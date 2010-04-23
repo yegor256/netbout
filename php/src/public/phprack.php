@@ -1,3 +1,4 @@
+<?php
 /**
  * netbout.com
  *
@@ -14,23 +15,14 @@
  * @version $Id$
  */
 
-* {
-    padding: 0px;
-    margin: 0px;
-}
+global $phpRackConfig;
+$phpRackConfig = array(
+    'auth' => array(
+        'username' => 'egor',
+        'password' => 'netbout',
+    ),
+    'dir' => dirname(__FILE__) . '/../rack-tests',
+);
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    line-height: 1.4em;
-
-    color: black;
-    background-color: white;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-img {
-    border: none;
-}
-
+define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
+include dirname(__FILE__) . '/../library/phpRack/bootstrap.php';
