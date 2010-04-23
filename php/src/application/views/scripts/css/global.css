@@ -1,0 +1,20 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    line-height: 1.4em;
+
+    color: black;
+    background-color: white;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+img {
+    border: none;
+}
+

@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<!--
+ *
+ * Copyright (c) FaZend.com
+ * All rights reserved.
+ *
+ * You can use this product "as is" without any warranties from authors.
+ * You can change the product only through Google Code repository
+ * at http://code.google.com/p/fazend
+ * If you have any questions about privacy, please email privacy@fazend.com
+ *
+ * @copyright Copyright (c) FaZend.com
+ * @version $Id$
+ * @category FaZend
+ *
+ * This Phing build file. For more information see this document:
+ * http://phing.info/docs/guide/current/
+ *
+-->
+
+<project name="netbout" basedir="." default="main">
+
+    <!-- get properties from file -->
+    <property file="./build.properties" />
+
+	<target name="main">
+		<phing phingfile="${project.basedir}/src/library/FaZend/Application/Phing/build.xml" 
+		    inheritRefs="true" 
+		    haltonfailure="true"
+		    target="main" />
+	</target>
+
+</project>
