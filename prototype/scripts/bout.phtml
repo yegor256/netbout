@@ -2,10 +2,35 @@
     <div class="title">New PHP project, lead engineer wanted..</div>
 
     <table class="details" cellpadding="0" cellspacing="0">
-        <tr><td><span>Started on:</span>12 June 2010 (2 weeks ago)<br/></td></tr>
+        <tr><td><span>Started on:</span>12 June 2010 (2 weeks ago)</td></tr>
     </table>
 
     <div class="participants">
+        <? foreach (rnd(array(1, 2, 3, 4, 5, 6), 4) as $i): ?>
+            <a href="" title="filter by him/her">
+                <? if (rand(0, 1)): ?>
+                    <img src="img/<?=$i?>.jpg"/>
+                <? else: ?>
+                    <span class="anonymous"><?=name()?></span>
+                <? endif; ?>
+            </a>
+        <? endforeach; ?>
+        <form action="?p=bout" method="post" class="inline">
+            <dd><input type="text" size="50" value="john13@example.com"/></dd>
+            <dd><input type="submit" value="Invite" /></dd>
+        </form>
+    </div>
+
+    <div class="tags">
+        <ul>
+            <? foreach (rnd(array('PHP', 'C++', 'netbout', 'Germany', 'USA')) as $i): ?>
+                <li class="tag"><a href=""><?=$i?></a></li>
+            <? endforeach; ?>
+        </ul>
+        <form action="?p=bout" method="post" class="inline">
+            <dd><input type="text" size="20" value=""/></dd>
+            <dd><input type="submit" value="Add" /></dd>
+        </form>
     </div>
 </div>
 
@@ -26,9 +51,9 @@
 <? endfor; ?>
 
 <div class="reply">
-    <form action="">
-        <dd><textarea></textarea></dd>
-        <div class="preview"></div>
+    <form action="?p=bout" method="post">
+        <dd><textarea onkeyup="$('#preview').html($('#reply').val());" id="reply"></textarea></dd>
+        <div id="preview"></div>
         <dd><input type="submit" value="Post Your Message" /></dd>
     </form>
 </div>

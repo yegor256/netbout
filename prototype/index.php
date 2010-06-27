@@ -1,8 +1,11 @@
 <?php
 
-function rnd(array $lst)
+function rnd(array $lst, $max = null)
 {
-    $indexes = array_rand($lst, rand(1, count($lst)));
+    if (is_null($max)) {
+        $max = count($lst);
+    }
+    $indexes = array_rand($lst, rand(1, $max));
     if (!is_array($indexes)) {
         $indexes = array($indexes);
     }

@@ -2,7 +2,6 @@
 <div class="filter">
     <b>Filtered by</b> (click to remove):
     <ul>
-        <li>"PHP Germany"</li>
         <li class="tag"><a href="" title="don't filter by PHP">PHP</a></li>
         <li><a href="" title="don't filter by Ales Solodov">Alex Solodov</a></li>
     </ul>
@@ -11,7 +10,7 @@
 <? for ($intro = 0; $intro < 5; $intro++): ?>
     <div class="intro">
         <div class="participants">
-            <? foreach (rnd(array(1, 2, 3, 4, 5)) as $i): ?>
+            <? foreach (rnd(array(1, 2, 3, 4, 5, 6), 4) as $i): ?>
                 <a href="" title="filter by him/her">
                     <? if (rand(0, 1)): ?>
                         <img src="img/<?=$i?>.jpg"/>

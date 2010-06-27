@@ -37,13 +37,13 @@ input,
 textarea{
     color: <?=TPC_BLACK?>;
     font-size: 1em;
-    padding: 0.5em;
+    padding: 0.3em;
     border: 1px solid <?=TPC_BLACK?>;
 }
     
 input[type="submit"]{
     cursor: pointer;
-    padding: 0.2em 0.5em;
+    padding: 0.3em 0.6em;
     margin-top: 0.3em;
 }
 
@@ -201,4 +201,11 @@ li.tag{
         color: white;
         cursor: pointer;
         text-decoration: none;
+    }
+
+form.inline{
+}
+    
+    form.inline dd{
+        display: inline;
     }
