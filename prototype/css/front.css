@@ -1,0 +1,51 @@
+div.filter{
+    margin-bottom: 2em;
+}
+
+    div.filter ul{
+        display: inline;
+    }
+
+        div.filter ul li{
+            display: inline;
+            margin-left: 0.5em;
+        }
+
+div.intro{
+    clear: both;
+    padding-bottom: 2em;
+    margin-bottom: 1em;
+    border-bottom: 1px dotted <?=TPC_LIGHTGRAY?>;
+}
+
+    div.intro a.title{
+        font-size: 1.2em;
+    }
+
+        div.intro a.title.unread{
+            font-weight: bold;
+        }
+
+    div.intro div.participants{
+        float: right;
+        margin-left: 2em;
+    }
+    
+        div.intro div.participants img{
+            height: 50px;
+            vertical-align: bottom;
+        }
+    
+        div.intro div.participants span.anonymous{
+            display: inline-block;
+            vertical-align: bottom;
+            height: 40px;
+            width: 50px;
+            background-color: <?=TPC_LIGHTGRAY?>;
+            color: <?=TPC_GRAY?>;
+            text-align: center;
+            padding-top: 10px;
+        }
+    
+    div.intro ul.tags{
+    }

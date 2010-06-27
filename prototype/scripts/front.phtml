@@ -1,0 +1,36 @@
+
+<div class="filter">
+    <b>Filtered by</b> (click to remove):
+    <ul>
+        <li>"PHP Germany"</li>
+        <li class="tag"><a href="" title="don't filter by PHP">PHP</a></li>
+        <li><a href="" title="don't filter by Ales Solodov">Alex Solodov</a></li>
+    </ul>
+</div>
+
+<? for ($intro = 0; $intro < 5; $intro++): ?>
+    <div class="intro">
+        <div class="participants">
+            <? foreach (rnd(array(1, 2, 3, 4, 5)) as $i): ?>
+                <a href="" title="filter by him/her">
+                    <? if (rand(0, 1)): ?>
+                        <img src="img/<?=$i?>.jpg"/>
+                    <? else: ?>
+                        <span class="anonymous"><?=name()?></span>
+                    <? endif; ?>
+                </a>
+            <? endforeach; ?>
+        </div>
+        <a href="?p=bout" class="title <?=($intro < 2 ? 'unread' : false)?>">
+            #<?=rand(1,999)?>: New project in PHP, lead developer wanted..
+        </a><br/>
+        <?=$intro * 2 + 3?> days ago by <a href="" title="filter by this user"><?=name()?></a>: 
+        <?=lorem(rand(50, 300))?>
+        <ul class="tags">
+            <? foreach (rnd(array('PHP', 'C++', 'netbout', 'Germany', 'USA')) as $i): ?>
+                <li class="tag"><a href=""><?=$i?></a></li>
+            <? endforeach; ?>
+        </ul>
+    </div>
+<? endfor; ?>
+    

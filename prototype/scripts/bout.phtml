@@ -1,0 +1,34 @@
+<div class="preamble">
+    <div class="title">New PHP project, lead engineer wanted..</div>
+
+    <table class="details" cellpadding="0" cellspacing="0">
+        <tr><td><span>Started on:</span>12 June 2010 (2 weeks ago)<br/></td></tr>
+    </table>
+
+    <div class="participants">
+    </div>
+</div>
+
+<? for ($i = 0; $i < 5; $i++): ?>
+    <div class="message">
+        <div class="author">
+            <img src="img/<?=rand(1, 5)?>.jpg" />
+        </div>
+        <div class="heading">
+            5 days ago by peter898
+        </div>
+        <div class="text">
+            <? for ($j = 0; $j < rand(1,3); $j++): ?>
+                <p><?=lorem(250)?></p>
+            <? endfor; ?>
+        </div>
+    </div>
+<? endfor; ?>
+
+<div class="reply">
+    <form action="">
+        <dd><textarea></textarea></dd>
+        <div class="preview"></div>
+        <dd><input type="submit" value="Post Your Message" /></dd>
+    </form>
+</div>

@@ -1,0 +1,62 @@
+div.preamble{
+    margin-bottom: 2em;
+}
+
+    div.preamble div.title{
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    div.preamble table.details{
+        margin: 0.5em 0;
+    }
+
+        div.preamble table.details td{
+        }
+
+            div.preamble table.details td span{
+                display: block;
+                color: <?=TPC_LIGHTGRAY?>;
+            }
+
+div.message{
+    padding-top: 3em;
+    margin-top: 3em;
+    border-top: 1px dotted <?=TPC_LIGHTGRAY?>;
+}
+
+    div.message:first-child{
+        border-top: 0;
+    }
+
+    div.message div.author{
+        float: right;
+        margin-left: 2em;
+    }
+
+        div.message div.author img{
+            height: 75px;
+        }
+
+    div.message div.text{
+    }
+
+div.reply{
+}
+
+    div.reply form{
+    }
+
+        div.reply form textarea{
+            width: 95%;
+            height: 10em;
+        }
+
+        div.reply form div.preview{
+            padding: 0.5em;
+            border: 2px dashed <?=TPC_LIGHTGRAY?>;
+            min-height: 2em;
+            width: 95%;
+        }
+
+
