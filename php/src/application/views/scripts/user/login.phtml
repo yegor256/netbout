@@ -1,10 +1,13 @@
 
+<h1>Login</h1>
+
 <p>Before we let you in we have to authenticate your 
     identity, in order to protect your private and sensitive
     information.</p>
 
 <?=$this->forma()
     ->addBehavior('flash', "'logged in'")
+    ->addBehavior('redirect')
     ->addField('text', 'id')
         ->fieldLabel('Your NetBout ID')
         ->fieldAttrib('size', 12)

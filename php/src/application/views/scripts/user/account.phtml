@@ -1,7 +1,11 @@
-Your account:
+
+<h1>Account Settings</h1>
+
+<p>Your account:</p>
 
 <?=$this->forma()
     ->addBehavior('flash', "'changes were saved'")
+    ->addBehavior('redirect')
     ->addField('text', 'id')
         ->fieldLabel('Your netBout ID (can\'t be changed)')
         ->fieldAttrib('size', 12)

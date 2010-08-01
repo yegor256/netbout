@@ -1,10 +1,22 @@
-Start new <b>bout</b>:
+<h1>Start New</h1>
 
-<form action="">
-    <dd>Email or netBout ID of your first recipient:</dd>
-    <dd><input type="text" size="50" value="john13@example.com"/></dd>
-    <dd>Subject:</dd>
-    <dd><input type="text" size="60"/></dd>
-    <dd><input type="submit" value="Start New Bout" /></dd>
-</form>
+<p>Start new <b>bout</b>:</p>
+
+<?=$this->forma()
+    ->addBehavior('flash', "'bout started'")
+    ->addBehavior('redirect')
+    ->addField('text', 'id')
+        ->fieldLabel('Email or netBout ID of your first recipient')
+        ->fieldAttrib('size', 12)
+        ->fieldAttrib('maxlength', 7)
+        ->fieldAttrib('disabled', 'disabled')
+        ->fieldValue('john13')
+    ->addField('text', 'subject')
+        ->fieldLabel('Subject')
+        ->fieldAttrib('size', 50)
+        ->fieldAttrib('maxlength', 200)
+    ->addField('submit')
+        ->fieldValue('Start New Bout')
+        // ->fieldAction(false) // to be changed
+    ?>
 

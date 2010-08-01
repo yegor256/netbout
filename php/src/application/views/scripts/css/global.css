@@ -45,8 +45,19 @@ a, a:visited {
     }
     
 p,
-form{
+form,
+h1,
+h2{
     margin: 0.4em 0;
+}
+
+    /* FLASH message after some event */
+    p.flash {
+        color: <?=TPC_RED?>;
+    }
+    
+h1 {
+    font-size: 1.4em;
 }
     
 input,
