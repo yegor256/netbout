@@ -12,17 +12,34 @@
  *
  * @author Yegor Bugayenko <yegor256@yahoo.com>
  * @copyright Copyright (c) netbout.com, 2010
- * @version $Id$
+ * @version $Id: global.css 3 2010-04-23 21:02:37Z yegor256@yahoo.com $
  */
 
-global $phpRackConfig;
-$phpRackConfig = array(
-    'auth' => array(
-        'username' => 'netbout',
-        'password' => 'netbout555',
-    ),
-    'dir' => dirname(__FILE__) . '/../rack-tests',
-);
+/**
+ * Manipulations with user account
+ *
+ * @package front
+ */
+class UserController extends FaZend_Controller_Action
+{
+    
+    /**
+     * Login
+     *
+     * @return void
+     */
+    public function loginAction() 
+    {
+    }
+    
+    /**
+     * Account management
+     *
+     * @return void
+     */
+    public function accountAction() 
+    {
+        
+    }
 
-define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
-include dirname(__FILE__) . '/../library/phpRack/bootstrap.php';
+}

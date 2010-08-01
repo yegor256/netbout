@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
 <!--
- *
  * netbout.com
  *
  * Redistribution and use in source and binary forms, with or 
@@ -20,6 +19,12 @@
 
     <!-- get properties from file -->
     <property file="./build.properties" />
+
+    <!--
+    This file is located in continuous integration server and is
+    accessible only to deployment manager
+    -->
+    <property file="../netbout.properties" />
 
 	<target name="main">
 		<phing phingfile="${project.basedir}/src/library/FaZend/Application/Phing/build.xml" 

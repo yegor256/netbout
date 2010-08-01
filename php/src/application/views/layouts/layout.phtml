@@ -1,3 +1,4 @@
+<?="<?xml version=\"1.0\" encoding=\"utf-8\"?>"?>
 <!--
  * netbout.com
  *
@@ -13,30 +14,60 @@
  * @copyright Copyright (c) netbout.com, 2010
  * @version $Id$
  -->
-<?php echo $this->doctype()?>
-<?php
-    $this->headMeta()
-        ->appendHttpEquiv('expires', 'Wed, 26 Feb 1997 08:21:57 GMT')
-        ->appendHttpEquiv('pragma', 'no-cache')
-        ->appendHttpEquiv('Cache-Control', 'no-cache')
-        ->appendName('keywords', '')
-        ->appendName('description', '');
-
-    $this->includeCSS('global.css');
-
-?>
+<? $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=utf-8') ?>
+<? $this->includeCSS('global.css') ?>
+<? $this->includeJQuery() ?>
+<? $this->headScript()->appendFile('http://jquery-ui.googlecode.com/svn/tags/1.8rc3/ui/jquery-ui.js') ?>
+<?=$this->doctype() ?>
 <html xmlns="http://www.w3.org/1999/xhtml"> 
 <head>  
-    <?php echo $this->headTitle()?>
-    <?php echo $this->headMeta()?>
-    <?php echo $this->headLink()?>
-    <?php echo $this->headStyle()?>
+    <?=$this->headTitle()?>
+    <?=$this->headMeta()?>
+    <?=$this->headLink()?>
+    <?=$this->headStyle()?>
 </head> 
 <body>
-
-    <div>
-    <?php echo  $this->layout()->content ?>
+    <div id="header">
+        <div class="wrapper">
+            <table cellpadding="0" cellspacing="0">
+                <tr><td class="logo">
+                    <a id="logo" href="<?=$this->url(array(), 'front')?>"><img src="logo.png"/></a>
+                    <ul>
+                        <li><a href="<?=$this->url(array('action'=>'account'), 'user')?>" 
+                            style="font-weight: bolder;">john13</a></li>
+                        <li><a href="<?=$this->url(array(), 'start')?>">start</a></li>
+                        <li><a href="<?=$this->url(array('action'=>'login'), 'user')?>">log out</a></li>
+                    </ul>
+                </td>
+                <td align="right">
+                    <form action="" method="post">
+                        <dd><input type="text" value="PHP Germany" size="46" autocomplete="off" /></dd>
+                        <dd><input type="submit" value="?" /></dd>
+                    </form>
+                </td></tr>
+            </table>
+        </div>
     </div>
-
+    <div id="content">
+        <div class="wrapper">
+            <?=$this->flashMessage()?>
+            <?=$this->layout()->content?>
+        </div>
+    </div>
+    <div id="footer">
+        <div class="wrapper">
+            <ul id="menu">
+                <li><a href="">how it works</a></li>
+                <li><a href="">your privacy</a></li>
+                <li><a href="">feedback</a></li>
+            </ul>
+            <p>(c) <?=Zend_Date::now()->get(Zend_Date::YEAR)?>, netBout.com,
+                rev.<?=FaZend_Revision::get()?>, 
+                <?=$this->pageLoadTime()?>, All Rights Reserved.
+            </p>
+        </div>
+    </div>
+    <?=$this->googleAnalytics(false)?>
+    <?=$this->headScript() ?>
 </body>
 </html>

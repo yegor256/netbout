@@ -1,0 +1,98 @@
+/**
+ * netbout.com
+ *
+ * Redistribution and use in source and binary forms, with or 
+ * without modification, are PROHIBITED without prior written 
+ * permission from the author. This product may NOT be used 
+ * anywhere and on any computer except the server platform of 
+ * netbout.com. located at www.netbout.com. If you received this 
+ * code occasionally and without intent to use it, please report 
+ * this incident to the author by email: privacy@netbout.com
+ *
+ * @author Yegor Bugayenko <yegor256@yahoo.com>
+ * @copyright Copyright (c) netbout.com, 2010
+ * @version $Id: global.css 3 2010-04-23 21:02:37Z yegor256@yahoo.com $
+ */
+
+div.preamble{
+    margin-bottom: 2em;
+}
+
+    div.preamble div.title{
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    div.preamble table.details{
+        margin: 0.5em 0;
+    }
+
+        div.preamble table.details td{
+        }
+
+            div.preamble table.details td span{
+                display: block;
+                color: <?=TPC_GRAY?>;
+            }
+
+    div.preamble div.participants{
+    }
+
+        div.preamble div.participants img{
+            height: 75px;
+            vertical-align: bottom;
+        }
+
+        div.preamble div.participants span.anonymous{
+            display: inline-block;
+            vertical-align: bottom;
+            height: 55px;
+            width: 75px;
+            background-color: <?=TPC_LIGHTGRAY?>;
+            color: <?=TPC_GRAY?>;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+div.message{
+    padding-top: 3em;
+    margin-top: 3em;
+    border-top: 1px dotted <?=TPC_LIGHTGRAY?>;
+}
+
+    div.message:first-child{
+        border-top: 0;
+    }
+
+    div.message div.author{
+        float: right;
+        margin-left: 2em;
+    }
+
+        div.message div.author img{
+            height: 75px;
+        }
+
+    div.message div.text{
+    }
+
+div.reply{
+    margin-top: 3em;
+}
+
+    div.reply form{
+    }
+
+        div.reply form textarea#reply{
+            width: 95%;
+            height: 10em;
+        }
+
+        div.reply form div#preview{
+            padding: 0.5em;
+            border: 2px dashed <?=TPC_LIGHTGRAY?>;
+            min-height: 2em;
+            width: 95%;
+        }
+
+

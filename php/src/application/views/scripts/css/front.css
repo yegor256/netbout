@@ -1,0 +1,67 @@
+/**
+ * netbout.com
+ *
+ * Redistribution and use in source and binary forms, with or 
+ * without modification, are PROHIBITED without prior written 
+ * permission from the author. This product may NOT be used 
+ * anywhere and on any computer except the server platform of 
+ * netbout.com. located at www.netbout.com. If you received this 
+ * code occasionally and without intent to use it, please report 
+ * this incident to the author by email: privacy@netbout.com
+ *
+ * @author Yegor Bugayenko <yegor256@yahoo.com>
+ * @copyright Copyright (c) netbout.com, 2010
+ * @version $Id: global.css 3 2010-04-23 21:02:37Z yegor256@yahoo.com $
+ */
+
+div.filter{
+    margin-bottom: 2em;
+}
+
+    div.filter ul{
+        display: inline;
+    }
+
+        div.filter ul li{
+            display: inline;
+            margin-left: 0.5em;
+        }
+
+div.intro{
+    clear: both;
+    padding-bottom: 2em;
+    margin-bottom: 1em;
+    border-bottom: 1px dotted <?=TPC_LIGHTGRAY?>;
+}
+
+    div.intro a.title{
+        font-size: 1.2em;
+    }
+
+        div.intro a.title.unread{
+            font-weight: bold;
+        }
+
+    div.intro div.participants{
+        float: right;
+        margin-left: 2em;
+    }
+    
+        div.intro div.participants img{
+            height: 50px;
+            vertical-align: bottom;
+        }
+    
+        div.intro div.participants span.anonymous{
+            display: inline-block;
+            vertical-align: bottom;
+            height: 40px;
+            width: 50px;
+            background-color: <?=TPC_LIGHTGRAY?>;
+            color: <?=TPC_GRAY?>;
+            text-align: center;
+            padding-top: 10px;
+        }
+    
+    div.intro ul.tags{
+    }
