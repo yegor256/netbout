@@ -14,6 +14,8 @@
 # @version $Id$
 #
 
+# to protect content during development
+# just comment the lines when the site is ready for public
 AuthUserFile .htpasswd
 AuthGroupFile /dev/null
 AuthName "netbout.com"
