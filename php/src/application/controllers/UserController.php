@@ -27,6 +27,7 @@ class UserController extends FaZend_Controller_Action
      * Login
      *
      * @return void
+     * @see views/scripts/user/login.phtml
      */
     public function loginAction() 
     {
@@ -36,6 +37,7 @@ class UserController extends FaZend_Controller_Action
      * Account management
      *
      * @return void
+     * @see views/scripts/user/account.phtml
      */
     public function accountAction() 
     {

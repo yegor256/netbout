@@ -37,6 +37,7 @@ class IndexController extends FaZend_Controller_Action
      * Front
      *
      * @return void
+     * @see views/scripts/index/front.phtml
      */
     public function frontAction() 
     {
@@ -47,6 +48,7 @@ class IndexController extends FaZend_Controller_Action
      * Page with one bout
      *
      * @return void
+     * @see views/scripts/index/bout.phtml
      */
     public function boutAction() 
     {
