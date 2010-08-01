@@ -1,10 +1,20 @@
 Your account:
 
-<form action="">
-    <dd>Your netBout ID (can't be changed):</dd>
-    <dd><input type="text" size="30" disabled="disabled" value="john13"/></dd>
-    <dd>New password (email confirmation will be required):</dd>
-    <dd><input type="password" size="25"/></dd>
-    <dd><input type="submit" value="Save Changes" /></dd>
-</form>
+<?=$this->forma()
+    ->addBehavior('flash', "'changes were saved'")
+    ->addField('text', 'id')
+        ->fieldLabel('Your netBout ID (can\'t be changed)')
+        ->fieldAttrib('size', 12)
+        ->fieldAttrib('maxlength', 7)
+        ->fieldAttrib('disabled', 'disabled')
+        ->fieldValue('john13')
+    ->addField('text', 'password')
+        ->fieldLabel('New password (email confirmation will be required)')
+        ->fieldAttrib('type', 'password')
+        ->fieldAttrib('size', 22)
+        ->fieldAttrib('maxlength', 100)
+    ->addField('submit')
+        ->fieldValue('Save Changes')
+        ->fieldAction(false) // to be changed
+    ?>
 

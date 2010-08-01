@@ -3,11 +3,18 @@
     identity, in order to protect your private and sensitive
     information.</p>
 
-<form action="">
-    <dd>Your netBout ID:</dd>
-    <dd><input type="text" size="30" /></dd>
-    <dd>Password:</dd>
-    <dd><input type="password" size="25"/></dd>
-    <dd><input type="submit" value="Login" /></dd>
-</form>
-
+<?=$this->forma()
+    ->addBehavior('flash', "'logged in'")
+    ->addField('text', 'id')
+        ->fieldLabel('Your NetBout ID')
+        ->fieldAttrib('size', 12)
+        ->fieldAttrib('maxlength', 7)
+    ->addField('text', 'password')
+        ->fieldLabel('Password')
+        ->fieldAttrib('type', 'password')
+        ->fieldAttrib('size', 22)
+        ->fieldAttrib('maxlength', 100)
+    ->addField('submit')
+        ->fieldValue('Login')
+        ->fieldAction(false) // to be changed
+    ?>
