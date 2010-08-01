@@ -14,11 +14,11 @@
 # @version $Id$
 #
 
-#AuthUserFile .htpasswd
-#AuthGroupFile /dev/null
-#AuthName "project protected files"
-#AuthType Basic
-#require valid-user
+AuthUserFile .htpasswd
+AuthGroupFile /dev/null
+AuthName "netbout.com"
+AuthType Basic
+Require valid-user
 
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} -s [OR]
