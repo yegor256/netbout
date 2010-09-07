@@ -31,7 +31,7 @@
         <? foreach (array(1, 2, 3, 4, 5, 6) as $i): ?>
             <a href="" title="<?=_t('filter by him/her')?>">
                 <? if (rand(0, 1)): ?>
-                    <img src="img/<?=$i?>.jpg"/>
+                    <img src="http://www.robert-deniro.com/deniro.jpg"/>
                 <? else: ?>
                     <span class="anonymous">John Smith</span>
                 <? endif; ?>
@@ -67,7 +67,7 @@
 <? for ($i = 0; $i < 5; $i++): ?>
     <div class="message">
         <div class="author">
-            <img src="img/<?=rand(1, 5)?>.jpg" />
+            <img src="http://www.robert-deniro.com/deniro.jpg" />
         </div>
         <div class="heading">
             <?=_t('%s ago by %s', '5 days', 'peter898')?>
