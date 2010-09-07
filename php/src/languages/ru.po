@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: netbout.com\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-07 12:24+0100\n"
-"PO-Revision-Date: 2010-09-07 12:26+0100\n"
+"POT-Creation-Date: 2010-09-07 13:48+0100\n"
+"PO-Revision-Date: 2010-09-07 13:51+0100\n"
 "Last-Translator: Yegor Bugayenko <egor@technoparkcorp.com>\n"
 "Language-Team: netbout.com <team@netbout.com>\n"
 "MIME-Version: 1.0\n"
@@ -42,57 +42,65 @@ msgstr "Все права зарезервированы"
 
 #: /code/netbout/php/src/application/views/scripts/index/bout.phtml:24
 msgid "Started on"
-msgstr ""
+msgstr "Начали"
 
 #: /code/netbout/php/src/application/views/scripts/index/bout.phtml:32
 #: /code/netbout/php/src/application/views/scripts/index/front.phtml:31
 msgid "filter by him/her"
-msgstr ""
+msgstr "фильтровать по нему/ней"
 
-#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:65
+#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:42
+msgid "Invite"
+msgstr "Пригласить"
+
+#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:54
+msgid "Add"
+msgstr "Добавить"
+
+#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:73
 #, php-format
 msgid "%s ago by %s"
 msgstr "%s назад от %s"
 
-#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:79
+#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:87
 msgid "Post Your Message"
-msgstr ""
+msgstr "Добавить сообщение"
 
 #: /code/netbout/php/src/application/views/scripts/index/front.phtml:20
 msgid "Filtered by"
-msgstr ""
+msgstr "Фильтруем по"
 
 #: /code/netbout/php/src/application/views/scripts/index/front.phtml:20
 msgid "click to remove"
-msgstr ""
+msgstr "кликните чтобы удалить"
 
 #: /code/netbout/php/src/application/views/scripts/index/front.phtml:22
 #: /code/netbout/php/src/application/views/scripts/index/front.phtml:23
 #, php-format
 msgid "don't filter by %s"
-msgstr ""
+msgstr "не фильтровать по %s"
 
 #: /code/netbout/php/src/application/views/scripts/index/front.phtml:46
 #, php-format
 msgid "filter by %s"
-msgstr ""
+msgstr "фильтровать по %s"
 
 #: /code/netbout/php/src/application/views/scripts/index/front.phtml:44
 #, php-format
 msgid "%d days ago by %s"
-msgstr ""
+msgstr "%d дней назад от %s"
 
 #: /code/netbout/php/src/application/views/scripts/index/start.phtml:17
 msgid "Start New"
-msgstr ""
+msgstr "Начать новый"
 
 #: /code/netbout/php/src/application/views/scripts/index/start.phtml:19
 msgid "Start new bout with just one click"
-msgstr ""
+msgstr "Начните новый диалог прямо сейчас"
 
 #: /code/netbout/php/src/application/views/scripts/index/start.phtml:25
 msgid "Email or netBout ID of your first recipient"
-msgstr ""
+msgstr "Email или NetBout ID вашего респондента"
 
 #: /code/netbout/php/src/application/views/scripts/index/start.phtml:31
 msgid "Subject"
@@ -100,15 +108,15 @@ msgstr "Тема"
 
 #: /code/netbout/php/src/application/views/scripts/index/start.phtml:35
 msgid "Start New Bout"
-msgstr ""
+msgstr "Начать новый Bout"
 
 #: /code/netbout/php/src/application/views/scripts/user/account.phtml:17
 msgid "Account Settings"
-msgstr ""
+msgstr "Настройки"
 
 #: /code/netbout/php/src/application/views/scripts/user/account.phtml:19
 msgid "Your account"
-msgstr ""
+msgstr "Ваш аккаунт"
 
 #: /code/netbout/php/src/application/views/scripts/user/account.phtml:25
 msgid "Your netBout ID (can't be changed)"
@@ -120,12 +128,12 @@ msgstr ""
 
 #: /code/netbout/php/src/application/views/scripts/user/account.phtml:36
 msgid "Save Changes"
-msgstr ""
+msgstr "Сохранить изменения"
 
 #: /code/netbout/php/src/application/views/scripts/user/login.phtml:17
 #: /code/netbout/php/src/application/views/scripts/user/login.phtml:36
 msgid "Login"
-msgstr ""
+msgstr "Вход"
 
 #: /code/netbout/php/src/application/views/scripts/user/login.phtml:19
 msgid ""
@@ -136,11 +144,11 @@ msgstr ""
 
 #: /code/netbout/php/src/application/views/scripts/user/login.phtml:27
 msgid "Your NetBout ID"
-msgstr ""
+msgstr "Ваш ID в NetBout"
 
 #: /code/netbout/php/src/application/views/scripts/user/login.phtml:31
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #~ msgid "sfx: years (>5)"
 #~ msgstr "years"
