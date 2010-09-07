@@ -54,6 +54,14 @@
             <dd><input type="submit" value="Add" /></dd>
         </form>
     </div>
+
+    <div class="stages">
+        <ul>
+            <? foreach (array('questionnaire', 'test task', 'UML drawing') as $i): ?>
+                <li class="stage"><a href=""><?=$i?></a></li>
+            <? endforeach; ?>
+        </ul>
+    </div>
 </div>
 
 <? for ($i = 0; $i < 5; $i++): ?>

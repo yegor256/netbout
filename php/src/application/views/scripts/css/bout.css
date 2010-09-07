@@ -31,7 +31,6 @@ div.preamble{
         }
 
             div.preamble table.details td span{
-                display: block;
                 color: <?=TPC_GRAY?>;
             }
 
@@ -53,6 +52,19 @@ div.preamble{
             text-align: center;
             padding-top: 20px;
         }
+
+    div.preamble div.stages{
+        margin-top: 3em;
+    }
+
+        div.preamble div.stages ul{
+            display: inline;
+        }
+
+            div.preamble div.stages ul li.stage{
+                display: inline;
+                margin-right: 1em;
+            }
 
 div.message{
     padding-top: 3em;
