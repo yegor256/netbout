@@ -1,22 +1,38 @@
-<h1>Start New</h1>
+<!--
+ * netbout.com
+ *
+ * Redistribution and use in source and binary forms, with or 
+ * without modification, are PROHIBITED without prior written 
+ * permission from the author. This product may NOT be used 
+ * anywhere and on any computer except the server platform of 
+ * netbout.com. located at www.netbout.com. If you received this 
+ * code occasionally and without intent to use it, please report 
+ * this incident to the author by email: privacy@netbout.com
+ *
+ * @author Yegor Bugayenko <yegor256@yahoo.com>
+ * @copyright Copyright (c) netbout.com, 2010
+ * @version $Id$
+ -->
 
-<p>Start new <b>bout</b>:</p>
+<h1><?=_t('Start New')?></h1>
+
+<p><?=_t('Start new bout with just one click')?>:</p>
 
 <?=$this->forma()
-    ->addBehavior('flash', "'bout started'")
+    ->addBehavior('flash', "_t('bout started')")
     ->addBehavior('redirect')
     ->addField('text', 'id')
-        ->fieldLabel('Email or netBout ID of your first recipient')
+        ->fieldLabel(_t('Email or netBout ID of your first recipient'))
         ->fieldAttrib('size', 12)
         ->fieldAttrib('maxlength', 7)
         ->fieldAttrib('disabled', 'disabled')
         ->fieldValue('john13')
     ->addField('text', 'subject')
-        ->fieldLabel('Subject')
+        ->fieldLabel(_t('Subject'))
         ->fieldAttrib('size', 50)
         ->fieldAttrib('maxlength', 200)
     ->addField('submit')
-        ->fieldValue('Start New Bout')
+        ->fieldValue(_t('Start New Bout'))
         // ->fieldAction(false) // to be changed
     ?>
 

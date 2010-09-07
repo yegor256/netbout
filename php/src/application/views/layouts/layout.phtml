@@ -35,8 +35,8 @@
                     <ul>
                         <li><a href="<?=$this->url(array('action'=>'account'), 'user')?>" 
                             style="font-weight: bolder;">john13</a></li>
-                        <li><a href="<?=$this->url(array(), 'start')?>">start</a></li>
-                        <li><a href="<?=$this->url(array('action'=>'login'), 'user')?>">log out</a></li>
+                        <li><a href="<?=$this->url(array(), 'start')?>"><?=_t('start')?></a></li>
+                        <li><a href="<?=$this->url(array('action'=>'login'), 'user')?>"><?=_t('log out')?></a></li>
                     </ul>
                 </td>
                 <td align="right">
@@ -57,13 +57,14 @@
     <div id="footer">
         <div class="wrapper">
             <ul id="menu">
-                <li><a href="">how it works</a></li>
-                <li><a href="">your privacy</a></li>
-                <li><a href="">feedback</a></li>
+                <li><a href=""><?=_t('how it works')?></a></li>
+                <li><a href=""><?=_t('your privacy')?></a></li>
+                <li><a href=""><?=_t('feedback')?></a></li>
             </ul>
             <p>(c) <?=Zend_Date::now()->get(Zend_Date::YEAR)?>, netBout.com,
                 rev.<?=FaZend_Revision::get()?>, 
-                <?=$this->pageLoadTime()?>, All Rights Reserved.
+                <?=$this->pageLoadTime()?>, 
+                <?=_t('All Rights Reserved')?>.
             </p>
         </div>
     </div>

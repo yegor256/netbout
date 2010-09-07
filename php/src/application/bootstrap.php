@@ -40,6 +40,70 @@ define('FZ_BLUE4', '#92BECE'); // light blue
  */
 class Bootstrap extends FaZend_Application_Bootstrap_Bootstrap
 {
+
+    /**
+     * Initialize it.
+     *
+     * This method has to be the first in bootstrap!
+     *
+     * @return void
+     */
+    protected function _initAll()
+    {
+        if (function_exists('mb_internal_encoding')) {
+            mb_internal_encoding('UTF-8');
+        }
+        $this->bootstrap('fz_logger');
+        $this->bootstrap('fz_starter');
+    }
     
+    /**
+     * Init non-explicit ORM mapping rules
+     *
+     * @return void
+     */
+    protected function _initOrmMapping()
+    {
+        $this->bootstrap('fz_orm');
+        $converters = array(
+            'dates' => array(
+                'regexs' => array(
+                    '/^.*?\.(?:created)$/',
+                ),
+                'converter' => FaZend_Callback::factory('new Zend_Date(${a1}, Zend_Date::ISO_8601);')
+            ),
+        );
+
+        foreach ($converters as $converter) {
+            foreach ($converter['regexs'] as $regex) {
+                FaZend_Db_Table_ActiveRow::addMapping(
+                    $regex,
+                    $converter['converter']
+                );
+            }
+        }
+    }
+    
+    /**
+     * Emailer reconfigure for the specific language.
+     *
+     * @return void
+     */
+    protected function _initEmailer()
+    {
+        $defs = array_keys(Zend_Locale::getDefault());
+        $lang = array_shift($defs);
+        $folder = APPLICATION_PATH . '/views/emails';
+
+        $this->bootstrap('fz_email');
+        $email = FaZend_Email::getDefaultEmail();
+        $email->setFolders(
+            array(
+                $folder . '/en',
+                $folder . '/' . $lang
+            )
+        );
+    }
+
 }
 

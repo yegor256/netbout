@@ -16,6 +16,11 @@
  */
 
 /**
+ * @see FaZend_Controller_Action
+ */
+require_once 'FaZend/Controller/Action.php';
+
+/**
  * Front controller
  *
  * @package front
@@ -41,7 +46,7 @@ class IndexController extends FaZend_Controller_Action
      */
     public function frontAction() 
     {
-        
+        // nothing yet
     }
     
     /**
@@ -52,7 +57,7 @@ class IndexController extends FaZend_Controller_Action
      */
     public function boutAction() 
     {
-        
+        // nothing yet
     }
     
 }

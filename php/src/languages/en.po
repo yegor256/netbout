@@ -1,0 +1,170 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: netbout.com\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-09-07 12:24+0100\n"
+"PO-Revision-Date: 2010-09-07 12:24+0100\n"
+"Last-Translator: Yegor Bugayenko <egor@technoparkcorp.com>\n"
+"Language-Team: netbout.com <team@netbout.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _t\n"
+"X-Poedit-Basepath: /code/netbout/php/src/application\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED STATES\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-SearchPath-0: /code/netbout/php/src/application\n"
+
+#: /code/netbout/php/src/application/views/layouts/layout.phtml:38
+msgid "start"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/layouts/layout.phtml:39
+msgid "log out"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/layouts/layout.phtml:60
+msgid "how it works"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/layouts/layout.phtml:61
+msgid "your privacy"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/layouts/layout.phtml:62
+msgid "feedback"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/layouts/layout.phtml:67
+msgid "All Rights Reserved"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:24
+msgid "Started on"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:32
+#: /code/netbout/php/src/application/views/scripts/index/front.phtml:31
+msgid "filter by him/her"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:65
+#, php-format
+msgid "%s ago by %s"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/bout.phtml:79
+msgid "Post Your Message"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/front.phtml:20
+msgid "Filtered by"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/front.phtml:20
+msgid "click to remove"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/front.phtml:22
+#: /code/netbout/php/src/application/views/scripts/index/front.phtml:23
+#, php-format
+msgid "don't filter by %s"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/front.phtml:46
+#, php-format
+msgid "filter by %s"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/front.phtml:44
+#, php-format
+msgid "%d days ago by %s"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/start.phtml:17
+msgid "Start New"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/start.phtml:19
+msgid "Start new bout with just one click"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/start.phtml:25
+msgid "Email or netBout ID of your first recipient"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/start.phtml:31
+msgid "Subject"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/index/start.phtml:35
+msgid "Start New Bout"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/user/account.phtml:17
+msgid "Account Settings"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/user/account.phtml:19
+msgid "Your account"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/user/account.phtml:25
+msgid "Your netBout ID (can't be changed)"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/user/account.phtml:31
+msgid "New password (email confirmation will be required)"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/user/account.phtml:36
+msgid "Save Changes"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/user/login.phtml:17
+#: /code/netbout/php/src/application/views/scripts/user/login.phtml:36
+msgid "Login"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/user/login.phtml:19
+msgid ""
+"Before we let you in we have to authenticate your \n"
+"    identity, in order to protect your private and sensitive\n"
+"    information."
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/user/login.phtml:27
+msgid "Your NetBout ID"
+msgstr ""
+
+#: /code/netbout/php/src/application/views/scripts/user/login.phtml:31
+msgid "Password"
+msgstr ""
+
+#~ msgid "sfx: years (>5)"
+#~ msgstr "years"
+
+#~ msgid "sfx: years (<5)"
+#~ msgstr "years"
+
+#~ msgid "sfx: months"
+#~ msgstr "mons"
+
+#~ msgid "sfx: weeks"
+#~ msgstr "weeks"
+
+#~ msgid "sfx: days"
+#~ msgstr "days"
+
+#~ msgid "sfx: hours"
+#~ msgstr "hrs"
+
+#~ msgid "sfx: minutes"
+#~ msgstr "mins"
+
+#~ msgid "txt: manifesto"
+#~ msgstr ""
+#~ "CAYBO is an open book of complaints, which are resolved to the benefit of "
+#~ "both consumers and service providers. CAYBO is not responsible for the "
+#~ "content of complaints and messages published here."
