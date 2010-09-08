@@ -14,7 +14,7 @@ class Injector extends FaZend_Test_Injector
     protected function _injectLocale()
     {
         // just to test that localization works properly (and visually :)
-        Zend_Locale::setDefault('ru');
+        // Zend_Locale::setDefault('ru');
     }
 
 }
