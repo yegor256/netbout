@@ -35,6 +35,7 @@ div.preamble{
             }
 
     div.preamble div.participants{
+        margin-bottom: 0.5em;
     }
 
         div.preamble div.participants img{
@@ -51,6 +52,11 @@ div.preamble{
             color: <?=TPC_GRAY?>;
             text-align: center;
             padding-top: 20px;
+        }
+
+        div.preamble div.participants ul li{
+            list-style: none;
+            display: inline;
         }
 
     div.preamble div.stages{

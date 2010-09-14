@@ -223,12 +223,19 @@ li.tag{
         border-bottom: 1px solid <?=TPC_GRAY?>;
     }
 
-    li.tag a:hover{
-        background-color: <?=TPC_GRAY?>;
-        color: white;
-        cursor: pointer;
-        text-decoration: none;
-    }
+        li.tag a:hover{
+            background-color: <?=TPC_GRAY?>;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+li.add {
+    list-style: none;
+    display: inline;
+    font-weight: bold;
+    cursor: pointer;
+}
 
 form.inline{
 }
