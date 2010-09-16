@@ -65,12 +65,26 @@ div.preamble{
 
         div.preamble div.stages ul{
             display: inline;
+            margin-bottom: 1em;
         }
 
             div.preamble div.stages ul li.stage{
                 display: inline;
                 margin-right: 1em;
             }
+
+            div.preamble div.stages ul li.ui-state-active{
+                font-weight: bold;
+            }
+
+        div.preamble div.ui-tabs-panel {
+            border: 1px solid <?=TPC_LIGHTGRAY?>;
+            padding: 3em;
+        }
+
+        div.preamble div.ui-tabs-hide {
+            display: none;
+        }
 
 div.message{
     padding-top: 3em;

@@ -61,13 +61,22 @@
         </form>
     </div>
 
-    <div class="stages">
+    <div class="stages" id="stages">
+        <?$tabs = array('questionnaire', 'test task', 'UML drawing')?>
         <ul>
-            <? foreach (array('questionnaire', 'test task', 'UML drawing') as $i): ?>
-                <li class="stage"><a href=""><?=$i?></a></li>
+            <? foreach ($tabs as $id=>$i): ?>
+                <li class="stage"><a href="#tab-<?=$id?>"><?=$i?></a></li>
             <? endforeach; ?>
         </ul>
+        <? foreach ($tabs as $id=>$i): ?>
+            <div id="tab-<?=$id?>">
+                This stage is rented by ActorHelper "<b><?=$i?></b>"
+            </div>
+        <? endforeach; ?>
     </div>
+    <?$this->includeJQuery()?>
+    <?$this->headScript()->appendFile('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/jquery-ui.min.js')?>
+    <?$this->headScript()->appendScript('$(function() { $("#stages").tabs(); });')?>
 </div>
 
 <? for ($i = 0; $i < 5; $i++): ?>
