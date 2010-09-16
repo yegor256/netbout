@@ -23,6 +23,15 @@ div.preamble{
         font-weight: bold;
     }
 
+    div.preamble div.myself{
+        text-align: right;
+        float: right;
+    }
+
+        div.preamble div.myself img{
+            height: 100px;
+        }
+
     div.preamble table.details{
         margin: 0.5em 0;
     }
@@ -99,6 +108,7 @@ div.message{
     div.message div.author{
         float: right;
         margin-left: 2em;
+        text-align: right;
     }
 
         div.message div.author img{
