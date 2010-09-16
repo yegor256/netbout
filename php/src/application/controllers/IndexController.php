@@ -60,4 +60,15 @@ class IndexController extends FaZend_Controller_Action
         // nothing yet
     }
     
+    /**
+     * Start new bout.
+     *
+     * @return void
+     * @see views/scripts/index/start.phtml
+     */
+    public function startAction() 
+    {
+        // nothing yet
+    }
+    
 }
