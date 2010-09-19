@@ -26,17 +26,13 @@ require_once 'FaZend/Test/TestCase.php';
  * - when this user will register new account, we will attach items created so far by him
  *   to his account
  *
- * @todo #15 What extra features should has registered user,
+ * @todo #15! TBD What extra features should has registered user,
  *           what limitation we will have for registration-free user?
  *
- * 2. For registration process we must decide which registration method will be better
- *    a) own implemention of registration with few fields (email, password, other fields...?)
- *    b) OpenID mechanism is similar way like we have here
- *       http://stackoverflow.com/users/login
+ * 2. For registration process we will use own implemention of registration with fields
+ *    (email, password, password confirmation)
  *
- * @todo #15 Decide which method of registration should be used
- *
- * @todo #15 Implemenent this test and make it workable
+ * @todo #15! Implement this test and make it workable
  */
 class concepts_UserIdentificationFlexibilityTest extends FaZend_Test_TestCase
 {
