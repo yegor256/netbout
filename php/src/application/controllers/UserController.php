@@ -12,7 +12,7 @@
  *
  * @author Yegor Bugayenko <yegor256@yahoo.com>
  * @copyright Copyright (c) netbout.com, 2010
- * @version $Id: global.css 3 2010-04-23 21:02:37Z yegor256@yahoo.com $
+ * @version $Id$
  */
 
 /**
@@ -21,11 +21,12 @@
 require_once 'FaZend/Controller/Action.php';
 
 /**
- * Manipulations with user account
+ * Manipulations with user account, we should use as most as possible the parent
+ * class {@link Fazend_UserController} to avoid duplicated code
  *
  * @package front
  */
-class UserController extends FaZend_Controller_Action
+class UserController extends Fazend_UserController
 {
     
     /**
