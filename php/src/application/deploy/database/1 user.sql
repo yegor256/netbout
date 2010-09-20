@@ -1,4 +1,14 @@
 --
+-- netbout.com
+--
+-- Redistribution and use in source and binary forms, with or 
+-- without modification, are PROHIBITED without prior written 
+-- permission from the author. This product may NOT be used 
+-- anywhere and on any computer except the server platform of 
+-- netbout.com. located at www.netbout.com. If you received this 
+-- code occasionally and without intent to use it, please report 
+-- this incident to the author by email: privacy@netbout.com
+-- 
 -- Users table
 --
 -- This table is called USER because of integration with {@link FaZend_User}
