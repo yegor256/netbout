@@ -61,23 +61,41 @@ implements Zend_Acl_Role_Interface
      * @param string Email
      * @return Model_User
      */
-    public static function create($email, $password = null)
+    public static function create($email, $login, $password = null)
     {
-        validate()
-            ->emailAddress(
-                $email,
-                array(),
-                "Invalid email format: '{$email}'"
-            )
-            ->false(
-                self::isEmailBusy($email),
-                "User with this email '{$email}' is already registered"
+        if (empty($login) && empty($email)) {
+            FaZend_Exception::raise(
+                'FaZend_Validator_Exception',
+                'One of the identification fields(email, login) must be not empty'
             );
+        }
+
+        if (!empty($email)) {
+            validate()
+                ->emailAddress(
+                    $email,
+                    array(),
+                    "Invalid email format: '{$email}'"
+                )
+                ->false(
+                    self::isEmailBusy($email),
+                    "User with this email '{$email}' is already registered"
+                );
+        }
+
+        if (!empty($login)) {
+            validate()
+                ->false(
+                self::isLoginBusy($login),
+                "User with this login '{$login}' is already registered"
+            );
+        }
 
         if ($password === null) {
-            $password = self::_getStrongPassword($email);
+            $password = self::getStrongPassword($email);
         }
         $user = new self();
+        $user->login = $login;
         $user->email = $email;
         $user->password = self::getPasswordHash($password, $email);
         $user->save();
@@ -117,15 +135,43 @@ implements Zend_Acl_Role_Interface
     }
 
     /**
+     * This login is already busy?
+     *
+     * @param string Email
+     * @return boolean
+     */
+    public static function isLoginBusy($login)
+    {
+        return (bool)self::retrieve()
+            ->setSilenceIfEmpty()
+            ->where('login = ?', $login)
+            ->fetchRow();
+    }
+
+    /**
      * Create strong password
      *
      * @param string Email
      * @return string
      * @see create()
      */
-    public static function _getStrongPassword($email)
+    public static function getStrongPassword($email)
     {
         return substr(md5(rand() . $email), 8);
+    }
+
+    /**
+     * Get user by login
+     *
+     * @param string Email of the user
+     * @return FaZend_User
+     */
+    public static function findByLogin($login)
+    {
+        return self::retrieve()
+            ->where('login = ?', $login)
+            ->setRowClass(self::$_rowClass)
+            ->fetchRow();
     }
     
 }

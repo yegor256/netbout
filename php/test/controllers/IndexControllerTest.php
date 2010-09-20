@@ -11,11 +11,11 @@ require_once 'FaZend/Test/TestCase.php';
 class controllers_IndexControllerTest extends FaZend_Test_TestCase
 {
 
-	public function testDefaultFrontPage()
-	{
-		$this->dispatch('/');
-		$this->assertController('index');
-	}
+    public function testDefaultFrontPage()
+    {
+        $this->dispatch('/');
+        $this->assertController('index');
+    }
 
 }
 
