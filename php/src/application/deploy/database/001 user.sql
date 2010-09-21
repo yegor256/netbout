@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `user`
     -- MEDIUMINT is used because we will be able to have 16.777.215 users
     -- and it's enough, as we think now
     `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT "Unique ID of the user",
-    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "Date of user registration",
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "Date when the row was created",
 
     `login` VARCHAR(254) COMMENT "Unique ID of the user, used for login",
 
@@ -39,8 +39,11 @@ CREATE TABLE IF NOT EXISTS `user`
     -- @see http://tools.ietf.org/html/rfc5322
     `email` VARCHAR(254) COMMENT "Optional email address of the user",
 
-    `bio` TEXT COMMENT "optional text about the user, visible to his contacts",
-    `signature` TEXT COMMENT "to be used in emails sent from this user to others",
+    `avatar` VARCHAR(50) COMMENT "Optional avatar src of the user",
+    `bio` TEXT COMMENT "Optional text about the user, visible to his contacts",
+    `deliveryMethod` SET('email', 'sms') COMMENT "How we should deliver data updates to this user",
+    `status` ENUM('active', 'pending') COMMENT "Status which means that ActorBank failed to process the latest payment",
+    `signature` TEXT COMMENT "To be used in emails sent from this user to others",
 
     -- Users are identified by ID
     PRIMARY KEY(`id`),
