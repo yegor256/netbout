@@ -9,7 +9,7 @@
 -- code occasionally and without intent to use it, please report 
 -- this incident to the author by email: privacy@netbout.com
 --
--- Interlink between NETBOUT and STAGE
+-- One stage
 --
 -- @category Data
 -- @package MySQL
@@ -17,22 +17,25 @@
 -- @see ActorUser
 -- @see Model_NetBout_Stage
 -- @see Model_NetBout
--- @see Model_Stage
+-- @see Model_Helper
 -- @version $Id$
 --
 
-CREATE TABLE IF NOT EXISTS `netBoutStage`
+CREATE TABLE IF NOT EXISTS `stage`
 (
     -- MEDIUMINT is used because we will be able to have 16.777.215 stage links
     -- and it's enough, as we think now
     `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT "Unique ID of the link",
     `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "Date when the row was created",
 
+    -- MEDIUMINT UNSIGNED is used - @see user.id column
+    `user` MEDIUMINT UNSIGNED NOT NULL COMMENT "Who should be charged for this stage",
+
     -- MEDIUMINT UNSIGNED is used - @see netBout.id column
     `netBout` MEDIUMINT UNSIGNED NOT NULL COMMENT "Unique ID of the NetBout",
 
-    -- MEDIUMINT UNSIGNED is used - @see stage.id column
-    `stage` MEDIUMINT UNSIGNED NOT NULL COMMENT "Stage which will be used in NetBout",
+    -- MEDIUMINT UNSIGNED is used - @see helper.id column
+    `helper` MEDIUMINT UNSIGNED NOT NULL COMMENT "Helper which will be used in NetBout",
 
     -- XML, which is understandable only by the helper it will configure Stage
     -- behavior for selected NetBout
@@ -47,11 +50,16 @@ CREATE TABLE IF NOT EXISTS `netBoutStage`
         ON DELETE CASCADE,
 
     -- Link to the user
-    FOREIGN KEY(`stage`) REFERENCES `stage`(`id`)
+    FOREIGN KEY(`user`) REFERENCES `user`(`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    -- Link to the helper
+    FOREIGN KEY(`helper`) REFERENCES `helper`(`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 )
 AUTO_INCREMENT=1
 DEFAULT CHARSET=utf8 
 ENGINE=InnoDB
-COMMENT="Interlink between NETBOUT and STAGE";
+COMMENT="List of Stage-s";

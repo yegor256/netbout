@@ -16,12 +16,12 @@
  */
 
 /**
- * Interlink between NETBOUT and STAGE
+ * One NetBout stage 
  *
  * @package Model
- * @see netBoutStage.sql
+ * @see stage.sql
  */
-class Model_NetBout_Stage extends FaZend_Db_Table_ActiveRow_netBoutStage
+class Model_NetBout_Stage extends FaZend_Db_Table_ActiveRow_stage
 {
 
 }

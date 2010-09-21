@@ -19,9 +19,9 @@
  * One NetBout
  *
  * @package Model
- * @see stage.sql
+ * @see helper.sql
  */
-class Model_Stage extends FaZend_Db_Table_ActiveRow_stage
+class Model_Helper extends FaZend_Db_Table_ActiveRow_helper
 {
 
 }
