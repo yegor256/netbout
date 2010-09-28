@@ -31,13 +31,16 @@ CREATE TABLE IF NOT EXISTS `invitation`
     `netBout` MEDIUMINT UNSIGNED NOT NULL COMMENT "Unique ID of the NetBout",
 
     -- MEDIUMINT UNSIGNED is used - @see user.id column
-    `user` MEDIUMINT UNSIGNED NOT NULL COMMENT "Who send this invitation",
+    `inviter` MEDIUMINT UNSIGNED NOT NULL COMMENT "Who send this invitation",
 
-    -- Email where invitation should be sent
-    `email` VARCHAR(254) NOT NULL COMMENT "Invited participant email",
+    -- MEDIUMINT UNSIGNED is used - @see user.id column
+    `invited` MEDIUMINT UNSIGNED NOT NULL COMMENT "Who will receive this invitation",
+
+    -- We using SHA256 hash with, so it's always 64 chars,
+    `secretKey` CHAR(64) NOT NULL COMMENT "Secret key used for invitation identification",
 
     -- Invitation status
-    `status` ENUM('pending', 'accepted', 'declined') DEFAULT 'pending' NOT NULL COMMENT "Invitation status",
+    `status` ENUM('pending', 'sent', 'accepted', 'declined') DEFAULT 'pending' NOT NULL COMMENT "Invitation status",
 
     -- Links are identified by ID
     PRIMARY KEY(`id`),
@@ -47,8 +50,13 @@ CREATE TABLE IF NOT EXISTS `invitation`
         ON UPDATE CASCADE
         ON DELETE CASCADE,
 
-    -- Link to the user
-    FOREIGN KEY(`user`) REFERENCES `user`(`id`)
+    -- Link to the inviter user
+    FOREIGN KEY(`inviter`) REFERENCES `user`(`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    -- Link to the invited user
+    FOREIGN KEY(`invited`) REFERENCES `user`(`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 )

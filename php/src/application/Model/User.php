@@ -54,11 +54,13 @@ implements Zend_Acl_Role_Interface
     {
         return self::getCurrentUser();
     }
-    
+
     /**
-     * Create new user by email only
+     * Create new user by email or login
      *
      * @param string Email
+     * @param string Login
+     * @param string Password
      * @return Model_User
      */
     public static function create($email, $login, $password = null)
@@ -100,7 +102,7 @@ implements Zend_Acl_Role_Interface
         $user->password = self::getPasswordHash($password, $email);
         $user->save();
 
-        logg("New user created '%s'", $user->email);
+        logg("New user created with email '%s' and login '%s'", $user->email, $user->login);
 
         return $user;
     }
@@ -110,7 +112,7 @@ implements Zend_Acl_Role_Interface
      *
      * @param string Password
      * @param string Salt
-     * @return string
+     * @return string 64 byte hash
      * @see QOS3
      */
     public static function getPasswordHash($password, $salt)

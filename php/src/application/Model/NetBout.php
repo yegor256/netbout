@@ -21,7 +21,34 @@
  * @package Model
  * @see netBout.sql
  */
-class Model_NetBout extends FaZend_Db_Table_ActiveRow_netBout
+class Model_NetBout extends FaZend_Db_Table_ActiveRow_netBout implements Zend_Acl_Resource_Interface
 {
+    /**
+     * Returns the string identifier of the Resource
+     *
+     * @return string
+     * @see Zend_Acl_Resource_Interface
+     */
+    public function getResourceId()
+    {
+        return 'netBout:' . strval($this);
+    }
 
+    /**
+     * Create new netBout
+     *
+     * @param string Subject of the NetBout
+     * @param Model_User Author of the NetBout
+     * @return Model_NetBout
+     */
+    public function create($subject, Model_User $user)
+    {
+        $netBout = new self();
+        $netBout->subject = $subject;
+        $netBout->user = $user;
+        $netBout->save();
+
+        logg("New bout '%s' created by user '#%s'", $subject, $user);
+        return $netBout;
+    }
 }
