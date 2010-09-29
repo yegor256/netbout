@@ -14,6 +14,15 @@
 -- This table is called USER because of integration with {@link FaZend_User}
 -- component, which is tailored for USER table.
 --
+-- We can have two types of users
+-- 1. user who was registered (has record with login, and optionally email)
+--
+-- 2. user who was not registered (was invited - has record with email and login IS NULL)
+-- When we sent invitation to not existing user (no record in user table for his email/login),
+-- we create new record with an email and random password, and send an invitation to him.
+-- When user accept the invitation we set a cookie with id and password hash. Thanks for
+-- that we can identify him.
+--
 -- @category Data
 -- @package MySQL
 -- @see ActorUser
@@ -42,7 +51,6 @@ CREATE TABLE IF NOT EXISTS `user`
     `avatar` VARCHAR(50) COMMENT "Optional avatar src of the user",
     `bio` TEXT COMMENT "Optional text about the user, visible to his contacts",
     `deliveryMethod` SET('email', 'sms') COMMENT "How we should deliver data updates to this user",
-    `status` ENUM('active', 'pending') COMMENT "Status which means that ActorBank failed to process the latest payment",
     `signature` TEXT COMMENT "To be used in emails sent from this user to others",
 
     -- Users are identified by ID
