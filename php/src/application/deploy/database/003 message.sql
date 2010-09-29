@@ -36,6 +36,30 @@ CREATE TABLE IF NOT EXISTS `message`
     -- Messages are identified by ID
     PRIMARY KEY(`id`),
 
+    -- We will NOT use here FULLTEXT index because we have really personal search
+    -- engine. Each user is able to search ONLY in NetBout-s message where
+    -- he is participant. Because of that we must first found messages for which
+    -- user has access. We use for that participant table to get netbout
+    -- id-s where we can search.
+    --
+    -- The best possibility is two column index on (netBout and text)
+    -- because we must first search by netBout and after in found messages, but
+    -- MySQL doesn't support this kind of index - we can NOT include int field IN
+    -- FULLTEXT index and additionally we must migrate to MyISAM. FULLTEXT index
+    -- also affect insert speed and when we use it for search other indexes are ignored.
+    -- In our case when we intensively use other integer index, this behavior can
+    -- cause much performance degradation, so we must use other solution described below.
+    --
+    -- With user access control we have great selectivity, because our DB can have
+    -- 10mln messages but user participated in NetBout-s which summary have
+    -- 10000 messages (100 NetBout-s 100 messages in each), so we will limit our searches
+    -- to about 0.1% of our message table size, what is really great.
+    --
+    -- Finally we will use fast integer index(netBout) + LIKE on text column.
+    -- Thanks for that we can handle about 10000 messages per user, if we will need
+    -- more we must migrate to more efficient search engines like SPHINX, but for current
+    -- requirements this solution has really good performance.
+
     -- Author of the message
     FOREIGN KEY(`user`) REFERENCES `user`(`id`)
         ON UPDATE CASCADE
