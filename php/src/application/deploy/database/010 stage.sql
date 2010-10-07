@@ -28,9 +28,6 @@ CREATE TABLE IF NOT EXISTS `stage`
     `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT "Unique ID of the link",
     `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "Date when the row was created",
 
-    -- MEDIUMINT UNSIGNED is used - @see user.id column
-    `user` MEDIUMINT UNSIGNED NOT NULL COMMENT "Who should be charged for this stage",
-
     -- MEDIUMINT UNSIGNED is used - @see netBout.id column
     `netBout` MEDIUMINT UNSIGNED NOT NULL COMMENT "Unique ID of the NetBout",
 
@@ -46,11 +43,6 @@ CREATE TABLE IF NOT EXISTS `stage`
 
     -- Link to the NetBout
     FOREIGN KEY(`netBout`) REFERENCES `netBout`(`id`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-
-    -- Link to the user
-    FOREIGN KEY(`user`) REFERENCES `user`(`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
 
