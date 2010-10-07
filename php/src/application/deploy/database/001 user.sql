@@ -53,15 +53,22 @@ CREATE TABLE IF NOT EXISTS `user`
     `deliveryMethod` SET('email', 'sms') COMMENT "How we should deliver data updates to this user",
     `signature` TEXT COMMENT "To be used in emails sent from this user to others",
 
+    -- ActorHelper fields
+    `name` VARCHAR(100) COMMENT "That identifies the helper uniquely in the SUD",
+    `restApiKey` VARCHAR(64) COMMENT "Some secret code for access through RestApi",
+
+    -- DECIMAL(10,2) is used to avoid rounding errors
+    `price` DECIMAL(10,2) COMMENT "Fixed monetary value, to be paid by ActorUser for every stage rented by the helper (can be zero)",
+
     -- Users are identified by ID
     PRIMARY KEY(`id`),
 
     -- We use INDEX instead UNIQUE, because login or email can be NULL,
-    -- so we can have many NULL-s for one column. We will check login and email
+    -- so we can have many NULL-s for one column. We will check login, email and helper name
     -- uniqueness in PHP part
     INDEX(`login`),
-    INDEX(`email`)
-
+    INDEX(`email`),
+    INDEX(`name`)
 )
 AUTO_INCREMENT=1
 DEFAULT CHARSET=utf8 
