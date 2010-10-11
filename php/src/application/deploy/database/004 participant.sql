@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS `participant`
     -- MEDIUMINT UNSIGNED is used - @see user.id column
     `user` MEDIUMINT UNSIGNED NOT NULL COMMENT "Invited participant",
 
-    -- Role of user in this NetBout
-    `role` VARCHAR(30) NOT NULL COMMENT "User role in this NetBout",
+    -- Participant status in this NetBout
+    `status` ENUM('creator', 'invited', 'accepted', 'rejected') NOT NULL COMMENT "Participant status",
 
     -- Links are identified by ID
     PRIMARY KEY(`id`),
