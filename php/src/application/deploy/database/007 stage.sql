@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `stage`
     -- MEDIUMINT UNSIGNED is used - @see netBout.id column
     `netBout` MEDIUMINT UNSIGNED NOT NULL COMMENT "Unique ID of the NetBout",
 
-    -- MEDIUMINT UNSIGNED is used - @see helper.id column
+    -- MEDIUMINT UNSIGNED is used - @see user.id column
     `helper` MEDIUMINT UNSIGNED NOT NULL COMMENT "Helper which will be used in NetBout",
 
     -- XML, which is understandable only by the helper it will configure Stage
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `stage`
         ON DELETE CASCADE,
 
     -- Link to the helper
-    FOREIGN KEY(`helper`) REFERENCES `helper`(`id`)
+    FOREIGN KEY(`helper`) REFERENCES `user`(`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 )

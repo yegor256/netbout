@@ -16,12 +16,12 @@
  */
 
 /**
- * One NetBout
+ * One ActorHelper
  *
  * @package Model
- * @see helper.sql
+ * @see user.sql
  */
-class Model_Helper extends FaZend_Db_Table_ActiveRow_helper
+class Model_Helper extends FaZend_Db_Table_ActiveRow_user
 {
 
 }
