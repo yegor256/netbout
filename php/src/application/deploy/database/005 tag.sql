@@ -28,6 +28,9 @@ CREATE TABLE IF NOT EXISTS `tag`
     -- MEDIUMINT UNSIGNED is used - @see user.id column
     `user` MEDIUMINT UNSIGNED NOT NULL COMMENT "Who created this tag",
 
+    -- MEDIUMINT UNSIGNED is used - @see tag.id column, NULL here mean tag has no parent
+    `parent` MEDIUMINT UNSIGNED COMMENT "Parent tag of this one",
+
     -- Tag name
     `name` VARCHAR(50) NOT NULL COMMENT "Tag name",
 
