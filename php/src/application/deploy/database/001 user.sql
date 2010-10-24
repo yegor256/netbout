@@ -1,14 +1,14 @@
 --
 -- netbout.com
 --
--- Redistribution and use in source and binary forms, with or 
--- without modification, are PROHIBITED without prior written 
--- permission from the author. This product may NOT be used 
--- anywhere and on any computer except the server platform of 
--- netbout.com. located at www.netbout.com. If you received this 
--- code occasionally and without intent to use it, please report 
+-- Redistribution and use in source and binary forms, with or
+-- without modification, are PROHIBITED without prior written
+-- permission from the author. This product may NOT be used
+-- anywhere and on any computer except the server platform of
+-- netbout.com. located at www.netbout.com. If you received this
+-- code occasionally and without intent to use it, please report
 -- this incident to the author by email: privacy@netbout.com
--- 
+--
 -- Users table
 --
 -- This table is called USER because of integration with {@link FaZend_User}
@@ -34,31 +34,43 @@ CREATE TABLE IF NOT EXISTS `user`
 (
     -- MEDIUMINT is used because we will be able to have 16.777.215 users
     -- and it's enough, as we think now
-    `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT "Unique ID of the user",
-    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "Date when the row was created",
+    `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT
+        COMMENT "Unique ID of the user",
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        COMMENT "Date when the row was created",
 
-    `login` VARCHAR(254) COMMENT "Unique ID of the user, used for login",
+    `login` VARCHAR(254)
+        COMMENT "Unique ID of the user, used for login",
 
     -- We using SHA256 hash with salt, so it's always 64 chars,
     -- @see Model_User::getPasswordHash()
-    `password` CHAR(64) NOT NULL COMMENT "Password hash",
+    `password` CHAR(64) NOT NULL
+        COMMENT "Password hash",
 
     -- VARCHAR(254) is used
     -- @see http://en.wikipedia.org/wiki/E-mail_address
     -- @see http://tools.ietf.org/html/rfc5322
-    `email` VARCHAR(254) COMMENT "Optional email address of the user",
+    `email` VARCHAR(254)
+        COMMENT "Optional email address of the user",
 
-    `avatar` VARCHAR(50) COMMENT "Optional avatar src of the user",
-    `bio` TEXT COMMENT "Optional text about the user, visible to his contacts",
-    `deliveryMethod` SET('email', 'sms') COMMENT "How we should deliver data updates to this user",
-    `signature` TEXT COMMENT "To be used in emails sent from this user to others",
+    `avatar` VARCHAR(50)
+        COMMENT "Optional avatar src of the user",
+    `bio` TEXT
+        COMMENT "Optional text about the user, visible to his contacts",
+    `deliveryMethod` SET('email', 'sms')
+        COMMENT "How we should deliver data updates to this user",
+    `signature` TEXT
+        COMMENT "To be used in emails sent from this user to others",
 
     -- ActorHelper fields
-    `name` VARCHAR(100) COMMENT "That identifies the helper uniquely in the SUD",
-    `restApiKey` VARCHAR(64) COMMENT "Some secret code for access through RestApi",
+    `name` VARCHAR(100)
+        COMMENT "That identifies the helper uniquely in the SUD",
+    `restApiKey` VARCHAR(64)
+        COMMENT "Some secret code for access through RestApi",
 
     -- DECIMAL(10,2) is used to avoid rounding errors
-    `price` DECIMAL(10,2) COMMENT "Fixed monetary value, to be paid by ActorUser for every stage rented by the helper (can be zero)",
+    `price` DECIMAL(10,2)
+        COMMENT "Fixed monetary value, to be paid by ActorUser for every stage rented by the helper (can be zero)",
 
     -- Users are identified by ID
     PRIMARY KEY(`id`),
@@ -71,6 +83,6 @@ CREATE TABLE IF NOT EXISTS `user`
     INDEX(`name`)
 )
 AUTO_INCREMENT=1
-DEFAULT CHARSET=utf8 
+DEFAULT CHARSET=utf8
 ENGINE=InnoDB
 COMMENT="List of users";

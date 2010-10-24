@@ -25,7 +25,6 @@ class Model_NetBout_Participant extends FaZend_Db_Table_ActiveRow_participant
 {
     /**
      * Constants used for determine invitation status
-     *
      */
     const STATUS_CREATOR    = 'creator';
 
@@ -36,13 +35,19 @@ class Model_NetBout_Participant extends FaZend_Db_Table_ActiveRow_participant
      */
     const STATUS_PENDING    = 'pending';
 
-    // Status after email hase been sent to invited user
+    /**
+     * Status after email hase been sent to invited user
+     */
     const STATUS_INVITED    = 'invited';
 
-    // Status when user accept this invitation
+    /**
+     * Status when user accept this invitation
+     */
     const STATUS_ACCEPTED   = 'accepted';
 
-    // Status when user decline this invitation
+    /**
+     * Status when user decline this invitation
+     */
     const STATUS_DECLINE    = 'declined';
 
     /**
@@ -78,7 +83,7 @@ class Model_NetBout_Participant extends FaZend_Db_Table_ActiveRow_participant
      * will happen online, through the netbout.com website.
      *
      * @return void
-     * @throws Exception if invitation has been earlier sent
+     * @throws Model_NetBout_Participant_Exception If invitation has been earlier sent
      * @todo #16:1h Implement invitation sending with html message template using
      *              {@link FaZend_Email::create()}
      */

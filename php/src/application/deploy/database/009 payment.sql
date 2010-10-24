@@ -30,23 +30,30 @@ CREATE TABLE IF NOT EXISTS `payment`
 (
     -- INT UNSIGNED is used, because we have MEDIUMINT UNSIGNED in netBout.id column
     -- and here will be stored some records per each one NETBOUT
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT "Unique ID of the payment",
-    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT "Date when the row was created",
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT
+        COMMENT "Unique ID of the payment",
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        COMMENT "Date when the row was created",
 
     -- MEDIUMINT UNSIGNED is used - @see user.id column
-    `debit` MEDIUMINT UNSIGNED COMMENT "Who should be debited",
+    `debit` MEDIUMINT UNSIGNED NOT NULL
+        COMMENT "Who should be debited",
 
     -- MEDIUMINT UNSIGNED is used - @see user.id column
-    `credit` MEDIUMINT UNSIGNED NOT NULL COMMENT "Who will receive funds",
+    `credit` MEDIUMINT UNSIGNED NOT NULL
+        COMMENT "Who will receive funds",
 
     -- Paid amount, DECIMAL(10,2) is used to avoid rounding errors
     -- Can be positive or negative(mean we create request for payment)
-    `amount` DECIMAL(10,2) NOT NULL COMMENT "Paid amount",
+    `amount` DECIMAL(10,2) NOT NULL
+        COMMENT "Paid amount",
 
     -- MEDIUMINT UNSIGNED is used - @see stage.id column
-    `stage` MEDIUMINT UNSIGNED NOT NULL COMMENT "What this payment is for",
+    `stage` MEDIUMINT UNSIGNED NOT NULL
+        COMMENT "What this payment is for",
 
-    `description` TEXT NOT NULL COMMENT "Detailed explanation of the transaction",
+    `description` TEXT NOT NULL
+        COMMENT "Detailed explanation of the transaction",
 
     -- Links are identified by ID
     PRIMARY KEY(`id`),

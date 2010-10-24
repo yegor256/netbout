@@ -7,12 +7,12 @@ require_once 'FaZend/Test/TestCase.php';
 
 class Model_NetBout_ParticipantTest extends FaZend_Test_TestCase
 {
-    public function testClassExists()
+    public function testValidatesExistenceOfClassUnderTest()
     {
         $this->assertTrue(class_exists(substr(get_class(), 0, -4)));
     }
 
-    public function testInvitationCanBeSent()
+    public function testSendsInvitationToNetboutParticipant()
     {
         $inviter = Mocks_Model_User::get(null, 'testuser1');
         $invited = Mocks_Model_User::get('invited@email.com');
@@ -26,12 +26,12 @@ class Model_NetBout_ParticipantTest extends FaZend_Test_TestCase
         $participant->sendInvitation();
     }
 
-    public function testInvitationCanBeAccepted()
+    public function testAcceptsInvitation()
     {
         $this->markTestIncomplete();
     }
 
-    public function testInvitationCanBeDeclined()
+    public function testDeclinesInvitation()
     {
         $this->markTestIncomplete();
     }
@@ -43,7 +43,7 @@ class Model_NetBout_ParticipantTest extends FaZend_Test_TestCase
      * @todo #16:2h Model_Acl should be implemented with persistence storage to make this
      * scenario possible
      */
-    public function testUserHasAccetToNetBoutAfterInvitationAcceptance()
+    public function testValidatesParticipantAccessToAcceptedInvitation()
     {
         $this->markTestIncomplete();
 
@@ -65,7 +65,7 @@ class Model_NetBout_ParticipantTest extends FaZend_Test_TestCase
      * Not accepted invitation should be automatically declined after some
      * configured interval of time (7 days)
      */
-    public function testInvitationAreAutomaticallyDeclinedAfterExpirationInterval()
+    public function testValidatesInvitationAutomaticExpiration()
     {
        $this->markTestIncomplete();
     }
