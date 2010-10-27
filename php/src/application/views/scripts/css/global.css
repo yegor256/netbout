@@ -1,12 +1,12 @@
 /**
  * netbout.com
  *
- * Redistribution and use in source and binary forms, with or 
- * without modification, are PROHIBITED without prior written 
- * permission from the author. This product may NOT be used 
- * anywhere and on any computer except the server platform of 
- * netbout.com. located at www.netbout.com. If you received this 
- * code occasionally and without intent to use it, please report 
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are PROHIBITED without prior written
+ * permission from the author. This product may NOT be used
+ * anywhere and on any computer except the server platform of
+ * netbout.com. located at www.netbout.com. If you received this
+ * code occasionally and without intent to use it, please report
  * this incident to the author by email: privacy@netbout.com
  *
  * @author Yegor Bugayenko <yegor256@yahoo.com>
@@ -15,20 +15,20 @@
  */
 
 * {
-    margin: 0; 
-    padding: 0; 
+    margin: 0;
+    padding: 0;
     border: 0;
 }
 
 body {
-    font-family: Arial, sans-serif; 
-    font-size: 10pt;
-    line-height: 1.3em; 
-    min-height: 100%; 
-    height: auto !important; 
-    height: 100%; 
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.3em;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
     position: relative;
-    color: <?=TPC_BLACK?>;   
+    color: <?=TPC_BLACK?>;
 }
 
 html{
@@ -43,7 +43,7 @@ a, a:visited {
     a:hover{
         text-decoration: underline;
     }
-    
+
 p,
 form,
 h1,
@@ -55,11 +55,11 @@ h2{
     p.flash {
         color: <?=TPC_RED?>;
     }
-    
+
 h1 {
     font-size: 1.4em;
 }
-    
+
 input,
 textarea{
     color: <?=TPC_BLACK?>;
@@ -67,7 +67,7 @@ textarea{
     padding: 0.3em;
     border: 1px solid <?=TPC_BLACK?>;
 }
-    
+
 input[type="submit"]{
     cursor: pointer;
     padding: 0.3em 0.6em;
@@ -96,20 +96,20 @@ div#header{
     }
 
         div#header table td {
-            padding: 0; 
+            padding: 0;
             margin: 0;
             vertical-align: top;
         }
 
         div#header table td.logo {
-            padding: 0; 
+            padding: 0;
             margin: 0;
             vertical-align: top;
         }
-        
+
             div#header table td.logo ul{
             }
-            
+
                 div#header table td.logo ul li{
                     list-style: none;
                     display: inline;
@@ -133,7 +133,7 @@ div#header{
 
     div#header form{
     }
-    
+
         div#header form dd{
             display: inline;
         }
@@ -153,16 +153,16 @@ div#header{
         div#header form input[type="text"]{
             border: 2px solid <?=TPC_BLACK?>;
         }
-    
+
         div#header form input[type="submit"]{
             text-decoration: none;
             background: white;
             cursor: pointer;
             text-align: center;
             color: <?=TPC_BLACK?>;
-            border: 0;  
+            border: 0;
             font-weight: bold;
-        }   
+        }
 
 /* everything between header and footer */
 div#content{
@@ -177,11 +177,11 @@ div#footer{
     width: 100%;
     padding: 1em 0em;
     height: 5em; /* change it together with div#content-wrapper.padding-bottom */
-    position: absolute; 
-    bottom: 0;   
+    position: absolute;
+    bottom: 0;
     border-top: 0.4em <?=TPC_BLACK?> solid; /*1.5em is equal to the basic scale*/
     background: <?=TPC_DARKGRAY?>;
-    color: white;     
+    color: white;
 }
 
     div#footer ul#menu{
@@ -198,14 +198,13 @@ div#footer{
                 border-left: none;
                 padding-left: 0;
             }
-    
+
             div#footer ul#menu li a,
             div#footer ul#menu li a:visited{
                 color: white;
             }
 
                 div#footer ul#menu li a:hover{
-                    border-bottom: 1px solid white;
                 }
 
 li.tag{
@@ -239,7 +238,7 @@ li.add {
 
 form.inline{
 }
-    
+
     form.inline dd{
         display: inline;
     }
