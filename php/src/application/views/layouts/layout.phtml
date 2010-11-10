@@ -2,12 +2,12 @@
 <!--
  * netbout.com
  *
- * Redistribution and use in source and binary forms, with or 
- * without modification, are PROHIBITED without prior written 
- * permission from the author. This product may NOT be used 
- * anywhere and on any computer except the server platform of 
- * netbout.com. located at www.netbout.com. If you received this 
- * code occasionally and without intent to use it, please report 
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are PROHIBITED without prior written
+ * permission from the author. This product may NOT be used
+ * anywhere and on any computer except the server platform of
+ * netbout.com. located at www.netbout.com. If you received this
+ * code occasionally and without intent to use it, please report
  * this incident to the author by email: privacy@netbout.com
  *
  * @author Yegor Bugayenko <yegor256@yahoo.com>
@@ -18,8 +18,8 @@
 <? $this->includeCSS('global.css') ?>
 <? $this->includeJQuery() ?>
 <?=$this->doctype() ?>
-<html xmlns="http://www.w3.org/1999/xhtml"> 
-<head>  
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
     <?=$this->headTitle()?>
     <?=$this->headMeta()?>
     <?=$this->headLink()?>
@@ -32,7 +32,7 @@
                 <tr><td class="logo">
                     <a id="logo" href="<?=$this->url(array(), 'front')?>"><img src="<?=$this->viewFile('logo.png')?>"/></a>
                     <ul>
-                        <li><a href="<?=$this->url(array('action'=>'account'), 'user')?>" 
+                        <li><a href="<?=$this->url(array('action'=>'account'), 'user')?>"
                             style="font-weight: bolder;">john13</a></li>
                         <li><a href="<?=$this->url(array(), 'start')?>"><?=_t('start')?></a></li>
                         <li><a href="<?=$this->url(array('action'=>'login'), 'user')?>"><?=_t('log out')?></a></li>
@@ -55,14 +55,17 @@
     </div>
     <div id="footer">
         <div class="wrapper">
+            <div style="position: absolute; right: 0; top: 0;">
+                USPTO patent app. no. 12/943,022
+            </div>
             <ul id="menu">
                 <li><a href=""><?=_t('how it works')?></a></li>
                 <li><a href=""><?=_t('your privacy')?></a></li>
                 <li><a href=""><?=_t('feedback')?></a></li>
             </ul>
             <p>(c) <?=Zend_Date::now()->get(Zend_Date::YEAR)?>, netBout.com,
-                rev.<?=FaZend_Revision::get()?>, 
-                <?=$this->pageLoadTime()?>, 
+                rev.<?=FaZend_Revision::get()?>,
+                <?=$this->pageLoadTime()?>,
                 <?=_t('All Rights Reserved')?>.
             </p>
         </div>

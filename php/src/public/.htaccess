@@ -1,12 +1,12 @@
 #
 # netbout.com
 #
-# Redistribution and use in source and binary forms, with or 
-# without modification, are PROHIBITED without prior written 
-# permission from the author. This product may NOT be used 
-# anywhere and on any computer except the server platform of 
-# netbout.com. located at www.netbout.com. If you received this 
-# code occasionally and without intent to use it, please report 
+# Redistribution and use in source and binary forms, with or
+# without modification, are PROHIBITED without prior written
+# permission from the author. This product may NOT be used
+# anywhere and on any computer except the server platform of
+# netbout.com. located at www.netbout.com. If you received this
+# code occasionally and without intent to use it, please report
 # this incident to the author by email: privacy@netbout.com
 #
 # @author Yegor Bugayenko <yegor256@yahoo.com>
@@ -16,11 +16,11 @@
 
 # to protect content during development
 # just comment the lines when the site is ready for public
-AuthUserFile .htpasswd
-AuthGroupFile /dev/null
-AuthName "netbout.com"
-AuthType Basic
-Require valid-user
+#AuthUserFile .htpasswd
+#AuthGroupFile /dev/null
+#AuthName "netbout.com"
+#AuthType Basic
+#Require valid-user
 
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} -s [OR]
