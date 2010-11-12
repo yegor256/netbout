@@ -156,7 +156,6 @@ div#header{
         }
 
         div#header form input[type="text"]{
-            border: 2px solid <?=TPC_BLACK?>;
         }
 
         div#header form input[type="submit"]{
