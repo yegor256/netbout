@@ -29,6 +29,7 @@ body {
     height: 100%;
     position: relative;
     color: <?=TPC_BLACK?>;
+    border-bottom: 1px solid <?=TPC_DARKGRAY?>;
 }
 
 html{
