@@ -29,6 +29,10 @@ body {
     height: 100%;
     position: relative;
     color: <?=TPC_BLACK?>;
+    /*
+    Without the following line FireFox renders
+    footer with a big white padding at the bottom
+    */
     border-bottom: 1px solid <?=TPC_DARKGRAY?>;
 }
 
