@@ -15,12 +15,8 @@ require_once 'FaZend/Test/TestCase.php';
  * After user first netbout post/message user we will:
  * - add record to users table with some flag that will inform it's temporary user
  * - set long life cookie to identifiy this user
- *
  * - when this user will register new account, we will attach items created so far by him
  *   to his account
- *
- * @todo #15 TBD What extra features should has registered user,
- *           what limitation we will have for registration-free user?
  *
  * 2. For registration process we will use own implemention of registration with fields
  *    (email, login, password, password confirmation)
