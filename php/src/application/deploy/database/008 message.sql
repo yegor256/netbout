@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `message`
     -- if stage is NOT NULL we have here XML, which is understandable only by
     -- the helper so render process will be handled by it.
     `text` LONGTEXT NOT NULL
-        COMMENT "Message text",
+        COMMENT "Message text or XML content parseable by Helper only",
 
     -- Messages are identified by ID
     PRIMARY KEY(`id`),
