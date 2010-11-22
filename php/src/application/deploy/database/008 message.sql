@@ -55,18 +55,33 @@ CREATE TABLE IF NOT EXISTS `message`
         COMMENT "Unique ID of the NetBout",
 
     -- MEDIUMINT UNSIGNED is used - @see user.id column
-    `user` MEDIUMINT UNSIGNED NOT NULL
+    `user` MEDIUMINT UNSIGNED DEFAULT NULL
         COMMENT "Author of the message",
 
-    -- @see BoutText
+    -- MEDIUMINT UNSIGNED is used - @see stage.id column
+    `stage` MEDIUMINT UNSIGNED DEFAULT NULL
+        COMMENT "Stage which added this message",
+
+    -- if user is NOT NULL we have here BoutText.
+    -- if stage is NOT NULL we have here XML, which is understandable only by
+    -- the helper so render process will be handled by it.
     `text` LONGTEXT NOT NULL
         COMMENT "Message text",
+
+
+    `content` LONGTEXT NOT NULL
+        COMMENT "XML, which is understandable only by the helper",
 
     -- Messages are identified by ID
     PRIMARY KEY(`id`),
 
     -- Author of the message
     FOREIGN KEY(`user`) REFERENCES `user`(`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    -- Stage which added this message
+    FOREIGN KEY(`stage`) REFERENCES `stage`(`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
 

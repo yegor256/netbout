@@ -42,11 +42,6 @@ CREATE TABLE IF NOT EXISTS `stage`
     `helper` MEDIUMINT UNSIGNED NOT NULL
         COMMENT "Helper which will be used in NetBout",
 
-    -- XML, which is understandable only by the helper it will configure Stage
-    -- behavior for selected NetBout
-    `content` LONGTEXT NOT NULL
-        COMMENT "XML, which is understandable only by the helper",
-
     -- Links are identified by ID
     PRIMARY KEY(`id`),
 
