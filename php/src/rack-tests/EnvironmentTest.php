@@ -17,13 +17,12 @@ class EnvironmentTest extends PhpRack_Test
             ->isLoaded('dom')
             ->isLoaded('pdo')
             ->isLoaded('libxml')
-            ->isLoaded('fileinfo')
             ->isLoaded('json')
             ->isLoaded('pdo_mysql')
             ->isLoaded('mysql')
-            ->isLoaded('mcrypt') 
+            ->isLoaded('mcrypt')
             ->isLoaded('openssl')
             ;
     }
 
-}   
+}
