@@ -27,20 +27,13 @@ CREATE TABLE IF NOT EXISTS `netBout`
     `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         COMMENT "Date when the row was created",
 
-    -- MEDIUMINT UNSIGNED is used - @see user.id column
-    `user` MEDIUMINT UNSIGNED NOT NULL
-        COMMENT "Creator of this NetBout",
+    -- User which create this NetBout will be recorded in participant table with "creator" status.
 
     `subject` TEXT NOT NULL
         COMMENT "Mandatory title of the bout, visible to all participants",
 
     -- NetBout-s are identified by ID
-    PRIMARY KEY(`id`),
-
-    -- Author of the NetBout
-    FOREIGN KEY(`user`) REFERENCES `user`(`id`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+    PRIMARY KEY(`id`)
 )
 AUTO_INCREMENT=1
 DEFAULT CHARSET=utf8

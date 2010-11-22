@@ -56,23 +56,26 @@ class Model_NetBout_Participant extends FaZend_Db_Table_ActiveRow_participant
      * @param Model_NetBout For which NetBout we want invite user
      * @param Model_User User who will be invited to participate in the NetBout
      * @param Model_User User who request for participation
+     * @param string Participant status
      * @return Model_NetBout_Participant
      */
-    public static function create(Model_NetBout $netBout, Model_User $invited, Model_User $inviter)
-    {
-        $invitation = new self();
-        $invitation->netBout = $netBout;
-        $invitation->invited = $invited;
-        $invitation->inviter = $inviter;
+    public static function create(
+        Model_NetBout $netBout,
+        Model_User $invited,
+        Model_User $inviter = null,
+        $status = self::STATUS_PENDING
+    ) {
+        $participant = new self();
+        $participant->netBout = $netBout;
+        $participant->invited = $invited;
+        $participant->inviter = $inviter;
 
         // really random hard to guess 64 byte secret key
-        $invitation->secretKey = Model_User::getPasswordHash(uniqid('', true), rand());
+        $participant->secretKey = Model_User::getPasswordHash(uniqid('', true), rand());
+        $participant->status = $status;
+        $participant->save();
 
-        // we will ONLY create invitation here, not send it so we set status as PENDING
-        $invitation->status = self::STATUS_PENDING;
-        $invitation->save();
-
-        return $invitation;
+        return $participant;
     }
 
     /**

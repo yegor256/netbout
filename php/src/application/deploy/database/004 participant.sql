@@ -39,7 +39,9 @@ CREATE TABLE IF NOT EXISTS `participant`
         COMMENT "Invited participant",
 
     -- MEDIUMINT UNSIGNED is used - @see user.id column
-    `inviter` MEDIUMINT UNSIGNED NOT NULL
+    -- In case when participant.status = "creator" we will have here inviter = NULL, because
+    -- creator of the NetBout is not invited by any other user.
+    `inviter` MEDIUMINT UNSIGNED DEFAULT NULL
         COMMENT "Who send this invitation",
 
     -- We using SHA256 hash with, so it's always 64 chars,
