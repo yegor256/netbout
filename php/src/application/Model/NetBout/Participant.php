@@ -63,8 +63,8 @@ class Model_NetBout_Participant extends FaZend_Db_Table_ActiveRow_participant
         Model_NetBout $netBout,
         Model_User $invited,
         Model_User $inviter = null,
-        $status = self::STATUS_PENDING
-    ) {
+        $status = self::STATUS_PENDING)
+    {
         $participant = new self();
         $participant->netBout = $netBout;
         $participant->invited = $invited;
