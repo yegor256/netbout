@@ -45,8 +45,9 @@ class Model_NetBout extends FaZend_Db_Table_ActiveRow_netBout implements Zend_Ac
     {
         $netBout = new self();
         $netBout->subject = $subject;
-        $netBout->user = $user;
         $netBout->save();
+
+        Model_NetBout_Participant::create($netBout, $user, null);
 
         logg("New bout '%s' created by user '#%s'", $subject, $user);
         return $netBout;
