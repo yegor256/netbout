@@ -53,8 +53,10 @@ CREATE TABLE IF NOT EXISTS `user`
     `email` VARCHAR(254)
         COMMENT "Optional email address of the user",
 
-    `avatar` VARCHAR(50)
-        COMMENT "Optional avatar src of the user",
+    -- The avatar image will be displayed using the gravatar.com service.
+    -- We must have only an email address. Thanks for that url to the avatar
+    -- image can be generated on the fly.
+
     `bio` TEXT
         COMMENT "Optional text about the user, visible to his contacts",
     `deliveryMethod` SET('email', 'sms')
