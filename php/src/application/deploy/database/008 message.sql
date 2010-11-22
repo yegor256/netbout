@@ -68,10 +68,6 @@ CREATE TABLE IF NOT EXISTS `message`
     `text` LONGTEXT NOT NULL
         COMMENT "Message text",
 
-
-    `content` LONGTEXT NOT NULL
-        COMMENT "XML, which is understandable only by the helper",
-
     -- Messages are identified by ID
     PRIMARY KEY(`id`),
 
