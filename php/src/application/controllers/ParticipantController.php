@@ -12,7 +12,7 @@
  *
  * @author Yegor Bugayenko <yegor256@yahoo.com>
  * @copyright Copyright (c) netbout.com, 2010
- * @version $Id: global.css 3 2010-04-23 21:02:37Z yegor256@yahoo.com $
+ * @version $Id$
  */
 
 /**
@@ -21,32 +21,31 @@
 require_once 'FaZend/Controller/Action.php';
 
 /**
- * Front controller
+ * Participant controller
  *
  * @package front
  */
-class IndexController extends FaZend_Controller_Action
+class ParticipantController extends FaZend_Controller_Action
 {
     
     /**
-     * Default action
+     * Add participant to the bout
      *
      * @return void
      */
-    public function indexAction() 
-    {
-        $this->_forward('front');
-    }
-    
-    /**
-     * Front
-     *
-     * @return void
-     * @see views/scripts/index/front.phtml
-     */
-    public function frontAction() 
+    public function addAction()
     {
         // nothing yet
     }
     
+    /**
+     * Kicks off participant from the bout
+     *
+     * @return void
+     */
+    public function deleteAction()
+    {
+        // nothing yet
+    }
+
 }

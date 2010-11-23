@@ -12,7 +12,7 @@
  *
  * @author Yegor Bugayenko <yegor256@yahoo.com>
  * @copyright Copyright (c) netbout.com, 2010
- * @version $Id: global.css 3 2010-04-23 21:02:37Z yegor256@yahoo.com $
+ * @version $Id$
  */
 
 /**
@@ -21,32 +21,54 @@
 require_once 'FaZend/Controller/Action.php';
 
 /**
- * Front controller
+ * Bout controller
  *
  * @package front
  */
-class IndexController extends FaZend_Controller_Action
+class BoutController extends FaZend_Controller_Action
 {
-    
+
     /**
-     * Default action
+     * Page with bouts where user participate. Bouts displayed here can be
+     * filtered by phrase or tag.
      *
      * @return void
      */
-    public function indexAction() 
+    public function searchAction()
     {
-        $this->_forward('front');
+        // nothing yet
     }
     
     /**
-     * Front
+     * Page with one bout
      *
      * @return void
-     * @see views/scripts/index/front.phtml
+     * @see views/scripts/bout/show.phtml
      */
-    public function frontAction() 
+    public function showAction()
     {
         // nothing yet
+    }
+    
+    /**
+     * Create new bout
+     *
+     * @return void
+     * @see views/scripts/bout/create.phtml 
+     */
+    public function createAction()
+    {
+        // nothing yet
+    }
+
+    /**
+     * Save new message for the bout
+     *
+     * @return void
+     */
+    public function saveMessage()
+    {
+        // nothing yet 
     }
     
 }
