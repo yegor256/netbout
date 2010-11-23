@@ -83,6 +83,21 @@ class Bootstrap extends FaZend_Application_Bootstrap_Bootstrap
             }
         }
     }
+
+    /**
+     * Initialize FaZend_User
+     *
+     * @return void
+     */
+    protected function _initFaZendUser()
+    {
+        $this->bootstrap('fz_orm');
+        FaZend_User::setRowClass('Model_User');
+        FaZend_User::setIdentityProperty('__id');
+        FaZend_User::setIdentityColumn('id');
+        FaZend_User::setCredentialProperty('authToken');
+        FaZend_User::setCredentialColumn('authToken');
+    }
     
     /**
      * Emailer reconfigure for the specific language.

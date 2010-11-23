@@ -39,18 +39,20 @@ CREATE TABLE IF NOT EXISTS `user`
     `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         COMMENT "Date when the row was created",
 
-    `login` VARCHAR(254)
+    `login` VARCHAR(254) DEFAULT NULL
         COMMENT "Unique ID of the user, used for login",
 
-    -- We using SHA256 hash with salt, so it's always 64 chars,
+    -- We can have here 64 bytes SHA256 password hash or OpenId url
     -- @see Model_User::getPasswordHash()
-    `password` CHAR(64) NOT NULL
-        COMMENT "Password hash",
+    -- VARCHAR(255) is used, because OpenId url can have max 255 bytes length
+    -- @see http://openid.net/specs/openid-authentication-1_1.html#limits
+    `authToken` VARCHAR(255) NOT NULL
+        COMMENT "Password hash or OpenId url",
 
     -- VARCHAR(254) is used
     -- @see http://en.wikipedia.org/wiki/E-mail_address
     -- @see http://tools.ietf.org/html/rfc5322
-    `email` VARCHAR(254)
+    `email` VARCHAR(254) DEFAULT NULL
         COMMENT "Optional email address of the user",
 
     -- The avatar image will be displayed using the gravatar.com service.
