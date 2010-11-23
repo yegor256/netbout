@@ -99,7 +99,7 @@ implements Zend_Acl_Role_Interface
         $user = new self();
         $user->login = $login;
         $user->email = $email;
-        $user->password = self::getPasswordHash($password, $email);
+        $user->authToken = self::getPasswordHash($password, $email);
         $user->save();
 
         logg("New user created with email '%s' and login '%s'", $user->email, $user->login);
