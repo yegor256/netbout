@@ -21,8 +21,7 @@
 require_once 'FaZend/Controller/Action.php';
 
 /**
- * Manipulations with user account, we should use as most as possible the parent
- * class {@link Fazend_UserController} to avoid duplicated code
+ * Manipulations with user account
  *
  * @package front
  */
@@ -48,6 +47,16 @@ class UserController extends FaZend_Controller_Action
     public function accountAction()
     {
 
+    }
+
+    /**
+     * User registration
+     *
+     * @return void
+     */
+    public function registerAction()
+    {
+        // nothing yet
     }
 
 }
