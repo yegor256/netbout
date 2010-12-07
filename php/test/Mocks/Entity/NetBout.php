@@ -4,7 +4,7 @@
  */
 
 /**
- * @todo #80: Currently is just proxy for Mocks_Model_NetBout due to time limitation.
+ * @todo #80! Currently is just proxy for Mocks_Model_NetBout due to time limitation.
  *            Implement this part in correct way.
  */
 class Mocks_Entity_NetBout

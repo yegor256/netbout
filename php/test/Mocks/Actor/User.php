@@ -4,7 +4,7 @@
  */
 
 /**
- * @todo #80: Implement user creation part in correct way.
+ * @todo #80! Implement user creation part in correct way.
  */
 class Mocks_Actor_User
 {
@@ -25,7 +25,7 @@ class Mocks_Actor_User
         }
 
         if (!$user) {
-            // @todo #80: Model_User is used because it contain method which hash password
+            // @todo #80! Model_User is used because it contain method which hash password
             $user = Model_User::create($email, $login, $password);
         }
 
