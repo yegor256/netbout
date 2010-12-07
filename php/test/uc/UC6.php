@@ -35,7 +35,7 @@ class uc_UC6Test extends FaZend_Test_TestCase
         $password = 'mypassword';
         $user = Mocks_Actor_User::get('my@test.com', null, $password);
         $this->_sendLoginForm($user->email, $password);
-        $this->assertRedirectTo('/u/account');
+        $this->assertRedirectTo('/'); // we should get back to HOME
     }
 
     public function testRecognizesCorrectUserLoginCredentials()
@@ -46,7 +46,7 @@ class uc_UC6Test extends FaZend_Test_TestCase
         $password = 'mypassword';
         $user = Mocks_Actor_User::get(null, 'mylogin', $password);
         $this->_sendLoginForm($user->login, $password);
-        $this->assertRedirectTo('/u/account');
+        $this->assertRedirectTo('/'); // we should get back to HOME
     }
 
     public function testRecognizesWrongUserEmailCredentials()
