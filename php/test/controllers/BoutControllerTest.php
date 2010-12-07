@@ -8,12 +8,9 @@
  */
 require_once 'FaZend/Test/TestCase.php';
 
-/**
- * @todo #80:3h Implemenent this test and make it workable.
- */
 class controllers_BoutControllerTest extends FaZend_Test_TestCase
 {
-    
+
    /**
      * Check if new bout can be created by the user
      */
