@@ -20,17 +20,14 @@ class uc_UC2Test extends FaZend_Test_TestCase
         // @todo #80 Remove this line when the test is ready
         $this->markTestIncomplete();
 
-        if (Model_User::isLoggedIn()) {
-            Model_User::logOut();
-        }
+        Mocks_Actor_User::logout();
 
         $response = $this->dispatch('/b/create');
 
         // check user is redirected to login form
         $this->assertRedirectTo('/u/login');
 
-        $user = Mocks_Model_User::get();
-        $user->logIn();
+        Mocks_Actor_User::login();
 
         // check whether form is displayed
         $this->resetRequest()->resetResponse();
