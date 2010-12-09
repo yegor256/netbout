@@ -45,7 +45,7 @@ class uc_UC3Test extends FaZend_Test_TestCase
             ->setMethod('POST')
             ->setPost(array('text' => $text));
         $this->dispatch($url);
-        $this->assertRedirectRegex($url, 'we are not redirected to bout page, why?');
+        $this->assertRedirectTo($url, 'we are not redirected to bout page, why?');
 
         // reading again to find the message just posted
         $this->resetRequest()->resetResponse();
