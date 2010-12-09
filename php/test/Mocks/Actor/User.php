@@ -37,14 +37,14 @@ class Mocks_Actor_User
     }
 
     /**
-     * Login user with the given email address.
+     * Login user with the given email address or login.
      */
-    public static function login($email = null)
+    public static function login($email = null, $login = null)
     {
         /**
          * @todo #80 Replace this call by own implemenetation with Zend_Auth
          */
-        $user = Mocks_Model_User::get($email);
+        $user = Mocks_Model_User::get($email, $login);
         $user->logIn();
     }
 
