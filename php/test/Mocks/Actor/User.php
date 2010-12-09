@@ -4,7 +4,7 @@
  */
 
 /**
- * @todo #80! Implement user creation part in correct way.
+ * @todo #80:1hr To remove any calls to Model_* related classes, use only Zend or FaZend classes
  */
 class Mocks_Actor_User
 {
@@ -25,7 +25,11 @@ class Mocks_Actor_User
         }
 
         if (!$user) {
-            // @todo #80! Model_User is used because it contain method which hash password
+            /**
+             * @todo #80 Model_User is used because it contain method which
+             * hash password, but we must move this hash algorithm here to
+             * Mocks_Actor_User class
+             */
             $user = Model_User::create($email, $login, $password);
         }
 
@@ -37,6 +41,9 @@ class Mocks_Actor_User
      */
     public static function login($email = null)
     {
+        /**
+         * @todo #80 Replace this call by own implemenetation with Zend_Auth
+         */
         $user = Mocks_Model_User::get($email);
         $user->logIn();
     }
@@ -47,6 +54,9 @@ class Mocks_Actor_User
      */
     public static function logout()
     {
+        /**
+         * @todo #80 Replace this call by own implemenetation with Zend_Auth
+         */
         if (Model_User::isLoggedIn()) {
             Model_User::logOut();
         }
