@@ -21,7 +21,6 @@ require_once 'FaZend/Test/TestCase.php';
  * 2. For registration process we will use own implemention of registration with fields
  *    (email, login, password, password confirmation)
  *
- * @todo #80:2h for implement #15
  * @todo #15:2hrs to implement this test and make it workable
  *           (implement UserController and required front end templates)
  */

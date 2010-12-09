@@ -21,16 +21,18 @@ class uc_UC3Test extends FaZend_Test_TestCase
         $this->markTestIncomplete();
 
         $bout = Mocks_Entity_NetBout::get();
-        $url = '/b/' . $bout['id'];
+
+        // this URL is used for reading and writing to the Bout (RESTful approach)
+        $url = "/b/{$bout['id']}";
+
+        // reading Bout
         $this->dispatch($url);
         $this->assertResponseCode(200, 'returned response code is NOT equal to 200, why?');
-
         $this->assertQuery('form#newMessageForm', 'new message form is not displayed, why?');
         $this->assertQuery(
             'form#newMessageForm input[name=text]',
             'new message form does NOT contain "text" field, why?'
         );
-
         $this->assertQuery(
             'form#newMessageForm input[name=bout]',
             'new message form does NOT contain "bout" field, why?'
@@ -38,20 +40,17 @@ class uc_UC3Test extends FaZend_Test_TestCase
 
         // submit new message form
         $this->resetRequest()->resetResponse();
-
         $text = 'My unique message ' . uniqid('', true);
         $this->getRequest()
             ->setMethod('POST')
-            ->setPost(
-                array('text' => $text),
-                array('bout' => $bout)
-            );
+            ->setPost(array('text' => $text));
+        $this->dispatch($url);
+        $this->assertRedirectRegex($url, 'we are not redirected to bout page, why?');
 
-        $this->dispatch('/b/saveMessage');
-        $boutUrl = '/b/' . $bout['id'];
-        $this->assertRedirectRegex($boutUrl, 'we are not redirected to bout page, why?');
-
-        $this->dispatch($boutUrl);
+        // reading again to find the message just posted
+        $this->resetRequest()->resetResponse();
+        $this->dispatch($url);
+        $this->assertResponseCode(200, 'returned response code is NOT equal to 200, why?');
         $this->assertQueryContentContains('div', $text, 'message text is NOT displayed in div tag');
     }
 
