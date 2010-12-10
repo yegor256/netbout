@@ -18,31 +18,28 @@
 
 <p><?=_t('Start new bout with just one click')?>:</p>
 
-<?=$this->forma()
+
+<?=
+    /**
+     *  @todo #88: How add redirection here to the NetBout show page, after insert to DB?
+     */
+    $this->forma()
+    ->addAttrib('id', 'newBoutForm')
     ->addBehavior('flash', "_t('bout started')")
     ->addBehavior('redirect')
-    ->addField('text', 'id')
-        ->fieldLabel(_t('Email or netBout ID of your first recipient'))
-        ->fieldAttrib('size', 12)
-        ->fieldAttrib('maxlength', 7)
-        ->fieldAttrib('disabled', 'disabled')
-        ->fieldValue('john13')
     ->addField('text', 'subject')
         ->fieldLabel(_t('Subject'))
         ->fieldAttrib('size', 50)
         ->fieldAttrib('maxlength', 200)
-    ->addField('radio', 'identity')
-        ->fieldLabel(_t('Identity'))
-        ->fieldValue(0)
-        ->fieldSeparator('&nbsp;')
-        ->fieldOptions(
-            array(
-                '<img src="http://www.al-pacino.org/images/players/al-pacino/al_pacino_26.jpg" height="140" />',
-                '<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/KevinSpaceyApr09.jpg/220px-KevinSpaceyApr09.jpg" height="140"/>',
-            )
-        )
-    ->addField('submit')
+    ->addField('submit', 'submit')
         ->fieldValue(_t('Start New Bout'))
-        // ->fieldAction(false) // to be changed
+        ->fieldAction(
+            '
+            Model_NetBout::create(
+                ${subject},
+                Model_User::me()
+            );
+            '
+        )
     ?>
 

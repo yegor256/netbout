@@ -27,6 +27,12 @@ require_once 'FaZend/Controller/Action.php';
  */
 class BoutController extends FaZend_Controller_Action
 {
+    public function init()
+    {                    
+        if (!Model_User::isLoggedIn()) {
+            $this->_redirect('/u/login');
+        }
+    }
 
     /**
      * Page with bouts where user participate. Bouts displayed here can be
@@ -47,7 +53,8 @@ class BoutController extends FaZend_Controller_Action
      */
     public function showAction()
     {
-        // nothing yet
+        $bout = $this->_getParam('bout');
+        $this->view->bout = new Model_NetBout((int)$bout);
     }
     
     /**
