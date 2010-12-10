@@ -1,12 +1,12 @@
 <!--
  * netbout.com
  *
- * Redistribution and use in source and binary forms, with or 
- * without modification, are PROHIBITED without prior written 
- * permission from the author. This product may NOT be used 
- * anywhere and on any computer except the server platform of 
- * netbout.com. located at www.netbout.com. If you received this 
- * code occasionally and without intent to use it, please report 
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are PROHIBITED without prior written
+ * permission from the author. This product may NOT be used
+ * anywhere and on any computer except the server platform of
+ * netbout.com. located at www.netbout.com. If you received this
+ * code occasionally and without intent to use it, please report
  * this incident to the author by email: privacy@netbout.com
  *
  * @author Yegor Bugayenko <yegor256@yahoo.com>
@@ -19,14 +19,10 @@
 <p><?=_t('Start new bout with just one click')?>:</p>
 
 
-<?=
-    /**
-     *  @todo #88: How add redirection here to the NetBout show page, after insert to DB?
-     */
-    $this->forma()
+<?=$this->forma()
     ->addAttrib('id', 'newBoutForm')
     ->addBehavior('flash', "_t('bout started')")
-    ->addBehavior('redirect')
+    ->addBehavior('redirect', FaZend_Callback::factory('"/b/" . ${a2}'))
     ->addField('text', 'subject')
         ->fieldLabel(_t('Subject'))
         ->fieldAttrib('size', 50)
