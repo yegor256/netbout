@@ -33,6 +33,7 @@
 		    target="main" />
 
         <!-- build summary REMPL report -->
+        <mkdir dir="${project.basedir}/reports/rempl" />
         <taskdef name="RemplReport" classname="src.library.Rempl.RemplReport" />
         <RemplReport dir="${project.basedir}/reports/rempl">
             <fileset dir="${project.basedir}">
