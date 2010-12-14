@@ -22,7 +22,7 @@
 
     <!--
     This file is located in continuous integration server and is
-    accessible only to deployment manager
+    accessible only to deployment manager.
     -->
     <property file="../external.properties" />
 
@@ -31,6 +31,17 @@
 		    inheritRefs="true"
 		    haltonfailure="true"
 		    target="main" />
+
+        <!-- build summary REMPL report -->
+        <taskdef name="RemplReport" classname="src.library.Rempl.RemplReport" />
+        <RemplReport dir="${project.basedir}/reports/rempl">
+            <fileset dir="${project.basedir}">
+                <include name="**/*.php"/>
+                <include name="**/*.phtml"/>
+                <exclude name=".svn/**"/>
+                <exclude name="src/library/**"/>
+            </fileset>
+        </RemplReport>
 	</target>
 
 </project>
