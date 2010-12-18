@@ -24,7 +24,7 @@
     This file is located in continuous integration server and is
     accessible only to deployment manager.
     -->
-    <property file="../external.properties" />
+    <property file="../../external.properties" />
 
 	<target name="main">
 		<phing phingfile="${project.basedir}/src/library/FaZend/Application/Phing/build.xml"
