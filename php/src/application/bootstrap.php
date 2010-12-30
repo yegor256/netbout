@@ -2,12 +2,12 @@
 /**
  * netbout.com
  *
- * Redistribution and use in source and binary forms, with or 
- * without modification, are PROHIBITED without prior written 
- * permission from the author. This product may NOT be used 
- * anywhere and on any computer except the server platform of 
- * netbout.com. located at www.netbout.com. If you received this 
- * code occasionally and without intent to use it, please report 
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are PROHIBITED without prior written
+ * permission from the author. This product may NOT be used
+ * anywhere and on any computer except the server platform of
+ * netbout.com. located at www.netbout.com. If you received this
+ * code occasionally and without intent to use it, please report
  * this incident to the author by email: privacy@netbout.com
  *
  * @author Yegor Bugayenko <yegor256@yahoo.com>
@@ -53,10 +53,11 @@ class Bootstrap extends FaZend_Application_Bootstrap_Bootstrap
         if (function_exists('mb_internal_encoding')) {
             mb_internal_encoding('UTF-8');
         }
+        $this->bootstrap('fazend');
         $this->bootstrap('fz_logger');
         $this->bootstrap('fz_starter');
     }
-    
+
     /**
      * Init non-explicit ORM mapping rules
      *
@@ -98,7 +99,7 @@ class Bootstrap extends FaZend_Application_Bootstrap_Bootstrap
         FaZend_User::setCredentialProperty('authToken');
         FaZend_User::setCredentialColumn('authToken');
     }
-    
+
     /**
      * Emailer reconfigure for the specific language.
      *
