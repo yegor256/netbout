@@ -26,23 +26,19 @@
     -->
     <property file="../../external.properties" />
 
-	<target name="main">
-		<phing phingfile="${project.basedir}/src/library/FaZend/Application/Phing/build.xml"
-		    inheritRefs="true"
-		    haltonfailure="true"
-		    target="main" />
+    <target name="main">
+        <phing phingfile="${project.basedir}/src/library/FaZend/Application/Phing/build.xml"
+            inheritRefs="true"
+            haltonfailure="true"
+            target="main" />
 
         <!-- build summary REMPL report -->
         <mkdir dir="${project.basedir}/reports/rempl" />
-        <taskdef name="RemplReport" classname="src.library.Rempl.RemplReport" />
-        <RemplReport dir="${project.basedir}/reports/rempl">
-            <fileset dir="${project.basedir}">
-                <include name="**/*.php"/>
-                <include name="**/*.phtml"/>
-                <exclude name=".svn/**"/>
-                <exclude name="src/library/**"/>
-            </fileset>
-        </RemplReport>
-	</target>
+        <taskdef name="RemplRead" classname="src.library.rempl.RemplRead" />
+        <taskdef name="RemplReport" classname="src.library.rempl.RemplReport" />
+        <RemplRead rom="${project.basedir}/rom.xml" />
+        <RemplReport dir="${project.basedir}/reports/rempl"
+            rom="${project.basedir}/rom.xml" />
+    </target>
 
 </project>
