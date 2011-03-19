@@ -27,6 +27,7 @@
     <property file="../../external.properties" />
 
     <target name="main">
+        <mkdir dir="${project.basedir}/build" />
         <phing phingfile="${project.basedir}/src/library/FaZend/Application/Phing/build.xml"
             inheritRefs="true"
             haltonfailure="true"
