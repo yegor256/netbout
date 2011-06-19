@@ -39,7 +39,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-www</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <name>netbout-www</name>
 
 </project>
