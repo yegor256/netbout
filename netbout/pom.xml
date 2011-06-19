@@ -1,0 +1,1135 @@
+<?xml version="1.0"?>
+<!--
+ * Copyright (c) 2009-2011, netBout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email: privacy@netbout.com.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * This file is an Apache Maven 3.0 build automation script. Maven is used
+ * in the project since it's one of the most powerful and stable
+ * tools in the market. Other tools were reviewed, including: Apache Ant,
+ * Phing, and GNU Make (all I personally know). None of them are suitable
+ * better than Apache Maven to this project. Maven is widely supported
+ * by open source community and is extended by many plugins. The only
+ * critical defect that I know is that Maven doesn't support incremental
+ * build and re-builds everything from scratch. I already reported this
+ * problem: http://jira.codehaus.org/browse/MNG-4885.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ * @link http://maven.apache.org/
+ * @link http://en.wikipedia.org/wiki/List_of_build_automation_software
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.netbout</groupId>
+    <artifactId>netbout</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>netbout</name>
+
+    <modules>
+        <module>netbout-tk</module>
+        <module>netbout-www</module>
+    </modules>
+
+    <description>.com, Decision Making System</description>
+    <url>http://www.netbout.com</url>
+    <inceptionYear>2010</inceptionYear>
+
+    <organization>
+        <name>netBout Inc.</name>
+        <url>http://www.netbout.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>netBout persistent communications</name>
+            <url>http://www.netbout.com/LICENSE.txt</url>
+            <distribution>repo</distribution>
+            <comments>This is a proprietary software, you can't redistribute it</comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>1</id>
+            <name>Yegor Bugayenko</name>
+            <email>yegor@netbout.com</email>
+            <organization>netBout Inc.</organization>
+            <organizationUrl>http://www.netbout.com</organizationUrl>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>-7</timezone>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>trac</system>
+        <url>http://trac.netbout.com/netbout</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</connection>
+        <developerConnection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</developerConnection>
+        <url>svn://svn.netbout.com/netbout/trunk/netbout</url>
+    </scm>
+
+    <distributionManagement>
+        <site>
+            <!--
+            To make this deployment working you should configure
+            the destination server (with Apache HTTP Server). See
+            INSTALL.txt for additional details.
+            -->
+            <id>maven.netbout.com</id>
+            <name>netBout.com Project Site</name>
+            <url>ftp://maven.netbout.com/</url>
+        </site>
+    </distributionManagement>
+
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jdk.version>1.6</jdk.version>
+    </properties>
+
+    <repositories>
+        <!-- intentionally empty -->
+    </repositories>
+
+    <pluginRepositories>
+        <!-- intentionally empty -->
+    </pluginRepositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!--
+                This library simplifies string operations. This is
+                org.apache.commons.lang.*.
+                -->
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.5</version> <!-- 15 Oct 2010 -->
+            </dependency>
+            <dependency>
+                <!--
+                This library simplifies file-management operations.
+                -->
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>1.3.2</version> <!-- 9 Oct 2010 -->
+            </dependency>
+            <dependency>
+                <!--
+                Jersey is an open-source implementation of JAX-RS
+                specification, which we're using for RESTful functionality.
+                Other options considered: RESTEasy.
+                @link http://en.wikipedia.org/wiki/JAX-RS
+                @link https://jersey.dev.java.net/
+                -->
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.6.1</version> <!-- 8 Nov 2010 -->
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <!--
+                Main logging facility. All other packages shall
+                be forwarded to LOG4J through SLF4J
+                -->
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.16</version> <!-- 5 Nov 2010 -->
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <!--
+                We are using JUnit framework for unit test organization
+                and management. This framework is the most stable and mature
+                in the market. Other options considered: TestNG.
+                @link http://www.junit.org/
+                -->
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.7</version> <!-- 10 Sep 2010 -->
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <!--
+                Mockito is used as a mocking library during testing.
+                Other options: jMock.
+                @link http://stackoverflow.com/questions/22697
+                @link http://www.mockito.org/
+                -->
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>1.8.5</version> <!-- 9 Oct 2010 -->
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>${jersey.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey.jersey-test-framework</groupId>
+                <artifactId>jersey-test-framework-grizzly</artifactId>
+                <version>${jersey.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <!--
+            This profile activates all continuous integration specific
+            plugins, not necessary in development. To activate
+            this profile run: "mvn -Dci"
+            -->
+            <id>for-production</id>
+            <activation>
+                <property><name>ci</name></property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!--
+                        This is an extra validation mechanism, that enforces
+                        explicit version numbering across the POM.XML file.
+                        It's important to work this way, because sudden
+                        version changing may lead to broken builds.
+                        -->
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>1.0-beta-1</version>
+                        <executions>
+                            <execution>
+                                <id>enforce-it</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireMavenVersion>
+                                            <version>3.0</version>
+                                        </requireMavenVersion>
+                                        <requireJavaVersion>
+                                            <version>${jdk.version}</version>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!--
+                        This plugin will collect current build number
+                        from Subversion and save it into MANIFEST.MF. Later,
+                        this number is used by different java classes, mostly
+                        in order to expose it in web.
+                        -->
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>buildnumber-maven-plugin</artifactId>
+                        <version>1.0-beta-4</version>
+                        <configuration>
+                            <doCheck>false</doCheck>
+                            <doUpdate>false</doUpdate>
+                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!--
+            This profile activates all strict static code analysis validation
+            procedures, mandatory for continuous integration. To activate
+            this profile run: "mvn -Dci"
+            -->
+            <id>static-analysis</id>
+            <activation>
+                <property><name>ci</name></property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <!--
+                            API documentation builder. It will produce documentation
+                            which is then to be used in site:site. It will be
+                            located at target/site/apidocs.
+                            -->
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>2.8</version>  <!-- 5 June 2011 -->
+                            <configuration>
+                                <failOnError>true</failOnError>
+                                <quiet>true</quiet>
+                                <tags>
+                                    <!--
+                                    Here we instruct plugin to use custom tag
+                                    @link http://maven.apache.org/plugins/maven-javadoc-plugin/examples/tag-configuration.html
+                                    -->
+                                    <tag>
+                                        <name>todo</name>
+                                        <placement>a</placement>
+                                        <head>To do:</head>
+                                    </tag>
+                                </tags>
+                            </configuration>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>com.netbout</groupId>
+                                    <artifactId>netbout-tk</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                </dependency>
+                            </dependencies>
+                        </plugin>
+                        <plugin>
+                            <!--
+                            Coding styling validator. Configuration is inside resources/checkstyle
+                            directory. When you edit that file don't forget to install
+                            the build-tool project first, and then run this project.
+                            -->
+                            <artifactId>maven-checkstyle-plugin</artifactId>
+                            <version>2.6</version> <!-- 14 October 2010 -->
+                            <configuration>
+                                <failOnViolation>true</failOnViolation>
+                                <failsOnError>true</failsOnError>
+                                <consoleOutput>true</consoleOutput>
+                                <logViolationsToConsole>true</logViolationsToConsole>
+                                <violationSeverity>info</violationSeverity>
+                                <configLocation>checkstyle/checks.xml</configLocation>
+                                <headerLocation>checkstyle/LICENSE.txt</headerLocation>
+                            </configuration>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>com.netbout</groupId>
+                                    <artifactId>netbout-tk</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                </dependency>
+                            </dependencies>
+                        </plugin>
+                        <plugin>
+                            <!--
+                            Project Mess Detector, finds coding errors and reports them. In
+                            CI environment it should stop the build if some errors are
+                            found.
+                            -->
+                            <artifactId>maven-pmd-plugin</artifactId>
+                            <version>2.5</version> <!-- 2 Nov 2010 -->
+                            <configuration>
+                                <failOnViolation>true</failOnViolation>
+                                <targetJdk>${jdk.version}</targetJdk>
+                                <aggregate>false</aggregate>
+                                <verbose>true</verbose>
+                                <linkXRef>false</linkXRef>
+                                <rulesets>
+                                    <ruleset>pmd/ruleset.xml</ruleset>
+                                </rulesets>
+                            </configuration>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>com.netbout</groupId>
+                                    <artifactId>netbout-tk</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                </dependency>
+                            </dependencies>
+                        </plugin>
+                        <plugin>
+                            <!--
+                            Static code analysis to find potential bugs in code. One
+                            major drawback in this plugin is that it DOES'T produce
+                            any report to the output, only to XML files
+                            -->
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>findbugs-maven-plugin</artifactId>
+                            <version>2.3.2-SNAPSHOT</version> <!-- 6 Nov 2010 -->
+                            <configuration>
+                                <threshold>Exp</threshold> <!-- as much to show as possible -->
+                                <!--
+                                We never fail on error here, instead we let
+                                our Groovy code to fail later, after parsing of
+                                all errors
+                                -->
+                                <failOnError>false</failOnError>
+                                <xmlOutput>true</xmlOutput>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <!--
+                            This is a code coverage validator, executed AFTER
+                            all unit tests are passed. Cobertura starts all tests
+                            again in order to calculate code coverage, and validates
+                            that this coverage is in the allowed interval.
+                            -->
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>cobertura-maven-plugin</artifactId>
+                            <version>2.4</version> <!-- 2 Nov 2010 -->
+                            <configuration>
+                                <!--
+                                This option doesn't work with cobertura 2.4, but is
+                                going to be implemented in 2.5
+                                @link http://jira.codehaus.org/browse/MCOBERTURA-75
+                                -->
+                                <quiet>false</quiet>
+                                <check>
+                                    <haltOnFailure>true</haltOnFailure>
+                                    <lineRate>60</lineRate>
+                                    <branchRate>60</branchRate>
+                                    <packageLineRate>70</packageLineRate>
+                                    <packageBranchRate>70</packageBranchRate>
+                                    <totalLineRate>80</totalLineRate>
+                                    <totalBranchRate>80</totalBranchRate>
+                                </check>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <!-- configuration is in pluginManagement section above -->
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>javadoc</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- configuration is in pluginManagement section above -->
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>analyze-only</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>analyze-only</goal>
+                                </goals>
+                                <configuration>
+                                    <ignoreNonCompile>true</ignoreNonCompile>
+                                    <failOnWarning>true</failOnWarning>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>analyze-dep-mgt</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>analyze-dep-mgt</goal>
+                                </goals>
+                                <configuration>
+                                    <failBuild>true</failBuild>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- configuration is in pluginManagement section above -->
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>check-sources</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>check-test-sources</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- the files are inside :ymock-tk module -->
+                                    <configLocation>checkstyle/checks-test.xml</configLocation>
+                                    <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- configuration is in pluginManagement section above -->
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                    <goal>cpd-check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- configuration is in pluginManagement section above -->
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- configuration is in pluginManagement section above -->
+                        <groupId>org.codehaus.gmaven</groupId>
+                        <artifactId>gmaven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>findbugs</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <properties>
+                                        <xml>${project.build.directory}/findbugsXml.xml</xml>
+                                        <failOnError>true</failOnError>
+                                    </properties>
+                                    <!--
+                                    @link http://docs.codehaus.org/display/GMAVEN/Executing+Groovy+Code
+                                    @link http://groovy.codehaus.org./Reading+XML+using+Groovy%27s+XmlParser
+                                    -->
+                                    <source>
+                                        <![CDATA[
+                                        def file = new File(project.properties['xml'])
+                                        if (!file.exists()) {
+                                            log.info("No XML report, nothing to parse")
+                                            return
+                                        }
+                                        def xml = new XmlParser().parse(file)
+                                        def bugs = xml.BugInstance
+                                        def total = bugs.size()
+                                        if (total <= 0) {
+                                            log.info("No errors/warnings found")
+                                            return
+                                        }
+                                        log.info("Total bugs: " + total)
+                                        for (i in 0..total-1) {
+                                            def bug = bugs[i]
+                                            log.info(
+                                                bug.LongMessage.text()
+                                                + " " + bug.Class.'@classname'
+                                                + " " + bug.Class.SourceLine.Message.text()
+                                            )
+                                        }
+                                        if (project.properties['failOnError']) {
+                                            fail(total + " FindBugs error(s)")
+                                        }
+                                        ]]>
+                                    </source>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- configuration is in pluginManagement section above -->
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!--
+            This profile activates all site-related plugins. To activate
+            this profile run: "mvn -Dsite"
+            -->
+            <id>live-site</id>
+            <activation>
+                <property><name>site</name></property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <!-- version is specified in build/plugins -->
+                        <configuration>
+                            <reportPlugins>
+                                <plugin>
+                                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                                    <!-- version is specified in plugins -->
+                                    <reports>
+                                        <report>cim</report>
+                                        <report>dependencies</report>
+                                        <report>issue-tracking</report>
+                                        <report>license</report>
+                                        <report>mailing-list</report>
+                                        <report>plugins</report>
+                                        <report>project-team</report>
+                                        <report>scm</report>
+                                        <report>summary</report>
+                                    </reports>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.codehaus.mojo</groupId>
+                                    <artifactId>taglist-maven-plugin</artifactId>
+                                    <version>2.4</version> <!-- 15 Nov 2010 -->
+                                    <configuration>
+                                        <tagListOptions>
+                                            <tagClasses>
+                                                <tagClass>
+                                                    <displayName>ToDo</displayName>
+                                                    <tags>
+                                                        <tag>
+                                                            <matchString>@todo</matchString>
+                                                            <matchType>exact</matchType>
+                                                        </tag>
+                                                    </tags>
+                                                </tagClass>
+                                            </tagClasses>
+                                        </tagListOptions>
+                                    </configuration>
+                                </plugin>
+                                <plugin>
+                                    <artifactId>maven-javadoc-plugin</artifactId>
+                                    <!-- version is specified in build/plugins -->
+                                    <configuration>
+                                        <stylesheetfile>javadoc/screen.css</stylesheetfile>
+                                        <tags>
+                                            <tag>
+                                                <name>todo</name>
+                                                <placement>a</placement>
+                                                <head>To do:</head>
+                                            </tag>
+                                        </tags>
+                                        <reportSets>
+                                            <reportSet>
+                                                <id>html</id>
+                                                <reports>
+                                                    <report>javadoc</report>
+                                                </reports>
+                                            </reportSet>
+                                        </reportSets>
+                                        <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+                                        <docletArtifact>
+                                            <groupId>org.umlgraph</groupId>
+                                            <artifactId>doclet</artifactId>
+                                            <version>5.1</version>
+                                        </docletArtifact>
+                                        <additionalparam>
+                                            -views
+                                            -all
+                                        </additionalparam>
+                                        <useStandardDocletOptions>true</useStandardDocletOptions>
+                                    </configuration>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.codehaus.mojo</groupId>
+                                    <artifactId>cobertura-maven-plugin</artifactId>
+                                    <!-- version is specified in build/plugins -->
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.codehaus.mojo</groupId>
+                                    <artifactId>jdepend-maven-plugin</artifactId>
+                                    <version>2.0-beta-2</version> <!-- 7 Nov 2010 -->
+                                </plugin>
+                            </reportPlugins>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-descriptor</id>
+                                <goals>
+                                    <goal>attach-descriptor</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!--
+                        @todo #2 These groovy scripts shall be placed into
+                                 rempl-tk src/main/resources/groovy directory.
+                        -->
+                        <!-- version and configuration is in pluginManagement section -->
+                        <groupId>org.codehaus.gmaven</groupId>
+                        <artifactId>gmaven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!--
+                                For every sub-module we create placeholders, which will
+                                be FTP-deployed to the web server, BEFORE the sub-module. This
+                                is required in order to avoid problem with "non existing directory"
+                                when we're starting to deploy a sub-module into a directory which
+                                is currently absent.
+                                -->
+                                <id>site-placeholders</id>
+                                <phase>post-site</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <classpath>
+                                        <element>
+                                            <!-- this is where placeholders directory is located -->
+                                            <groupId>com.netbout</groupId>
+                                            <artifactId>netbout-tk</artifactId>
+                                            <version>1.0-SNAPSHOT</version>
+                                        </element>
+                                        <element>
+                                            <!-- for file manipulations -->
+                                            <groupId>commons-io</groupId>
+                                            <artifactId>commons-io</artifactId>
+                                            <version>2.0.1</version> <!-- 7 Mar 2011 -->
+                                        </element>
+                                        <element>
+                                            <!-- for manipulations with strings -->
+                                            <groupId>commons-lang</groupId>
+                                            <artifactId>commons-lang</artifactId>
+                                            <version>2.5</version> <!-- 15 Oct 2010 -->
+                                        </element>
+                                    </classpath>
+                                    <properties>
+                                        <placeholders>
+                                            site-placeholders/.htaccess,
+                                            site-placeholders/placeholder.html
+                                        </placeholders>
+                                        <target>${project.build.directory}/site</target>
+                                    </properties>
+                                    <source>
+                                        <![CDATA[
+                                        import org.apache.commons.lang.StringUtils;
+                                        import org.apache.commons.io.FileUtils;
+                                        def target = new File(project.properties['target'])
+                                        if (!target.exists()) {
+                                            fail("Can't find target: " + project.properties['target'])
+                                        }
+                                        for (module in project.modules) {
+                                            def dir = new File(target.getPath(), module)
+                                            dir.mkdir()
+                                            for (ph in StringUtils.split(project.properties['placeholders'], ",")) {
+                                                ph = StringUtils.trim(ph)
+                                                def phfile = new File(ph);
+                                                def url = getClass().getClassLoader().getResource(ph);
+                                                if (url == null) {
+                                                    fail("Can't find placeholder " + ph)
+                                                }
+                                                log.info("Placeholder " + ph + " found at " + url);
+                                                def dest = new File(
+                                                    dir.toString(),
+                                                    StringUtils.substringAfterLast(ph, "/")
+                                                )
+                                                if (dest.exists()) {
+                                                    fail("Placeholder already exists: " + dest)
+                                                }
+                                                FileUtils.copyURLToFile(
+                                                    url, // JAR-related URL of the found file
+                                                    dest // destination file
+                                                )
+                                                log.info("Placeholder " + ph + " copied to " + dir);
+                                            }
+                                        }
+                                        ]]>
+                                    </source>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <!--
+                                When site is ready we need to replace certain strings
+                                inside its HTML files, in order to improve readability
+                                of the output.
+                                -->
+                                <id>site-markers</id>
+                                <phase>post-site</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <classpath>
+                                        <element>
+                                            <!-- for file manipulations -->
+                                            <groupId>commons-io</groupId>
+                                            <artifactId>commons-io</artifactId>
+                                            <version>2.0.1</version> <!-- 7 Mar 2011 -->
+                                        </element>
+                                        <element>
+                                            <!-- for manipulations with strings -->
+                                            <groupId>commons-lang</groupId>
+                                            <artifactId>commons-lang</artifactId>
+                                            <version>2.5</version> <!-- 15 Oct 2010 -->
+                                        </element>
+                                    </classpath>
+                                    <properties>
+                                        <find>
+                                            <![CDATA[
+                                            Version: ${project.version}
+                                            <title>Coverage Report</title>
+                                            ]]>
+                                        </find>
+                                        <replace>
+                                            <![CDATA[
+                                            Version: ${project.version}/${buildNumber}
+                                            <title>Coverage Report (${project.version}/${buildNumber})</title>
+                                            ]]>
+                                        </replace>
+                                        <target>${project.build.directory}/site</target>
+                                    </properties>
+                                    <source>
+                                        <![CDATA[
+                                        import org.apache.commons.io.FileUtils;
+                                        import org.apache.commons.io.filefilter.*;
+                                        import org.apache.commons.lang.StringUtils;
+                                        def dir = new File(project.properties['target'])
+                                        if (!dir.exists()) {
+                                            log.info("Directory is absent: " + dir)
+                                            return
+                                        }
+                                        def it = FileUtils.iterateFiles(
+                                            dir,
+                                            new SuffixFileFilter(".html"),
+                                            TrueFileFilter.INSTANCE
+                                        )
+                                        def find = StringUtils.stripAll(
+                                            StringUtils.split(project.properties['find'], "\n")
+                                        )
+                                        def replace = StringUtils.stripAll(
+                                            StringUtils.split(project.properties['replace'], "\n")
+                                        )
+                                        while (it.hasNext()) {
+                                            def File file = it.next()
+                                            def contents = FileUtils.readFileToString(file)
+                                            contents = StringUtils.replaceEach(contents, find, replace)
+                                            FileUtils.writeStringToFile(file, contents)
+                                        }
+                                        ]]>
+                                    </source>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!--
+            At this profile we deploy the WAR package to Google App Engine
+            server. It's done by a special plugin, that accomplishes all
+            necessary data manipulations with the server.
+            -->
+            <id>deploy-to-gae</id>
+            <activation>
+                <file><exists>${basedir}/src/main/webapp/WEB-INF/appengine-web.xml</exists></file>
+            </activation>
+            <properties>
+                <gae.home>${project.build.directory}/appengine-java-sdk-1.5.0.1</gae.home>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.google.appengine</groupId>
+                    <artifactId>appengine-java-sdk</artifactId>
+                    <version>1.5.0.1</version> <!-- 12 June 2011 -->
+                    <type>zip</type>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack-gae-sdk</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.google.appengine</groupId>
+                                            <artifactId>appengine-java-sdk</artifactId>
+                                            <version>1.5.0.1</version>
+                                            <type>zip</type>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!--
+                        This plugin transfers data to Google App Engine.
+                        @see http://www.kindleit.net/maven_gae_plugin/index.html
+                        -->
+                        <groupId>net.kindleit</groupId>
+                        <artifactId>maven-gae-plugin</artifactId>
+                        <version>0.8.4</version>
+                        <configuration>
+                            <serverId>www.netbout.com</serverId>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <extensions>
+            <!--
+            To enable site deployment by FTP.
+            @link http://maven.apache.org/wagon/wagon-providers/wagon-ftp/
+            @todo #2 There is still a problem. This extension sends all possible
+                     details of its execution to stdout, exposing FTP passwords
+                     and logins. I already submitted a bug to its developers (WAGON-320),
+                     but not luck yet. Maybe we have to create our own extension.
+                     @see http://stackoverflow.com/questions/4564018
+                     @see http://jira.codehaus.org/browse/WAGON-320
+            -->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>1.0-beta-7</version> <!-- 18 Dec 2010 -->
+            </extension>
+        </extensions>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.5</version>
+                    <configuration>
+                        <!-- we don't deploy this project nowhere except netbout-www sub-module -->
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>2.2</version> <!-- 7 Nov 2010 -->
+                    <configuration>
+                        <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                        <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.1</version> <!-- 2 Dec 2010 -->
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <SCM-Revision>${buildNumber}</SCM-Revision>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.4.3</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.0-beta-3</version> <!-- 28 Dec 2010 -->
+                    <configuration>
+                        <reportPlugins>
+                            <!--
+                            Section is intentionally empty. Full list of plugins
+                            is configured in "CI" profile. We don't need all them
+                            during development, that's why they are not here.
+                            -->
+                        </reportPlugins>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <!--
+                    Starts unit tests, protocols their results and creates
+                    a summary report. It is required to send testing protocol
+                    to the STDOUT as well, not only to the file.
+                    -->
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.5</version> <!-- 1 Oct 2010 -->
+                    <configuration>
+                        <useFile>false</useFile>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version> <!-- 27 Oct 2010 -->
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <!--
+                    This plugin helps to manage releases and new versions
+                    of the product.
+                    @link http://maven.apache.org/plugins/maven-release-plugin/usage.html
+                    -->
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.1</version>
+                    <configuration>
+                        <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>xml-maven-plugin</artifactId>
+                    <version>1.0-beta-3-SNAPSHOT</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>validate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <validationSets>
+                            <validationSet>
+                                <dir>src/main/resources</dir>
+                                <validating>true</validating>
+                                <includes>
+                                    <include>.xml</include>
+                                </includes>
+                            </validationSet>
+                        </validationSets>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <!--
+                    This is an extra validation mechanism, that enforces
+                    explicit version numbering across the POM.XML file.
+                    It's important to work this way, because sudden
+                    version changing may lead to broken builds.
+                    -->
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.0-beta-1</version>
+                </plugin>
+                <plugin>
+                    <!--
+                    This plugin will collect current build number
+                    from Subversion and save it into MANIFEST.MF. Later,
+                    this number is used by different java classes, mostly
+                    in order to expose it in web.
+                    -->
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>buildnumber-maven-plugin</artifactId>
+                    <version>1.0-beta-4</version>
+                    <configuration>
+                        <doCheck>${buildnumber.update}</doCheck>
+                        <doUpdate>${buildnumber.update}</doUpdate>
+                        <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <!--
+                    API documentation builder. It will produce documentation
+                    which is then to be used in site:site. It will be
+                    located at target/site/apidocs.
+                    -->
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.7</version>  <!-- 12 October 2010 -->
+                    <configuration>
+                        <skip>${javadoc.skip}</skip>
+                        <failOnError>${javadoc.strict}</failOnError>
+                        <quiet>true</quiet>
+                        <tags>
+                            <!--
+                            Here we instruct plugin to use custom tag
+                            @link http://maven.apache.org/plugins/maven-javadoc-plugin/examples/tag-configuration.html
+                            -->
+                            <tag>
+                                <name>todo</name>
+                                <placement>a</placement>
+                                <head>To do:</head>
+                            </tag>
+                        </tags>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <!--
+                    To enable on-fly script executions.
+                    @link http://docs.codehaus.org/display/GMAVEN/Executing+Groovy+Code
+                    -->
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <version>1.3</version> <!-- 23 Nov 2010 -->
+                </plugin>
+                <plugin>
+                    <!--
+                    To execute ANT scripts.
+                    -->
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
