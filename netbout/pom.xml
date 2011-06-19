@@ -721,84 +721,6 @@
                         <executions>
                             <execution>
                                 <!--
-                                For every sub-module we create placeholders, which will
-                                be FTP-deployed to the web server, BEFORE the sub-module. This
-                                is required in order to avoid problem with "non existing directory"
-                                when we're starting to deploy a sub-module into a directory which
-                                is currently absent.
-                                -->
-                                <id>site-placeholders</id>
-                                <phase>post-site</phase>
-                                <goals>
-                                    <goal>execute</goal>
-                                </goals>
-                                <configuration>
-                                    <classpath>
-                                        <element>
-                                            <!-- this is where placeholders directory is located -->
-                                            <groupId>com.netbout</groupId>
-                                            <artifactId>netbout-tk</artifactId>
-                                            <version>1.0-SNAPSHOT</version>
-                                        </element>
-                                        <element>
-                                            <!-- for file manipulations -->
-                                            <groupId>commons-io</groupId>
-                                            <artifactId>commons-io</artifactId>
-                                            <version>2.0.1</version> <!-- 7 Mar 2011 -->
-                                        </element>
-                                        <element>
-                                            <!-- for manipulations with strings -->
-                                            <groupId>commons-lang</groupId>
-                                            <artifactId>commons-lang</artifactId>
-                                            <version>2.5</version> <!-- 15 Oct 2010 -->
-                                        </element>
-                                    </classpath>
-                                    <properties>
-                                        <placeholders>
-                                            site-placeholders/.htaccess,
-                                            site-placeholders/placeholder.html
-                                        </placeholders>
-                                        <target>${project.build.directory}/site</target>
-                                    </properties>
-                                    <source>
-                                        <![CDATA[
-                                        import org.apache.commons.lang.StringUtils;
-                                        import org.apache.commons.io.FileUtils;
-                                        def target = new File(project.properties['target'])
-                                        if (!target.exists()) {
-                                            fail("Can't find target: " + project.properties['target'])
-                                        }
-                                        for (module in project.modules) {
-                                            def dir = new File(target.getPath(), module)
-                                            dir.mkdir()
-                                            for (ph in StringUtils.split(project.properties['placeholders'], ",")) {
-                                                ph = StringUtils.trim(ph)
-                                                def phfile = new File(ph);
-                                                def url = getClass().getClassLoader().getResource(ph);
-                                                if (url == null) {
-                                                    fail("Can't find placeholder " + ph)
-                                                }
-                                                log.info("Placeholder " + ph + " found at " + url);
-                                                def dest = new File(
-                                                    dir.toString(),
-                                                    StringUtils.substringAfterLast(ph, "/")
-                                                )
-                                                if (dest.exists()) {
-                                                    fail("Placeholder already exists: " + dest)
-                                                }
-                                                FileUtils.copyURLToFile(
-                                                    url, // JAR-related URL of the found file
-                                                    dest // destination file
-                                                )
-                                                log.info("Placeholder " + ph + " copied to " + dir);
-                                            }
-                                        }
-                                        ]]>
-                                    </source>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <!--
                                 When site is ready we need to replace certain strings
                                 inside its HTML files, in order to improve readability
                                 of the output.
@@ -930,7 +852,7 @@
                         <artifactId>maven-gae-plugin</artifactId>
                         <version>0.8.4</version>
                         <configuration>
-                            <serverId>www.netbout.com</serverId>
+                            <serverId>netbout.com</serverId>
                         </configuration>
                         <executions>
                             <execution>
