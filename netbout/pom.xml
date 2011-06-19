@@ -101,15 +101,31 @@
     </scm>
 
     <distributionManagement>
+        <snapshotRepository>
+            <!--
+            Use this URL to get artifacts from this repo:
+            https://s3.amazonaws.com/netbout.maven/snapshot
+            -->
+            <id>netbout.s3</id>
+            <url>s3://netbout.maven/snapshot</url>
+        </snapshotRepository>
+        <repository>
+            <!--
+            Use this URL to get artifacts from this repo:
+            https://s3.amazonaws.com/netbout.maven/release
+            -->
+            <id>netbout.s3</id>
+            <url>s3://netbout.maven/release</url>
+        </repository>
         <site>
             <!--
             To make this deployment working you should configure
             the destination server (with Apache HTTP Server). See
             INSTALL.txt for additional details.
             -->
-            <id>maven.netbout.com</id>
+            <id>netbout.s3</id>
             <name>netBout.com Project Site</name>
-            <url>ftp://maven.netbout.com/</url>
+            <url>s3://netbout.site/</url>
         </site>
     </distributionManagement>
 
@@ -932,20 +948,13 @@
 
     <build>
         <extensions>
-            <!--
-            To enable site deployment by FTP.
-            @link http://maven.apache.org/wagon/wagon-providers/wagon-ftp/
-            @todo #2 There is still a problem. This extension sends all possible
-                     details of its execution to stdout, exposing FTP passwords
-                     and logins. I already submitted a bug to its developers (WAGON-320),
-                     but not luck yet. Maybe we have to create our own extension.
-                     @see http://stackoverflow.com/questions/4564018
-                     @see http://jira.codehaus.org/browse/WAGON-320
-            -->
             <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>1.0-beta-7</version> <!-- 18 Dec 2010 -->
+                <!--
+                Artifacts deployment to Amazon Web Services, S3.
+                -->
+                <groupId>org.springframework.build.aws</groupId>
+                <artifactId>org.springframework.build.aws.maven</artifactId>
+                <version>3.0.0.RELEASE</version>
             </extension>
         </extensions>
         <pluginManagement>
@@ -957,10 +966,6 @@
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.5</version>
-                    <configuration>
-                        <!-- we don't deploy this project nowhere except netbout-www sub-module -->
-                        <skip>true</skip>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-dependency-plugin</artifactId>
