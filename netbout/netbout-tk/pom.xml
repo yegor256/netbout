@@ -51,7 +51,7 @@
         </repository>
         <site>
             <id>netbout.s3</id>
-            <url>s3://netbout.s3/netbout-tk</url>
+            <url>s3://netbout.site/netbout-tk</url>
         </site>
     </distributionManagement>
 
