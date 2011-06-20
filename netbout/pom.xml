@@ -119,9 +119,7 @@
         </repository>
         <site>
             <!--
-            To make this deployment working you should configure
-            the destination server (with Apache HTTP Server). See
-            INSTALL.txt for additional details.
+            Deploying the site to Amazon S3.
             -->
             <id>netbout.s3</id>
             <name>netBout.com Project Site</name>
