@@ -41,19 +41,26 @@
     <description>Test/Tool Kit</description>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>netbout.s3</id>
+            <url>s3://netbout.maven/snapshot</url>
+        </snapshotRepository>
+        <repository>
+            <id>netbout.s3</id>
+            <url>s3://netbout.maven/release</url>
+        </repository>
         <site>
-            <id>maven.netbout.com</id>
-            <name>netBout.com Project Site</name>
-            <url>ftp://maven.netbout.com/netbout-tk</url>
+            <id>netbout.s3</id>
+            <url>s3://netbout.s3/netbout-tk</url>
         </site>
     </distributionManagement>
 
     <build>
         <extensions>
             <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>1.0-beta-7</version> <!-- 18 Dec 2010 -->
+                <groupId>org.springframework.build.aws</groupId>
+                <artifactId>org.springframework.build.aws.maven</artifactId>
+                <version>3.0.0.RELEASE</version>
             </extension>
         </extensions>
         <plugins>
@@ -64,13 +71,6 @@
                     <reportPlugins>
                         <!-- the section is intentionally empty -->
                     </reportPlugins>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
