@@ -38,9 +38,9 @@
         <artifactId>netbout</artifactId>
         <version>2.0-SNAPSHOT</version>
     </parent>
-    <artifactId>netbout-www</artifactId>
+    <artifactId>netbout-war</artifactId>
     <packaging>war</packaging>
-    <name>netbout-www</name>
+    <name>netbout-war</name>
 
     <dependencies>
         <dependency>

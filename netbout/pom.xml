@@ -53,12 +53,12 @@
 
     <modules>
         <module>netbout-tk</module>
-        <module>netbout-www</module>
-        <module>netbout-rest</module>
-        <module>netbout-engine</module>
-        <module>netbout-model</module>
         <module>netbout-spi</module>
+        <module>netbout-model</module>
         <module>netbout-helpers</module>
+        <module>netbout-engine</module>
+        <module>netbout-rest</module>
+        <module>netbout-war</module>
     </modules>
 
     <description>Persistent Communications Online</description>
