@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,34 +23,51 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.engine.impl;
+
+// data access from com.netbout:netbout-data
+import com.netbout.data.BoutManager;
+import com.netbout.data.jpa.JpaBoutManager;
+
+// API
+import com.netbout.engine.Bout;
+import com.netbout.engine.BoutFactory;
+
+/**
+ * Implementation of the default factory.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ */
+public final class DefaultBoutFactory implements BoutFactory {
 
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.netbout</groupId>
-        <artifactId>netbout</artifactId>
-        <version>2.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>netbout-war</artifactId>
-    <packaging>war</packaging>
-    <name>netbout-war</name>
+    /**
+     * Manager of data entities.
+     */
+    private final BoutManager manager;
 
-    <properties>
-        <jersey.version>1.8-ea04</jersey.version>
-    </properties>
+    /**
+     * Public ctor.
+     */
+    public DefaultBoutFactory() {
+        this.manager = new JpaBoutManager();
+    }
 
-    <dependencies>
-        <dependency>
-            <groupId>com.netbout</groupId>
-            <artifactId>netbout-rest</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+    /**
+     * Protected ctor, for unit testing.
+     * @param mgr The manager
+     */
+    public DefaultBoutFactory(final BoutManager mgr) {
+        this.manager = mgr;
+    }
 
-</project>
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout find(final Long boutId) {
+        return new LazyBout(this.manager, boutId);
+    }
+
+}

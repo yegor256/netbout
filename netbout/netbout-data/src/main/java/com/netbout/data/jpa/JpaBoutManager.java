@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,22 +23,28 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.data.jpa;
+
+// API
+import com.netbout.data.BoutEnt;
+import com.netbout.data.BoutManager;
+
+/**
+ * JPA implementation of the entity manager.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ */
+public final class JpaBoutManager implements BoutManager {
 
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.netbout</groupId>
-        <artifactId>netbout</artifactId>
-        <version>2.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>netbout-model</artifactId>
-    <packaging>jar</packaging>
-    <name>netbout-model</name>
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BoutEnt find(final Long bout) {
+        // stub
+        return new JpaBoutEnt();
+    }
 
-</project>
+}

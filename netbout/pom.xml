@@ -54,7 +54,7 @@
     <modules>
         <module>netbout-tk</module>
         <module>netbout-spi</module>
-        <module>netbout-model</module>
+        <module>netbout-data</module>
         <module>netbout-helpers</module>
         <module>netbout-engine</module>
         <module>netbout-rest</module>
@@ -212,6 +212,16 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.7</version> <!-- 10 Sep 2010 -->
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <!--
+                Assertions and matchers for unit tests.
+                @link http://code.google.com/p/hamcrest/wiki/Tutorial
+                -->
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>1.1</version> <!-- 6 Apr 2011 -->
                 <scope>test</scope>
             </dependency>
             <dependency>

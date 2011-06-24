@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,34 +23,22 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.data;
+
+/**
+ * Manager of bouts.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ */
+public interface BoutManager {
 
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.netbout</groupId>
-        <artifactId>netbout</artifactId>
-        <version>2.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>netbout-war</artifactId>
-    <packaging>war</packaging>
-    <name>netbout-war</name>
+    /**
+     * Find bout entity by ID.
+     * @param bout The ID
+     * @return The entity
+     */
+    BoutEnt find(final Long bout);
 
-    <properties>
-        <jersey.version>1.8-ea04</jersey.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.netbout</groupId>
-            <artifactId>netbout-rest</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-
-</project>
+}

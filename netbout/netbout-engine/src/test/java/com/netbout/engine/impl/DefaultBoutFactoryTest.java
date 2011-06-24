@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,34 +23,38 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.engine.impl;
+
+import com.netbout.data.BoutEnt;
+import com.netbout.data.BoutManager;
+import com.netbout.engine.BoutFactory;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
+
+/**
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ */
+public final class DefaultBoutFactoryTest {
 
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.netbout</groupId>
-        <artifactId>netbout</artifactId>
-        <version>2.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>netbout-war</artifactId>
-    <packaging>war</packaging>
-    <name>netbout-war</name>
+    private static final Long BOUT_ID = 543L;
 
-    <properties>
-        <jersey.version>1.8-ea04</jersey.version>
-    </properties>
+    private static final String BOUT_TITLE = "some title";
 
-    <dependencies>
-        <dependency>
-            <groupId>com.netbout</groupId>
-            <artifactId>netbout-rest</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+    @Test
+    public void testBoutFinding() throws Exception {
+        final BoutEnt entity = mock(BoutEnt.class);
+        doReturn(this.BOUT_TITLE).when(entity).title();
+        final BoutManager manager = mock(BoutManager.class);
+        doReturn(entity).when(manager).find(this.BOUT_ID);
+        final BoutFactory factory = new DefaultBoutFactory(manager);
+        assertThat(
+            factory.find(this.BOUT_ID).title(),
+            equalTo(this.BOUT_TITLE)
+        );
+    }
 
-</project>
+}

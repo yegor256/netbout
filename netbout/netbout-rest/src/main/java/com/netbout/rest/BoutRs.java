@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,34 +23,66 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest;
+
+// bout manipulation engine from com.netbout:netbout-engine
+import com.netbout.engine.Bout;
+import com.netbout.engine.BoutFactory;
+import com.netbout.engine.impl.DefaultBoutFactory;
+
+// for JAX-RS
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+/**
+ * RESTful front of one Bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ */
+@Path("{id: \\d+}")
+public final class BoutRs {
 
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.netbout</groupId>
-        <artifactId>netbout</artifactId>
-        <version>2.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>netbout-war</artifactId>
-    <packaging>war</packaging>
-    <name>netbout-war</name>
+    /**
+     * Bout manipulation factory.
+     */
+    private final BoutFactory factory;
 
-    <properties>
-        <jersey.version>1.8-ea04</jersey.version>
-    </properties>
+    /**
+     * The bout to work with.
+     */
+    private final Bout bout;
 
-    <dependencies>
-        <dependency>
-            <groupId>com.netbout</groupId>
-            <artifactId>netbout-rest</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+    /**
+     * Public ctor.
+     * @param boutId ID of the bout
+     */
+    public BoutRs(@PathParam("id") final Long boutId) {
+        this(new DefaultBoutFactory(), boutId);
+    }
 
-</project>
+    /**
+     * Ctor for unit testing.
+     * @param fct The factory
+     * @param boutId ID of the bout
+     */
+    protected BoutRs(final BoutFactory fct, final Long boutId) {
+        this.factory = fct;
+        this.bout = this.factory.find(boutId);
+    }
+
+    /**
+     * Get bout data.
+     * @return The bout, convertable to XML
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public Bout info() {
+        return this.bout;
+    }
+
+}
