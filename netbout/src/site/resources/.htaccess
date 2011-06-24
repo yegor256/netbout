@@ -1,9 +1,0 @@
-#
-# @version $Id$
-#
-
-# to protect content
-AuthUserFile /home/caybo/maven.netbout.com/.htpasswd
-AuthName "maven.netbout.com"
-AuthType Basic
-Require valid-user

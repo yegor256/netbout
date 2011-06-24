@@ -38,14 +38,19 @@
         <artifactId>netbout</artifactId>
         <version>2.0-SNAPSHOT</version>
     </parent>
-    <artifactId>netbout-www</artifactId>
-    <packaging>war</packaging>
-    <name>netbout-www</name>
+    <artifactId>netbout-engine</artifactId>
+    <packaging>jar</packaging>
+    <name>netbout-engine</name>
 
     <dependencies>
         <dependency>
             <groupId>com.netbout</groupId>
-            <artifactId>netbout-rest</artifactId>
+            <artifactId>netbout-model</artifactId>
+            <version>2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netbout</groupId>
+            <artifactId>netbout-helpers</artifactId>
             <version>2.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

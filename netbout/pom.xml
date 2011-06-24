@@ -54,9 +54,14 @@
     <modules>
         <module>netbout-tk</module>
         <module>netbout-www</module>
+        <module>netbout-rest</module>
+        <module>netbout-engine</module>
+        <module>netbout-model</module>
+        <module>netbout-spi</module>
+        <module>netbout-helpers</module>
     </modules>
 
-    <description>.com, Decision Making System</description>
+    <description>Persistent Communications Online</description>
     <url>http://www.netbout.com</url>
     <inceptionYear>2010</inceptionYear>
 
@@ -146,6 +151,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.netbout</groupId>
+                <artifactId>netbout-tk</artifactId>
+                <version>2.0-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <!--
                 This library simplifies string operations. This is
