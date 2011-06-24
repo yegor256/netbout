@@ -24,67 +24,21 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine.impl;
+package com.netbout.data.jpa;
 
-// data access from com.netbout:netbout-data
-import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
-
-// API
-import com.netbout.engine.Bout;
+import org.junit.*;
+// import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Implementation of a Bout.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class LazyBout implements Bout {
+public final class JpaBoutEntTest {
 
-    /**
-     * Manager of data entities.
-     */
-    private final BoutManager manager;
-
-    /**
-     * ID of the bout.
-     */
-    private final Long boutId;
-
-    /**
-     * Bout entity.
-     */
-    private BoutEnt bout;
-
-    /**
-     * Public ctor, for unit testing.
-     * @param mgr The manager
-     * @param bid Bout ID
-     */
-    public LazyBout(final BoutManager mgr, final Long bid) {
-        this.manager = mgr;
-        this.boutId = bid;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String title() {
-        return this.entity().title();
-    }
-
-    /**
-     * Load entity from manager.
-     * @return The entity loaded
-     */
-    private BoutEnt entity() {
-        synchronized (this) {
-            if (this.bout == null) {
-                this.bout = this.manager.find(this.boutId);
-            }
-            return this.bout;
-        }
+    @Test
+    public void testBoutManipulations() throws Exception {
     }
 
 }
