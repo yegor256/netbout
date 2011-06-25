@@ -28,7 +28,7 @@ package com.netbout.engine.impl;
 
 import com.netbout.data.BoutEnt;
 import com.netbout.data.BoutManager;
-import com.netbout.engine.BoutFactory;
+import com.netbout.engine.Bout;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -38,32 +38,23 @@ import static org.mockito.Mockito.*;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultBoutFactoryTest {
+public final class LazyBoutTest {
 
     private static final Long BOUT_ID = 543L;
 
     private static final String BOUT_TITLE = "some title";
 
     @Test
-    public void testBoutFinding() throws Exception {
+    public void testBoutBehavior() throws Exception {
         final BoutEnt entity = mock(BoutEnt.class);
         doReturn(this.BOUT_TITLE).when(entity).title();
         final BoutManager manager = mock(BoutManager.class);
         doReturn(entity).when(manager).find(this.BOUT_ID);
-        final BoutFactory factory = new DefaultBoutFactory(manager);
-        assertThat(
-            factory.find(this.BOUT_ID).title(),
-            equalTo(this.BOUT_TITLE)
-        );
-    }
-
-    @Test
-    public void testDefaultClassInstantiating() throws Exception {
-        final BoutFactory factory = new DefaultBoutFactory();
-        assertThat(
-            factory,
-            instanceOf(BoutFactory.class)
-        );
+        final Bout bout = new LazyBout(manager, this.BOUT_ID);
+        final String title1 = bout.title();
+        final String title2 = bout.title();
+        assertThat(title1, equalTo(this.BOUT_TITLE));
+        verify(manager).find(this.BOUT_ID);
     }
 
 }

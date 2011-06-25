@@ -50,4 +50,10 @@ public final class BoutRsTest {
         assertThat(svc.info(), equalTo(bout));
     }
 
+    @Test
+    public void testDefaultClassInstantiating() throws Exception {
+        final BoutRs svc = new BoutRs(this.BOUT_ID);
+        assertThat(svc, instanceOf(BoutRs.class));
+    }
+
 }
