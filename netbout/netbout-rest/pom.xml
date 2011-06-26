@@ -102,6 +102,12 @@
             <artifactId>mockito-all</artifactId>
             <!-- other details are in parent pom.xml -->
         </dependency>
+        <dependency>
+            <groupId>org.xmlmatchers</groupId>
+            <artifactId>xml-matchers</artifactId>
+            <version>0.10</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

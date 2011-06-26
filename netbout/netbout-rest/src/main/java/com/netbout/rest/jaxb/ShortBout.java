@@ -24,32 +24,63 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.jaxb;
 
-// JDK
-import java.net.URI;
+// bout manipulation engine from com.netbout:netbout-engine
+import com.netbout.engine.Bout;
+
+// JAXB
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Builder of URI-s.
+ * One bout, short info.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UriBuilder {
+@XmlType(name = "bout")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class ShortBout {
 
     /**
-     * Build an URI.
-     * @param path The path
-     * @return Full URI
-     * @todo #103 It's a stub at the moment. We should build proper
-     *       URIs, using full path of the application in web.
+     * The Bout itself.
      */
-    public URI build(final String path) {
-        try {
-            return new URI(path);
-        } catch (java.net.URISyntaxException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+    private final Bout bout;
+
+    /**
+     * Public default ctor, required for JAXB.
+     */
+    public ShortBout() {
+        this.bout = null;
+    }
+
+    /**
+     * Public ctor.
+     * @param pbout The bout
+     */
+    public ShortBout(final Bout pbout) {
+        this.bout = pbout;
+    }
+
+    /**
+     * Number of the bout.
+     * @return The number
+     */
+    @XmlElement(name = "number", required = true)
+    public Long getNumber() {
+        return this.bout.number();
+    }
+
+    /**
+     * Title of the bout.
+     * @return The title
+     */
+    @XmlElement(name = "title")
+    public String getTitle() {
+        return this.bout.title();
     }
 
 }

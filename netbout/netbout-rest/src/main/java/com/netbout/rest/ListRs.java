@@ -31,8 +31,8 @@ import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
 import com.netbout.engine.impl.DefaultBoutFactory;
 
-// JDK
-import java.util.List;
+// JAXB implemented data manipulators
+import com.netbout.rest.jaxb.PageWithBouts;
 
 // for JAX-RS
 import javax.ws.rs.GET;
@@ -42,8 +42,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 /**
  * Collection of Bouts.
@@ -80,24 +83,28 @@ public final class ListRs {
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public List<Bout> list(@QueryParam("q") @DefaultValue("")
+    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
         final String query) {
-        return this.factory.list(query);
+        return new PageWithBouts(this.factory, query);
     }
 
     /**
      * Start new bout.
+     * @param uinfo URI Information (injected by JAX-RS impl)
      * @param identity The identity to use as creator
      * @param title The title of the bout
      * @return JAX-RS response
      */
     @POST
     @Path("/new")
-    public Response start(@QueryParam("i") final String identity,
+    public Response start(@Context UriInfo uinfo,
+        @QueryParam("i") final String identity,
         @QueryParam("t") final String title) {
         final Bout bout = this.factory.create(new WebIdentity(identity), title);
+        final UriBuilder builder = uinfo.getAbsolutePathBuilder()
+            .path(this.getClass(), "bout");
         return Response
-            .created(new UriBuilder().build("/" + bout.number()))
+            .created(builder.build(bout.number()))
             .build();
     }
 
