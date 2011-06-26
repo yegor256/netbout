@@ -56,6 +56,8 @@ public final class CreateBoutIT {
     }
 
     private String root(final String suffix) {
+        // @todo #103 Port number shall be received from system variable, not
+        //       being hard-coded (as it is now)
         return "http://localhost:9090/" + suffix;
     }
 
