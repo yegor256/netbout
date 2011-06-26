@@ -26,37 +26,18 @@
  */
 package com.netbout.engine;
 
-// JDK
-import java.util.List;
-
 /**
- * Factory to manipulate bouts.
+ * Identity, who is representing a user.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutFactory {
+public interface Identity {
 
     /**
-     * Create new bout.
-     * @param creator The creator of the bout
-     * @param title Title of the bout
-     * @return The bout just created
+     * Get its name (unique in the entire system).
+     * @return The name
      */
-    Bout create(final Identity creator, final String title);
-
-    /**
-     * Find one bout by unique ID.
-     * @param boutId Unique ID
-     * @return The bout just found
-     */
-    Bout find(final Long boutId);
-
-    /**
-     * Find a number of bouts, using query.
-     * @param query The query
-     * @return The list of bouts just found
-     */
-    List<Bout> list(final String query);
+    String name();
 
 }

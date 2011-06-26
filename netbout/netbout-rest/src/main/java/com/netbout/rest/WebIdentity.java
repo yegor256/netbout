@@ -24,39 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine;
+package com.netbout.rest;
 
-// JDK
-import java.util.List;
+// bout manipulation engine from com.netbout:netbout-engine
+import com.netbout.engine.Identity;
 
 /**
- * Factory to manipulate bouts.
+ * Web Identity (after authentication).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutFactory {
+public final class WebIdentity implements Identity {
 
     /**
-     * Create new bout.
-     * @param creator The creator of the bout
-     * @param title Title of the bout
-     * @return The bout just created
+     * Name of identity.
      */
-    Bout create(final Identity creator, final String title);
+    private String name;
 
     /**
-     * Find one bout by unique ID.
-     * @param boutId Unique ID
-     * @return The bout just found
+     * Public ctor.
+     * @param name The identity, as a text
+     * @todo #103 Here we should validate that this identity can be
+     *       used with currently logged in user. If the user is not
+     *       logged in - we should throw a runtime exception.
      */
-    Bout find(final Long boutId);
+    public WebIdentity(final String text) {
+        this.name = text;
+    }
 
     /**
-     * Find a number of bouts, using query.
-     * @param query The query
-     * @return The list of bouts just found
+     * {@inheritDoc}
      */
-    List<Bout> list(final String query);
+    @Override
+    public String name() {
+        return this.name;
+    }
 
 }

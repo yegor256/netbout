@@ -35,6 +35,12 @@ package com.netbout.engine;
 public interface Bout {
 
     /**
+     * Get number of the bout.
+     * @return The number
+     */
+    Long number();
+
+    /**
      * Get title of the bout.
      * @return The title
      */

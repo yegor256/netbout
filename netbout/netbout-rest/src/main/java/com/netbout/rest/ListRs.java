@@ -24,79 +24,92 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine.impl;
+package com.netbout.rest;
 
-// data access from com.netbout:netbout-data
-import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
-import com.netbout.data.jpa.JpaBoutManager;
-
-// API
+// bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
-import com.netbout.engine.Identity;
+import com.netbout.engine.impl.DefaultBoutFactory;
 
 // JDK
-import java.util.ArrayList;
 import java.util.List;
 
+// for JAX-RS
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 /**
- * Implementation of the default factory.
+ * Collection of Bouts.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultBoutFactory implements BoutFactory {
+@Path("/")
+public final class ListRs {
 
     /**
-     * Manager of data entities.
+     * Bout manipulation factory.
      */
-    private final BoutManager manager;
+    private final BoutFactory factory;
 
     /**
      * Public ctor.
      */
-    public DefaultBoutFactory() {
-        this.manager = new JpaBoutManager();
+    public ListRs() {
+        this(new DefaultBoutFactory());
     }
 
     /**
-     * Protected ctor, for unit testing.
-     * @param mgr The manager
+     * Ctor for unit testing.
+     * @param fct The factory
      */
-    public DefaultBoutFactory(final BoutManager mgr) {
-        this.manager = mgr;
+    protected ListRs(final BoutFactory fct) {
+        this.factory = fct;
     }
 
     /**
-     * {@inheritDoc}
+     * Get list of bouts.
+     * @return The collection of bouts, to be converted into XML
      */
-    @Override
-    public Bout create(final Identity creator, final String title) {
-        return new LazyBout(
-            this.manager,
-            this.manager.create(creator.name(), title).number()
-        );
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public List<Bout> list(@QueryParam("q") @DefaultValue("")
+        final String query) {
+        return this.factory.list(query);
     }
 
     /**
-     * {@inheritDoc}
+     * Start new bout.
+     * @param identity The identity to use as creator
+     * @param title The title of the bout
+     * @return JAX-RS response
      */
-    @Override
-    public Bout find(final Long boutId) {
-        return new LazyBout(this.manager, boutId);
+    @POST
+    @Path("/new")
+    public Response start(@QueryParam("i") final String identity,
+        @QueryParam("t") final String title) {
+        final Bout bout = this.factory.create(new WebIdentity(identity), title);
+        return Response
+            .created(new UriBuilder().build("/" + bout.number()))
+            .build();
     }
 
     /**
-     * {@inheritDoc}
+     * Get one single bout as JAX-RS resource.
+     * @param bout ID of the bout
+     * @return The resource
      */
-    @Override
-    public List<Bout> list(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
-        for (BoutEnt ent : this.manager.list(query)) {
-            list.add(new LazyBout(this.manager, ent.number()));
-        }
-        return list;
+    @GET
+    @Path("{id: \\d+}")
+    public BoutRs bout(@PathParam("id") final Long bout) {
+        return new BoutRs(this.factory, bout);
     }
 
 }

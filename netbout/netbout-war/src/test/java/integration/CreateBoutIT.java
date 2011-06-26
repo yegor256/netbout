@@ -24,39 +24,39 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine;
+package integration;
 
-// JDK
-import java.util.List;
+import com.netbout.engine.Bout;
+import com.netbout.engine.BoutFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Factory to manipulate bouts.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutFactory {
+public final class CreateBoutIT {
 
-    /**
-     * Create new bout.
-     * @param creator The creator of the bout
-     * @param title Title of the bout
-     * @return The bout just created
-     */
-    Bout create(final Identity creator, final String title);
+    @Test
+    public void testCreatesNewBout() throws Exception {
+        final HttpClient client = new DefaultHttpClient();
+        final HttpUriRequest request = new HttpGet(this.root(""));
+        final HttpResponse response = client.execute(request);
+        assertThat(
+            response.getStatusLine().getStatusCode(),
+            equalTo(200)
+        );
+    }
 
-    /**
-     * Find one bout by unique ID.
-     * @param boutId Unique ID
-     * @return The bout just found
-     */
-    Bout find(final Long boutId);
-
-    /**
-     * Find a number of bouts, using query.
-     * @param query The query
-     * @return The list of bouts just found
-     */
-    List<Bout> list(final String query);
+    private String root(final String suffix) {
+        return "http://localhost:9090/" + suffix;
+    }
 
 }

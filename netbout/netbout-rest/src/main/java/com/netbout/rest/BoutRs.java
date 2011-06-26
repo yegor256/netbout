@@ -39,12 +39,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- * RESTful front of one Bout.
+ * RESTful front of one Bout. The class is instantiated from {@link ListRs}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("{id: \\d+}")
 public final class BoutRs {
 
     /**
@@ -59,18 +58,11 @@ public final class BoutRs {
 
     /**
      * Public ctor.
-     * @param boutId ID of the bout
-     */
-    public BoutRs(@PathParam("id") final Long boutId) {
-        this(new DefaultBoutFactory(), boutId);
-    }
-
-    /**
-     * Ctor for unit testing.
      * @param fct The factory
      * @param boutId ID of the bout
+     * @see ListRs#bout(Long)
      */
-    protected BoutRs(final BoutFactory fct, final Long boutId) {
+    public BoutRs(final BoutFactory fct, final Long boutId) {
         this.factory = fct;
         this.bout = this.factory.find(boutId);
     }

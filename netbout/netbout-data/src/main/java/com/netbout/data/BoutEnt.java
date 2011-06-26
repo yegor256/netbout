@@ -35,6 +35,12 @@ package com.netbout.data;
 public interface BoutEnt {
 
     /**
+     * Get unique number of the bout.
+     * @return The number
+     */
+    Long number();
+
+    /**
      * Get title of the bout.
      * @return The title
      */

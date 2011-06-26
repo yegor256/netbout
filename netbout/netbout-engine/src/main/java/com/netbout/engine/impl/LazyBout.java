@@ -70,6 +70,14 @@ final class LazyBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public Long number() {
+        return this.entity().number();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String title() {
         return this.entity().title();
     }
