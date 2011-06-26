@@ -108,6 +108,13 @@
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <java.util.logging.config.file>
+                                    ${project.build.outputDirectory}/logging.properties
+                                </java.util.logging.config.file>
+                            </systemPropertyVariables>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>verify</id>
