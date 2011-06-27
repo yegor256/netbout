@@ -27,72 +27,41 @@
 package com.netbout.rest;
 
 // bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
+import com.netbout.engine.User;
 
-// JAXB implemented data manipulators
-import com.netbout.rest.jaxb.PageWithBouts;
-
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+// JAX-RS
+import javax.ws.rs.core.SecurityContext;
 
 /**
- * Collection of Bouts.
+ * Authenticator.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class ListRs {
+public final class Auth {
 
     /**
-     * Bout manipulation factory.
+     * Name of identity.
      */
-    private final BoutFactory factory;
+    private User user;
 
     /**
      * Public ctor.
+     * @param ctx The context
+     * @todo #103 Here we should validate that this identity can be
+     *       used with currently logged in user. If the user is not
+     *       logged in - we should throw a runtime exception.
      */
-    public ListRs() {
-        this(new DefaultBoutFactory());
+    public Auth(final SecurityContext ctx) {
+        this.user = new DefaultUserFactory().find("login", "password");
     }
 
     /**
-     * Ctor for unit testing.
-     * @param fct The factory
+     * Get currently logged in user.
+     * @return The user
      */
-    protected ListRs(final BoutFactory fct) {
-        this.factory = fct;
-    }
-
-    /**
-     * Get list of bouts.
-     * @return The collection of bouts, to be converted into XML
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
-        final String query) {
-        return new PageWithBouts(this.factory, query);
-    }
-
-    /**
-     * Get one single bout as JAX-RS resource.
-     * @param bout ID of the bout
-     * @return The resource
-     */
-    @GET
-    @Path("{id: \\d+}")
-    public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.factory, bout);
+    public User user() {
+        return this.user;
     }
 
 }

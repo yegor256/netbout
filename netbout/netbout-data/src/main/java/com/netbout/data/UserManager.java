@@ -24,47 +24,25 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration;
+package com.netbout.data;
 
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.junit.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.xmlmatchers.transform.XmlConverters.the;
+// JDK
+import java.util.List;
 
 /**
+ * Manager of users.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CreateBoutIT {
+public interface UserManager {
 
-    private static final String BOUT_TITLE = "some text";
-
-    private static final String IDENTITY = "me";
-
-    @Test
-    public void testCreatesNewBout() throws Exception {
-        final HttpClient client = new DefaultHttpClient();
-        final HttpUriRequest request = new HttpGet(
-            new ContainerURL().path("/new")
-                .param("t", this.BOUT_TITLE)
-                .param("i", this.IDENTITY)
-                .toURI()
-        );
-        final HttpResponse response = client.execute(request);
-        assertThat(
-            response.getStatusLine().getStatusCode(),
-            equalTo(HttpStatus.SC_CREATED)
-        );
-    }
+    /**
+     * Find user entity by login and password.
+     * @param login The login
+     * @param password The password
+     * @return The entity
+     */
+    UserEnt find(final String login, final String password);
 
 }

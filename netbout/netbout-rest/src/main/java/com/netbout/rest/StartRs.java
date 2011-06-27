@@ -32,26 +32,30 @@ import com.netbout.engine.BoutFactory;
 import com.netbout.engine.impl.DefaultBoutFactory;
 
 // JAXB implemented data manipulators
-import com.netbout.rest.jaxb.PageWithBouts;
+import com.netbout.rest.jaxb.PageStart;
 
 // for JAX-RS
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 /**
- * Collection of Bouts.
+ * Start new bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class ListRs {
+@Path("/new")
+public final class StartRs extends AbstractRs {
 
     /**
      * Bout manipulation factory.
@@ -61,7 +65,7 @@ public final class ListRs {
     /**
      * Public ctor.
      */
-    public ListRs() {
+    public StartRs() {
         this(new DefaultBoutFactory());
     }
 
@@ -69,30 +73,38 @@ public final class ListRs {
      * Ctor for unit testing.
      * @param fct The factory
      */
-    protected ListRs(final BoutFactory fct) {
+    protected StartRs(final BoutFactory fct) {
         this.factory = fct;
     }
 
     /**
-     * Get list of bouts.
-     * @return The collection of bouts, to be converted into XML
+     * Start new bout.
+     * @return JAX-RS response
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
-        final String query) {
-        return new PageWithBouts(this.factory, query);
+    public PageStart start() {
+        return new PageStart();
     }
 
     /**
-     * Get one single bout as JAX-RS resource.
-     * @param bout ID of the bout
-     * @return The resource
+     * Start new bout.
+     * @param identity The identity to use as creator
+     * @param title The title of the bout
+     * @return JAX-RS response
      */
-    @GET
-    @Path("{id: \\d+}")
-    public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.factory, bout);
+    @POST
+    public Response start(@QueryParam("i") final String identity,
+        @QueryParam("t") final String title) {
+        final Bout bout = this.factory.create(
+            this.user().identity(identity),
+            title
+        );
+        final UriBuilder builder = this.uriInfo().getAbsolutePathBuilder()
+            .path(ListRs.class, "bout");
+        return Response
+            .created(builder.build(bout.number()))
+            .build();
     }
 
 }

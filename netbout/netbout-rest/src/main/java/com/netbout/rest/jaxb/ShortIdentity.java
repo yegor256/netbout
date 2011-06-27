@@ -24,75 +24,54 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.jaxb;
 
 // bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
+import com.netbout.engine.Identity;
 
-// JAXB implemented data manipulators
-import com.netbout.rest.jaxb.PageWithBouts;
-
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+// JAXB
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Collection of Bouts.
+ * One identity, short info.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class ListRs {
+@XmlType(name = "identity")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class ShortIdentity {
 
     /**
-     * Bout manipulation factory.
+     * The Identity itself.
      */
-    private final BoutFactory factory;
+    private final Identity identity;
+
+    /**
+     * Public default ctor, required for JAXB.
+     */
+    public ShortIdentity() {
+        this.bout = null;
+    }
 
     /**
      * Public ctor.
+     * @param idt The identity
      */
-    public ListRs() {
-        this(new DefaultBoutFactory());
+    public ShortIdentity(final Identity idt) {
+        this.identity = idt;
     }
 
     /**
-     * Ctor for unit testing.
-     * @param fct The factory
+     * Name of identity.
+     * @return The name
      */
-    protected ListRs(final BoutFactory fct) {
-        this.factory = fct;
-    }
-
-    /**
-     * Get list of bouts.
-     * @return The collection of bouts, to be converted into XML
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
-        final String query) {
-        return new PageWithBouts(this.factory, query);
-    }
-
-    /**
-     * Get one single bout as JAX-RS resource.
-     * @param bout ID of the bout
-     * @return The resource
-     */
-    @GET
-    @Path("{id: \\d+}")
-    public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.factory, bout);
+    @XmlElement(name = "name")
+    public String getName() {
+        return this.identity.name();
     }
 
 }

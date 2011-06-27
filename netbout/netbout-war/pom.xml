@@ -78,6 +78,17 @@
             <!-- other details are in parent pom.xml -->
         </dependency>
         <dependency>
+            <groupId>org.xmlmatchers</groupId>
+            <artifactId>xml-matchers</artifactId>
+            <!-- other details are in parent pom.xml -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <!-- other details are in parent pom.xml -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!--
             JAX-RS reference implementation, required during compile time
             -->
@@ -109,6 +120,7 @@
                             <goal>integration-test</goal>
                         </goals>
                         <configuration>
+                            <useFile>false</useFile>
                             <systemPropertyVariables>
                                 <java.util.logging.config.file>
                                     ${project.build.outputDirectory}/logging.properties

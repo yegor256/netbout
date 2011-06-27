@@ -24,75 +24,65 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.jaxb;
 
 // bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
+import com.netbout.engine.Identity;
+import com.netbout.engine.User;
 
-// JAXB implemented data manipulators
-import com.netbout.rest.jaxb.PageWithBouts;
+// JDK
+import java.util.ArrayList;
+import java.util.List;
 
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+// JAXB
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Collection of Bouts.
+ * Start new bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class ListRs {
+@XmlRootElement(name = "page")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class PageStart {
 
     /**
-     * Bout manipulation factory.
+     * User to work with.
      */
-    private final BoutFactory factory;
+    private final User user;
+
+    /**
+     * Public default ctor, required for JAXB.
+     */
+    public PageStart() {
+        this.user = null;
+    }
 
     /**
      * Public ctor.
+     * @param usr The user
      */
-    public ListRs() {
-        this(new DefaultBoutFactory());
+    public PageStart(final User usr) {
+        this.user = usr;
     }
 
     /**
-     * Ctor for unit testing.
-     * @param fct The factory
-     */
-    protected ListRs(final BoutFactory fct) {
-        this.factory = fct;
-    }
-
-    /**
-     * Get list of bouts.
+     * Collection of bouts.
      * @return The collection of bouts, to be converted into XML
      */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
-        final String query) {
-        return new PageWithBouts(this.factory, query);
-    }
-
-    /**
-     * Get one single bout as JAX-RS resource.
-     * @param bout ID of the bout
-     * @return The resource
-     */
-    @GET
-    @Path("{id: \\d+}")
-    public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.factory, bout);
+    @XmlElement(name = "identity")
+    @XmlElementWrapper(name = "identities")
+    public List<Identity> getIdentities() {
+        final List<ShortIdentity> list = new ArrayList<ShortIdentity>();
+        for (Identity identity : this.user.identities()) {
+            list.add(new ShortIdentity(identity));
+        }
+        return list;
     }
 
 }

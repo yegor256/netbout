@@ -24,75 +24,47 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package integration;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
-
-// JAXB implemented data manipulators
-import com.netbout.rest.jaxb.PageWithBouts;
-
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
- * Collection of Bouts.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class ListRs {
+public final class ContainerURL {
 
-    /**
-     * Bout manipulation factory.
-     */
-    private final BoutFactory factory;
+    // @todo #103 Port number shall be received from system variable, not
+    //       being hard-coded (as it is now)
+    private static final String ROOT = "http://localhost:9090";
 
-    /**
-     * Public ctor.
-     */
-    public ListRs() {
-        this(new DefaultBoutFactory());
+    private final List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+    private final StringBuilder builder = new StringBuilder(this.ROOT);
+
+    public ContainerURL path(final String path) {
+        this.builder.append(path);
+        return this;
     }
 
-    /**
-     * Ctor for unit testing.
-     * @param fct The factory
-     */
-    protected ListRs(final BoutFactory fct) {
-        this.factory = fct;
+    public ContainerURL param(final String name, final String value) {
+        this.params.add(new BasicNameValuePair(name, value));
+        return this;
     }
 
-    /**
-     * Get list of bouts.
-     * @return The collection of bouts, to be converted into XML
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
-        final String query) {
-        return new PageWithBouts(this.factory, query);
+    @Override
+    public String toString() {
+        return this.builder.toString()
+            + URLEncodedUtils.format(this.params, "utf-8");
     }
 
-    /**
-     * Get one single bout as JAX-RS resource.
-     * @param bout ID of the bout
-     * @return The resource
-     */
-    @GET
-    @Path("{id: \\d+}")
-    public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.factory, bout);
+    public URI toURI() throws java.net.URISyntaxException {
+        return new URI(this.toString());
     }
 
 }

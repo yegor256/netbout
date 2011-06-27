@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2011, netUser.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netUser Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
@@ -24,47 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration;
+package com.netbout.data.jpa;
 
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.junit.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.xmlmatchers.transform.XmlConverters.the;
+// API
+import com.netbout.data.IdentityEnt;
+import com.netbout.data.UserEnt;
+
+// JDK
+import java.util.ArrayList;
+import java.util.List;
 
 /**
+ * JPA implementation of the entity.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CreateBoutIT {
+public final class JpaUserEnt implements UserEnt {
 
-    private static final String BOUT_TITLE = "some text";
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long number() {
+        // stub
+        return 1L;
+    }
 
-    private static final String IDENTITY = "me";
-
-    @Test
-    public void testCreatesNewBout() throws Exception {
-        final HttpClient client = new DefaultHttpClient();
-        final HttpUriRequest request = new HttpGet(
-            new ContainerURL().path("/new")
-                .param("t", this.BOUT_TITLE)
-                .param("i", this.IDENTITY)
-                .toURI()
-        );
-        final HttpResponse response = client.execute(request);
-        assertThat(
-            response.getStatusLine().getStatusCode(),
-            equalTo(HttpStatus.SC_CREATED)
-        );
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<IdentityEnt> identities() {
+        final List<IdentityEnt> list = new ArrayList<IdentityEnt>();
+        // stub
+        return list;
     }
 
 }

@@ -26,73 +26,69 @@
  */
 package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
-
-// JAXB implemented data manipulators
-import com.netbout.rest.jaxb.PageWithBouts;
-
 // for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 
 /**
- * Collection of Bouts.
+ * Abstract JAX-RS entry point.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class ListRs {
+public abstract class AbstractRs {
 
     /**
-     * Bout manipulation factory.
+     * URI information.
      */
-    private final BoutFactory factory;
+    private UriInfo uriInfo;
 
     /**
-     * Public ctor.
+     * Security context.
      */
-    public ListRs() {
-        this(new DefaultBoutFactory());
+    private SecurityContext securityContext;
+
+    /**
+     * Save URI information.
+     * @param uinfo URI Information (injected by JAX-RS impl)
+     */
+    @Context
+    public final void setUriInfo(final UriInfo uinfo) {
+        this.uriInfo = uinfo;
     }
 
     /**
-     * Ctor for unit testing.
-     * @param fct The factory
+     * Save security context.
+     * @param ctx The context
      */
-    protected ListRs(final BoutFactory fct) {
-        this.factory = fct;
+    @Context
+    public final void setSecurityContext(final SecurityContext ctx) {
+        this.securityContext = ctx;
     }
 
     /**
-     * Get list of bouts.
-     * @return The collection of bouts, to be converted into XML
+     * Get currently logged in user.
+     * @return The user
      */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
-        final String query) {
-        return new PageWithBouts(this.factory, query);
+    protected final User user() {
+        return new Auth(this.securityContext()).user();
     }
 
     /**
-     * Get one single bout as JAX-RS resource.
-     * @param bout ID of the bout
-     * @return The resource
+     * Get URI information.
+     * @return URI Information (injected by JAX-RS impl)
      */
-    @GET
-    @Path("{id: \\d+}")
-    public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.factory, bout);
+    protected final UriInfo uriInfo() {
+        return this.uriInfo;
+    }
+
+    /**
+     * Get security context.
+     * @return The context
+     */
+    protected final SecurityContext securityContext() {
+        return this.securityContext;
     }
 
 }

@@ -24,41 +24,51 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package integration;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Identity;
+import com.netbout.engine.Bout;
+import com.netbout.engine.BoutFactory;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
+import static org.xmlmatchers.transform.XmlConverters.the;
 
 /**
- * Web Identity (after authentication).
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class WebIdentity implements Identity {
+public final class ListExistingBoutsIT {
 
-    /**
-     * Name of identity.
-     */
-    private String name;
-
-    /**
-     * Public ctor.
-     * @param name The identity, as a text
-     * @todo #103 Here we should validate that this identity can be
-     *       used with currently logged in user. If the user is not
-     *       logged in - we should throw a runtime exception.
-     */
-    public WebIdentity(final String text) {
-        this.name = text;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String name() {
-        return this.name;
+    @Test
+    public void testCreatesNewBout() throws Exception {
+        final HttpClient client = new DefaultHttpClient();
+        final HttpUriRequest request = new HttpGet(
+            new ContainerURL().path("/").toURI()
+        );
+        final HttpResponse response = client.execute(request);
+        assertThat(
+            response.getStatusLine().getStatusCode(),
+            equalTo(HttpStatus.SC_OK)
+        );
+        final String xml = IOUtils.toString(response.getEntity().getContent());
+        assertThat(
+            the(xml),
+            org.xmlmatchers.XmlMatchers.hasXPath("/page/bouts")
+        );
+        assertThat(
+            the(xml),
+            org.xmlmatchers.XmlMatchers.hasXPath(
+                "/processing-instruction('xml-stylesheet')[@href]"
+            )
+        );
     }
 
 }

@@ -24,75 +24,26 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
-
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
-
-// JAXB implemented data manipulators
-import com.netbout.rest.jaxb.PageWithBouts;
-
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+package com.netbout.data;
 
 /**
- * Collection of Bouts.
+ * Identity, entity of data.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class ListRs {
+public interface IdentityEnt {
 
     /**
-     * Bout manipulation factory.
+     * Get unique number of the identity.
+     * @return The number
      */
-    private final BoutFactory factory;
+    Long number();
 
     /**
-     * Public ctor.
+     * Get name of identity.
+     * @return The name
      */
-    public ListRs() {
-        this(new DefaultBoutFactory());
-    }
-
-    /**
-     * Ctor for unit testing.
-     * @param fct The factory
-     */
-    protected ListRs(final BoutFactory fct) {
-        this.factory = fct;
-    }
-
-    /**
-     * Get list of bouts.
-     * @return The collection of bouts, to be converted into XML
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
-        final String query) {
-        return new PageWithBouts(this.factory, query);
-    }
-
-    /**
-     * Get one single bout as JAX-RS resource.
-     * @param bout ID of the bout
-     * @return The resource
-     */
-    @GET
-    @Path("{id: \\d+}")
-    public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.factory, bout);
-    }
+    String name();
 
 }

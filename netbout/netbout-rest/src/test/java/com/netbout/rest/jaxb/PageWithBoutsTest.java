@@ -79,12 +79,6 @@ public final class PageWithBoutsTest {
             the(xml),
             org.xmlmatchers.XmlMatchers.hasXPath("/page/bouts[count(bout) = 1]")
         );
-        // assertThat(
-        //     the(xml),
-        //     org.xmlmatchers.XmlMatchers.hasXPath(
-        //         "/processing-instruction('xml-stylesheet')[@href]"
-        //     )
-        // );
     }
 
 }

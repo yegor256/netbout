@@ -24,75 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.data.jpa;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
+// API
+import com.netbout.data.UserEnt;
+import com.netbout.data.UserManager;
 
-// JAXB implemented data manipulators
-import com.netbout.rest.jaxb.PageWithBouts;
-
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+// JDK
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Collection of Bouts.
+ * JPA implementation of the entity manager.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class ListRs {
+public final class JpaUserManager implements UserManager {
 
     /**
-     * Bout manipulation factory.
+     * {@inheritDoc}
      */
-    private final BoutFactory factory;
-
-    /**
-     * Public ctor.
-     */
-    public ListRs() {
-        this(new DefaultBoutFactory());
-    }
-
-    /**
-     * Ctor for unit testing.
-     * @param fct The factory
-     */
-    protected ListRs(final BoutFactory fct) {
-        this.factory = fct;
-    }
-
-    /**
-     * Get list of bouts.
-     * @return The collection of bouts, to be converted into XML
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
-        final String query) {
-        return new PageWithBouts(this.factory, query);
-    }
-
-    /**
-     * Get one single bout as JAX-RS resource.
-     * @param bout ID of the bout
-     * @return The resource
-     */
-    @GET
-    @Path("{id: \\d+}")
-    public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.factory, bout);
+    @Override
+    public UserEnt find(final String login, final String password) {
+        // stub
+        return new JpaUserEnt();
     }
 
 }
