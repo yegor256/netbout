@@ -26,39 +26,19 @@
  */
 package com.netbout.data.jpa;
 
-// API
-import com.netbout.data.IdentityEnt;
-import com.netbout.data.UserEnt;
-
-// JDK
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.*;
+// import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * JPA implementation of the entity.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class JpaUserEnt implements UserEnt {
+public final class JpaUserEntTest {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long number() {
-        // stub
-        return 1L;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<IdentityEnt> identities() {
-        final List<IdentityEnt> list = new ArrayList<IdentityEnt>();
-        // stub
-        return list;
+    @Test
+    public void testUserManipulations() throws Exception {
     }
 
 }
