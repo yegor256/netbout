@@ -54,7 +54,8 @@ public final class ShortBout {
      * Public default ctor, required for JAXB.
      */
     public ShortBout() {
-        this.bout = null;
+        // this constructor should never be called
+        throw new IllegalStateException("Invalid call");
     }
 
     /**

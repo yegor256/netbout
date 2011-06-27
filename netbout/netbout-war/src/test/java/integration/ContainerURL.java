@@ -59,8 +59,11 @@ public final class ContainerURL {
 
     @Override
     public String toString() {
-        return this.builder.toString()
-            + URLEncodedUtils.format(this.params, "utf-8");
+        if (this.params.size() > 0) {
+            this.builder.append("?")
+                .append(URLEncodedUtils.format(this.params, "utf-8"));
+        }
+        return this.builder.toString();
     }
 
     public URI toURI() throws java.net.URISyntaxException {

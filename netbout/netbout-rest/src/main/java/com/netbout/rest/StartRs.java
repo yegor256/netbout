@@ -84,7 +84,7 @@ public final class StartRs extends AbstractRs {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public PageStart start() {
-        return new PageStart();
+        return new PageStart(this.user());
     }
 
     /**

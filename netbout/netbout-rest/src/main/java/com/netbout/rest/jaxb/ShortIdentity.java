@@ -54,7 +54,8 @@ public final class ShortIdentity {
      * Public default ctor, required for JAXB.
      */
     public ShortIdentity() {
-        this.identity = null;
+        // this constructor should never be called
+        throw new IllegalStateException("Invalid call");
     }
 
     /**

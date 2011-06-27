@@ -24,66 +24,62 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.jaxb;
+package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Identity;
-import com.netbout.engine.User;
-
-// JDK
-import java.util.ArrayList;
-import java.util.List;
+// for JAX-RS
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
 
 // JAXB
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 /**
- * Start new bout.
+ * Replace standard marshaller.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @link <a href="http://markmail.org/search/?q=list%3Anet.java.dev.jersey.users+ContextResolver%3CMarshaller%3E#query:list%3Anet.java.dev.jersey.users%20ContextResolver%3CMarshaller%3E+page:1+mid:q4fkq6eqlgkzdodc+state:results">discussion</a>
  */
-@XmlRootElement(name = "page")
-@XmlAccessorType(XmlAccessType.NONE)
-public final class PageStart {
+@Provider
+@Produces(MediaType.APPLICATION_XML)
+public final class XslResolver implements ContextResolver<Marshaller> {
 
     /**
-     * User to work with.
+     * JAXB context.
      */
-    private final User user;
-
-    /**
-     * Public default ctor, required for JAXB.
-     */
-    public PageStart() {
-        // this constructor should never be called
-        throw new IllegalStateException("Invalid call");
-    }
+    private final JAXBContext context;
 
     /**
      * Public ctor.
-     * @param usr The user
      */
-    public PageStart(final User usr) {
-        this.user = usr;
+    public XslResolver() {
+        try {
+            this.context = JAXBContext.newInstance("com.netbout.rest.jaxb");
+        } catch (javax.xml.bind.JAXBException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
-     * Collection of bouts.
-     * @return The collection of bouts, to be converted into XML
+     * {@inheritDoc}
      */
-    @XmlElement(name = "identity")
-    @XmlElementWrapper(name = "identities")
-    public List<ShortIdentity> getIdentities() {
-        final List<ShortIdentity> list = new ArrayList<ShortIdentity>();
-        for (Identity identity : this.user.identities()) {
-            list.add(new ShortIdentity(identity));
+    @Override
+    public Marshaller getContext(final Class<?> type) {
+        try {
+            final Marshaller mrsh = this.context.createMarshaller();
+            mrsh.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            mrsh.setProperty(
+                "com.sun.xml.internal.bind.xmlHeaders",
+                "<?xml version='1.0'?>"
+                + "<?xml-stylesheet href='/test.xsl'?>"
+            );
+            return mrsh;
+        } catch (javax.xml.bind.JAXBException ex) {
+            throw new IllegalStateException(ex);
         }
-        return list;
     }
 
 }

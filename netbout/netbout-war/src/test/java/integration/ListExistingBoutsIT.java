@@ -26,8 +26,6 @@
  */
 package integration;
 
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -66,7 +64,7 @@ public final class ListExistingBoutsIT {
         assertThat(
             the(xml),
             org.xmlmatchers.XmlMatchers.hasXPath(
-                "/processing-instruction('xml-stylesheet')[@href]"
+                "/processing-instruction('xml-stylesheet')"
             )
         );
     }

@@ -65,8 +65,8 @@ public final class PageWithBouts {
      * Public default ctor, required for JAXB.
      */
     public PageWithBouts() {
-        this.factory = null;
-        this.query = null;
+        // this constructor should never be called
+        throw new IllegalStateException("Invalid call");
     }
 
     /**

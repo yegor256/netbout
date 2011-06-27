@@ -26,13 +26,12 @@
  */
 package integration;
 
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.*;
@@ -52,9 +51,23 @@ public final class CreateBoutIT {
     private static final String IDENTITY = "me";
 
     @Test
-    public void testCreatesNewBout() throws Exception {
+    public void testRenderStartPage() throws Exception {
         final HttpClient client = new DefaultHttpClient();
         final HttpUriRequest request = new HttpGet(
+            new ContainerURL().path("/new").toURI()
+        );
+        final HttpResponse response = client.execute(request);
+        assertThat(
+            response.getStatusLine().getStatusCode(),
+            equalTo(HttpStatus.SC_OK)
+        );
+    }
+
+    @Ignore
+    @Test
+    public void testCreatesNewBout() throws Exception {
+        final HttpClient client = new DefaultHttpClient();
+        final HttpUriRequest request = new HttpPost(
             new ContainerURL().path("/new")
                 .param("t", this.BOUT_TITLE)
                 .param("i", this.IDENTITY)
