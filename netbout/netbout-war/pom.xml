@@ -60,7 +60,6 @@
             <groupId>com.netbout</groupId>
             <artifactId>netbout-rest</artifactId>
             <version>2.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -194,24 +193,25 @@
 
     <profiles>
         <profile>
+            <!--
+            @todo #103 Temporary measure, until we increase code coverage.
+            -->
             <id>static-analysis</id>
             <activation>
                 <property><name>ci</name></property>
             </activation>
             <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>cobertura-maven-plugin</artifactId>
-                            <configuration>
-                                <check>
-                                    <haltOnFailure>false</haltOnFailure>
-                                </check>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <configuration>
+                            <check>
+                                <haltOnFailure>false</haltOnFailure>
+                            </check>
+                        </configuration>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>
