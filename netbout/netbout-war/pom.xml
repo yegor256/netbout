@@ -167,7 +167,7 @@
                     <webAppConfig>
                         <contextPath>/</contextPath>
                     </webAppConfig>
-                    <stopPort>8005</stopPort>
+                    <stopPort>9091</stopPort>
                     <stopKey>STOP</stopKey>
                     <daemon>true</daemon>
                 </configuration>
