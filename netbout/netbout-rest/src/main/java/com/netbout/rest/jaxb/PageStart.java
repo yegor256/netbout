@@ -77,7 +77,7 @@ public final class PageStart {
      */
     @XmlElement(name = "identity")
     @XmlElementWrapper(name = "identities")
-    public List<Identity> getIdentities() {
+    public List<ShortIdentity> getIdentities() {
         final List<ShortIdentity> list = new ArrayList<ShortIdentity>();
         for (Identity identity : this.user.identities()) {
             list.add(new ShortIdentity(identity));

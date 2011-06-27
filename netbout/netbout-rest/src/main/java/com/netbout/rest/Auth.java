@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 // bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.User;
+import com.netbout.engine.impl.DefaultUserFactory;
 
 // JAX-RS
 import javax.ws.rs.core.SecurityContext;

@@ -54,7 +54,7 @@ public final class ShortIdentity {
      * Public default ctor, required for JAXB.
      */
     public ShortIdentity() {
-        this.bout = null;
+        this.identity = null;
     }
 
     /**
