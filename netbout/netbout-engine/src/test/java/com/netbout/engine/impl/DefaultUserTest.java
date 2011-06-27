@@ -26,48 +26,38 @@
  */
 package com.netbout.engine.impl;
 
-// data access from com.netbout:netbout-data
-import com.netbout.data.UserManager;
-import com.netbout.data.jpa.JpaUserManager;
-
-// API
+import com.netbout.data.IdentityEnt;
+import com.netbout.data.UserEnt;
 import com.netbout.engine.User;
-import com.netbout.engine.UserFactory;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Implementation of the default factory.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultUserFactory implements UserFactory {
+public final class DefaultUserTest {
 
-    /**
-     * Manager of data entities.
-     */
-    private final UserManager manager;
+    private static final String IDENTITY = "John Doe";
 
-    /**
-     * Public ctor.
-     */
-    public DefaultUserFactory() {
-        this.manager = new JpaUserManager();
-    }
+    private static final Long USER_ID = 58L;
 
-    /**
-     * Protected ctor, for unit testing.
-     * @param mgr The manager
-     */
-    public DefaultUserFactory(final UserManager mgr) {
-        this.manager = mgr;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public User find(final String login, final String password) {
-        return new DefaultUser(this.manager.find(login, password));
+    @Test
+    public void testUserBehavior() throws Exception {
+        final UserEnt entity = mock(UserEnt.class);
+        final List<IdentityEnt> identities = new ArrayList<IdentityEnt>();
+        final IdentityEnt identity = mock(IdentityEnt.class);
+        doReturn(this.IDENTITY).when(identity).name();
+        identities.add(identity);
+        doReturn(identities).when(entity).identities();
+        final User user = new DefaultUser(entity);
+        assertThat(user.identities().size(), equalTo(1));
+        verify(entity).identities();
+        assertThat(user.identity(this.IDENTITY).name(), equalTo(this.IDENTITY));
     }
 
 }

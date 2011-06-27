@@ -29,12 +29,9 @@ package com.netbout.rest;
 // bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
 
 // for JAX-RS
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 

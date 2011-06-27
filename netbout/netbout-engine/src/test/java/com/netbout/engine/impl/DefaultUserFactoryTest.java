@@ -26,48 +26,44 @@
  */
 package com.netbout.engine.impl;
 
-// data access from com.netbout:netbout-data
+import com.netbout.data.UserEnt;
 import com.netbout.data.UserManager;
-import com.netbout.data.jpa.JpaUserManager;
-
-// API
 import com.netbout.engine.User;
 import com.netbout.engine.UserFactory;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Implementation of the default factory.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultUserFactory implements UserFactory {
+public final class DefaultUserFactoryTest {
 
-    /**
-     * Manager of data entities.
-     */
-    private final UserManager manager;
+    private static final Long USER_ID = 543L;
 
-    /**
-     * Public ctor.
-     */
-    public DefaultUserFactory() {
-        this.manager = new JpaUserManager();
+    private static final String USER_LOGIN = "john";
+
+    private static final String USER_PWD = "secret54";
+
+    @Test
+    public void testSimpleUserFinding() throws Exception {
+        final UserEnt entity = mock(UserEnt.class);
+        final UserManager manager = mock(UserManager.class);
+        doReturn(entity).when(manager).find(this.USER_LOGIN, this.USER_PWD);
+        final UserFactory factory = new DefaultUserFactory(manager);
+        final User found = factory.find(this.USER_LOGIN, this.USER_PWD);
+        verify(manager).find(this.USER_LOGIN, this.USER_PWD);
     }
 
-    /**
-     * Protected ctor, for unit testing.
-     * @param mgr The manager
-     */
-    public DefaultUserFactory(final UserManager mgr) {
-        this.manager = mgr;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public User find(final String login, final String password) {
-        return new DefaultUser(this.manager.find(login, password));
+    @Test
+    public void testDefaultClassInstantiating() throws Exception {
+        final UserFactory factory = new DefaultUserFactory();
+        assertThat(
+            factory,
+            instanceOf(UserFactory.class)
+        );
     }
 
 }

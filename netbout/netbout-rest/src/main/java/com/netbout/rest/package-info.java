@@ -26,7 +26,7 @@
  */
 
 /**
- * RESTful interface.
+ * REST
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

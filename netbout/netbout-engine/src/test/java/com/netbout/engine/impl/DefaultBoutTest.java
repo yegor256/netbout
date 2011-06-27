@@ -27,7 +27,6 @@
 package com.netbout.engine.impl;
 
 import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
 import com.netbout.engine.Bout;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;

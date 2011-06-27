@@ -27,7 +27,6 @@
 package com.netbout.rest;
 
 // bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
 import com.netbout.engine.impl.DefaultBoutFactory;
 
@@ -75,11 +74,12 @@ public final class ListRs {
 
     /**
      * Get list of bouts.
+     * @param query The query
      * @return The collection of bouts, to be converted into XML
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public PageWithBouts list(@QueryParam("q") @DefaultValue("")
+    public PageWithBouts list(@DefaultValue("") @QueryParam("q")
         final String query) {
         return new PageWithBouts(this.factory, query);
     }

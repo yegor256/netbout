@@ -31,6 +31,8 @@ import com.netbout.data.BoutManager;
 import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
 import com.netbout.engine.Identity;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -90,6 +92,23 @@ public final class DefaultBoutFactoryTest {
             created.title(),
             equalTo(this.BOUT_TITLE)
         );
+    }
+
+    @Test
+    public void testBoutListing() throws Exception {
+        final BoutManager manager = mock(BoutManager.class);
+        final List<BoutEnt> entities = new ArrayList<BoutEnt>();
+        final BoutEnt entity = mock(BoutEnt.class);
+        entities.add(entity);
+        final String query = "";
+        doReturn(entities).when(manager).list(query);
+        final BoutFactory factory = new DefaultBoutFactory(manager);
+        final List<Bout> found = factory.list(query);
+        assertThat(
+            found.size(),
+            equalTo(1)
+        );
+        verify(manager).list(query);
     }
 
 }

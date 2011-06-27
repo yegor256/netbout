@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2009-2011, netUser.com
+ * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netUser Inc. located at www.netbout.com.
+ * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
@@ -29,7 +29,6 @@ package com.netbout.engine.impl;
 // data access from com.netbout:netbout-data
 import com.netbout.data.IdentityEnt;
 import com.netbout.data.UserEnt;
-import com.netbout.data.UserManager;
 
 // API
 import com.netbout.engine.Identity;
