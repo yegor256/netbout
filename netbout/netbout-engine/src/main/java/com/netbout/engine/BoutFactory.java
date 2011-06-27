@@ -26,6 +26,9 @@
  */
 package com.netbout.engine;
 
+// JDK
+import java.util.List;
+
 /**
  * Factory to manipulate bouts.
  *
@@ -35,10 +38,25 @@ package com.netbout.engine;
 public interface BoutFactory {
 
     /**
+     * Create new bout.
+     * @param creator The creator of the bout
+     * @param title Title of the bout
+     * @return The bout just created
+     */
+    Bout create(final Identity creator, final String title);
+
+    /**
      * Find one bout by unique ID.
      * @param boutId Unique ID
      * @return The bout just found
      */
     Bout find(final Long boutId);
+
+    /**
+     * Find a number of bouts, using query.
+     * @param query The query
+     * @return The list of bouts just found
+     */
+    List<Bout> list(final String query);
 
 }

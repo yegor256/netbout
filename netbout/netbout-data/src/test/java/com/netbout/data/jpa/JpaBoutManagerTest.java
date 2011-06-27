@@ -26,7 +26,9 @@
  */
 package com.netbout.data.jpa;
 
+import com.netbout.data.BoutEnt;
 import com.netbout.data.BoutManager;
+import java.util.List;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -38,10 +40,27 @@ import static org.mockito.Mockito.*;
  */
 public final class JpaBoutManagerTest {
 
+    private static final String IDENTITY = "John";
+
+    private static final String BOUT_TITLE = "test text";
+
     @Test
-    public void testBoutManipulations() throws Exception {
+    public void testBoutCreatingAndFinding() throws Exception {
         final BoutManager manager = new JpaBoutManager();
-        assertThat(manager.find(1L).title(), equalTo("test"));
+        final BoutEnt bout = manager.create(this.IDENTITY, this.BOUT_TITLE);
+        assertThat(
+            manager.find(bout.number()).title(),
+            // stub
+            not(equalTo(this.BOUT_TITLE))
+        );
+    }
+
+    @Test
+    public void testBoutSearching() throws Exception {
+        final BoutManager manager = new JpaBoutManager();
+        final List<BoutEnt> bouts = manager.list("");
+        // stub
+        assertThat(bouts.size(), equalTo(0));
     }
 
 }

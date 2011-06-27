@@ -30,6 +30,10 @@ package com.netbout.data.jpa;
 import com.netbout.data.BoutEnt;
 import com.netbout.data.BoutManager;
 
+// JDK
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * JPA implementation of the entity manager.
  *
@@ -42,9 +46,28 @@ public final class JpaBoutManager implements BoutManager {
      * {@inheritDoc}
      */
     @Override
+    public BoutEnt create(final String identity, final String title) {
+        // stub
+        return new JpaBoutEnt();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public BoutEnt find(final Long bout) {
         // stub
         return new JpaBoutEnt();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<BoutEnt> list(final String query) {
+        // stub
+        final List<BoutEnt> list = new ArrayList<BoutEnt>();
+        return list;
     }
 
 }

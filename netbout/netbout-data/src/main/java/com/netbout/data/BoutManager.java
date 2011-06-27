@@ -26,6 +26,9 @@
  */
 package com.netbout.data;
 
+// JDK
+import java.util.List;
+
 /**
  * Manager of bouts.
  *
@@ -35,10 +38,25 @@ package com.netbout.data;
 public interface BoutManager {
 
     /**
+     * Create new entity by identity and title.
+     * @param identity Name of identity
+     * @param title The title of new bout
+     * @return The entity
+     */
+    BoutEnt create(final String identity, final String title);
+
+    /**
      * Find bout entity by ID.
      * @param bout The ID
      * @return The entity
      */
     BoutEnt find(final Long bout);
+
+    /**
+     * Find bout entity by query.
+     * @param query The query
+     * @return The list of found entities
+     */
+    List<BoutEnt> list(final String query);
 
 }

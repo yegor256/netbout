@@ -41,6 +41,15 @@ public final class JpaBoutEnt implements BoutEnt {
      * {@inheritDoc}
      */
     @Override
+    public Long number() {
+        // stub
+        return 1L;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String title() {
         // stub
         return "test";

@@ -24,37 +24,66 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine.impl;
+package com.netbout.rest;
 
-import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
-import com.netbout.engine.Bout;
-import org.junit.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+// JAXB implemented data manipulators
+import com.netbout.rest.jaxb.PageLogin;
+
+// for JAX-RS
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
+ * Login.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyBoutTest {
+@Path("/auth")
+public final class LoginRs extends AbstractRs {
 
-    private static final Long BOUT_ID = 543L;
+    /**
+     * Public ctor.
+     */
+    public LoginRs() {
+        super();
+    }
 
-    private static final String BOUT_TITLE = "some title";
+    /**
+     * Ctor for unit testing.
+     * @param builder The factory builder
+     */
+    protected LoginRs(final FactoryBuilder builder) {
+        super(builder);
+    }
 
-    @Test
-    public void testBoutBehavior() throws Exception {
-        final BoutEnt entity = mock(BoutEnt.class);
-        doReturn(this.BOUT_TITLE).when(entity).title();
-        final BoutManager manager = mock(BoutManager.class);
-        doReturn(entity).when(manager).find(this.BOUT_ID);
-        final Bout bout = new LazyBout(manager, this.BOUT_ID);
-        final String title1 = bout.title();
-        final String title2 = bout.title();
-        assertThat(title1, equalTo(this.BOUT_TITLE));
-        verify(manager).find(this.BOUT_ID);
+    /**
+     * Start new bout.
+     * @return JAX-RS response
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public PageLogin entrance() {
+        return new PageLogin();
+    }
+
+    /**
+     * Login.
+     * @param login The login
+     * @param password The password
+     * @return JAX-RS response
+     */
+    @POST
+    public Response login(@QueryParam("l") final String login,
+        @QueryParam("p") final String password) {
+        return Response
+            .ok()
+            .build();
     }
 
 }

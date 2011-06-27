@@ -62,11 +62,39 @@
         </dependency>
         <dependency>
             <!--
+            Translate all calls to SLF4j into JUL logging (used by GAE).
+            -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.6.1</version> <!-- 8 Nov 2010 -->
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <!--
+            Main logging facility. All other packages shall
+            be forwarded to LOG4J through SLF4J
+            -->
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version> <!-- 5 Nov 2010 -->
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <!--
             JAX-RS reference implementation, required during compile time
             -->
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
             <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <!--
+            JAX-RS reference implementation, required for testing only.
+            -->
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -81,6 +109,11 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
+            <!-- other details are in parent pom.xml -->
+        </dependency>
+        <dependency>
+            <groupId>org.xmlmatchers</groupId>
+            <artifactId>xml-matchers</artifactId>
             <!-- other details are in parent pom.xml -->
         </dependency>
     </dependencies>

@@ -28,7 +28,11 @@ package com.netbout.engine.impl;
 
 import com.netbout.data.BoutEnt;
 import com.netbout.data.BoutManager;
+import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
+import com.netbout.engine.Identity;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -44,17 +48,21 @@ public final class DefaultBoutFactoryTest {
 
     private static final String BOUT_TITLE = "some title";
 
+    private static final String IDENTITY_NAME = "John Doe";
+
     @Test
-    public void testBoutFinding() throws Exception {
+    public void testSimpleBoutFinding() throws Exception {
         final BoutEnt entity = mock(BoutEnt.class);
         doReturn(this.BOUT_TITLE).when(entity).title();
         final BoutManager manager = mock(BoutManager.class);
         doReturn(entity).when(manager).find(this.BOUT_ID);
         final BoutFactory factory = new DefaultBoutFactory(manager);
+        final Bout found = factory.find(this.BOUT_ID);
         assertThat(
-            factory.find(this.BOUT_ID).title(),
+            found.title(),
             equalTo(this.BOUT_TITLE)
         );
+        verify(manager).find(this.BOUT_ID);
     }
 
     @Test
@@ -64,6 +72,43 @@ public final class DefaultBoutFactoryTest {
             factory,
             instanceOf(BoutFactory.class)
         );
+    }
+
+    @Test
+    public void testBoutCreatingMechanism() throws Exception {
+        final BoutEnt entity = mock(BoutEnt.class);
+        doReturn(this.BOUT_TITLE).when(entity).title();
+        doReturn(this.BOUT_ID).when(entity).number();
+        final BoutManager manager = mock(BoutManager.class);
+        doReturn(entity).when(manager)
+            .create(this.IDENTITY_NAME, this.BOUT_TITLE);
+        doReturn(entity).when(manager).find(this.BOUT_ID);
+        final Identity creator = mock(Identity.class);
+        doReturn(this.IDENTITY_NAME).when(creator).name();
+        final BoutFactory factory = new DefaultBoutFactory(manager);
+        final Bout created = factory.create(creator, this.BOUT_TITLE);
+        verify(manager).create(this.IDENTITY_NAME, this.BOUT_TITLE);
+        assertThat(
+            created.title(),
+            equalTo(this.BOUT_TITLE)
+        );
+    }
+
+    @Test
+    public void testBoutListing() throws Exception {
+        final BoutManager manager = mock(BoutManager.class);
+        final List<BoutEnt> entities = new ArrayList<BoutEnt>();
+        final BoutEnt entity = mock(BoutEnt.class);
+        entities.add(entity);
+        final String query = "";
+        doReturn(entities).when(manager).list(query);
+        final BoutFactory factory = new DefaultBoutFactory(manager);
+        final List<Bout> found = factory.list(query);
+        assertThat(
+            found.size(),
+            equalTo(1)
+        );
+        verify(manager).list(query);
     }
 
 }

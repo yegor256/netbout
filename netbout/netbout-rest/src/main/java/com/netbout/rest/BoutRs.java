@@ -28,29 +28,19 @@ package com.netbout.rest;
 
 // bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
 
 // for JAX-RS
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- * RESTful front of one Bout.
+ * RESTful front of one Bout. The class is instantiated from {@link ListRs}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("{id: \\d+}")
-public final class BoutRs {
-
-    /**
-     * Bout manipulation factory.
-     */
-    private final BoutFactory factory;
+public final class BoutRs extends AbstractRs {
 
     /**
      * The bout to work with.
@@ -59,20 +49,13 @@ public final class BoutRs {
 
     /**
      * Public ctor.
+     * @param builder The factory builder
      * @param boutId ID of the bout
+     * @see ListRs#bout(Long)
      */
-    public BoutRs(@PathParam("id") final Long boutId) {
-        this(new DefaultBoutFactory(), boutId);
-    }
-
-    /**
-     * Ctor for unit testing.
-     * @param fct The factory
-     * @param boutId ID of the bout
-     */
-    protected BoutRs(final BoutFactory fct, final Long boutId) {
-        this.factory = fct;
-        this.bout = this.factory.find(boutId);
+    public BoutRs(final FactoryBuilder builder, final Long boutId) {
+        super(builder);
+        this.bout = this.builder().getBoutFactory().find(boutId);
     }
 
     /**

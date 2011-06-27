@@ -24,67 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine.impl;
+package com.netbout.rest;
 
-// data access from com.netbout:netbout-data
-import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
+// bout manipulation engine from com.netbout:netbout-engine
+import com.netbout.engine.User;
 
-// API
-import com.netbout.engine.Bout;
+// JDK
+import java.security.Principal;
+
+// JAX-RS
+import javax.ws.rs.core.SecurityContext;
 
 /**
- * Implementation of a Bout.
+ * Authenticator.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class LazyBout implements Bout {
+public final class Auth {
 
     /**
-     * Manager of data entities.
+     * Name of identity.
      */
-    private final BoutManager manager;
+    private User user;
 
     /**
-     * ID of the bout.
+     * Public ctor.
+     * @param bldr Factory builder
+     * @param ctx The context
+     * @todo #103 Here we should validate that this identity can be
+     *       used with currently logged in user. If the user is not
+     *       logged in - we should throw a runtime exception.
      */
-    private final Long boutId;
-
-    /**
-     * Bout entity.
-     */
-    private BoutEnt bout;
-
-    /**
-     * Public ctor, for unit testing.
-     * @param mgr The manager
-     * @param bid Bout ID
-     */
-    public LazyBout(final BoutManager mgr, final Long bid) {
-        this.manager = mgr;
-        this.boutId = bid;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String title() {
-        return this.entity().title();
-    }
-
-    /**
-     * Load entity from manager.
-     * @return The entity loaded
-     */
-    private BoutEnt entity() {
-        synchronized (this) {
-            if (this.bout == null) {
-                this.bout = this.manager.find(this.boutId);
-            }
-            return this.bout;
+    public Auth(final FactoryBuilder bldr, final SecurityContext ctx) {
+        final Principal principal = ctx.getUserPrincipal();
+        if (principal == null) {
+            throw new NotLoggedInException();
         }
+        final Long num = Long.valueOf(principal.getName());
+        this.user = bldr.getUserFactory().find(num);
+    }
+
+    /**
+     * Get currently logged in user.
+     * @return The user
+     */
+    public User user() {
+        return this.user;
     }
 
 }

@@ -46,14 +46,10 @@ public final class BoutRsTest {
         final Bout bout = mock(Bout.class);
         final BoutFactory factory = mock(BoutFactory.class);
         doReturn(bout).when(factory).find(this.BOUT_ID);
-        final BoutRs svc = new BoutRs(factory, this.BOUT_ID);
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        doReturn(factory).when(builder).getBoutFactory();
+        final BoutRs svc = new BoutRs(builder, this.BOUT_ID);
         assertThat(svc.info(), equalTo(bout));
-    }
-
-    @Test
-    public void testDefaultClassInstantiating() throws Exception {
-        final BoutRs svc = new BoutRs(this.BOUT_ID);
-        assertThat(svc, instanceOf(BoutRs.class));
     }
 
 }
