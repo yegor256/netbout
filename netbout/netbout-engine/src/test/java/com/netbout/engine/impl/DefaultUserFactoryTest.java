@@ -43,18 +43,14 @@ public final class DefaultUserFactoryTest {
 
     private static final Long USER_ID = 543L;
 
-    private static final String USER_LOGIN = "john";
-
-    private static final String USER_PWD = "secret54";
-
     @Test
     public void testSimpleUserFinding() throws Exception {
         final UserEnt entity = mock(UserEnt.class);
         final UserManager manager = mock(UserManager.class);
-        doReturn(entity).when(manager).find(this.USER_LOGIN, this.USER_PWD);
+        doReturn(entity).when(manager).find(this.USER_ID);
         final UserFactory factory = new DefaultUserFactory(manager);
-        final User found = factory.find(this.USER_LOGIN, this.USER_PWD);
-        verify(manager).find(this.USER_LOGIN, this.USER_PWD);
+        final User found = factory.find(this.USER_ID);
+        verify(manager).find(this.USER_ID);
     }
 
     @Test

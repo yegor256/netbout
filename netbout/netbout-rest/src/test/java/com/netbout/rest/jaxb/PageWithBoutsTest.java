@@ -28,16 +28,13 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 import org.junit.*;
+import org.xmlmatchers.transform.XmlConverters;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
-import static org.xmlmatchers.transform.XmlConverters.the;
 
 /**
  * @author Yegor Bugayenko (yegor@netbout.com)
@@ -53,10 +50,6 @@ public final class PageWithBoutsTest {
 
     @Test
     public void testSimpleJaxbMarshalling() throws Exception {
-        final JAXBContext ctx =
-            JAXBContext.newInstance("com.netbout.rest.jaxb");
-        final Marshaller mrsh = ctx.createMarshaller();
-        mrsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         final BoutFactory factory = mock(BoutFactory.class);
         final List<Bout> list = new ArrayList<Bout>();
         final Bout bout = mock(Bout.class);
@@ -65,20 +58,23 @@ public final class PageWithBoutsTest {
         list.add(bout);
         doReturn(list).when(factory).list(this.QUERY);
         final PageWithBouts page = new PageWithBouts(factory, this.QUERY);
-        final StringWriter writer = new StringWriter();
-        mrsh.marshal(page, writer);
-        final String xml = writer.toString();
+        final String xml = new ObjectMarshaller().marshall(page);
         assertThat(
-            the(xml),
+            XmlConverters.the(xml),
             org.xmlmatchers.XmlMatchers.hasXPath(
                 "/page/bouts/bout/number[text() = '"
                 + this.BOUT_ID + "']"
             )
         );
         assertThat(
-            the(xml),
+            XmlConverters.the(xml),
             org.xmlmatchers.XmlMatchers.hasXPath("/page/bouts[count(bout) = 1]")
         );
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testDefaultClassInstantiation() throws Exception {
+        new PageWithBouts();
     }
 
 }

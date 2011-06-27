@@ -60,4 +60,33 @@ public final class DefaultUserTest {
         assertThat(user.identity(this.IDENTITY).name(), equalTo(this.IDENTITY));
     }
 
+    @Test
+    public void testUserBehaviorWithMultipleIdentities() throws Exception {
+        final UserEnt entity = mock(UserEnt.class);
+        final List<IdentityEnt> identities = new ArrayList<IdentityEnt>();
+        final IdentityEnt identity1 = mock(IdentityEnt.class);
+        doReturn(this.IDENTITY).when(identity1).name();
+        identities.add(identity1);
+        final IdentityEnt identity2 = mock(IdentityEnt.class);
+        doReturn("something else").when(identity2).name();
+        identities.add(identity2);
+        doReturn(identities).when(entity).identities();
+        final User user = new DefaultUser(entity);
+        assertThat(user.identities().size(), equalTo(2));
+        verify(entity).identities();
+        assertThat(user.identity(this.IDENTITY).name(), equalTo(this.IDENTITY));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidIdentityFinding() throws Exception {
+        final UserEnt entity = mock(UserEnt.class);
+        final List<IdentityEnt> identities = new ArrayList<IdentityEnt>();
+        final IdentityEnt identity = mock(IdentityEnt.class);
+        doReturn(this.IDENTITY).when(identity).name();
+        identities.add(identity);
+        doReturn(identities).when(entity).identities();
+        final User user = new DefaultUser(entity);
+        user.identity("unknown");
+    }
+
 }

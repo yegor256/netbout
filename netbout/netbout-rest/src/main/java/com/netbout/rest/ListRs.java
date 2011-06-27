@@ -34,14 +34,13 @@ import com.netbout.engine.impl.DefaultBoutFactory;
 import com.netbout.rest.jaxb.PageWithBouts;
 
 // for JAX-RS
-import javax.ws.rs.GET;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * Collection of Bouts.
@@ -50,26 +49,21 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/")
-public final class ListRs {
-
-    /**
-     * Bout manipulation factory.
-     */
-    private final BoutFactory factory;
+public final class ListRs extends AbstractRs {
 
     /**
      * Public ctor.
      */
     public ListRs() {
-        this(new DefaultBoutFactory());
+        super();
     }
 
     /**
      * Ctor for unit testing.
-     * @param fct The factory
+     * @param builder The factory builder
      */
-    protected ListRs(final BoutFactory fct) {
-        this.factory = fct;
+    protected ListRs(final FactoryBuilder builder) {
+        super(builder);
     }
 
     /**
@@ -81,7 +75,7 @@ public final class ListRs {
     @Produces(MediaType.APPLICATION_XML)
     public PageWithBouts list(@DefaultValue("") @QueryParam("q")
         final String query) {
-        return new PageWithBouts(this.factory, query);
+        return new PageWithBouts(this.builder().getBoutFactory(), query);
     }
 
     /**
@@ -92,7 +86,7 @@ public final class ListRs {
     @GET
     @Path("{id: \\d+}")
     public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.factory, bout);
+        return new BoutRs(this.builder(), bout);
     }
 
 }

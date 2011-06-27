@@ -24,48 +24,54 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.jaxb;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import com.netbout.engine.Identity;
+import com.netbout.engine.User;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.*;
+import org.xmlmatchers.transform.XmlConverters;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * RESTful front of one Bout. The class is instantiated from {@link ListRs}.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutRs extends AbstractRs {
+public final class PageStartTest {
 
-    /**
-     * The bout to work with.
-     */
-    private final Bout bout;
+    private static final String IDENTITY = "Peter Smith";
 
-    /**
-     * Public ctor.
-     * @param builder The factory builder
-     * @param boutId ID of the bout
-     * @see ListRs#bout(Long)
-     */
-    public BoutRs(final FactoryBuilder builder, final Long boutId) {
-        super(builder);
-        this.bout = this.builder().getBoutFactory().find(boutId);
+    @Test
+    public void testSimpleJaxbMarshalling() throws Exception {
+        final User user = mock(User.class);
+        final List<Identity> identities = new ArrayList<Identity>();
+        final Identity identity = mock(Identity.class);
+        doReturn(this.IDENTITY).when(identity).name();
+        identities.add(identity);
+        doReturn(identities).when(user).identities();
+        final PageStart page = new PageStart(user);
+        final String xml = new ObjectMarshaller().marshall(page);
+        assertThat(
+            XmlConverters.the(xml),
+            org.xmlmatchers.XmlMatchers.hasXPath(
+                "/page/identities/identity/name[text() = '"
+                + this.IDENTITY + "']"
+            )
+        );
+        assertThat(
+            XmlConverters.the(xml),
+            org.xmlmatchers.XmlMatchers.hasXPath(
+                "/page/identities[count(identity) = 1]"
+            )
+        );
     }
 
-    /**
-     * Get bout data.
-     * @return The bout, convertable to XML
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public Bout info() {
-        return this.bout;
+    @Test(expected = IllegalStateException.class)
+    public void testDefaultClassInstantiation() throws Exception {
+        new PageStart();
     }
 
 }

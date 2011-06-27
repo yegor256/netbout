@@ -28,16 +28,14 @@ package com.netbout.rest;
 
 // bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
 
 // JAXB implemented data manipulators
 import com.netbout.rest.jaxb.PageStart;
 
 // for JAX-RS
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -54,23 +52,18 @@ import javax.ws.rs.core.UriBuilder;
 public final class StartRs extends AbstractRs {
 
     /**
-     * Bout manipulation factory.
-     */
-    private final BoutFactory factory;
-
-    /**
      * Public ctor.
      */
     public StartRs() {
-        this(new DefaultBoutFactory());
+        super();
     }
 
     /**
      * Ctor for unit testing.
-     * @param fct The factory
+     * @param builder The factory builder
      */
-    protected StartRs(final BoutFactory fct) {
-        this.factory = fct;
+    protected StartRs(final FactoryBuilder builder) {
+        super(builder);
     }
 
     /**
@@ -79,7 +72,7 @@ public final class StartRs extends AbstractRs {
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public PageStart start() {
+    public PageStart entrance() {
         return new PageStart(this.user());
     }
 
@@ -92,14 +85,14 @@ public final class StartRs extends AbstractRs {
     @POST
     public Response start(@QueryParam("i") final String identity,
         @QueryParam("t") final String title) {
-        final Bout bout = this.factory.create(
+        final Bout bout = this.builder().getBoutFactory().create(
             this.user().identity(identity),
             title
         );
-        final UriBuilder builder = this.uriInfo().getAbsolutePathBuilder()
+        final UriBuilder ubuilder = this.uriInfo().getAbsolutePathBuilder()
             .path(ListRs.class, "bout");
         return Response
-            .created(builder.build(bout.number()))
+            .created(ubuilder.build(bout.number()))
             .build();
     }
 

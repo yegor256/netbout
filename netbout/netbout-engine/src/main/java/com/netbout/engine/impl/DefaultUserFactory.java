@@ -66,8 +66,8 @@ public final class DefaultUserFactory implements UserFactory {
      * {@inheritDoc}
      */
     @Override
-    public User find(final String login, final String password) {
-        return new DefaultUser(this.manager.find(login, password));
+    public User find(final Long number) {
+        return new DefaultUser(this.manager.find(number));
     }
 
 }

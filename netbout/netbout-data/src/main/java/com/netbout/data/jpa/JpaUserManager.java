@@ -42,7 +42,7 @@ public final class JpaUserManager implements UserManager {
      * {@inheritDoc}
      */
     @Override
-    public UserEnt find(final String login, final String password) {
+    public UserEnt find(final Long number) {
         // stub
         return new JpaUserEnt();
     }

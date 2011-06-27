@@ -35,11 +35,10 @@ package com.netbout.data;
 public interface UserManager {
 
     /**
-     * Find user entity by login and password.
-     * @param login The login
-     * @param password The password
+     * Find user entity by number.
+     * @param number The number
      * @return The entity
      */
-    UserEnt find(final String login, final String password);
+    UserEnt find(final Long number);
 
 }

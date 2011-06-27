@@ -24,48 +24,27 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.jaxb;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.io.StringWriter;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 /**
- * RESTful front of one Bout. The class is instantiated from {@link ListRs}.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutRs extends AbstractRs {
+public final class ObjectMarshaller {
 
-    /**
-     * The bout to work with.
-     */
-    private final Bout bout;
-
-    /**
-     * Public ctor.
-     * @param builder The factory builder
-     * @param boutId ID of the bout
-     * @see ListRs#bout(Long)
-     */
-    public BoutRs(final FactoryBuilder builder, final Long boutId) {
-        super(builder);
-        this.bout = this.builder().getBoutFactory().find(boutId);
-    }
-
-    /**
-     * Get bout data.
-     * @return The bout, convertable to XML
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public Bout info() {
-        return this.bout;
+    public String marshall(final Object obj) throws Exception {
+        final JAXBContext ctx =
+            JAXBContext.newInstance("com.netbout.rest.jaxb");
+        final Marshaller mrsh = ctx.createMarshaller();
+        mrsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        final StringWriter writer = new StringWriter();
+        mrsh.marshal(obj, writer);
+        final String xml = writer.toString();
+        return xml;
     }
 
 }

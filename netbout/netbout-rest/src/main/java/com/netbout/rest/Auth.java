@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 // bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.User;
-import com.netbout.engine.impl.DefaultUserFactory;
 
 // JAX-RS
 import javax.ws.rs.core.SecurityContext;
@@ -48,13 +47,14 @@ public final class Auth {
 
     /**
      * Public ctor.
+     * @param bldr Factory builder
      * @param ctx The context
      * @todo #103 Here we should validate that this identity can be
      *       used with currently logged in user. If the user is not
      *       logged in - we should throw a runtime exception.
      */
-    public Auth(final SecurityContext ctx) {
-        this.user = new DefaultUserFactory().find("login", "password");
+    public Auth(final FactoryBuilder bldr, final SecurityContext ctx) {
+        this.user = bldr.getUserFactory().find(ctx.getUserPrincipal());
     }
 
     /**

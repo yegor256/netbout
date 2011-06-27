@@ -47,10 +47,12 @@ public final class DefaultBoutTest {
     public void testBoutBehavior() throws Exception {
         final BoutEnt entity = mock(BoutEnt.class);
         doReturn(this.BOUT_TITLE).when(entity).title();
+        doReturn(this.BOUT_ID).when(entity).number();
         final Bout bout = new DefaultBout(entity);
-        final String title = bout.title();
-        assertThat(title, equalTo(this.BOUT_TITLE));
+        assertThat(bout.title(), equalTo(this.BOUT_TITLE));
         verify(entity).title();
+        assertThat(bout.number(), equalTo(this.BOUT_ID));
+        verify(entity).number();
     }
 
 }

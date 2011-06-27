@@ -26,46 +26,34 @@
  */
 package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+// API from com.netbout:netbout-engine
+import com.netbout.engine.BoutFactory;
+import com.netbout.engine.UserFactory;
+import com.netbout.engine.impl.DefaultBoutFactory;
+import com.netbout.engine.impl.DefaultUserFactory;
 
 /**
- * RESTful front of one Bout. The class is instantiated from {@link ListRs}.
+ * Default builder of factories.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutRs extends AbstractRs {
+public final class DefaultFactoryBuilder implements FactoryBuilder {
 
     /**
-     * The bout to work with.
+     * {@inheritDoc}
      */
-    private final Bout bout;
-
-    /**
-     * Public ctor.
-     * @param builder The factory builder
-     * @param boutId ID of the bout
-     * @see ListRs#bout(Long)
-     */
-    public BoutRs(final FactoryBuilder builder, final Long boutId) {
-        super(builder);
-        this.bout = this.builder().getBoutFactory().find(boutId);
+    @Override
+    public UserFactory getUserFactory() {
+        return new DefaultUserFactory();
     }
 
     /**
-     * Get bout data.
-     * @return The bout, convertable to XML
+     * {@inheritDoc}
      */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public Bout info() {
-        return this.bout;
+    @Override
+    public BoutFactory getBoutFactory() {
+        return new DefaultBoutFactory();
     }
 
 }

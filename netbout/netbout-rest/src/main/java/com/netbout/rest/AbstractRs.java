@@ -40,7 +40,13 @@ import javax.ws.rs.core.UriInfo;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractRs {
+
+    /**
+     * Factory builder.
+     */
+    private FactoryBuilder builder;
 
     /**
      * URI information.
@@ -51,6 +57,21 @@ public abstract class AbstractRs {
      * Security context.
      */
     private SecurityContext securityContext;
+
+    /**
+     * Default public ctor.
+     */
+    public AbstractRs() {
+        this(new DefaultFactoryBuilder());
+    }
+
+    /**
+     * Public ctor.
+     * @param bldr The builder
+     */
+    public AbstractRs(final FactoryBuilder bldr) {
+        this.builder = bldr;
+    }
 
     /**
      * Save URI information.
@@ -71,11 +92,20 @@ public abstract class AbstractRs {
     }
 
     /**
+     * Get factory builder.
+     * @return The builder
+     */
+    protected final FactoryBuilder builder() {
+        return this.builder;
+    }
+
+    /**
      * Get currently logged in user.
+     * @param factory The factory to work with
      * @return The user
      */
     protected final User user() {
-        return new Auth(this.securityContext()).user();
+        return new Auth(this.builder(), this.securityContext()).user();
     }
 
     /**

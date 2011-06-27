@@ -24,10 +24,13 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.data.jpa;
+package com.netbout.rest;
 
-import com.netbout.data.UserEnt;
-import com.netbout.data.UserManager;
+import com.netbout.engine.BoutFactory;
+import com.netbout.engine.User;
+import com.netbout.engine.UserFactory;
+import com.netbout.rest.jaxb.PageStart;
+import javax.ws.rs.core.Response;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -37,17 +40,40 @@ import static org.mockito.Mockito.*;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class JpaUserManagerTest {
+public final class StartRsTest {
 
-    private static final Long USER_ID = 132L;
+    private static final String IDENTITY = "Alex Smith";
+
+    private static final Long BOUT_ID = 123L;
+
+    private static final String BOUT_TITLE = "some text";
+
+    private static final String USER_LOGIN = "alex@example.com";
+
+    private static final String USER_PWD = "secret77";
 
     @Test
-    public void testUserManipulations() throws Exception {
-        final UserManager manager = new JpaUserManager();
-        final UserEnt ent = manager.find(this.USER_ID);
-        // stub now
-        assertThat(ent.number(), equalTo(1L));
-        assertThat(ent.identities().size(), equalTo(0));
+    public void testEntrancePage() throws Exception {
+        final BoutFactory factory = mock(BoutFactory.class);
+        // doReturn(bout).when(factory).find(this.BOUT_ID);
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        doReturn(factory).when(builder).getBoutFactory();
+        final StartRs svc = new StartRs(builder);
+        assertThat(svc.entrance(), instanceOf(PageStart.class));
+    }
+
+    @Test
+    public void testBoutCreatingPage() throws Exception {
+        final BoutFactory bfactory = mock(BoutFactory.class);
+        final UserFactory ufactory = mock(UserFactory.class);
+        final User user = mock(User.class);
+        doReturn(user).when(ufactory).find(this.USER_LOGIN, this.USER_PWD);
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        doReturn(ufactory).when(builder).getUserFactory();
+        doReturn(bfactory).when(builder).getBoutFactory();
+        final StartRs svc = new StartRs(builder);
+        final Response response = svc.start(this.IDENTITY, this.BOUT_TITLE);
+        // assertThat(response.entrance(), instanceOf(PageStart.class));
     }
 
 }

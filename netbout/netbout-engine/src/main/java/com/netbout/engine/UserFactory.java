@@ -35,11 +35,10 @@ package com.netbout.engine;
 public interface UserFactory {
 
     /**
-     * Find the user by credentials provided.
-     * @param login The login
-     * @param password The password
+     * Find the user by ID.
+     * @param number The number of the user
      * @return The user found
      */
-    User find(final String login, final String password);
+    User find(final Long number);
 
 }
