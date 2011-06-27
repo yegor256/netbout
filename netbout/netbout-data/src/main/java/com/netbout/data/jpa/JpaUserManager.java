@@ -30,10 +30,6 @@ package com.netbout.data.jpa;
 import com.netbout.data.UserEnt;
 import com.netbout.data.UserManager;
 
-// JDK
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * JPA implementation of the entity manager.
  *
