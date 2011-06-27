@@ -28,6 +28,7 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
+import com.netbout.rest.FactoryBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.*;
@@ -50,14 +51,16 @@ public final class PageWithBoutsTest {
 
     @Test
     public void testSimpleJaxbMarshalling() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
         final BoutFactory factory = mock(BoutFactory.class);
+        doReturn(factory).when(builder).getBoutFactory();
         final List<Bout> list = new ArrayList<Bout>();
         final Bout bout = mock(Bout.class);
         doReturn(this.BOUT_TITLE).when(bout).title();
         doReturn(this.BOUT_ID).when(bout).number();
         list.add(bout);
         doReturn(list).when(factory).list(this.QUERY);
-        final PageWithBouts page = new PageWithBouts(factory, this.QUERY);
+        final PageWithBouts page = new PageWithBouts(builder, this.QUERY);
         final String xml = new ObjectMarshaller().marshall(page);
         assertThat(
             XmlConverters.the(xml),

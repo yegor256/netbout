@@ -38,6 +38,12 @@ import java.util.List;
 public interface User {
 
     /**
+     * Get user number.
+     * @return The number
+     */
+    Long number();
+
+    /**
      * Full list of all identities.
      * @return The list of identities
      */

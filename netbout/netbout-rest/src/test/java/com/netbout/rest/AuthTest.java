@@ -26,51 +26,49 @@
  */
 package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.User;
-
-// JDK
+import com.netbout.engine.UserFactory;
 import java.security.Principal;
-
-// JAX-RS
 import javax.ws.rs.core.SecurityContext;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Authenticator.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Auth {
+public final class AuthTest {
 
-    /**
-     * Name of identity.
-     */
-    private User user;
+    private static final Long USER_ID = 12773L;
 
-    /**
-     * Public ctor.
-     * @param bldr Factory builder
-     * @param ctx The context
-     * @todo #103 Here we should validate that this identity can be
-     *       used with currently logged in user. If the user is not
-     *       logged in - we should throw a runtime exception.
-     */
-    public Auth(final FactoryBuilder bldr, final SecurityContext ctx) {
-        final Principal principal = ctx.getUserPrincipal();
-        if (principal == null) {
-            throw new NotLoggedInException();
-        }
-        final Long num = Long.valueOf(principal.getName());
-        this.user = bldr.getUserFactory().find(num);
+    @Test
+    public void testAuthentication() throws Exception {
+        // factory
+        final UserFactory ufactory = mock(UserFactory.class);
+        final User user = mock(User.class);
+        doReturn(this.USER_ID).when(user).number();
+        doReturn(user).when(ufactory).find(this.USER_ID);
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        doReturn(ufactory).when(builder).getUserFactory();
+        // context
+        final SecurityContext context = mock(SecurityContext.class);
+        final Principal principal = mock(Principal.class);
+        doReturn(this.USER_ID.toString()).when(principal).getName();
+        doReturn(principal).when(context).getUserPrincipal();
+        final Auth auth = new Auth(builder, context);
+        final User authenticated = auth.user();
+        assertThat(authenticated.number(), equalTo(this.USER_ID));
     }
 
-    /**
-     * Get currently logged in user.
-     * @return The user
-     */
-    public User user() {
-        return this.user;
+    @Test(expected = NotLoggedInException.class)
+    public void testNonLoggedInUser() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final SecurityContext context = mock(SecurityContext.class);
+        doReturn(null).when(context).getUserPrincipal();
+        final Auth auth = new Auth(builder, context);
+        auth.user();
     }
 
 }

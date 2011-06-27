@@ -26,51 +26,12 @@
  */
 package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.User;
-
-// JDK
-import java.security.Principal;
-
-// JAX-RS
-import javax.ws.rs.core.SecurityContext;
-
 /**
- * Authenticator.
+ * User is not logged in.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Auth {
-
-    /**
-     * Name of identity.
-     */
-    private User user;
-
-    /**
-     * Public ctor.
-     * @param bldr Factory builder
-     * @param ctx The context
-     * @todo #103 Here we should validate that this identity can be
-     *       used with currently logged in user. If the user is not
-     *       logged in - we should throw a runtime exception.
-     */
-    public Auth(final FactoryBuilder bldr, final SecurityContext ctx) {
-        final Principal principal = ctx.getUserPrincipal();
-        if (principal == null) {
-            throw new NotLoggedInException();
-        }
-        final Long num = Long.valueOf(principal.getName());
-        this.user = bldr.getUserFactory().find(num);
-    }
-
-    /**
-     * Get currently logged in user.
-     * @return The user
-     */
-    public User user() {
-        return this.user;
-    }
+public final class NotLoggedInException extends RuntimeException {
 
 }

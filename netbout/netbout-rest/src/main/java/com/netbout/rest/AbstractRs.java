@@ -101,7 +101,6 @@ public abstract class AbstractRs {
 
     /**
      * Get currently logged in user.
-     * @param factory The factory to work with
      * @return The user
      */
     protected final User user() {

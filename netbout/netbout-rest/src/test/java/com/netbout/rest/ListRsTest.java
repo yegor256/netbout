@@ -26,51 +26,41 @@
  */
 package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.User;
-
-// JDK
-import java.security.Principal;
-
-// JAX-RS
-import javax.ws.rs.core.SecurityContext;
+import com.netbout.engine.Bout;
+import com.netbout.engine.BoutFactory;
+import com.netbout.rest.jaxb.PageWithBouts;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Authenticator.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Auth {
+public final class ListRsTest {
 
-    /**
-     * Name of identity.
-     */
-    private User user;
+    private static final Long BOUT_ID = 123L;
 
-    /**
-     * Public ctor.
-     * @param bldr Factory builder
-     * @param ctx The context
-     * @todo #103 Here we should validate that this identity can be
-     *       used with currently logged in user. If the user is not
-     *       logged in - we should throw a runtime exception.
-     */
-    public Auth(final FactoryBuilder bldr, final SecurityContext ctx) {
-        final Principal principal = ctx.getUserPrincipal();
-        if (principal == null) {
-            throw new NotLoggedInException();
-        }
-        final Long num = Long.valueOf(principal.getName());
-        this.user = bldr.getUserFactory().find(num);
+    private static final String QUERY = "";
+
+    @Test
+    public void testListsBouts() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final ListRs svc = new ListRs(builder);
+        assertThat(svc.list(this.QUERY), instanceOf(PageWithBouts.class));
     }
 
-    /**
-     * Get currently logged in user.
-     * @return The user
-     */
-    public User user() {
-        return this.user;
+    @Test
+    public void testSingleBoutRendering() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final BoutFactory bfactory = mock(BoutFactory.class);
+        final Bout bout = mock(Bout.class);
+        doReturn(bout).when(bfactory).find(this.BOUT_ID);
+        doReturn(this.BOUT_ID).when(bout).number();
+        doReturn(bfactory).when(builder).getBoutFactory();
+        final ListRs svc = new ListRs(builder);
+        assertThat(svc.bout(this.BOUT_ID), instanceOf(BoutRs.class));
     }
 
 }

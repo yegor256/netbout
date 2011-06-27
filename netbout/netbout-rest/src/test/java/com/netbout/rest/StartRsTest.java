@@ -26,11 +26,18 @@
  */
 package com.netbout.rest;
 
+import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
+import com.netbout.engine.Identity;
 import com.netbout.engine.User;
 import com.netbout.engine.UserFactory;
 import com.netbout.rest.jaxb.PageStart;
+import java.net.URI;
+import java.security.Principal;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -48,32 +55,55 @@ public final class StartRsTest {
 
     private static final String BOUT_TITLE = "some text";
 
-    private static final String USER_LOGIN = "alex@example.com";
-
-    private static final String USER_PWD = "secret77";
+    private static final Long USER_ID = 633L;
 
     @Test
     public void testEntrancePage() throws Exception {
-        final BoutFactory factory = mock(BoutFactory.class);
-        // doReturn(bout).when(factory).find(this.BOUT_ID);
+        final UserFactory factory = mock(UserFactory.class);
+        final User user = mock(User.class);
+        doReturn(user).when(factory).find(this.USER_ID);
         final FactoryBuilder builder = mock(FactoryBuilder.class);
-        doReturn(factory).when(builder).getBoutFactory();
+        doReturn(factory).when(builder).getUserFactory();
         final StartRs svc = new StartRs(builder);
+        svc.setSecurityContext(this.context());
         assertThat(svc.entrance(), instanceOf(PageStart.class));
     }
 
     @Test
     public void testBoutCreatingPage() throws Exception {
+        // bouts
         final BoutFactory bfactory = mock(BoutFactory.class);
+        final Bout bout = mock(Bout.class);
+        doReturn(this.BOUT_ID).when(bout).number();
+        doReturn(bout).when(bfactory)
+            .create((Identity) anyObject(), anyString());
+        // users
         final UserFactory ufactory = mock(UserFactory.class);
         final User user = mock(User.class);
-        doReturn(user).when(ufactory).find(this.USER_LOGIN, this.USER_PWD);
+        doReturn(user).when(ufactory).find(this.USER_ID);
         final FactoryBuilder builder = mock(FactoryBuilder.class);
         doReturn(ufactory).when(builder).getUserFactory();
         doReturn(bfactory).when(builder).getBoutFactory();
+        // service
         final StartRs svc = new StartRs(builder);
+        svc.setSecurityContext(this.context());
+        final UriInfo uinfo = mock(UriInfo.class);
+        final UriBuilder ubuilder = mock(UriBuilder.class);
+        doReturn(ubuilder).when(uinfo).getAbsolutePathBuilder();
+        doReturn(ubuilder).when(ubuilder)
+            .path((Class) anyObject(), anyString());
+        final URI uri = new URI("http://localhost/abc");
+        doReturn(uri).when(ubuilder).build(anyVararg());
+        svc.setUriInfo(uinfo);
         final Response response = svc.start(this.IDENTITY, this.BOUT_TITLE);
-        // assertThat(response.entrance(), instanceOf(PageStart.class));
+    }
+
+    private SecurityContext context() {
+        final SecurityContext context = mock(SecurityContext.class);
+        final Principal principal = mock(Principal.class);
+        doReturn(this.USER_ID.toString()).when(principal).getName();
+        doReturn(principal).when(context).getUserPrincipal();
+        return context;
     }
 
 }

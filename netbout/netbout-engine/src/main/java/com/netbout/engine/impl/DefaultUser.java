@@ -63,6 +63,14 @@ final class DefaultUser implements User {
      * {@inheritDoc}
      */
     @Override
+    public Long number() {
+        return this.user.number();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<Identity> identities() {
         final List<Identity> list = new ArrayList<Identity>();
         for (IdentityEnt ent : this.user.identities()) {

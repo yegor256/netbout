@@ -26,10 +26,6 @@
  */
 package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.impl.DefaultBoutFactory;
-
 // JAXB implemented data manipulators
 import com.netbout.rest.jaxb.PageWithBouts;
 
@@ -75,7 +71,7 @@ public final class ListRs extends AbstractRs {
     @Produces(MediaType.APPLICATION_XML)
     public PageWithBouts list(@DefaultValue("") @QueryParam("q")
         final String query) {
-        return new PageWithBouts(this.builder().getBoutFactory(), query);
+        return new PageWithBouts(this.builder(), query);
     }
 
     /**

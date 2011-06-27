@@ -28,7 +28,9 @@ package com.netbout.rest.jaxb;
 
 // bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
+
+// API
+import com.netbout.rest.FactoryBuilder;
 
 // JDK
 import java.util.ArrayList;
@@ -54,7 +56,7 @@ public final class PageWithBouts {
     /**
      * Bout manipulation factory.
      */
-    private final BoutFactory factory;
+    private final FactoryBuilder builder;
 
     /**
      * Query to retrieve list of bouts.
@@ -71,11 +73,11 @@ public final class PageWithBouts {
 
     /**
      * Public ctor.
-     * @param fct The factory
+     * @param bldr The builder
      * @param qry The query
      */
-    public PageWithBouts(final BoutFactory fct, final String qry) {
-        this.factory = fct;
+    public PageWithBouts(final FactoryBuilder bldr, final String qry) {
+        this.builder = bldr;
         this.query = qry;
     }
 
@@ -87,7 +89,7 @@ public final class PageWithBouts {
     @XmlElementWrapper(name = "bouts")
     public List<ShortBout> getList() {
         final List<ShortBout> list = new ArrayList<ShortBout>();
-        for (Bout bout : this.factory.list(this.query)) {
+        for (Bout bout : this.builder.getBoutFactory().list(this.query)) {
             list.add(new ShortBout(bout));
         }
         return list;
