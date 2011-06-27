@@ -24,17 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration;
+package com.netbout.war;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
+import com.netbout.rest.jaxb.PageWithBouts;
+import javax.ws.rs.ext.ContextResolver;
+import javax.xml.bind.Marshaller;
 import org.junit.*;
-import org.xmlmatchers.transform.XmlConverters;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -43,30 +38,13 @@ import static org.mockito.Mockito.*;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ListExistingBoutsIT {
+public final class XslResolverTest {
 
     @Test
-    public void testCreatesNewBout() throws Exception {
-        final HttpClient client = new DefaultHttpClient();
-        final HttpUriRequest request = new HttpGet(
-            new ContainerURL().path("/").toURI()
-        );
-        final HttpResponse response = client.execute(request);
-        assertThat(
-            response.getStatusLine().getStatusCode(),
-            equalTo(HttpStatus.SC_OK)
-        );
-        final String xml = IOUtils.toString(response.getEntity().getContent());
-        assertThat(
-            XmlConverters.the(xml),
-            org.xmlmatchers.XmlMatchers.hasXPath("/page/bouts")
-        );
-        assertThat(
-            XmlConverters.the(xml),
-            org.xmlmatchers.XmlMatchers.hasXPath(
-                "/processing-instruction('xml-stylesheet')"
-            )
-        );
+    public void testInstantiatesMarshaller() throws Exception {
+        final ContextResolver<Marshaller> resolver = new XslResolver();
+        final Marshaller mrsh = resolver.getContext(PageWithBouts.class);
+        assertThat(mrsh, is(not(nullValue())));
     }
 
 }

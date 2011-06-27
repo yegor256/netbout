@@ -47,7 +47,7 @@
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>com.netbout.rest</param-value>
+            <param-value>com.netbout.rest,com.netbout.war</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

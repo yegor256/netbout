@@ -192,4 +192,28 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>static-analysis</id>
+            <activation>
+                <property><name>ci</name></property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>cobertura-maven-plugin</artifactId>
+                            <configuration>
+                                <check>
+                                    <haltOnFailure>false</haltOnFailure>
+                                </check>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

@@ -26,7 +26,6 @@
  */
 package integration;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -38,7 +37,6 @@ import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
-import static org.xmlmatchers.transform.XmlConverters.the;
 
 /**
  * @author Yegor Bugayenko (yegor@netbout.com)
@@ -50,11 +48,13 @@ public final class CreateBoutIT {
 
     private static final String IDENTITY = "me";
 
+    private static final String PATH = "/new";
+
     @Test
     public void testRenderStartPage() throws Exception {
         final HttpClient client = new DefaultHttpClient();
         final HttpUriRequest request = new HttpGet(
-            new ContainerURL().path("/new").toURI()
+            new ContainerURL().path(this.PATH).toURI()
         );
         final HttpResponse response = client.execute(request);
         assertThat(
@@ -68,7 +68,7 @@ public final class CreateBoutIT {
     public void testCreatesNewBout() throws Exception {
         final HttpClient client = new DefaultHttpClient();
         final HttpUriRequest request = new HttpPost(
-            new ContainerURL().path("/new")
+            new ContainerURL().path(this.PATH)
                 .param("t", this.BOUT_TITLE)
                 .param("i", this.IDENTITY)
                 .toURI()
