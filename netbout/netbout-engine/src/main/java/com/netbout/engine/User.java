@@ -24,78 +24,30 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine.impl;
-
-// data access from com.netbout:netbout-data
-import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
-import com.netbout.data.jpa.JpaBoutManager;
-
-// API
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.Identity;
+package com.netbout.engine;
 
 // JDK
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of the default factory.
+ * One user.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultBoutFactory implements BoutFactory {
+public interface User {
 
     /**
-     * Manager of data entities.
+     * Full list of all identities.
+     * @return The list of identities
      */
-    private final BoutManager manager;
+    List<Identity> identities();
 
     /**
-     * Public ctor.
+     * Find identity by name.
+     * @param name Name of identity
+     * @return The identity found
      */
-    public DefaultBoutFactory() {
-        this.manager = new JpaBoutManager();
-    }
-
-    /**
-     * Protected ctor, for unit testing.
-     * @param mgr The manager
-     */
-    public DefaultBoutFactory(final BoutManager mgr) {
-        this.manager = mgr;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout create(final Identity creator, final String title) {
-        return new DefaultBout(
-            this.manager.create(creator.name(), title)
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout find(final Long boutId) {
-        return new DefaultBout(this.manager.find(boutId));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Bout> list(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
-        for (BoutEnt ent : this.manager.list(query)) {
-            list.add(new DefaultBout(ent));
-        }
-        return list;
-    }
+    Identity identity(final String name);
 
 }

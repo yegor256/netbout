@@ -26,73 +26,32 @@
  */
 package com.netbout.engine.impl;
 
-// data access from com.netbout:netbout-data
 import com.netbout.data.BoutEnt;
 import com.netbout.data.BoutManager;
-
-// API
 import com.netbout.engine.Bout;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Implementation of a Bout.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class LazyBout implements Bout {
+public final class DefaultBoutTest {
 
-    /**
-     * Manager of data entities.
-     */
-    private final BoutManager manager;
+    private static final Long BOUT_ID = 543L;
 
-    /**
-     * ID of the bout.
-     */
-    private final Long boutId;
+    private static final String BOUT_TITLE = "some title";
 
-    /**
-     * Bout entity.
-     */
-    private BoutEnt bout;
-
-    /**
-     * Public ctor, for unit testing.
-     * @param mgr The manager
-     * @param bid Bout ID
-     */
-    public LazyBout(final BoutManager mgr, final Long bid) {
-        this.manager = mgr;
-        this.boutId = bid;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long number() {
-        return this.entity().number();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String title() {
-        return this.entity().title();
-    }
-
-    /**
-     * Load entity from manager.
-     * @return The entity loaded
-     */
-    private BoutEnt entity() {
-        synchronized (this) {
-            if (this.bout == null) {
-                this.bout = this.manager.find(this.boutId);
-            }
-            return this.bout;
-        }
+    @Test
+    public void testBoutBehavior() throws Exception {
+        final BoutEnt entity = mock(BoutEnt.class);
+        doReturn(this.BOUT_TITLE).when(entity).title();
+        final Bout bout = new DefaultBout(entity);
+        final String title = bout.title();
+        assertThat(title, equalTo(this.BOUT_TITLE));
+        verify(entity).title();
     }
 
 }

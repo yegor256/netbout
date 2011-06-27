@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2011, netUser.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netUser Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
@@ -27,75 +27,38 @@
 package com.netbout.engine.impl;
 
 // data access from com.netbout:netbout-data
-import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
-import com.netbout.data.jpa.JpaBoutManager;
+import com.netbout.data.IdentityEnt;
 
 // API
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
 import com.netbout.engine.Identity;
 
-// JDK
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Implementation of the default factory.
+ * Implementation of an Identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultBoutFactory implements BoutFactory {
+final class SimpleIdentity implements Identity {
 
     /**
-     * Manager of data entities.
+     * The name.
      */
-    private final BoutManager manager;
+    private String name;
 
     /**
      * Public ctor.
+     * @param ent The entity
      */
-    public DefaultBoutFactory() {
-        this.manager = new JpaBoutManager();
-    }
-
-    /**
-     * Protected ctor, for unit testing.
-     * @param mgr The manager
-     */
-    public DefaultBoutFactory(final BoutManager mgr) {
-        this.manager = mgr;
+    public SimpleIdentity(final IdentityEnt ent) {
+        this.name = ent.name();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Bout create(final Identity creator, final String title) {
-        return new DefaultBout(
-            this.manager.create(creator.name(), title)
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout find(final Long boutId) {
-        return new DefaultBout(this.manager.find(boutId));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Bout> list(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
-        for (BoutEnt ent : this.manager.list(query)) {
-            list.add(new DefaultBout(ent));
-        }
-        return list;
+    public String name() {
+        return this.name;
     }
 
 }

@@ -24,78 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine.impl;
-
-// data access from com.netbout:netbout-data
-import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
-import com.netbout.data.jpa.JpaBoutManager;
-
-// API
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.Identity;
-
-// JDK
-import java.util.ArrayList;
-import java.util.List;
+package com.netbout.engine;
 
 /**
- * Implementation of the default factory.
+ * Factory to manipulate users.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultBoutFactory implements BoutFactory {
+public interface UserFactory {
 
     /**
-     * Manager of data entities.
+     * Find the user by credentials provided.
+     * @param login The login
+     * @param password The password
+     * @return The user found
      */
-    private final BoutManager manager;
-
-    /**
-     * Public ctor.
-     */
-    public DefaultBoutFactory() {
-        this.manager = new JpaBoutManager();
-    }
-
-    /**
-     * Protected ctor, for unit testing.
-     * @param mgr The manager
-     */
-    public DefaultBoutFactory(final BoutManager mgr) {
-        this.manager = mgr;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout create(final Identity creator, final String title) {
-        return new DefaultBout(
-            this.manager.create(creator.name(), title)
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout find(final Long boutId) {
-        return new DefaultBout(this.manager.find(boutId));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Bout> list(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
-        for (BoutEnt ent : this.manager.list(query)) {
-            list.add(new DefaultBout(ent));
-        }
-        return list;
-    }
+    User find(final String login, final String password);
 
 }

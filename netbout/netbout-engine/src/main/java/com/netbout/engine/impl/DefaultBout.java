@@ -28,74 +28,45 @@ package com.netbout.engine.impl;
 
 // data access from com.netbout:netbout-data
 import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
-import com.netbout.data.jpa.JpaBoutManager;
 
 // API
 import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import com.netbout.engine.Identity;
-
-// JDK
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Implementation of the default factory.
+ * Implementation of a Bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultBoutFactory implements BoutFactory {
+final class DefaultBout implements Bout {
 
     /**
-     * Manager of data entities.
+     * Bout entity.
      */
-    private final BoutManager manager;
+    private final BoutEnt bout;
 
     /**
      * Public ctor.
+     * @param ent The entity
      */
-    public DefaultBoutFactory() {
-        this.manager = new JpaBoutManager();
-    }
-
-    /**
-     * Protected ctor, for unit testing.
-     * @param mgr The manager
-     */
-    public DefaultBoutFactory(final BoutManager mgr) {
-        this.manager = mgr;
+    public DefaultBout(final BoutEnt ent) {
+        this.bout = ent;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Bout create(final Identity creator, final String title) {
-        return new DefaultBout(
-            this.manager.create(creator.name(), title)
-        );
+    public Long number() {
+        return this.bout.number();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Bout find(final Long boutId) {
-        return new DefaultBout(this.manager.find(boutId));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Bout> list(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
-        for (BoutEnt ent : this.manager.list(query)) {
-            list.add(new DefaultBout(ent));
-        }
-        return list;
+    public String title() {
+        return this.bout.title();
     }
 
 }

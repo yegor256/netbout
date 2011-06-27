@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2011, netUser.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netUser Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
@@ -26,35 +26,50 @@
  */
 package com.netbout.engine.impl;
 
-import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
-import com.netbout.engine.Bout;
-import org.junit.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+// data access from com.netbout:netbout-data
+import com.netbout.data.UserEnt;
+import com.netbout.data.UserManager;
+import com.netbout.data.jpa.JpaUserManager;
+
+// API
+import com.netbout.engine.User;
+import com.netbout.engine.UserFactory;
+import com.netbout.engine.Identity;
 
 /**
+ * Implementation of the default factory.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyBoutTest {
+public final class DefaultUserFactory implements UserFactory {
 
-    private static final Long BOUT_ID = 543L;
+    /**
+     * Manager of data entities.
+     */
+    private final UserManager manager;
 
-    private static final String BOUT_TITLE = "some title";
+    /**
+     * Public ctor.
+     */
+    public DefaultUserFactory() {
+        this.manager = new JpaUserManager();
+    }
 
-    @Test
-    public void testBoutBehavior() throws Exception {
-        final BoutEnt entity = mock(BoutEnt.class);
-        doReturn(this.BOUT_TITLE).when(entity).title();
-        final BoutManager manager = mock(BoutManager.class);
-        doReturn(entity).when(manager).find(this.BOUT_ID);
-        final Bout bout = new LazyBout(manager, this.BOUT_ID);
-        final String title1 = bout.title();
-        final String title2 = bout.title();
-        assertThat(title1, equalTo(this.BOUT_TITLE));
-        verify(manager).find(this.BOUT_ID);
+    /**
+     * Protected ctor, for unit testing.
+     * @param mgr The manager
+     */
+    public DefaultUserFactory(final UserManager mgr) {
+        this.manager = mgr;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public User find(final String login, final String password) {
+        return new DefaultUser(this.manager.find(login, password));
     }
 
 }
