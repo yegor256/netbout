@@ -141,6 +141,7 @@
                                 <java.util.logging.config.file>
                                     ${project.build.outputDirectory}/logging.properties
                                 </java.util.logging.config.file>
+                                <jetty.port>${jetty.port}</jetty.port>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
@@ -153,6 +154,26 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.6</version> <!-- 27 June 2011 -->
+                <configuration>
+                    <portNames>
+                        <portName>jetty.port</portName>
+                        <portName>jetty.port.stop</portName>
+                    </portNames>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>reserve-port</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>7.4.2.v20110526</version>
@@ -160,14 +181,14 @@
                     <scanIntervalSeconds>0</scanIntervalSeconds>
                     <connectors>
                         <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                            <port>9090</port>
+                            <port>${jetty.port}</port>
                             <maxIdleTime>5000</maxIdleTime> <!-- 5 sec -->
                         </connector>
                     </connectors>
                     <webAppConfig>
                         <contextPath>/</contextPath>
                     </webAppConfig>
-                    <stopPort>9091</stopPort>
+                    <stopPort>${jetty.port.stop}</stopPort>
                     <stopKey>STOP</stopKey>
                     <daemon>true</daemon>
                 </configuration>

@@ -39,9 +39,8 @@ import org.apache.http.message.BasicNameValuePair;
  */
 public final class ContainerURL {
 
-    // @todo #103 Port number shall be received from system variable, not
-    //       being hard-coded (as it is now)
-    private static final String ROOT = "http://localhost:9090";
+    private static final String ROOT =
+        "http://localhost:" + System.getProperty("jetty.port");
 
     private final List<NameValuePair> params = new ArrayList<NameValuePair>();
 
