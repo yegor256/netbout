@@ -305,9 +305,7 @@
                     <plugin>
                         <!--
                         This plugin will collect current build number
-                        from Subversion and save it into MANIFEST.MF. Later,
-                        this number is used by different java classes, mostly
-                        in order to expose it in web.
+                        from Subversion and save it into Maven property "buildNumber".
                         -->
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>buildnumber-maven-plugin</artifactId>
@@ -933,17 +931,6 @@
                     <configuration>
                         <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
                         <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1</version> <!-- 2 Dec 2010 -->
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <SCM-Revision>${buildNumber}</SCM-Revision>
-                            </manifestEntries>
-                        </archive>
                     </configuration>
                 </plugin>
                 <plugin>
