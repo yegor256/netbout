@@ -49,6 +49,11 @@
             <param-name>com.sun.jersey.config.property.packages</param-name>
             <param-value>com.netbout.rest,com.netbout.war</param-value>
         </init-param>
+        <init-param>
+            <!-- for GAE: http://code.google.com/p/googleappengine/wiki/WillItPlayInJava -->
+            <param-name>com.sun.jersey.config.feature.DisableWADL</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>jersey</servlet-name>
