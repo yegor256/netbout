@@ -24,62 +24,27 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.war;
+package integration.jaxb;
 
-// for JAX-RS
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
-
-// JAXB
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 /**
- * Replace standard marshaller.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @link <a href="http://markmail.org/search/?q=list%3Anet.java.dev.jersey.users+ContextResolver%3CMarshaller%3E#query:list%3Anet.java.dev.jersey.users%20ContextResolver%3CMarshaller%3E+page:1+mid:q4fkq6eqlgkzdodc+state:results">discussion</a>
  */
-@Provider
-@Produces(MediaType.APPLICATION_XML)
-public final class XslResolver implements ContextResolver<Marshaller> {
+public final class ValidateImplementationIT {
 
-    /**
-     * JAXB context.
-     */
-    private final JAXBContext context;
-
-    /**
-     * Public ctor.
-     */
-    public XslResolver() {
-        try {
-            this.context = JAXBContext.newInstance("com.netbout.rest.jaxb");
-        } catch (javax.xml.bind.JAXBException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Marshaller getContext(final Class<?> type) {
-        try {
-            final Marshaller mrsh = this.context.createMarshaller();
-            mrsh.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            mrsh.setProperty(
-                "com.sun.xml.bind.xmlHeaders",
-                "<?xml version='1.0'?>"
-                + "<?xml-stylesheet href='/test.xsl'?>"
-            );
-            return mrsh;
-        } catch (javax.xml.bind.JAXBException ex) {
-            throw new IllegalStateException(ex);
-        }
+    @Test
+    public void test() throws Exception {
+        final JAXBContext ctx =
+            JAXBContext.newInstance("com.netbout.rest.jaxb");
+        assertThat(
+            ctx.getClass().getName(),
+            equalTo("com.sun.xml.bind.v2.runtime.JAXBContextImpl")
+        );
     }
 
 }

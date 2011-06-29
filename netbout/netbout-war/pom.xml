@@ -122,6 +122,42 @@
             <version>4.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <!--
+            JAXB 2.0 implementation, required in runtime.
+            -->
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.2.4-1</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <!--
+            JAXB 2.0 API, required in runtime.
+            -->
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.2.3</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <!--
+            Translate all calls to SLF4j into JUL logging (used by GAE).
+            -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.6.1</version> <!-- 8 Nov 2010 -->
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <!--
+            Turn all LOG4J logging to SLF4J, during testing.
+            -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
