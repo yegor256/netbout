@@ -45,6 +45,8 @@
     <properties>
         <!-- we should specify it here to avoid dependency error in Jersey -->
         <jersey.version>1.8-ea04</jersey.version>
+        <!-- default buildNumber (and version number in GAE) -->
+        <buildNumber>13</buildNumber>
     </properties>
 
     <repositories>
@@ -288,6 +290,77 @@
                                 <haltOnFailure>false</haltOnFailure>
                             </check>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!--
+            At this profile we deploy the WAR package to Google App Engine
+            server. It's done by a special plugin, that accomplishes all
+            necessary data manipulations with the server.
+            -->
+            <id>deploy-to-gae</id>
+            <activation>
+                <file><exists>${basedir}/src/main/webapp/WEB-INF/appengine-web.xml</exists></file>
+            </activation>
+            <properties>
+                <gae.version>1.5.1</gae.version>
+                <gae.home>${project.build.directory}/appengine-java-sdk-${gae.version}</gae.home>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.google.appengine</groupId>
+                    <artifactId>appengine-java-sdk</artifactId>
+                    <version>${gae.version}</version> <!-- 29 June 2011 -->
+                    <type>zip</type>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack-gae-sdk</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.google.appengine</groupId>
+                                            <artifactId>appengine-java-sdk</artifactId>
+                                            <version>${gae.version}</version>
+                                            <type>zip</type>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!--
+                        This plugin transfers data to Google App Engine.
+                        @see http://www.kindleit.net/maven_gae_plugin/index.html
+                        -->
+                        <groupId>net.kindleit</groupId>
+                        <artifactId>maven-gae-plugin</artifactId>
+                        <version>0.8.4</version>
+                        <configuration>
+                            <serverId>netbout.com</serverId>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
