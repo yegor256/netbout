@@ -74,7 +74,7 @@ public final class XslResolver implements ContextResolver<Marshaller> {
             mrsh.setProperty(
                 "com.sun.xml.bind.xmlHeaders",
                 "<?xml version='1.0'?>"
-                + "<?xml-stylesheet href='/xsl/"
+                + "<?xml-stylesheet type='text/xml' href='/xsl/"
                 + type.getSimpleName()
                 + ".xsl'?>"
             );

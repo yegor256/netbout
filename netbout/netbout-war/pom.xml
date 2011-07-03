@@ -160,13 +160,40 @@
             <version>1.6.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <!--
+            Saxon for XSLT 2.0
+            -->
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <version>8.7</version> <!-- 26 May 2011 -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!--
+            DOM in Saxon.
+            -->
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-dom</artifactId>
+            <version>8.7</version> <!-- 26 May 2011 -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!--
+            DOM in Saxon.
+            -->
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.3.04</version> <!-- 26 May 2011 -->
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.9</version>
+                <!-- other details are in parent pom.xml -->
                 <executions>
                     <execution>
                         <id>integration-test</id>

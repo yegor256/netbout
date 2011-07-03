@@ -211,7 +211,7 @@
                 -->
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.7</version> <!-- 10 Sep 2010 -->
+                <version>4.8.2</version> <!-- 3 July 2011 -->
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -882,6 +882,18 @@
                 </plugin>
                 <plugin>
                     <!--
+                    Safe execution of integration tests.
+                    -->
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.9</version>
+                    <configuration>
+                        <argLine>-Dfile.encoding=UTF8</argLine>
+                        <runOrder>random</runOrder>
+                        <useFile>false</useFile>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <!--
                     Starts unit tests, protocols their results and creates
                     a summary report. It is required to send testing protocol
                     to the STDOUT as well, not only to the file.
@@ -889,6 +901,8 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.5</version> <!-- 1 Oct 2010 -->
                     <configuration>
+                        <argLine>-Dfile.encoding=UTF8</argLine>
+                        <runOrder>random</runOrder>
                         <useFile>false</useFile>
                     </configuration>
                 </plugin>
