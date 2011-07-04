@@ -201,7 +201,6 @@
                             <goal>integration-test</goal>
                         </goals>
                         <configuration>
-                            <useFile>false</useFile>
                             <systemPropertyVariables>
                                 <java.util.logging.config.file>
                                     ${project.build.outputDirectory}/logging.properties
@@ -288,7 +287,7 @@
                         </archive>
                         <webResources>
                             <resource>
-                                <directory>src/main/webapp/WEB-INF</directory>
+                                <directory>src/main/gae</directory>
                                 <filtering>true</filtering>
                             </resource>
                         </webResources>
@@ -329,7 +328,7 @@
             -->
             <id>deploy-to-gae</id>
             <activation>
-                <file><exists>${basedir}/src/main/webapp/WEB-INF/appengine-web.xml</exists></file>
+                <file><exists>src</exists></file>
             </activation>
             <properties>
                 <gae.version>1.5.1</gae.version>
@@ -386,6 +385,42 @@
                                 <goals>
                                     <goal>deploy</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>compress-xml</id>
+            <activation>
+                <file><exists>src</exists></file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- configuration is in pluginManagement section above -->
+                        <groupId>org.codehaus.gmaven</groupId>
+                        <artifactId>gmaven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compress-xml</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <properties>
+                                        <includes>${project.build.directory}/**.xsl</includes>
+                                    </properties>
+                                    <!--
+                                    @todo #107 Compression mechanism should be implemented
+                                    -->
+                                    <source>
+                                        <![CDATA[
+                                        ]]>
+                                    </source>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

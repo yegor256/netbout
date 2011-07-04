@@ -98,10 +98,6 @@ public final class HtmlRenderingIT {
         this.folder = this.root.newFolder("xsl");
         this.resolver = new HtmlRenderingIT.InDirResolver(this.folder);
         this.factory.setURIResolver(this.resolver);
-        FileUtils.copyDirectory(
-            new File("./src/main/webapp/xsl"),
-            new File(this.folder, "xsl")
-        );
     }
 
     @Test
@@ -132,7 +128,16 @@ public final class HtmlRenderingIT {
         }
         @Override
         public Source resolve(final String href, final String base) {
-            return new StreamSource(new File(this.dir, href));
+            try {
+                final File xsl = new File(this.dir, href);
+                FileUtils.writeStringToFile(
+                    xsl,
+                    new ContainerPage().xml(href)
+                );
+                return new StreamSource(xsl);
+            } catch (java.io.IOException ex) {
+                throw new IllegalArgumentException(ex);
+            }
         }
     }
 

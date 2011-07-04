@@ -24,17 +24,14 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration;
+package integration.xsl;
 
-import java.net.URI;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.xmlmatchers.transform.XmlConverters;
+import integration.ContainerPage;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -42,38 +39,37 @@ import static org.hamcrest.Matchers.*;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ContainerPage {
+@RunWith(Parameterized.class)
+public final class WebPagesIT {
 
-    public String page(final String path) throws java.io.IOException {
-        final HttpClient client = new DefaultHttpClient();
-        URI uri;
-        try {
-            uri = new ContainerURL().path(path).toURI();
-        } catch (java.net.URISyntaxException ex) {
-            throw new java.io.IOException(ex);
-        }
-        final HttpUriRequest request = new HttpGet(uri);
-        final HttpResponse response = client.execute(request);
-        assertThat(
-            response.getStatusLine().getStatusCode(),
-            describedAs("HTTP response for " + path, equalTo(HttpStatus.SC_OK))
-        );
-        return IOUtils.toString(response.getEntity().getContent());
+    /**
+     * Full list of URLs to test.
+     */
+    private static final String[] URLS = {
+        "/",
+        "/favicon.ico",
+        "/robots.txt",
+        "/LICENSE.txt",
+    };
+
+    private final String path;
+
+    public WebPagesIT(final String name) {
+        this.path = name;
     }
 
-    public String xml(final String path) throws java.io.IOException {
-        final String xml = this.page(path);
-        assertThat(
-            XmlConverters.the(xml),
-            org.xmlmatchers.XmlMatchers.hasXPath("/page")
-        );
-        assertThat(
-            XmlConverters.the(xml),
-            org.xmlmatchers.XmlMatchers.hasXPath(
-                "/processing-instruction('xml-stylesheet')"
-            )
-        );
-        return xml;
+    @Parameterized.Parameters
+    public static Collection<Object[]> paths() {
+        final Collection<Object[]> paths = new ArrayList<Object[]>();
+        for (String url : WebPagesIT.URLS) {
+            paths.add(new Object[] {url});
+        }
+        return paths;
+    }
+
+    @Test
+    public void testOnePageRendering() throws Exception {
+        new ContainerPage().page(this.path);
     }
 
 }
