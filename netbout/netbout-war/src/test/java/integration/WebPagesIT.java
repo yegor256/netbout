@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration.xsl;
+package integration;
 
 import integration.ContainerPage;
 import java.util.ArrayList;
@@ -50,6 +50,8 @@ public final class WebPagesIT {
         "/favicon.ico",
         "/robots.txt",
         "/LICENSE.txt",
+        "/images/logo.png",
+        "/xsl/layout.xsl",
     };
 
     private final String path;

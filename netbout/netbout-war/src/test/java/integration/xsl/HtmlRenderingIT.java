@@ -132,7 +132,7 @@ public final class HtmlRenderingIT {
                 final File xsl = new File(this.dir, href);
                 FileUtils.writeStringToFile(
                     xsl,
-                    new ContainerPage().xml(href)
+                    new ContainerPage().page(href)
                 );
                 return new StreamSource(xsl);
             } catch (java.io.IOException ex) {
