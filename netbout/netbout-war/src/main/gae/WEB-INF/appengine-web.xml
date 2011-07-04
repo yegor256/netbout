@@ -32,7 +32,14 @@
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
     <application>netbout</application>
     <version>${buildNumber}</version>
-    <public-root>/static</public-root>
+    <public-root>/</public-root>
+    <static-files>
+        <include path="/images/**" />
+        <include path="/xsl/**" />
+        <include path="/robots.txt" />
+        <include path="/LICENSE.txt" />
+        <include path="/favicon.ico" />
+    </static-files>
     <system-properties>
         <property name="java.util.logging.config.file"
             value="WEB-INF/classes/logging.properties" />
