@@ -397,6 +397,16 @@
                 <file><exists>src</exists></file>
             </activation>
             <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <artifactId>maven-war-plugin</artifactId>
+                            <configuration>
+                                <warSourceExcludes>css/**</warSourceExcludes>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
                 <plugins>
                     <plugin>
                         <groupId>net.alchim31.maven</groupId>
