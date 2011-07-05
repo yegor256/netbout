@@ -33,13 +33,40 @@
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:output method="html"/>
+    <xsl:output method="xhtml"/>
 
     <xsl:include href="/xsl/layout.xsl" />
 
+    <xsl:template name="head">
+        <title>netBout.com</title>
+        <link href="/css/front.css" rel="stylesheet" type="text/css"></link>
+    </xsl:template>
+
     <xsl:template name="content">
-        <div>
-            Hello!
+        <div class="filter">
+            <b>Filtered by</b> (click to remove):
+            <ul>
+                <li class="tag"><a href="" title="don't filter by PHP">PHP</a></li>
+                <li><a href="" title="don't filter by Alex Solodov">Alex Solodov</a></li>
+            </ul>
+        </div>
+
+        <div class="intro">
+            <div class="participants">
+                <a href="" title="filter by him/her">
+                    <img src="http://www.robert-deniro.com/deniro.jpg"/>
+                </a>
+            </div>
+            <a href="/" class="title unread">
+                #5252: New project in PHP, lead developer wanted..
+            </a>
+            <br/>
+            5 days ago by
+            <a href="" title="filter by John Smith'">John Smith</a>:
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            <ul class="tags">
+                <li class="tag"><a href="">java</a></li>
+            </ul>
         </div>
     </xsl:template>
 

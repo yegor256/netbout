@@ -1,0 +1,259 @@
+/**
+ * Copyright (c) 2009-2011, netBout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email: privacy@netbout.com.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+body {
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.3em;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    position: relative;
+    color: #122632;
+    /*
+    Without the following line FireFox renders
+    footer with a big white padding at the bottom
+    */
+    border-bottom: 1px solid #5a5a5a;
+}
+
+html{
+    height: 100%;
+}
+
+a, a:visited {
+    text-decoration: none;
+    color: #0093d0;
+}
+
+    a:hover{
+        text-decoration: underline;
+    }
+
+p,
+form,
+h1,
+h2{
+    margin: 0.4em 0;
+}
+
+    /* FLASH message after some event */
+    p.flash {
+        color: #e31b23;
+    }
+
+h1 {
+    font-size: 1.4em;
+}
+
+input,
+textarea{
+    color: #122632;
+    font-size: 1em;
+    padding: 0.3em;
+    border: 1px solid #122632;
+}
+
+input[type="submit"]{
+    cursor: pointer;
+    padding: 0.3em 0.6em;
+    margin-top: 0.3em;
+}
+
+    input[type="submit"]:hover{
+    }
+
+/* wrapper just keep the width of the content to the fixed width, and in the center */
+div.wrapper{
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 700px;
+}
+
+div#header{
+    position: relative;
+}
+
+    div#header table {
+        width: 100%;
+        height: 5em;
+        padding-top: 1em;
+    }
+
+        div#header table td {
+            padding: 0;
+            margin: 0;
+            vertical-align: top;
+        }
+
+        div#header table td.logo {
+            padding: 0;
+            margin: 0;
+            vertical-align: top;
+        }
+
+            div#header table td.logo ul{
+            }
+
+                div#header table td.logo ul li{
+                    list-style: none;
+                    display: inline;
+                    border-left: 1px solid #7d8f9b;
+                    padding: 0 0.5em;
+                }
+
+                    div#header table td.logo ul li:first-child{
+                        border-left: none;
+                        padding-left: 0;
+                    }
+
+            div#header table td.logo a#logo{
+                border: none;
+                display: block;
+            }
+
+                div#header table td.logo a#logo img{
+                    width: 150px;
+                }
+
+    div#header form{
+    }
+
+        div#header form dd{
+            display: inline;
+        }
+
+            /* autocomplete field */
+            div#header form dd ul{
+                text-align: left;
+            }
+
+        /*redefining it to clean jquery UI styles*/
+        div#header form input{
+            font-size: 1.2em;
+            line-height: 1.4em;
+            padding: 0.2em;
+        }
+
+        div#header form input[type="text"]{
+        }
+
+        div#header form input[type="submit"]{
+            text-decoration: none;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            color: #122632;
+            border: 0;
+            font-weight: bold;
+        }
+
+/* everything between header and footer */
+div#content{
+    overflow: hidden;
+    margin: 1.5em 0;
+    padding-bottom: 8em; /* to bring footer to the bottom, see div#footer.height */
+}
+
+div#footer{
+    font-size: 0.8em;
+    line-height: 1.2em;
+    width: 100%;
+    padding: 1em 0em;
+    height: 5em; /* change it together with div#content-wrapper.padding-bottom */
+    position: absolute;
+    bottom: 0;
+    border-top: 0.4em #122632 solid; /*1.5em is equal to the basic scale*/
+    background: #5a5a5a;
+    color: white;
+}
+
+    div#footer ul#menu{
+    }
+
+        div#footer ul#menu li{
+            list-style: none;
+            display: inline;
+            border-left: 1px solid #e7e9ea;
+            padding: 0 1em;
+        }
+
+            div#footer ul#menu li:first-child{
+                border-left: none;
+                padding-left: 0;
+            }
+
+            div#footer ul#menu li a,
+            div#footer ul#menu li a:visited{
+                color: white;
+            }
+
+                div#footer ul#menu li a:hover{
+                }
+
+li.tag{
+    list-style: none;
+    display: inline;
+}
+
+    li.tag a{
+        font-size: 0.9em;
+        background-color: #e7e9ea;
+        color: #7d8f9b;
+        font-weight: normal;
+        padding: 0.2em 0.5em;
+        border-right: 1px solid #7d8f9b;
+        border-bottom: 1px solid #7d8f9b;
+    }
+
+        li.tag a:hover{
+            background-color: #7d8f9b;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+li.add {
+    list-style: none;
+    display: inline;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form.inline{
+}
+
+    form.inline dd{
+        display: inline;
+    }

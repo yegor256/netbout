@@ -1,0 +1,151 @@
+/**
+ * Copyright (c) 2009-2011, netBout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email: privacy@netbout.com.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+div.preamble{
+    margin-bottom: 2em;
+}
+
+    div.preamble div.title{
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    div.preamble div.myself{
+        text-align: right;
+        float: right;
+    }
+
+        div.preamble div.myself img{
+            height: 100px;
+        }
+
+    div.preamble table.details{
+        margin: 0.5em 0;
+    }
+
+        div.preamble table.details td{
+        }
+
+            div.preamble table.details td span{
+                color: #7d8f9b;
+            }
+
+    div.preamble div.participants{
+        margin-bottom: 0.5em;
+    }
+
+        div.preamble div.participants img{
+            height: 75px;
+            vertical-align: bottom;
+        }
+
+        div.preamble div.participants span.anonymous{
+            display: inline-block;
+            vertical-align: bottom;
+            height: 55px;
+            width: 75px;
+            background-color: #e7e9ea;
+            color: #7d8f9b;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        div.preamble div.participants ul li{
+            list-style: none;
+            display: inline;
+        }
+
+    div.preamble div.stages{
+        margin-top: 3em;
+    }
+
+        div.preamble div.stages ul{
+            display: inline;
+            margin-bottom: 1em;
+        }
+
+            div.preamble div.stages ul li.stage{
+                display: inline;
+                margin-right: 1em;
+            }
+
+            div.preamble div.stages ul li.ui-state-active{
+                font-weight: bold;
+            }
+
+        div.preamble div.ui-tabs-panel {
+            border: 1px solid #e7e9ea;
+            padding: 3em;
+        }
+
+        div.preamble div.ui-tabs-hide {
+            display: none;
+        }
+
+div.message{
+    padding-top: 3em;
+    margin-top: 3em;
+    border-top: 1px dotted #e7e9ea;
+}
+
+    div.message:first-child{
+        border-top: 0;
+    }
+
+    div.message div.author{
+        float: right;
+        margin-left: 2em;
+        text-align: right;
+    }
+
+        div.message div.author img{
+            height: 75px;
+        }
+
+    div.message div.text{
+    }
+
+div.reply{
+    margin-top: 3em;
+}
+
+    div.reply form{
+    }
+
+        div.reply form textarea#reply{
+            width: 95%;
+            height: 10em;
+        }
+
+        div.reply form div#preview{
+            padding: 0.5em;
+            border: 2px dashed #e7e9ea;
+            min-height: 2em;
+            width: 95%;
+        }
+
+

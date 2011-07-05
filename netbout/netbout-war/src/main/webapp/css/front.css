@@ -24,55 +24,55 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration;
 
-import integration.ContainerPage;
-import java.util.ArrayList;
-import java.util.Collection;
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
-/**
- * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
- */
-@RunWith(Parameterized.class)
-public final class WebPagesIT {
-
-    /**
-     * Full list of URLs to test.
-     */
-    private static final String[] URLS = {
-        "/",
-        "/favicon.ico",
-        "/robots.txt",
-        "/LICENSE.txt",
-        "/images/logo.png",
-        "/css/global.css",
-        "/xsl/layout.xsl",
-    };
-
-    private final String path;
-
-    public WebPagesIT(final String name) {
-        this.path = name;
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> paths() {
-        final Collection<Object[]> paths = new ArrayList<Object[]>();
-        for (String url : WebPagesIT.URLS) {
-            paths.add(new Object[] {url});
-        }
-        return paths;
-    }
-
-    @Test
-    public void testOnePageRendering() throws Exception {
-        new ContainerPage().page(this.path);
-    }
-
+div.filter{
+    margin-bottom: 2em;
 }
+
+    div.filter ul{
+        display: inline;
+    }
+
+        div.filter ul li{
+            display: inline;
+            margin-left: 0.5em;
+        }
+
+div.intro{
+    clear: both;
+    padding-bottom: 2em;
+    margin-bottom: 1em;
+    border-bottom: 1px dotted #e7e9ea;
+}
+
+    div.intro a.title{
+        font-size: 1.2em;
+    }
+
+        div.intro a.title.unread{
+            font-weight: bold;
+        }
+
+    div.intro div.participants{
+        float: right;
+        margin-left: 2em;
+    }
+
+        div.intro div.participants img{
+            height: 50px;
+            vertical-align: bottom;
+        }
+
+        div.intro div.participants span.anonymous{
+            display: inline-block;
+            vertical-align: bottom;
+            height: 40px;
+            width: 50px;
+            background-color: #e7e9ea;
+            color: #7d8f9b;
+            text-align: center;
+            padding-top: 10px;
+        }
+
+    div.intro ul.tags{
+    }

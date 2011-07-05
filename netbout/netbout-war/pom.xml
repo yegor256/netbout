@@ -392,12 +392,27 @@
             </build>
         </profile>
         <profile>
-            <id>compress-xml</id>
+            <id>compress</id>
             <activation>
                 <file><exists>src</exists></file>
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>net.alchim31.maven</groupId>
+                        <artifactId>yuicompressor-maven-plugin</artifactId>
+                        <version>1.2</version> <!-- 5 July 2011 -->
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>compress</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <nosuffix>true</nosuffix>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <!-- configuration is in pluginManagement section above -->
                         <groupId>org.codehaus.gmaven</groupId>

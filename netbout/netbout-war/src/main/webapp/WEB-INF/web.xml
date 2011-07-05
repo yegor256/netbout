@@ -62,6 +62,10 @@
         <servlet-name>default</servlet-name>
         <url-pattern>/xsl/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/css/*</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>jersey</servlet-name>

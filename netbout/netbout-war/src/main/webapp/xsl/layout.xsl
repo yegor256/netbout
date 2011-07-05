@@ -35,8 +35,62 @@
 
     <xsl:template match="/">
         <html>
+            <head>
+                <xsl:call-template name="head" />
+                <link href="/css/screen.css" rel="stylesheet" type="text/css"></link>
+            </head>
             <body>
-                <xsl:call-template name="content" />
+                <div style="font-size: 6em; position: fixed; color: #ddd; line-height: 1em">
+                    <!--
+                    This text is for "production in development" stage only
+                    -->
+                    product<br/>
+                    in development
+                </div>
+                <div id="header">
+                    <div class="wrapper">
+                        <table cellpadding="0" cellspacing="0">
+                            <tr><td class="logo">
+                                <a id="logo" href="/"><img src="/images/logo.png"/></a>
+                                <ul>
+                                    <li><a href="/john13"
+                                        style="font-weight: bolder;">john13</a></li>
+                                    <li><a href="/new">start</a></li>
+                                    <li><a href="/out">log out</a></li>
+                                </ul>
+                            </td>
+                            <td align="right">
+                                <form action="" method="post">
+                                    <dd><input type="text" value="PHP Germany" size="36" autocomplete="off" /></dd>
+                                    <dd><input type="submit" value="?" /></dd>
+                                </form>
+                            </td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div id="content">
+                    <div class="wrapper">
+                        <xsl:call-template name="content" />
+                    </div>
+                </div>
+                <div id="footer">
+                    <div class="wrapper">
+                        <div style="position: absolute; right: 0; top: 0;">
+                            USPTO patent app. no. 12/943,022
+                        </div>
+                        <ul id="menu">
+                            <li><a href="">how it works</a></li>
+                            <li><a href="">your privacy</a></li>
+                            <li><a href="">feedback</a></li>
+                        </ul>
+                        <p>
+                            (c) 2011, netBout.com,
+                            rev.123,
+                            0.3sec.
+                            All Rights Reserved.
+                        </p>
+                    </div>
+                </div>
             </body>
         </html>
     </xsl:template>
