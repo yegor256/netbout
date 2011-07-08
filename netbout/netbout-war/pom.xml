@@ -423,32 +423,6 @@
                             <nosuffix>true</nosuffix>
                         </configuration>
                     </plugin>
-                    <plugin>
-                        <!-- configuration is in pluginManagement section above -->
-                        <groupId>org.codehaus.gmaven</groupId>
-                        <artifactId>gmaven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>compress-xml</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>execute</goal>
-                                </goals>
-                                <configuration>
-                                    <properties>
-                                        <includes>${project.build.directory}/**.xsl</includes>
-                                    </properties>
-                                    <!--
-                                    @todo #107 Compression mechanism should be implemented
-                                    -->
-                                    <source>
-                                        <![CDATA[
-                                        ]]>
-                                    </source>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
