@@ -53,7 +53,7 @@
 
     <body>
         <head>
-            <link href="/images/favicon.gif" rel="shortcut icon" />
+            <link href="http://www.netbout.com/favicon.gif" rel="shortcut icon" />
             <link href="/css/site.css" rel="stylesheet" type="text/css" />
             <link href="/prettify/prettify.css" type="text/css" rel="stylesheet" />
             <script type="text/javascript">
