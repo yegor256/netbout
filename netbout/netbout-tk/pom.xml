@@ -43,15 +43,15 @@
     <distributionManagement>
         <snapshotRepository>
             <id>netbout.s3</id>
-            <url>s3://netbout.maven/snapshot</url>
+            <url>s3://repo.netbout.com/snapshot</url>
         </snapshotRepository>
         <repository>
             <id>netbout.s3</id>
-            <url>s3://netbout.maven/release</url>
+            <url>s3://repo.netbout.com/release</url>
         </repository>
         <site>
             <id>netbout.s3</id>
-            <url>s3://netbout.site/netbout-tk</url>
+            <url>s3://maven.netbout.com/netbout-tk</url>
         </site>
     </distributionManagement>
 

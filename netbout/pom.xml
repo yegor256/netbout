@@ -112,7 +112,7 @@
             https://s3.amazonaws.com/netbout.maven/snapshot
             -->
             <id>netbout.s3</id>
-            <url>s3://netbout.maven/snapshot</url>
+            <url>s3://repo.netbout.com/snapshot</url>
         </snapshotRepository>
         <repository>
             <!--
@@ -120,7 +120,7 @@
             https://s3.amazonaws.com/netbout.maven/release
             -->
             <id>netbout.s3</id>
-            <url>s3://netbout.maven/release</url>
+            <url>s3://repo.netbout.com/release</url>
         </repository>
         <site>
             <!--
@@ -128,7 +128,7 @@
             -->
             <id>netbout.s3</id>
             <name>netBout.com Project Site</name>
-            <url>s3://netbout.site/</url>
+            <url>s3://maven.netbout.com/</url>
         </site>
     </distributionManagement>
 
@@ -714,6 +714,14 @@
                                             -all
                                         </additionalparam>
                                         <useStandardDocletOptions>true</useStandardDocletOptions>
+                                    </configuration>
+                                </plugin>
+                                <plugin>
+                                    <groupId>com.rempl.plugins</groupId>
+                                    <artifactId>rempl-maven-plugin</artifactId>
+                                    <version>1.1.1</version>
+                                    <configuration>
+                                        <rom>src/rempl/rom.xml</rom>
                                     </configuration>
                                 </plugin>
                                 <plugin>
