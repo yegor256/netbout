@@ -37,7 +37,7 @@
         <html>
             <head>
                 <xsl:call-template name="head" />
-                <link href="/css/screen.css" rel="stylesheet" type="text/css"></link>
+                <link href="/css/global.css" rel="stylesheet" type="text/css"></link>
             </head>
             <body>
                 <div style="font-size: 6em; position: fixed; color: #ddd; line-height: 1em">
