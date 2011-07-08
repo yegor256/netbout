@@ -29,12 +29,6 @@ package com.netbout.rest;
 // bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.User;
 
-// JDK
-import java.security.Principal;
-
-// JAX-RS
-import javax.ws.rs.core.SecurityContext;
-
 /**
  * Authenticator.
  *
@@ -44,33 +38,26 @@ import javax.ws.rs.core.SecurityContext;
 public final class Auth {
 
     /**
-     * Name of identity.
+     * Conver user to auth token.
+     * @param user The user
+     * @return Auth token
      */
-    private User user;
-
-    /**
-     * Public ctor.
-     * @param bldr Factory builder
-     * @param ctx The context
-     * @todo #103 Here we should validate that this identity can be
-     *       used with currently logged in user. If the user is not
-     *       logged in - we should throw a runtime exception.
-     */
-    public Auth(final FactoryBuilder bldr, final SecurityContext ctx) {
-        final Principal principal = ctx.getUserPrincipal();
-        if (principal == null) {
-            throw new NotLoggedInException();
-        }
-        final Long num = Long.valueOf(principal.getName());
-        this.user = bldr.getUserFactory().find(num);
+    public String encode(final User user) {
+        return user.number().toString();
     }
 
     /**
-     * Get currently logged in user.
+     * Convert auth token to user.
+     * @param bldr Factory builder
+     * @param token The authentication token
      * @return The user
      */
-    public User user() {
-        return this.user;
+    public User decode(final FactoryBuilder bldr, final String token) {
+        if (token == null) {
+            throw new NotLoggedInException();
+        }
+        final Long num = Long.valueOf(token);
+        return bldr.getUserFactory().find(num);
     }
 
 }

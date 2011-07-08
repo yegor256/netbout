@@ -26,7 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.netbout.engine.User;
+import com.netbout.engine.UserFactory;
 import com.netbout.rest.jaxb.PageLogin;
+import java.net.HttpCookie;
+import java.util.List;
 import javax.ws.rs.core.Response;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,6 +43,20 @@ import static org.mockito.Mockito.*;
  */
 public final class LoginRsTest {
 
+    private static final Long ID = 342L;
+
+    private static final String PWD = "secret";
+
+    /**
+     * @link <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.30">RFC-2616</a>
+     */
+    private static final String LOCATION_HEADER = "Location";
+
+    /**
+     * @link <a href="http://www.ietf.org/rfc/rfc2109.txt">RFC-2109</a>
+     */
+    private static final String SETCOOKIE_HEADER = "Set-Cookie";
+
     @Test
     public void testEntrance() throws Exception {
         final FactoryBuilder builder = mock(FactoryBuilder.class);
@@ -46,11 +64,79 @@ public final class LoginRsTest {
         assertThat(svc.entrance(), instanceOf(PageLogin.class));
     }
 
+    /**
+     * @todo #107 This mechanism doesn't work at the moment, because it
+     *       is not implemented.
+     */
+    @Ignore
     @Test
     public void testSignonProcess() throws Exception {
         final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final UserFactory factory = mock(UserFactory.class);
+        final User user = mock(User.class);
+        doReturn(factory).when(builder).getUserFactory();
+        doReturn(user).when(factory).find(this.ID);
+        doReturn(this.PWD).when(user).secret();
         final LoginRs svc = new LoginRs(builder);
-        final Response response = svc.login("a", "b");
+        final String redirect = "/some-page.html";
+        final Response response = svc.login(this.ID, this.PWD, redirect);
+        verify(builder).getUserFactory();
+        verify(factory).find(this.ID);
+        verify(user).secret();
+        assertThat(
+            response.getStatus(),
+            equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
+        );
+        assertThat(
+            (String) response.getMetadata().getFirst(this.LOCATION_HEADER),
+            equalTo(redirect)
+        );
+        final List<HttpCookie> cookies = HttpCookie.parse(
+            (String) response.getMetadata().getFirst(this.SETCOOKIE_HEADER)
+        );
+        HttpCookie found = null;
+        for (HttpCookie cookie : cookies) {
+            if (cookie.getName().equals(AbstractRs.COOKIE)) {
+                found = cookie;
+                break;
+            }
+        }
+        assertThat(found, is(notNullValue()));
+        final String authToken = found.getValue();
+        assertThat(
+            new Auth().decode(builder, authToken).number(),
+            equalTo(this.ID)
+        );
+    }
+
+    /**
+     * @todo #107 This mechanism doesn't work at the moment, because it
+     *       is not implemented.
+     */
+    @Ignore
+    @Test
+    public void testInvalidSignonProcess() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final UserFactory factory = mock(UserFactory.class);
+        final User user = mock(User.class);
+        doReturn(factory).when(builder).getUserFactory();
+        doReturn(user).when(factory).find(this.ID);
+        doReturn("some-other-secret").when(user).secret();
+        final LoginRs svc = new LoginRs(builder);
+        final Response response = svc.login(this.ID, this.PWD, "/");
+        verify(builder).getUserFactory();
+        verify(factory).find(this.ID);
+        verify(user).secret();
+        assertThat(
+            response.getStatus(),
+            equalTo(Response.Status.FORBIDDEN.getStatusCode())
+        );
+        final List<HttpCookie> cookies = HttpCookie.parse(
+            (String) response.getMetadata().getFirst(this.SETCOOKIE_HEADER)
+        );
+        for (HttpCookie cookie : cookies) {
+            assertThat(cookie.getName(), not(equalTo(AbstractRs.COOKIE)));
+        }
     }
 
 }

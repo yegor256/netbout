@@ -30,6 +30,7 @@ package com.netbout.rest;
 import com.netbout.rest.jaxb.PageLogin;
 
 // for JAX-RS
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -76,11 +77,13 @@ public final class LoginRs extends AbstractRs {
      * Login.
      * @param login The login
      * @param password The password
+     * @param redirect URL, where to redirect on success
      * @return JAX-RS response
      */
     @POST
-    public Response login(@QueryParam("l") final String login,
-        @QueryParam("p") final String password) {
+    public Response login(@QueryParam("l") final Long login,
+        @QueryParam("p") final String password,
+        @DefaultValue("") @QueryParam("r") final String redirect) {
         return Response
             .ok()
             .build();

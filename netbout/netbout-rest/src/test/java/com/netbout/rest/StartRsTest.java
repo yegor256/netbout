@@ -65,7 +65,6 @@ public final class StartRsTest {
         final FactoryBuilder builder = mock(FactoryBuilder.class);
         doReturn(factory).when(builder).getUserFactory();
         final StartRs svc = new StartRs(builder);
-        svc.setSecurityContext(this.context());
         assertThat(svc.entrance(), instanceOf(PageStart.class));
     }
 
@@ -86,7 +85,6 @@ public final class StartRsTest {
         doReturn(bfactory).when(builder).getBoutFactory();
         // service
         final StartRs svc = new StartRs(builder);
-        svc.setSecurityContext(this.context());
         final UriInfo uinfo = mock(UriInfo.class);
         final UriBuilder ubuilder = mock(UriBuilder.class);
         doReturn(ubuilder).when(uinfo).getAbsolutePathBuilder();
@@ -96,14 +94,6 @@ public final class StartRsTest {
         doReturn(uri).when(ubuilder).build(anyVararg());
         svc.setUriInfo(uinfo);
         final Response response = svc.start(this.IDENTITY, this.BOUT_TITLE);
-    }
-
-    private SecurityContext context() {
-        final SecurityContext context = mock(SecurityContext.class);
-        final Principal principal = mock(Principal.class);
-        doReturn(this.USER_ID.toString()).when(principal).getName();
-        doReturn(principal).when(context).getUserPrincipal();
-        return context;
     }
 
 }

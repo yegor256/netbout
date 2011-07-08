@@ -44,31 +44,28 @@ public final class AuthTest {
     private static final Long USER_ID = 12773L;
 
     @Test
-    public void testAuthentication() throws Exception {
-        // factory
-        final UserFactory ufactory = mock(UserFactory.class);
+    public void testEncodingAndDecodingMechanism() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final UserFactory factory = mock(UserFactory.class);
+        doReturn(factory).when(builder).getUserFactory();
         final User user = mock(User.class);
         doReturn(this.USER_ID).when(user).number();
-        doReturn(user).when(ufactory).find(this.USER_ID);
-        final FactoryBuilder builder = mock(FactoryBuilder.class);
-        doReturn(ufactory).when(builder).getUserFactory();
-        // context
-        final SecurityContext context = mock(SecurityContext.class);
-        final Principal principal = mock(Principal.class);
-        doReturn(this.USER_ID.toString()).when(principal).getName();
-        doReturn(principal).when(context).getUserPrincipal();
-        final Auth auth = new Auth(builder, context);
-        final User authenticated = auth.user();
-        assertThat(authenticated.number(), equalTo(this.USER_ID));
+        doReturn(user).when(factory).find(this.USER_ID);
+
+        final Auth auth = new Auth();
+        final String token = auth.encode(user);
+        verify(user).secret();
+        assertThat(auth.decode(builder, token).number(), equalTo(this.USER_ID));
+        verify(builder).getUserFactory();
+        verify(factory).find(this.USER_ID);
+        verify(user).secret();
     }
 
     @Test(expected = NotLoggedInException.class)
     public void testNonLoggedInUser() throws Exception {
         final FactoryBuilder builder = mock(FactoryBuilder.class);
-        final SecurityContext context = mock(SecurityContext.class);
-        doReturn(null).when(context).getUserPrincipal();
-        final Auth auth = new Auth(builder, context);
-        auth.user();
+        final Auth auth = new Auth();
+        auth.decode(builder, this.USER_ID.toString());
     }
 
 }

@@ -30,6 +30,7 @@ package com.netbout.rest;
 import com.netbout.engine.User;
 
 // for JAX-RS
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -44,6 +45,12 @@ import javax.ws.rs.core.UriInfo;
 public abstract class AbstractRs {
 
     /**
+     * Name of cookie to use for authentication. This value is used
+     * in {@link #setAuthToken()} method annotation.
+     */
+    public static final String COOKIE = "netbout";
+
+    /**
      * Factory builder.
      */
     private FactoryBuilder builder;
@@ -54,9 +61,9 @@ public abstract class AbstractRs {
     private UriInfo uriInfo;
 
     /**
-     * Security context.
+     * Authentication token.
      */
-    private SecurityContext securityContext;
+    private String authToken;
 
     /**
      * Default public ctor.
@@ -83,12 +90,12 @@ public abstract class AbstractRs {
     }
 
     /**
-     * Save security context.
-     * @param ctx The context
+     * Set authentication token, to be called by JAX-RS implementation.
+     * @param tkn Value of the cookie
      */
-    @Context
-    public final void setSecurityContext(final SecurityContext ctx) {
-        this.securityContext = ctx;
+    @CookieParam("netbout")
+    public final void setAuthToken(final String token) {
+        this.authToken = token;
     }
 
     /**
@@ -104,7 +111,7 @@ public abstract class AbstractRs {
      * @return The user
      */
     protected final User user() {
-        return new Auth(this.builder(), this.securityContext()).user();
+        return new Auth().decode(this.builder(), this.authToken);
     }
 
     /**
@@ -113,14 +120,6 @@ public abstract class AbstractRs {
      */
     protected final UriInfo uriInfo() {
         return this.uriInfo;
-    }
-
-    /**
-     * Get security context.
-     * @return The context
-     */
-    protected final SecurityContext securityContext() {
-        return this.securityContext;
     }
 
 }
