@@ -26,9 +26,10 @@
  */
 package integration;
 
-import integration.ContainerPage;
+import com.jayway.restassured.RestAssured;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.apache.http.HttpStatus;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -70,9 +71,18 @@ public final class WebPagesIT {
         return paths;
     }
 
+    @BeforeClass
+    public static void configureRestAssured() {
+        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
+    }
+
     @Test
     public void testOnePageRendering() throws Exception {
-        new ContainerPage().page(this.path);
+        RestAssured
+            .expect()
+            .statusCode(equalTo(HttpStatus.SC_OK))
+            .when()
+            .get(this.path);
     }
 
 }

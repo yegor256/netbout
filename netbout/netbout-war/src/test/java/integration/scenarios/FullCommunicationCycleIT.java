@@ -24,49 +24,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration;
+package integration.scenarios;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
+import com.jayway.restassured.RestAssured;
+import org.junit.*;
+import static com.jayway.restassured.RestAssured.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ContainerURL {
+public final class FullCommunicationCycleIT {
 
-    private static final String ROOT =
-        "http://localhost:" + System.getProperty("jetty.port");
-
-    private final List<NameValuePair> params = new ArrayList<NameValuePair>();
-
-    private final StringBuilder builder = new StringBuilder(this.ROOT);
-
-    public ContainerURL path(final String path) {
-        this.builder.append(path);
-        return this;
+    @Before
+    public void configureRestAssured() {
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
+        RestAssured.basePath = "/";
+        RestAssured.responseContentType("text/xml");
     }
 
-    public ContainerURL param(final String name, final String value) {
-        this.params.add(new BasicNameValuePair(name, value));
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        if (this.params.size() > 0) {
-            this.builder.append("?")
-                .append(URLEncodedUtils.format(this.params, "utf-8"));
-        }
-        return this.builder.toString();
-    }
-
-    public URI toURI() throws java.net.URISyntaxException {
-        return new URI(this.toString());
+    @Test
+    public void testFullCycle() throws Exception {
+        // with()
+        //     .parameters("login", "John", "password", "secret")
+        // expect()
+        //     .body("", equalTo("John"))
+        // when()
+        //     .post("/greetXML");
     }
 
 }

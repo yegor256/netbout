@@ -162,6 +162,16 @@
         </dependency>
         <dependency>
             <!--
+            REST Assured framework.
+            @link http://code.google.com/p/rest-assured/
+            -->
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>1.2.2</version> <!-- 8 July 2011 -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!--
             Saxon for XSLT 2.0
             -->
             <groupId>net.sf.saxon</groupId>

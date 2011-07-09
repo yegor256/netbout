@@ -26,14 +26,12 @@
  */
 package integration.css;
 
-import integration.ContainerPage;
+import com.jayway.restassured.RestAssured;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.junit.*;
-import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.xmlmatchers.transform.XmlConverters;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -57,11 +55,13 @@ public final class CssCompressionIT {
 
     private final String path;
 
-    @Rule
-    public TemporaryFolder root = new TemporaryFolder();
-
     public CssCompressionIT(final String name) {
         this.path = name;
+    }
+
+    @BeforeClass
+    public static void configureRestAssured() {
+        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
     }
 
     @Parameterized.Parameters
@@ -75,7 +75,7 @@ public final class CssCompressionIT {
 
     @Test
     public void testOnePageRendering() throws Exception {
-        final String css = new ContainerPage().page(this.path);
+        final String css = RestAssured.get(this.path).asString();
         assertThat(css, not(containsString("/*")));
     }
 

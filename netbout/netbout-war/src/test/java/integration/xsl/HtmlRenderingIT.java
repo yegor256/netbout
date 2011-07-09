@@ -26,8 +26,7 @@
  */
 package integration.xsl;
 
-import integration.ContainerPage;
-import integration.ContainerURL;
+import com.jayway.restassured.RestAssured;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -40,12 +39,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -83,6 +76,11 @@ public final class HtmlRenderingIT {
         this.path = name;
     }
 
+    @BeforeClass
+    public static void configureRestAssured() {
+        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
+    }
+
     @Parameterized.Parameters
     public static Collection<Object[]> paths() {
         final Collection<Object[]> paths = new ArrayList<Object[]>();
@@ -105,7 +103,7 @@ public final class HtmlRenderingIT {
         final File page = new File(this.folder, "page.xml");
         FileUtils.writeStringToFile(
             page,
-            new ContainerPage().xml(this.path)
+            RestAssured.get(this.path).asString()
         );
         final Source xml = new StreamSource(page);
         final Source xsl = this.factory
@@ -132,7 +130,7 @@ public final class HtmlRenderingIT {
                 final File xsl = new File(this.dir, href);
                 FileUtils.writeStringToFile(
                     xsl,
-                    new ContainerPage().page(href)
+                    RestAssured.get(href).asString()
                 );
                 return new StreamSource(xsl);
             } catch (java.io.IOException ex) {

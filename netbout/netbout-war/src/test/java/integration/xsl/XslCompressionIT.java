@@ -26,11 +26,10 @@
  */
 package integration.xsl;
 
-import integration.ContainerPage;
+import com.jayway.restassured.RestAssured;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.junit.*;
-import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.xmlmatchers.transform.XmlConverters;
@@ -42,7 +41,13 @@ import static org.hamcrest.Matchers.*;
  * are not visible to public.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #107 This test doesn't work now because we don't compress
+ *       XSL files during WAR packaging. This functionality has to
+ *       be implemented in pom.xml. I don't know what Maven plugin
+ *       should be used for this, maybe a plain simple Groovy script
+ *       through org.codehaus.gmaven:gmaven-plugin.
  */
+@Ignore
 @RunWith(Parameterized.class)
 public final class XslCompressionIT {
 
@@ -56,11 +61,13 @@ public final class XslCompressionIT {
 
     private final String path;
 
-    @Rule
-    public TemporaryFolder root = new TemporaryFolder();
-
     public XslCompressionIT(final String name) {
         this.path = name;
+    }
+
+    @BeforeClass
+    public static void configureRestAssured() {
+        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
     }
 
     @Parameterized.Parameters
@@ -72,17 +79,9 @@ public final class XslCompressionIT {
         return paths;
     }
 
-    /**
-     * @todo #107 This test doesn't work now because we don't compress
-     *       XSL files during WAR packaging. This functionality has to
-     *       be implemented in pom.xml. I don't know what Maven plugin
-     *       should be used for this, maybe a plain simple Groovy script
-     *       through org.codehaus.gmaven:gmaven-plugin.
-     */
-    @Ignore
     @Test
     public void testOnePageRendering() throws Exception {
-        final String xsl = new ContainerPage().page(this.path);
+        final String xsl = RestAssured.get(this.path).asString();
         assertThat(
             XmlConverters.the(xsl),
             not(org.xmlmatchers.XmlMatchers.hasXPath("//comment()"))
