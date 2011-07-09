@@ -27,8 +27,10 @@
 package integration;
 
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.specification.RequestSpecification;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -39,38 +41,43 @@ import static org.hamcrest.Matchers.*;
 /**
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #107 This test doesn't work because functionality is not
+ *       implemented. We don't process exceptions thrown by JAX-RS
+ *       and don't do any manipulations with them. We should catch every
+ *       exceptional situation and convert it to a normal XML response,
+ *       formatted by a specific XSL (like any other page on the site).
  */
+@Ignore
 @RunWith(Parameterized.class)
-public final class WebPagesIT {
-
-    /**
-     * Full list of URLs to test.
-     */
-    private static final String[] URLS = {
-        "/",
-        "/favicon.ico",
-        "/robots.txt",
-        "/LICENSE.txt",
-        "/images/logo.png",
-        "/css/global.css",
-        "/css/front.css",
-        "/css/bout.css",
-        "/xsl/layout.xsl",
-    };
+public final class BrokenPageIT {
 
     private final String path;
 
-    public WebPagesIT(final String name) {
-        this.path = name;
+    private final RequestSpecification spec;
+
+    public BrokenPageIT(final String page, final RequestSpecification spc) {
+        this.path = page;
+        this.spec = spc;
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> paths() {
-        final Collection<Object[]> paths = new ArrayList<Object[]>();
-        for (String url : WebPagesIT.URLS) {
-            paths.add(new Object[] {url});
-        }
-        return paths;
+    public static Collection<Object[]> specs() {
+        final Collection<Object[]> specs = new ArrayList<Object[]>();
+        specs.add(
+            new Object[] {
+                "/auth",
+                // "password" is not provided, the URL is broken
+                RestAssured.given().queryParam("login", "John Doe"),
+            }
+        );
+        specs.add(
+            new Object[] {
+                // this bout can't be found since the number is too long
+                "/637363747382473284973289473778979872",
+                RestAssured.given(),
+            }
+        );
+        return specs;
     }
 
     @BeforeClass
@@ -79,11 +86,13 @@ public final class WebPagesIT {
     }
 
     @Test
-    public void testOnePageRendering() throws Exception {
-        RestAssured
+    public void testOneBrokenPage() throws Exception {
+        this.spec
             .expect()
             .logOnError()
-            .statusCode(equalTo(HttpStatus.SC_OK))
+            .statusCode(equalTo(HttpStatus.SC_BAD_REQUEST))
+            .contentType(MediaType.APPLICATION_XML)
+            .body(hasXPath("/page"))
             .when()
             .get(this.path);
     }

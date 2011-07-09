@@ -29,6 +29,7 @@ package integration;
 import com.jayway.restassured.RestAssured;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -39,35 +40,37 @@ import static org.hamcrest.Matchers.*;
 /**
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #107 This test doesn't work because functionality is not
+ *       implemented. We don't process exceptions thrown by servlet container
+ *       and don't do any manipulations with them. We should catch every
+ *       exceptional situation and convert it to a normal XML response,
+ *       formatted by a specific XSL (like any other page on the site).
  */
+@Ignore
 @RunWith(Parameterized.class)
-public final class WebPagesIT {
+public final class NotFoundPageIT {
 
     /**
      * Full list of URLs to test.
      */
     private static final String[] URLS = {
-        "/",
-        "/favicon.ico",
-        "/robots.txt",
-        "/LICENSE.txt",
-        "/images/logo.png",
-        "/css/global.css",
-        "/css/front.css",
-        "/css/bout.css",
-        "/xsl/layout.xsl",
+        "/css/this-page-is-not-found.css",
+        "/images/image-is-not-there.png",
+        "/xsl/this-stylesheet-doesnt-exist.xsl",
+        // this bout is not found for sure
+        "/1746473847"
     };
 
     private final String path;
 
-    public WebPagesIT(final String name) {
+    public NotFoundPageIT(final String name) {
         this.path = name;
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> paths() {
         final Collection<Object[]> paths = new ArrayList<Object[]>();
-        for (String url : WebPagesIT.URLS) {
+        for (String url : NotFoundPageIT.URLS) {
             paths.add(new Object[] {url});
         }
         return paths;
@@ -79,11 +82,13 @@ public final class WebPagesIT {
     }
 
     @Test
-    public void testOnePageRendering() throws Exception {
+    public void testOneNotFoundPage() throws Exception {
         RestAssured
             .expect()
             .logOnError()
-            .statusCode(equalTo(HttpStatus.SC_OK))
+            .statusCode(equalTo(HttpStatus.SC_NOT_FOUND))
+            .contentType(MediaType.APPLICATION_XML)
+            .body(hasXPath("/page"))
             .when()
             .get(this.path);
     }

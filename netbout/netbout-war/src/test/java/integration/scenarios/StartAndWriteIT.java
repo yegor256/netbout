@@ -36,14 +36,11 @@ import static org.hamcrest.Matchers.*;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class FullCommunicationCycleIT {
+public final class StartAndWriteIT {
 
-    @Before
-    public void configureRestAssured() {
-        RestAssured.baseURI = "http://localhost";
+    @BeforeClass
+    public static void configureRestAssured() {
         RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
-        RestAssured.basePath = "/";
-        RestAssured.responseContentType("text/xml");
     }
 
     @Test
