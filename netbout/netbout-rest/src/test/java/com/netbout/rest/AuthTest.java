@@ -29,6 +29,8 @@ package com.netbout.rest;
 import com.netbout.engine.User;
 import com.netbout.engine.UserFactory;
 import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 import javax.ws.rs.core.SecurityContext;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,10 +40,18 @@ import static org.mockito.Mockito.*;
 /**
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #107 This test doesn't work because authentication functionality
+ *       is not implemented yet. We should implement it, using some
+ *       simple encryption/decryption algorithm with salt.
  */
+@Ignore
 public final class AuthTest {
 
-    private static final Long USER_ID = 12773L;
+    private static final Long ID = 12773L;
+
+    private static final String PWD = "some-secret-123";
+
+    private static final Integer STRENGTH_CYCLES = 20;
 
     @Test
     public void testEncodingAndDecodingMechanism() throws Exception {
@@ -49,23 +59,69 @@ public final class AuthTest {
         final UserFactory factory = mock(UserFactory.class);
         doReturn(factory).when(builder).getUserFactory();
         final User user = mock(User.class);
-        doReturn(this.USER_ID).when(user).number();
-        doReturn(user).when(factory).find(this.USER_ID);
+        doReturn(this.ID).when(user).number();
+        doReturn(this.PWD).when(user).secret();
+        doReturn(user).when(factory).find(this.ID);
 
         final Auth auth = new Auth();
         final String token = auth.encode(user);
         verify(user).secret();
-        assertThat(auth.decode(builder, token).number(), equalTo(this.USER_ID));
+        assertThat(auth.decode(builder, token).number(), equalTo(this.ID));
         verify(builder).getUserFactory();
-        verify(factory).find(this.USER_ID);
+        verify(factory).find(this.ID);
         verify(user).secret();
     }
 
     @Test(expected = NotLoggedInException.class)
-    public void testNonLoggedInUser() throws Exception {
+    public void testInvalidPassword() throws Exception {
+        // build token with invalid password
+        final User invalid = mock(User.class);
+        doReturn(this.ID).when(invalid).number();
+        doReturn("invalid-password").when(invalid).secret();
+        final String token = new Auth().encode(invalid);
+        // let's try to login with this token
         final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final UserFactory factory = mock(UserFactory.class);
+        doReturn(factory).when(builder).getUserFactory();
+        final User user = mock(User.class);
+        doReturn(this.ID).when(user).number();
+        doReturn(this.PWD).when(user).secret();
+        doReturn(user).when(factory).find(this.ID);
+        new Auth().decode(builder, token);
+    }
+
+    @Test(expected = NotLoggedInException.class)
+    public void testDecodeFromInvalidToken() throws Exception {
+        new Auth().decode(
+            mock(FactoryBuilder.class),
+            "some-invalid-auth-token"
+        );
+    }
+
+    @Test(expected = NotLoggedInException.class)
+    public void testDecodeFromEmptyToken() throws Exception {
+        new Auth().decode(mock(FactoryBuilder.class), "");
+    }
+
+    @Test
+    public void testStrengthOfEncodingAndDecodingMechanism() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final UserFactory factory = mock(UserFactory.class);
+        doReturn(factory).when(builder).getUserFactory();
+        final User user = mock(User.class);
+        doReturn(this.ID).when(user).number();
+        doReturn(this.PWD).when(user).secret();
+        doReturn(user).when(factory).find(this.ID);
+
         final Auth auth = new Auth();
-        auth.decode(builder, this.USER_ID.toString());
+        final Set<String> tokens = new HashSet<String>();
+        // every time we get a token, it has to be unique, even if
+        // the user is the same
+        for (int num = 0; num < this.STRENGTH_CYCLES; num += 1) {
+            final String token = auth.encode(user);
+            assertThat(tokens, not(hasItem(token)));
+            tokens.add(token);
+        }
     }
 
 }
