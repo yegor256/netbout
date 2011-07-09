@@ -28,6 +28,8 @@ package com.netbout.data.jpa;
 
 import com.netbout.data.BoutEnt;
 import com.netbout.data.BoutManager;
+import com.netbout.data.UserEnt;
+import com.netbout.data.UserManager;
 import java.util.List;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,13 +37,46 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 /**
+ * This test case is increasing code coverage in order to make build clean.
+ * Feel free to remove this class or any methods from it, if you have other
+ * test cases ready, which cover classes.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class JpaBoutManagerTest {
+public final class TestCoverageTest {
+
+    private static final Long USER_ID = 132L;
+
+    private static final String IDENTITY = "John";
+
+    private static final String BOUT_TITLE = "test text";
 
     @Test
-    public void testBoutManipulations() throws Exception {
+    public void testUserManipulations() throws Exception {
+        final UserManager manager = new JpaUserManager();
+        final UserEnt ent = manager.find(this.USER_ID);
+        // stub now
+        assertThat(ent.number(), equalTo(1L));
+        assertThat(ent.identities().size(), equalTo(0));
+    }
+
+    @Test
+    public void testBoutCreatingAndFinding() throws Exception {
+        final BoutManager manager = new JpaBoutManager();
+        final BoutEnt bout = manager.create(this.IDENTITY, this.BOUT_TITLE);
+        assertThat(
+            manager.find(bout.number()).title(),
+            // stub
+            not(equalTo(this.BOUT_TITLE))
+        );
+    }
+
+    @Test
+    public void testBoutSearching() throws Exception {
+        final BoutManager manager = new JpaBoutManager();
+        final List<BoutEnt> bouts = manager.list("");
+        // stub
+        assertThat(bouts.size(), equalTo(0));
     }
 
 }

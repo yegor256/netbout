@@ -39,15 +39,8 @@ import static org.mockito.Mockito.*;
  */
 public final class JpaUserManagerTest {
 
-    private static final Long USER_ID = 132L;
-
     @Test
     public void testUserManipulations() throws Exception {
-        final UserManager manager = new JpaUserManager();
-        final UserEnt ent = manager.find(this.USER_ID);
-        // stub now
-        assertThat(ent.number(), equalTo(1L));
-        assertThat(ent.identities().size(), equalTo(0));
     }
 
 }
