@@ -26,31 +26,44 @@
  */
 package integration.scenarios;
 
-import com.jayway.restassured.RestAssured;
 import org.junit.*;
-import static com.jayway.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /**
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #107 This test doesn't work because functionality is not
+ *       implemented yet.
  */
+@Ignore
 public final class StartAndWriteIT {
 
-    @BeforeClass
-    public static void configureRestAssured() {
-        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
-    }
+    /**
+     * This user should exist in the database before the test case
+     * is started.
+     */
+    private static final Long ROOT_USER = 1L;
+
+    private static final String ROOT_PWD = "secret";
 
     @Test
     public void testFullCycle() throws Exception {
-        // with()
-        //     .parameters("login", "John", "password", "secret")
-        // expect()
-        //     .body("", equalTo("John"))
-        // when()
-        //     .post("/greetXML");
+        // let's start a new bout
+        final Session starter = new Session();
+        starter.login(this.ROOT_USER, this.ROOT_PWD);
+        final Long bout = starter.startBout("Let's talk..");
+        starter.sendMessage(bout, "Hey!");
+        final String inviteUrl = starter.invite(bout, "john@example.com");
+
+        // let's respond to the invitation
+        final Session responder = new Session();
+        assertThat(responder.acceptInvitation(inviteUrl), equalTo(bout));
+        final String message = "Glad to see you!";
+        responder.sendMessage(bout, message);
+
+        // let's read the response
+        assertThat(starter.readRecent(bout), equalTo(message));
     }
 
 }

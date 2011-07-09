@@ -38,7 +38,6 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -58,7 +57,7 @@ public final class HtmlRenderingIT {
      * Full list of URLs to test.
      */
     private static final String[] URLS = {
-        "/"
+        "/",
     };
 
     private final String path;

@@ -24,80 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine.impl;
+package integration.scenarios;
 
-// data access from com.netbout:netbout-data
-import com.netbout.data.IdentityEnt;
-import com.netbout.data.UserEnt;
-
-// API
-import com.netbout.engine.Identity;
-import com.netbout.engine.User;
-
-// JDK
-import java.util.ArrayList;
-import java.util.List;
+import com.jayway.restassured.RestAssured;
+import org.apache.http.HttpStatus;
+import static org.hamcrest.Matchers.*;
 
 /**
- * Implementation of a User.
- *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class DefaultUser implements User {
+public final class Session {
 
-    /**
-     * User entity.
-     */
-    private UserEnt user;
+    private String token;
 
-    /**
-     * Public ctor, for unit testing.
-     * @param ent The entity
-     */
-    public DefaultUser(final UserEnt ent) {
-        this.user = ent;
+    public void login(final Long user, final String pwd) throws Exception {
+        this.token = RestAssured
+            .expect()
+            .logOnError()
+            .statusCode(equalTo(HttpStatus.SC_TEMPORARY_REDIRECT))
+            .cookie(com.netbout.rest.AbstractRs.COOKIE)
+            .when()
+            .get("/auth")
+            .cookie(com.netbout.rest.AbstractRs.COOKIE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long number() {
-        return this.user.number();
+    public Long startBout(final String subject) throws Exception {
+        return 1L;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String secret() {
-        return "secret-1";
+    public String invite(final Long bout, final String recipient)
+        throws Exception {
+        return "/some-url";
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Identity> identities() {
-        final List<Identity> list = new ArrayList<Identity>();
-        for (IdentityEnt ent : this.user.identities()) {
-            list.add(new SimpleIdentity(ent));
-        }
-        return list;
+    public Long acceptInvitation(final String url) throws Exception {
+        return 1L;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity(final String text) {
-        for (IdentityEnt ent : this.user.identities()) {
-            if (ent.name().equals(text)) {
-                return new SimpleIdentity(ent);
-            }
-        }
-        throw new IllegalArgumentException("Identity not found: " + text);
+    public void sendMessage(final Long bout, final String message)
+        throws Exception {
+    }
+
+    public String readRecent(final Long bout) throws Exception {
+        return "some text";
     }
 
 }

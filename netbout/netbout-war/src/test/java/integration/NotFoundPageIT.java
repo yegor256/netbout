@@ -34,7 +34,6 @@ import org.apache.http.HttpStatus;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -58,7 +57,7 @@ public final class NotFoundPageIT {
         "/images/image-is-not-there.png",
         "/xsl/this-stylesheet-doesnt-exist.xsl",
         // this bout is not found for sure
-        "/1746473847"
+        "/1746473847",
     };
 
     private final String path;

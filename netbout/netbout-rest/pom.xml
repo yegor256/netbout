@@ -78,6 +78,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!--
+            For constants mostly.
+            @link http://hc.apache.org/httpcomponents-core-ga/httpcore/apidocs/constant-values.html
+            -->
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <!-- other details are in parent pom.xml -->

@@ -32,6 +32,8 @@ import com.netbout.rest.jaxb.PageLogin;
 import java.net.HttpCookie;
 import java.util.List;
 import javax.ws.rs.core.Response;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -40,7 +42,10 @@ import static org.mockito.Mockito.*;
 /**
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #107 This mechanism doesn't work at the moment, because it
+ *       is not implemented.
  */
+@Ignore
 public final class LoginRsTest {
 
     private static final Long ID = 342L;
@@ -48,27 +53,10 @@ public final class LoginRsTest {
     private static final String PWD = "secret";
 
     /**
-     * @link <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.30">RFC-2616</a>
-     */
-    private static final String LOCATION_HEADER = "Location";
-
-    /**
      * @link <a href="http://www.ietf.org/rfc/rfc2109.txt">RFC-2109</a>
      */
     private static final String SETCOOKIE_HEADER = "Set-Cookie";
 
-    @Test
-    public void testEntrance() throws Exception {
-        final FactoryBuilder builder = mock(FactoryBuilder.class);
-        final LoginRs svc = new LoginRs(builder);
-        assertThat(svc.entrance(), instanceOf(PageLogin.class));
-    }
-
-    /**
-     * @todo #107 This mechanism doesn't work at the moment, because it
-     *       is not implemented.
-     */
-    @Ignore
     @Test
     public void testSignonProcess() throws Exception {
         final FactoryBuilder builder = mock(FactoryBuilder.class);
@@ -85,10 +73,10 @@ public final class LoginRsTest {
         verify(user).secret();
         assertThat(
             response.getStatus(),
-            equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
+            equalTo(HttpStatus.SC_TEMPORARY_REDIRECT)
         );
         assertThat(
-            (String) response.getMetadata().getFirst(this.LOCATION_HEADER),
+            (String) response.getMetadata().getFirst(HttpHeaders.LOCATION),
             equalTo(redirect)
         );
         final List<HttpCookie> cookies = HttpCookie.parse(
@@ -109,11 +97,6 @@ public final class LoginRsTest {
         );
     }
 
-    /**
-     * @todo #107 This mechanism doesn't work at the moment, because it
-     *       is not implemented.
-     */
-    @Ignore
     @Test
     public void testInvalidSignonProcess() throws Exception {
         final FactoryBuilder builder = mock(FactoryBuilder.class);
@@ -129,7 +112,7 @@ public final class LoginRsTest {
         verify(user).secret();
         assertThat(
             response.getStatus(),
-            equalTo(Response.Status.FORBIDDEN.getStatusCode())
+            equalTo(HttpStatus.SC_FORBIDDEN)
         );
         final List<HttpCookie> cookies = HttpCookie.parse(
             (String) response.getMetadata().getFirst(this.SETCOOKIE_HEADER)

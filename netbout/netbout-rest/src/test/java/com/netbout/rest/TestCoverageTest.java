@@ -24,80 +24,33 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.engine.impl;
+package com.netbout.rest;
 
-// data access from com.netbout:netbout-data
-import com.netbout.data.IdentityEnt;
-import com.netbout.data.UserEnt;
-
-// API
-import com.netbout.engine.Identity;
 import com.netbout.engine.User;
-
-// JDK
-import java.util.ArrayList;
+import com.netbout.engine.UserFactory;
+import com.netbout.rest.jaxb.PageLogin;
+import java.net.HttpCookie;
 import java.util.List;
+import javax.ws.rs.core.Response;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Implementation of a User.
- *
+ * This test case is increasing code coverage in order to make build clean.
+ * Feel free to remove this class or any methods from it, if you have other
+ * test cases ready, which cover classes.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class DefaultUser implements User {
+public final class TestCoverageTest {
 
-    /**
-     * User entity.
-     */
-    private UserEnt user;
-
-    /**
-     * Public ctor, for unit testing.
-     * @param ent The entity
-     */
-    public DefaultUser(final UserEnt ent) {
-        this.user = ent;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long number() {
-        return this.user.number();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String secret() {
-        return "secret-1";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Identity> identities() {
-        final List<Identity> list = new ArrayList<Identity>();
-        for (IdentityEnt ent : this.user.identities()) {
-            list.add(new SimpleIdentity(ent));
-        }
-        return list;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity(final String text) {
-        for (IdentityEnt ent : this.user.identities()) {
-            if (ent.name().equals(text)) {
-                return new SimpleIdentity(ent);
-            }
-        }
-        throw new IllegalArgumentException("Identity not found: " + text);
+    @Test
+    public void testLoginRsEntrance() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final LoginRs svc = new LoginRs(builder);
+        assertThat(svc.entrance(), instanceOf(PageLogin.class));
     }
 
 }

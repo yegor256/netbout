@@ -36,12 +36,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -61,7 +55,7 @@ public final class XslTransformationTest {
      * Full list of pages to test.
      */
     private static final String[] PAGES = {
-        "PageWithBouts"
+        "PageWithBouts",
     };
 
     private static final URIResolver RESOLVER =

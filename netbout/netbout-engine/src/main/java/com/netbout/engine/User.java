@@ -44,6 +44,12 @@ public interface User {
     Long number();
 
     /**
+     * Get user's secret code.
+     * @return The secret code
+     */
+    String secret();
+
+    /**
      * Full list of all identities.
      * @return The list of identities
      */

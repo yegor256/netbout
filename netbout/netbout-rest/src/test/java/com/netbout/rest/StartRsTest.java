@@ -47,6 +47,7 @@ import static org.mockito.Mockito.*;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Ignore
 public final class StartRsTest {
 
     private static final String IDENTITY = "Alex Smith";

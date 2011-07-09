@@ -81,9 +81,9 @@ public final class LoginRs extends AbstractRs {
      * @return JAX-RS response
      */
     @POST
-    public Response login(@QueryParam("l") final Long login,
-        @QueryParam("p") final String password,
-        @DefaultValue("") @QueryParam("r") final String redirect) {
+    public Response login(@QueryParam("login") final Long login,
+        @QueryParam("password") final String password,
+        @DefaultValue("") @QueryParam("redirect") final String redirect) {
         return Response
             .ok()
             .build();
