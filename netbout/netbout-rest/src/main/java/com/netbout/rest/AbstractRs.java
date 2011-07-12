@@ -32,7 +32,6 @@ import com.netbout.engine.User;
 // for JAX-RS
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -46,7 +45,7 @@ public abstract class AbstractRs {
 
     /**
      * Name of cookie to use for authentication. This value is used
-     * in {@link #setAuthToken()} method annotation.
+     * in {@link #setAuthToken(String)} method annotation.
      */
     public static final String COOKIE = "netbout";
 
@@ -91,7 +90,7 @@ public abstract class AbstractRs {
 
     /**
      * Set authentication token, to be called by JAX-RS implementation.
-     * @param tkn Value of the cookie
+     * @param token Value of the cookie
      */
     @CookieParam("netbout")
     public final void setAuthToken(final String token) {

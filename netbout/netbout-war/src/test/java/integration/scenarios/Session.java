@@ -27,8 +27,13 @@
 package integration.scenarios;
 
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.path.xml.XmlPath;
+import com.jayway.restassured.response.Response;
+import com.netbout.rest.AbstractRs;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Yegor Bugayenko (yegor@netbout.com)
@@ -38,36 +43,95 @@ public final class Session {
 
     private String token;
 
+    public Session() {
+        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
+    }
+
     public void login(final Long user, final String pwd) throws Exception {
         this.token = RestAssured
             .expect()
             .logOnError()
             .statusCode(equalTo(HttpStatus.SC_TEMPORARY_REDIRECT))
-            .cookie(com.netbout.rest.AbstractRs.COOKIE)
+            .cookie(AbstractRs.COOKIE)
             .when()
             .get("/auth")
-            .cookie(com.netbout.rest.AbstractRs.COOKIE);
+            .cookie(AbstractRs.COOKIE);
     }
 
-    public Long startBout(final String subject) throws Exception {
-        return 1L;
+    public Long start(final String subject) throws Exception {
+        final String xml = RestAssured
+            .expect()
+            .logOnError()
+            .statusCode(equalTo(HttpStatus.SC_CREATED))
+            .cookie(AbstractRs.COOKIE)
+            .header(HttpHeaders.LOCATION, anyString())
+            .with()
+            .parameters("title", subject)
+            .when()
+            .cookie(AbstractRs.COOKIE, this.token)
+            .post("/new")
+            .andReturn()
+            .asString();
+        return XmlPath.with(xml).get("page.bout.number");
     }
 
-    public String invite(final Long bout, final String recipient)
+    public void invite(final Long bout, final String recipient)
         throws Exception {
-        return "/some-url";
+        RestAssured
+            .expect()
+            .logOnError()
+            .statusCode(equalTo(HttpStatus.SC_SEE_OTHER))
+            .cookie(AbstractRs.COOKIE)
+            .header(HttpHeaders.LOCATION, "/" + bout)
+            .with()
+            .parameters("identity", recipient)
+            .when()
+            .cookie(AbstractRs.COOKIE, this.token)
+            .post("/{bout}/invite", bout);
     }
 
-    public Long acceptInvitation(final String url) throws Exception {
-        return 1L;
+    public Long accept(final String url) throws Exception {
+        final Response response = RestAssured
+            .expect()
+            .logOnError()
+            .statusCode(equalTo(HttpStatus.SC_ACCEPTED))
+            .cookie(AbstractRs.COOKIE)
+            .when()
+            .get(url);
+        final String xml = response.asString();
+        this.token = response.cookie(AbstractRs.COOKIE);
+        return XmlPath.with(xml).get("page.bout.number");
     }
 
-    public void sendMessage(final Long bout, final String message)
+    public void say(final Long bout, final String message)
         throws Exception {
+        RestAssured
+            .expect()
+            .logOnError()
+            .statusCode(equalTo(HttpStatus.SC_SEE_OTHER))
+            .cookie(AbstractRs.COOKIE)
+            .header(HttpHeaders.LOCATION, "/" + bout)
+            .with()
+            .parameters("message", message)
+            .when()
+            .cookie(AbstractRs.COOKIE, this.token)
+            .post("/{bout}", bout);
     }
 
-    public String readRecent(final Long bout) throws Exception {
-        return "some text";
+    public String recent(final Long bout) throws Exception {
+        final String xml = RestAssured
+            .expect()
+            .logOnError()
+            .statusCode(equalTo(HttpStatus.SC_OK))
+            .cookie(AbstractRs.COOKIE)
+            .when()
+            .cookie(AbstractRs.COOKIE, this.token)
+            .get("/{bout}", bout)
+            .andReturn()
+            .asString();
+        return XmlPath.with(xml).get(
+            "page.bout.messages.message[page.bout.messages.message.size()-1]"
+        );
     }
 
 }

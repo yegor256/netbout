@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.*;
  * @todo #107 This test doesn't work because functionality is not
  *       implemented yet.
  */
-@Ignore
+// @Ignore
 public final class StartAndWriteIT {
 
     /**
@@ -44,7 +44,6 @@ public final class StartAndWriteIT {
      * is started.
      */
     private static final Long ROOT_USER = 1L;
-
     private static final String ROOT_PWD = "secret";
 
     @Test
@@ -52,18 +51,22 @@ public final class StartAndWriteIT {
         // let's start a new bout
         final Session starter = new Session();
         starter.login(this.ROOT_USER, this.ROOT_PWD);
-        final Long bout = starter.startBout("Let's talk..");
-        starter.sendMessage(bout, "Hey!");
-        final String inviteUrl = starter.invite(bout, "john@example.com");
+        final Long bout = starter.start("Let's talk..");
+        starter.say(bout, "Hey!");
+        starter.invite(bout, "alex@example.com");
+
+        // somehow we catch the email sent to alex@example.com,
+        // and get a URL out of it
+        final String confirm = "http://localhost/confirm-me";
 
         // let's respond to the invitation
         final Session responder = new Session();
-        assertThat(responder.acceptInvitation(inviteUrl), equalTo(bout));
+        assertThat(responder.accept(confirm), equalTo(bout));
         final String message = "Glad to see you!";
-        responder.sendMessage(bout, message);
+        responder.say(bout, message);
 
         // let's read the response
-        assertThat(starter.readRecent(bout), equalTo(message));
+        assertThat(starter.recent(bout), equalTo(message));
     }
 
 }

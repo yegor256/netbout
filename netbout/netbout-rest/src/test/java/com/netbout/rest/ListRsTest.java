@@ -26,8 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
 import com.netbout.rest.jaxb.PageWithBouts;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,18 +47,6 @@ public final class ListRsTest {
         final FactoryBuilder builder = mock(FactoryBuilder.class);
         final ListRs svc = new ListRs(builder);
         assertThat(svc.list(this.QUERY), instanceOf(PageWithBouts.class));
-    }
-
-    @Test
-    public void testSingleBoutRendering() throws Exception {
-        final FactoryBuilder builder = mock(FactoryBuilder.class);
-        final BoutFactory bfactory = mock(BoutFactory.class);
-        final Bout bout = mock(Bout.class);
-        doReturn(bout).when(bfactory).find(this.BOUT_ID);
-        doReturn(this.BOUT_ID).when(bout).number();
-        doReturn(bfactory).when(builder).getBoutFactory();
-        final ListRs svc = new ListRs(builder);
-        assertThat(svc.bout(this.BOUT_ID), instanceOf(BoutRs.class));
     }
 
 }

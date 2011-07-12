@@ -748,7 +748,7 @@
                     <plugin>
                         <!--
                         @todo #2 These groovy scripts shall be placed into
-                                 rempl-tk src/main/resources/groovy directory.
+                                 netbout-tk src/main/resources/groovy directory.
                         -->
                         <!-- version and configuration is in pluginManagement section -->
                         <groupId>org.codehaus.gmaven</groupId>

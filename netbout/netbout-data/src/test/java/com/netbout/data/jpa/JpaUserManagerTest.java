@@ -26,10 +26,10 @@
  */
 package com.netbout.data.jpa;
 
-import com.netbout.data.UserEnt;
-import com.netbout.data.UserManager;
+// import com.netbout.data.UserEnt;
+// import com.netbout.data.UserManager;
 import org.junit.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+// import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 

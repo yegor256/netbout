@@ -49,7 +49,7 @@ public final class BoutRsTest {
         final FactoryBuilder builder = mock(FactoryBuilder.class);
         doReturn(factory).when(builder).getBoutFactory();
         final BoutRs svc = new BoutRs(builder, this.BOUT_ID);
-        assertThat(svc.info(), equalTo(bout));
+        assertThat(svc.bout(), is(notNullValue()));
     }
 
 }

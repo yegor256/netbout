@@ -26,11 +26,11 @@
  */
 package com.netbout.data.jpa;
 
-import com.netbout.data.BoutEnt;
-import com.netbout.data.BoutManager;
-import java.util.List;
+// import com.netbout.data.BoutEnt;
+// import com.netbout.data.BoutManager;
+// import java.util.List;
 import org.junit.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+// import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 

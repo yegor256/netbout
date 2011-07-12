@@ -24,29 +24,26 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.jaxb;
 
 // bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.Bout;
 
-// JAXB implemented data manipulators
-import com.netbout.rest.jaxb.PageOfBout;
-
-// for JAX-RS
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+// JAXB
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * RESTful front of one Bout. The class is instantiated from {@link ListRs}.
+ * One bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("{id: \\d+}")
-public final class BoutRs extends AbstractRs {
+@XmlRootElement(name = "page")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class PageOfBout {
 
     /**
      * The bout to work with.
@@ -55,32 +52,19 @@ public final class BoutRs extends AbstractRs {
 
     /**
      * Public ctor.
-     * @param boutId ID of the bout to work with
+     * @param bot The bout
      */
-    public BoutRs(@PathParam("id") final Long boutId) {
-        super();
-        this.bout = this.builder().getBoutFactory().find(boutId);
+    public PageOfBout(final Bout bot) {
+        this.bout = bot;
     }
 
     /**
-     * Ctor for unit testing.
-     * @param builder The factory builder
-     * @param boutId ID of the bout
-     * @see ListRs#bout(Long)
+     * The number of it.
+     * @return The number
      */
-    protected BoutRs(final FactoryBuilder builder, final Long boutId) {
-        super(builder);
-        this.bout = this.builder().getBoutFactory().find(boutId);
-    }
-
-    /**
-     * Get bout data.
-     * @return The bout, convertable to XML
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public PageOfBout bout() {
-        return new PageOfBout(this.bout);
+    @XmlElement(name = "bout")
+    public ShortBout getBout() {
+        return new ShortBout(this.bout);
     }
 
 }

@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import com.netbout.engine.User;
 import com.netbout.engine.UserFactory;
-import com.netbout.rest.jaxb.PageLogin;
 import java.net.HttpCookie;
 import java.util.List;
 import javax.ws.rs.core.Response;

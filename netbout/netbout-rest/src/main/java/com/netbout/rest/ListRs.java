@@ -33,7 +33,6 @@ import com.netbout.rest.jaxb.PageWithBouts;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -72,17 +71,6 @@ public final class ListRs extends AbstractRs {
     public PageWithBouts list(@DefaultValue("") @QueryParam("q")
         final String query) {
         return new PageWithBouts(this.builder(), query);
-    }
-
-    /**
-     * Get one single bout as JAX-RS resource.
-     * @param bout ID of the bout
-     * @return The resource
-     */
-    @GET
-    @Path("{id: \\d+}")
-    public BoutRs bout(@PathParam("id") final Long bout) {
-        return new BoutRs(this.builder(), bout);
     }
 
 }

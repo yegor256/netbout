@@ -33,6 +33,7 @@ import com.netbout.engine.Bout;
 import com.netbout.rest.jaxb.PageStart;
 
 // for JAX-RS
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -83,8 +84,9 @@ public final class StartRs extends AbstractRs {
      * @return JAX-RS response
      */
     @POST
-    public Response start(@QueryParam("i") final String identity,
-        @QueryParam("t") final String title) {
+    public Response start(
+        @DefaultValue("") @QueryParam("identity") final String identity,
+        @QueryParam("title") final String title) {
         final Bout bout = this.builder().getBoutFactory().create(
             this.user().identity(identity),
             title

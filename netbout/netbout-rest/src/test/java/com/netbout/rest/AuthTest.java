@@ -28,10 +28,8 @@ package com.netbout.rest;
 
 import com.netbout.engine.User;
 import com.netbout.engine.UserFactory;
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
-import javax.ws.rs.core.SecurityContext;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
