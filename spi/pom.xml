@@ -45,36 +45,32 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.netbout</groupId>
+    <groupId>com.netbout.spi</groupId>
     <artifactId>netbout</artifactId>
-    <version netbout="yes">3.0-SNAPSHOT</version>
+    <version netbout="yes">1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>netbout</name>
 
     <modules>
         <module>netbout-tk</module>
-        <module>netbout-data</module>
-        <module>netbout-helpers</module>
-        <module>netbout-engine</module>
-        <module>netbout-rest</module>
-        <module>netbout-war</module>
+        <module>netbout-spi</module>
     </modules>
 
-    <description>Persistent Communications Online</description>
-    <url>http://www.netbout.com</url>
-    <inceptionYear>2010</inceptionYear>
+    <description>Service Programming Interface for NetBout.com</description>
+    <url>http://spi.netbout.com</url>
+    <inceptionYear>2011</inceptionYear>
 
     <organization>
         <name>netBout Inc.</name>
-        <url>http://www.netbout.com</url>
+        <url>http://spi.netbout.com</url>
     </organization>
 
     <licenses>
         <license>
             <name>netBout persistent communications</name>
-            <url>http://www.netbout.com/LICENSE.txt</url>
+            <url>http://spi.netbout.com/LICENSE.txt</url>
             <distribution>repo</distribution>
-            <comments>This is a proprietary software, you can't redistribute it</comments>
+            <comments>This is an open-source software</comments>
         </license>
     </licenses>
 
@@ -99,35 +95,34 @@
     </issueManagement>
 
     <scm>
-        <connection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</connection>
-        <developerConnection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</developerConnection>
-        <url>svn://svn.netbout.com/netbout/trunk/netbout</url>
+        <connection>scm:svn:svn://svn.netbout.com/netbout/trunk/spi</connection>
+        <developerConnection>scm:svn:svn://svn.netbout.com/netbout/trunk/spi</developerConnection>
+        <url>svn://svn.netbout.com/netbout/trunk/spi</url>
     </scm>
 
     <distributionManagement>
-        <snapshotRepository>
-            <!--
-            Use this URL to get artifacts from this repo:
-            https://s3.amazonaws.com/netbout.maven/snapshot
-            -->
-            <id>netbout.s3</id>
-            <url>s3://repo.netbout.com/snapshot</url>
-        </snapshotRepository>
+        <downloadUrl>https://oss.sonatype.org/content/groups/public</downloadUrl>
         <repository>
-            <!--
-            Use this URL to get artifacts from this repo:
-            https://s3.amazonaws.com/netbout.maven/release
-            -->
-            <id>netbout.s3</id>
-            <url>s3://repo.netbout.com/release</url>
+            <uniqueVersion>false</uniqueVersion>
+            <id>sonatype.nexus</id>
+            <name>Sonatype OSS Repository (for releases)</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>sonatype.nexus</id>
+            <name>Sonatype OSS Repository (for snapshots)</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <site>
             <!--
-            Deploying the site to Amazon S3.
+            Deploying the site to Amazon S3. "netbout-spi.s3" server details
+            are defined in "settings.xml" file, provided by continuous integration
+            server during build cycle.
             -->
             <id>netbout.s3</id>
-            <name>netBout.com Project Site</name>
-            <url>s3://maven.netbout.com/</url>
+            <name>spi.netbout.com Project Site</name>
+            <url>s3://spi.netbout.com/</url>
         </site>
     </distributionManagement>
 
@@ -227,65 +222,64 @@
             <build>
                 <plugins>
                     <plugin>
-                        <!--
-                        This plugin will collect current build number
-                        from Subversion and save it into Maven property "buildNumber".
-                        -->
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>buildnumber-maven-plugin</artifactId>
-                        <version since="1 Aug 2011">1.0-beta-4</version>
-                        <configuration>
-                            <doCheck>false</doCheck>
-                            <doUpdate>false</doUpdate>
-                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                        </configuration>
+                        <groupId>com.qulice</groupId>
+                        <artifactId>qulice-maven-plugin</artifactId>
+                        <version since="2 Sep 2011">0.1.1</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.netbout.spi</groupId>
+                                <artifactId>netbout-tk</artifactId>
+                                <version netbout="yes">1.0-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
-                                <phase>prepare-package</phase>
                                 <goals>
-                                    <goal>create</goal>
+                                    <goal>check</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
                     <plugin>
-                        <!--
-                        API documentation builder. It will produce documentation
-                        which is then to be used in site:site. It will be
-                        located at target/site/apidocs.
-                        -->
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version since="5 Jun 2011">2.8</version>
-                        <configuration>
-                            <failOnError>true</failOnError>
-                            <quiet>true</quiet>
-                            <tags>
-                                <!--
-                                Here we instruct plugin to use custom tag
-                                @link http://maven.apache.org/plugins/maven-javadoc-plugin/examples/tag-configuration.html
-                                -->
-                                <tag>
-                                    <name>todo</name>
-                                    <placement>a</placement>
-                                    <head>To do:</head>
-                                </tag>
-                            </tags>
-                        </configuration>
+                        <version since="2 Sep 2011">2.8</version>
                         <executions>
                             <execution>
-                                <phase>verify</phase>
+                                <phase>package</phase>
                                 <goals>
-                                    <goal>javadoc</goal>
+                                    <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version since="2 Sep 2011">2.2</version>
                         <dependencies>
                             <dependency>
-                                <groupId>com.netbout</groupId>
+                                <groupId>com.netbout.spi</groupId>
                                 <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">3.0-SNAPSHOT</version>
+                                <version netbout="yes">1.0-SNAPSHOT</version>
                             </dependency>
                         </dependencies>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptorRefs>
+                                        <!--
+                                        This descriptor is in netbout-tk sub-module, which is in classpath of
+                                        this plugin.
+                                        @see http://maven.apache.org/plugins/maven-assembly-plugin/examples/sharing-descriptors.html
+                                        -->
+                                        <descriptorRef>netbout-sources</descriptorRef>
+                                    </descriptorRefs>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

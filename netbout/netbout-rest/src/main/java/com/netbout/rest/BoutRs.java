@@ -66,7 +66,6 @@ public final class BoutRs extends AbstractRs {
      * Ctor for unit testing.
      * @param builder The factory builder
      * @param boutId ID of the bout
-     * @see ListRs#bout(Long)
      */
     protected BoutRs(final FactoryBuilder builder, final Long boutId) {
         super(builder);

@@ -63,6 +63,7 @@ public final class AuthTest {
 
         final Auth auth = new Auth();
         final String token = auth.encode(user);
+        verify(user).number();
         verify(user).secret();
         assertThat(auth.decode(builder, token).number(), equalTo(this.ID));
         verify(builder).getUserFactory();

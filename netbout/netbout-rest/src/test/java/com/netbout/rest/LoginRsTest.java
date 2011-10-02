@@ -56,6 +56,9 @@ public final class LoginRsTest {
      */
     private static final String SETCOOKIE_HEADER = "Set-Cookie";
 
+    /**
+     * @checkstyle ExecutableStatementCount (40 lines)
+     */
     @Test
     public void testSignonProcess() throws Exception {
         final FactoryBuilder builder = mock(FactoryBuilder.class);

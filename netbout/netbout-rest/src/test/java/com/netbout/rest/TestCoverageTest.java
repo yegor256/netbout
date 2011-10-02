@@ -26,6 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.netbout.engine.User;
+import com.netbout.engine.UserFactory;
 import com.netbout.rest.jaxb.PageLogin;
 import org.junit.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,11 +43,53 @@ import static org.mockito.Mockito.*;
  */
 public final class TestCoverageTest {
 
+    /**
+     * Feel free to delete this test, if you managed to create another test
+     * for this class.
+     */
     @Test
-    public void testLoginRsEntrance() throws Exception {
+    public void testLoginRs() throws Exception {
         final FactoryBuilder builder = mock(FactoryBuilder.class);
         final LoginRs svc = new LoginRs(builder);
-        assertThat(svc.entrance(), instanceOf(PageLogin.class));
+        svc.entrance();
+    }
+
+    /**
+     * Feel free to delete this test, if you managed to create another test
+     * for this class.
+     */
+    @Test
+    public void testStartRs() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final StartRs svc = new StartRs(builder);
+        svc.entrance();
+        svc.start("i", "t");
+    }
+
+    /**
+     * Feel free to delete this test, if you managed to create another test
+     * for this class.
+     */
+    @Test
+    public void testAuth() throws Exception {
+        final FactoryBuilder builder = mock(FactoryBuilder.class);
+        final UserFactory factory = mock(UserFactory.class);
+        doReturn(factory).when(builder).getUserFactory();
+        final User user = mock(User.class);
+        doReturn(1L).when(user).number();
+        doReturn(user).when(factory).find(1L);
+        final Auth auth = new Auth();
+        auth.encode(user);
+        auth.decode(builder, "123");
+    }
+
+    /**
+     * Feel free to delete this test, if you managed to create another test
+     * for this class.
+     */
+    @Test(expected = NotLoggedInException.class)
+    public void testAuthOnFailure() throws Exception {
+        new Auth().decode(null, null);
     }
 
 }

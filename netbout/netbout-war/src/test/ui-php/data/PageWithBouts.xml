@@ -30,5 +30,19 @@
  * @version $Id$
  -->
 <page>
-    <bouts/>
+    <links>
+        <link href="?" name="logout" />
+        <link href="/PageStart.xml" name="start" />
+    </links>
+    <identity>
+        <name>William Shakespeare</name>
+    </identity>
+    <bouts>
+        <bout id="5463">
+            <title>PHP programming in Netbout project</title>
+            <participants>
+                <participant ></participant>
+            </participants>
+        </bout>
+    </bouts>
 </page>

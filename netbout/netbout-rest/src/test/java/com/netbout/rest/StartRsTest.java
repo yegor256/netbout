@@ -93,6 +93,10 @@ public final class StartRsTest {
         doReturn(uri).when(ubuilder).build(anyVararg());
         svc.setUriInfo(uinfo);
         final Response response = svc.start(this.IDENTITY, this.BOUT_TITLE);
+        assertThat(
+            response.getStatus(),
+            equalTo(Response.Status.CREATED.getStatusCode())
+        );
     }
 
 }
