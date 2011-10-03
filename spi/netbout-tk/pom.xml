@@ -118,4 +118,39 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <!--
+            Sign artifacts before installation with GPG.
+            -->
+            <id>gpg</id>
+            <activation>
+                <property><name>gpg.keyname</name></property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!--
+                        To GPG-sign the artifact before deployment to foreign
+                        repository. GPG keys have to be provided in CI
+                        environment, and published beforehand.
+                        @link http://www.sonatype.com/people/2010/01/how-to-generate-pgp-signatures-with-maven/
+                        -->
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version since="21 Dec 2010">1.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

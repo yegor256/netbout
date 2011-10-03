@@ -42,6 +42,14 @@
     <packaging>jar</packaging>
     <name>netbout-rest</name>
 
+    <repositories>
+        <repository>
+            <!-- for Jersey -->
+            <id>java.net</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.netbout</groupId>
@@ -63,6 +71,13 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version since="2 Sep 2011">2.0</version>
+        </dependency>
+        <dependency>
+            <!-- Especially for tests -->
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version since="22 Sep 2011">1.8-ea04</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- HTTP related constants, for testing only -->

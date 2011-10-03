@@ -28,7 +28,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<web-app version="3.0"
+<web-app version="3.0" metadata-complete="false"
     xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
@@ -42,47 +42,27 @@
         <param-value>yegor@netbout.com</param-value>
     </context-param>
 
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/favicon.ico</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/robots.txt</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/LICENSE.txt</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/images/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/xsl/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/css/*</url-pattern>
-    </servlet-mapping>
+    <context-param>
+        <param-name>rexsl.packages</param-name>
+        <param-value>com.netbout.rest</param-value>
+    </context-param>
+    <listener>
+        <listener-class>com.rexsl.core.CoreListener</listener-class>
+    </listener>
 
-    <servlet>
-        <servlet-name>jersey</servlet-name>
-        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>com.netbout.rest,com.netbout.war</param-value>
-        </init-param>
-        <init-param>
-            <!-- for GAE: http://code.google.com/p/googleappengine/wiki/WillItPlayInJava -->
-            <param-name>com.sun.jersey.config.feature.DisableWADL</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>jersey</servlet-name>
+    <filter>
+        <filter-name>GuiceFilter</filter-name>
+        <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>GuiceFilter</filter-name>
         <url-pattern>/*</url-pattern>
-    </servlet-mapping>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+    <mime-mapping>
+        <extension>xsl</extension>
+        <mime-type>text/xsl</mime-type>
+    </mime-mapping>
 
 </web-app>
