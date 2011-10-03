@@ -26,10 +26,7 @@
  */
 package com.netbout.rest;
 
-// API from com.netbout:netbout-engine
 import com.netbout.engine.User;
-
-// for JAX-RS
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;

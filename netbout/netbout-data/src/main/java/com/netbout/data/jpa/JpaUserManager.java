@@ -26,7 +26,6 @@
  */
 package com.netbout.data.jpa;
 
-// API
 import com.netbout.data.UserEnt;
 import com.netbout.data.UserManager;
 

@@ -26,19 +26,19 @@
  */
 package com.netbout.data.jpa;
 
-// import com.netbout.data.UserEnt;
-// import com.netbout.data.UserManager;
-import org.junit.*;
-// import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import org.junit.Test;
 
 /**
+ * Test case of class {@link JpaUserManager}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 public final class JpaUserManagerTest {
 
+    /**
+     * User can be created, deleted, etc.
+     * @throws Exception If something unexpected happens
+     */
     @Test
     public void testUserManipulations() throws Exception {
     }

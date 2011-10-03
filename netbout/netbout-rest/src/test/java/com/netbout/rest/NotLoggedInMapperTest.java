@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,10 +23,31 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.rest;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
+
+/**
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<page>
-    <bouts/>
-</page>
+ */
+public final class NotLoggedInMapperTest {
+
+    @Test
+    public void testResponseBuilding() throws Exception {
+        final ExceptionMapper<NotLoggedInException> mapper =
+            new NotLoggedInMapper();
+        final Response response = mapper.toResponse(new NotLoggedInException());
+        assertThat(
+            response.getStatus(),
+            equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
+        );
+    }
+
+}

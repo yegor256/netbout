@@ -24,59 +24,35 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration.css;
+package com.netbout.rest;
 
-import com.jayway.restassured.RestAssured;
-import java.util.ArrayList;
-import java.util.Collection;
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
- * Here we test that CSS compression really works, and CSS comments
- * are not visible to public.
+ * Replace standard marshaller.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @link <a href="http://markmail.org/search/?q=list%3Anet.java.dev.jersey.users+ContextResolver%3CMarshaller%3E#query:list%3Anet.java.dev.jersey.users%20ContextResolver%3CMarshaller%3E+page:1+mid:q4fkq6eqlgkzdodc+state:results">discussion</a>
  */
-@RunWith(Parameterized.class)
-public final class CssCompressionIT {
+@Provider
+public final class NotLoggedInMapper
+    implements ExceptionMapper<NotLoggedInException> {
 
     /**
-     * Full list of URLs to test.
+     * {@inheritDoc}
      */
-    private static final String[] URLS = {
-        "/css/global.css",
-        "/css/front.css",
-        "/css/bout.css",
-    };
-
-    private final String path;
-
-    public CssCompressionIT(final String name) {
-        this.path = name;
-    }
-
-    @BeforeClass
-    public static void configureRestAssured() {
-        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> paths() {
-        final Collection<Object[]> paths = new ArrayList<Object[]>();
-        for (String url : CssCompressionIT.URLS) {
-            paths.add(new Object[] {url});
-        }
-        return paths;
-    }
-
-    @Test
-    public void testOnePageRendering() throws Exception {
-        final String css = RestAssured.get(this.path).asString();
-        assertThat(css, not(containsString("/*")));
+    @Override
+    public Response toResponse(final NotLoggedInException exc) {
+        return Response.status(Response.Status.TEMPORARY_REDIRECT)
+            .location(UriBuilder.fromPath("/auth").build())
+            .entity(exc.getMessage())
+            .type(MediaType.TEXT_PLAIN)
+            .build();
     }
 
 }

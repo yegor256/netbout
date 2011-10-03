@@ -24,67 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration;
-
-import com.jayway.restassured.RestAssured;
-import java.util.ArrayList;
-import java.util.Collection;
-import org.apache.http.HttpStatus;
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import static org.hamcrest.Matchers.*;
 
 /**
+ * Testing of JPA implementation.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@RunWith(Parameterized.class)
-public final class WebPagesIT {
-
-    /**
-     * Full list of URLs to test.
-     */
-    private static final String[] URLS = {
-        "/",
-        "/favicon.ico",
-        "/robots.txt",
-        "/LICENSE.txt",
-        "/images/logo.png",
-        "/css/global.css",
-        "/css/front.css",
-        "/css/bout.css",
-        "/xsl/layout.xsl",
-    };
-
-    private final String path;
-
-    public WebPagesIT(final String name) {
-        this.path = name;
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> paths() {
-        final Collection<Object[]> paths = new ArrayList<Object[]>();
-        for (String url : WebPagesIT.URLS) {
-            paths.add(new Object[] {url});
-        }
-        return paths;
-    }
-
-    @BeforeClass
-    public static void configureRestAssured() {
-        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
-    }
-
-    @Test
-    public void testOnePageRendering() throws Exception {
-        RestAssured
-            .expect()
-            .logOnError()
-            .statusCode(equalTo(HttpStatus.SC_OK))
-            .when()
-            .get(this.path);
-    }
-
-}
+package com.netbout.data.jpa;

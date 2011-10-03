@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,24 +23,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+
+/**
+ * Service Programming Interface.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @link <a href="http://code.google.com/appengine/docs/java/config/appconfig.html">google app engine doc</a>
- -->
-<appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-    <application>netbout</application>
-    <version>${buildNumber}</version>
-    <public-root>/</public-root>
-    <static-files>
-        <include path="/images/**" />
-        <include path="/xsl/**" />
-        <include path="/robots.txt" />
-        <include path="/LICENSE.txt" />
-        <include path="/favicon.ico" />
-    </static-files>
-    <system-properties>
-        <property name="java.util.logging.config.file"
-            value="WEB-INF/classes/logging.properties" />
-    </system-properties>
-</appengine-web-app>
+ */
+package com.netbout.spi;

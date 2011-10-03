@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-// API from com.netbout:netbout-engine
 import com.netbout.engine.BoutFactory;
 import com.netbout.engine.UserFactory;
 import com.netbout.engine.impl.DefaultBoutFactory;

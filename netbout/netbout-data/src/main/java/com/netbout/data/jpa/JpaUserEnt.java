@@ -26,11 +26,8 @@
  */
 package com.netbout.data.jpa;
 
-// API
 import com.netbout.data.IdentityEnt;
 import com.netbout.data.UserEnt;
-
-// JDK
 import java.util.ArrayList;
 import java.util.List;
 

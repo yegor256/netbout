@@ -24,27 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package integration.jaxb;
-
-import javax.xml.bind.JAXBContext;
-import org.junit.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 /**
+ * RESTful interface, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ValidateImplementationIT {
-
-    @Test
-    public void test() throws Exception {
-        final JAXBContext ctx =
-            JAXBContext.newInstance("com.netbout.rest.jaxb");
-        assertThat(
-            ctx.getClass().getName(),
-            equalTo("com.sun.xml.bind.v2.runtime.JAXBContextImpl")
-        );
-    }
-
-}
+package com.netbout.rest;

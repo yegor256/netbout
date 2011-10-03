@@ -26,7 +26,6 @@
  */
 package com.netbout.data;
 
-// JDK
 import java.util.List;
 
 /**

@@ -26,15 +26,10 @@
  */
 package com.netbout.rest.jaxb;
 
-// bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.Identity;
 import com.netbout.engine.User;
-
-// JDK
 import java.util.ArrayList;
 import java.util.List;
-
-// JAXB
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;

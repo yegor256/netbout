@@ -26,17 +26,19 @@
  */
 package com.netbout.data.jpa;
 
-import org.junit.*;
-// import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import org.junit.Test;
 
 /**
+ * Test case of class {@link JpaBoutEnt}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 public final class JpaBoutEntTest {
 
+    /**
+     * Bout can be created, deleted, etc.
+     * @throws Exception If something unexpected happens
+     */
     @Test
     public void testBoutManipulations() throws Exception {
     }

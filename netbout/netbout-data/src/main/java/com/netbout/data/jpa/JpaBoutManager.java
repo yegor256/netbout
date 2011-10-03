@@ -26,11 +26,8 @@
  */
 package com.netbout.data.jpa;
 
-// API
 import com.netbout.data.BoutEnt;
 import com.netbout.data.BoutManager;
-
-// JDK
 import java.util.ArrayList;
 import java.util.List;
 

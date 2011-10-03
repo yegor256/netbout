@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.User;
 
 /**

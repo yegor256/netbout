@@ -26,13 +26,8 @@
  */
 package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
 import com.netbout.engine.Bout;
-
-// JAXB implemented data manipulators
 import com.netbout.rest.jaxb.PageOfBout;
-
-// for JAX-RS
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;

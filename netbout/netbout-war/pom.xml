@@ -36,32 +36,17 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version>2.0-SNAPSHOT</version>
+        <version netbout="yes">3.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-war</artifactId>
     <packaging>war</packaging>
     <name>netbout-war</name>
 
-    <properties>
-        <!-- we should specify it here to avoid dependency error in Jersey -->
-        <jersey.version>1.8-ea04</jersey.version>
-        <!-- default buildNumber (and version number in GAE) -->
-        <buildNumber>13</buildNumber>
-    </properties>
-
-    <repositories>
-        <repository>
-            <!-- for Jersey -->
-            <id>java.net</id>
-            <url>http://download.java.net/maven/2</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-rest</artifactId>
-            <version>2.0-SNAPSHOT</version>
+            <version netbout="yes">3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -89,353 +74,24 @@
             <!-- other details are in parent pom.xml -->
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <!--
-            JAX-RS reference implementation, required during compile time
-            -->
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-core</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <!--
-            JAX-RS reference implementation.
-            -->
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>${jersey.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <!--
-            For integration testing.
-            -->
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.1.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!--
-            For integration testing.
-            -->
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>4.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!--
-            JAXB 2.0 implementation, required in runtime.
-            -->
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.2.4-1</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <!--
-            JAXB 2.0 API, required in runtime.
-            -->
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.2.3</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <!--
-            Translate all calls to SLF4j into JUL logging (used by GAE).
-            -->
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.6.1</version> <!-- 8 Nov 2010 -->
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <!--
-            Turn all LOG4J logging to SLF4J, during testing.
-            -->
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!--
-            REST Assured framework.
-            @link http://code.google.com/p/rest-assured/
-            -->
-            <groupId>com.jayway.restassured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>1.2.2</version> <!-- 8 July 2011 -->
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!--
-            Saxon for XSLT 2.0
-            -->
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon</artifactId>
-            <version>8.7</version> <!-- 26 May 2011 -->
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!--
-            DOM in Saxon.
-            -->
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-dom</artifactId>
-            <version>8.7</version> <!-- 26 May 2011 -->
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!--
-            DOM in Saxon.
-            -->
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-            <version>1.3.04</version> <!-- 26 May 2011 -->
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <!-- other details are in parent pom.xml -->
-                <executions>
-                    <execution>
-                        <id>integration-test</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                        </goals>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <java.util.logging.config.file>
-                                    ${project.build.outputDirectory}/logging.properties
-                                </java.util.logging.config.file>
-                                <jetty.port>${jetty.port}</jetty.port>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>verify</id>
-                        <goals>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.6</version> <!-- 27 June 2011 -->
-                <configuration>
-                    <portNames>
-                        <portName>jetty.port</portName>
-                        <portName>jetty.port.stop</portName>
-                    </portNames>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>reserve-port</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>reserve-network-port</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>7.4.2.v20110526</version>
-                <configuration>
-                    <scanIntervalSeconds>0</scanIntervalSeconds>
-                    <connectors>
-                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                            <port>${jetty.port}</port>
-                            <maxIdleTime>5000</maxIdleTime> <!-- 5 sec -->
-                        </connector>
-                    </connectors>
-                    <webAppConfig>
-                        <contextPath>/</contextPath>
-                    </webAppConfig>
-                    <stopPort>${jetty.port.stop}</stopPort>
-                    <stopKey>STOP</stopKey>
-                    <daemon>true</daemon>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>start-jetty</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>run-exploded</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>stop-jetty</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1</version> <!-- 2 Dec 2010 -->
+                    <version since="2 Dec 2010">2.1</version>
                     <configuration>
                         <archive>
                             <manifestEntries>
                                 <SCM-Revision>${buildNumber}</SCM-Revision>
                             </manifestEntries>
                         </archive>
-                        <webResources>
-                            <resource>
-                                <directory>src/main/gae</directory>
-                                <filtering>true</filtering>
-                            </resource>
-                        </webResources>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <profile>
-            <!--
-            @todo #103 Temporary measure, until we increase code coverage.
-            -->
-            <id>static-analysis</id>
-            <activation>
-                <property><name>ci</name></property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>cobertura-maven-plugin</artifactId>
-                        <configuration>
-                            <check>
-                                <haltOnFailure>false</haltOnFailure>
-                            </check>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <!--
-            At this profile we deploy the WAR package to Google App Engine
-            server. It's done by a special plugin, that accomplishes all
-            necessary data manipulations with the server.
-            -->
-            <id>deploy-to-gae</id>
-            <activation>
-                <file><exists>src</exists></file>
-            </activation>
-            <properties>
-                <gae.version>1.5.1</gae.version>
-                <gae.home>${project.build.directory}/appengine-java-sdk-${gae.version}</gae.home>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>com.google.appengine</groupId>
-                    <artifactId>appengine-java-sdk</artifactId>
-                    <version>${gae.version}</version> <!-- 29 June 2011 -->
-                    <type>zip</type>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>unpack-gae-sdk</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>com.google.appengine</groupId>
-                                            <artifactId>appengine-java-sdk</artifactId>
-                                            <version>${gae.version}</version>
-                                            <type>zip</type>
-                                            <outputDirectory>${project.build.directory}</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <!--
-                        This plugin transfers data to Google App Engine.
-                        @see http://www.kindleit.net/maven_gae_plugin/index.html
-                        -->
-                        <groupId>net.kindleit</groupId>
-                        <artifactId>maven-gae-plugin</artifactId>
-                        <version>0.8.4</version>
-                        <configuration>
-                            <serverId>netbout.com</serverId>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>compress</id>
-            <activation>
-                <file><exists>src</exists></file>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <artifactId>maven-war-plugin</artifactId>
-                            <configuration>
-                                <warSourceExcludes>css/**</warSourceExcludes>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-                <plugins>
-                    <plugin>
-                        <groupId>net.alchim31.maven</groupId>
-                        <artifactId>yuicompressor-maven-plugin</artifactId>
-                        <version>1.2</version> <!-- 5 July 2011 -->
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>compress</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <nosuffix>true</nosuffix>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

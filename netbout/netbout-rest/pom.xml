@@ -36,51 +36,39 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version>2.0-SNAPSHOT</version>
+        <version netbout="yes">3.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-rest</artifactId>
     <packaging>jar</packaging>
     <name>netbout-rest</name>
 
-    <repositories>
-        <repository>
-            <!-- for Jersey -->
-            <id>java.net</id>
-            <url>http://download.java.net/maven/2</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-engine</artifactId>
-            <version>2.0-SNAPSHOT</version>
+            <version netbout="yes">3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <!--
-            JAX-RS reference implementation, required during compile time
+            JSR 311 (JAX-RS) API.
             -->
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-core</artifactId>
-            <version>1.8-ea04</version>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version since="2 Sep 2011">1.1.1</version>
         </dependency>
         <dependency>
             <!--
-            JAX-RS reference implementation, required for testing only.
+            JAXB 2.0 API.
             -->
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>1.8-ea04</version>
-            <scope>test</scope>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version since="2 Sep 2011">2.0</version>
         </dependency>
         <dependency>
-            <!--
-            For constants mostly.
-            @link http://hc.apache.org/httpcomponents-core-ga/httpcore/apidocs/constant-values.html
-            -->
+            <!-- HTTP related constants, for testing only -->
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.1</version>
+            <version>4.1.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>

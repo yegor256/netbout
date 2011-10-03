@@ -1,4 +1,3 @@
-<?php
 /**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
@@ -25,33 +24,14 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.spi;
 
-$home = dirname(__FILE__);
-$src = realpath($home . '/../../main/webapp');
-$dest = '/tmp/netbout-ui';
-if (!file_exists($dest)) {
-    mkdir($dest);
+/**
+ * NetBout helper.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ */
+public interface Helper {
+
 }
-shell_exec('rm -rf ' . $dest . '/*');
-shell_exec('cp -R ' . $src . '/* ' . $dest);
-shell_exec('cp -R ' . $home . '/data/* ' . $dest);
-
-if (isset($_GET['path'])) {
-    $path = $_GET['path'];
-} else {
-    $path = 'PageWithBouts.xml';
-}
-
-if (preg_match('/\.xml$/', $path)) {
-    $type = 'text/xml';
-} else if (preg_match('/\.xsl$/', $path)) {
-    $type = 'text/xsl';
-} else if (preg_match('/\.css$/', $path)) {
-    $type = 'text/css';
-} else if (preg_match('/\.png$/', $path)) {
-    $type = 'image/png';
-}
-header('Content-Type:' . $type);
-$content = file_get_contents($dest . '/' . $path);
-echo preg_replace('/href=(?:"|\')(.*?)(?:"|\')/', 'href=\'?path=${1}\'', $content);
-
