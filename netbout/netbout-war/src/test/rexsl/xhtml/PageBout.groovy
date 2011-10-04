@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/PageWithBouts.xsl" type="text/xsl"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -28,21 +26,18 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<page>
-    <links>
-        <link href="?" name="logout" />
-        <link href="/PageStart.xml" name="start" />
-    </links>
-    <identity>
-        <name>William Shakespeare</name>
-    </identity>
-    <bouts>
-        <bout id="5463">
-            <title>PHP programming in Netbout project</title>
-            <participants>
-                <participant ></participant>
-            </participants>
-        </bout>
-    </bouts>
-</page>
+ */
+
+import com.rexsl.test.XhtmlConverter
+import org.junit.Assert
+import org.junit.matchers.JUnitMatchers
+import org.xmlmatchers.XmlMatchers
+import org.xmlmatchers.namespace.SimpleNamespaceContext
+
+Assert.assertThat(
+    XhtmlConverter.the(document),
+    XmlMatchers.hasXPath(
+        "//x:html",
+        new SimpleNamespaceContext().withBinding("x", "http://www.w3.org/1999/xhtml")
+    )
+)
