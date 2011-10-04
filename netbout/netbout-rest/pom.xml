@@ -39,7 +39,7 @@
         <version netbout="yes">3.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-rest</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <name>netbout-rest</name>
 
     <repositories>
@@ -55,6 +55,18 @@
             <groupId>com.netbout</groupId>
             <artifactId>netbout-engine</artifactId>
             <version netbout="yes">3.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-core</artifactId>
+            <version since="3 Oct 2011">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version since="3 Oct 2011">1.0-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <!--
@@ -107,5 +119,75 @@
             <!-- other details are in parent pom.xml -->
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.rexsl</groupId>
+                <artifactId>rexsl-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <!--
+            This profile activates all continuous integration specific
+            plugins, not necessary in development. To activate
+            this profile run: "mvn -Dci"
+            -->
+            <id>continuous-integration</id>
+            <activation>
+                <property><name>ci</name></property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <!--
+                            This plugin will collect current build number
+                            from Subversion and save it into Maven property "buildNumber".
+                            -->
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>buildnumber-maven-plugin</artifactId>
+                            <version since="1 Aug 2011">1.0-beta-4</version>
+                            <configuration>
+                                <doCheck>false</doCheck>
+                                <doUpdate>false</doUpdate>
+                                <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <phase>prepare-package</phase>
+                                    <goals>
+                                        <goal>create</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <artifactId>maven-war-plugin</artifactId>
+                            <version since="2 Dec 2010">2.1</version>
+                            <configuration>
+                                <archive>
+                                    <manifestEntries>
+                                        <SCM-Revision>${buildNumber}</SCM-Revision>
+                                    </manifestEntries>
+                                </archive>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
