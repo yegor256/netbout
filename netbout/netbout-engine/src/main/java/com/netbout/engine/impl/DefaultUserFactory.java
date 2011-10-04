@@ -26,11 +26,8 @@
  */
 package com.netbout.engine.impl;
 
-// data access from com.netbout:netbout-data
 import com.netbout.data.UserManager;
 import com.netbout.data.jpa.JpaUserManager;
-
-// API
 import com.netbout.engine.User;
 import com.netbout.engine.UserFactory;
 

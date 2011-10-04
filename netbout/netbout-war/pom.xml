@@ -80,30 +80,9 @@
             <artifactId>xml-matchers</artifactId>
             <!-- other details are in parent pom.xml -->
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-io</artifactId>
-            <!-- other details are in parent pom.xml -->
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version since="2 Dec 2010">2.1</version>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <SCM-Revision>${buildNumber}</SCM-Revision>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.rexsl</groupId>
@@ -119,5 +98,58 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <!--
+            This profile activates all continuous integration specific
+            plugins, not necessary in development. To activate
+            this profile run: "mvn -Dci"
+            -->
+            <id>continuous-integration</id>
+            <activation>
+                <property><name>ci</name></property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <!--
+                            This plugin will collect current build number
+                            from Subversion and save it into Maven property "buildNumber".
+                            -->
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>buildnumber-maven-plugin</artifactId>
+                            <version since="1 Aug 2011">1.0-beta-4</version>
+                            <configuration>
+                                <doCheck>false</doCheck>
+                                <doUpdate>false</doUpdate>
+                                <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <phase>prepare-package</phase>
+                                    <goals>
+                                        <goal>create</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <artifactId>maven-war-plugin</artifactId>
+                            <version since="2 Dec 2010">2.1</version>
+                            <configuration>
+                                <archive>
+                                    <manifestEntries>
+                                        <SCM-Revision>${buildNumber}</SCM-Revision>
+                                    </manifestEntries>
+                                </archive>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

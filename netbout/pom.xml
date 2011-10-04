@@ -226,28 +226,6 @@
             <build>
                 <plugins>
                     <plugin>
-                        <!--
-                        This plugin will collect current build number
-                        from Subversion and save it into Maven property "buildNumber".
-                        -->
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>buildnumber-maven-plugin</artifactId>
-                        <version since="1 Aug 2011">1.0-beta-4</version>
-                        <configuration>
-                            <doCheck>false</doCheck>
-                            <doUpdate>false</doUpdate>
-                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>create</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
                         <version since="2 Sep 2011">0.1.1</version>

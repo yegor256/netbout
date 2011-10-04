@@ -26,10 +26,7 @@
  */
 package com.netbout.engine.impl;
 
-// data access from com.netbout:netbout-data
 import com.netbout.data.BoutEnt;
-
-// API
 import com.netbout.engine.Bout;
 
 /**

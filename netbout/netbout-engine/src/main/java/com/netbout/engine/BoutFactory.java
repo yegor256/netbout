@@ -26,7 +26,6 @@
  */
 package com.netbout.engine;
 
-// JDK
 import java.util.List;
 
 /**

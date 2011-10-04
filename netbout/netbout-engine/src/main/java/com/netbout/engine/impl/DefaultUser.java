@@ -26,15 +26,10 @@
  */
 package com.netbout.engine.impl;
 
-// data access from com.netbout:netbout-data
 import com.netbout.data.IdentityEnt;
 import com.netbout.data.UserEnt;
-
-// API
 import com.netbout.engine.Identity;
 import com.netbout.engine.User;
-
-// JDK
 import java.util.ArrayList;
 import java.util.List;
 

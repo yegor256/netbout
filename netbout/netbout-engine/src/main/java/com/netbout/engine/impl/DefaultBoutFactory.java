@@ -26,17 +26,12 @@
  */
 package com.netbout.engine.impl;
 
-// data access from com.netbout:netbout-data
 import com.netbout.data.BoutEnt;
 import com.netbout.data.BoutManager;
 import com.netbout.data.jpa.JpaBoutManager;
-
-// API
 import com.netbout.engine.Bout;
 import com.netbout.engine.BoutFactory;
 import com.netbout.engine.Identity;
-
-// JDK
 import java.util.ArrayList;
 import java.util.List;
 
