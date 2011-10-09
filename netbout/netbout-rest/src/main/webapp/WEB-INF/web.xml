@@ -28,7 +28,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<web-app version="3.0" metadata-complete="false"
+<web-app version="3.0" metadata-complete="true"
     xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
@@ -42,27 +42,67 @@
         <param-value>yegor@netbout.com</param-value>
     </context-param>
 
-    <context-param>
-        <param-name>rexsl.packages</param-name>
-        <param-value>com.netbout.rest</param-value>
-    </context-param>
-    <listener>
-        <listener-class>com.rexsl.core.CoreListener</listener-class>
-    </listener>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/robots.txt</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/css/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/xsl/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/favicon.ico</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/images/*</url-pattern>
+    </servlet-mapping>
 
     <filter>
-        <filter-name>GuiceFilter</filter-name>
-        <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+        <filter-name>XsltFilter</filter-name>
+        <filter-class>com.rexsl.core.XsltFilter</filter-class>
+        <description>
+            This filter will convert XML documents produced by JAXB into
+            XHTML documents, through an XSLT transformer.
+        </description>
     </filter>
     <filter-mapping>
-        <filter-name>GuiceFilter</filter-name>
+        <filter-name>XsltFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
+
+    <servlet>
+        <servlet-name>RestfulServlet</servlet-name>
+        <servlet-class>com.rexsl.core.RestfulServlet</servlet-class>
+        <description>
+            This servlet is responsible for resolving JAX-RS annotated
+            resources and converting their JAXB-annotated output into
+            XML documents.
+        </description>
+        <init-param>
+            <param-name>com.rexsl.PACKAGES</param-name>
+            <param-value>com.netbout.rest</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RestfulServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
     <mime-mapping>
         <extension>xsl</extension>
         <mime-type>text/xsl</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>ico</extension>
+        <mime-type>image/gif</mime-type>
     </mime-mapping>
 
 </web-app>

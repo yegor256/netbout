@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/PageBout.xsl" type="text/xsl"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -25,41 +23,21 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
- * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
- -->
-<page>
-    <user>
-        <email>robert.deniro</email>
-        <photo href="http://www.robert-deniro.com/deniro.jpg" />
-    </user>
-    <bout id="5463">
-        <title>PHP programming in Netbout project</title>
-        <participants>
-            <participant>
-                <email>depp</email>
-                <photo href="http://www.ofcelebrity.net/photos/johnny-depp-6.jpg" />
-            </participant>
-            <participant>
-                <email>javier@gmail.com</email>
-                <photo href="http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg" />
-            </participant>
-        </participants>
-        <messages>
-            <message>
-                <author>robert.deniro</author>
-                <text>
-                    I think that this subject should be discussed in
-                    this bout. What do you think, guys?...
-                </text>
-            </message>
-            <message>
-                <author>depp</author>
-                <text>
-                    Yeah, I agree, let's talk about it today!
-                </text>
-            </message>
-        </messages>
-    </bout>
-</page>
+ */
+
+div.message {
+    padding: 1em;
+    margin-top: 1em;
+    width: 40em;
+    position: relative;
+}
+
+    div.message div.author {
+        float: right;
+        margin-left: 0.5em;
+        text-align: right;
+    }
+
+        div.message div.author img {
+            height: 75px;
+        }

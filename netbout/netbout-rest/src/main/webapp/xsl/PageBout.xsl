@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/PageBout.xsl" type="text/xsl"?>
 <!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
@@ -29,37 +28,38 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<page>
-    <user>
-        <email>robert.deniro</email>
-        <photo href="http://www.robert-deniro.com/deniro.jpg" />
-    </user>
-    <bout id="5463">
-        <title>PHP programming in Netbout project</title>
-        <participants>
-            <participant>
-                <email>depp</email>
-                <photo href="http://www.ofcelebrity.net/photos/johnny-depp-6.jpg" />
-            </participant>
-            <participant>
-                <email>javier@gmail.com</email>
-                <photo href="http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg" />
-            </participant>
-        </participants>
-        <messages>
-            <message>
-                <author>robert.deniro</author>
-                <text>
-                    I think that this subject should be discussed in
-                    this bout. What do you think, guys?...
-                </text>
-            </message>
-            <message>
-                <author>depp</author>
-                <text>
-                    Yeah, I agree, let's talk about it today!
-                </text>
-            </message>
-        </messages>
-    </bout>
-</page>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
+
+    <xsl:output method="xhtml"/>
+
+    <xsl:include href="/xsl/layout.xsl" />
+
+    <xsl:template name="head">
+        <title><xsl:value-of select="/page/bout/title"/></title>
+        <link href="/css/PageBout.css" rel="stylesheet" type="text/css"></link>
+    </xsl:template>
+
+    <xsl:template name="content">
+        <form>
+            <input name="query" />
+            <input name="submit" value="submit" type="submit" />
+        </form>
+        <xsl:for-each select="/page/bout/messages/message">
+            <div class="message">
+                <xsl:value-of select="text"/>
+                <div class="author">
+                    <img>
+                        <xsl:attribute name="src">
+                            <xsl:value-of select="/page/bout/participants/participant[email/text()=author/text()]/photo/@href"/>
+                        </xsl:attribute>
+                    </img>
+                </div>
+            </div>
+        </xsl:for-each>
+    </xsl:template>
+
+</xsl:stylesheet>
