@@ -25,71 +25,24 @@
  * SUCH DAMAGE.
  */
 
-* {
-    margin: 0;
-    padding: 0;
-}
-
-img {
-    border: 0;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    font-size: 12pt;
-    line-height: 1.3em;
-    min-height: 100%;
+/* row of photos and names */
+div.dudes{
     position: relative;
-    color: #122632;
-    padding: 1em;
+    height: 75px;
 }
 
-/* top bar */
-div#bar {
-    position: relative;
-    height: 1em;
-    margin-bottom: 1em;
-}
-
-    div#bar a#logo {
+    div.dudes div.dude{
         position: absolute;
-        bottom: 0px;
-        left: 0px;
+        font-size: 0.8em;
     }
 
-    div#bar div#crumbs {
-        position: absolute;
-        left: 5em;
-        bottom: 0px;
-    }
-
-        div#bar div#crumbs span {
-            position: relative;
-            margin-right: 1em;
+        div.dudes div.dude img{
+            height: 50px;
+            width: 50px;
+            display: block;
         }
 
-        div#bar div#crumbs img#photo {
-            width: 18px;
-            height: 18px;
-            position: relative;
+        div.dudes div.dude img.pending{
+            opacity : 0.4;
         }
-
-/* search box */
-form#box {
-    position: relative;
-    margin-bottom: 1em;
-}
-
-    form#box input {
-        font-size: 1.4em;
-    }
-
-    form#box input[type='submit'] {
-        font-size: 1.4em;
-    }
-
-/* everything between header and footer */
-div#content {
-    position: relative;
-}
 

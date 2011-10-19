@@ -34,37 +34,8 @@
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:output method="xhtml"/>
-
-    <xsl:include href="/xsl/layout.xsl" />
-    <xsl:include href="/xsl/dudes.xsl" />
-
-    <xsl:template name="head">
-        <title>netBout.com</title>
-        <link href="/css/PageWithBouts.css" rel="stylesheet" type="text/css"></link>
-        <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
-    </xsl:template>
-
-    <xsl:template name="content">
-        <xsl:for-each select="/page/bouts/bout">
-            <div class="bout">
-                <a class="title unread">
-                    <xsl:attribute name="class">
-                        <xsl:text>title </xsl:text>
-                        <xsl:if test="@unread">
-                            <xsl:text>unread</xsl:text>
-                        </xsl:if>
-                    </xsl:attribute>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="@href"/>
-                    </xsl:attribute>
-                    <xsl:value-of select="title" />
-                </a>
-                <xsl:call-template name="dudes">
-                    <xsl:with-param name="participants" select="participants" />
-                </xsl:call-template>
-            </div>
-        </xsl:for-each>
+    <xsl:template name="stage-343">
+        <xsl:text>stage content</xsl:text>
     </xsl:template>
 
 </xsl:stylesheet>

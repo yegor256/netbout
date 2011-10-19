@@ -37,27 +37,65 @@
     <xsl:output method="xhtml"/>
 
     <xsl:include href="/xsl/layout.xsl" />
+    <xsl:include href="/xsl/dudes.xsl" />
 
     <xsl:template name="head">
         <title><xsl:value-of select="/page/bout/title"/></title>
         <link href="/css/PageBout.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
     </xsl:template>
 
     <xsl:template name="content">
+        <xsl:value-of select="/page/title"/>
+        <xsl:call-template name="dudes">
+            <xsl:with-param name="participants" select="/page/participants" />
+            <xsl:with-param name="invite" select="'yes'" />
+        </xsl:call-template>
+        <div id="stage">
+            <ul id="titles">
+                <xsl:for-each select="/page/stages/stage">
+                    <xsl:choose>
+                        <xsl:when test="@active">
+                            <li>
+                                <xsl:value-of select="@name"/>
+                            </li>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <li>
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:text>...</xsl:text>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="@name"/>
+                                </a>
+                            </li>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </ul>
+            <div id="body">
+                <xsl:for-each select="/page/stages/stage">
+                    <xsl:if test="@active">
+                    </xsl:if>
+                </xsl:for-each>
+            </div>
+        </div>
         <form>
-            <input name="query" />
-            <input name="submit" value="submit" type="submit" />
+            <dl><textarea cols="80" rows="5"></textarea></dl>
+            <dl><input name="submit" type="submit" /></dl>
         </form>
-        <xsl:for-each select="/page/bout/messages/message">
+        <xsl:for-each select="/page/messages/message">
+            <xsl:variable name="message" select="."/>
             <div class="message">
-                <xsl:value-of select="text"/>
-                <div class="author">
+                <div class="header">
                     <img>
                         <xsl:attribute name="src">
-                            <xsl:value-of select="/page/bout/participants/participant[email/text()=author/text()]/photo/@href"/>
+                            <xsl:value-of select="/page/participants/participant[$message/author/text()=identity/text()]/photo/@href"/>
                         </xsl:attribute>
                     </img>
+                    <xsl:value-of select="/page/participants/participant[$message/author/text()=identity/text()]/identity"/>
                 </div>
+                <xsl:value-of select="text"/>
             </div>
         </xsl:for-each>
     </xsl:template>

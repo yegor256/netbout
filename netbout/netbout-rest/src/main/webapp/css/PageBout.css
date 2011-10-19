@@ -25,19 +25,36 @@
  * SUCH DAMAGE.
  */
 
+div#stage {
+    margin-bottom: 2em;
+}
+
+    div#stage ul#titles{
+    }
+
+        div#stage ul#titles li{
+            display: inline;
+            margin-right: 1em;
+        }
+
+    div#stage div#body{
+        border: 1px solid gray;
+        min-height: 3em;
+    }
+
 div.message {
-    padding: 1em;
-    margin-top: 1em;
-    width: 40em;
+    border-top: 1px dotted gray;
+    padding-top: 1em;
+    margin-bottom: 1em;
     position: relative;
 }
 
-    div.message div.author {
-        float: right;
-        margin-left: 0.5em;
-        text-align: right;
+    div.message div.header {
+        position: relative;
+        height: 60px;
     }
 
-        div.message div.author img {
-            height: 75px;
+        div.message div.header img {
+            height: 50px;
+            width: 50px;
         }

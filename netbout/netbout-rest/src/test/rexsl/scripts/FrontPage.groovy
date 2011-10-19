@@ -36,7 +36,7 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext
 import static org.hamcrest.Matchers.*
 
 def r = new TestClient(documentRoot)
-  .header('Accept', 'application/xml')
+  .header('Accept', 'text/html')
   .header('User-agent', 'Firefox')
   .get('/')
 Assert.assertThat(r.status, equalTo(200))

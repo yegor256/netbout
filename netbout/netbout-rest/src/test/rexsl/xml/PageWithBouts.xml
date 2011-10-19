@@ -31,18 +31,57 @@
  -->
 <page>
     <links>
-        <link href="?" name="logout" />
+        <link href="/xml/PageWithBouts.xml" name="home" />
+        <link href="/" name="logout" />
         <link href="/xml/PageBout.xml" name="start" />
     </links>
-    <identity>
-        <name>William Shakespeare</name>
-    </identity>
+    <identity>William.Shakespeare</identity>
+    <photo href="http://www.robert-deniro.com/deniro.jpg"/>
     <bouts>
-        <bout id="5463">
+        <bout id="5463" href="/xml/PageBout.xml" unread="yes">
             <title>PHP programming in NetBout project</title>
             <participants>
                 <participant>
-                    <identity>Alex Doe</identity>
+                    <identity>johnny</identity>
+                    <photo href="http://www.ofcelebrity.net/photos/johnny-depp-6.jpg" />
+                </participant>
+                <participant>
+                    <identity>javier</identity>
+                    <photo href="http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg" />
+                </participant>
+            </participants>
+        </bout>
+        <bout id="6363" href="/xml/PageBout.xml" unread="yes">
+            <title>some personal issues to discuss urgently</title>
+            <participants>
+                <participant>
+                    <identity>Monica</identity>
+                    <photo href="http://pixdaus.com/pics/1228335452nZgDtst.jpg" />
+                </participant>
+                <participant>
+                    <identity>john.turturro</identity>
+                    <photo href="http://www.topnews.in/light/files/John-Turturro.jpg" />
+                </participant>
+                <participant>
+                    <identity>2pac</identity>
+                    <photo href="http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg" />
+                </participant>
+            </participants>
+        </bout>
+        <bout id="63775" href="/xml/PageBout.xml">
+            <title>how about joining my team next week?</title>
+            <participants>
+                <participant>
+                    <identity>jeff.bridges</identity>
+                    <photo href="http://www.hellomagazine.com/imagenes/profiles/jeff-bridges/5406-jeff-bridges-profile.jpg" />
+                </participant>
+                <participant>
+                    <identity>Sarah.Palin</identity>
+                    <photo href="http://www.dailypolitical.com/wp-content/uploads/2010/12/Sarah-Palin.jpg" />
+                </participant>
+                <participant>
+                    <identity>al.pacino@gmail.com</identity>
+                    <photo href="http://collider.com/wp-content/image-base/People/A/Al_Pacino/Al_Pacino%20(1).jpg" />
                 </participant>
             </participants>
         </bout>

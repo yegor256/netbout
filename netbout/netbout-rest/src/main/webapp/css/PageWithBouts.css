@@ -25,54 +25,16 @@
  * SUCH DAMAGE.
  */
 
-div.filter{
-    margin-bottom: 2em;
-}
-
-    div.filter ul{
-        display: inline;
-    }
-
-        div.filter ul li{
-            display: inline;
-            margin-left: 0.5em;
-        }
-
-div.intro{
+div.bout{
     clear: both;
-    padding-bottom: 2em;
     margin-bottom: 1em;
-    border-bottom: 1px dotted #e7e9ea;
 }
 
-    div.intro a.title{
+    div.bout a.title{
         font-size: 1.2em;
     }
 
-        div.intro a.title.unread{
+        div.bout a.title.unread{
             font-weight: bold;
         }
 
-    div.intro div.participants{
-        float: right;
-        margin-left: 2em;
-    }
-
-        div.intro div.participants img{
-            height: 50px;
-            vertical-align: bottom;
-        }
-
-        div.intro div.participants span.anonymous{
-            display: inline-block;
-            vertical-align: bottom;
-            height: 40px;
-            width: 50px;
-            background-color: #e7e9ea;
-            color: #7d8f9b;
-            text-align: center;
-            padding-top: 10px;
-        }
-
-    div.intro ul.tags{
-    }

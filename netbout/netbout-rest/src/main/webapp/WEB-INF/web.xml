@@ -73,7 +73,7 @@
     </filter>
     <filter-mapping>
         <filter-name>XsltFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <servlet-name>RestfulServlet</servlet-name>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>

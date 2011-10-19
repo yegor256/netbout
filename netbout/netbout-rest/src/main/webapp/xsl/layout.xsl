@@ -42,17 +42,48 @@
                 <link rel="icon" type="image/gif" href="/favicon.ico"/>
             </head>
             <body>
-                <div id="header">
-                    <a id="logo" href="/">
+                <div id="bar">
+                    <a id="logo">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="/page/links/link[@name='home']/@href"/>
+                        </xsl:attribute>
                         <img src="/images/logo.png"/>
                     </a>
+                    <div id="crumbs">
+                        <span>
+                            <img id="photo">
+                                <xsl:attribute name="src">
+                                    <xsl:value-of select="/page/photo/@href"/>
+                                </xsl:attribute>
+                            </img>
+                        </span>
+                        <span>
+                            <xsl:value-of select="/page/identity"/>
+                        </span>
+                        <span>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="/page/links/link[@name='start']/@href"/>
+                                </xsl:attribute>
+                                <xsl:text>start</xsl:text>
+                            </a>
+                        </span>
+                        <span>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="/page/links/link[@name='logout']/@href"/>
+                                </xsl:attribute>
+                                <xsl:text>logout</xsl:text>
+                            </a>
+                        </span>
+                    </div>
                 </div>
+                <form id="box">
+                    <input name="q" />
+                    <input value="find" type="submit" />
+                </form>
                 <div id="content">
                     <xsl:call-template name="content" />
-                </div>
-                <div id="footer">
-                    (c) 2011, netBout.com. All Rights Reserved.
-                    USPTO patent app. no. 12/943,022
                 </div>
             </body>
         </html>
