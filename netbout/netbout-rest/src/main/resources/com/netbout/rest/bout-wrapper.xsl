@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -23,40 +24,21 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-div#holder {
-    margin-bottom: 2em;
-}
+    <xsl:include href="/xsl/PageBout.xsl" />
+    <xsl:include href="/${id}/stage.xsl?uri=${xsl}" />
 
-    div#holder ul#titles{
-    }
+    <xsl:template name="stage-head">
+        <link href="/${id}/stage.css?uri=${css}" rel="stylesheet" type="text/css"></link>
+    </xsl:template>
 
-        div#holder ul#titles li{
-            display: inline;
-            margin-right: 1em;
-        }
-
-    div#holder div#stage{
-        border: 1px solid gray;
-        min-height: 3em;
-        padding: 1em;
-        font-size: 0.8em;
-    }
-
-div.message {
-    border-top: 1px dotted gray;
-    padding-top: 1em;
-    margin-bottom: 1em;
-    position: relative;
-}
-
-    div.message div.header {
-        position: relative;
-        height: 60px;
-    }
-
-        div.message div.header img {
-            height: 50px;
-            width: 50px;
-        }
+</xsl:stylesheet>

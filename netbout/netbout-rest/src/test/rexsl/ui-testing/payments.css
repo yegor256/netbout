@@ -25,38 +25,13 @@
  * SUCH DAMAGE.
  */
 
-div#holder {
-    margin-bottom: 2em;
+div#stage table{
 }
 
-    div#holder ul#titles{
+    div#stage table th{
+        background: blue;
+        color: white;
+        font-weight: normal;
     }
 
-        div#holder ul#titles li{
-            display: inline;
-            margin-right: 1em;
-        }
 
-    div#holder div#stage{
-        border: 1px solid gray;
-        min-height: 3em;
-        padding: 1em;
-        font-size: 0.8em;
-    }
-
-div.message {
-    border-top: 1px dotted gray;
-    padding-top: 1em;
-    margin-bottom: 1em;
-    position: relative;
-}
-
-    div.message div.header {
-        position: relative;
-        height: 60px;
-    }
-
-        div.message div.header img {
-            height: 50px;
-            width: 50px;
-        }

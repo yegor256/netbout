@@ -34,8 +34,28 @@
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:template name="stage-343">
-        <xsl:text>stage content</xsl:text>
+    <xsl:template name="stage">
+        <xsl:param name="root" />
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <xsl:for-each select="$root/payments/payment">
+                    <tr>
+                        <td><xsl:value-of select="date"/></td>
+                        <td><xsl:value-of select="amount"/></td>
+                        <td><xsl:value-of select="currency"/></td>
+                        <td><xsl:value-of select="details"/></td>
+                    </tr>
+                </xsl:for-each>
+            </tbody>
+        </table>
     </xsl:template>
 
 </xsl:stylesheet>

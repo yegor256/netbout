@@ -43,6 +43,7 @@
         <title><xsl:value-of select="/page/bout/title"/></title>
         <link href="/css/PageBout.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
+        <xsl:call-template name="stage-head"/>
     </xsl:template>
 
     <xsl:template name="content">
@@ -51,11 +52,11 @@
             <xsl:with-param name="participants" select="/page/participants" />
             <xsl:with-param name="invite" select="'yes'" />
         </xsl:call-template>
-        <div id="stage">
+        <div id="holder">
             <ul id="titles">
                 <xsl:for-each select="/page/stages/stage">
                     <xsl:choose>
-                        <xsl:when test="@active">
+                        <xsl:when test="not(@href)">
                             <li>
                                 <xsl:value-of select="@name"/>
                             </li>
@@ -64,7 +65,7 @@
                             <li>
                                 <a>
                                     <xsl:attribute name="href">
-                                        <xsl:text>...</xsl:text>
+                                        <xsl:value-of select="@href"/>
                                     </xsl:attribute>
                                     <xsl:value-of select="@name"/>
                                 </a>
@@ -73,9 +74,12 @@
                     </xsl:choose>
                 </xsl:for-each>
             </ul>
-            <div id="body">
+            <div id="stage">
                 <xsl:for-each select="/page/stages/stage">
-                    <xsl:if test="@active">
+                    <xsl:if test="not(@href)">
+                        <xsl:call-template name="stage">
+                            <xsl:with-param name="root" select="." />
+                        </xsl:call-template>
                     </xsl:if>
                 </xsl:for-each>
             </div>
