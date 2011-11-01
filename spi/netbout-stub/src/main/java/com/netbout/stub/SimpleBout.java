@@ -27,42 +27,44 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.stub;
 
-import java.net.URL;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Identity.
- *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identify(String)}.
+ * Simple implementation of a {@link Bout}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
-public interface Identity {
+final class SimpleBout implements Bout {
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
-     * @param query Search query, if necessary
-     * @return The list of bouts
+     * {@inheritDoc}
      */
-    List<Bout> inbox(String query);
+    @Override
+    public String title() {
+        return null;
+    }
 
     /**
-     * Get name of the identity.
-     * @return The name
+     * {@inheritDoc}
      */
-    String name();
+    @Override
+    public Collection<Participant> participants() {
+        return null;
+    }
 
     /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
+     * {@inheritDoc}
      */
-    URL photo();
+    @Override
+    public List<Message> messages(final String query) {
+        return null;
+    }
 
 }

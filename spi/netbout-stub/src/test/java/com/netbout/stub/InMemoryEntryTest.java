@@ -27,42 +27,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.stub;
 
-import java.net.URL;
-import java.util.List;
+import com.netbout.spi.Entry;
+import com.netbout.spi.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Identity.
- *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identify(String)}.
- *
+ * Test case for {@link InMemoryEntry}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
-public interface Identity {
+public final class InMemoryEntryTest {
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
-     * @param query Search query, if necessary
-     * @return The list of bouts
+     * User can be registered and then authenticated.
+     * @throws Exception If there is some problem inside
      */
-    List<Bout> inbox(String query);
-
-    /**
-     * Get name of the identity.
-     * @return The name
-     */
-    String name();
-
-    /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
-     */
-    URL photo();
+    @Test
+    public void testRegistrationAndAuthentication() throws Exception {
+        final Entry entry = new InMemoryEntry();
+        final String name = "John Doe";
+        entry.register(name, "");
+        final User user = entry.authenticate(name, "");
+        MatcherAssert.assertThat(user, Matchers.notNullValue());
+    }
 
 }

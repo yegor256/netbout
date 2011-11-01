@@ -27,42 +27,78 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.stub;
 
-import java.net.URL;
+import com.netbout.spi.Identity;
+import com.netbout.spi.User;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Identity.
- *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identify(String)}.
+ * Simple implementation of a {@link User}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
-public interface Identity {
+final class SimpleUser implements User {
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
-     * @param query Search query, if necessary
-     * @return The list of bouts
+     * The name.
      */
-    List<Bout> inbox(String query);
+    private final String name;
 
     /**
-     * Get name of the identity.
+     * Collection of identities.
+     */
+    private final Collection<SimpleIdentity> identities =
+        new ArrayList<SimpleIdentity>();
+
+    /**
+     * Public ctor.
+     * @param nme The name of it
+     * @see InMemoryEntry#register(String,String)
+     */
+    public SimpleUser(final String nme) {
+        this.name = nme;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity identity(final String name) {
+        for (SimpleIdentity identity : this.identities) {
+            if (identity.name().equals(name)) {
+                return identity;
+            }
+        }
+        throw new IllegalArgumentException(
+            "Identity not found in the user"
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void identify(final String name) {
+        for (SimpleIdentity identity : this.identities) {
+            if (identity.name().equals(name)) {
+                throw new IllegalArgumentException(
+                    "This identity is already attached to the user"
+                );
+            }
+        }
+        this.identities.add(new SimpleIdentity(name));
+    }
+
+    /**
+     * Get its name.
      * @return The name
      */
-    String name();
-
-    /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
-     */
-    URL photo();
+    public String getName() {
+        return this.name;
+    }
 
 }

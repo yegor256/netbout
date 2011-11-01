@@ -29,40 +29,34 @@
  */
 package com.netbout.spi;
 
-import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Identity.
- *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identify(String)}.
+ * Bout, a conversation room.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
-public interface Identity {
+public interface Bout {
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
+     * Get its title.
+     * @return The title of the bout
+     */
+    String title();
+
+    /**
+     * Get all its participants.
+     * @return The list of them
+     */
+    Collection<Participant> participants();
+
+    /**
+     * Get ordered list of all messages of the bout.
      * @param query Search query, if necessary
-     * @return The list of bouts
+     * @return The list of them
      */
-    List<Bout> inbox(String query);
-
-    /**
-     * Get name of the identity.
-     * @return The name
-     */
-    String name();
-
-    /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
-     */
-    URL photo();
+    List<Message> messages(String query);
 
 }

@@ -27,42 +27,61 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.stub;
 
+import com.netbout.spi.Identity;
+import com.netbout.spi.Bout;
+import com.netbout.spi.User;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Identity.
- *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identify(String)}.
+ * Simple implementation of a {@link Identity}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
-public interface Identity {
+final class SimpleIdentity implements Identity {
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
-     * @param query Search query, if necessary
-     * @return The list of bouts
+     * The name.
      */
-    List<Bout> inbox(String query);
+    private final String name;
 
     /**
-     * Get name of the identity.
-     * @return The name
+     * Public ctor.
+     * @param identity The identity
+     * @see SimpleUser#identity(String)
      */
-    String name();
+    public SimpleIdentity(final String identity) {
+        this.name = identity;
+    }
 
     /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
+     * {@inheritDoc}
      */
-    URL photo();
+    @Override
+    public List<Bout> inbox(String query) {
+        final List<Bout> list = new ArrayList<Bout>();
+        list.add(new SimpleBout());
+        return list;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL photo() {
+        return null;
+    }
 
 }

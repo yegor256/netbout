@@ -29,40 +29,34 @@
  */
 package com.netbout.spi;
 
-import java.net.URL;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
- * Identity.
- *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identify(String)}.
+ * Single message in a {@link Bout}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
-public interface Identity {
+public interface Message {
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
-     * @param query Search query, if necessary
-     * @return The list of bouts
+     * Author of this message.
+     * @return The author
      */
-    List<Bout> inbox(String query);
+    Identity author();
 
     /**
-     * Get name of the identity.
-     * @return The name
+     * Text of the message.
+     * @return The text
      */
-    String name();
+    String text();
 
     /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
+     * Date when it was posted.
+     * @return The date
      */
-    URL photo();
+    Date date();
 
 }

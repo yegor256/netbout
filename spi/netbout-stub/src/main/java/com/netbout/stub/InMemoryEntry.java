@@ -27,42 +27,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.stub;
 
-import java.net.URL;
+import com.netbout.spi.Entry;
+import com.netbout.spi.User;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Identity.
- *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identify(String)}.
+ * In-memory entry.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
-public interface Identity {
+public final class InMemoryEntry implements Entry {
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
-     * @param query Search query, if necessary
-     * @return The list of bouts
+     * Collection of users.
      */
-    List<Bout> inbox(String query);
+    private final Collection<SimpleUser> users = new ArrayList<SimpleUser>();
 
     /**
-     * Get name of the identity.
-     * @return The name
+     * {@inheritDoc}
      */
-    String name();
+    @Override
+    public void register(final String name, final String secret) {
+        for (SimpleUser user : this.users) {
+            if (user.getName().equals(name)) {
+                throw new IllegalArgumentException(
+                    "User with this name already registered"
+                );
+            }
+        }
+        this.users.add(new SimpleUser(name));
+    }
 
     /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
+     * {@inheritDoc}
      */
-    URL photo();
+    @Override
+    public User authenticate(final String name, final String secret) {
+        for (SimpleUser user : this.users) {
+            if (user.getName().equals(name)) {
+                return user;
+            }
+        }
+        throw new IllegalArgumentException(
+            "User with this name is not found"
+        );
+    }
 
 }

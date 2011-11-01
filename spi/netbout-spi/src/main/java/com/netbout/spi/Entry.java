@@ -29,40 +29,31 @@
  */
 package com.netbout.spi;
 
-import java.net.URL;
-import java.util.List;
-
 /**
- * Identity.
+ * Entry point to the netbout.
  *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identify(String)}.
+ * <p>This interface should be implemented by implementation package, as
+ * a main entry point to the module. You should start using the entire
+ * framework from the provided class.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
-public interface Identity {
+public interface Entry {
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
-     * @param query Search query, if necessary
-     * @return The list of bouts
+     * Register a new user.
+     * @param name Unique identifier of the user
+     * @param secret Some secret code of this user
      */
-    List<Bout> inbox(String query);
+    void register(String name, String secret);
 
     /**
-     * Get name of the identity.
-     * @return The name
+     * Authenticate a user and get its identity.
+     * @param name Unique identifier of the user
+     * @param secret Some secret code of this user
+     * @return The user just authenticated
      */
-    String name();
-
-    /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
-     */
-    URL photo();
+    User authenticate(String name, String secret);
 
 }
