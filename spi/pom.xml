@@ -229,9 +229,13 @@
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
                         <version since="2 Sep 2011">0.1.5</version>
-                        <configuration>
-                            <license>file:./LICENSE.txt</license>
-                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.netbout.spi</groupId>
+                                <artifactId>netbout-tk</artifactId>
+                                <version netbout="yes">1.0-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
                                 <goals>
@@ -262,12 +266,24 @@
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
-                                    <descriptors>
-                                        <descriptor>src/main/assembly/netbout-sources.xml</descriptor>
-                                    </descriptors>
+                                    <descriptorRefs>
+                                        <!--
+                                        This descriptor is in netbout-tk sub-module, which is in classpath of
+                                        this plugin.
+                                        @see http://maven.apache.org/plugins/maven-assembly-plugin/examples/sharing-descriptors.html
+                                        -->
+                                        <descriptorRef>netbout-sources</descriptorRef>
+                                    </descriptorRefs>
                                 </configuration>
                             </execution>
                         </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.netbout.spi</groupId>
+                                <artifactId>netbout-tk</artifactId>
+                                <version netbout="yes">1.0-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
@@ -383,6 +399,13 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.netbout.spi</groupId>
+                                <artifactId>netbout-tk</artifactId>
+                                <version netbout="yes">1.0-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
