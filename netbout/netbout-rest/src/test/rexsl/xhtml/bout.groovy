@@ -34,7 +34,7 @@ import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 
 Assert.assertThat(
-    XhtmlConverter.the(document),
+    XhtmlConverter.the(rexsl.document),
     XmlMatchers.hasXPath(
         '//x:html',
         new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')

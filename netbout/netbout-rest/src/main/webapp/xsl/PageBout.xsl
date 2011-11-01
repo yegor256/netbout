@@ -41,9 +41,9 @@
 
     <xsl:template name="head">
         <title><xsl:value-of select="/page/bout/title"/></title>
-        <link href="/css/PageBout.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/bout.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
-        <xsl:call-template name="stage-head"/>
+        <!-- <xsl:call-template name="stage-head"/> -->
     </xsl:template>
 
     <xsl:template name="content">
@@ -77,9 +77,9 @@
             <div id="stage">
                 <xsl:for-each select="/page/stages/stage">
                     <xsl:if test="not(@href)">
-                        <xsl:call-template name="stage">
+                        <!-- <xsl:call-template name="stage">
                             <xsl:with-param name="root" select="." />
-                        </xsl:call-template>
+                        </xsl:call-template> -->
                     </xsl:if>
                 </xsl:for-each>
             </div>

@@ -41,7 +41,7 @@
 
     <xsl:template name="head">
         <title>netBout.com</title>
-        <link href="/css/PageWithBouts.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/inbox.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
     </xsl:template>
 

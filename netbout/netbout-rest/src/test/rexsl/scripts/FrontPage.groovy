@@ -28,6 +28,7 @@
  * @version $Id$
  */
 
+/*
 import com.rexsl.test.TestClient
 import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
@@ -37,7 +38,7 @@ import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 import org.hamcrest.Matchers
 
-def r = new TestClient(documentRoot)
+def r = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
     .header(HttpHeaders.USER_AGENT, 'Firefox 5')
     .get('/')
@@ -49,3 +50,4 @@ Assert.assertThat(
         new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
     )
 )
+*/
