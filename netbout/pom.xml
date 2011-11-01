@@ -53,8 +53,7 @@
 
     <modules>
         <module>netbout-tk</module>
-        <module>netbout-data</module>
-        <module>netbout-engine</module>
+        <module>netbout-hub</module>
         <module>netbout-rest</module>
     </modules>
 
@@ -139,6 +138,11 @@
 
     <repositories>
         <!-- intentionally empty -->
+        <repository>
+            <!-- until SPI is in development -->
+            <id>netbout.snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
