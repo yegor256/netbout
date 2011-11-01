@@ -30,20 +30,22 @@
 
 import com.rexsl.test.TestClient
 import com.rexsl.test.XhtmlConverter
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
 import org.junit.Assert
 import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
-import static org.hamcrest.Matchers.*
+import org.hamcrest.Matchers
 
 def r = new TestClient(documentRoot)
-  .header('Accept', 'text/html')
-  .header('User-agent', 'Firefox')
-  .get('/')
-Assert.assertThat(r.status, equalTo(200))
+    .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
+    .header(HttpHeaders.USER_AGENT, 'Firefox 5')
+    .get('/')
+Assert.assertThat(r.status, equalTo(HttpURLConnection.HTTP_OK))
 Assert.assertThat(
-  XhtmlConverter.the(r.body),
-  XmlMatchers.hasXPath(
-    "//x:div[contains(.,'product')]",
-    new SimpleNamespaceContext().withBinding("x", "http://www.w3.org/1999/xhtml")
-  )
+    XhtmlConverter.the(r.body),
+    XmlMatchers.hasXPath(
+        '//x:div[contains(.,"product")]',
+        new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+    )
 )

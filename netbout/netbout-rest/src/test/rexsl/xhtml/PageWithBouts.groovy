@@ -30,14 +30,13 @@
 
 import com.rexsl.test.XhtmlConverter
 import org.junit.Assert
-import org.junit.matchers.JUnitMatchers
 import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 
 Assert.assertThat(
     XhtmlConverter.the(document),
     XmlMatchers.hasXPath(
-        "//x:html",
-        new SimpleNamespaceContext().withBinding("x", "http://www.w3.org/1999/xhtml")
+        '//x:html',
+        new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
     )
 )

@@ -47,7 +47,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout</groupId>
     <artifactId>netbout</artifactId>
-    <version netbout="yes">3.0-SNAPSHOT</version>
+    <version netbout="yes">2.0</version>
     <packaging>pom</packaging>
     <name>netbout</name>
 
@@ -232,12 +232,12 @@
                     <plugin>
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
-                        <version since="2 Sep 2011">0.1.1</version>
+                        <version since="1 Nov 2011">0.1.5</version>
                         <dependencies>
                             <dependency>
                                 <groupId>com.netbout</groupId>
                                 <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">3.0-SNAPSHOT</version>
+                                <version netbout="yes">2.0</version>
                             </dependency>
                         </dependencies>
                         <executions>
