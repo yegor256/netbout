@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,22 +23,73 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
- * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0
-    http://maven.apache.org/xsd/decoration-1.0.0.xsd"
-    name="netbout-tk">
+ */
 
-    <body>
-        <menu ref="parent" />
-        <menu name="Overview">
-            <item name="Introduction" href="index.html" />
-        </menu>
-        <menu ref="reports" />
-    </body>
+* {
+    margin: 0;
+    padding: 0;
+}
 
-</project>
+img {
+    border: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 12pt;
+    line-height: 1.3em;
+    min-height: 100%;
+    position: relative;
+    color: #122632;
+    padding: 1em;
+}
+
+/* top bar */
+div#bar {
+    position: relative;
+    height: 1em;
+    margin-bottom: 1em;
+}
+
+    div#bar a#logo {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+    }
+
+    div#bar div#crumbs {
+        position: absolute;
+        left: 5em;
+        bottom: 0px;
+    }
+
+        div#bar div#crumbs span {
+            position: relative;
+            margin-right: 1em;
+        }
+
+        div#bar div#crumbs img#photo {
+            width: 18px;
+            height: 18px;
+            position: relative;
+        }
+
+/* search box */
+form#box {
+    position: relative;
+    margin-bottom: 1em;
+}
+
+    form#box input {
+        font-size: 1.4em;
+    }
+
+    form#box input[type='submit'] {
+        font-size: 1.4em;
+    }
+
+/* everything between header and footer */
+div#content {
+    position: relative;
+}
+

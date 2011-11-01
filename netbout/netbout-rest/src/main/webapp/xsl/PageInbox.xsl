@@ -28,18 +28,43 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0
-    http://maven.apache.org/xsd/decoration-1.0.0.xsd"
-    name="netbout-tk">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-    <body>
-        <menu ref="parent" />
-        <menu name="Overview">
-            <item name="Introduction" href="index.html" />
-        </menu>
-        <menu ref="reports" />
-    </body>
+    <xsl:output method="xhtml"/>
 
-</project>
+    <xsl:include href="/xsl/layout.xsl" />
+    <xsl:include href="/xsl/dudes.xsl" />
+
+    <xsl:template name="head">
+        <title>netBout.com</title>
+        <link href="/css/inbox.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
+    </xsl:template>
+
+    <xsl:template name="content">
+        <xsl:for-each select="/page/bouts/bout">
+            <div class="bout">
+                <a class="title unread">
+                    <xsl:attribute name="class">
+                        <xsl:text>title </xsl:text>
+                        <xsl:if test="@unread">
+                            <xsl:text>unread</xsl:text>
+                        </xsl:if>
+                    </xsl:attribute>
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="@href"/>
+                    </xsl:attribute>
+                    <xsl:value-of select="title" />
+                </a>
+                <xsl:call-template name="dudes">
+                    <xsl:with-param name="participants" select="participants" />
+                </xsl:call-template>
+            </div>
+        </xsl:for-each>
+    </xsl:template>
+
+</xsl:stylesheet>

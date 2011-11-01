@@ -25,7 +25,7 @@ SUCH DAMAGE.
 
 ====================================
 
-Should be installed in Google App Engine..
+Should be installed in Servlet Container.
 
 TBD...
 

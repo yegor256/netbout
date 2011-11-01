@@ -9,7 +9,7 @@
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
- * incident to the author by email: privacy@netbout.com.
+ * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,46 +26,36 @@
  */
 package com.netbout.rest;
 
-// bout manipulation engine from com.netbout:netbout-engine
-import com.netbout.engine.Bout;
-
-// for JAX-RS
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- * RESTful front of one Bout. The class is instantiated from {@link ListRs}.
+ * RESTful front of one Bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutRs extends AbstractRs {
-
-    /**
-     * The bout to work with.
-     */
-    private final Bout bout;
+@Path("/{id: \\d+}")
+public final class BoutRs {
 
     /**
      * Public ctor.
-     * @param builder The factory builder
-     * @param boutId ID of the bout
-     * @see ListRs#bout(Long)
+     * @param boutId ID of the bout to work with
      */
-    public BoutRs(final FactoryBuilder builder, final Long boutId) {
-        super(builder);
-        this.bout = this.builder().getBoutFactory().find(boutId);
+    public BoutRs(@PathParam("id") final Long boutId) {
     }
 
     /**
-     * Get bout data.
+     * Get bout.
      * @return The bout, convertable to XML
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public Bout info() {
-        return this.bout;
+    @Produces(MediaType.TEXT_PLAIN)
+    public String bout() {
+        return "hello";
     }
 
 }

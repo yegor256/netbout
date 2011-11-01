@@ -10,7 +10,7 @@
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
- * incident to the author by email: privacy@netbout.com.
+ * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -35,7 +35,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout</groupId>
     <artifactId>netbout-tk</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version netbout="yes">2.0</version>
     <packaging>jar</packaging>
     <name>netbout-tk</name>
     <description>Test/Tool Kit</description>
@@ -43,15 +43,15 @@
     <distributionManagement>
         <snapshotRepository>
             <id>netbout.s3</id>
-            <url>s3://netbout.maven/snapshot</url>
+            <url>s3://repo.netbout.com/snapshot</url>
         </snapshotRepository>
         <repository>
             <id>netbout.s3</id>
-            <url>s3://netbout.maven/release</url>
+            <url>s3://repo.netbout.com/release</url>
         </repository>
         <site>
             <id>netbout.s3</id>
-            <url>s3://netbout.site/netbout-tk</url>
+            <url>s3://maven.netbout.com/netbout-tk</url>
         </site>
     </distributionManagement>
 

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -27,19 +26,28 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0
-    http://maven.apache.org/xsd/decoration-1.0.0.xsd"
-    name="netbout-tk">
+ */
 
-    <body>
-        <menu ref="parent" />
-        <menu name="Overview">
-            <item name="Introduction" href="index.html" />
-        </menu>
-        <menu ref="reports" />
-    </body>
+/*
+import com.rexsl.test.TestClient
+import com.rexsl.test.XhtmlConverter
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import org.junit.Assert
+import org.xmlmatchers.XmlMatchers
+import org.xmlmatchers.namespace.SimpleNamespaceContext
+import org.hamcrest.Matchers
 
-</project>
+def r = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
+    .header(HttpHeaders.USER_AGENT, 'Firefox 5')
+    .get('/')
+Assert.assertThat(r.status, equalTo(HttpURLConnection.HTTP_OK))
+Assert.assertThat(
+    XhtmlConverter.the(r.body),
+    XmlMatchers.hasXPath(
+        '//x:div[contains(.,"product")]',
+        new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+    )
+)
+*/

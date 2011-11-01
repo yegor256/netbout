@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="/xsl/PageBout.xsl" type="text/xsl"?>
+<!--
+ * Copyright (c) 2009-2011, netBout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ -->
+<page>
+    <links>
+        <link href="/xml/PageInbox.xml" name="home" />
+        <link href="/" name="logout" />
+        <link href="/xml/PageBout.xml" name="start" />
+    </links>
+    <id>6252</id>
+    <title>PHP programming in Netbout project</title>
+    <identity>robert.deniro</identity>
+    <photo href="http://www.robert-deniro.com/deniro.jpg"/>
+    <stages>
+        <stage name="Recent Payments">
+            <payments>
+                <payment>
+                    <date>23-08-2011</date>
+                    <amount>123</amount>
+                    <currency>USD</currency>
+                    <details>paid to Johnny for Fear and Loathing</details>
+                </payment>
+                <payment>
+                    <date>23-08-2011</date>
+                    <amount>500</amount>
+                    <currency>USD</currency>
+                    <details>paid to Javier for something else</details>
+                </payment>
+            </payments>
+        </stage>
+        <stage name="Documents" href="/xml/PageBout.xml">
+            <documents>
+                <doc name="some-name.txt" />
+            </documents>
+        </stage>
+    </stages>
+    <participants>
+        <participant href="/xml/PageBout.xml">
+            <identity>depp</identity>
+            <photo href="http://www.ofcelebrity.net/photos/johnny-depp-6.jpg" />
+        </participant>
+        <participant href="/xml/PageBout.xml" pending="yes">
+            <identity>javier@gmail.com</identity>
+            <photo href="http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg" />
+        </participant>
+        <participant href="/xml/PageBout.xml">
+            <identity>john.turturro</identity>
+            <photo href="http://www.topnews.in/light/files/John-Turturro.jpg" />
+        </participant>
+        <participant href="/xml/PageBout.xml">
+            <identity>2pac</identity>
+            <photo href="http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg" />
+        </participant>
+    </participants>
+    <messages>
+        <message>
+            <author>depp</author>
+            <text>
+                I think that this subject should be discussed in
+                this bout. What do you think, guys?...
+            </text>
+        </message>
+        <message>
+            <author>javier@gmail.com</author>
+            <text>
+                Yeah, I agree, let's talk about it today!
+            </text>
+        </message>
+        <message>
+            <author>john.turturro</author>
+            <text>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </text>
+        </message>
+        <message>
+            <author>2pac</author>
+            <text>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </text>
+        </message>
+    </messages>
+</page>
