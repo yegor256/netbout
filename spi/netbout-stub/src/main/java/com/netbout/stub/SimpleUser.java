@@ -44,6 +44,11 @@ import java.util.List;
 final class SimpleUser implements User {
 
     /**
+     * The entry.
+     */
+    private final InMemoryEntry entry;
+
+    /**
      * The name.
      */
     private final String name;
@@ -56,10 +61,12 @@ final class SimpleUser implements User {
 
     /**
      * Public ctor.
+     * @param ent The entry
      * @param nme The name of it
      * @see InMemoryEntry#register(String,String)
      */
-    public SimpleUser(final String nme) {
+    public SimpleUser(final InMemoryEntry ent, final String nme) {
+        this.entry = ent;
         this.name = nme;
     }
 
@@ -90,7 +97,7 @@ final class SimpleUser implements User {
                 );
             }
         }
-        this.identities.add(new SimpleIdentity(name));
+        this.identities.add(new SimpleIdentity(this.entry, name));
     }
 
     /**

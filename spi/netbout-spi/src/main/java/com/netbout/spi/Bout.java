@@ -47,10 +47,23 @@ public interface Bout {
     String title();
 
     /**
+     * Set its title.
+     * @param text The title of the bout
+     */
+    void title(String text);
+
+    /**
      * Get all its participants.
      * @return The list of them
      */
     Collection<Participant> participants();
+
+    /**
+     * Invite new participant.
+     * @param identity Identity of the participant
+     * @return This new participant
+     */
+    Participant invite(String identity);
 
     /**
      * Get ordered list of all messages of the bout.
@@ -58,5 +71,12 @@ public interface Bout {
      * @return The list of them
      */
     List<Message> messages(String query);
+
+    /**
+     * Post a new message.
+     * @param text The text of the new message
+     * @return The message just posted
+     */
+    Message post(String text);
 
 }

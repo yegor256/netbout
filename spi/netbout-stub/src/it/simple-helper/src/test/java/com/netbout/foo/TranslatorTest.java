@@ -27,96 +27,67 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.stub;
+package com.netbout.foo;
 
-import com.netbout.spi.Identity;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Participant;
+import com.netbout.spi.Entry;
+import com.netbout.spi.Identity;
 import com.netbout.spi.User;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import com.netbout.stub.InMemoryEntry;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Simple implementation of a {@link Identity}.
- *
+ * Test case for {@link Translator}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SimpleIdentity implements Identity {
+public final class TranslatorTest {
 
     /**
-     * The entry.
+     * How this helper is called in netbout.
      */
-    private final InMemoryEntry entry;
+    private static final String HELPER_IDENTITY = "Translator";
 
     /**
-     * The name.
+     * Netbout test harness.
      */
-    private final String name;
+    private final Entry entry = new InMemoryEntry();
 
     /**
-     * Public ctor.
-     * @param ent The entry to work with
-     * @param identity The identity
-     * @see SimpleUser#identity(String)
+     * Register a helper.
+     * @throws Exception If there is some problem inside
      */
-    public SimpleIdentity(final InMemoryEntry ent, final String identity) {
-        this.entry = ent;
-        this.name = identity;
+    @Before
+    public void registerHelper() throws Exception {
+        final String name = "Owner Of The Helper";
+        this.entry.register(name, "");
+        final User user = entry.authenticate(name, "");
+        user.identify(this.HELPER_IDENTITY);
+        user.identity(this.HELPER_IDENTITY).promote("com.netbout.foo");
     }
 
     /**
-     * {@inheritDoc}
+     * Test full cycle of translation.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Bout start() {
-        final BoutData data = new BoutData(this.entry);
-        final Participant dude = data.invite(this.name);
-        dude.confirm();
-        this.entry.add(data);
-        return new SimpleBout(this, data);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Bout> inbox(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
-        for (BoutData data : this.entry.bouts()) {
-            for (Participant dude : data.participants()) {
-                if (dude.identity().equals(this)) {
-                    list.add(new SimpleBout(this, data));
-                    break;
-                }
-            }
-        }
-        return list;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String name() {
-        return this.name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL photo() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void promote(final String pkg) {
-        // ...
+    @Test
+    public void testMessageTranslation() throws Exception {
+        final String name = "John Doe";
+        entry.register(name, "");
+        final User user = entry.authenticate(name, "");
+        user.identify(name);
+        final Identity identity = user.identity(name);
+        final Bout bout = identity.start();
+        bout.title("let's about...");
+        bout.invite(this.HELPER_IDENTITY);
+        bout.post("Hello, how are you?");
+        MatcherAssert.assertThat(
+            bout.messages("").get(0).text(),
+            Matchers.startsWith("Bonjour, ")
+        );
     }
 
 }

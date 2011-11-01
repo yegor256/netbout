@@ -46,6 +46,12 @@ import java.util.List;
 public interface Identity {
 
     /**
+     * Start new bout.
+     * @return The bout just created
+     */
+    Bout start();
+
+    /**
      * Get an ordered list of all bouts this identity is taking
      * participation in.
      * @param query Search query, if necessary
@@ -64,5 +70,12 @@ public interface Identity {
      * @return The URL of the photo
      */
     URL photo();
+
+    /**
+     * This identity should be promoted to an active helper.
+     * @param pkg The package where all Java code related to this helper
+     *  is located (should be available to JVM)
+     */
+    void promote(String pkg);
 
 }

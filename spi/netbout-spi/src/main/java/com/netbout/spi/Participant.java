@@ -43,12 +43,17 @@ public interface Participant {
      * Who is a participant.
      * @return The identity of the participant
      */
-    Identity identity();
+    String identity();
 
     /**
      * Did he confirm his participation already?
      * @return Yes or no?
      */
     boolean confirmed();
+
+    /**
+     * Confirm it.
+     */
+    void confirm();
 
 }

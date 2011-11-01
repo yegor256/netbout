@@ -33,7 +33,9 @@ import com.netbout.spi.Entry;
 import com.netbout.spi.User;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * In-memory entry.
@@ -49,6 +51,12 @@ public final class InMemoryEntry implements Entry {
     private final Collection<SimpleUser> users = new ArrayList<SimpleUser>();
 
     /**
+     * Collection of bouts.
+     */
+    private final Map<Integer, BoutData> bouts =
+        new HashMap<Integer, BoutData>();
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -60,7 +68,7 @@ public final class InMemoryEntry implements Entry {
                 );
             }
         }
-        this.users.add(new SimpleUser(name));
+        this.users.add(new SimpleUser(this, name));
     }
 
     /**
@@ -76,6 +84,39 @@ public final class InMemoryEntry implements Entry {
         throw new IllegalArgumentException(
             "User with this name is not found"
         );
+    }
+
+    /**
+     * Add new bout to storage.
+     * @param bout The bout to add
+     * @return It's number (unique)
+     */
+    public Integer add(final BoutData bout) {
+        Integer max = 1;
+        for (Integer num : this.bouts.keySet()) {
+            if (num >= max) {
+                max = num + 1;
+            }
+        }
+        this.bouts.put(max, bout);
+        return max;
+    }
+
+    /**
+     * Find and return bout from collection.
+     * @param num Number of the bout
+     * @return The bout found
+     */
+    public BoutData get(final Integer num) {
+        return this.bouts.get(num);
+    }
+
+    /**
+     * Return all bouts in storage.
+     * @return All bouts
+     */
+    public Collection<BoutData> bouts() {
+        return this.bouts.values();
     }
 
 }

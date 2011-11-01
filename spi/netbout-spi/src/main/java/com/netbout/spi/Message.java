@@ -42,10 +42,10 @@ import java.util.List;
 public interface Message {
 
     /**
-     * Author of this message.
+     * Author of this message, his identity.
      * @return The author
      */
-    Identity author();
+    String identity();
 
     /**
      * Text of the message.

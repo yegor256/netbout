@@ -27,21 +27,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.foo;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.netbout.spi.Helper;
+import com.netbout.spi.Message;
+import com.netbout.spi.Operation;
+import com.netbout.spi.Participant;
 
 /**
- * Annotation to point to a helper class.
+ * Translates all messages from English to the local language of the bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Helper {
+@Helper
+public final class Translator {
+
+    /**
+     * Translate message text for specified participant.
+     * @param viewer Who will view the message
+     * @param msg The message to translate
+     * @return New text to show
+     */
+    @Operation
+    public String translate(final Participant viewer, final Message msg) {
+        return msg.text().replace("Hello", "Bonjour");
+    }
 
 }

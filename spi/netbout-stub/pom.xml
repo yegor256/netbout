@@ -61,5 +61,86 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version since="22 Mar 2011">1.5</version>
+                <configuration>
+                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                    <debug>false</debug>
+                    <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                    <noLog>false</noLog>
+                    <!--
+                    With this construct you can include some projects,
+                    which you're interested in.
+                    -->
+                    <pomIncludes>
+                        <pomInclude>simple-helper/pom.xml</pomInclude>
+                    </pomIncludes>
+                    <postBuildHookScript>verify</postBuildHookScript>
+                    <preBuildHookScript>setup</preBuildHookScript>
+                    <projectsDirectory>src/it</projectsDirectory>
+                    <settingsFile>${basedir}/src/it/settings.xml</settingsFile>
+                    <showErrors>true</showErrors>
+                    <showVersion>false</showVersion>
+                    <streamLogs>true</streamLogs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-invoker</id>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                    </execution>
+                    <execution>
+                        <id>run-invoker</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!--
+                @todo #30 This is a workaround until they fix maven-invoker-plugin,
+                 see the ticket #30 for more information.
+                -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version since="26 Oct 2011">1.6</version>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <target>
+                                <copy verbose="yes" overwrite="yes"
+                                    file="${basedir}/../pom.xml"
+                                    tofile="${project.build.directory}/local-repo/com/netbout/spi/netbout/${project.version}/-${project.version}.pom"/>
+                                <copy verbose="yes" overwrite="yes"
+                                    file="${com.netbout.spi:netbout-spi:jar}"
+                                    tofile="${project.build.directory}/local-repo/com/netbout/spi/netbout-spi/${project.version}/netbout-spi-${project.version}.jar"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version since="2 Oct 2011">2.10</version>
+                    <configuration>
+                        <argLine>-Dfile.encoding=UTF8</argLine>
+                        <useFile>false</useFile>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>

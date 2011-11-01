@@ -27,21 +27,62 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.stub;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import java.util.Collection;
+import java.util.List;
 
 /**
- * Annotation to point to a helper class.
+ * Simple implementation of a {@link Bout}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Helper {
+final class SimpleParticipant implements Participant {
+
+    /**
+     * Is it confirmed?
+     */
+    private boolean confirmed;
+
+    /**
+     * The identity.
+     */
+    private String identity;
+
+    /**
+     * Public ctor.
+     * @param idnt Identity
+     */
+    public SimpleParticipant(final String idnt) {
+        this.identity = idnt;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String identity() {
+        return this.identity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean confirmed() {
+        return this.confirmed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void confirm() {
+        this.confirmed = true;
+    }
 
 }

@@ -27,21 +27,66 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.stub;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.netbout.spi.Message;
+import java.util.Date;
 
 /**
- * Annotation to point to a helper class.
+ * Simple implementation of a {@link Message}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Helper {
+final class SimpleMessage implements Message {
+
+    /**
+     * The author.
+     */
+    private String identity;
+
+    /**
+     * The text.
+     */
+    private String text;
+
+    /**
+     * The date.
+     */
+    private Date date = new Date();
+
+    /**
+     * Public ctor.
+     * @param idnt The author
+     * @param txt The text
+     */
+    public SimpleMessage(final String idnt, final String txt) {
+        this.identity = idnt;
+        this.text = txt;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String identity() {
+        return this.identity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String text() {
+        return this.text;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date date() {
+        return this.date;
+    }
 
 }

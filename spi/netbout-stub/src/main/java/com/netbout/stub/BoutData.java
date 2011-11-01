@@ -29,21 +29,20 @@
  */
 package com.netbout.stub;
 
-import com.netbout.spi.Identity;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
-import com.netbout.spi.User;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Simple implementation of a {@link Identity}.
+ * Simple implementation of a {@link Bout}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SimpleIdentity implements Identity {
+final class BoutData {
 
     /**
      * The entry.
@@ -51,72 +50,83 @@ final class SimpleIdentity implements Identity {
     private final InMemoryEntry entry;
 
     /**
-     * The name.
+     * The title.
      */
-    private final String name;
+    private String title;
+
+    /**
+     * Collection of participants.
+     */
+    private final Collection<SimpleParticipant> participants =
+        new ArrayList<SimpleParticipant>();
+
+    /**
+     * Ordered list of messages.
+     */
+    private final List<SimpleMessage> messages = new ArrayList<SimpleMessage>();
 
     /**
      * Public ctor.
      * @param ent The entry to work with
-     * @param identity The identity
-     * @see SimpleUser#identity(String)
      */
-    public SimpleIdentity(final InMemoryEntry ent, final String identity) {
+    public BoutData(final InMemoryEntry ent) {
         this.entry = ent;
-        this.name = identity;
     }
 
     /**
-     * {@inheritDoc}
+     * Get title.
+     * @return The title
      */
-    @Override
-    public Bout start() {
-        final BoutData data = new BoutData(this.entry);
-        final Participant dude = data.invite(this.name);
-        dude.confirm();
-        this.entry.add(data);
-        return new SimpleBout(this, data);
+    public String getTitle() {
+        return this.title;
     }
 
     /**
-     * {@inheritDoc}
+     * Set title.
+     * @param text The title
      */
-    @Override
-    public List<Bout> inbox(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
-        for (BoutData data : this.entry.bouts()) {
-            for (Participant dude : data.participants()) {
-                if (dude.identity().equals(this)) {
-                    list.add(new SimpleBout(this, data));
-                    break;
-                }
-            }
-        }
-        return list;
+    public void setTitle(final String text) {
+        this.title = text;
     }
 
     /**
-     * {@inheritDoc}
+     * Invite new person.
+     * @param identity The person
+     * @return Invited
      */
-    @Override
-    public String name() {
-        return this.name;
+    public Participant invite(final String identity) {
+        final SimpleParticipant dude = new SimpleParticipant(identity);
+        this.participants.add(dude);
+        return dude;
     }
 
     /**
-     * {@inheritDoc}
+     * Get list of participants.
+     * @return The list
      */
-    @Override
-    public URL photo() {
-        return null;
+    public Collection<SimpleParticipant> participants() {
+        return this.participants;
     }
 
     /**
-     * {@inheritDoc}
+     * Get full list of messages.
+     * @param query The search query
+     * @return Messages
      */
-    @Override
-    public void promote(final String pkg) {
-        // ...
+    public List<SimpleMessage> messages(final String query) {
+        return this.messages;
+    }
+
+    /**
+     * Post new message.
+     * @param identity The author
+     * @param text The message
+     * @return The message just posted
+     */
+    public SimpleMessage post(final String identity, final String text) {
+        final SimpleMessage msg = new SimpleMessage(identity, text);
+        this.messages.add(msg);
+        return msg;
     }
 
 }

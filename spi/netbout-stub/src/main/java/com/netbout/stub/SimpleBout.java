@@ -30,6 +30,7 @@
 package com.netbout.stub;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.Collection;
@@ -44,11 +45,47 @@ import java.util.List;
 final class SimpleBout implements Bout {
 
     /**
+     * The viewer.
+     */
+    private Identity identity;
+
+    /**
+     * The data.
+     */
+    private BoutData data;
+
+    /**
+     * Public ctor.
+     * @param idnt The viewer
+     * @param dat The data
+     */
+    public SimpleBout(final Identity idnt, final BoutData dat) {
+        this.identity = idnt;
+        this.data = dat;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public String title() {
-        return null;
+        return this.data.getTitle();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void title(final String text) {
+        this.data.setTitle(text);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Participant invite(final String identity) {
+        return this.data.invite(identity);
     }
 
     /**
@@ -56,7 +93,7 @@ final class SimpleBout implements Bout {
      */
     @Override
     public Collection<Participant> participants() {
-        return null;
+        return (Collection) this.data.participants();
     }
 
     /**
@@ -64,7 +101,15 @@ final class SimpleBout implements Bout {
      */
     @Override
     public List<Message> messages(final String query) {
-        return null;
+        return (List) this.data.messages(query);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Message post(final String text) {
+        return this.data.post(this.identity.name(), text);
     }
 
 }
