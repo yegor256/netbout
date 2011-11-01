@@ -26,30 +26,21 @@
  */
 package com.netbout.rest;
 
-import com.netbout.engine.Bout;
-import com.netbout.engine.BoutFactory;
-import org.junit.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
+ * Test case for {@link BoutRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 public final class BoutRsTest {
 
-    private static final Long BOUT_ID = 123L;
-
     @Test
-    public void testBoutFinding() throws Exception {
-        final Bout bout = mock(Bout.class);
-        final BoutFactory factory = mock(BoutFactory.class);
-        doReturn(bout).when(factory).find(this.BOUT_ID);
-        final FactoryBuilder builder = mock(FactoryBuilder.class);
-        doReturn(factory).when(builder).getBoutFactory();
-        final BoutRs svc = new BoutRs(builder, this.BOUT_ID);
-        assertThat(svc.bout(), is(notNullValue()));
+    public void testBoutRendering() throws Exception {
+        final BoutRs rest = new BoutRs(1L);
+        MatcherAssert.assertThat(rest, Matchers.notNullValue());
     }
 
 }

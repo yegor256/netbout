@@ -45,7 +45,7 @@
     <dependencies>
         <dependency>
             <groupId>com.netbout</groupId>
-            <artifactId>netbout-engine</artifactId>
+            <artifactId>netbout-hub</artifactId>
             <version netbout="yes">3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -75,17 +75,13 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!--
-            JSR 311 (JAX-RS) API.
-            -->
+            <!-- JSR 311 (JAX-RS) API. -->
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
             <version since="2 Sep 2011">1.1.1</version>
         </dependency>
         <dependency>
-            <!--
-            JAXB 2.0 API.
-            -->
+            <!-- JAXB 2.0 API. -->
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version since="2 Sep 2011">2.0</version>
@@ -123,6 +119,13 @@
             <!-- other details are in parent pom.xml -->
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>rexsl.snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
@@ -184,6 +187,8 @@
                                 <archive>
                                     <manifestEntries>
                                         <SCM-Revision>${buildNumber}</SCM-Revision>
+                                        <NetBout-Version>${project.version}</NetBout-Version>
+                                        <NetBout-Date>${maven.build.timestamp}</NetBout-Date>
                                     </manifestEntries>
                                 </archive>
                             </configuration>

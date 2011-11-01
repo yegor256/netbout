@@ -9,7 +9,7 @@
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
- * incident to the author by email: privacy@netbout.com.
+ * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,112 +26,36 @@
  */
 package com.netbout.rest;
 
-import com.netbout.engine.Bout;
-import com.netbout.rest.jaxb.PageOfBout;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.io.IOUtils;
 
 /**
- * RESTful front of one Bout. The class is instantiated from {@link ListRs}.
+ * RESTful front of one Bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("{id: \\d+}")
-public final class BoutRs extends AbstractRs {
-
-    /**
-     * The bout to work with.
-     */
-    private final Bout bout;
+@Path("/{id: \\d+}")
+public final class BoutRs {
 
     /**
      * Public ctor.
      * @param boutId ID of the bout to work with
      */
     public BoutRs(@PathParam("id") final Long boutId) {
-        super();
-        this.bout = this.builder().getBoutFactory().find(boutId);
     }
 
     /**
-     * Ctor for unit testing.
-     * @param builder The factory builder
-     * @param boutId ID of the bout
-     */
-    protected BoutRs(final FactoryBuilder builder, final Long boutId) {
-        super(builder);
-        this.bout = this.builder().getBoutFactory().find(boutId);
-    }
-
-    /**
-     * Get bout data.
+     * Get bout.
      * @return The bout, convertable to XML
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public PageOfBout bout() {
-        return new PageOfBout(this.bout);
-    }
-
-    /**
-     * Get wrapping XSL for this bout.
-     * @param css URL of the CSS, if necessary
-     * @param xsl URL of the XSL, if necessary
-     * @return The XSL
-     */
-    @Path("/wrapper.xsl")
-    @GET
-    @Produces("text/xsl")
-    public String wrapper(@DefaultValue("") @QueryParam("css") final String css,
-        @DefaultValue("") @QueryParam("xsl") final String xsl) {
-        try {
-            return IOUtils.toString(
-                this.getClass().getResourceAsStream("bout-wrapper.xsl")
-            ).replaceAll("\\$\\{id\\}", this.bout.number().toString())
-            .replaceAll("\\$\\{css\\}", css)
-            .replaceAll("\\$\\{xsl\\}", xsl);
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Get stage related CSS.
-     * @param uri The URI to load from, if necessary
-     * @return The CSS
-     */
-    @Path("/stage.css")
-    @GET
-    @Produces("text/css")
-    public Response css(@QueryParam("uri") final String uri) {
-        if (uri != null) {
-            return Response.temporaryRedirect(UriBuilder.fromUri(uri).build()).build();
-        }
-        return Response.ok("/* hello */").build();
-    }
-
-    /**
-     * Get stage related XSL.
-     * @param uri The URI to load from, if necessary
-     * @return The XSL
-     */
-    @Path("/stage.xsl")
-    @GET
-    @Produces("text/xsl")
-    public Response xsl(@QueryParam("uri") final String uri) {
-        if (uri != null) {
-            return Response.temporaryRedirect(UriBuilder.fromUri(uri).build()).build();
-        }
-        return Response.ok("<?xml version='1.0'?><a/>").build();
+    @Produces(MediaType.TEXT_PLAIN)
+    public String bout() {
+        return "hello";
     }
 
 }
