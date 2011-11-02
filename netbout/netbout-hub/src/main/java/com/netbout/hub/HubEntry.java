@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -10,7 +9,7 @@
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
- * incident to the author by email: privacy@netbout.com.
+ * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,45 +23,43 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub;
+
+import com.netbout.spi.Entry;
+
+/**
+ * Entry point to Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ */
+public final class HubEntry implements Entry {
 
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.netbout</groupId>
-        <artifactId>netbout</artifactId>
-        <version netbout="yes">2.0</version>
-    </parent>
-    <artifactId>netbout-hub</artifactId>
-    <packaging>jar</packaging>
-    <name>netbout-hub</name>
+    /**
+     * Singleton instance.
+     */
+    public static final HubEntry INSTANCE = new HubEntry();
 
-    <dependencies>
-        <dependency>
-            <groupId>com.netbout.spi</groupId>
-            <artifactId>netbout-spi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.netbout.spi</groupId>
-            <artifactId>netbout-stub</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-        </dependency>
-    </dependencies>
+    /**
+     * Private ctor, to avoid instantiation.
+     */
+    private HubEntry() {
+        // intentionally empty
+    }
 
-</project>
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void register(final String name, final String secret) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public User authenticate(final String name, final String secret) {
+    }
+
+}

@@ -153,6 +153,19 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <!-- Service programming interface of the netbout -->
+                <groupId>com.netbout.spi</groupId>
+                <artifactId>netbout-spi</artifactId>
+                <version since="2 Nov 2011">1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <!-- Testing stub -->
+                <groupId>com.netbout.spi</groupId>
+                <artifactId>netbout-stub</artifactId>
+                <version since="2 Nov 2011">1.0-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <!--
                 This library simplifies string operations. This is
                 org.apache.commons.lang.*.
