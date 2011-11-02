@@ -48,6 +48,15 @@ public final class BoutNotFoundException extends Exception {
 
     /**
      * Public ctor.
+     * @param message Root cause of the exception
+     * @param args Arguments for <tt>String.format()</tt>
+     */
+    public BoutNotFoundException(final String message, final Object... args) {
+        super(String.format(message, args));
+    }
+
+    /**
+     * Public ctor.
      * @param message Additional message
      * @param cause Root cause of the exception
      */

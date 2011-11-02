@@ -27,43 +27,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.stub;
+
+import com.netbout.spi.Identity;
 
 /**
- * Thowable when identity is not found.
+ * Internal holder of participant data.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see Bout#invite(String)
  */
-public final class UnknownIdentityException extends Exception {
+final class ParticipantData {
+
+    /**
+     * The author.
+     */
+    private final Identity identity;
+
+    /**
+     * Is it confirmed?
+     */
+    private boolean confirmed;
 
     /**
      * Public ctor.
-     * @param cause Root cause of the exception
+     * @param idnt The identity
+     * @param aye Is it confirmed
      */
-    public UnknownIdentityException(final Throwable cause) {
-        super(cause);
+    public ParticipantData(final Identity idnt, final boolean aye) {
+        this.identity = idnt;
+        this.confirmed = aye;
     }
 
     /**
-     * Public ctor.
-     * @param message Root cause of the exception
-     * @param args Arguments for <tt>String.format()</tt>
+     * Is it confirmed?
+     * @return The flag
      */
-    public UnknownIdentityException(final String message,
-        final Object... args) {
-        super(String.format(message, args));
+    public boolean isConfirmed() {
+        return this.confirmed;
     }
 
     /**
-     * Public ctor.
-     * @param message Additional message
-     * @param cause Root cause of the exception
+     * Get identity.
+     * @return The identity
      */
-    public UnknownIdentityException(final String message,
-        final Throwable cause) {
-        super(message, cause);
+    public Identity getIdentity() {
+        return this.identity;
     }
 
 }

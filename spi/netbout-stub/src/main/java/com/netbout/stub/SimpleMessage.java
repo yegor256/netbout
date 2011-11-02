@@ -29,6 +29,8 @@
  */
 package com.netbout.stub;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import java.util.Date;
 
@@ -41,9 +43,14 @@ import java.util.Date;
 final class SimpleMessage implements Message {
 
     /**
+     * The bout.
+     */
+    private Bout bout;
+
+    /**
      * The author.
      */
-    private String identity;
+    private Identity identity;
 
     /**
      * The text.
@@ -57,19 +64,32 @@ final class SimpleMessage implements Message {
 
     /**
      * Public ctor.
+     * @param holder Owner of this message
      * @param idnt The author
      * @param txt The text
+     * @param when Date of it
      */
-    public SimpleMessage(final String idnt, final String txt) {
+    public SimpleMessage(final Bout holder, final Identity idnt,
+        final String txt, final Date when) {
+        this.bout = holder;
         this.identity = idnt;
         this.text = txt;
+        this.date = when;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String identity() {
+    public Bout bout() {
+        return this.bout;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity author() {
         return this.identity;
     }
 

@@ -40,8 +40,8 @@ import java.util.Collection;
 public interface Participant {
 
     /**
-     * Where is a participant.
-     * @return The bout
+     * Where is this person a participant.
+     * @return The bout, holder of this participant
      */
     Bout bout();
 

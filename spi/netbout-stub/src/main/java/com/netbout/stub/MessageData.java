@@ -27,43 +27,66 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.stub;
+
+import com.netbout.spi.Identity;
+import java.util.Date;
 
 /**
- * Thowable when identity is not found.
+ * Internal holder of message data.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see Bout#invite(String)
  */
-public final class UnknownIdentityException extends Exception {
+final class MessageData {
+
+    /**
+     * The author.
+     */
+    private final Identity identity;
+
+    /**
+     * The text.
+     */
+    private final String text;
+
+    /**
+     * The date.
+     */
+    private final Date date = new Date();
 
     /**
      * Public ctor.
-     * @param cause Root cause of the exception
+     * @param idnt The identity
+     * @param text The text
      */
-    public UnknownIdentityException(final Throwable cause) {
-        super(cause);
+    public MessageData(final Identity idnt, final String txt) {
+        this.identity = idnt;
+        this.text = txt;
     }
 
     /**
-     * Public ctor.
-     * @param message Root cause of the exception
-     * @param args Arguments for <tt>String.format()</tt>
+     * Get text.
+     * @return The text
      */
-    public UnknownIdentityException(final String message,
-        final Object... args) {
-        super(String.format(message, args));
+    public String getText() {
+        return this.text;
     }
 
     /**
-     * Public ctor.
-     * @param message Additional message
-     * @param cause Root cause of the exception
+     * Get identity.
+     * @return The identity
      */
-    public UnknownIdentityException(final String message,
-        final Throwable cause) {
-        super(message, cause);
+    public Identity getIdentity() {
+        return this.identity;
+    }
+
+    /**
+     * Get date.
+     * @return The date
+     */
+    public Date getDate() {
+        return this.date;
     }
 
 }

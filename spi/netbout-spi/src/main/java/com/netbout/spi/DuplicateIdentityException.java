@@ -48,6 +48,16 @@ public final class DuplicateIdentityException extends Exception {
 
     /**
      * Public ctor.
+     * @param message Text message of the exception
+     * @param args Arguments for <tt>String.format()</tt>
+     */
+    public DuplicateIdentityException(final String message,
+        final Object... args) {
+        super(String.format(message, args));
+    }
+
+    /**
+     * Public ctor.
      * @param message Additional message
      * @param cause Root cause of the exception
      */

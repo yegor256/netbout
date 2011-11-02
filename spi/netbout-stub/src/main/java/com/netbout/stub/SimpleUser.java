@@ -29,7 +29,10 @@
  */
 package com.netbout.stub;
 
+import com.netbout.spi.DuplicateIdentityException;
+import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
+import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,14 +77,25 @@ final class SimpleUser implements User {
      * {@inheritDoc}
      */
     @Override
-    public Identity identity(final String name) {
+    public Entry entry() {
+        return this.entry;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity identity(final String label)
+        throws UnknownIdentityException {
         for (SimpleIdentity identity : this.identities) {
-            if (identity.name().equals(name)) {
+            if (identity.name().equals(label)) {
                 return identity;
             }
         }
-        throw new IllegalArgumentException(
-            "Identity not found in the user"
+        throw new UnknownIdentityException(
+            "Identity '%s' not found for user '%s'",
+            label,
+            this.name
         );
     }
 
@@ -89,15 +103,25 @@ final class SimpleUser implements User {
      * {@inheritDoc}
      */
     @Override
-    public void identify(final String name) {
+    public void identify(final String label) throws DuplicateIdentityException {
         for (SimpleIdentity identity : this.identities) {
-            if (identity.name().equals(name)) {
-                throw new IllegalArgumentException(
-                    "This identity is already attached to the user"
+            if (identity.name().equals(label)) {
+                throw new DuplicateIdentityException(
+                    "Identity '%s' is already attached to '%s' user",
+                    label,
+                    this.name
                 );
             }
         }
-        this.identities.add(new SimpleIdentity(this.entry, name));
+        this.identities.add(new SimpleIdentity(this, label));
+    }
+
+    /**
+     * Get full list of his identities.
+     * @return The list
+     */
+    public Collection<SimpleIdentity> getIdentities() {
+        return this.identities;
     }
 
     /**

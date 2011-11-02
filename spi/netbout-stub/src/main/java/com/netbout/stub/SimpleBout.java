@@ -33,6 +33,8 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.UnknownIdentityException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -68,6 +70,14 @@ final class SimpleBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public Identity identity() {
+        return this.identity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String title() {
         return this.data.getTitle();
     }
@@ -76,7 +86,7 @@ final class SimpleBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public void title(final String text) {
+    public void rename(final String text) {
         this.data.setTitle(text);
     }
 
@@ -84,8 +94,18 @@ final class SimpleBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public Participant invite(final String identity) {
-        return this.data.invite(identity);
+    public Participant invite(final String friend)
+        throws UnknownIdentityException {
+        final ParticipantData data = new ParticipantData(
+            ((InMemoryEntry) this.identity().user().entry()).friend(friend),
+            false
+        );
+        this.data.addParticipant(data);
+        return new SimpleParticipant(
+            this,
+            data.getIdentity(),
+            data.isConfirmed()
+        );
     }
 
     /**
@@ -93,7 +113,17 @@ final class SimpleBout implements Bout {
      */
     @Override
     public Collection<Participant> participants() {
-        return (Collection) this.data.participants();
+        Collection<Participant> participants = new ArrayList<Participant>();
+        for (ParticipantData data : this.data.getParticipants()) {
+            participants.add(
+                new SimpleParticipant(
+                    this,
+                    data.getIdentity(),
+                    data.isConfirmed()
+                )
+            );
+        }
+        return participants;
     }
 
     /**
@@ -101,7 +131,18 @@ final class SimpleBout implements Bout {
      */
     @Override
     public List<Message> messages(final String query) {
-        return (List) this.data.messages(query);
+        List<Message> messages = new ArrayList<Message>();
+        for (MessageData data : this.data.getMessages(query)) {
+            messages.add(
+                new SimpleMessage(
+                    this,
+                    data.getIdentity(),
+                    data.getText(),
+                    data.getDate()
+                )
+            );
+        }
+        return messages;
     }
 
     /**
@@ -109,7 +150,17 @@ final class SimpleBout implements Bout {
      */
     @Override
     public Message post(final String text) {
-        return this.data.post(this.identity.name(), text);
+        final MessageData data = new MessageData(
+            this.identity(),
+            text
+        );
+        this.data.addMessage(data);
+        return new SimpleMessage(
+            this,
+            data.getIdentity(),
+            data.getText(),
+            data.getDate()
+        );
     }
 
 }

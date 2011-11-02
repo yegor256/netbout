@@ -37,17 +37,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Simple implementation of a {@link Bout}.
+ * Internal storage of bout data.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 final class BoutData {
-
-    /**
-     * The entry.
-     */
-    private final InMemoryEntry entry;
 
     /**
      * The title.
@@ -57,21 +52,13 @@ final class BoutData {
     /**
      * Collection of participants.
      */
-    private final Collection<SimpleParticipant> participants =
-        new ArrayList<SimpleParticipant>();
+    private final Collection<ParticipantData> participants =
+        new ArrayList<ParticipantData>();
 
     /**
      * Ordered list of messages.
      */
-    private final List<SimpleMessage> messages = new ArrayList<SimpleMessage>();
-
-    /**
-     * Public ctor.
-     * @param ent The entry to work with
-     */
-    public BoutData(final InMemoryEntry ent) {
-        this.entry = ent;
-    }
+    private final List<MessageData> messages = new ArrayList<MessageData>();
 
     /**
      * Get title.
@@ -90,21 +77,18 @@ final class BoutData {
     }
 
     /**
-     * Invite new person.
-     * @param identity The person
-     * @return Invited
+     * Add new participant.
+     * @param data The participant
      */
-    public Participant invite(final String identity) {
-        final SimpleParticipant dude = new SimpleParticipant(identity);
-        this.participants.add(dude);
-        return dude;
+    public void addParticipant(final ParticipantData data) {
+        this.participants.add(data);
     }
 
     /**
      * Get list of participants.
      * @return The list
      */
-    public Collection<SimpleParticipant> participants() {
+    public Collection<ParticipantData> getParticipants() {
         return this.participants;
     }
 
@@ -113,20 +97,16 @@ final class BoutData {
      * @param query The search query
      * @return Messages
      */
-    public List<SimpleMessage> messages(final String query) {
+    public List<MessageData> getMessages(final String query) {
         return this.messages;
     }
 
     /**
      * Post new message.
-     * @param identity The author
-     * @param text The message
-     * @return The message just posted
+     * @param data The data
      */
-    public SimpleMessage post(final String identity, final String text) {
-        final SimpleMessage msg = new SimpleMessage(identity, text);
-        this.messages.add(msg);
-        return msg;
+    public void addMessage(final MessageData data) {
+        this.messages.add(data);
     }
 
 }

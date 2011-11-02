@@ -31,6 +31,7 @@ package com.netbout.stub;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.Bout;
+import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Participant;
 import com.netbout.spi.User;
@@ -38,6 +39,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.reflections.Reflections;
 
 /**
  * Simple implementation of a {@link Identity}.
@@ -48,9 +50,9 @@ import java.util.Set;
 final class SimpleIdentity implements Identity {
 
     /**
-     * The entry.
+     * The user.
      */
-    private final InMemoryEntry entry;
+    private final SimpleUser user;
 
     /**
      * The name.
@@ -59,13 +61,21 @@ final class SimpleIdentity implements Identity {
 
     /**
      * Public ctor.
-     * @param ent The entry to work with
-     * @param identity The identity
+     * @param usr The user of this identity
+     * @param nam The identity's name
      * @see SimpleUser#identity(String)
      */
-    public SimpleIdentity(final InMemoryEntry ent, final String identity) {
-        this.entry = ent;
-        this.name = identity;
+    public SimpleIdentity(final SimpleUser usr, final String nam) {
+        this.user = usr;
+        this.name = nam;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public User user() {
+        return this.user;
     }
 
     /**
@@ -73,11 +83,26 @@ final class SimpleIdentity implements Identity {
      */
     @Override
     public Bout start() {
-        final BoutData data = new BoutData(this.entry);
-        final Participant dude = data.invite(this.name);
-        dude.confirm();
-        this.entry.add(data);
+        final Long num = ((InMemoryEntry) this.user.entry()).createBout();
+        BoutData data;
+        try {
+            data = ((InMemoryEntry) this.user.entry()).findBout(num);
+        } catch (BoutNotFoundException ex) {
+            throw new IllegalStateException(ex);
+        }
+        data.addParticipant(new ParticipantData(this, true));
         return new SimpleBout(this, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout bout(final Long number) throws BoutNotFoundException {
+        return new SimpleBout(
+            this,
+            ((InMemoryEntry) this.user.entry()).findBout(number)
+        );
     }
 
     /**
@@ -86,9 +111,10 @@ final class SimpleIdentity implements Identity {
     @Override
     public List<Bout> inbox(final String query) {
         final List<Bout> list = new ArrayList<Bout>();
-        for (BoutData data : this.entry.bouts()) {
-            for (Participant dude : data.participants()) {
-                if (dude.identity().equals(this)) {
+        for (BoutData data
+            : ((InMemoryEntry) this.user.entry()).getAllBouts()) {
+            for (ParticipantData dude : data.getParticipants()) {
+                if (dude.getIdentity().equals(this)) {
                     list.add(new SimpleBout(this, data));
                     break;
                 }
@@ -120,8 +146,8 @@ final class SimpleIdentity implements Identity {
     public void promote(final String pkg) {
         final Reflections reflections = new Reflections(pkg);
         final Set<Class<?>> annotated =
-            reflections.getTypesAnnotatedWith(Helper.class)
-            
+            reflections.getTypesAnnotatedWith(Helper.class);
+        // todo
     }
 
 }

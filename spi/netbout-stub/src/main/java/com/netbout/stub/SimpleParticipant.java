@@ -30,6 +30,7 @@
 package com.netbout.stub;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.Collection;
@@ -44,6 +45,11 @@ import java.util.List;
 final class SimpleParticipant implements Participant {
 
     /**
+     * Holder of this object.
+     */
+    private Bout bout;
+
+    /**
      * Is it confirmed?
      */
     private boolean confirmed;
@@ -51,21 +57,34 @@ final class SimpleParticipant implements Participant {
     /**
      * The identity.
      */
-    private String identity;
+    private Identity identity;
 
     /**
      * Public ctor.
+     * @param holder Holder of this object
      * @param idnt Identity
+     * @param aye Is it confirmed
      */
-    public SimpleParticipant(final String idnt) {
+    public SimpleParticipant(final Bout holder, final Identity idnt,
+        final boolean aye) {
+        this.bout = holder;
         this.identity = idnt;
+        this.confirmed = aye;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String identity() {
+    public Bout bout() {
+        return this.bout;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity identity() {
         return this.identity;
     }
 
@@ -81,8 +100,8 @@ final class SimpleParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public void confirm() {
-        this.confirmed = true;
+    public void confirm(final boolean aye) {
+        this.confirmed = aye;
     }
 
 }

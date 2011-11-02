@@ -29,7 +29,10 @@
  */
 package com.netbout.stub;
 
+import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Entry;
+import com.netbout.spi.Identity;
+import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,8 +56,7 @@ public final class InMemoryEntry implements Entry {
     /**
      * Collection of bouts.
      */
-    private final Map<Integer, BoutData> bouts =
-        new HashMap<Integer, BoutData>();
+    private final Map<Long, BoutData> bouts = new HashMap<Long, BoutData>();
 
     /**
      * {@inheritDoc}
@@ -87,18 +89,33 @@ public final class InMemoryEntry implements Entry {
     }
 
     /**
-     * Add new bout to storage.
-     * @param bout The bout to add
+     * Find identity by name.
+     * @return Found identity
+     * @throws UnknownIdentityException If not found
+     */
+    public Identity friend(final String name) throws UnknownIdentityException {
+        for (SimpleUser user : this.users) {
+            for (SimpleIdentity identity : user.getIdentities()) {
+                if (identity.name().equals(name)) {
+                    return identity;
+                }
+            }
+        }
+        throw new UnknownIdentityException("Identity '%s' not found", name);
+    }
+
+    /**
+     * Create new bout in the storage.
      * @return It's number (unique)
      */
-    public Integer add(final BoutData bout) {
-        Integer max = 1;
-        for (Integer num : this.bouts.keySet()) {
+    public Long createBout() {
+        Long max = 1L;
+        for (Long num : this.bouts.keySet()) {
             if (num >= max) {
                 max = num + 1;
             }
         }
-        this.bouts.put(max, bout);
+        this.bouts.put(max, new BoutData());
         return max;
     }
 
@@ -106,8 +123,14 @@ public final class InMemoryEntry implements Entry {
      * Find and return bout from collection.
      * @param num Number of the bout
      * @return The bout found
+     * @throws BoutNotFoundException If this bout is not found
      */
-    public BoutData get(final Integer num) {
+    public BoutData findBout(final Long num) throws BoutNotFoundException {
+        if (!this.bouts.containsKey(num)) {
+            throw new BoutNotFoundException(
+                "Bout %d doesn't exist", num
+            );
+        }
         return this.bouts.get(num);
     }
 
@@ -115,7 +138,7 @@ public final class InMemoryEntry implements Entry {
      * Return all bouts in storage.
      * @return All bouts
      */
-    public Collection<BoutData> bouts() {
+    public Collection<BoutData> getAllBouts() {
         return this.bouts.values();
     }
 
