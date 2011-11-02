@@ -27,70 +27,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.foo;
+package com.netbout.spi.stub;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Entry;
-import com.netbout.spi.Identity;
 import com.netbout.spi.User;
-import com.netbout.spi.cpa.CpaHelper;
-import com.netbout.spi.stub.InMemoryEntry;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test case for {@link Translator}.
+ * Test case for {@link InMemoryEntry}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TranslatorTest {
+public final class InMemoryEntryTest {
 
     /**
-     * How this helper is called in netbout.
-     */
-    private static final String HELPER_IDENTITY = "Translator";
-
-    /**
-     * Netbout test harness.
-     */
-    private final Entry entry = new InMemoryEntry();
-
-    /**
-     * Register a helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void registerHelper() throws Exception {
-        final String name = "Owner Of The Helper";
-        this.entry.register(name, "");
-        final User user = entry.authenticate(name, "");
-        user.identify(this.HELPER_IDENTITY);
-        user.identity(this.HELPER_IDENTITY).promote(
-            new CpaHelper(this.getClass().getPackage().getName())
-        );
-    }
-
-    /**
-     * Test full cycle of translation.
+     * User can be registered and then authenticated.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testMessageTranslation() throws Exception {
+    public void testRegistrationAndAuthentication() throws Exception {
+        final Entry entry = new InMemoryEntry();
         final String name = "John Doe";
         entry.register(name, "");
         final User user = entry.authenticate(name, "");
-        user.identify(name);
-        final Identity identity = user.identity(name);
-        final Bout bout = identity.start();
-        bout.rename("let's talk about...");
-        bout.invite(this.HELPER_IDENTITY);
-        bout.post("Hello, how are you?");
-        MatcherAssert.assertThat(
-            bout.messages("").get(0).text(),
-            Matchers.startsWith("Bonjour, ")
-        );
+        MatcherAssert.assertThat(user, Matchers.notNullValue());
     }
 
 }

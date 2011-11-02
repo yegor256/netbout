@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.stub;
+package com.netbout.spi.stub;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
@@ -104,7 +104,7 @@ final class SimpleBout implements Bout {
         this.data.addParticipant(data);
         Logger.info(
             this,
-            "#invite(%s): success",
+            "#invite('%s'): success",
             friend
         );
         return new SimpleParticipant(
@@ -174,7 +174,7 @@ final class SimpleBout implements Bout {
         this.data.addMessage(data);
         Logger.info(
             this,
-            "#post(%s): message posted",
+            "#post('%s'): message posted",
             text
         );
         return new SimpleMessage(

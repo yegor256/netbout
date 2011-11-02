@@ -27,109 +27,105 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.stub;
+package com.netbout.spi.stub;
 
-import com.netbout.spi.DuplicateIdentityException;
-import com.netbout.spi.Entry;
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
-import com.netbout.spi.User;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Helper;
+import com.netbout.spi.OperationFailureException;
+import com.netbout.spi.Participant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * Simple implementation of a {@link User}.
+ * Chain of execution.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SimpleUser implements User {
+final class ChainedHelper implements Helper {
 
     /**
-     * The entry.
+     * Fallback value.
      */
-    private final InMemoryEntry entry;
+    private final Object fallback;
 
     /**
-     * The name.
+     * Was it started already?
      */
-    private final String name;
+    private boolean started;
 
     /**
-     * Collection of identities.
+     * List of helpers.
      */
-    private final Collection<SimpleIdentity> identities =
-        new ArrayList<SimpleIdentity>();
+    private final List<Helper> helpers = new ArrayList<Helper>();
 
     /**
      * Public ctor.
-     * @param ent The entry
-     * @param nme The name of it
-     * @see InMemoryEntry#register(String,String)
+     * @param val The fallback value
      */
-    public SimpleUser(final InMemoryEntry ent, final String nme) {
-        this.entry = ent;
-        this.name = nme;
+    public ChainedHelper(final Object val) {
+        this.fallback = val;
+    }
+
+    /**
+     * Add new helper.
+     * @param helper The helper
+     */
+    public void add(final Helper helper) {
+        this.helpers.add(helper);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Entry entry() {
-        return this.entry;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity(final String label)
-        throws UnknownIdentityException {
-        for (SimpleIdentity identity : this.identities) {
-            if (identity.name().equals(label)) {
-                return identity;
-            }
+    public Collection<String> supports() {
+        final Collection<String> mnemos = new ArrayList<String>();
+        for (Helper helper : this.helpers) {
+            mnemos.addAll(helper.supports());
         }
-        throw new UnknownIdentityException(
-            "Identity '%s' not found for user '%s'",
-            label,
-            this.name
+        return mnemos;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T execute(String mnemo, Class<T> type, Object... args)
+        throws OperationFailureException {
+        final boolean dup = ChainedHelperFactory.INSTANCE.isDuplicate(
+            this,
+            this.hash(mnemo, type, args)
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void identify(final String label) throws DuplicateIdentityException {
-        for (SimpleIdentity identity : this.identities) {
-            if (identity.name().equals(label)) {
-                throw new DuplicateIdentityException(
-                    "Identity '%s' is already attached to '%s' user",
-                    label,
-                    this.name
-                );
-            }
+        if (dup) {
+            return (T) this.fallback;
         }
-        this.identities.add(new SimpleIdentity(this, label));
+        this.started = true;
+        for (Helper helper : this.helpers) {
+            if (!helper.supports().contains(mnemo)) {
+                continue;
+            }
+            return (T) helper.execute(mnemo, type, args);
+        }
+        throw new IllegalArgumentException("Operation not supported");
     }
 
-    /**
-     * Get full list of his identities.
-     * @return The list
-     */
-    public Collection<SimpleIdentity> getIdentities() {
-        return this.identities;
-    }
 
     /**
-     * Get its name.
-     * @return The name
+     * Calculate unique hash code of these args.
+     * @param mnemo The mnemo
+     * @param type The type
+     * @param args Arguments
      */
-    public String getName() {
-        return this.name;
+    private String hash(String mnemo, Class type, Object... args) {
+        return String.format(
+            "%s:%s:%s",
+            mnemo,
+            type.getName(),
+            StringUtils.join(args, ":")
+        );
     }
 
 }

@@ -27,65 +27,93 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.stub;
+package com.netbout.spi.stub;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
 import java.util.Date;
 
 /**
- * Internal holder of message data.
+ * Simple implementation of a {@link Message}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MessageData {
+final class SimpleMessage implements Message {
+
+    /**
+     * The bout.
+     */
+    private Bout bout;
 
     /**
      * The author.
      */
-    private final Identity identity;
+    private Identity identity;
 
     /**
      * The text.
      */
-    private final String text;
+    private String text;
 
     /**
      * The date.
      */
-    private final Date date = new Date();
+    private Date date = new Date();
 
     /**
      * Public ctor.
-     * @param idnt The identity
-     * @param text The text
+     * @param holder Owner of this message
+     * @param idnt The author
+     * @param txt The text
+     * @param when Date of it
      */
-    public MessageData(final Identity idnt, final String txt) {
+    public SimpleMessage(final Bout holder, final Identity idnt,
+        final String txt, final Date when) {
+        this.bout = holder;
         this.identity = idnt;
         this.text = txt;
+        this.date = when;
     }
 
     /**
-     * Get text.
-     * @return The text
+     * {@inheritDoc}
      */
-    public String getText() {
-        return this.text;
+    @Override
+    public Bout bout() {
+        return this.bout;
     }
 
     /**
-     * Get identity.
-     * @return The identity
+     * {@inheritDoc}
      */
-    public Identity getIdentity() {
+    @Override
+    public Identity author() {
         return this.identity;
     }
 
     /**
-     * Get date.
-     * @return The date
+     * {@inheritDoc}
      */
-    public Date getDate() {
+    @Override
+    public String text() {
+        try {
+            return ChainedHelperFactory.INSTANCE
+                .local(this.bout(), this.text)
+                .execute("pre-render-message", String.class, this);
+        } catch (com.netbout.spi.OperationFailureException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date date() {
         return this.date;
     }
 

@@ -32,6 +32,7 @@ package com.netbout.foo;
 import com.netbout.spi.Message;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
+import com.ymock.util.Logger;
 
 /**
  * Translates all messages from English to the local language of the bout.
@@ -49,7 +50,14 @@ public final class Translator {
      */
     @Operation("pre-render-message")
     public String translate(final Message msg) {
-        return msg.text().replace("Hello", "Bonjour");
+        final String text = msg.text();
+        final String result = text.replace("Hello", "Bonjour");
+        Logger.info(
+            "#translate(%s): translated to '%s'",
+            text,
+            result
+        );
+        return result;
     }
 
 }

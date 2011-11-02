@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.stub;
+package com.netbout.spi.stub;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.Bout;
@@ -35,6 +35,7 @@ import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Participant;
 import com.netbout.spi.User;
+import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +96,10 @@ final class SimpleIdentity implements Identity {
             throw new IllegalStateException(ex);
         }
         data.addParticipant(new ParticipantData(this, true));
+        Logger.info(
+            this,
+            "#start(): bout started"
+        );
         return new SimpleBout(this, data);
     }
 
@@ -124,6 +129,12 @@ final class SimpleIdentity implements Identity {
                 }
             }
         }
+        Logger.info(
+            this,
+            "#inbox('%s'): %d bouts found",
+            query,
+            list.size()
+        );
         return list;
     }
 
@@ -149,6 +160,12 @@ final class SimpleIdentity implements Identity {
     @Override
     public void promote(final Helper hlp) {
         this.helper = hlp;
+        Logger.info(
+            this,
+            "#promote(%s): '%s' promoted",
+            hlp.getClass().getName(),
+            this.name()
+        );
     }
 
     /**

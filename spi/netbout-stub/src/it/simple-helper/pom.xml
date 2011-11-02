@@ -55,6 +55,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.ymock</groupId>
+            <artifactId>ymock-util</artifactId>
+            <version since="2 Nov 2011">1.0</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version since="3 July 2011">4.8.2</version>

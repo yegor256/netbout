@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.stub;
+package com.netbout.spi.stub;
 
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Entry;
@@ -74,7 +74,7 @@ public final class InMemoryEntry implements Entry {
         this.users.add(new SimpleUser(this, name));
         Logger.info(
             this,
-            "#register(%s, %s): registered",
+            "#register('%s', '%s'): registered",
             name,
             secret
         );
@@ -89,7 +89,7 @@ public final class InMemoryEntry implements Entry {
             if (user.getName().equals(name)) {
                 Logger.info(
                     this,
-                    "#authenticate(%s, %s): completed",
+                    "#authenticate('%s', '%s'): completed",
                     name,
                     secret
                 );
@@ -112,7 +112,7 @@ public final class InMemoryEntry implements Entry {
                 if (identity.name().equals(name)) {
                     Logger.info(
                         this,
-                        "#friend(%s): identity found",
+                        "#friend('%s'): identity found",
                         name
                     );
                     return identity;
@@ -156,7 +156,7 @@ public final class InMemoryEntry implements Entry {
         }
         Logger.info(
             this,
-            "#findBout(%d): bout found",
+            "#findBout(#%d): bout found",
             num
         );
         return this.bouts.get(num);

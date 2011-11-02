@@ -27,32 +27,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.stub;
+package com.netbout.spi.stub;
 
-import com.netbout.spi.Entry;
-import com.netbout.spi.User;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.spi.Identity;
 
 /**
- * Test case for {@link InMemoryEntry}.
+ * Internal holder of participant data.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class InMemoryEntryTest {
+final class ParticipantData {
 
     /**
-     * User can be registered and then authenticated.
-     * @throws Exception If there is some problem inside
+     * The author.
      */
-    @Test
-    public void testRegistrationAndAuthentication() throws Exception {
-        final Entry entry = new InMemoryEntry();
-        final String name = "John Doe";
-        entry.register(name, "");
-        final User user = entry.authenticate(name, "");
-        MatcherAssert.assertThat(user, Matchers.notNullValue());
+    private final Identity identity;
+
+    /**
+     * Is it confirmed?
+     */
+    private boolean confirmed;
+
+    /**
+     * Public ctor.
+     * @param idnt The identity
+     * @param aye Is it confirmed
+     */
+    public ParticipantData(final Identity idnt, final boolean aye) {
+        this.identity = idnt;
+        this.confirmed = aye;
+    }
+
+    /**
+     * Is it confirmed?
+     * @return The flag
+     */
+    public boolean isConfirmed() {
+        return this.confirmed;
+    }
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    public Identity getIdentity() {
+        return this.identity;
     }
 
 }

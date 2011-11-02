@@ -27,11 +27,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.stub;
+package com.netbout.spi.stub;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -74,6 +75,11 @@ final class BoutData {
      */
     public void setTitle(final String text) {
         this.title = text;
+        Logger.info(
+            this,
+            "#setTitle('%s'): changed",
+            text
+        );
     }
 
     /**
@@ -82,6 +88,12 @@ final class BoutData {
      */
     public void addParticipant(final ParticipantData data) {
         this.participants.add(data);
+        Logger.info(
+            this,
+            "#addParticipant('%s'): added (%d in total now)",
+            data.getIdentity().name(),
+            this.participants.size()
+        );
     }
 
     /**
@@ -107,6 +119,12 @@ final class BoutData {
      */
     public void addMessage(final MessageData data) {
         this.messages.add(data);
+        Logger.info(
+            this,
+            "#addMessage('%s'): added (%d in total now)",
+            data.getText(),
+            this.messages.size()
+        );
     }
 
 }

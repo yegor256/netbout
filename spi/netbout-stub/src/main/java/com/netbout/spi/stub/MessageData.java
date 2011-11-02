@@ -27,81 +27,66 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.stub;
+package com.netbout.spi.stub;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
-import java.util.Collection;
-import java.util.List;
+import java.util.Date;
 
 /**
- * Simple implementation of a {@link Bout}.
+ * Internal holder of message data.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SimpleParticipant implements Participant {
+final class MessageData {
 
     /**
-     * Holder of this object.
+     * The author.
      */
-    private Bout bout;
+    private final Identity identity;
 
     /**
-     * Is it confirmed?
+     * The text.
      */
-    private boolean confirmed;
+    private final String text;
 
     /**
-     * The identity.
+     * The date.
      */
-    private Identity identity;
+    private final Date date = new Date();
 
     /**
      * Public ctor.
-     * @param holder Holder of this object
-     * @param idnt Identity
-     * @param aye Is it confirmed
+     * @param idnt The identity
+     * @param text The text
      */
-    public SimpleParticipant(final Bout holder, final Identity idnt,
-        final boolean aye) {
-        this.bout = holder;
+    public MessageData(final Identity idnt, final String txt) {
         this.identity = idnt;
-        this.confirmed = aye;
+        this.text = txt;
     }
 
     /**
-     * {@inheritDoc}
+     * Get text.
+     * @return The text
      */
-    @Override
-    public Bout bout() {
-        return this.bout;
+    public String getText() {
+        return this.text;
     }
 
     /**
-     * {@inheritDoc}
+     * Get identity.
+     * @return The identity
      */
-    @Override
-    public Identity identity() {
+    public Identity getIdentity() {
         return this.identity;
     }
 
     /**
-     * {@inheritDoc}
+     * Get date.
+     * @return The date
      */
-    @Override
-    public boolean confirmed() {
-        return this.confirmed;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void confirm(final boolean aye) {
-        this.confirmed = aye;
+    public Date getDate() {
+        return this.date;
     }
 
 }
