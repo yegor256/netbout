@@ -37,7 +37,6 @@ import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Simple implementation of a {@link User}.

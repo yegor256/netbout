@@ -88,7 +88,7 @@ public interface Identity {
     /**
      * This identity should be promoted to an active helper.
      * @param helper The helper that can help us to process data
-     * @throws PromotionException
+     * @throws PromotionException If there is some problem
      */
     void promote(Helper helper) throws PromotionException;
 

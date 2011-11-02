@@ -50,12 +50,13 @@ public final class CpaHelperTest {
         final Helper helper = new CpaHelper(
             this.getClass().getPackage().getName()
         );
+        final String opName = "sample-op";
         MatcherAssert.assertThat(
             helper.supports(),
-            Matchers.hasItem("sample-op")
+            Matchers.hasItem(opName)
         );
         MatcherAssert.assertThat(
-            helper.execute("sample-op", String.class, "alpha-12"),
+            helper.execute(opName, String.class, "alpha-12"),
             Matchers.equalTo("alpha-XX")
         );
     }
@@ -67,6 +68,8 @@ public final class CpaHelperTest {
     public static final class SampleFarm {
         /**
          * Sample operation.
+         * @param text The text to translate
+         * @return The translated text
          */
         @Operation("sample-op")
         public String translate(final String text) {

@@ -29,17 +29,15 @@
  */
 package com.netbout.spi.stub;
 
-import com.netbout.spi.Identity;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
-import com.netbout.spi.Participant;
+import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Simple implementation of a {@link Identity}.

@@ -29,8 +29,6 @@
  */
 package com.netbout.spi;
 
-import java.util.Collection;
-
 /**
  * Participant in a bout.
  *

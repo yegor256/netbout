@@ -30,10 +30,8 @@
 package com.netbout.spi.stub;
 
 import com.netbout.spi.Bout;
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
 import java.util.Date;
 
 /**
@@ -70,6 +68,7 @@ final class SimpleMessage implements Message {
      * @param idnt The author
      * @param txt The text
      * @param when Date of it
+     * @checkstyle ParameterNumber (3 lines)
      */
     public SimpleMessage(final Bout holder, final Identity idnt,
         final String txt, final Date when) {

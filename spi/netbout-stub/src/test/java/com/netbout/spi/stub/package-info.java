@@ -27,84 +27,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi.stub;
-
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Participant;
-import com.ymock.util.Logger;
 
 /**
- * Simple implementation of a {@link Bout}.
+ * Testing stub, test cases.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SimpleParticipant implements Participant {
-
-    /**
-     * Holder of this object.
-     */
-    private Bout bout;
-
-    /**
-     * Is it confirmed?
-     */
-    private boolean confirmed;
-
-    /**
-     * The identity.
-     */
-    private Identity identity;
-
-    /**
-     * Public ctor.
-     * @param holder Holder of this object
-     * @param idnt Identity
-     * @param aye Is it confirmed
-     */
-    public SimpleParticipant(final Bout holder, final Identity idnt,
-        final boolean aye) {
-        this.bout = holder;
-        this.identity = idnt;
-        this.confirmed = aye;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout() {
-        return this.bout;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity() {
-        return this.identity;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean confirmed() {
-        return this.confirmed;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void confirm(final boolean aye) {
-        this.confirmed = aye;
-        Logger.info(
-            this,
-            "#confirm(%b): done",
-            aye
-        );
-    }
-
-}
+package com.netbout.spi.stub;

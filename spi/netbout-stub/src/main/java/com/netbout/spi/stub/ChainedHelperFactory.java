@@ -53,7 +53,7 @@ final class ChainedHelperFactory {
     /**
      * List of running chains.
      */
-    public final Map<ChainedHelper, String> chains =
+    private final Map<ChainedHelper, String> chains =
         new HashMap<ChainedHelper, String>();
 
     /**
@@ -102,7 +102,8 @@ final class ChainedHelperFactory {
     public ChainedHelper local(final Bout bout, final Object fallback) {
         final ChainedHelper chain = new ChainedHelper(fallback);
         for (Participant dude : bout.participants()) {
-            final Helper helper = ((SimpleIdentity) dude.identity()).getHelper();
+            final Helper helper =
+                ((SimpleIdentity) dude.identity()).getHelper();
             if (helper != null) {
                 chain.add(helper);
             }

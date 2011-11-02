@@ -89,7 +89,7 @@ public final class TranslatorTest {
         bout.post("Hello, how are you?");
         MatcherAssert.assertThat(
             bout.messages("").get(0).text(),
-            Matchers.startsWith("Bonjour, ")
+            Matchers.equalTo("Bonjour, how are you?")
         );
     }
 

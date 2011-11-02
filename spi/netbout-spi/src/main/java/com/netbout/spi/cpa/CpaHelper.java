@@ -37,7 +37,6 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.reflections.Reflections;
 
 /**
@@ -104,8 +103,8 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public <T> T execute(String mnemo, Class<T> type, Object... args)
-        throws OperationFailureException {
+    public <T> T execute(final String mnemo, final Class<T> type,
+        final Object... args) throws OperationFailureException {
         if (!this.ops.containsKey(mnemo)) {
             throw new IllegalArgumentException("Operation not supported");
         }
@@ -135,6 +134,8 @@ public final class CpaHelper implements Helper {
         private final Method method;
         /**
          * Public ctor.
+         * @param frm Farm object
+         * @param mtd Method to call on this farm
          */
         public Target(final Object frm, final Method mtd) {
             this.farm = frm;
@@ -144,6 +145,7 @@ public final class CpaHelper implements Helper {
          * Execute it with arguments.
          * @param args Arguments
          * @return The response
+         * @throws OperationFailureException If some problem inside
          */
         public Object execute(final Object[] args)
             throws OperationFailureException {

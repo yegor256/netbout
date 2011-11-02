@@ -38,7 +38,6 @@ import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -103,6 +102,7 @@ public final class InMemoryEntry implements Entry {
 
     /**
      * Find identity by name.
+     * @param name The name of the identity to find
      * @return Found identity
      * @throws UnknownIdentityException If not found
      */

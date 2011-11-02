@@ -47,7 +47,6 @@ public @interface Operation {
 
     /**
      * Mnemo of the operation.
-     * @return The mnemo
      */
     String value();
 

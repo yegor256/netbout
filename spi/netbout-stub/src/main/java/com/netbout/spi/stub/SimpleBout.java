@@ -97,11 +97,11 @@ final class SimpleBout implements Bout {
     @Override
     public Participant invite(final String friend)
         throws UnknownIdentityException {
-        final ParticipantData data = new ParticipantData(
+        final ParticipantData dude = new ParticipantData(
             ((InMemoryEntry) this.identity().user().entry()).friend(friend),
             false
         );
-        this.data.addParticipant(data);
+        this.data.addParticipant(dude);
         Logger.info(
             this,
             "#invite('%s'): success",
@@ -109,8 +109,8 @@ final class SimpleBout implements Bout {
         );
         return new SimpleParticipant(
             this,
-            data.getIdentity(),
-            data.isConfirmed()
+            dude.getIdentity(),
+            dude.isConfirmed()
         );
     }
 
@@ -119,13 +119,14 @@ final class SimpleBout implements Bout {
      */
     @Override
     public Collection<Participant> participants() {
-        Collection<Participant> participants = new ArrayList<Participant>();
-        for (ParticipantData data : this.data.getParticipants()) {
+        final Collection<Participant> participants
+            = new ArrayList<Participant>();
+        for (ParticipantData dude : this.data.getParticipants()) {
             participants.add(
                 new SimpleParticipant(
                     this,
-                    data.getIdentity(),
-                    data.isConfirmed()
+                    dude.getIdentity(),
+                    dude.isConfirmed()
                 )
             );
         }
@@ -142,7 +143,7 @@ final class SimpleBout implements Bout {
      */
     @Override
     public List<Message> messages(final String query) {
-        List<Message> messages = new ArrayList<Message>();
+        final List<Message> messages = new ArrayList<Message>();
         for (MessageData data : this.data.getMessages(query)) {
             messages.add(
                 new SimpleMessage(
@@ -167,11 +168,11 @@ final class SimpleBout implements Bout {
      */
     @Override
     public Message post(final String text) {
-        final MessageData data = new MessageData(
+        final MessageData msg = new MessageData(
             this.identity(),
             text
         );
-        this.data.addMessage(data);
+        this.data.addMessage(msg);
         Logger.info(
             this,
             "#post('%s'): message posted",
@@ -179,9 +180,9 @@ final class SimpleBout implements Bout {
         );
         return new SimpleMessage(
             this,
-            data.getIdentity(),
-            data.getText(),
-            data.getDate()
+            msg.getIdentity(),
+            msg.getText(),
+            msg.getDate()
         );
     }
 

@@ -58,6 +58,7 @@ public interface User {
     /**
      * Add new identity to the user.
      * @param name Unique name of the identity
+     * @throws DuplicateIdentityException If this identity already exists
      */
     void identify(String name) throws DuplicateIdentityException;
 
