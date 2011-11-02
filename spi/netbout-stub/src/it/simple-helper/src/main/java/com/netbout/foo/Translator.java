@@ -50,7 +50,7 @@ public final class Translator {
      * @return New text to show
      */
     @Operation
-    public String translate(final Participant viewer, final Message msg) {
+    public String translate(final Message msg) {
         return msg.text().replace("Hello", "Bonjour");
     }
 

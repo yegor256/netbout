@@ -40,10 +40,16 @@ import java.util.Collection;
 public interface Participant {
 
     /**
+     * Where is a participant.
+     * @return The bout
+     */
+    Bout bout();
+
+    /**
      * Who is a participant.
      * @return The identity of the participant
      */
-    String identity();
+    Identity identity();
 
     /**
      * Did he confirm his participation already?
@@ -52,8 +58,9 @@ public interface Participant {
     boolean confirmed();
 
     /**
-     * Confirm it.
+     * Confirm it (or reject).
+     * @param confirm To confirm or reject?
      */
-    void confirm();
+    void confirm(boolean confirm);
 
 }

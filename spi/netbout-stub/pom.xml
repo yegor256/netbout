@@ -52,6 +52,11 @@
             <version netbout="yes">1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version since="1 Nov 2011">0.9.5</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>

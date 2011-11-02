@@ -42,10 +42,16 @@ import java.util.List;
 public interface Message {
 
     /**
+     * Where this message is posted.
+     * @return The bout
+     */
+    Bout bout();
+
+    /**
      * Author of this message, his identity.
      * @return The author
      */
-    String identity();
+    Identity author();
 
     /**
      * Text of the message.

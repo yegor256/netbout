@@ -46,6 +46,12 @@ import java.util.List;
 public interface Identity {
 
     /**
+     * Who is the owner of this identity.
+     * @return The owner
+     */
+    User user();
+
+    /**
      * Start new bout.
      * @return The bout just created
      */
@@ -58,6 +64,14 @@ public interface Identity {
      * @return The list of bouts
      */
     List<Bout> inbox(String query);
+
+    /**
+     * Get bout by its unique ID.
+     * @param number The number of the bout
+     * @return The bout
+     * @throws BoutNotFoundException If this bout doesn't exist
+     */
+    Bout bout(Long number) throws BoutNotFoundException;
 
     /**
      * Get name of the identity.
@@ -75,7 +89,8 @@ public interface Identity {
      * This identity should be promoted to an active helper.
      * @param pkg The package where all Java code related to this helper
      *  is located (should be available to JVM)
+     * @throws PromotionException
      */
-    void promote(String pkg);
+    void promote(String pkg) throws PromotionException;
 
 }

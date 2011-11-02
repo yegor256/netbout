@@ -41,6 +41,12 @@ import java.util.List;
 public interface Bout {
 
     /**
+     * Who is viewing this bout now.
+     * @return The identity of the viewer
+     */
+    Identity identity();
+
+    /**
      * Get its title.
      * @return The title of the bout
      */
@@ -50,7 +56,7 @@ public interface Bout {
      * Set its title.
      * @param text The title of the bout
      */
-    void title(String text);
+    void rename(String text);
 
     /**
      * Get all its participants.
@@ -62,8 +68,9 @@ public interface Bout {
      * Invite new participant.
      * @param identity Identity of the participant
      * @return This new participant
+     * @throws UnknownIdentityException If this identity is not found
      */
-    Participant invite(String identity);
+    Participant invite(String identity) throws UnknownIdentityException;
 
     /**
      * Get ordered list of all messages of the bout.

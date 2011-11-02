@@ -31,11 +31,13 @@ package com.netbout.stub;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Helper;
 import com.netbout.spi.Participant;
 import com.netbout.spi.User;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Simple implementation of a {@link Identity}.
@@ -116,7 +118,10 @@ final class SimpleIdentity implements Identity {
      */
     @Override
     public void promote(final String pkg) {
-        // ...
+        final Reflections reflections = new Reflections(pkg);
+        final Set<Class<?>> annotated =
+            reflections.getTypesAnnotatedWith(Helper.class)
+            
     }
 
 }

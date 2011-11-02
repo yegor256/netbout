@@ -30,33 +30,30 @@
 package com.netbout.spi;
 
 /**
- * Entry point to the netbout.
- *
- * <p>This interface should be implemented by implementation package, as
- * a main entry point to the module. You should start using the entire
- * framework from the provided class.
+ * Thowable when such identity is already assigned to another user.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see User#identify(String)
  */
-public interface Entry {
+public final class DuplicateIdentityException extends Exception {
 
     /**
-     * Register a new user.
-     * @param name Unique identifier of the user
-     * @param secret Some secret code of this user
-     * @throws DuplicateUserException If this user is already registered
+     * Public ctor.
+     * @param cause Root cause of the exception
      */
-    void register(String name, String secret) throws DuplicateUserException;
+    public DuplicateIdentityException(final Throwable cause) {
+        super(cause);
+    }
 
     /**
-     * Authenticate a user and get its identity.
-     * @param name Unique identifier of the user
-     * @param secret Some secret code of this user
-     * @return The user just authenticated
-     * @throws AuthenticationException If we can't authenticate this user
+     * Public ctor.
+     * @param message Additional message
+     * @param cause Root cause of the exception
      */
-    User authenticate(String name, String secret)
-        throws AuthenticationException;
+    public DuplicateIdentityException(final String message,
+        final Throwable cause) {
+        super(message, cause);
+    }
 
 }
