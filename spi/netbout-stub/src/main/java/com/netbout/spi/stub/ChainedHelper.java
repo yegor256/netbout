@@ -95,7 +95,7 @@ final class ChainedHelper implements Helper {
     @Override
     public <T> T execute(String mnemo, Class<T> type, Object... args)
         throws OperationFailureException {
-        final boolean dup = ChainedHelperFactory.INSTANCE.isDuplicate(
+        final boolean dup = ChainedHelperProvider.INSTANCE.isDuplicate(
             this,
             this.hash(mnemo, type, args)
         );

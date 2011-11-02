@@ -100,7 +100,7 @@ final class SimpleMessage implements Message {
     @Override
     public String text() {
         try {
-            return ChainedHelperFactory.INSTANCE
+            return ChainedHelperProvider.INSTANCE
                 .local(this.bout(), this.text)
                 .execute("pre-render-message", String.class, this);
         } catch (com.netbout.spi.OperationFailureException ex) {

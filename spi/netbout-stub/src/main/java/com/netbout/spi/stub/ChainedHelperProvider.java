@@ -42,13 +42,13 @@ import java.util.Map;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class ChainedHelperFactory {
+final class ChainedHelperProvider {
 
     /**
      * The singleton.
      */
-    public static final ChainedHelperFactory INSTANCE =
-        new ChainedHelperFactory();
+    public static final ChainedHelperProvider INSTANCE =
+        new ChainedHelperProvider();
 
     /**
      * List of running chains.
@@ -59,7 +59,7 @@ final class ChainedHelperFactory {
     /**
      * Private ctor.
      */
-    private ChainedHelperFactory() {
+    private ChainedHelperProvider() {
         // intentionally empty
     }
 
