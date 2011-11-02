@@ -26,104 +26,70 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.netbout.spi;
+
+import java.net.URL;
+import java.util.List;
+
+/**
+ * Identity.
+ *
+ * <p>This is the main entry point to all bouts which belong to the user. An
+ * instance of this interface can be obtained from
+ * {@link User#identify(String)}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see User#identify(String)
  */
+public interface Identity {
 
-body {
-    font-size: 16px;
-}
+    /**
+     * Who is the owner of this identity.
+     * @return The owner
+     */
+    User user();
 
-body, li, p, td, select, input {
-    font-family: 'Trebuchet MS', Verdana, Arial, Serif !important;
-}
+    /**
+     * Start new bout.
+     * @return The bout just created
+     */
+    Bout start();
 
-tt, pre {
-    background-color: #eee;
-    padding: 0.3em;
-    font-family: 'Consolas', 'Menlo', 'Monaco', 'Lucida Console', 'Liberation Mono',
-        'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New',
-        monospace, serif;
-}
-tt {
-    padding: 0em 0.3em;
-}
-div.source pre {
-    background-color: white;
-    font-size: 0.9em;
-    padding: 0;
-}
-pre.prettyprint { border: 0 !important; }
+    /**
+     * Get an ordered list of all bouts this identity is taking
+     * participation in.
+     * @param query Search query, if necessary
+     * @return The list of bouts
+     */
+    List<Bout> inbox(String query);
 
-/*
- * Overriding maven-theme.css and maven-base.css
- */
-p,
-li {
-    font-size: 1em;
-    color: inherit;
-}
-h2 {
-    font-weight: normal;
-    font-size: 1.5em;
-    color: #2276A4;
-}
-h3 {
-    font-weight: normal;
-    font-size: 1.2em;
-    background: none;
-    color: #2276A4;
-    padding: 1em 0em;
-}
-table {
-    font-size: 1em;
-}
-table.bodyTable {
-    border: none !important;
-}
-table.bodyTable td,
-table.bodyTable th {
-    font-size: 0.9em;
-    border: none !important;
-}
-table.bodyTable th {
-    font-weight: normal;
-    background-color: #2276A4;
-}
-table.bodyTable tr.a {
-    background-color: white;
-}
-table.bodyTable tr.b {
-    background-color: white;
-}
-.source {
-    overflow: hidden;
-}
-div#bodyColumn {
-    margin-left: 15em;
-}
-div#contentBox {
-    width: 50em;
-}
-div#banner {
-    background: white;
-    height: 80px;
-}
-a#bannerLeft img {
-    margin-left: 20px;
-    margin-top: 15px;
-}
-div#leftColumn {
-    width: 13em;
-}
-div#breadcrumbs {
-    font-size: 0.7em;
-}
-div#footer {
-    font-size: 0.7em;
-}
-div#navcolumn li {
-    font-size: 1em;
-}
+    /**
+     * Get bout by its unique ID.
+     * @param number The number of the bout
+     * @return The bout
+     * @throws BoutNotFoundException If this bout doesn't exist
+     */
+    Bout bout(Long number) throws BoutNotFoundException;
 
+    /**
+     * Get name of the identity.
+     * @return The name
+     */
+    String name();
+
+    /**
+     * Get a photo of this identity.
+     * @return The URL of the photo
+     */
+    URL photo();
+
+    /**
+     * This identity should be promoted to an active helper.
+     * @param helper The helper that can help us to process data
+     * @throws PromotionException If there is some problem
+     */
+    void promote(Helper helper) throws PromotionException;
+
+}

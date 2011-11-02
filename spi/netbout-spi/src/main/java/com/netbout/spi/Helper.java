@@ -26,104 +26,35 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.netbout.spi;
+
+import java.util.Collection;
+
+/**
+ * Helper, implementation of identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+public interface Helper {
 
-body {
-    font-size: 16px;
-}
+    /**
+     * Returns full list of supported operations (their mnemos).
+     * @return The list of names
+     */
+    Collection<String> supports();
 
-body, li, p, td, select, input {
-    font-family: 'Trebuchet MS', Verdana, Arial, Serif !important;
-}
+    /**
+     * Send one single query to the helper, in order to get atomic response.
+     * @param mnemo Name of the request, unique ID of what should be done
+     * @param type What is the type of response we're expecting
+     * @param args Collection of arguments, if necessary
+     * @param <T> Type of response we're expecting
+     * @return The response
+     * @throws OperationFailureException If helper can't perform this request
+     */
+    <T> T execute(String mnemo, Class<T> type, Object... args)
+        throws OperationFailureException;
 
-tt, pre {
-    background-color: #eee;
-    padding: 0.3em;
-    font-family: 'Consolas', 'Menlo', 'Monaco', 'Lucida Console', 'Liberation Mono',
-        'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New',
-        monospace, serif;
 }
-tt {
-    padding: 0em 0.3em;
-}
-div.source pre {
-    background-color: white;
-    font-size: 0.9em;
-    padding: 0;
-}
-pre.prettyprint { border: 0 !important; }
-
-/*
- * Overriding maven-theme.css and maven-base.css
- */
-p,
-li {
-    font-size: 1em;
-    color: inherit;
-}
-h2 {
-    font-weight: normal;
-    font-size: 1.5em;
-    color: #2276A4;
-}
-h3 {
-    font-weight: normal;
-    font-size: 1.2em;
-    background: none;
-    color: #2276A4;
-    padding: 1em 0em;
-}
-table {
-    font-size: 1em;
-}
-table.bodyTable {
-    border: none !important;
-}
-table.bodyTable td,
-table.bodyTable th {
-    font-size: 0.9em;
-    border: none !important;
-}
-table.bodyTable th {
-    font-weight: normal;
-    background-color: #2276A4;
-}
-table.bodyTable tr.a {
-    background-color: white;
-}
-table.bodyTable tr.b {
-    background-color: white;
-}
-.source {
-    overflow: hidden;
-}
-div#bodyColumn {
-    margin-left: 15em;
-}
-div#contentBox {
-    width: 50em;
-}
-div#banner {
-    background: white;
-    height: 80px;
-}
-a#bannerLeft img {
-    margin-left: 20px;
-    margin-top: 15px;
-}
-div#leftColumn {
-    width: 13em;
-}
-div#breadcrumbs {
-    font-size: 0.7em;
-}
-div#footer {
-    font-size: 0.7em;
-}
-div#navcolumn li {
-    font-size: 1em;
-}
-

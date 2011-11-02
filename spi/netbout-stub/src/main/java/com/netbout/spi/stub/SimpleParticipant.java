@@ -26,104 +26,85 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.netbout.spi.stub;
+
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Participant;
+import com.ymock.util.Logger;
+
+/**
+ * Simple implementation of a {@link Bout}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+final class SimpleParticipant implements Participant {
 
-body {
-    font-size: 16px;
-}
+    /**
+     * Holder of this object.
+     */
+    private Bout bout;
 
-body, li, p, td, select, input {
-    font-family: 'Trebuchet MS', Verdana, Arial, Serif !important;
-}
+    /**
+     * Is it confirmed?
+     */
+    private boolean confirmed;
 
-tt, pre {
-    background-color: #eee;
-    padding: 0.3em;
-    font-family: 'Consolas', 'Menlo', 'Monaco', 'Lucida Console', 'Liberation Mono',
-        'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New',
-        monospace, serif;
-}
-tt {
-    padding: 0em 0.3em;
-}
-div.source pre {
-    background-color: white;
-    font-size: 0.9em;
-    padding: 0;
-}
-pre.prettyprint { border: 0 !important; }
+    /**
+     * The identity.
+     */
+    private Identity identity;
 
-/*
- * Overriding maven-theme.css and maven-base.css
- */
-p,
-li {
-    font-size: 1em;
-    color: inherit;
-}
-h2 {
-    font-weight: normal;
-    font-size: 1.5em;
-    color: #2276A4;
-}
-h3 {
-    font-weight: normal;
-    font-size: 1.2em;
-    background: none;
-    color: #2276A4;
-    padding: 1em 0em;
-}
-table {
-    font-size: 1em;
-}
-table.bodyTable {
-    border: none !important;
-}
-table.bodyTable td,
-table.bodyTable th {
-    font-size: 0.9em;
-    border: none !important;
-}
-table.bodyTable th {
-    font-weight: normal;
-    background-color: #2276A4;
-}
-table.bodyTable tr.a {
-    background-color: white;
-}
-table.bodyTable tr.b {
-    background-color: white;
-}
-.source {
-    overflow: hidden;
-}
-div#bodyColumn {
-    margin-left: 15em;
-}
-div#contentBox {
-    width: 50em;
-}
-div#banner {
-    background: white;
-    height: 80px;
-}
-a#bannerLeft img {
-    margin-left: 20px;
-    margin-top: 15px;
-}
-div#leftColumn {
-    width: 13em;
-}
-div#breadcrumbs {
-    font-size: 0.7em;
-}
-div#footer {
-    font-size: 0.7em;
-}
-div#navcolumn li {
-    font-size: 1em;
-}
+    /**
+     * Public ctor.
+     * @param holder Holder of this object
+     * @param idnt Identity
+     * @param aye Is it confirmed
+     */
+    public SimpleParticipant(final Bout holder, final Identity idnt,
+        final boolean aye) {
+        this.bout = holder;
+        this.identity = idnt;
+        this.confirmed = aye;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout bout() {
+        return this.bout;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity identity() {
+        return this.identity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean confirmed() {
+        return this.confirmed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void confirm(final boolean aye) {
+        this.confirmed = aye;
+        Logger.info(
+            this,
+            "#confirm(%b): done",
+            aye
+        );
+    }
+
+}

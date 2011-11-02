@@ -26,104 +26,33 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ */
+package com.netbout.spi.stub;
+
+import com.netbout.spi.Entry;
+import com.netbout.spi.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+/**
+ * Test case for {@link InMemoryEntry}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+public final class InMemoryEntryTest {
 
-body {
-    font-size: 16px;
-}
+    /**
+     * User can be registered and then authenticated.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testRegistrationAndAuthentication() throws Exception {
+        final Entry entry = new InMemoryEntry();
+        final String name = "John Doe";
+        entry.register(name, "");
+        final User user = entry.authenticate(name, "");
+        MatcherAssert.assertThat(user, Matchers.notNullValue());
+    }
 
-body, li, p, td, select, input {
-    font-family: 'Trebuchet MS', Verdana, Arial, Serif !important;
 }
-
-tt, pre {
-    background-color: #eee;
-    padding: 0.3em;
-    font-family: 'Consolas', 'Menlo', 'Monaco', 'Lucida Console', 'Liberation Mono',
-        'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New',
-        monospace, serif;
-}
-tt {
-    padding: 0em 0.3em;
-}
-div.source pre {
-    background-color: white;
-    font-size: 0.9em;
-    padding: 0;
-}
-pre.prettyprint { border: 0 !important; }
-
-/*
- * Overriding maven-theme.css and maven-base.css
- */
-p,
-li {
-    font-size: 1em;
-    color: inherit;
-}
-h2 {
-    font-weight: normal;
-    font-size: 1.5em;
-    color: #2276A4;
-}
-h3 {
-    font-weight: normal;
-    font-size: 1.2em;
-    background: none;
-    color: #2276A4;
-    padding: 1em 0em;
-}
-table {
-    font-size: 1em;
-}
-table.bodyTable {
-    border: none !important;
-}
-table.bodyTable td,
-table.bodyTable th {
-    font-size: 0.9em;
-    border: none !important;
-}
-table.bodyTable th {
-    font-weight: normal;
-    background-color: #2276A4;
-}
-table.bodyTable tr.a {
-    background-color: white;
-}
-table.bodyTable tr.b {
-    background-color: white;
-}
-.source {
-    overflow: hidden;
-}
-div#bodyColumn {
-    margin-left: 15em;
-}
-div#contentBox {
-    width: 50em;
-}
-div#banner {
-    background: white;
-    height: 80px;
-}
-a#bannerLeft img {
-    margin-left: 20px;
-    margin-top: 15px;
-}
-div#leftColumn {
-    width: 13em;
-}
-div#breadcrumbs {
-    font-size: 0.7em;
-}
-div#footer {
-    font-size: 0.7em;
-}
-div#navcolumn li {
-    font-size: 1em;
-}
-

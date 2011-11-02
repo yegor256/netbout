@@ -27,14 +27,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.stub;
+
+import com.netbout.spi.Identity;
 
 /**
- * Identity.
+ * Internal holder of participant data.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Identity {
+final class ParticipantData {
+
+    /**
+     * The author.
+     */
+    private final Identity identity;
+
+    /**
+     * Is it confirmed?
+     */
+    private boolean confirmed;
+
+    /**
+     * Public ctor.
+     * @param idnt The identity
+     * @param aye Is it confirmed
+     */
+    public ParticipantData(final Identity idnt, final boolean aye) {
+        this.identity = idnt;
+        this.confirmed = aye;
+    }
+
+    /**
+     * Is it confirmed?
+     * @return The flag
+     */
+    public boolean isConfirmed() {
+        return this.confirmed;
+    }
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    public Identity getIdentity() {
+        return this.identity;
+    }
 
 }
