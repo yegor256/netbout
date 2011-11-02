@@ -167,6 +167,14 @@
             </dependency>
             <dependency>
                 <!--
+                Logging facility, on top of SLF4J.
+                -->
+                <groupId>com.ymock</groupId>
+                <artifactId>ymock-util</artifactId>
+                <version since="2 Nov 2011">1.0</version>
+            </dependency>
+            <dependency>
+                <!--
                 We are using JUnit framework for unit test organization
                 and management. This framework is the most stable and mature
                 in the market. Other options considered: TestNG.

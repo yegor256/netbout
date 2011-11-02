@@ -29,67 +29,41 @@
  */
 package com.netbout.spi;
 
-import java.net.URL;
-import java.util.List;
-
 /**
- * Identity.
- *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identify(String)}.
+ * Thowable when operation fails because of some problem inside a helper.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
+ * @see Helper#operation(String,Class,Objeсt)
  */
-public interface Identity {
+public final class OperationFailureException extends Exception {
 
     /**
-     * Who is the owner of this identity.
-     * @return The owner
+     * Public ctor.
+     * @param cause Root cause of the exception
      */
-    User user();
+    public OperationFailureException(final Throwable cause) {
+        super(cause);
+    }
 
     /**
-     * Start new bout.
-     * @return The bout just created
+     * Public ctor.
+     * @param message Root cause of the exception
+     * @param args Arguments for <tt>String.format()</tt>
      */
-    Bout start();
+    public OperationFailureException(final String message,
+        final Object... args) {
+        super(String.format(message, args));
+    }
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
-     * @param query Search query, if necessary
-     * @return The list of bouts
+     * Public ctor.
+     * @param message Additional message
+     * @param cause Root cause of the exception
      */
-    List<Bout> inbox(String query);
-
-    /**
-     * Get bout by its unique ID.
-     * @param number The number of the bout
-     * @return The bout
-     * @throws BoutNotFoundException If this bout doesn't exist
-     */
-    Bout bout(Long number) throws BoutNotFoundException;
-
-    /**
-     * Get name of the identity.
-     * @return The name
-     */
-    String name();
-
-    /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
-     */
-    URL photo();
-
-    /**
-     * This identity should be promoted to an active helper.
-     * @param helper The helper that can help us to process data
-     * @throws PromotionException
-     */
-    void promote(Helper helper) throws PromotionException;
+    public OperationFailureException(final String message,
+        final Throwable cause) {
+        super(message, cause);
+    }
 
 }

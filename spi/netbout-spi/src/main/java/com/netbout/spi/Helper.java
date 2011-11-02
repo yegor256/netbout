@@ -29,19 +29,32 @@
  */
 package com.netbout.spi;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collection;
 
 /**
- * Annotation to point to a helper class.
+ * Helper, implementation of identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Helper {
+public interface Helper {
+
+    /**
+     * Returns full list of supported operations (their mnemos).
+     * @return The list of names
+     */
+    Collection<String> supports();
+
+    /**
+     * Send one single query to the helper, in order to get atomic response.
+     * @param mnemo Name of the request, unique ID of what should be done
+     * @param type What is the type of response we're expecting
+     * @param args Collection of arguments, if necessary
+     * @param <T> Type of response we're expecting
+     * @return The response
+     * @throws OperationFailureException If helper can't perform this request
+     */
+    <T> T execute(String mnemo, Class<T> type, Object... args)
+        throws OperationFailureException;
 
 }

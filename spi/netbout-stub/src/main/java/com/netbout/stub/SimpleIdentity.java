@@ -39,7 +39,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.reflections.Reflections;
 
 /**
  * Simple implementation of a {@link Identity}.
@@ -143,11 +142,8 @@ final class SimpleIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void promote(final String pkg) {
-        final Reflections reflections = new Reflections(pkg);
-        final Set<Class<?>> annotated =
-            reflections.getTypesAnnotatedWith(Helper.class);
-        // todo
+    public void promote(final Helper hlp) {
+        //
     }
 
 }

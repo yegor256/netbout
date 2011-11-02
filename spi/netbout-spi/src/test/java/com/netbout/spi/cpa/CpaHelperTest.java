@@ -27,22 +27,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.cpa;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.netbout.spi.Helper;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Annotation to point to a method that can handle particular type
- * of an operation.
- *
+ * Test case for {@link CpaHelper}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Operation {
+public final class CpaHelperTest {
+
+    /**
+     * User can be registered and then authenticated.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testDiscoveryOfOperations() throws Exception {
+        final Helper helper = new CpaHelper(
+            this.getClass().getPackage().getName()
+        );
+        MatcherAssert.assertThat(
+            helper.supports(),
+            Matchers.hasItem("sample-op")
+        );
+        MatcherAssert.assertThat(
+            helper.execute("sample-op", String.class, "alpha-12"),
+            Matchers.equalTo("alpha-XX")
+        );
+    }
+
+    /**
+     * Sample farm.
+     */
+    @Farm
+    public static final class SampleFarm {
+        /**
+         * Sample operation.
+         */
+        @Operation("sample-op")
+        public String translate(final String text) {
+            return text.replaceAll("[0-9]", "X");
+        }
+    }
 
 }
