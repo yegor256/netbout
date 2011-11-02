@@ -34,6 +34,7 @@ import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
+import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -71,6 +72,12 @@ public final class InMemoryEntry implements Entry {
             }
         }
         this.users.add(new SimpleUser(this, name));
+        Logger.info(
+            this,
+            "#register(%s, %s): registered",
+            name,
+            secret
+        );
     }
 
     /**
@@ -80,6 +87,12 @@ public final class InMemoryEntry implements Entry {
     public User authenticate(final String name, final String secret) {
         for (SimpleUser user : this.users) {
             if (user.getName().equals(name)) {
+                Logger.info(
+                    this,
+                    "#authenticate(%s, %s): completed",
+                    name,
+                    secret
+                );
                 return user;
             }
         }
@@ -97,6 +110,11 @@ public final class InMemoryEntry implements Entry {
         for (SimpleUser user : this.users) {
             for (SimpleIdentity identity : user.getIdentities()) {
                 if (identity.name().equals(name)) {
+                    Logger.info(
+                        this,
+                        "#friend(%s): identity found",
+                        name
+                    );
                     return identity;
                 }
             }
@@ -116,6 +134,11 @@ public final class InMemoryEntry implements Entry {
             }
         }
         this.bouts.put(max, new BoutData());
+        Logger.info(
+            this,
+            "#createBout(): bout #%d created",
+            max
+        );
         return max;
     }
 
@@ -131,6 +154,11 @@ public final class InMemoryEntry implements Entry {
                 "Bout %d doesn't exist", num
             );
         }
+        Logger.info(
+            this,
+            "#findBout(%d): bout found",
+            num
+        );
         return this.bouts.get(num);
     }
 

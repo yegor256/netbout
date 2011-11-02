@@ -33,6 +33,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
+import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.stub.InMemoryEntry;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -66,7 +67,9 @@ public final class TranslatorTest {
         this.entry.register(name, "");
         final User user = entry.authenticate(name, "");
         user.identify(this.HELPER_IDENTITY);
-        user.identity(this.HELPER_IDENTITY).promote("com.netbout.foo");
+        user.identity(this.HELPER_IDENTITY).promote(
+            new CpaHelper(this.getClass().getPackage().getName())
+        );
     }
 
     /**
@@ -81,7 +84,7 @@ public final class TranslatorTest {
         user.identify(name);
         final Identity identity = user.identity(name);
         final Bout bout = identity.start();
-        bout.title("let's about...");
+        bout.rename("let's about...");
         bout.invite(this.HELPER_IDENTITY);
         bout.post("Hello, how are you?");
         MatcherAssert.assertThat(

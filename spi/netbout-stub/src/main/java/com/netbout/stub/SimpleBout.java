@@ -34,6 +34,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.UnknownIdentityException;
+import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -101,6 +102,11 @@ final class SimpleBout implements Bout {
             false
         );
         this.data.addParticipant(data);
+        Logger.info(
+            this,
+            "#invite(%s): success",
+            friend
+        );
         return new SimpleParticipant(
             this,
             data.getIdentity(),
@@ -123,6 +129,11 @@ final class SimpleBout implements Bout {
                 )
             );
         }
+        Logger.info(
+            this,
+            "#participants(): %d participants found",
+            participants.size()
+        );
         return participants;
     }
 
@@ -142,6 +153,12 @@ final class SimpleBout implements Bout {
                 )
             );
         }
+        Logger.info(
+            this,
+            "#messages('%s'): %d messages found",
+            query,
+            messages.size()
+        );
         return messages;
     }
 
@@ -155,6 +172,11 @@ final class SimpleBout implements Bout {
             text
         );
         this.data.addMessage(data);
+        Logger.info(
+            this,
+            "#post(%s): message posted",
+            text
+        );
         return new SimpleMessage(
             this,
             data.getIdentity(),

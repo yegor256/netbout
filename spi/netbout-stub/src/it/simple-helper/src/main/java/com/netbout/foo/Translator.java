@@ -29,10 +29,9 @@
  */
 package com.netbout.foo;
 
-import com.netbout.spi.Helper;
 import com.netbout.spi.Message;
-import com.netbout.spi.Operation;
-import com.netbout.spi.Participant;
+import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.Operation;
 
 /**
  * Translates all messages from English to the local language of the bout.
@@ -40,16 +39,15 @@ import com.netbout.spi.Participant;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Helper
+@Farm
 public final class Translator {
 
     /**
      * Translate message text for specified participant.
-     * @param viewer Who will view the message
      * @param msg The message to translate
      * @return New text to show
      */
-    @Operation
+    @Operation("pre-render-message")
     public String translate(final Message msg) {
         return msg.text().replace("Hello", "Bonjour");
     }

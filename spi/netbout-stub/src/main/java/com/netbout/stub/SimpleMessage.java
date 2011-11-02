@@ -30,8 +30,10 @@
 package com.netbout.stub;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
 import java.util.Date;
 
 /**
@@ -98,7 +100,25 @@ final class SimpleMessage implements Message {
      */
     @Override
     public String text() {
-        return this.text;
+        String rendered = this.text;
+        for (Participant dude : this.bout().participants()) {
+            final Helper helper = ((SimpleIdentity) dude.identity()).getHelper();
+            if (helper == null) {
+                continue;
+            }
+            if (helper.supports().contains("pre-render-message")) {
+                try {
+                    rendered = helper.execute(
+                        "pre-render-message",
+                        String.class,
+                        this
+                    );
+                } catch (com.netbout.spi.OperationFailureException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+        }
+        return rendered;
     }
 
     /**

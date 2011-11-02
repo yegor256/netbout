@@ -59,6 +59,11 @@ final class SimpleIdentity implements Identity {
     private final String name;
 
     /**
+     * The helper, if exists.
+     */
+    private Helper helper;
+
+    /**
      * Public ctor.
      * @param usr The user of this identity
      * @param nam The identity's name
@@ -143,7 +148,15 @@ final class SimpleIdentity implements Identity {
      */
     @Override
     public void promote(final Helper hlp) {
-        //
+        this.helper = hlp;
+    }
+
+    /**
+     * Get helper, if it's set (NULL otherwise).
+     * @return The helper
+     */
+    public Helper getHelper() {
+        return this.helper;
     }
 
 }
