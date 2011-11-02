@@ -132,7 +132,7 @@
                             <target>
                                 <copy verbose="yes" overwrite="yes"
                                     file="${basedir}/../pom.xml"
-                                    tofile="${project.build.directory}/local-repo/com/netbout/spi/netbout/${project.version}/-${project.version}.pom"/>
+                                    tofile="${project.build.directory}/local-repo/com/netbout/spi/netbout/${project.version}/netbout-${project.version}.pom"/>
                                 <copy verbose="yes" overwrite="yes"
                                     file="${com.netbout.spi:netbout-spi:jar}"
                                     tofile="${project.build.directory}/local-repo/com/netbout/spi/netbout-spi/${project.version}/netbout-spi-${project.version}.jar"/>
