@@ -93,6 +93,7 @@ final class SimpleBout implements Bout {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Participant invite(final String friend)
@@ -144,13 +145,13 @@ final class SimpleBout implements Bout {
     @Override
     public List<Message> messages(final String query) {
         final List<Message> messages = new ArrayList<Message>();
-        for (MessageData data : this.data.getMessages(query)) {
+        for (MessageData msg : this.data.getMessages(query)) {
             messages.add(
                 new SimpleMessage(
                     this,
-                    data.getIdentity(),
-                    data.getText(),
-                    data.getDate()
+                    msg.getIdentity(),
+                    msg.getText(),
+                    msg.getDate()
                 )
             );
         }

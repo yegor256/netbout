@@ -58,7 +58,7 @@ final class MessageData {
     /**
      * Public ctor.
      * @param idnt The identity
-     * @param text The text
+     * @param txt The text
      */
     public MessageData(final Identity idnt, final String txt) {
         this.identity = idnt;

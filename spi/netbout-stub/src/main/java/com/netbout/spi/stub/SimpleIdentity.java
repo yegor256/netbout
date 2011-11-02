@@ -103,6 +103,7 @@ final class SimpleIdentity implements Identity {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Bout bout(final Long number) throws BoutNotFoundException {
@@ -121,7 +122,7 @@ final class SimpleIdentity implements Identity {
         for (BoutData data
             : ((InMemoryEntry) this.user.entry()).getAllBouts()) {
             for (ParticipantData dude : data.getParticipants()) {
-                if (dude.getIdentity().equals(this)) {
+                if (this.equals(dude.getIdentity())) {
                     list.add(new SimpleBout(this, data));
                     break;
                 }

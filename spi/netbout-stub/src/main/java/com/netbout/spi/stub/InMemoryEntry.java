@@ -105,6 +105,7 @@ public final class InMemoryEntry implements Entry {
      * @param name The name of the identity to find
      * @return Found identity
      * @throws UnknownIdentityException If not found
+     * @checkstyle RedundantThrows (4 lines)
      */
     public Identity friend(final String name) throws UnknownIdentityException {
         for (SimpleUser user : this.users) {
@@ -147,6 +148,7 @@ public final class InMemoryEntry implements Entry {
      * @param num Number of the bout
      * @return The bout found
      * @throws BoutNotFoundException If this bout is not found
+     * @checkstyle RedundantThrows (4 lines)
      */
     public BoutData findBout(final Long num) throws BoutNotFoundException {
         if (!this.bouts.containsKey(num)) {

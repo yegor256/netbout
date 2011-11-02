@@ -83,6 +83,7 @@ final class SimpleUser implements User {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Identity identity(final String label)
@@ -106,6 +107,7 @@ final class SimpleUser implements User {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public void identify(final String label) throws DuplicateIdentityException {

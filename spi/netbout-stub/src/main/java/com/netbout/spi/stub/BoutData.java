@@ -29,9 +29,6 @@
  */
 package com.netbout.spi.stub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
