@@ -40,34 +40,25 @@
     <xsl:include href="/xsl/dudes.xsl" />
 
     <xsl:template name="title">
-        <xsl:text>inbox</xsl:text>
+        <xsl:text>login</xsl:text>
     </xsl:template>
 
     <xsl:template name="head">
-        <link href="/css/inbox.css" rel="stylesheet" type="text/css"></link>
-        <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
     </xsl:template>
 
     <xsl:template name="content">
-        <xsl:for-each select="/page/bouts/bout">
-            <div class="bout">
-                <a class="title unread">
-                    <xsl:attribute name="class">
-                        <xsl:text>title </xsl:text>
-                        <xsl:if test="@unread">
-                            <xsl:text>unread</xsl:text>
-                        </xsl:if>
-                    </xsl:attribute>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="@href"/>
-                    </xsl:attribute>
-                    <xsl:value-of select="title" />
-                </a>
-                <xsl:call-template name="dudes">
-                    <xsl:with-param name="participants" select="participants" />
-                </xsl:call-template>
-            </div>
-        </xsl:for-each>
+        <p>
+            <xsl:text>Login using one of them:</xsl:text>
+        </p>
+        <ul>
+            <xsl:for-each select="/page/providers/link">
+                <li>
+                    <a href="@href">
+                        <xsl:value-of select="@name">
+                    </a>
+                </li>
+            </xsl:for-each>
+        </ul>
     </xsl:template>
 
 </xsl:stylesheet>

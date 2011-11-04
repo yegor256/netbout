@@ -23,19 +23,33 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+
+/**
+ * Thrown when login is required, but is not provided in cookies.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+final class LoginRequiredException extends WebApplicationException {
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    /**
+     * Constructor.
+     */
+    public LoginRequiredException() {
+        super(
+            Response
+                .status(Response.Status.TEMPORARY_REDIRECT)
+                .location(UriBuilder.fromPath("/login").build())
+                .type(MediaType.TEXT_PLAIN)
+                .build()
+        );
+    }
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+}

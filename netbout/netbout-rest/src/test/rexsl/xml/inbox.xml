@@ -35,8 +35,10 @@
         <link href="/" name="logout" />
         <link href="/xml/PageBout.xml" name="start" />
     </links>
-    <identity>William.Shakespeare</identity>
-    <photo href="http://www.robert-deniro.com/deniro.jpg"/>
+    <identity>
+        <name>William.Shakespeare</name>
+        <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+    </idenitty>
     <bouts>
         <bout id="5463" href="/xml/PageBout.xml" unread="yes">
             <title>PHP programming in NetBout project</title>

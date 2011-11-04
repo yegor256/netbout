@@ -28,15 +28,12 @@
  * @version $Id$
  */
 
+import static org.xmlmatchers.XmlMatchers.hasXPath
 import com.rexsl.test.XhtmlConverter
 import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 
-Assert.assertThat(
-    XhtmlConverter.the(rexsl.document),
-    XmlMatchers.hasXPath(
-        '//x:html',
-        new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-    )
-)
+def xhtml = XhtmlConverter.the(rexsl.document)
+def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+
+Assert.assertThat(xhtml, hasXPath('//x:div[@class="bout"]', ctx))

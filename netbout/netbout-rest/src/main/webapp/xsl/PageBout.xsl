@@ -39,8 +39,11 @@
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
 
+    <xsl:template name="title">
+        <xsl:value-of select="/page/bout/title"/>
+    </xsl:template>
+
     <xsl:template name="head">
-        <title><xsl:value-of select="/page/bout/title"/></title>
         <link href="/css/bout.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
         <!-- <xsl:call-template name="stage-head"/> -->

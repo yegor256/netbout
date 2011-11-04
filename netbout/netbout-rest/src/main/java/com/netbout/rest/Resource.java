@@ -23,19 +23,38 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest;
+
+import com.netbout.spi.Identity;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.Providers;
+
+/**
+ * RESTful resource.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+interface Resource {
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    /**
+     * Get URI Info.
+     * @return URI info
+     */
+    UriInfo uriInfo();
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+    /**
+     * All registered JAX-RS providers.
+     * @return Providers
+     */
+    Providers providers();
 
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+    /**
+     * Get current user identity, or throws {@link LoginRequiredException} if
+     * no user is logged in at the moment.
+     * @return The identity
+     */
+    Identity identity();
+
+}

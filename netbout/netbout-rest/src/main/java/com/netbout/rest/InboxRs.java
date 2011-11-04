@@ -23,19 +23,43 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+/**
+ * RESTful front of user's inbox.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Path("/")
+public final class InboxRs extends AbstractRs {
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    /**
+     * Get bout.
+     * @return The bout, convertable to XML
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public Page inbox() {
+        return PageBuilder.build(this, "inbox")
+            .append(this.identity().inbox(""));
+    }
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+    /**
+     * Login page.
+     * @return The bout, convertable to XML
+     */
+    @Path("/login")
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public Page login() {
+        return PageBuilder.build(this, "login");
+    }
 
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+}

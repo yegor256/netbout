@@ -26,31 +26,101 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Entry;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
+import com.netbout.spi.PromotionException;
 import com.netbout.spi.User;
+import java.net.URL;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Entry point to Hub.
+ * Identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntry implements Entry {
+@XmlType(name = "identity")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class HubIdentity implements Identity {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void register(final String name, final String secret) {
-        //...
+    public User user() {
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public User authenticate(final String name, final String secret) {
+    public Bout start() {
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Bout> inbox(String query) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout bout(Long number) throws BoutNotFoundException {
+        return null;
+    }
+
+    /**
+     * Get name of the object, JAXB-related method.
+     * @return The name
+     */
+    @XmlElement(name = "name", required = true)
+    public String getName() {
+        return this.name();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return "hello";
+    }
+
+    /**
+     * Get photo of the object, JAXB-related method.
+     * @return The name
+     */
+    @XmlElement(name = "photo", required = true)
+    public URL getPhoto() {
+        return this.photo();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL photo() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void promote(Helper helper) throws PromotionException {
+        //...
     }
 
 }

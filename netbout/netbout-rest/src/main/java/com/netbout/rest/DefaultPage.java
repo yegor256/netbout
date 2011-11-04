@@ -26,37 +26,74 @@
  */
 package com.netbout.rest;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import com.rexsl.core.XslResolver;
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * RESTful front of one Bout.
+ * Page.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/{id: \\d+}")
-public final class BoutRs extends AbstractRs {
+@XmlRootElement(name = "page")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class DefaultPage implements Page {
 
     /**
-     * Public ctor.
-     * @param boutId ID of the bout to work with
+     * Home resource of this page.
      */
-    public BoutRs(@PathParam("id") final Long boutId) {
-        super();
+    private final Resource home;
+
+    /**
+     * Collection of elements.
+     */
+    private final Collection elements = new ArrayList();
+
+    /**
+     * Public ctor for JAXB, should never be called.
+     */
+    public DefaultPage() {
+        throw new IllegalStateException("#DefaultPage(): illegal call");
     }
 
     /**
-     * Get bout.
-     * @return The bout, convertable to XML
+     * Public ctor.
+     * @param res Home of this page
+     * @see PageBuilder#build(Resource,String)
      */
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String bout() {
-        return "hello";
+    public DefaultPage(final Resource res) {
+        this.home = res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page append(final Object element) {
+        this.elements.add(element);
+        final XslResolver resolver = (XslResolver) this.home.providers()
+            .getContextResolver(
+                Marshaller.class,
+                MediaType.APPLICATION_XML_TYPE
+            );
+        resolver.add(element.getClass());
+        return this;
+    }
+
+    /**
+     * Get all elements.
+     * @return Full list of injected elements
+     */
+    @XmlAnyElement
+    public Collection<Object> getElements() {
+        return this.elements;
     }
 
 }

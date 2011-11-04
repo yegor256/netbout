@@ -37,6 +37,10 @@
     <xsl:template match="/">
         <html>
             <head>
+                <title>
+                    <xsl:text>netbout: </xsl:text>
+                    <xsl:call-template name="title" />
+                </title>
                 <xsl:call-template name="head" />
                 <link href="/css/global.css" rel="stylesheet" type="text/css"></link>
                 <link rel="icon" type="image/gif" href="/favicon.ico"/>

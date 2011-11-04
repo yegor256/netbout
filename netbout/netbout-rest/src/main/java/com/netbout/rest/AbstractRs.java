@@ -23,19 +23,70 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest;
+
+import com.netbout.spi.Entry;
+import com.netbout.spi.Identity;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.Providers;
+
+/**
+ * Abstract RESTful resource.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+abstract class AbstractRs implements Resource {
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    /**
+     * Entry to work with.
+     */
+    private Entry entry;
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+    /**
+     * Injected by JAX-RS.
+     */
+    @Context
+    private Providers providers;
 
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+    /**
+     * Injected by JAX-RS.
+     */
+    @Context
+    private UriInfo uriInfo;
+
+    /**
+     * Inject hub, should be called by JAX-RS framework.
+     * @param ent The entry to work with
+     */
+    public final void setEntry(@Context final Entry ent) {
+        this.entry = ent;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UriInfo uriInfo() {
+        return this.uriInfo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Providers providers() {
+        return this.providers;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Identity identity() {
+        throw new LoginRequiredException();
+    }
+
+}
