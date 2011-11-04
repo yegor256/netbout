@@ -26,30 +26,35 @@
  */
 package com.netbout.rest;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * RESTful front of user's inbox.
- *
+ * Test case for {@link InboxRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class InboxRs extends AbstractRs {
+public final class InboxRsTest {
 
     /**
-     * Get bout.
-     * @return The bout, convertable to XML
+     * Login page should be renderable.
+     * @throws Exception If there is some problem inside
      */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public Page inbox() {
-        return PageBuilder.INSTANCE
-            .build(this, "inbox")
-            .append(this.identity().inbox(""));
+    @Test
+    public void testLoginPageRendering() throws Exception {
+        final UriInfo info = Mockito.mock(UriInfo.class);
+        final URI home = new URI("http://localhost/g");
+        Mockito.doReturn(UriBuilder.fromUri(home))
+            .when(info).getAbsolutePathBuilder();
+        Mockito.doReturn(home).when(info).getAbsolutePath();
+        final InboxRs rest = new InboxRs();
+        rest.setUriInfo(info);
+        MatcherAssert.assertThat(rest, Matchers.notNullValue());
     }
 
 }

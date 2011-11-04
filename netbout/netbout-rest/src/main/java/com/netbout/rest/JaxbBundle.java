@@ -125,8 +125,8 @@ public final class JaxbBundle {
      * @param val The value
      * @return This object
      */
-    public JaxbBundle attr(final String nam, final String val) {
-        this.attrs.put(nam, val);
+    public JaxbBundle attr(final String nam, final Object val) {
+        this.attrs.put(nam, val.toString());
         return this;
     }
 

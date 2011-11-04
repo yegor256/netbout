@@ -29,7 +29,10 @@ package com.netbout.rest;
 import com.rexsl.core.Stylesheet;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.JaxbConverter;
+import java.net.URI;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -55,14 +58,7 @@ public final class PageBuilderTest {
      */
     @Test
     public void testJaxbIsWorking() throws Exception {
-        final XslResolver resolver = new XslResolver();
-        final Providers providers = Mockito.mock(Providers.class);
-        Mockito.doReturn(resolver).when(providers).getContextResolver(
-            Marshaller.class,
-            MediaType.APPLICATION_XML_TYPE
-        );
-        final Resource resource = Mockito.mock(Resource.class);
-        Mockito.doReturn(providers).when(resource).providers();
+        final Resource resource = this.resource();
         final String stylesheet = "test-stylesheet";
         final Page page = PageBuilder.INSTANCE.build(resource, stylesheet);
         // double check duplicate instantiation
@@ -81,6 +77,29 @@ public final class PageBuilderTest {
             JaxbConverter.the(page, PageBuilderTest.Foo.class),
             XmlMatchers.hasXPath("/page/foo/message[contains(.,'hello')]")
         );
+    }
+
+    /**
+     * Create resource.
+     * @return The resource, mocked
+     * @throws Exception If there is some problem inside
+     */
+    private Resource resource() throws Exception {
+        final Resource resource = Mockito.mock(Resource.class);
+        final Providers providers = Mockito.mock(Providers.class);
+        Mockito.doReturn(providers).when(resource).providers();
+        final XslResolver resolver = new XslResolver();
+        Mockito.doReturn(resolver).when(providers).getContextResolver(
+            Marshaller.class,
+            MediaType.APPLICATION_XML_TYPE
+        );
+        final UriInfo info = Mockito.mock(UriInfo.class);
+        Mockito.doReturn(info).when(resource).uriInfo();
+        final URI home = new URI("http://localhost/x");
+        Mockito.doReturn(UriBuilder.fromUri(home))
+            .when(info).getAbsolutePathBuilder();
+        Mockito.doReturn(home).when(info).getAbsolutePath();
+        return resource;
     }
 
     /**

@@ -90,11 +90,20 @@ public final class DefaultPage implements Page {
             new JaxbBundle("links")
                 .add(this.HATEOAS_LINK)
                     .attr(this.HATEOAS_NAME, "self")
-                    .attr(this.HATEOAS_HREF, "?self")
+                    .attr(
+                        this.HATEOAS_HREF,
+                        this.home.uriInfo().getAbsolutePath()
+                )
                 .up()
                 .add(this.HATEOAS_LINK)
                     .attr(this.HATEOAS_NAME, "home")
-                    .attr(this.HATEOAS_HREF, "?home")
+                    .attr(
+                        this.HATEOAS_HREF,
+                        this.home.uriInfo()
+                            .getAbsolutePathBuilder()
+                            .replacePath("/")
+                            .build()
+                )
                 .up()
         );
     }

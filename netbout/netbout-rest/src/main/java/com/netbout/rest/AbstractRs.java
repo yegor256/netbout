@@ -48,13 +48,11 @@ abstract class AbstractRs implements Resource {
     /**
      * Injected by JAX-RS.
      */
-    @Context
     private Providers providers;
 
     /**
      * Injected by JAX-RS.
      */
-    @Context
     private UriInfo uriInfo;
 
     /**
@@ -66,11 +64,29 @@ abstract class AbstractRs implements Resource {
     }
 
     /**
+     * Set URI Info, to be called by JAX-RS framework or a unit test.
+     * @param info The info to inject
+     */
+    @Context
+    public void setUriInfo(final UriInfo info) {
+        this.uriInfo = info;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public UriInfo uriInfo() {
         return this.uriInfo;
+    }
+
+    /**
+     * Set Providers, to be called by JAX-RS framework or a unit test.
+     * @param prov List of providers
+     */
+    @Context
+    public void setProviders(final Providers prov) {
+        this.providers = prov;
     }
 
     /**

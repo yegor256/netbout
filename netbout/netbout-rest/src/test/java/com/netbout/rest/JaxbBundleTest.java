@@ -28,7 +28,10 @@ package com.netbout.rest;
 
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.JaxbConverter;
+import java.net.URI;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import javax.xml.bind.Marshaller;
 import org.hamcrest.MatcherAssert;
@@ -75,14 +78,6 @@ public final class JaxbBundleTest {
      */
     @Test
     public void testMarshallingWorks() throws Exception {
-        final XslResolver resolver = new XslResolver();
-        final Providers providers = Mockito.mock(Providers.class);
-        Mockito.doReturn(resolver).when(providers).getContextResolver(
-            Marshaller.class,
-            MediaType.APPLICATION_XML_TYPE
-        );
-        final Resource resource = Mockito.mock(Resource.class);
-        Mockito.doReturn(providers).when(resource).providers();
         final JaxbBundle bundle = new JaxbBundle("alpha")
             .add("beta-1")
                 .attr("name", "Joe")
@@ -91,7 +86,7 @@ public final class JaxbBundleTest {
                 .add("gamma", "works fine, isn't it?")
                 .up()
             .up();
-        final Page page = PageBuilder.INSTANCE.build(resource, "test")
+        final Page page = PageBuilder.INSTANCE.build(this.resource(), "test")
             .append(bundle.element())
             .append("Test me");
         MatcherAssert.assertThat(
@@ -100,6 +95,29 @@ public final class JaxbBundleTest {
                 "/page/alpha/beta-2/gamma[contains(.,'works')]"
             )
         );
+    }
+
+    /**
+     * Create resource.
+     * @return The resource, mocked
+     * @throws Exception If there is some problem inside
+     */
+    private Resource resource() throws Exception {
+        final Resource resource = Mockito.mock(Resource.class);
+        final Providers providers = Mockito.mock(Providers.class);
+        Mockito.doReturn(providers).when(resource).providers();
+        final XslResolver resolver = new XslResolver();
+        Mockito.doReturn(resolver).when(providers).getContextResolver(
+            Marshaller.class,
+            MediaType.APPLICATION_XML_TYPE
+        );
+        final UriInfo info = Mockito.mock(UriInfo.class);
+        Mockito.doReturn(info).when(resource).uriInfo();
+        final URI home = new URI("http://localhost/x");
+        Mockito.doReturn(UriBuilder.fromUri(home))
+            .when(info).getAbsolutePathBuilder();
+        Mockito.doReturn(home).when(info).getAbsolutePath();
+        return resource;
     }
 
 }

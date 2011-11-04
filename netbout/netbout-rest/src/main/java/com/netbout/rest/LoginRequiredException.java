@@ -45,7 +45,7 @@ final class LoginRequiredException extends WebApplicationException {
         super(
             Response
                 .status(Response.Status.TEMPORARY_REDIRECT)
-                .location(UriBuilder.fromPath("/login").build())
+                .location(UriBuilder.fromPath("/g").build())
                 .build()
         );
     }

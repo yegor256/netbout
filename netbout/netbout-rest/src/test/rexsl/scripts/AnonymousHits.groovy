@@ -57,4 +57,8 @@ import org.hamcrest.Matchers
         XhtmlConverter.the(r.body),
         XmlMatchers.hasXPath("/page/providers/link[@name='facebook']")
     )
+    Assert.assertThat(
+        XhtmlConverter.the(r.body),
+        XmlMatchers.hasXPath("/page/links/link[@name='self']")
+    )
 }

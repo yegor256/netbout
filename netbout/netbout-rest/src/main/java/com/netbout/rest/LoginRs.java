@@ -26,30 +26,59 @@
  */
 package com.netbout.rest;
 
+import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 
 /**
- * RESTful front of user's inbox.
+ * RESTful front of login functions.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class InboxRs extends AbstractRs {
+@Path("/g")
+public final class LoginRs extends AbstractRs {
 
     /**
-     * Get bout.
-     * @return The bout, convertable to XML
+     * Login page.
+     * @return The page, convertable to XML
+     * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public Page inbox() {
+    public Page login() {
+        final URI facebookUri = UriBuilder
+            .fromPath("https://www.facebook.com/dialog/oauth")
+            .queryParam("client_id", "1")
+            .queryParam(
+                "redirect_uri",
+                this.uriInfo().getAbsolutePathBuilder()
+                    .replacePath("/g/fb")
+                    .build()
+            )
+            .build();
         return PageBuilder.INSTANCE
-            .build(this, "inbox")
-            .append(this.identity().inbox(""));
+            .build(this, "login")
+            .append(
+                new JaxbBundle("providers")
+                    .add(DefaultPage.HATEOAS_LINK)
+                        .attr(DefaultPage.HATEOAS_NAME, "facebook")
+                        .attr(DefaultPage.HATEOAS_HREF, facebookUri)
+                    .up()
+            );
+    }
+
+    /**
+     * Facebook authentication page (callback hits it).
+     * @return The response
+     */
+    @Path("/fb")
+    @GET
+    public String fbauth() {
+        return "ok";
     }
 
 }
