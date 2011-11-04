@@ -112,6 +112,10 @@ public final class PageBuilder {
             } catch (ClassNotFoundException ex) {
                 throw new IllegalStateException(ex);
             }
+            // let's double check that the class found really is the
+            // class we're looking for
+            assert ((Stylesheet) cls.getAnnotation(Stylesheet.class))
+                .value().equals(stylesheet);
         } else {
             cls = PageBuilder.construct(name, stylesheet);
         }
