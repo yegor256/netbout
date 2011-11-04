@@ -32,13 +32,14 @@
     xmlns:nb="http://www.netbout.com">
 
     <xs:complexType name="link">
-        <xs:attribute name="href" type="xs:string"/>
+        <xs:attribute name="href" type="xs:anyURI"/>
         <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="identity">
         <xs:sequence>
             <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="photo" type="xs:anyURI" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
 
@@ -59,7 +60,7 @@
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="id" type="xs:decimal"/>
+        <xs:attribute name="number" type="xs:decimal"/>
     </xs:complexType>
 
     <xs:element name="page">

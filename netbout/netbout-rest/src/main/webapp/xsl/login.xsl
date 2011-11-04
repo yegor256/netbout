@@ -53,7 +53,10 @@
         <ul>
             <xsl:for-each select="/page/providers/link">
                 <li>
-                    <a href="@href">
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="@href" />
+                        </xsl:attribute>
                         <xsl:value-of select="@name" />
                     </a>
                 </li>

@@ -41,4 +41,8 @@ def r = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('/')
 Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
+//Assert.assertThat(
+//    XhtmlConverter.the(r.body),
+//    XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
+//)
 Assert.assertThat(XhtmlConverter.the(r.body), XmlMatchers.hasXPath("/page"))

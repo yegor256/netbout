@@ -47,7 +47,8 @@ public final class InboxRs extends AbstractRs {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public Page inbox() {
-        return PageBuilder.INSTANCE.build(this, "inbox")
+        return PageBuilder.INSTANCE
+            .build(this, "inbox")
             .append(this.identity().inbox(""));
     }
 
@@ -59,7 +60,19 @@ public final class InboxRs extends AbstractRs {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public Page login() {
-        return PageBuilder.INSTANCE.build(this, "login");
+        return PageBuilder.INSTANCE
+            .build(this, "login")
+            .append(
+                new JaxbBundle("providers")
+                    .add(DefaultPage.HATEOAS_LINK)
+                        .attr(DefaultPage.HATEOAS_NAME, "facebook")
+                        .attr(DefaultPage.HATEOAS_HREF, "http://...")
+                    .up()
+                    .add(DefaultPage.HATEOAS_LINK)
+                        .attr(DefaultPage.HATEOAS_NAME, "twitter")
+                        .attr(DefaultPage.HATEOAS_HREF, "http://t...")
+                    .up()
+            );
     }
 
 }

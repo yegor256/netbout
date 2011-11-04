@@ -35,10 +35,6 @@
         <link href="/" name="logout" />
         <link href="/xml/bout.xml" name="start" />
     </links>
-    <identity>
-        <name>William.Shakespeare</name>
-        <photo>http://www.robert-deniro.com/deniro.jpg</photo>
-    </identity>
     <providers>
         <link name="facebook" href="http://fb.com/..." />
     </providers>

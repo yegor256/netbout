@@ -41,4 +41,11 @@ public interface Page {
      */
     Page append(Object element);
 
+    /**
+     * Add new JAXB bundle.
+     * @param bundle The bundle to add
+     * @return This object
+     */
+    Page append(JaxbBundle bundle);
+
 }

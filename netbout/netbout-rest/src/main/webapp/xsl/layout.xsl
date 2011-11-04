@@ -54,38 +54,46 @@
                         <img src="/images/logo.png"/>
                     </a>
                     <div id="crumbs">
-                        <span>
-                            <img id="photo">
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="/page/identity/photo"/>
-                                </xsl:attribute>
-                            </img>
-                        </span>
-                        <span>
-                            <xsl:value-of select="/page/identity/name"/>
-                        </span>
-                        <span>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="/page/links/link[@name='start']/@href"/>
-                                </xsl:attribute>
-                                <xsl:text>start</xsl:text>
-                            </a>
-                        </span>
-                        <span>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="/page/links/link[@name='logout']/@href"/>
-                                </xsl:attribute>
-                                <xsl:text>logout</xsl:text>
-                            </a>
-                        </span>
+                        <xsl:choose>
+                            <xsl:when test="/page/identity">
+                                <span>
+                                    <img id="photo">
+                                        <xsl:attribute name="src">
+                                            <xsl:value-of select="/page/identity/photo"/>
+                                        </xsl:attribute>
+                                    </img>
+                                </span>
+                                <span>
+                                    <xsl:value-of select="/page/identity/name"/>
+                                </span>
+                                <span>
+                                    <a>
+                                        <xsl:attribute name="href">
+                                            <xsl:value-of select="/page/links/link[@name='start']/@href"/>
+                                        </xsl:attribute>
+                                        <xsl:text>start</xsl:text>
+                                    </a>
+                                </span>
+                                <span>
+                                    <a>
+                                        <xsl:attribute name="href">
+                                            <xsl:value-of select="/page/links/link[@name='logout']/@href"/>
+                                        </xsl:attribute>
+                                        <xsl:text>logout</xsl:text>
+                                    </a>
+                                </span>
+                            </xsl:when>
+                            <xsl:otherwise>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </div>
                 </div>
-                <form id="box">
-                    <input name="q" />
-                    <input value="find" type="submit" />
-                </form>
+                <xsl:if test="/page/identity">
+                    <form id="box">
+                        <input name="q" />
+                        <input value="find" type="submit" />
+                    </form>
+                </xsl:if>
                 <div id="content">
                     <xsl:call-template name="content" />
                 </div>

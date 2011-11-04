@@ -26,35 +26,55 @@
  */
 package com.netbout.rest;
 
-import com.rexsl.core.Stylesheet;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.JaxbConverter;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Providers;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
+import org.xmlmatchers.transform.XmlConverters;
 
 /**
- * Test case for {@link PageBuilder}.
+ * Test case for {@link JaxbBundle}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PageBuilderTest {
+public final class JaxbBundleTest {
+
+    /**
+     * Object can be converted to XML text.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testBundleToXmlConversion() throws Exception {
+        final JaxbBundle bundle = new JaxbBundle("root")
+            .add("employee")
+                .attr("age", "10")
+                .add("dept")
+                    .add("country", "DE")
+                    .up()
+                    .add("salary", "> \u20AC 50,000")
+                    .up()
+                    .attr("boss", "Charles de Batz-Castelmore d'Artagnan")
+                .up()
+            .up();
+        MatcherAssert.assertThat(
+            XmlConverters.the(bundle.element()),
+            XmlMatchers.hasXPath(
+                "/root/employee[@age='10']/dept/country[.='DE']"
+            )
+        );
+    }
 
     /**
      * Object can be converted to XML through JAXB.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testJaxbIsWorking() throws Exception {
+    public void testMarshallingWorks() throws Exception {
         final XslResolver resolver = new XslResolver();
         final Providers providers = Mockito.mock(Providers.class);
         Mockito.doReturn(resolver).when(providers).getContextResolver(
@@ -63,40 +83,23 @@ public final class PageBuilderTest {
         );
         final Resource resource = Mockito.mock(Resource.class);
         Mockito.doReturn(providers).when(resource).providers();
-        final String stylesheet = "test-stylesheet";
-        final Page page = PageBuilder.INSTANCE.build(resource, stylesheet);
-        // double check duplicate instantiation
-        PageBuilder.INSTANCE.build(resource, stylesheet);
+        final JaxbBundle bundle = new JaxbBundle("alpha")
+            .add("beta-1")
+                .attr("name", "Joe")
+            .up()
+            .add("beta-2")
+                .add("gamma", "works fine, isn't it?")
+                .up()
+            .up();
+        final Page page = PageBuilder.INSTANCE.build(resource, "test")
+            .append(bundle.element())
+            .append("Test me");
         MatcherAssert.assertThat(
-            page.getClass().getAnnotation(Stylesheet.class),
-            Matchers.notNullValue()
+            JaxbConverter.the(page, JaxbBundle.class),
+            XmlMatchers.hasXPath(
+                "/page/alpha/beta-2/gamma[contains(.,'works')]"
+            )
         );
-        MatcherAssert.assertThat(
-            page.getClass().getAnnotation(Stylesheet.class).value(),
-            Matchers.equalTo(stylesheet)
-        );
-        page.append(new PageBuilderTest.Foo());
-        page.append(new PageBuilderTest.Foo());
-        MatcherAssert.assertThat(
-            JaxbConverter.the(page, PageBuilderTest.Foo.class),
-            XmlMatchers.hasXPath("/page/foo/message[contains(.,'hello')]")
-        );
-    }
-
-    /**
-     * Sub-class to add to Page as sub-element.
-     */
-    @XmlRootElement(name = "foo")
-    @XmlAccessorType(XmlAccessType.NONE)
-    public static final class Foo {
-        /**
-         * Get message.
-         * @return The message
-         */
-        @XmlElement
-        public String getMessage() {
-            return "hello, world!";
-        }
     }
 
 }

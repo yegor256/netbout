@@ -34,6 +34,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -45,6 +46,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
 public final class DefaultPage implements Page {
+
+    /**
+     * Link element.
+     */
+    public static final String HATEOAS_LINK = "link";
+
+    /**
+     * Name attribute.
+     */
+    public static final String HATEOAS_NAME = "name";
+
+    /**
+     * HREF attribute.
+     */
+    public static final String HATEOAS_HREF = "href";
 
     /**
      * Home resource of this page.
@@ -70,6 +86,17 @@ public final class DefaultPage implements Page {
      */
     public DefaultPage(final Resource res) {
         this.home = res;
+        this.append(
+            new JaxbBundle("links")
+                .add(this.HATEOAS_LINK)
+                    .attr(this.HATEOAS_NAME, "self")
+                    .attr(this.HATEOAS_HREF, "?self")
+                .up()
+                .add(this.HATEOAS_LINK)
+                    .attr(this.HATEOAS_NAME, "home")
+                    .attr(this.HATEOAS_HREF, "?home")
+                .up()
+        );
     }
 
     /**
@@ -78,12 +105,23 @@ public final class DefaultPage implements Page {
     @Override
     public Page append(final Object element) {
         this.elements.add(element);
-        final XslResolver resolver = (XslResolver) this.home.providers()
-            .getContextResolver(
-                Marshaller.class,
-                MediaType.APPLICATION_XML_TYPE
-            );
-        resolver.add(element.getClass());
+        if (!(element instanceof org.w3c.dom.Element)) {
+            final XslResolver resolver = (XslResolver) this.home.providers()
+                .getContextResolver(
+                    Marshaller.class,
+                    MediaType.APPLICATION_XML_TYPE
+                );
+            resolver.add(element.getClass());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page append(final JaxbBundle bundle) {
+        this.append(bundle.element());
         return this;
     }
 
@@ -91,7 +129,8 @@ public final class DefaultPage implements Page {
      * Get all elements.
      * @return Full list of injected elements
      */
-    @XmlAnyElement
+    @XmlAnyElement(lax = true)
+    @XmlMixed
     public Collection<Object> getElements() {
         return this.elements;
     }

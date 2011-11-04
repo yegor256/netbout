@@ -51,6 +51,10 @@ import org.hamcrest.Matchers
     Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
     Assert.assertThat(
         XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'login.xsl')]")
+        XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/login.xsl')]")
+    )
+    Assert.assertThat(
+        XhtmlConverter.the(r.body),
+        XmlMatchers.hasXPath("/page/providers/link[@name='facebook']")
     )
 }
