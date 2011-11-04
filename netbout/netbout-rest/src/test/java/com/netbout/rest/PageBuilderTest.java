@@ -64,8 +64,8 @@ public final class PageBuilderTest {
         final Resource resource = Mockito.mock(Resource.class);
         Mockito.doReturn(providers).when(resource).providers();
         final String stylesheet = "test-stylesheet";
-        final Page page = PageBuilder.build(resource, stylesheet);
-        final Page page2 = PageBuilder.build(resource, stylesheet);
+        final Page page = PageBuilder.INSTANCE.build(resource, stylesheet);
+        final Page page2 = PageBuilder.INSTANCE.build(resource, stylesheet);
         MatcherAssert.assertThat(
             page.getClass().getAnnotation(Stylesheet.class),
             Matchers.notNullValue()

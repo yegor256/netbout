@@ -47,7 +47,7 @@ public final class InboxRs extends AbstractRs {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public Page inbox() {
-        return PageBuilder.build(this, "inbox")
+        return PageBuilder.INSTANCE.build(this, "inbox")
             .append(this.identity().inbox(""));
     }
 
@@ -59,7 +59,7 @@ public final class InboxRs extends AbstractRs {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public Page login() {
-        return PageBuilder.build(this, "login");
+        return PageBuilder.INSTANCE.build(this, "login");
     }
 
 }

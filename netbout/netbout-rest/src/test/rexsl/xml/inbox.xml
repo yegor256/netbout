@@ -38,7 +38,7 @@
     <identity>
         <name>William.Shakespeare</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
-    </idenitty>
+    </identity>
     <bouts>
         <bout id="5463" href="/xml/bout.xml" unread="yes">
             <title>PHP programming in NetBout project</title>

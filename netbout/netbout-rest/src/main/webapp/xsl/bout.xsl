@@ -50,14 +50,14 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <xsl:value-of select="/page/title"/>
+        <xsl:value-of select="/page/bout/title"/>
         <xsl:call-template name="dudes">
-            <xsl:with-param name="participants" select="/page/participants" />
+            <xsl:with-param name="participants" select="/page/bout/participants" />
             <xsl:with-param name="invite" select="'yes'" />
         </xsl:call-template>
         <div id="holder">
             <ul id="titles">
-                <xsl:for-each select="/page/stages/stage">
+                <xsl:for-each select="/page/bout/stages/stage">
                     <xsl:choose>
                         <xsl:when test="not(@href)">
                             <li>
@@ -78,7 +78,7 @@
                 </xsl:for-each>
             </ul>
             <div id="stage">
-                <xsl:for-each select="/page/stages/stage">
+                <xsl:for-each select="/page/bout/stages/stage">
                     <xsl:if test="not(@href)">
                         <!-- <xsl:call-template name="stage">
                             <xsl:with-param name="root" select="." />
@@ -91,16 +91,16 @@
             <dl><textarea cols="80" rows="5"></textarea></dl>
             <dl><input name="submit" type="submit" /></dl>
         </form>
-        <xsl:for-each select="/page/messages/message">
+        <xsl:for-each select="/page/bout/messages/message">
             <xsl:variable name="message" select="."/>
             <div class="message">
                 <div class="header">
                     <img>
                         <xsl:attribute name="src">
-                            <xsl:value-of select="/page/participants/participant[$message/author/text()=identity/text()]/photo/@href"/>
+                            <xsl:value-of select="/page/bout/participants/participant[$message/author/text()=identity/name/text()]/photo"/>
                         </xsl:attribute>
                     </img>
-                    <xsl:value-of select="/page/participants/participant[$message/author/text()=identity/text()]/identity"/>
+                    <xsl:value-of select="/page/bout/participants/participant[$message/author/text()=identity/name/text()]/identity/name"/>
                 </div>
                 <xsl:value-of select="text"/>
             </div>

@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.rexsl.core.Stylesheet;
 import com.ymock.util.Logger;
 import java.util.Collection;
+import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.bytecode.AnnotationsAttribute;
@@ -37,7 +38,7 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
 
 /**
- * Page builder.
+ * Page builder, a singleton.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -45,10 +46,24 @@ import javassist.bytecode.annotation.StringMemberValue;
 public final class PageBuilder {
 
     /**
-     * It's utility class, you can't instantiate it directly.
+     * Public instance.
+     */
+    public static final PageBuilder INSTANCE = new PageBuilder();
+
+    /**
+     * Javassist class pool.
+     */
+    private final ClassPool pool = ClassPool.getDefault();
+
+    /**
+     * It's a singleton class, you can't instantiate it directly.
      */
     private PageBuilder() {
-        // intentionally empty
+        this.pool.insertClassPath(new ClassClassPath(this.getClass()));
+        Logger.debug(
+            this,
+            "#PageBuilder(): javassist initialized"
+        );
     }
 
     /**
@@ -57,10 +72,10 @@ public final class PageBuilder {
      * @param stylesheet The XSL stylesheet to use with this class
      * @return The instance of the class just created
      */
-    public static Page build(final Resource home, final String stylesheet) {
+    public Page build(final Resource home, final String stylesheet) {
         Page page;
         try {
-            page = (Page) PageBuilder.create(stylesheet)
+            page = (Page) this.create(stylesheet)
                 .getDeclaredConstructor(Resource.class)
                 .newInstance(home);
         } catch (InstantiationException ex) {
@@ -73,7 +88,7 @@ public final class PageBuilder {
             throw new IllegalStateException(ex);
         }
         Logger.debug(
-            PageBuilder.class,
+            this,
             "#build(%s, '%s'): page of class %s created",
             home.getClass().getName(),
             stylesheet,
@@ -89,7 +104,7 @@ public final class PageBuilder {
      * @return The object that can be added to the Page
      *  with {@link #append(Object)}
      */
-    public static Object group(final String name, final Collection list) {
+    public Object group(final String name, final Collection list) {
         // todo
         return null;
     }
@@ -99,14 +114,14 @@ public final class PageBuilder {
      * @param stylesheet The XSL stylesheet to use with this class
      * @return The class just created or found
      */
-    private static Class<? extends Page> create(final String stylesheet) {
+    private Class<? extends Page> create(final String stylesheet) {
         final String name = String.format(
             "com.netbout.rest.Page$%s$%d",
             stylesheet.replaceAll("[^\\w]", ""),
             Math.abs(stylesheet.hashCode())
         );
         Class cls;
-        if (ClassPool.getDefault().getOrNull(name) != null) {
+        if (this.pool.getOrNull(name) != null) {
             try {
                 cls = (Class<Page>) Class.forName(name);
             } catch (ClassNotFoundException ex) {
@@ -117,7 +132,7 @@ public final class PageBuilder {
             assert ((Stylesheet) cls.getAnnotation(Stylesheet.class))
                 .value().equals(stylesheet);
         } else {
-            cls = PageBuilder.construct(name, stylesheet);
+            cls = this.construct(name, stylesheet);
         }
         return cls;
     }
@@ -128,10 +143,10 @@ public final class PageBuilder {
      * @param stylesheet The XSL stylesheet to use with this class
      * @return The class just created
      */
-    private static Class<? extends Page> construct(final String name,
+    private Class<? extends Page> construct(final String name,
         final String stylesheet) {
         try {
-            final CtClass ctc = ClassPool.getDefault().getAndRename(
+            final CtClass ctc = this.pool.getAndRename(
                 DefaultPage.class.getName(),
                 name
             );
@@ -151,7 +166,7 @@ public final class PageBuilder {
             attribute.addAnnotation(annotation);
             final Class cls = ctc.toClass();
             Logger.debug(
-                PageBuilder.class,
+                this,
                 "#construct('%s', '%s'): class %s created",
                 name,
                 stylesheet,

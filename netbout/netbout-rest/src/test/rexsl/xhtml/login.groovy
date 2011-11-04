@@ -28,26 +28,12 @@
  * @version $Id$
  */
 
-/*
-import com.rexsl.test.TestClient
+import static org.xmlmatchers.XmlMatchers.hasXPath
 import com.rexsl.test.XhtmlConverter
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
 import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
-import org.hamcrest.Matchers
 
-def r = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
-    .header(HttpHeaders.USER_AGENT, 'Firefox 5')
-    .get('/')
-Assert.assertThat(r.status, equalTo(HttpURLConnection.HTTP_OK))
-Assert.assertThat(
-    XhtmlConverter.the(r.body),
-    XmlMatchers.hasXPath(
-        '//x:div[contains(.,"product")]',
-        new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-    )
-)
-*/
+def xhtml = XhtmlConverter.the(rexsl.document)
+def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+
+Assert.assertThat(xhtml, hasXPath('//x:html', ctx))

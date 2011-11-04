@@ -38,14 +38,14 @@ import javax.ws.rs.core.MediaType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/{id: \\d+}")
+@Path("/{num: \\d+}")
 public final class BoutRs extends AbstractRs {
 
     /**
      * Public ctor.
-     * @param boutId ID of the bout to work with
+     * @param num ID of the bout to work with
      */
-    public BoutRs(@PathParam("id") final Long boutId) {
+    public BoutRs(@PathParam("num") final Long num) {
         super();
     }
 
@@ -54,8 +54,9 @@ public final class BoutRs extends AbstractRs {
      * @return The bout, convertable to XML
      */
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_XML)
     public String bout() {
+        this.identity();
         return "hello";
     }
 

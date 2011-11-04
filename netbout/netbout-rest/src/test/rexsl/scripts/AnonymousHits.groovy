@@ -23,32 +23,34 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-
-/**
- * Thrown when login is required, but is not provided in cookies.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class LoginRequiredException extends WebApplicationException {
 
-    /**
-     * Constructor.
-     */
-    public LoginRequiredException() {
-        super(
-            Response
-                .status(Response.Status.TEMPORARY_REDIRECT)
-                .location(UriBuilder.fromPath("/login").build())
-                .build()
-        );
-    }
+import com.rexsl.test.TestClient
+import com.rexsl.test.XhtmlConverter
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import org.junit.Assert
+import org.xmlmatchers.XmlMatchers
+import org.xmlmatchers.namespace.SimpleNamespaceContext
+import org.hamcrest.Matchers
 
+// In this script we are trying to make different hits to the site
+// from anonymous user. All of our hits should lead to /login page.
+
+[
+    '/',
+    '/123',
+    '/login'
+].each { url ->
+    def r = new TestClient(rexsl.home)
+        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .get(url)
+    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
+    Assert.assertThat(
+        XhtmlConverter.the(r.body),
+        XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'login.xsl')]")
+    )
 }

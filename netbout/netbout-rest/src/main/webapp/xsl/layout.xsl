@@ -57,12 +57,12 @@
                         <span>
                             <img id="photo">
                                 <xsl:attribute name="src">
-                                    <xsl:value-of select="/page/photo/@href"/>
+                                    <xsl:value-of select="/page/identity/photo"/>
                                 </xsl:attribute>
                             </img>
                         </span>
                         <span>
-                            <xsl:value-of select="/page/identity"/>
+                            <xsl:value-of select="/page/identity/name"/>
                         </span>
                         <span>
                             <a>

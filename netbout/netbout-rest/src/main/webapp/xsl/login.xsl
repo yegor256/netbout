@@ -54,7 +54,7 @@
             <xsl:for-each select="/page/providers/link">
                 <li>
                     <a href="@href">
-                        <xsl:value-of select="@name">
+                        <xsl:value-of select="@name" />
                     </a>
                 </li>
             </xsl:for-each>
