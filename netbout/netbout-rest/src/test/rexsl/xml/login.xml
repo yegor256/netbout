@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/PageInbox.xsl" type="text/xsl"?>
+<?xml-stylesheet href="/xsl/login.xsl" type="text/xsl"?>
 <!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
@@ -31,9 +31,9 @@
  -->
 <page>
     <links>
-        <link href="/xml/PageInbox.xml" name="home" />
+        <link href="/xml/inbox.xml" name="home" />
         <link href="/" name="logout" />
-        <link href="/xml/PageBout.xml" name="start" />
+        <link href="/xml/bout.xml" name="start" />
     </links>
     <identity>
         <name>William.Shakespeare</name>
