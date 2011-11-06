@@ -234,9 +234,11 @@
                             <configuration>
                                 <archive>
                                     <manifestEntries>
-                                        <SCM-Revision>${buildNumber}</SCM-Revision>
+                                        <Netbout-Revision>${buildNumber}</Netbout-Revision>
                                         <NetBout-Version>${project.version}</NetBout-Version>
                                         <NetBout-Date>${maven.build.timestamp}</NetBout-Date>
+                                        <NetBout-FbId>${fb.id}</NetBout-FbId>
+                                        <NetBout-FbSecret>${fb.secret}</NetBout-FbSecret>
                                     </manifestEntries>
                                 </archive>
                             </configuration>

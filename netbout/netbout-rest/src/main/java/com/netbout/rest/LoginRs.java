@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.rexsl.core.Manifests;
 import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -52,7 +53,7 @@ public final class LoginRs extends AbstractRs {
     public Page login() {
         final URI facebookUri = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
-            .queryParam("client_id", "1")
+            .queryParam("client_id", Manifests.INSTANCE.read("Netbout-FbId"))
             .queryParam(
                 "redirect_uri",
                 this.uriInfo().getAbsolutePathBuilder()

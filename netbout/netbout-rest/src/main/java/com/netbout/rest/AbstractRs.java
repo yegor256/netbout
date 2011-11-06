@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.hub.HubEntry;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import javax.ws.rs.core.Context;
@@ -43,57 +44,33 @@ abstract class AbstractRs implements Resource {
     /**
      * Entry to work with.
      */
-    private Entry entry;
+    private Entry entry = new HubEntry();
 
     /**
-     * Injected by JAX-RS.
+     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
      */
+    @Context
     private Providers providers;
 
     /**
-     * Injected by JAX-RS.
+     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
      */
+    @Context
     private UriInfo uriInfo;
-
-    /**
-     * Inject hub, should be called by JAX-RS framework.
-     * @param ent The entry to work with
-     */
-    public final void setEntry(@Context final Entry ent) {
-        this.entry = ent;
-    }
-
-    /**
-     * Set URI Info, to be called by JAX-RS framework or a unit test.
-     * @param info The info to inject
-     */
-    @Context
-    public void setUriInfo(final UriInfo info) {
-        this.uriInfo = info;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public UriInfo uriInfo() {
-        return this.uriInfo;
-    }
-
-    /**
-     * Set Providers, to be called by JAX-RS framework or a unit test.
-     * @param prov List of providers
-     */
-    @Context
-    public void setProviders(final Providers prov) {
-        this.providers = prov;
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Providers providers() {
+        if (this.providers == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#providers was never injected by JAX-RS",
+                    this.getClass().getName()
+                )
+            );
+        }
         return this.providers;
     }
 
@@ -102,7 +79,55 @@ abstract class AbstractRs implements Resource {
      */
     @Override
     public final Identity identity() {
+        if (this.entry == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#entry was never injected by JAX-RS",
+                    this.getClass().getName()
+                )
+            );
+        }
         throw new LoginRequiredException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UriInfo uriInfo() {
+        if (this.uriInfo == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#uriInfo was never injected by JAX-RS",
+                    this.getClass().getName()
+                )
+            );
+        }
+        return this.uriInfo;
+    }
+
+    /**
+     * Set new entry.
+     * @param ent The entry to work with
+     */
+    public final void setEntry(final Entry ent) {
+        this.entry = ent;
+    }
+
+    /**
+     * Set URI Info, to be called by unit test.
+     * @param info The info to inject
+     */
+    public void setUriInfo(final UriInfo info) {
+        this.uriInfo = info;
+    }
+
+    /**
+     * Set Providers, to be called by JAX-RS framework or a unit test.
+     * @param prov List of providers
+     */
+    public void setProviders(final Providers prov) {
+        this.providers = prov;
     }
 
 }

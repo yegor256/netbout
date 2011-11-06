@@ -60,6 +60,10 @@ public final class LoginRsTest {
             JaxbConverter.the(page),
             XmlMatchers.hasXPath("/page/providers/link[@name='facebook']")
         );
+        MatcherAssert.assertThat(
+            JaxbConverter.the(page),
+            XmlMatchers.hasXPath("/page/version/name[.='1.0']")
+        );
     }
 
 }

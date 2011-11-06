@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -104,6 +105,15 @@ public final class DefaultPage implements Page {
                             .replacePath("/")
                             .build()
                 )
+                .up()
+        );
+        this.append(
+            new JaxbBundle("version")
+                .add("name", Manifests.INSTANCE.read("Netbout-Version"))
+                .up()
+                .add("revision", Manifests.INSTANCE.read("Netbout-Revision"))
+                .up()
+                .add("date", Manifests.INSTANCE.read("Netbout-Date"))
                 .up()
         );
     }
