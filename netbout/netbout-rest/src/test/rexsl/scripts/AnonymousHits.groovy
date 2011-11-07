@@ -42,7 +42,7 @@ import org.hamcrest.Matchers
 [
     '/',
     '/123',
-    '/login'
+    '/g'
 ].each { url ->
     def r = new TestClient(rexsl.home)
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
