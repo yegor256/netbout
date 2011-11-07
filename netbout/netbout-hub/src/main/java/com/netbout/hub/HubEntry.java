@@ -23,19 +23,34 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub;
+
+import com.netbout.spi.Entry;
+import com.netbout.spi.User;
+
+/**
+ * Entry point to Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+public final class HubEntry implements Entry {
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void register(final String name, final String secret) {
+        //...
+    }
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public User authenticate(final String name, final String secret) {
+        return null;
+    }
 
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+}

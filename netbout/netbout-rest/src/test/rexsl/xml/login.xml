@@ -1,4 +1,6 @@
-/**
+<?xml version="1.0"?>
+<?xml-stylesheet href="/xsl/login.xsl" type="text/xsl"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -26,16 +28,14 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
-
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+ -->
+<page>
+    <links>
+        <link href="/xml/inbox.xml" name="home" />
+        <link href="/" name="logout" />
+        <link href="/xml/bout.xml" name="start" />
+    </links>
+    <providers>
+        <link name="facebook" href="http://fb.com/..." />
+    </providers>
+</page>

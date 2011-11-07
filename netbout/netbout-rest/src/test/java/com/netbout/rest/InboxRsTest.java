@@ -23,19 +23,38 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.rest;
+
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+/**
+ * Test case for {@link InboxRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+public final class InboxRsTest {
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    /**
+     * Login page should be renderable.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testLoginPageRendering() throws Exception {
+        final UriInfo info = Mockito.mock(UriInfo.class);
+        final URI home = new URI("http://localhost/g");
+        Mockito.doReturn(UriBuilder.fromUri(home))
+            .when(info).getAbsolutePathBuilder();
+        Mockito.doReturn(home).when(info).getAbsolutePath();
+        final InboxRs rest = new InboxRs();
+        rest.setUriInfo(info);
+        MatcherAssert.assertThat(rest, Matchers.notNullValue());
+    }
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+}

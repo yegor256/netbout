@@ -36,6 +36,4 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext
 def xhtml = XhtmlConverter.the(rexsl.document)
 def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
 
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+Assert.assertThat(xhtml, hasXPath('//x:html', ctx))

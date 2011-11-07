@@ -32,7 +32,7 @@
     xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-    http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+        http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
     <display-name>www.netbout.com</display-name>
     <description>netBout.com</description>
@@ -66,10 +66,6 @@
     <filter>
         <filter-name>XsltFilter</filter-name>
         <filter-class>com.rexsl.core.XsltFilter</filter-class>
-        <description>
-            This filter will convert XML documents produced by JAXB into
-            XHTML documents, through an XSLT transformer.
-        </description>
     </filter>
     <filter-mapping>
         <filter-name>XsltFilter</filter-name>
@@ -81,11 +77,6 @@
     <servlet>
         <servlet-name>RestfulServlet</servlet-name>
         <servlet-class>com.rexsl.core.RestfulServlet</servlet-class>
-        <description>
-            This servlet is responsible for resolving JAX-RS annotated
-            resources and converting their JAXB-annotated output into
-            XML documents.
-        </description>
         <init-param>
             <param-name>com.rexsl.PACKAGES</param-name>
             <param-value>com.netbout.rest</param-value>

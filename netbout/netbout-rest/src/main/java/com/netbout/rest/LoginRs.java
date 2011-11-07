@@ -26,38 +26,64 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.page.JaxbBundle;
+import com.netbout.rest.page.PageBuilder;
+import com.rexsl.core.Manifests;
+import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 
 /**
- * RESTful front of one Bout.
+ * RESTful front of login functions.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/{num: \\d+}")
-public final class BoutRs extends AbstractRs {
+@Path("/g")
+public final class LoginRs extends AbstractRs {
 
     /**
-     * Public ctor.
-     * @param num ID of the bout to work with
-     */
-    public BoutRs(@PathParam("num") final Long num) {
-        super();
-    }
-
-    /**
-     * Get bout.
-     * @return The bout, convertable to XML
+     * Login page.
+     * @return The page, convertable to XML
+     * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public String bout() {
-        this.identity();
-        return "hello";
+    public Page login() {
+        final URI facebookUri = UriBuilder
+            .fromPath("https://www.facebook.com/dialog/oauth")
+            .queryParam("client_id", Manifests.INSTANCE.read("Netbout-FbId"))
+            .queryParam(
+                "redirect_uri",
+                this.uriInfo().getAbsolutePathBuilder()
+                    .replacePath("/g/fb")
+                    .build()
+            )
+            .build();
+        return new PageBuilder()
+            .stylesheet("login")
+            .build(AbstractPage.class)
+            .init(this)
+            .append(
+                new JaxbBundle("providers")
+                    .add(Page.HATEOAS_LINK)
+                        .attr(Page.HATEOAS_NAME, "facebook")
+                        .attr(Page.HATEOAS_HREF, facebookUri)
+                    .up()
+            );
+    }
+
+    /**
+     * Facebook authentication page (callback hits it).
+     * @return The response
+     */
+    @Path("/fb")
+    @GET
+    public String fbauth() {
+        return "ok";
     }
 
 }

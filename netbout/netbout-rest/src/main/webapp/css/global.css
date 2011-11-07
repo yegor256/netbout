@@ -34,6 +34,10 @@ img {
     border: 0;
 }
 
+ul, ol {
+    margin-left: 2em;
+}
+
 body {
     font-family: Arial, sans-serif;
     font-size: 12pt;
@@ -42,6 +46,17 @@ body {
     position: relative;
     color: #122632;
     padding: 1em;
+}
+
+/* top right label about deployed version */
+div#version {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 0.2em 0.5em;
+    font-size: 0.8em;
+    background-color: black;
+    color: white;
 }
 
 /* top bar */

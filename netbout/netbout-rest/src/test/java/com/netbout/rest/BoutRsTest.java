@@ -26,9 +26,13 @@
  */
 package com.netbout.rest;
 
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case for {@link BoutRs}.
@@ -43,7 +47,13 @@ public final class BoutRsTest {
      */
     @Test
     public void testBoutRendering() throws Exception {
+        final UriInfo info = Mockito.mock(UriInfo.class);
+        final URI home = new URI("http://localhost/g");
+        Mockito.doReturn(UriBuilder.fromUri(home))
+            .when(info).getAbsolutePathBuilder();
+        Mockito.doReturn(home).when(info).getAbsolutePath();
         final BoutRs rest = new BoutRs(1L);
+        rest.setUriInfo(info);
         MatcherAssert.assertThat(rest, Matchers.notNullValue());
     }
 

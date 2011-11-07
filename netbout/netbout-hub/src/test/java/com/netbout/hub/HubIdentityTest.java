@@ -23,19 +23,34 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.hub;
+
+import org.junit.Test;
+
+/**
+ * Test case of {@link HubIdentity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+public final class HubIdentityTest {
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    /**
+     * Object can be converted to XML through JAXB.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testJaxbIsWorking() throws Exception {
+        // final Identity identity = new HubIdentity();
+        // final Source xml = JaxbConverter.the(identity);
+        // MatcherAssert.assertThat(
+        //     xml,
+        //     XmlMatchers.hasXPath("/identity/name")
+        // );
+        // MatcherAssert.assertThat(
+        //     xml,
+        //     XmlMatchers.hasXPath("/identity/photo")
+        // );
+    }
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+}

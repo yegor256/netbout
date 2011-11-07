@@ -23,19 +23,46 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest;
+
+import com.netbout.rest.page.JaxbBundle;
+
+/**
+ * Page.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+public interface Page {
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    /**
+     * Link element.
+     */
+    String HATEOAS_LINK = "link";
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+    /**
+     * Name attribute.
+     */
+    String HATEOAS_NAME = "name";
 
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+    /**
+     * HREF attribute.
+     */
+    String HATEOAS_HREF = "href";
+
+    /**
+     * Append new JAXB-annotated element.
+     * @param element The element
+     * @return This object
+     */
+    Page append(Object element);
+
+    /**
+     * Append new bundle.
+     * @param bundle The DOM bundle
+     * @return This object
+     */
+    Page append(JaxbBundle bundle);
+
+}

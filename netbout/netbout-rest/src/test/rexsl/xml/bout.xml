@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/PageBout.xsl" type="text/xsl"?>
+<?xml-stylesheet href="/xsl/bout.xsl" type="text/xsl"?>
 <!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
@@ -31,81 +31,94 @@
  -->
 <page>
     <links>
-        <link href="/xml/PageInbox.xml" name="home" />
+        <link href="/xml/inbox.xml" name="home" />
         <link href="/" name="logout" />
-        <link href="/xml/PageBout.xml" name="start" />
+        <link href="/xml/bout.xml" name="start" />
     </links>
-    <id>6252</id>
-    <title>PHP programming in Netbout project</title>
-    <identity>robert.deniro</identity>
-    <photo href="http://www.robert-deniro.com/deniro.jpg"/>
-    <stages>
-        <stage name="Recent Payments">
-            <payments>
-                <payment>
-                    <date>23-08-2011</date>
-                    <amount>123</amount>
-                    <currency>USD</currency>
-                    <details>paid to Johnny for Fear and Loathing</details>
-                </payment>
-                <payment>
-                    <date>23-08-2011</date>
-                    <amount>500</amount>
-                    <currency>USD</currency>
-                    <details>paid to Javier for something else</details>
-                </payment>
-            </payments>
-        </stage>
-        <stage name="Documents" href="/xml/PageBout.xml">
-            <documents>
-                <doc name="some-name.txt" />
-            </documents>
-        </stage>
-    </stages>
-    <participants>
-        <participant href="/xml/PageBout.xml">
-            <identity>depp</identity>
-            <photo href="http://www.ofcelebrity.net/photos/johnny-depp-6.jpg" />
-        </participant>
-        <participant href="/xml/PageBout.xml" pending="yes">
-            <identity>javier@gmail.com</identity>
-            <photo href="http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg" />
-        </participant>
-        <participant href="/xml/PageBout.xml">
-            <identity>john.turturro</identity>
-            <photo href="http://www.topnews.in/light/files/John-Turturro.jpg" />
-        </participant>
-        <participant href="/xml/PageBout.xml">
-            <identity>2pac</identity>
-            <photo href="http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg" />
-        </participant>
-    </participants>
-    <messages>
-        <message>
-            <author>depp</author>
-            <text>
-                I think that this subject should be discussed in
-                this bout. What do you think, guys?...
-            </text>
-        </message>
-        <message>
-            <author>javier@gmail.com</author>
-            <text>
-                Yeah, I agree, let's talk about it today!
-            </text>
-        </message>
-        <message>
-            <author>john.turturro</author>
-            <text>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </text>
-        </message>
-        <message>
-            <author>2pac</author>
-            <text>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </text>
-        </message>
-    </messages>
+    <identity>
+        <name>William.Shakespeare</name>
+        <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+    </identity>
+    <bout>
+        <number>6252</number>
+        <title>PHP programming in Netbout project</title>
+        <stages>
+            <stage name="Recent Payments">
+                <payments>
+                    <payment>
+                        <date>23-08-2011</date>
+                        <amount>123</amount>
+                        <currency>USD</currency>
+                        <details>paid to Johnny for Fear and Loathing</details>
+                    </payment>
+                    <payment>
+                        <date>23-08-2011</date>
+                        <amount>500</amount>
+                        <currency>USD</currency>
+                        <details>paid to Javier for something else</details>
+                    </payment>
+                </payments>
+            </stage>
+            <stage name="Documents" href="/xml/PageBout.xml">
+                <documents>
+                    <doc name="some-name.txt" />
+                </documents>
+            </stage>
+        </stages>
+        <participants>
+            <participant href="/xml/PageBout.xml" confirmed="1">
+                <identity>
+                    <name>depp</name>
+                    <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
+                </identity>
+            </participant>
+            <participant href="/xml/PageBout.xml" confirmed="1">
+                <identity>
+                    <name>javier@gmail.com</name>
+                    <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
+                </identity>
+            </participant>
+            <participant href="/xml/PageBout.xml" confirmed="0">
+                <identity>
+                    <name>john.turturro</name>
+                    <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
+                </identity>
+            </participant>
+            <participant href="/xml/PageBout.xml" confirmed="1">
+                <identity>
+                    <name>2pac</name>
+                    <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>
+                </identity>
+            </participant>
+        </participants>
+        <messages>
+            <message>
+                <author>depp</author>
+                <text>
+                    I think that this subject should be discussed in
+                    this bout. What do you think, guys?...
+                </text>
+                <date></date>
+            </message>
+            <message>
+                <author>javier@gmail.com</author>
+                <text>
+                    Yeah, I agree, let's talk about it today!
+                </text>
+            </message>
+            <message>
+                <author>john.turturro</author>
+                <text>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </text>
+            </message>
+            <message>
+                <author>2pac</author>
+                <text>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </text>
+            </message>
+        </messages>
+    </bout>
 </page>

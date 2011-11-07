@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/PageInbox.xsl" type="text/xsl"?>
+<?xml-stylesheet href="/xsl/inbox.xsl" type="text/xsl"?>
 <!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
@@ -31,14 +31,16 @@
  -->
 <page>
     <links>
-        <link href="/xml/PageInbox.xml" name="home" />
+        <link href="/xml/inbox.xml" name="home" />
         <link href="/" name="logout" />
-        <link href="/xml/PageBout.xml" name="start" />
+        <link href="/xml/bout.xml" name="start" />
     </links>
-    <identity>William.Shakespeare</identity>
-    <photo href="http://www.robert-deniro.com/deniro.jpg"/>
+    <identity>
+        <name>William.Shakespeare</name>
+        <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+    </identity>
     <bouts>
-        <bout id="5463" href="/xml/PageBout.xml" unread="yes">
+        <bout id="5463" href="/xml/bout.xml" unread="yes">
             <title>PHP programming in NetBout project</title>
             <participants>
                 <participant>
@@ -51,7 +53,7 @@
                 </participant>
             </participants>
         </bout>
-        <bout id="6363" href="/xml/PageBout.xml" unread="yes">
+        <bout id="6363" href="/xml/bout.xml" unread="yes">
             <title>some personal issues to discuss urgently</title>
             <participants>
                 <participant>
@@ -68,7 +70,7 @@
                 </participant>
             </participants>
         </bout>
-        <bout id="63775" href="/xml/PageBout.xml">
+        <bout id="63775" href="/xml/bout.xml">
             <title>how about joining my team next week?</title>
             <participants>
                 <participant>

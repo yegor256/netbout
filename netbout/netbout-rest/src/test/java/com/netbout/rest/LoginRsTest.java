@@ -23,19 +23,51 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.rest;
+
+import com.rexsl.test.JaxbConverter;
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.xmlmatchers.XmlMatchers;
+
+/**
+ * Test case for {@link LoginRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+public final class LoginRsTest {
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    /**
+     * Login page should be renderable.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testLoginPageRendering() throws Exception {
+        final UriInfo info = Mockito.mock(UriInfo.class);
+        final URI home = new URI("http://localhost/g");
+        Mockito.doReturn(UriBuilder.fromUri(home))
+            .when(info).getAbsolutePathBuilder();
+        Mockito.doReturn(home).when(info).getAbsolutePath();
+        final LoginRs rest = new LoginRs();
+        rest.setUriInfo(info);
+        final Page page = rest.login();
+        MatcherAssert.assertThat(
+            JaxbConverter.the(page),
+            XmlMatchers.hasXPath("/page/providers/link[@name='facebook']")
+        );
+        MatcherAssert.assertThat(
+            JaxbConverter.the(page),
+            XmlMatchers.hasXPath("/page/version/name[.='1.0']")
+        );
+        MatcherAssert.assertThat(
+            JaxbConverter.the(page),
+            XmlMatchers.hasXPath("/page/links/link[@name='self']")
+        );
+    }
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+}

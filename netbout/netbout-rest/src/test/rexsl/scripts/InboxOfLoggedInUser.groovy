@@ -28,14 +28,20 @@
  * @version $Id$
  */
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
+import com.rexsl.test.TestClient
 import com.rexsl.test.XhtmlConverter
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
 import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+import org.xmlmatchers.XmlMatchers
+import org.hamcrest.Matchers
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+def r = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('/')
+Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
+//Assert.assertThat(
+//    XhtmlConverter.the(r.body),
+//    XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
+//)
+Assert.assertThat(XhtmlConverter.the(r.body), XmlMatchers.hasXPath('/page'))

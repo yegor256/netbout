@@ -23,31 +23,36 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest;
+
+import com.netbout.rest.page.PageBuilder;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+/**
+ * RESTful front of user's inbox.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Path("/")
+public final class InboxRs extends AbstractRs {
 
-/*
-import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.xmlmatchers.namespace.SimpleNamespaceContext
-import org.hamcrest.Matchers
+    /**
+     * Get bout.
+     * @return The bout, convertable to XML
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public Page inbox() {
+        return new PageBuilder()
+            .stylesheet("inbox")
+            .build(AbstractPage.class)
+            .init(this)
+            .append(this.identity().inbox(""));
+    }
 
-def r = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
-    .header(HttpHeaders.USER_AGENT, 'Firefox 5')
-    .get('/')
-Assert.assertThat(r.status, equalTo(HttpURLConnection.HTTP_OK))
-Assert.assertThat(
-    XhtmlConverter.the(r.body),
-    XmlMatchers.hasXPath(
-        '//x:div[contains(.,"product")]',
-        new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-    )
-)
-*/
+}

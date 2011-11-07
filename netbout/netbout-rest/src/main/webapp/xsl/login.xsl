@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -26,16 +27,41 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    <xsl:output method="xhtml"/>
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
+    <xsl:include href="/xsl/layout.xsl" />
+    <xsl:include href="/xsl/dudes.xsl" />
 
-Assert.assertThat(xhtml, hasXPath('//x:div[@class="message"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:div[@id="stage"]', ctx))
-Assert.assertThat(xhtml, hasXPath('//x:title', ctx))
+    <xsl:template name="title">
+        <xsl:text>login</xsl:text>
+    </xsl:template>
+
+    <xsl:template name="head">
+    </xsl:template>
+
+    <xsl:template name="content">
+        <p>
+            <xsl:text>Login using one of them:</xsl:text>
+        </p>
+        <ul>
+            <xsl:for-each select="/page/providers/link">
+                <li>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="@href" />
+                        </xsl:attribute>
+                        <xsl:value-of select="@name" />
+                    </a>
+                </li>
+            </xsl:for-each>
+        </ul>
+    </xsl:template>
+
+</xsl:stylesheet>
