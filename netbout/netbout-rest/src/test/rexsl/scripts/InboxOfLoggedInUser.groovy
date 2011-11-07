@@ -34,7 +34,6 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import org.junit.Assert
 import org.xmlmatchers.XmlMatchers
-import org.xmlmatchers.namespace.SimpleNamespaceContext
 import org.hamcrest.Matchers
 
 def r = new TestClient(rexsl.home)
@@ -45,4 +44,4 @@ Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
 //    XhtmlConverter.the(r.body),
 //    XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
 //)
-Assert.assertThat(XhtmlConverter.the(r.body), XmlMatchers.hasXPath("/page"))
+Assert.assertThat(XhtmlConverter.the(r.body), XmlMatchers.hasXPath('/page'))

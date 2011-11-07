@@ -34,7 +34,6 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import org.junit.Assert
 import org.xmlmatchers.XmlMatchers
-import org.xmlmatchers.namespace.SimpleNamespaceContext
 import org.hamcrest.Matchers
 
 // In this script we are trying to make different hits to the site

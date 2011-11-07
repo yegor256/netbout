@@ -190,16 +190,16 @@ public final class PageBuilder {
     /**
      * Get list of existing annotations. Maybe we should filter out some of
      * them and not copy to the new class, I don't know.
-     * @param base Base class, where these annotations will be used
+     * @param dest Destination class, where these annotations will be used
      * @param parent Parent class, which will be inherited
      * @return The list of them
      */
-    private Collection<Annotation> annotations(final CtClass base,
+    private Collection<Annotation> annotations(final CtClass dest,
         final CtClass parent) {
         final AnnotationsAttribute attrib =
             (AnnotationsAttribute) parent.getClassFile()
                 .getAttribute(AnnotationsAttribute.visibleTag)
-                .copy(base.getClassFile().getConstPool(), new HashMap());
+                .copy(dest.getClassFile().getConstPool(), new HashMap());
         final Annotation[] all = attrib.getAnnotations();
         final Collection<Annotation> result = new ArrayList<Annotation>();
         final List<String> names = new ArrayList<String>();
@@ -211,7 +211,7 @@ public final class PageBuilder {
             this,
             // @checkstyle LineLength (1 line)
             "#annotations(%s, %s): %d found in base class, %d of them are copied: %s",
-            base.getName(),
+            dest.getName(),
             parent.getName(),
             all.length,
             result.size(),
