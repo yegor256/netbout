@@ -66,7 +66,7 @@ public final class DefaultPage implements Page {
     /**
      * Home resource of this page.
      */
-    private final Resource home;
+    private Resource home;
 
     /**
      * Collection of elements.
@@ -74,10 +74,10 @@ public final class DefaultPage implements Page {
     private final Collection elements = new ArrayList();
 
     /**
-     * Public ctor for JAXB, should never be called.
+     * Public ctor.
      */
     public DefaultPage() {
-        throw new IllegalStateException("#DefaultPage(): illegal call");
+        // intentionally empty
     }
 
     /**
@@ -85,7 +85,7 @@ public final class DefaultPage implements Page {
      * @param res Home of this page
      * @see PageBuilder#build(Resource,String)
      */
-    public DefaultPage(final Resource res) {
+    public void init(final Resource res) {
         this.home = res;
         this.append(
             new JaxbBundle("links")
