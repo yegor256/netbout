@@ -69,15 +69,16 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public List<Bout> inbox(String query) {
+    public List<Bout> inbox(final String query) {
         return null;
     }
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (3 lines)
      */
     @Override
-    public Bout bout(Long number) throws BoutNotFoundException {
+    public Bout bout(final Long number) throws BoutNotFoundException {
         return null;
     }
 
@@ -117,9 +118,10 @@ public final class HubIdentity implements Identity {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (3 lines)
      */
     @Override
-    public void promote(Helper helper) throws PromotionException {
+    public void promote(final Helper helper) throws PromotionException {
         //...
     }
 

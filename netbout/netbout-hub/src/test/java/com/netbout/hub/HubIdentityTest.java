@@ -26,13 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Identity;
-import com.rexsl.test.JaxbConverter;
-import javax.xml.transform.Source;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case of {@link HubIdentity}.
@@ -49,8 +43,14 @@ public final class HubIdentityTest {
     public void testJaxbIsWorking() throws Exception {
         // final Identity identity = new HubIdentity();
         // final Source xml = JaxbConverter.the(identity);
-        // MatcherAssert.assertThat(xml, XmlMatchers.hasXPath("/identity/name"));
-        // MatcherAssert.assertThat(xml, XmlMatchers.hasXPath("/identity/photo"));
+        // MatcherAssert.assertThat(
+        //     xml,
+        //     XmlMatchers.hasXPath("/identity/name")
+        // );
+        // MatcherAssert.assertThat(
+        //     xml,
+        //     XmlMatchers.hasXPath("/identity/photo")
+        // );
     }
 
 }
