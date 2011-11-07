@@ -26,7 +26,8 @@
  */
 package com.netbout.rest.page;
 
-import com.netbout.rest.DefaultPage;
+import com.netbout.rest.AbstractPage;
+import com.netbout.rest.Page;
 import com.netbout.rest.Resource;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.JaxbConverter;
@@ -88,8 +89,9 @@ public final class JaxbBundleTest {
                 .add("gamma", "works fine, isn't it?")
                 .up()
             .up();
-        final DefaultPage page = PageBuilder.INSTANCE
-            .build(DefaultPage.class, "test")
+        final Page page = new PageBuilder()
+            .stylesheet("test")
+            .build(AbstractPage.class)
             .init(this.resource())
             .append(bundle.element())
             .append("Test me");

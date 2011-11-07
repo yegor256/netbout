@@ -47,22 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class DefaultPage {
-
-    /**
-     * Link element.
-     */
-    public static final String HATEOAS_LINK = "link";
-
-    /**
-     * Name attribute.
-     */
-    public static final String HATEOAS_NAME = "name";
-
-    /**
-     * HREF attribute.
-     */
-    public static final String HATEOAS_HREF = "href";
+public abstract class AbstractPage implements Page {
 
     /**
      * Home resource of this page.
@@ -77,30 +62,30 @@ public final class DefaultPage {
     /**
      * Public ctor.
      */
-    public DefaultPage() {
+    public AbstractPage() {
         // intentionally empty
     }
 
     /**
-     * Public ctor.
+     * Initializer.
      * @param res Home of this page
      * @return This object
      */
-    public DefaultPage init(final Resource res) {
+    public final Page init(final Resource res) {
         this.home = res;
         this.append(
             new JaxbBundle("links")
-                .add(this.HATEOAS_LINK)
-                    .attr(this.HATEOAS_NAME, "self")
+                .add(Page.HATEOAS_LINK)
+                    .attr(Page.HATEOAS_NAME, "self")
                     .attr(
-                        this.HATEOAS_HREF,
+                        Page.HATEOAS_HREF,
                         this.home.uriInfo().getAbsolutePath()
                 )
                 .up()
-                .add(this.HATEOAS_LINK)
-                    .attr(this.HATEOAS_NAME, "home")
+                .add(Page.HATEOAS_LINK)
+                    .attr(Page.HATEOAS_NAME, "home")
                     .attr(
-                        this.HATEOAS_HREF,
+                        Page.HATEOAS_HREF,
                         this.home.uriInfo()
                             .getAbsolutePathBuilder()
                             .replacePath("/")
@@ -121,11 +106,10 @@ public final class DefaultPage {
     }
 
     /**
-     * Append new JAXB-annotated element.
-     * @param element The element
-     * @return This object
+     * {@inheritDoc}
      */
-    public DefaultPage append(final Object element) {
+    @Override
+    public final Page append(final Object element) {
         this.elements.add(element);
         if (!(element instanceof org.w3c.dom.Element)) {
             final XslResolver resolver = (XslResolver) this.home.providers()
@@ -139,11 +123,10 @@ public final class DefaultPage {
     }
 
     /**
-     * Append new bundle.
-     * @param bundle The DOM bundle
-     * @return This object
+     * {@inheritDoc}
      */
-    public DefaultPage append(final JaxbBundle bundle) {
+    @Override
+    public final Page append(final JaxbBundle bundle) {
         this.append(bundle.element());
         return this;
     }
@@ -154,7 +137,7 @@ public final class DefaultPage {
      */
     @XmlAnyElement(lax = true)
     @XmlMixed
-    public Collection<Object> getElements() {
+    public final Collection<Object> getElements() {
         return this.elements;
     }
 

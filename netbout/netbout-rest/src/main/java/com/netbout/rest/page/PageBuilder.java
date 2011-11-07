@@ -28,7 +28,10 @@ package com.netbout.rest.page;
 
 import com.rexsl.core.Stylesheet;
 import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -36,134 +39,144 @@ import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Page builder, a singleton.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @param <T> Class of page to build
  */
 public final class PageBuilder {
 
     /**
-     * Public instance.
+     * Static initialization of Javassist.
      */
-    public static final PageBuilder INSTANCE = new PageBuilder();
-
-    /**
-     * Javassist class pool.
-     */
-    private final ClassPool pool = ClassPool.getDefault();
-
-    /**
-     * It's a singleton class, you can't instantiate it directly.
-     */
-    private PageBuilder() {
-        this.pool.insertClassPath(new ClassClassPath(this.getClass()));
+    static {
+        ClassPool.getDefault().insertClassPath(
+            new ClassClassPath(PageBuilder.class)
+        );
         Logger.debug(
-            this,
+            PageBuilder.class,
             "#PageBuilder(): javassist initialized"
         );
     }
 
     /**
-     * Create new class.
-     * @param type The type of page to build
-     * @param stylesheet The XSL stylesheet to use with this class
-     * @return The instance of the class just created
+     * Stylesheet to use.
      */
-    public <T> T build(final Class<T> type, final String stylesheet) {
+    private String stylesheet;
+
+    /**
+     * Public ctor.
+     */
+    public PageBuilder() {
+        // intentionally empty
+    }
+
+    /**
+     * Configure the stylesheet to be used.
+     * @param xsl Name of stylesheet
+     * @return This object
+     */
+    public PageBuilder stylesheet(final String xsl) {
+        this.stylesheet = xsl;
+        return this;
+    }
+
+    /**
+     * Create new class.
+     * @param base Parent class, which will be inherited
+     * @return The instance of the class just created
+     * @param <T> The type of result expected
+     */
+    public <T> T build(final Class<T> base) {
         T page;
         try {
-            page = (T) this.create(type, stylesheet).newInstance();
+            page = (T) this.createOrFind(base).newInstance();
         } catch (InstantiationException ex) {
             throw new IllegalStateException(ex);
         } catch (IllegalAccessException ex) {
             throw new IllegalStateException(ex);
         }
         Logger.debug(
-            this,
-            "#build(%s, '%s'): page of class %s created",
-            type.getName(),
-            stylesheet,
+            PageBuilder.class,
+            // @checkstyle LineLength (1 line)
+            "#build(%s): page of class %s created",
+            base.getName(),
             page.getClass().getName()
         );
         return page;
     }
 
     /**
-     * Create new collection of JAXB elements.
-     * @param name Name of XML parent element
-     * @param list Collection of elements
-     * @return The object that can be added to the Page
-     *  with {@link #append(Object)}
-     */
-    public Object group(final String name, final Collection list) {
-        // todo
-        return null;
-    }
-
-    /**
-     * Create and return a new class for the given stylesheet.
-     * @param base Base class
-     * @param stylesheet The XSL stylesheet to use with this class
+     * Create and return a new class for the given stylesheet, or find an
+     * existing one and return it.
+     * @param base Parent class, which will be inherited
      * @return The class just created or found
      */
-    private Class create(final Class base, final String stylesheet) {
-        final String name = String.format(
-            "%s$%s$%d",
-            base.getName(),
-            stylesheet.replaceAll("[^\\w]", ""),
-            Math.abs(stylesheet.hashCode())
-        );
-        Class cls;
-        if (this.pool.getOrNull(name) != null) {
-            try {
-                cls = Class.forName(name);
-            } catch (ClassNotFoundException ex) {
-                throw new IllegalStateException(ex);
+    private Class createOrFind(final Class base) {
+        synchronized (PageBuilder.class) {
+            final String name = String.format(
+                "%s$%s$%d",
+                base.getName(),
+                this.stylesheet.replaceAll("[^\\w]", ""),
+                Math.abs(this.stylesheet.hashCode())
+            );
+            Class cls;
+            if (ClassPool.getDefault().getOrNull(name) != null) {
+                try {
+                    cls = Class.forName(name);
+                } catch (ClassNotFoundException ex) {
+                    throw new IllegalStateException(ex);
+                }
+                // let's double check that the class found really is the
+                // class we're looking for
+                assert ((Stylesheet) cls.getAnnotation(Stylesheet.class))
+                    .value().equals(this.stylesheet);
+            } else {
+                cls = this.construct(name, base);
             }
-            // let's double check that the class found really is the
-            // class we're looking for
-            assert ((Stylesheet) cls.getAnnotation(Stylesheet.class))
-                .value().equals(stylesheet);
-        } else {
-            cls = this.construct(base, name, stylesheet);
+            return cls;
         }
-        return cls;
     }
 
     /**
      * Construct a new class with given name.
-     * @param base Base class, to copy from
      * @param name The name of the class to construct
-     * @param stylesheet The XSL stylesheet to use with this class
+     * @param base Parent class, which will be inherited
      * @return The class just created
      */
-    private Class construct(final Class base, final String name,
-        final String stylesheet) {
+    private Class construct(final String name, final Class base) {
+        final ClassPool pool = ClassPool.getDefault();
         try {
-            final CtClass ctc = this.pool.getAndRename(base.getName(), name);
+            final CtClass parent = pool.get(base.getName());
+            final CtClass ctc = pool.makeClass(name, parent);
             final ClassFile file = ctc.getClassFile();
-            final AnnotationsAttribute attribute =
-                (AnnotationsAttribute) file.getAttribute(
-                    AnnotationsAttribute.visibleTag
-                );
+            final AnnotationsAttribute attribute = new AnnotationsAttribute(
+                file.getConstPool(),
+                AnnotationsAttribute.visibleTag
+            );
             final Annotation annotation = new Annotation(
                 Stylesheet.class.getName(),
                 file.getConstPool()
             );
             annotation.addMemberValue(
                 "value",
-                new StringMemberValue(stylesheet, file.getConstPool())
+                new StringMemberValue(this.stylesheet, file.getConstPool())
             );
             attribute.addAnnotation(annotation);
+            for (Annotation existing : this.annotations(ctc, parent)) {
+                attribute.addAnnotation(existing);
+            }
+            file.addAttribute(attribute);
             final Class cls = ctc.toClass();
             Logger.debug(
                 this,
-                "#construct('%s', '%s'): class %s created",
+                "#construct('%s', %s): class %s created",
                 name,
-                stylesheet,
+                base.getName(),
                 cls.getName()
             );
             return cls;
@@ -172,6 +185,39 @@ public final class PageBuilder {
         } catch (javassist.CannotCompileException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * Get list of existing annotations. Maybe we should filter out some of
+     * them and not copy to the new class, I don't know.
+     * @param base Base class, where these annotations will be used
+     * @param parent Parent class, which will be inherited
+     * @return The list of them
+     */
+    private Collection<Annotation> annotations(final CtClass base,
+        final CtClass parent) {
+        final AnnotationsAttribute attrib =
+            (AnnotationsAttribute) parent.getClassFile()
+                .getAttribute(AnnotationsAttribute.visibleTag)
+                .copy(base.getClassFile().getConstPool(), new HashMap());
+        final Annotation[] all = attrib.getAnnotations();
+        final Collection<Annotation> result = new ArrayList<Annotation>();
+        final List<String> names = new ArrayList<String>();
+        for (Annotation annotation : all) {
+            result.add(annotation);
+            names.add(annotation.getTypeName());
+        }
+        Logger.debug(
+            this,
+            // @checkstyle LineLength (1 line)
+            "#annotations(%s, %s): %d found in base class, %d of them are copied: %s",
+            base.getName(),
+            parent.getName(),
+            all.length,
+            result.size(),
+            StringUtils.join(names, ", ")
+        );
+        return result;
     }
 
 }

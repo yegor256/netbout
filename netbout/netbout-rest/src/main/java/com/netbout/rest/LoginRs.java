@@ -52,7 +52,7 @@ public final class LoginRs extends AbstractRs {
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public DefaultPage login() {
+    public Page login() {
         final URI facebookUri = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
             .queryParam("client_id", Manifests.INSTANCE.read("Netbout-FbId"))
@@ -63,14 +63,15 @@ public final class LoginRs extends AbstractRs {
                     .build()
             )
             .build();
-        return PageBuilder.INSTANCE
-            .build(DefaultPage.class, "login")
+        return new PageBuilder()
+            .stylesheet("login")
+            .build(AbstractPage.class)
             .init(this)
             .append(
                 new JaxbBundle("providers")
-                    .add(DefaultPage.HATEOAS_LINK)
-                        .attr(DefaultPage.HATEOAS_NAME, "facebook")
-                        .attr(DefaultPage.HATEOAS_HREF, facebookUri)
+                    .add(Page.HATEOAS_LINK)
+                        .attr(Page.HATEOAS_NAME, "facebook")
+                        .attr(Page.HATEOAS_HREF, facebookUri)
                     .up()
             );
     }

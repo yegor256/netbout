@@ -26,33 +26,43 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.page.PageBuilder;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import com.netbout.rest.page.JaxbBundle;
 
 /**
- * RESTful front of user's inbox.
+ * Page.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/")
-public final class InboxRs extends AbstractRs {
+public interface Page {
 
     /**
-     * Get bout.
-     * @return The bout, convertable to XML
+     * Link element.
      */
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public Page inbox() {
-        return new PageBuilder()
-            .stylesheet("inbox")
-            .build(AbstractPage.class)
-            .init(this)
-            .append(this.identity().inbox(""));
-    }
+    String HATEOAS_LINK = "link";
+
+    /**
+     * Name attribute.
+     */
+    String HATEOAS_NAME = "name";
+
+    /**
+     * HREF attribute.
+     */
+    String HATEOAS_HREF = "href";
+
+    /**
+     * Append new JAXB-annotated element.
+     * @param element The element
+     * @return This object
+     */
+    Page append(Object element);
+
+    /**
+     * Append new bundle.
+     * @param bundle The DOM bundle
+     * @return This object
+     */
+    Page append(JaxbBundle bundle);
 
 }

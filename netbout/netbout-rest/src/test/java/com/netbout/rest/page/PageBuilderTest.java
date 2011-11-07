@@ -26,7 +26,8 @@
  */
 package com.netbout.rest.page;
 
-import com.netbout.rest.DefaultPage;
+import com.netbout.rest.AbstractPage;
+import com.netbout.rest.Page;
 import com.netbout.rest.Resource;
 import com.rexsl.core.Stylesheet;
 import com.rexsl.core.XslResolver;
@@ -62,11 +63,12 @@ public final class PageBuilderTest {
     public void testJaxbIsWorking() throws Exception {
         final Resource resource = this.resource();
         final String stylesheet = "test-stylesheet";
-        final DefaultPage page = PageBuilder.INSTANCE
-            .build(DefaultPage.class, stylesheet);
-        page.init(resource);
+        final Page page = new PageBuilder()
+            .stylesheet(stylesheet)
+            .build(AbstractPage.class)
+            .init(resource);
         // double check duplicate instantiation
-        PageBuilder.INSTANCE.build(DefaultPage.class, stylesheet);
+        new PageBuilder().stylesheet(stylesheet).build(AbstractPage.class);
         MatcherAssert.assertThat(
             page.getClass().getAnnotation(Stylesheet.class),
             Matchers.notNullValue()
