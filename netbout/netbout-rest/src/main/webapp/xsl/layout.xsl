@@ -46,6 +46,10 @@
                 <link rel="icon" type="image/gif" href="/favicon.ico"/>
             </head>
             <body>
+                <div id="version">
+                    <xsl:text>r.</xsl:text>
+                    <xsl:value-of select="/page/version/revision"/>
+                </div>
                 <div id="bar">
                     <a id="logo">
                         <xsl:attribute name="href">
