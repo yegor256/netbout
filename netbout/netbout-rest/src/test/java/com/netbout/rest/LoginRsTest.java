@@ -55,7 +55,7 @@ public final class LoginRsTest {
         Mockito.doReturn(home).when(info).getAbsolutePath();
         final LoginRs rest = new LoginRs();
         rest.setUriInfo(info);
-        final Page page = rest.login();
+        final DefaultPage page = rest.login();
         MatcherAssert.assertThat(
             JaxbConverter.the(page),
             XmlMatchers.hasXPath("/page/providers/link[@name='facebook']")

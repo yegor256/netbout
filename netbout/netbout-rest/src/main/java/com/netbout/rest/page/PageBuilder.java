@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.page;
 
 import com.rexsl.core.Stylesheet;
 import com.ymock.util.Logger;
@@ -68,29 +68,23 @@ public final class PageBuilder {
 
     /**
      * Create new class.
-     * @param home Where this page is built from
+     * @param type The type of page to build
      * @param stylesheet The XSL stylesheet to use with this class
      * @return The instance of the class just created
      */
-    public Page build(final Resource home, final String stylesheet) {
-        Page page;
+    public <T> T build(final Class<T> type, final String stylesheet) {
+        T page;
         try {
-            page = (Page) this.create(stylesheet)
-                .getDeclaredConstructor(Resource.class)
-                .newInstance(home);
+            page = (T) this.create(type, stylesheet).newInstance();
         } catch (InstantiationException ex) {
             throw new IllegalStateException(ex);
         } catch (IllegalAccessException ex) {
-            throw new IllegalStateException(ex);
-        } catch (java.lang.reflect.InvocationTargetException ex) {
-            throw new IllegalStateException(ex);
-        } catch (NoSuchMethodException ex) {
             throw new IllegalStateException(ex);
         }
         Logger.debug(
             this,
             "#build(%s, '%s'): page of class %s created",
-            home.getClass().getName(),
+            type.getName(),
             stylesheet,
             page.getClass().getName()
         );
@@ -111,19 +105,21 @@ public final class PageBuilder {
 
     /**
      * Create and return a new class for the given stylesheet.
+     * @param base Base class
      * @param stylesheet The XSL stylesheet to use with this class
      * @return The class just created or found
      */
-    private Class<? extends Page> create(final String stylesheet) {
+    private Class create(final Class base, final String stylesheet) {
         final String name = String.format(
-            "com.netbout.rest.Page$%s$%d",
+            "%s$%s$%d",
+            base.getName(),
             stylesheet.replaceAll("[^\\w]", ""),
             Math.abs(stylesheet.hashCode())
         );
         Class cls;
         if (this.pool.getOrNull(name) != null) {
             try {
-                cls = (Class<Page>) Class.forName(name);
+                cls = Class.forName(name);
             } catch (ClassNotFoundException ex) {
                 throw new IllegalStateException(ex);
             }
@@ -132,24 +128,22 @@ public final class PageBuilder {
             assert ((Stylesheet) cls.getAnnotation(Stylesheet.class))
                 .value().equals(stylesheet);
         } else {
-            cls = this.construct(name, stylesheet);
+            cls = this.construct(base, name, stylesheet);
         }
         return cls;
     }
 
     /**
      * Construct a new class with given name.
+     * @param base Base class, to copy from
      * @param name The name of the class to construct
      * @param stylesheet The XSL stylesheet to use with this class
      * @return The class just created
      */
-    private Class<? extends Page> construct(final String name,
+    private Class construct(final Class base, final String name,
         final String stylesheet) {
         try {
-            final CtClass ctc = this.pool.getAndRename(
-                DefaultPage.class.getName(),
-                name
-            );
+            final CtClass ctc = this.pool.getAndRename(base.getName(), name);
             final ClassFile file = ctc.getClassFile();
             final AnnotationsAttribute attribute =
                 (AnnotationsAttribute) file.getAttribute(

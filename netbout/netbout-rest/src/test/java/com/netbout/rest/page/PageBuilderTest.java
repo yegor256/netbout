@@ -24,8 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.page;
 
+import com.netbout.rest.DefaultPage;
+import com.netbout.rest.Resource;
 import com.rexsl.core.Stylesheet;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.JaxbConverter;
@@ -60,9 +62,11 @@ public final class PageBuilderTest {
     public void testJaxbIsWorking() throws Exception {
         final Resource resource = this.resource();
         final String stylesheet = "test-stylesheet";
-        final Page page = PageBuilder.INSTANCE.build(resource, stylesheet);
+        final DefaultPage page = PageBuilder.INSTANCE
+            .build(DefaultPage.class, stylesheet);
+        page.init(resource);
         // double check duplicate instantiation
-        PageBuilder.INSTANCE.build(resource, stylesheet);
+        PageBuilder.INSTANCE.build(DefaultPage.class, stylesheet);
         MatcherAssert.assertThat(
             page.getClass().getAnnotation(Stylesheet.class),
             Matchers.notNullValue()

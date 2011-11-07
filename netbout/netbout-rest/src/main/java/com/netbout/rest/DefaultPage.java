@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.page.JaxbBundle;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class DefaultPage implements Page {
+public final class DefaultPage {
 
     /**
      * Link element.
@@ -83,9 +84,9 @@ public final class DefaultPage implements Page {
     /**
      * Public ctor.
      * @param res Home of this page
-     * @see PageBuilder#build(Resource,String)
+     * @return This object
      */
-    public void init(final Resource res) {
+    public DefaultPage init(final Resource res) {
         this.home = res;
         this.append(
             new JaxbBundle("links")
@@ -116,13 +117,15 @@ public final class DefaultPage implements Page {
                 .add("date", Manifests.INSTANCE.read("Netbout-Date"))
                 .up()
         );
+        return this;
     }
 
     /**
-     * {@inheritDoc}
+     * Append new JAXB-annotated element.
+     * @param element The element
+     * @return This object
      */
-    @Override
-    public Page append(final Object element) {
+    public DefaultPage append(final Object element) {
         this.elements.add(element);
         if (!(element instanceof org.w3c.dom.Element)) {
             final XslResolver resolver = (XslResolver) this.home.providers()
@@ -136,10 +139,11 @@ public final class DefaultPage implements Page {
     }
 
     /**
-     * {@inheritDoc}
+     * Append new bundle.
+     * @param bundle The DOM bundle
+     * @return This object
      */
-    @Override
-    public Page append(final JaxbBundle bundle) {
+    public DefaultPage append(final JaxbBundle bundle) {
         this.append(bundle.element());
         return this;
     }

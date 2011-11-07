@@ -36,7 +36,7 @@ import javax.ws.rs.ext.Providers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Resource {
+public interface Resource {
 
     /**
      * Get URI Info.

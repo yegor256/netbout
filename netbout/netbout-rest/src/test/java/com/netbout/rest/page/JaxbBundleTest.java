@@ -24,8 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.page;
 
+import com.netbout.rest.DefaultPage;
+import com.netbout.rest.Resource;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.JaxbConverter;
 import java.net.URI;
@@ -86,7 +88,9 @@ public final class JaxbBundleTest {
                 .add("gamma", "works fine, isn't it?")
                 .up()
             .up();
-        final Page page = PageBuilder.INSTANCE.build(this.resource(), "test")
+        final DefaultPage page = PageBuilder.INSTANCE
+            .build(DefaultPage.class, "test")
+            .init(this.resource())
             .append(bundle.element())
             .append("Test me");
         MatcherAssert.assertThat(

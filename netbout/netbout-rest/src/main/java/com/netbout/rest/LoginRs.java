@@ -26,6 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.page.JaxbBundle;
+import com.netbout.rest.page.PageBuilder;
 import com.rexsl.core.Manifests;
 import java.net.URI;
 import javax.ws.rs.GET;
@@ -50,7 +52,7 @@ public final class LoginRs extends AbstractRs {
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public Page login() {
+    public DefaultPage login() {
         final URI facebookUri = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
             .queryParam("client_id", Manifests.INSTANCE.read("Netbout-FbId"))
@@ -62,7 +64,8 @@ public final class LoginRs extends AbstractRs {
             )
             .build();
         return PageBuilder.INSTANCE
-            .build(this, "login")
+            .build(DefaultPage.class, "login")
+            .init(this)
             .append(
                 new JaxbBundle("providers")
                     .add(DefaultPage.HATEOAS_LINK)

@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.page.PageBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -46,9 +47,10 @@ public final class InboxRs extends AbstractRs {
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public Page inbox() {
+    public DefaultPage inbox() {
         return PageBuilder.INSTANCE
-            .build(this, "inbox")
+            .build(DefaultPage.class, "inbox")
+            .init(this)
             .append(this.identity().inbox(""));
     }
 
