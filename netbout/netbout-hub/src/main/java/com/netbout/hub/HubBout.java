@@ -1,34 +1,34 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met: 1) Redistributions of source code must retain the above
- * copyright notice, this list of conditions and the following
- * disclaimer. 2) Redistributions in binary form must reproduce the above
- * copyright notice, this list of conditions and the following
- * disclaimer in the documentation and/or other materials provided
- * with the distribution. 3) Neither the name of the NetBout.com nor
- * the names of its contributors may be used to endorse or promote
- * products derived from this software without specific prior written
- * permission.
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
- * NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
- * THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  */
-package com.netbout.spi.stub;
+package com.netbout.hub;
 
+import com.netbout.hub.data.BoutData;
+import com.netbout.hub.data.MessageData;
+import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -37,19 +37,26 @@ import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Simple implementation of a {@link Bout}.
+ * Identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SimpleBout implements Bout {
+@XmlType(name = "identity")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class HubBout implements Bout {
 
     /**
      * The viewer.
      */
-    private Identity identity;
+    private HubIdentity identity;
 
     /**
      * The data.
@@ -61,7 +68,7 @@ final class SimpleBout implements Bout {
      * @param idnt The viewer
      * @param dat The data
      */
-    public SimpleBout(final Identity idnt, final BoutData dat) {
+    public HubBout(final HubIdentity idnt, final BoutData dat) {
         this.identity = idnt;
         this.data = dat;
     }
@@ -83,11 +90,29 @@ final class SimpleBout implements Bout {
     }
 
     /**
+     * JAXB related method, to return the number of the bout.
+     * @return The number
+     */
+    @XmlElement
+    public Long getNumber() {
+        return this.number();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public String title() {
         return this.data.getTitle();
+    }
+
+    /**
+     * JAXB related method, to return the title of the bout.
+     * @return The title
+     */
+    @XmlElement
+    public String getTitle() {
+        return this.title();
     }
 
     /**
@@ -100,6 +125,7 @@ final class SimpleBout implements Bout {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Participant invite(final Identity friend) {
@@ -110,7 +136,7 @@ final class SimpleBout implements Bout {
             "#invite('%s'): success",
             friend
         );
-        return new SimpleParticipant(
+        return new HubParticipant(
             this,
             dude.getIdentity(),
             dude.isConfirmed()
@@ -126,7 +152,7 @@ final class SimpleBout implements Bout {
             = new ArrayList<Participant>();
         for (ParticipantData dude : this.data.getParticipants()) {
             participants.add(
-                new SimpleParticipant(
+                new HubParticipant(
                     this,
                     dude.getIdentity(),
                     dude.isConfirmed()
@@ -142,6 +168,16 @@ final class SimpleBout implements Bout {
     }
 
     /**
+     * JAXB related method, to return participants of the bout.
+     * @return The collection
+     */
+    @XmlElement(name = "participant")
+    @XmlElementWrapper(name = "participants")
+    public Collection<Participant> getParticipants() {
+        return this.participants();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -149,7 +185,7 @@ final class SimpleBout implements Bout {
         final List<Message> messages = new ArrayList<Message>();
         for (MessageData msg : this.data.getMessages(query)) {
             messages.add(
-                new SimpleMessage(
+                new HubMessage(
                     this,
                     msg.getIdentity(),
                     msg.getText(),
@@ -181,7 +217,7 @@ final class SimpleBout implements Bout {
             "#post('%s'): message posted",
             text
         );
-        return new SimpleMessage(
+        return new HubMessage(
             this,
             msg.getIdentity(),
             msg.getText(),

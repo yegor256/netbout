@@ -64,9 +64,7 @@ public final class TranslatorTest {
     @Before
     public void registerHelper() throws Exception {
         final String name = "Owner Of The Helper";
-        this.entry.register(name, "");
-        final User user = entry.authenticate(name, "");
-        user.identify(this.HELPER_IDENTITY);
+        final User user = this.entry.user(name);
         user.identity(this.HELPER_IDENTITY).promote(
             new CpaHelper(this.getClass().getPackage().getName())
         );
@@ -79,13 +77,11 @@ public final class TranslatorTest {
     @Test
     public void testMessageTranslation() throws Exception {
         final String name = "John Doe";
-        entry.register(name, "");
-        final User user = entry.authenticate(name, "");
-        user.identify(name);
+        final User user = this.entry.user(name);
         final Identity identity = user.identity(name);
         final Bout bout = identity.start();
         bout.rename("let's talk about...");
-        bout.invite(this.HELPER_IDENTITY);
+        bout.invite(this.entry.identity(this.HELPER_IDENTITY));
         bout.post("Hello, how are you?");
         MatcherAssert.assertThat(
             bout.messages("").get(0).text(),

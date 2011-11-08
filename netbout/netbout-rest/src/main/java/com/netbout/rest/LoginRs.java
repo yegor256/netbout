@@ -26,15 +26,24 @@
  */
 package com.netbout.rest;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Identity;
+import com.netbout.spi.User;
 import com.rexsl.core.Manifests;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.io.IOUtils;
 
 /**
  * RESTful front of login functions.
@@ -55,35 +64,113 @@ public final class LoginRs extends AbstractRs {
     public Page login() {
         final URI facebookUri = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
-            .queryParam("client_id", Manifests.INSTANCE.read("Netbout-FbId"))
+            // @checkstyle MultipleStringLiterals (3 lines)
+            .queryParam("client_id", Manifests.read("Netbout-FbId"))
             .queryParam(
                 "redirect_uri",
                 this.uriInfo().getAbsolutePathBuilder()
                     .replacePath("/g/fb")
                     .build()
             )
+            .queryParam("scope", "email")
             .build();
         return new PageBuilder()
             .stylesheet("login")
             .build(AbstractPage.class)
             .init(this)
             .append(
-                new JaxbBundle("providers")
-                    .add(Page.HATEOAS_LINK)
-                        .attr(Page.HATEOAS_NAME, "facebook")
-                        .attr(Page.HATEOAS_HREF, facebookUri)
-                    .up()
+                new JaxbBundle("facebook").attr(Page.HATEOAS_HREF, facebookUri)
             );
     }
 
     /**
      * Facebook authentication page (callback hits it).
+     * @param code Facebook "authorization code"
      * @return The response
      */
     @Path("/fb")
     @GET
-    public String fbauth() {
-        return "ok";
+    public Response fbauth(@PathParam("code") final String code) {
+        return new PageBuilder()
+            .stylesheet("fbauth")
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(this.authenticate(code))
+            .entity("")
+            .status(Response.Status.TEMPORARY_REDIRECT)
+            .location(UriBuilder.fromPath("/").build())
+            .build();
+    }
+
+    /**
+     * Authenticate the user through facebook.
+     * @param code Facebook "authorization code"
+     * @return The user found
+     */
+    private Identity authenticate(final String code) {
+        final String name = this.retrieveUserName(code);
+        final User user = this.entry().user(name);
+        return user.identity(name);
+    }
+
+    /**
+     * Get user name from Facebook, but the code provided.
+     * @param code Facebook "authorization code"
+     * @return The user name
+     */
+    private String retrieveUserName(final String code) {
+        final String token = this.retrieve(
+            UriBuilder
+                // @checkstyle MultipleStringLiterals (5 lines)
+                .fromPath("https://graph.facebook.com/oauth/access_token")
+                .queryParam("client_id", Manifests.read("Netbout-FbId"))
+                .queryParam("redirect_uri", this.uriInfo().getAbsolutePath())
+                .queryParam("client_secret", Manifests.read("Netbout-FbSecret"))
+                .queryParam("code", code)
+                .build()
+        );
+        final String json = this.retrieve(
+            UriBuilder
+                .fromPath("https://graph.facebook.com/me")
+                .replaceQuery(token)
+                .build()
+        );
+        final Gson gson = new Gson();
+        final Map<String, String> map = gson.fromJson(
+            json, new LoginRs.JsonType().getType()
+        );
+        return map.get("name");
+    }
+
+    /**
+     * Retrive data from the URL through HTTP request.
+     * @param uri The URI
+     * @return The response, text body
+     */
+    private String retrieve(final URI uri) {
+        HttpURLConnection conn;
+        try {
+            conn = (HttpURLConnection) uri.toURL().openConnection();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        } catch (java.io.IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        try {
+            return IOUtils.toString(conn.getInputStream());
+        } catch (java.io.IOException ex) {
+            throw new IllegalArgumentException(ex);
+        } finally {
+            conn.disconnect();
+        }
+    }
+
+    /**
+     * Supplementary type.
+     * @see #retrieveUserName(String)
+     */
+    private static final class JsonType
+        extends TypeToken<Map<String, String>> {
     }
 
 }

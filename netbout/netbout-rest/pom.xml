@@ -61,13 +61,24 @@
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-core</artifactId>
             <version since="15 Oct 2011">1.0-SNAPSHOT</version>
-            <!-- <scope>runtime</scope> -->
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
             <version since="15 Oct 2011">1.0-SNAPSHOT</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Base64 codec -->
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version since="8 Nov 2011">1.5</version>
+        </dependency>
+        <dependency>
+            <!-- JSON processing library -->
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version since="1 Sep 2011">1.7.1</version>
         </dependency>
         <dependency>
             <!--
@@ -117,27 +128,30 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <!-- other details are in parent pom.xml -->
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <!-- other details are in parent pom.xml -->
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <!-- other details are in parent pom.xml -->
         </dependency>
         <dependency>
             <groupId>org.xmlmatchers</groupId>
             <artifactId>xml-matchers</artifactId>
-            <!-- other details are in parent pom.xml -->
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <!-- other details are in parent pom.xml -->
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
         </dependency>
     </dependencies>
 
@@ -235,10 +249,10 @@
                                 <archive>
                                     <manifestEntries>
                                         <Netbout-Revision>${buildNumber}</Netbout-Revision>
-                                        <NetBout-Version>${project.version}</NetBout-Version>
-                                        <NetBout-Date>${maven.build.timestamp}</NetBout-Date>
-                                        <NetBout-FbId>${fb.id}</NetBout-FbId>
-                                        <NetBout-FbSecret>${fb.secret}</NetBout-FbSecret>
+                                        <Netbout-Version>${project.version}</Netbout-Version>
+                                        <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                        <Netbout-FbId>${fb.id}</Netbout-FbId>
+                                        <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
                                     </manifestEntries>
                                 </archive>
                             </configuration>

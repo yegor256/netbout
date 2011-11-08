@@ -24,43 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
-
-import com.netbout.spi.Entry;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
 
 /**
- * RESTful resource.
+ * Data structures in the hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
-
-    /**
-     * Entry.
-     * @return The entry
-     */
-    Entry entry();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
-
-}
+package com.netbout.hub.data;

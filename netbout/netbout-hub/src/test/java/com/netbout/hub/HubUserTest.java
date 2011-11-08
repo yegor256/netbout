@@ -24,43 +24,40 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.hub;
 
 import com.netbout.spi.Entry;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+import com.netbout.spi.Identity;
+import com.netbout.spi.User;
+import java.net.URL;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * RESTful resource.
- *
+ * Test case of {@link HubUser}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+public final class HubUserTest {
 
     /**
-     * Entry.
-     * @return The entry
+     * Identity manipulations.
+     * @throws Exception If there is some problem inside
      */
-    Entry entry();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
+    @Test
+    public void testIdentityManipulations() throws Exception {
+        final Entry entry = Mockito.mock(Entry.class);
+        final User user = new HubUser(entry, "John Doe");
+        final String label = "Johnny";
+        final URL photo = new URL("http://img.netbout.com/logo.png");
+        final Identity identity = user.identity(label);
+        identity.setPhoto(photo);
+        MatcherAssert.assertThat(
+            user.identity(label).photo(),
+            Matchers.equalTo(photo)
+        );
+    }
 
 }

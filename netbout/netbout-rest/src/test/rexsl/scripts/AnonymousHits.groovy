@@ -54,7 +54,7 @@ import org.hamcrest.Matchers
     )
     Assert.assertThat(
         XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath("/page/providers/link[@name='facebook']")
+        XmlMatchers.hasXPath('/page/facebook[@href]')
     )
     Assert.assertThat(
         XhtmlConverter.the(r.body),

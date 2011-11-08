@@ -28,68 +28,99 @@ package com.netbout.hub;
 
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Entry point to Hub.
+ * User.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntry implements Entry {
+public final class HubUser implements User {
 
     /**
-     * All users registered in the system.
+     * The entry.
      */
-    private final Collection<HubUser> users = new ArrayList<HubUser>();
+    private final Entry entry;
 
     /**
-     * {@inheritDoc}
+     * The name.
      */
-    @Override
-    public User user(final String name) {
-        for (User existing : this.users) {
-            if (existing.name().equals(name)) {
-                Logger.info(
-                    this,
-                    "#user('%s'): user found",
-                    name
-                );
-                return existing;
-            }
-        }
-        final HubUser user = new HubUser(this, name);
-        this.users.add(user);
-        Logger.info(
-            this,
-            "#user('%s'): new user registered",
-            name
-        );
-        return user;
+    private final String name;
+
+    /**
+     * Collection of identities that belong to this user.
+     */
+    private final Collection<HubIdentity> identities =
+        new ArrayList<HubIdentity>();
+
+    /**
+     * Public ctor.
+     * @param ent The entry
+     * @param nme The name of it
+     * @see InMemoryEntry#user(String)
+     */
+    public HubUser(final Entry ent, final String nme) {
+        this.entry = ent;
+        this.name = nme;
     }
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity identity(final String name)
-        throws UnknownIdentityException {
-        for (HubUser user : this.users) {
-            if (user.hasIdentity(name)) {
+    public Entry entry() {
+        return this.entry;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity identity(final String label) {
+        for (HubIdentity identity : this.identities) {
+            if (identity.name().equals(label)) {
                 Logger.info(
                     this,
-                    "#identity('%s'): identity found",
-                    name
+                    "#identity('%s'): found",
+                    label
                 );
-                return user.identity(name);
+                return identity;
             }
         }
-        throw new UnknownIdentityException("Identity '%s' not found", name);
+        final HubIdentity identity = new HubIdentity(this, label);
+        this.identities.add(identity);
+        Logger.info(
+            this,
+            "#identity('%s'): created new",
+            label
+        );
+        return identity;
+    }
+
+    /**
+     * User has this identity?
+     * @param label The name of the identity to find
+     * @return It has?
+     */
+    protected boolean hasIdentity(final String label) {
+        for (HubIdentity identity : this.identities) {
+            if (identity.name().equals(label)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

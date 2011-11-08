@@ -24,43 +24,44 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.hub;
 
-import com.netbout.spi.Entry;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+import org.junit.Test;
 
 /**
- * RESTful resource.
- *
+ * Test case of {@link HubMessage}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+public final class HubMessageTest {
 
     /**
-     * Entry.
-     * @return The entry
+     * Object can be converted to XML through JAXB.
+     * @throws Exception If there is some problem inside
      */
-    Entry entry();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
+    @Test
+    public void testJaxbIsWorking() throws Exception {
+        // final Bout bout = Mockito.mock(Bout.class);
+        // final Identity identity = Mockito.mock(Identity.class);
+        // final Message message = new HubMessage(
+        //     bout,
+        //     identity,
+        //     "this is a message",
+        //     new Date()
+        // );
+        // final Source xml = JaxbConverter.the(message);
+        // MatcherAssert.assertThat(
+        //     xml,
+        //     XmlMatchers.hasXPath("/message/author/name[.='John Doe']")
+        // );
+        // MatcherAssert.assertThat(
+        //     xml,
+        //     XmlMatchers.hasXPath("/message/text[starts-with(.,'this is')]")
+        // );
+        // MatcherAssert.assertThat(
+        //     xml,
+        //     XmlMatchers.hasXPath("/message/date")
+        // );
+    }
 
 }

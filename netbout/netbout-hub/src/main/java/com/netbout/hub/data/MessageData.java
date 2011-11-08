@@ -24,43 +24,66 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.hub.data;
 
-import com.netbout.spi.Entry;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+import com.netbout.spi.Identity;
+import java.util.Date;
 
 /**
- * RESTful resource.
+ * One message in a bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+public final class MessageData {
 
     /**
-     * Entry.
-     * @return The entry
+     * The author.
      */
-    Entry entry();
+    private final Identity identity;
 
     /**
-     * Get URI Info.
-     * @return URI info
+     * The text.
      */
-    UriInfo uriInfo();
+    private final String text;
 
     /**
-     * All registered JAX-RS providers.
-     * @return Providers
+     * The date.
      */
-    Providers providers();
+    private final Date date = new Date();
 
     /**
-     * All Http Headers.
-     * @return Headers
+     * Public ctor.
+     * @param idnt The identity
+     * @param txt The text
      */
-    HttpHeaders httpHeaders();
+    public MessageData(final Identity idnt, final String txt) {
+        this.identity = idnt;
+        this.text = txt;
+    }
+
+    /**
+     * Get text.
+     * @return The text
+     */
+    public String getText() {
+        return this.text;
+    }
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    public Identity getIdentity() {
+        return this.identity;
+    }
+
+    /**
+     * Get date.
+     * @return The date
+     */
+    public Date getDate() {
+        return this.date;
+    }
 
 }

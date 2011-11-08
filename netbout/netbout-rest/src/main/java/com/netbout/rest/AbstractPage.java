@@ -27,11 +27,14 @@
 package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
+import com.netbout.spi.Identity;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -95,11 +98,11 @@ public abstract class AbstractPage implements Page {
         );
         this.append(
             new JaxbBundle("version")
-                .add("name", Manifests.INSTANCE.read("Netbout-Version"))
+                .add("name", Manifests.read("Netbout-Version"))
                 .up()
-                .add("revision", Manifests.INSTANCE.read("Netbout-Revision"))
+                .add("revision", Manifests.read("Netbout-Revision"))
                 .up()
-                .add("date", Manifests.INSTANCE.read("Netbout-Date"))
+                .add("date", Manifests.read("Netbout-Date"))
                 .up()
         );
         return this;
@@ -129,6 +132,23 @@ public abstract class AbstractPage implements Page {
     public final Page append(final JaxbBundle bundle) {
         this.append(bundle.element());
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Response.ResponseBuilder authenticated(
+        final Identity identity) {
+        return Response.ok()
+            .entity(this)
+            .cookie(
+                new NewCookie(
+                    "netbout",
+                    new Cryptor(this.home.entry()).encrypt(identity)
+                )
+            )
+            .type(MediaType.APPLICATION_XML);
     }
 
     /**

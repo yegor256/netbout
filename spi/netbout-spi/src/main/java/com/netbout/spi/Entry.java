@@ -42,21 +42,18 @@ package com.netbout.spi;
 public interface Entry {
 
     /**
-     * Register a new user.
+     * Register a new user, or find existing one and retrieve.
      * @param name Unique identifier of the user
-     * @param secret Some secret code of this user
-     * @throws DuplicateUserException If this user is already registered
+     * @return The user just created or found
      */
-    void register(String name, String secret) throws DuplicateUserException;
+    User user(String name);
 
     /**
-     * Authenticate a user and get its identity.
-     * @param name Unique identifier of the user
-     * @param secret Some secret code of this user
-     * @return The user just authenticated
-     * @throws AuthenticationException If we can't authenticate this user
+     * Find an identity by name.
+     * @param name Unique name of identity
+     * @return The identity just found
+     * @throws UnknownIdentityException If this identity doesn't exist
      */
-    User authenticate(String name, String secret)
-        throws AuthenticationException;
+    Identity identity(String name) throws UnknownIdentityException;
 
 }

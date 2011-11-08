@@ -24,43 +24,52 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.hub.data;
 
-import com.netbout.spi.Entry;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+import com.netbout.spi.Identity;
 
 /**
- * RESTful resource.
+ * Bout with data.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+public final class ParticipantData {
 
     /**
-     * Entry.
-     * @return The entry
+     * The author.
      */
-    Entry entry();
+    private final Identity identity;
 
     /**
-     * Get URI Info.
-     * @return URI info
+     * Is it confirmed?
      */
-    UriInfo uriInfo();
+    private boolean confirmed;
 
     /**
-     * All registered JAX-RS providers.
-     * @return Providers
+     * Public ctor.
+     * @param idnt The identity
+     * @param aye Is it confirmed
      */
-    Providers providers();
+    public ParticipantData(final Identity idnt, final boolean aye) {
+        this.identity = idnt;
+        this.confirmed = aye;
+    }
 
     /**
-     * All Http Headers.
-     * @return Headers
+     * Is it confirmed?
+     * @return The flag
      */
-    HttpHeaders httpHeaders();
+    public boolean isConfirmed() {
+        return this.confirmed;
+    }
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    public Identity getIdentity() {
+        return this.identity;
+    }
 
 }

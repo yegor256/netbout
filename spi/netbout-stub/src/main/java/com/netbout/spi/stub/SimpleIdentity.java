@@ -157,6 +157,14 @@ final class SimpleIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
+    public void setPhoto(final URL pic) {
+        // todo..
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void promote(final Helper hlp) {
         this.helper = hlp;
         Logger.info(

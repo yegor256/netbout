@@ -27,40 +27,41 @@
 package com.netbout.rest;
 
 import com.netbout.spi.Entry;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+import com.netbout.spi.Identity;
+import com.netbout.spi.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * RESTful resource.
- *
+ * Test case for {@link Cryptor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+public final class CryptorTest {
 
     /**
-     * Entry.
-     * @return The entry
+     * Encryption + decryption.
+     * @throws Exception If there is some problem inside
      */
-    Entry entry();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
+    @Test
+    public void testEncryptionDecryption() throws Exception {
+        final String name = "\u041F\u0435\u0442\u0440 I";
+        final Identity identity = Mockito.mock(Identity.class);
+        Mockito.doReturn(name).when(identity).name();
+        final User user = Mockito.mock(User.class);
+        Mockito.doReturn(user).when(identity).user();
+        Mockito.doReturn("Alex Doe").when(user).name();
+        final Entry entry = Mockito.mock(Entry.class);
+        Mockito.doReturn(identity).when(entry).identity(name);
+        final String hash = new Cryptor(entry).encrypt(identity);
+        MatcherAssert.assertThat(
+            hash.matches("[\\w=\\+\\./]+"),
+            Matchers.describedAs(hash, Matchers.is(true))
+        );
+        final Identity discovered = new Cryptor(entry).decrypt(hash);
+        MatcherAssert.assertThat(discovered, Matchers.equalTo(identity));
+    }
 
 }

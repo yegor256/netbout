@@ -54,14 +54,6 @@
         <servlet-name>default</servlet-name>
         <url-pattern>/xsl/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/favicon.ico</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/images/*</url-pattern>
-    </servlet-mapping>
 
     <filter>
         <filter-name>XsltFilter</filter-name>
@@ -90,10 +82,6 @@
     <mime-mapping>
         <extension>xsl</extension>
         <mime-type>text/xsl</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>ico</extension>
-        <mime-type>image/gif</mime-type>
     </mime-mapping>
 
 </web-app>

@@ -48,18 +48,16 @@ public interface User {
     Entry entry();
 
     /**
-     * Select the right identity to work from.
-     * @param name Unique name of the identity
-     * @return The identity
-     * @throws UnknownIdentityException If this identity is not found
+     * Get name of the user.
+     * @return The name
      */
-    Identity identity(String name) throws UnknownIdentityException;
+    String name();
 
     /**
-     * Add new identity to the user.
+     * Select the right identity to work from, or create one if it's absent.
      * @param name Unique name of the identity
-     * @throws DuplicateIdentityException If this identity already exists
+     * @return The identity
      */
-    void identify(String name) throws DuplicateIdentityException;
+    Identity identity(String name);
 
 }

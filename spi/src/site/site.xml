@@ -45,7 +45,7 @@
 
     <bannerLeft>
         <name>SPI netBout</name>
-        <src>http://spi.netbout.com/images/logo.png</src>
+        <src>http://img.netbout.com/logo.png</src>
         <href>http://spi.netbout.com/</href>
     </bannerLeft>
 
@@ -56,7 +56,7 @@
 
     <body>
         <head>
-            <link href="http://www.netbout.com/favicon.gif" rel="shortcut icon" />
+            <link href="http://img.netbout.com/favicon.ico" rel="shortcut icon" />
             <link href="/css/site.css" rel="stylesheet" type="text/css" />
             <link type="text/css"
                 href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css"

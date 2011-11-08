@@ -29,7 +29,9 @@ package com.netbout.rest;
 import com.netbout.hub.HubEntry;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 
@@ -59,6 +61,26 @@ abstract class AbstractRs implements Resource {
     private UriInfo uriInfo;
 
     /**
+     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     */
+    @Context
+    private HttpHeaders headers;
+
+    /**
+     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     */
+    @CookieParam("netbout")
+    private String cookie;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Entry entry() {
+        return this.entry;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -78,16 +100,16 @@ abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public final Identity identity() {
-        if (this.entry == null) {
+    public HttpHeaders httpHeaders() {
+        if (this.headers == null) {
             throw new IllegalStateException(
                 String.format(
-                    "%s#entry was never injected by JAX-RS",
+                    "%s#headers was never injected by JAX-RS",
                     this.getClass().getName()
                 )
             );
         }
-        throw new LoginRequiredException();
+        return this.headers;
     }
 
     /**
@@ -128,6 +150,38 @@ abstract class AbstractRs implements Resource {
      */
     public void setProviders(final Providers prov) {
         this.providers = prov;
+    }
+
+    /**
+     * Set HttpHeaders, to be called by JAX-RS framework or a unit test.
+     * @param hdrs List of headers
+     */
+    public void setHttpHeaders(final HttpHeaders hdrs) {
+        this.headers = hdrs;
+    }
+
+    /**
+     * Get current user identity, or throws {@link LoginRequiredException} if
+     * no user is logged in at the moment.
+     * @return The identity
+     */
+    protected final Identity identity() {
+        if (this.entry == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#entry was never injected by JAX-RS",
+                    this.getClass().getName()
+                )
+            );
+        }
+        if (this.cookie == null) {
+            throw new LoginRequiredException();
+        }
+        try {
+            return new Cryptor(this.entry()).decrypt(this.cookie);
+        } catch (Cryptor.DecryptionException ex) {
+            throw new LoginRequiredException();
+        }
     }
 
 }

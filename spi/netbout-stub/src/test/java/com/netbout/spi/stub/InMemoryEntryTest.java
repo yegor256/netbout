@@ -50,8 +50,7 @@ public final class InMemoryEntryTest {
     public void testRegistrationAndAuthentication() throws Exception {
         final Entry entry = new InMemoryEntry();
         final String name = "John Doe";
-        entry.register(name, "");
-        final User user = entry.authenticate(name, "");
+        final User user = entry.user(name);
         MatcherAssert.assertThat(user, Matchers.notNullValue());
     }
 

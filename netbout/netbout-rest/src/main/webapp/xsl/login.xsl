@@ -48,20 +48,13 @@
 
     <xsl:template name="content">
         <p>
-            <xsl:text>Login using one of them:</xsl:text>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="/page/facebook/@href" />
+                </xsl:attribute>
+                <xsl:text>Login using your Facebook account</xsl:text>
+            </a>
         </p>
-        <ul>
-            <xsl:for-each select="/page/providers/link">
-                <li>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="@href" />
-                        </xsl:attribute>
-                        <xsl:value-of select="@name" />
-                    </a>
-                </li>
-            </xsl:for-each>
-        </ul>
     </xsl:template>
 
 </xsl:stylesheet>

@@ -92,4 +92,10 @@ public interface Identity {
      */
     void promote(Helper helper) throws PromotionException;
 
+    /**
+     * Set photo of the identity.
+     * @param photo The photo
+     */
+    void setPhoto(URL photo);
+
 }
