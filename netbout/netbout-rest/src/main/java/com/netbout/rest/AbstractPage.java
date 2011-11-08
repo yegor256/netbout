@@ -98,11 +98,11 @@ public abstract class AbstractPage implements Page {
         );
         this.append(
             new JaxbBundle("version")
-                .add("name", Manifests.INSTANCE.read("Netbout-Version"))
+                .add("name", Manifests.read("Netbout-Version"))
                 .up()
-                .add("revision", Manifests.INSTANCE.read("Netbout-Revision"))
+                .add("revision", Manifests.read("Netbout-Revision"))
                 .up()
-                .add("date", Manifests.INSTANCE.read("Netbout-Date"))
+                .add("date", Manifests.read("Netbout-Date"))
                 .up()
         );
         return this;

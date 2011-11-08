@@ -26,12 +26,20 @@
  */
 package com.netbout.rest;
 
+import com.rexsl.core.Manifests;
 import com.rexsl.test.JaxbConverter;
 import java.net.URI;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
 
@@ -40,6 +48,8 @@ import org.xmlmatchers.XmlMatchers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ LoginRs.class })
 public final class LoginRsTest {
 
     /**
@@ -48,13 +58,8 @@ public final class LoginRsTest {
      */
     @Test
     public void testLoginPageRendering() throws Exception {
-        final UriInfo info = Mockito.mock(UriInfo.class);
-        final URI home = new URI("http://localhost/g");
-        Mockito.doReturn(UriBuilder.fromUri(home))
-            .when(info).getAbsolutePathBuilder();
-        Mockito.doReturn(home).when(info).getAbsolutePath();
         final LoginRs rest = new LoginRs();
-        rest.setUriInfo(info);
+        rest.setUriInfo(this.uriInfo(new URI("http://localhost:99/")));
         final Page page = rest.login();
         MatcherAssert.assertThat(
             JaxbConverter.the(page),
@@ -68,6 +73,61 @@ public final class LoginRsTest {
             JaxbConverter.the(page),
             XmlMatchers.hasXPath("/page/links/link[@name='self']")
         );
+    }
+
+    /**
+     * Facebook callback should produce a cookie.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testAuthenticationFromFacebook() throws Exception {
+        final String code = "123";
+        final LoginRs rest = new LoginRs();
+        final URI home = new URI("http://localhost/");
+        rest.setUriInfo(this.uriInfo(home));
+        final LoginRs spy = PowerMockito.spy(rest);
+        final String token = "access_token=abc|cde&expires=5108";
+        PowerMockito.doReturn(token).when(
+            spy,
+            "retrieve",
+            Mockito.eq(
+                UriBuilder
+                    .fromPath("https://graph.facebook.com/oauth/access_token")
+                    .queryParam("client_id", Manifests.read("Netbout-FbId"))
+                    .queryParam("redirect_uri", home.toString())
+                    .queryParam(
+                        "client_secret",
+                        Manifests.read("Netbout-FbSecret")
+                    )
+                    .queryParam("code", code)
+                    .build()
+            )
+        );
+        PowerMockito.doReturn("{ name: 'John Doe' }").when(
+            spy,
+            "retrieve",
+            Mockito.eq(
+                UriBuilder
+                    .fromPath("https://graph.facebook.com/me")
+                    .replaceQuery(token)
+                    .build()
+            )
+        );
+        final Response response = spy.fbauth("123");
+        MatcherAssert.assertThat(response, Matchers.notNullValue());
+    }
+
+    /**
+     * Create mock UriInfo.
+     * @param home Home to return
+     * @throws Exception If there is some problem inside
+     */
+    private UriInfo uriInfo(final URI home) throws Exception {
+        final UriInfo info = Mockito.mock(UriInfo.class);
+        Mockito.doReturn(UriBuilder.fromUri(home))
+            .when(info).getAbsolutePathBuilder();
+        Mockito.doReturn(home).when(info).getAbsolutePath();
+        return info;
     }
 
 }

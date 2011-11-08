@@ -61,13 +61,18 @@
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-core</artifactId>
             <version since="15 Oct 2011">1.0-SNAPSHOT</version>
-            <!-- <scope>runtime</scope> -->
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
             <version since="15 Oct 2011">1.0-SNAPSHOT</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- JSON processing library -->
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version since="1 Sep 2011">1.7.1</version>
         </dependency>
         <dependency>
             <!--
@@ -133,6 +138,14 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
         </dependency>
     </dependencies>
 
