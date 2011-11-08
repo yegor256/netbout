@@ -28,6 +28,7 @@ package com.netbout.hub.data;
 
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
+import java.util.Date;
 
 /**
  * One message in a bout.

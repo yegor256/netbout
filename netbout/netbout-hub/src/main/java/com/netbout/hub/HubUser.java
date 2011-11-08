@@ -27,10 +27,15 @@
 package com.netbout.hub;
 
 import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.DuplicateIdentityException;
+import com.netbout.spi.Entry;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.PromotionException;
+import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
+import com.ymock.util.Logger;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -45,17 +50,12 @@ public final class HubUser implements User {
     /**
      * The entry.
      */
-    private final HubEntry entry;
+    private final Entry entry;
 
     /**
      * The name.
      */
     private final String name;
-
-    /**
-     * The secret.
-     */
-    private final String secret;
 
     /**
      * Collection of identities that belong to this user.
@@ -67,13 +67,11 @@ public final class HubUser implements User {
      * Public ctor.
      * @param ent The entry
      * @param nme The name of it
-     * @param scrt The secret of it
-     * @see InMemoryEntry#register(String,String)
+     * @see InMemoryEntry#user(String)
      */
-    public HubUser(final HubEntry ent, final String nme, final String scrt) {
+    public HubUser(final Entry ent, final String nme) {
         this.entry = ent;
         this.name = nme;
-        this.secret = scrt;
     }
 
     /**
@@ -82,6 +80,14 @@ public final class HubUser implements User {
     @Override
     public Entry entry() {
         return this.entry;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
@@ -134,13 +140,17 @@ public final class HubUser implements User {
     }
 
     /**
-     * The user can be authenticated with provided params?
-     * @param nam The name
-     * @param scrt The secret
-     * @return Is it me?
+     * User has this identity?
+     * @param name The name of the identity to find
+     * @return It has?
      */
-    protected boolean authenticated(final String nam, final String scrt) {
-        return this.name.equals(nam) && this.secret.equals(scrt);
+    protected boolean hasIdentity(final String label) {
+        for (HubIdentity identity : this.identities) {
+            if (identity.name().equals(label)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

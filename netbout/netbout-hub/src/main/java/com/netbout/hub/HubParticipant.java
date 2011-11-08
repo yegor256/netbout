@@ -30,12 +30,15 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Participant;
 import com.netbout.spi.PromotionException;
 import com.netbout.spi.User;
+import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -47,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "participant")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class HubParticipant implement Participant {
+public final class HubParticipant implements Participant {
 
     /**
      * Holder of this object.
@@ -116,7 +119,7 @@ public final class HubParticipant implement Participant {
      */
     @XmlAttribute
     public boolean getConfirmed() {
-        return this.participants();
+        return this.confirmed();
     }
 
     /**

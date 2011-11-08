@@ -50,6 +50,12 @@ public interface User {
     Entry entry();
 
     /**
+     * Get name of the user.
+     * @return The name
+     */
+    String name();
+
+    /**
      * Select the right identity to work from.
      * @param name Unique name of the identity
      * @return The identity

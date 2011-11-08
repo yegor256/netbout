@@ -26,9 +26,13 @@
  */
 package com.netbout.hub.data;
 
+import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**

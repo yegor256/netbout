@@ -26,17 +26,27 @@
  */
 package com.netbout.hub;
 
+import com.netbout.hub.data.BoutData;
+import com.netbout.hub.data.MessageData;
+import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
 import com.netbout.spi.PromotionException;
+import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
+import com.ymock.util.Logger;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -125,7 +135,7 @@ public final class HubBout implements Bout {
     public Participant invite(final String friend)
         throws UnknownIdentityException {
         final ParticipantData dude = new ParticipantData(
-            ((InMemoryEntry) this.identity().user().entry()).friend(friend),
+            ((HubEntry) this.identity().user().entry()).friend(friend),
             false
         );
         this.data.addParticipant(dude);
@@ -134,7 +144,7 @@ public final class HubBout implements Bout {
             "#invite('%s'): success",
             friend
         );
-        return new SimpleParticipant(
+        return new HubParticipant(
             this,
             dude.getIdentity(),
             dude.isConfirmed()
@@ -183,7 +193,7 @@ public final class HubBout implements Bout {
         final List<Message> messages = new ArrayList<Message>();
         for (MessageData msg : this.data.getMessages(query)) {
             messages.add(
-                new SimpleMessage(
+                new HubMessage(
                     this,
                     msg.getIdentity(),
                     msg.getText(),
@@ -215,7 +225,7 @@ public final class HubBout implements Bout {
             "#post('%s'): message posted",
             text
         );
-        return new SimpleMessage(
+        return new HubMessage(
             this,
             msg.getIdentity(),
             msg.getText(),

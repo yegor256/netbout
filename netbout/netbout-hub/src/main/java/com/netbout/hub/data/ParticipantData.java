@@ -35,7 +35,7 @@ import com.ymock.util.Logger;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class ParticipantData {
+public final class ParticipantData {
 
     /**
      * The author.

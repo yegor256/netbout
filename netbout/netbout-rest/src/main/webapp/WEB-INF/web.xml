@@ -83,9 +83,5 @@
         <extension>xsl</extension>
         <mime-type>text/xsl</mime-type>
     </mime-mapping>
-    <mime-mapping>
-        <extension>ico</extension>
-        <mime-type>image/gif</mime-type>
-    </mime-mapping>
 
 </web-app>

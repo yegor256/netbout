@@ -26,8 +26,13 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Entry;
+import com.netbout.spi.User;
 import java.net.URL;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link HubUser}.
@@ -43,29 +48,13 @@ public final class HubUserTest {
     @Test
     public void testIdentityManipulations() throws Exception {
         final Entry entry = Mockito.mock(Entry.class);
-        final User user = new HubUser(entry, "John Doe", "secret");
+        final User user = new HubUser(entry, "John Doe");
         final String label = "Johnny";
         final URL photo = new URL("http://img.netbout.com/logo.png");
         user.identify(label, photo);
         MatcherAssert.assertThat(
             user.identity(label).photo(),
             Matchers.equalTo(photo)
-        );
-    }
-
-    /**
-     * Registered identity can be authenticated later.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testAuthenticationMechanism() throws Exception {
-        final Entry entry = Mockito.mock(Entry.class);
-        final String name = "Johnny Walker";
-        final String secret = "swordfish";
-        final User user = new HubUser(entry, name, secret);
-        MatcherAssert.assertThat(
-            user.authenticated(name, secret),
-            Matchers.is(true)
         );
     }
 

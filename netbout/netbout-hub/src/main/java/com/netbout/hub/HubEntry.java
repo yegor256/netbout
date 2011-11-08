@@ -29,6 +29,8 @@ package com.netbout.hub;
 import com.ymock.util.Logger;
 import com.netbout.hub.data.BoutData;
 import com.netbout.spi.Entry;
+import com.netbout.spi.Identity;
+import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,43 +52,47 @@ public final class HubEntry implements Entry {
      * {@inheritDoc}
      */
     @Override
-    public void register(final String name, final String secret)
-        throws DuplicateUserException {
-        for (HubUser user : this.users) {
-            if (user.getName().equals(name)) {
-                throw new DuplicateUserException(
-                    "User '%s' is already registered", name
+    public User user(final String name) {
+        for (User existing : this.users) {
+            if (existing.name().equals(name)) {
+                Logger.info(
+                    this,
+                    "#user('%s'): user found",
+                    name
                 );
+                return existing;
             }
         }
-        this.users.add(new HubUser(this, name, secret));
+        final HubUser user = new HubUser(this, name);
+        this.users.add(user);
         Logger.info(
             this,
-            "#register('%s', '%s'): registered",
-            name,
-            secret
+            "#user('%s'): new user registered",
+            name
         );
+        return user;
     }
 
     /**
-     * {@inheritDoc}
+     * Find identity by name.
+     * @param name The name of the identity to find
+     * @return Found identity
+     * @throws UnknownIdentityException If not found
+     * @checkstyle RedundantThrows (4 lines)
      */
-    @Override
-    public User authenticate(final String name, final String secret) {
+    protected Identity friend(final String name)
+        throws UnknownIdentityException {
         for (HubUser user : this.users) {
-            if (user.authenticated(name, secret)) {
+            if (user.hasIdentity(name)) {
                 Logger.info(
                     this,
-                    "#authenticate('%s', '%s'): completed",
-                    name,
-                    secret
+                    "#friend('%s'): identity found",
+                    name
                 );
-                return user;
+                return user.identity(name);
             }
         }
-        throw new AuthenticationException(
-            "User '%s' not found or password is not correct", name
-        );
+        throw new UnknownIdentityException("Identity '%s' not found", name);
     }
 
 }
