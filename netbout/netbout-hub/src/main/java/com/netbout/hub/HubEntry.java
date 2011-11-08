@@ -26,12 +26,11 @@
  */
 package com.netbout.hub;
 
-import com.ymock.util.Logger;
-import com.netbout.hub.data.BoutData;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
+import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -77,6 +76,7 @@ public final class HubEntry implements Entry {
      * {@inheritDoc}
      * @checkstyle RedundantThrows (4 lines)
      */
+    @Override
     public Identity identity(final String name)
         throws UnknownIdentityException {
         for (HubUser user : this.users) {

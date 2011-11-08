@@ -67,6 +67,12 @@ abstract class AbstractRs implements Resource {
     private HttpHeaders headers;
 
     /**
+     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     */
+    @CookieParam("netbout")
+    private String cookie;
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -121,12 +127,6 @@ abstract class AbstractRs implements Resource {
         }
         return this.uriInfo;
     }
-
-    /**
-     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
-     */
-    @CookieParam("netbout")
-    private String cookie;
 
     /**
      * Set new entry.

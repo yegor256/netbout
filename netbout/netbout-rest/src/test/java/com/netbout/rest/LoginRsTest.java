@@ -40,7 +40,6 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
 
 /**
@@ -49,7 +48,7 @@ import org.xmlmatchers.XmlMatchers;
  * @version $Id$
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ LoginRs.class })
+@PrepareForTest(LoginRs.class)
 public final class LoginRsTest {
 
     /**
@@ -89,6 +88,7 @@ public final class LoginRsTest {
         final String token = "access_token=abc|cde&expires=5108";
         PowerMockito.doReturn(token).when(
             spy,
+            // @checkstyle MultipleStringLiterals (1 line)
             "retrieve",
             Mockito.eq(
                 UriBuilder
@@ -105,6 +105,7 @@ public final class LoginRsTest {
         );
         PowerMockito.doReturn("{ name: 'John Doe' }").when(
             spy,
+            // @checkstyle MultipleStringLiterals (1 line)
             "retrieve",
             Mockito.eq(
                 UriBuilder
@@ -113,13 +114,14 @@ public final class LoginRsTest {
                     .build()
             )
         );
-        final Response response = spy.fbauth("123");
+        final Response response = spy.fbauth(code);
         MatcherAssert.assertThat(response, Matchers.notNullValue());
     }
 
     /**
      * Create mock UriInfo.
      * @param home Home to return
+     * @return The UriInfo object
      * @throws Exception If there is some problem inside
      */
     private UriInfo uriInfo(final URI home) throws Exception {

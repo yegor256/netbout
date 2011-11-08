@@ -33,7 +33,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.PromotionException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.net.URL;
@@ -150,6 +149,7 @@ public final class HubIdentity implements Identity {
 
     /**
      * JAXB related method, to return the name of identity.
+     * @return The name
      */
     @XmlElement
     public String getName() {
@@ -166,6 +166,7 @@ public final class HubIdentity implements Identity {
 
     /**
      * JAXB related method, to return the name of identity.
+     * @return The photo
      */
     @XmlElement
     public String getPhoto() {

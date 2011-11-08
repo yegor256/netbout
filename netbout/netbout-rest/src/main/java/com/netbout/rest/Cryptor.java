@@ -28,6 +28,8 @@ package com.netbout.rest;
 
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -41,7 +43,17 @@ public final class Cryptor {
     /**
      * Separator between name and hash.
      */
-    private static final String SEPARATOR = "===";
+    private static final String SEPARATOR = ".";
+
+    /**
+     * Encoding to be used.
+     */
+    private static final String ENCODING = "UTF-8";
+
+    /**
+     * Salt for hash generation.
+     */
+    private static final String SALT = "U*#p}\u041F\u0435\u0442\u0440";
 
     /**
      * The entry to work with.
@@ -62,14 +74,14 @@ public final class Cryptor {
      * @return Encrypted string
      */
     public String encrypt(final Identity identity) {
-        return String.format(
-            "%s%s%s",
-            this.encode64(identity.user().name()),
-            this.SEPARATOR,
-            this.encode64(identity.name()),
-            this.SEPARATOR,
-            this.encode64(this.hash(identity.name()))
-        );
+        final StringBuilder builder = new StringBuilder();
+        builder
+            .append(this.toBase64(identity.user().name()))
+            .append(this.SEPARATOR)
+            .append(this.toBase64(identity.name()))
+            .append(this.SEPARATOR)
+            .append(this.toBase64(this.hash(identity.name())));
+        return builder.toString();
     }
 
     /**
@@ -79,9 +91,14 @@ public final class Cryptor {
         /**
          * Public ctor.
          * @param hash The source of problem
+         * @param message Error message
+         * @param args Optional arguments
          */
-        public DecryptionException(final String hash) {
-            super("Can't decrypt: " + hash);
+        public DecryptionException(final String hash, final String message,
+            final Object... args) {
+            super(
+                String.format("%s [%s]", String.format(message, args), hash)
+            );
         }
     }
 
@@ -89,24 +106,36 @@ public final class Cryptor {
      * Get identity from hash.
      * @param hash The hash to use
      * @return The name found in it
-     * @throws DecryptionException If we can't decrypt it
+     * @throws Cryptor.DecryptionException If we can't decrypt it
      */
-    public Identity decrypt(final String hash) throws DecryptionException {
+    public Identity decrypt(final String hash) throws
+        Cryptor.DecryptionException {
         final String[] parts = StringUtils.split(hash, this.SEPARATOR);
+        // @checkstyle MagicNumber (1 line)
         if (parts.length != 3) {
-            throw new DecryptionException(hash);
+            throw new DecryptionException(hash, "Not enough parts");
         }
-        final String uname = this.decode64(parts[0]);
-        final String iname = this.decode64(parts[1]);
-        final String signature = this.decode64(parts[2]);
+        final String uname = this.fromBase64(parts[0]);
+        final String iname = this.fromBase64(parts[1]);
+        final String signature = this.fromBase64(parts[2]);
         if (!signature.equals(this.hash(iname))) {
-            throw new DecryptionException(hash);
+            throw new DecryptionException(
+                hash,
+                "Signature ('%s') mismatch, while '%s' expected",
+                signature,
+                this.hash(iname)
+            );
         }
         Identity identity;
         try {
             identity = this.entry.identity(iname);
         } catch (com.netbout.spi.UnknownIdentityException ex) {
-            throw new DecryptionException(hash);
+            throw new DecryptionException(
+                hash,
+                "Identity '%s' not found: %s",
+                iname,
+                ex.getMessage()
+            );
         }
         return identity;
     }
@@ -117,7 +146,7 @@ public final class Cryptor {
      * @return The hash
      */
     private String hash(final String text) {
-        return String.format("%d", text.hashCode());
+        return DigestUtils.md5Hex(text + this.SALT);
     }
 
     /**
@@ -125,8 +154,12 @@ public final class Cryptor {
      * @param text The text to encode
      * @return Encoded text
      */
-    private String encode64(final String text) {
-        return text;
+    private String toBase64(final String text) {
+        try {
+            return new Base64().encodeToString(text.getBytes(this.ENCODING));
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**
@@ -134,8 +167,12 @@ public final class Cryptor {
      * @param text The text to decode
      * @return Decoded text
      */
-    private String decode64(final String text) {
-        return text;
+    private String fromBase64(final String text) {
+        try {
+            return new String(new Base64().decode(text), this.ENCODING);
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
 }

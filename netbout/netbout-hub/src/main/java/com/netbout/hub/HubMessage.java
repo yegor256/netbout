@@ -27,15 +27,9 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Bout;
-import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.PromotionException;
-import com.netbout.spi.User;
-import java.net.URL;
 import java.util.Date;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;

@@ -26,16 +26,10 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Entry;
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.PromotionException;
-import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -117,7 +111,7 @@ public final class HubUser implements User {
 
     /**
      * User has this identity?
-     * @param name The name of the identity to find
+     * @param label The name of the identity to find
      * @return It has?
      */
     protected boolean hasIdentity(final String label) {

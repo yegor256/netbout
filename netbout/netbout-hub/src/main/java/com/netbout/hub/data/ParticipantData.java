@@ -27,7 +27,6 @@
 package com.netbout.hub.data;
 
 import com.netbout.spi.Identity;
-import com.ymock.util.Logger;
 
 /**
  * Bout with data.

@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import java.net.URL;
 import org.junit.Test;
 
 /**

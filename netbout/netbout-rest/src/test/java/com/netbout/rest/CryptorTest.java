@@ -24,66 +24,44 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.data;
+package com.netbout.rest;
 
+import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
-import java.util.Date;
+import com.netbout.spi.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * One message in a bout.
- *
+ * Test case for {@link Cryptor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MessageData {
+public final class CryptorTest {
 
     /**
-     * The author.
+     * Encryption + decryption.
+     * @throws Exception If there is some problem inside
      */
-    private final Identity identity;
-
-    /**
-     * The text.
-     */
-    private final String text;
-
-    /**
-     * The date.
-     */
-    private final Date date = new Date();
-
-    /**
-     * Public ctor.
-     * @param idnt The identity
-     * @param txt The text
-     */
-    public MessageData(final Identity idnt, final String txt) {
-        this.identity = idnt;
-        this.text = txt;
-    }
-
-    /**
-     * Get text.
-     * @return The text
-     */
-    public String getText() {
-        return this.text;
-    }
-
-    /**
-     * Get identity.
-     * @return The identity
-     */
-    public Identity getIdentity() {
-        return this.identity;
-    }
-
-    /**
-     * Get date.
-     * @return The date
-     */
-    public Date getDate() {
-        return this.date;
+    @Test
+    public void testEncryptionDecryption() throws Exception {
+        final String name = "\u041F\u0435\u0442\u0440 I";
+        final Identity identity = Mockito.mock(Identity.class);
+        Mockito.doReturn(name).when(identity).name();
+        final User user = Mockito.mock(User.class);
+        Mockito.doReturn(user).when(identity).user();
+        Mockito.doReturn("Alex Doe").when(user).name();
+        final Entry entry = Mockito.mock(Entry.class);
+        Mockito.doReturn(identity).when(entry).identity(name);
+        final String hash = new Cryptor(entry).encrypt(identity);
+        MatcherAssert.assertThat(
+            hash.matches("[\\w=\\+\\./]+"),
+            Matchers.describedAs(hash, Matchers.is(true))
+        );
+        final Identity discovered = new Cryptor(entry).decrypt(hash);
+        MatcherAssert.assertThat(discovered, Matchers.equalTo(identity));
     }
 
 }

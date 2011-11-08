@@ -44,14 +44,14 @@ import java.util.Map;
 public final class Storage {
 
     /**
-     * All bouts existing in the system.
-     */
-    private final Map<Long, BoutData> bouts = new HashMap<Long, BoutData>();
-
-    /**
      * The singleton.
      */
     public static final Storage INSTANCE = new Storage();
+
+    /**
+     * All bouts existing in the system.
+     */
+    private final Map<Long, BoutData> bouts = new HashMap<Long, BoutData>();
 
     /**
      * Private ctor.
@@ -103,7 +103,8 @@ public final class Storage {
 
     /**
      * Return all bouts in storage.
-     * @return All bouts
+     * @param person Who should we get bouts for
+     * @return All bouts that belong to this person
      */
     public Collection<BoutData> inbox(final Identity person) {
         final List<BoutData> list = new ArrayList<BoutData>();

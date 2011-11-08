@@ -40,9 +40,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
@@ -66,6 +64,7 @@ public final class LoginRs extends AbstractRs {
     public Page login() {
         final URI facebookUri = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
+            // @checkstyle MultipleStringLiterals (3 lines)
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
             .queryParam(
                 "redirect_uri",
@@ -122,6 +121,7 @@ public final class LoginRs extends AbstractRs {
     private String retrieveUserName(final String code) {
         final String token = this.retrieve(
             UriBuilder
+                // @checkstyle MultipleStringLiterals (5 lines)
                 .fromPath("https://graph.facebook.com/oauth/access_token")
                 .queryParam("client_id", Manifests.read("Netbout-FbId"))
                 .queryParam("redirect_uri", this.uriInfo().getAbsolutePath())

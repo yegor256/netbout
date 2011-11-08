@@ -30,16 +30,10 @@ import com.netbout.hub.data.BoutData;
 import com.netbout.hub.data.MessageData;
 import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Bout;
-import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
-import com.netbout.spi.PromotionException;
-import com.netbout.spi.UnknownIdentityException;
-import com.netbout.spi.User;
 import com.ymock.util.Logger;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -97,6 +91,7 @@ public final class HubBout implements Bout {
 
     /**
      * JAXB related method, to return the number of the bout.
+     * @return The number
      */
     @XmlElement
     public Long getNumber() {
@@ -113,6 +108,7 @@ public final class HubBout implements Bout {
 
     /**
      * JAXB related method, to return the title of the bout.
+     * @return The title
      */
     @XmlElement
     public String getTitle() {
