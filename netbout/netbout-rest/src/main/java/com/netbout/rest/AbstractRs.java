@@ -30,6 +30,7 @@ import com.netbout.hub.HubEntry;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 
@@ -59,6 +60,12 @@ abstract class AbstractRs implements Resource {
     private UriInfo uriInfo;
 
     /**
+     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     */
+    @Context
+    private HttpHeaders headers;
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -72,6 +79,22 @@ abstract class AbstractRs implements Resource {
             );
         }
         return this.providers;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpHeaders httpHeaders() {
+        if (this.headers == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#headers was never injected by JAX-RS",
+                    this.getClass().getName()
+                )
+            );
+        }
+        return this.headers;
     }
 
     /**
@@ -112,6 +135,14 @@ abstract class AbstractRs implements Resource {
      */
     public void setProviders(final Providers prov) {
         this.providers = prov;
+    }
+
+    /**
+     * Set HttpHeaders, to be called by JAX-RS framework or a unit test.
+     * @param hdrs List of headers
+     */
+    public void setHttpHeaders(final HttpHeaders hdrs) {
+        this.headers = hdrs;
     }
 
     /**

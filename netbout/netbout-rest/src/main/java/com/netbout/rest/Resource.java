@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.spi.Identity;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 
@@ -49,5 +50,11 @@ public interface Resource {
      * @return Providers
      */
     Providers providers();
+
+    /**
+     * All Http Headers.
+     * @return Headers
+     */
+    HttpHeaders httpHeaders();
 
 }

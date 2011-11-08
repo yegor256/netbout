@@ -28,12 +28,16 @@ package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.User;
 import com.rexsl.core.Manifests;
 import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -76,16 +80,28 @@ public final class LoginRs extends AbstractRs {
 
     /**
      * Facebook authentication page (callback hits it).
+     * @param code Facebook "authorization code"
      * @return The response
      */
     @Path("/fb")
     @GET
     public Response fbauth(@PathParam("code") final String code) {
+        final User user = this.authenticate(code);
+        final String cookie = new Cryptor().encrypt(user.name());
         return Response
             .status(Response.Status.TEMPORARY_REDIRECT)
             .location(UriBuilder.fromPath("/").build())
-            .cookie()
+            .cookie(new NewCookie("netbout", cookie))
             .build();
+    }
+
+    /**
+     * Authenticate the user through facebook.
+     * @param code Facebook "authorization code"
+     * @return The user found
+     */
+    private User authenticate(final String code) {
+        return null;
     }
 
 }

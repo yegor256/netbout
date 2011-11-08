@@ -58,7 +58,7 @@ public final class LoginRsTest {
         final Page page = rest.login();
         MatcherAssert.assertThat(
             JaxbConverter.the(page),
-            XmlMatchers.hasXPath("/page/providers/link[@name='facebook']")
+            XmlMatchers.hasXPath("/page/facebook[@href]")
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(page),
