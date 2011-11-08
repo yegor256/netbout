@@ -79,6 +79,14 @@ final class SimpleBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public Long number() {
+        return this.data.getNumber();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String title() {
         return this.data.getTitle();
     }

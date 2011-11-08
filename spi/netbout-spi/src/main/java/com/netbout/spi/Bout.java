@@ -47,6 +47,12 @@ public interface Bout {
     Identity identity();
 
     /**
+     * Get its unique number.
+     * @return The number of the bout
+     */
+    Long number();
+
+    /**
      * Get its title.
      * @return The title of the bout
      */

@@ -48,6 +48,11 @@ final class BoutData {
     private String title;
 
     /**
+     * The number.
+     */
+    private Long number;
+
+    /**
      * Collection of participants.
      */
     private final Collection<ParticipantData> participants =
@@ -57,6 +62,27 @@ final class BoutData {
      * Ordered list of messages.
      */
     private final List<MessageData> messages = new ArrayList<MessageData>();
+
+    /**
+     * Get its number.
+     * @return The number
+     */
+    public Long getNumber() {
+        return this.number;
+    }
+
+    /**
+     * Set its number.
+     * @param num The number
+     */
+    public void setNumber(final Long num) {
+        this.number = num;
+        Logger.info(
+            this,
+            "#setNumber('%d'): changed",
+            num
+        );
+    }
 
     /**
      * Get title.

@@ -235,10 +235,10 @@
                                 <archive>
                                     <manifestEntries>
                                         <Netbout-Revision>${buildNumber}</Netbout-Revision>
-                                        <NetBout-Version>${project.version}</NetBout-Version>
-                                        <NetBout-Date>${maven.build.timestamp}</NetBout-Date>
-                                        <NetBout-FbId>${fb.id}</NetBout-FbId>
-                                        <NetBout-FbSecret>${fb.secret}</NetBout-FbSecret>
+                                        <Netbout-Version>${project.version}</Netbout-Version>
+                                        <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                        <Netbout-FbId>${fb.id}</Netbout-FbId>
+                                        <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
