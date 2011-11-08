@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.netbout.hub.HubEntry;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
@@ -64,6 +65,14 @@ abstract class AbstractRs implements Resource {
      */
     @Context
     private HttpHeaders headers;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Entry entry() {
+        return this.entry;
+    }
 
     /**
      * {@inheritDoc}
@@ -114,6 +123,12 @@ abstract class AbstractRs implements Resource {
     }
 
     /**
+     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     */
+    @CookieParam("netbout")
+    private String cookie;
+
+    /**
      * Set new entry.
      * @param ent The entry to work with
      */
@@ -159,7 +174,14 @@ abstract class AbstractRs implements Resource {
                 )
             );
         }
-        throw new LoginRequiredException();
+        if (this.cookie == null) {
+            throw new LoginRequiredException();
+        }
+        try {
+            return new Cryptor(this.entry()).decrypt(this.cookie);
+        } catch (Cryptor.DecryptionException ex) {
+            throw new LoginRequiredException();
+        }
     }
 
 }

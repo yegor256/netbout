@@ -74,19 +74,16 @@ public final class HubEntry implements Entry {
     }
 
     /**
-     * Find identity by name.
-     * @param name The name of the identity to find
-     * @return Found identity
-     * @throws UnknownIdentityException If not found
+     * {@inheritDoc}
      * @checkstyle RedundantThrows (4 lines)
      */
-    protected Identity friend(final String name)
+    public Identity identity(final String name)
         throws UnknownIdentityException {
         for (HubUser user : this.users) {
             if (user.hasIdentity(name)) {
                 Logger.info(
                     this,
-                    "#friend('%s'): identity found",
+                    "#identity('%s'): identity found",
                     name
                 );
                 return user.identity(name);

@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import com.rexsl.core.Manifests;
 import java.net.URI;
@@ -86,12 +87,12 @@ public final class LoginRs extends AbstractRs {
     @Path("/fb")
     @GET
     public Response fbauth(@PathParam("code") final String code) {
-        final User user = this.authenticate(code);
-        final String cookie = new Cryptor().encrypt(user.name());
-        return Response
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .authenticated(this.authenticate(code))
+            .entity("fbauth")
             .status(Response.Status.TEMPORARY_REDIRECT)
             .location(UriBuilder.fromPath("/").build())
-            .cookie(new NewCookie("netbout", cookie))
             .build();
     }
 
@@ -100,8 +101,13 @@ public final class LoginRs extends AbstractRs {
      * @param code Facebook "authorization code"
      * @return The user found
      */
-    private User authenticate(final String code) {
-        return null;
+    private Identity authenticate(final String code) {
+        // let's get user name from FB
+        final String name = "test";
+        // let's get this user from Entry
+        final User user = this.entry().user(name);
+        // let's create default identity
+        return user.identity(name);
     }
 
 }

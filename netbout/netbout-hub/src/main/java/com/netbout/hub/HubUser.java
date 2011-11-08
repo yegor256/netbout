@@ -92,11 +92,9 @@ public final class HubUser implements User {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity identity(final String label)
-        throws UnknownIdentityException {
+    public Identity identity(final String label) {
         for (HubIdentity identity : this.identities) {
             if (identity.name().equals(label)) {
                 Logger.info(
@@ -107,36 +105,14 @@ public final class HubUser implements User {
                 return identity;
             }
         }
-        throw new UnknownIdentityException(
-            "Identity '%s' not found for user '%s'",
-            label,
-            this.name
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    @Override
-    public void identify(final String label, final URL photo)
-        throws DuplicateIdentityException {
-        for (HubIdentity identity : this.identities) {
-            if (identity.name().equals(label)) {
-                throw new DuplicateIdentityException(
-                    "Identity '%s' is already attached to '%s' user",
-                    label,
-                    this.name
-                );
-            }
-        }
-        this.identities.add(new HubIdentity(this, label, photo));
+        final HubIdentity identity = new HubIdentity(this, label);
+        this.identities.add(identity);
         Logger.info(
             this,
-            "#identify('%s', '%s'): done",
-            label,
-            photo
+            "#identity('%s'): created new",
+            label
         );
+        return identity;
     }
 
     /**

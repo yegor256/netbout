@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Entry;
+import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
@@ -51,7 +52,8 @@ public final class HubUserTest {
         final User user = new HubUser(entry, "John Doe");
         final String label = "Johnny";
         final URL photo = new URL("http://img.netbout.com/logo.png");
-        user.identify(label, photo);
+        final Identity identity = user.identity(label);
+        identity.setPhoto(photo);
         MatcherAssert.assertThat(
             user.identity(label).photo(),
             Matchers.equalTo(photo)

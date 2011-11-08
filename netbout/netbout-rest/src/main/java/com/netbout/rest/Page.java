@@ -27,6 +27,8 @@
 package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
+import com.netbout.spi.Identity;
+import javax.ws.rs.core.Response;
 
 /**
  * Page.
@@ -64,5 +66,13 @@ public interface Page {
      * @return This object
      */
     Page append(JaxbBundle bundle);
+
+    /**
+     * Create and return a JAX-RS response, for a page that is viewed by an
+     * athenticated user (we know who is logged in now).
+     * @param identity The identity
+     * @return The response builder
+     */
+    Response.ResponseBuilder authenticated(Identity identity);
 
 }

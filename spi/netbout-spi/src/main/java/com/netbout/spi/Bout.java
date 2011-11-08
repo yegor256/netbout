@@ -74,9 +74,8 @@ public interface Bout {
      * Invite new participant.
      * @param identity Identity of the participant
      * @return This new participant
-     * @throws UnknownIdentityException If this identity is not found
      */
-    Participant invite(String identity) throws UnknownIdentityException;
+    Participant invite(Identity identity);
 
     /**
      * Get ordered list of all messages of the bout.

@@ -67,7 +67,7 @@ public final class HubIdentity implements Identity {
     /**
      * The photo.
      */
-    private final URL photo;
+    private URL photo;
 
     /**
      * The helper, if exists.
@@ -78,13 +78,11 @@ public final class HubIdentity implements Identity {
      * Public ctor.
      * @param usr The user of this identity
      * @param nam The identity's name
-     * @param pic Photo of the identity
      * @see HubUser#identity(String)
      */
-    public HubIdentity(final HubUser usr, final String nam, final URL pic) {
+    public HubIdentity(final HubUser usr, final String nam) {
         this.user = usr;
         this.name = nam;
-        this.photo = pic;
     }
 
     /**
@@ -172,6 +170,14 @@ public final class HubIdentity implements Identity {
     @XmlElement
     public String getPhoto() {
         return this.photo().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPhoto(final URL pic) {
+        this.photo = pic;
     }
 
     /**

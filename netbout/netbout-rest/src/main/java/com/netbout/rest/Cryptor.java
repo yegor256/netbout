@@ -26,17 +26,9 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.PageBuilder;
-import com.rexsl.core.Manifests;
-import java.net.URI;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import com.netbout.spi.Entry;
+import com.netbout.spi.Identity;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Encrypts and decrypts.
@@ -52,16 +44,31 @@ public final class Cryptor {
     private static final String SEPARATOR = "===";
 
     /**
-     * Encrypt user name.
-     * @param name The name to encrypt
+     * The entry to work with.
+     */
+    private final Entry entry;
+
+    /**
+     * Public ctor.
+     * @param ent Entry to work with
+     */
+    public Cryptor(final Entry ent) {
+        this.entry = ent;
+    }
+
+    /**
+     * Encrypt identity into text.
+     * @param identity The identity
      * @return Encrypted string
      */
-    public String encrypt(final String name) {
+    public String encrypt(final Identity identity) {
         return String.format(
             "%s%s%s",
-            this.encode64(name),
+            this.encode64(identity.user().name()),
             this.SEPARATOR,
-            this.encode64(this.hash(name))
+            this.encode64(identity.name()),
+            this.SEPARATOR,
+            this.encode64(this.hash(identity.name()))
         );
     }
 
@@ -79,24 +86,29 @@ public final class Cryptor {
     }
 
     /**
-     * Get name from hash.
+     * Get identity from hash.
      * @param hash The hash to use
      * @return The name found in it
      * @throws DecryptionException If we can't decrypt it
      */
-    public String decrypt(final String hash) throws DecryptionException {
-        final String name = this.decode64(
-            hash.substring(0, hash.indexOf(this.SEPARATOR))
-        );
-        final String sign = this.decode64(
-            hash.substring(
-                hash.indexOf(this.SEPARATOR) + this.SEPARATOR.length()
-            )
-        );
-        if (sign.equals(this.hash(name))) {
+    public Identity decrypt(final String hash) throws DecryptionException {
+        final String[] parts = StringUtils.split(hash, this.SEPARATOR);
+        if (parts.length != 3) {
             throw new DecryptionException(hash);
         }
-        return name;
+        final String uname = this.decode64(parts[0]);
+        final String iname = this.decode64(parts[1]);
+        final String signature = this.decode64(parts[2]);
+        if (!signature.equals(this.hash(iname))) {
+            throw new DecryptionException(hash);
+        }
+        Identity identity;
+        try {
+            identity = this.entry.identity(iname);
+        } catch (com.netbout.spi.UnknownIdentityException ex) {
+            throw new DecryptionException(hash);
+        }
+        return identity;
     }
 
     /**

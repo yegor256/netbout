@@ -27,10 +27,12 @@
 package com.netbout.rest;
 
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Identity;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * RESTful front of user's inbox.
@@ -46,13 +48,15 @@ public final class InboxRs extends AbstractRs {
      * @return The bout, convertable to XML
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public Page inbox() {
+    public Response inbox() {
+        final Identity identity = this.identity();
         return new PageBuilder()
             .stylesheet("inbox")
             .build(AbstractPage.class)
             .init(this)
-            .append(this.identity().inbox(""));
+            .append(identity.inbox(""))
+            .authenticated(identity)
+            .build();
     }
 
 }

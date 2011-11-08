@@ -48,4 +48,12 @@ public interface Entry {
      */
     User user(String name);
 
+    /**
+     * Find an identity by name.
+     * @param name Unique name of identity
+     * @return The identity just found
+     * @throws UnknownIdentityException
+     */
+    Identity identity(String name) throws UnknownIdentityException;
+
 }

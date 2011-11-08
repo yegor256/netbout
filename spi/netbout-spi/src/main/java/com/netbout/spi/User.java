@@ -56,19 +56,10 @@ public interface User {
     String name();
 
     /**
-     * Select the right identity to work from.
+     * Select the right identity to work from, or create one if it's absent.
      * @param name Unique name of the identity
      * @return The identity
-     * @throws UnknownIdentityException If this identity is not found
      */
-    Identity identity(String name) throws UnknownIdentityException;
-
-    /**
-     * Add new identity to the user.
-     * @param name Unique name of the identity
-     * @param photo Photo of the identity
-     * @throws DuplicateIdentityException If this identity already exists
-     */
-    void identify(String name, URL photo) throws DuplicateIdentityException;
+    Identity identity(String name);
 
 }

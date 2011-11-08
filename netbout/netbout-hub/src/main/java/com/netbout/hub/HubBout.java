@@ -132,12 +132,8 @@ public final class HubBout implements Bout {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Participant invite(final String friend)
-        throws UnknownIdentityException {
-        final ParticipantData dude = new ParticipantData(
-            ((HubEntry) this.identity().user().entry()).friend(friend),
-            false
-        );
+    public Participant invite(final Identity friend) {
+        final ParticipantData dude = new ParticipantData(friend, false);
         this.data.addParticipant(dude);
         Logger.info(
             this,
