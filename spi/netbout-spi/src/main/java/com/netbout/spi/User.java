@@ -29,8 +29,6 @@
  */
 package com.netbout.spi;
 
-import java.net.URL;
-
 /**
  * Authenticated user.
  *

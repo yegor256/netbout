@@ -29,13 +29,10 @@
  */
 package com.netbout.spi.stub;
 
-import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -84,11 +81,17 @@ final class SimpleUser implements User {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity identity(final String label)
-        throws UnknownIdentityException {
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity identity(final String label) {
         for (SimpleIdentity identity : this.identities) {
             if (identity.name().equals(label)) {
                 Logger.info(
@@ -99,35 +102,14 @@ final class SimpleUser implements User {
                 return identity;
             }
         }
-        throw new UnknownIdentityException(
-            "Identity '%s' not found for user '%s'",
-            label,
-            this.name
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    @Override
-    public void identify(final String label, final URL photo)
-        throws DuplicateIdentityException {
-        for (SimpleIdentity identity : this.identities) {
-            if (identity.name().equals(label)) {
-                throw new DuplicateIdentityException(
-                    "Identity '%s' is already attached to '%s' user",
-                    label,
-                    this.name
-                );
-            }
-        }
-        this.identities.add(new SimpleIdentity(this, label));
+        final SimpleIdentity identity = new SimpleIdentity(this, label);
+        this.identities.add(identity);
         Logger.info(
             this,
-            "#identify('%s'): done",
+            "#identity('%s'): created",
             label
         );
+        return identity;
     }
 
     /**
@@ -136,14 +118,6 @@ final class SimpleUser implements User {
      */
     public Collection<SimpleIdentity> getIdentities() {
         return this.identities;
-    }
-
-    /**
-     * Get its name.
-     * @return The name
-     */
-    public String getName() {
-        return this.name;
     }
 
 }

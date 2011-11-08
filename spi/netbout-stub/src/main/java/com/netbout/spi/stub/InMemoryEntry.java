@@ -62,42 +62,25 @@ public final class InMemoryEntry implements Entry {
      * {@inheritDoc}
      */
     @Override
-    public void register(final String name, final String secret) {
+    public User user(final String name) {
         for (SimpleUser user : this.users) {
-            if (user.getName().equals(name)) {
-                throw new IllegalArgumentException(
-                    "User with this name already registered"
-                );
-            }
-        }
-        this.users.add(new SimpleUser(this, name));
-        Logger.info(
-            this,
-            "#register('%s', '%s'): registered",
-            name,
-            secret
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public User authenticate(final String name, final String secret) {
-        for (SimpleUser user : this.users) {
-            if (user.getName().equals(name)) {
+            if (user.name().equals(name)) {
                 Logger.info(
                     this,
-                    "#authenticate('%s', '%s'): completed",
-                    name,
-                    secret
+                    "#user('%s'): found",
+                    name
                 );
                 return user;
             }
         }
-        throw new IllegalArgumentException(
-            "User with this name is not found"
+        final SimpleUser user = new SimpleUser(this, name);
+        this.users.add(user);
+        Logger.info(
+            this,
+            "#user('%s'): registered",
+            name
         );
+        return user;
     }
 
     /**
@@ -107,7 +90,8 @@ public final class InMemoryEntry implements Entry {
      * @throws UnknownIdentityException If not found
      * @checkstyle RedundantThrows (4 lines)
      */
-    public Identity friend(final String name) throws UnknownIdentityException {
+    public Identity identity(final String name)
+        throws UnknownIdentityException {
         for (SimpleUser user : this.users) {
             for (SimpleIdentity identity : user.getIdentities()) {
                 if (identity.name().equals(name)) {

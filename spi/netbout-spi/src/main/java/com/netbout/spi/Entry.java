@@ -52,7 +52,7 @@ public interface Entry {
      * Find an identity by name.
      * @param name Unique name of identity
      * @return The identity just found
-     * @throws UnknownIdentityException
+     * @throws UnknownIdentityException If this identity doesn't exist
      */
     Identity identity(String name) throws UnknownIdentityException;
 

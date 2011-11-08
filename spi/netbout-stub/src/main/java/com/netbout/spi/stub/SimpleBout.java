@@ -33,7 +33,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
-import com.netbout.spi.UnknownIdentityException;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -101,15 +100,10 @@ final class SimpleBout implements Bout {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Participant invite(final String friend)
-        throws UnknownIdentityException {
-        final ParticipantData dude = new ParticipantData(
-            ((InMemoryEntry) this.identity().user().entry()).friend(friend),
-            false
-        );
+    public Participant invite(final Identity friend) {
+        final ParticipantData dude = new ParticipantData(friend, false);
         this.data.addParticipant(dude);
         Logger.info(
             this,
