@@ -34,6 +34,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 /**
@@ -62,17 +63,14 @@ public final class LoginRs extends AbstractRs {
                     .replacePath("/g/fb")
                     .build()
             )
+            .queryParam("scope", "email")
             .build();
         return new PageBuilder()
             .stylesheet("login")
             .build(AbstractPage.class)
             .init(this)
             .append(
-                new JaxbBundle("providers")
-                    .add(Page.HATEOAS_LINK)
-                        .attr(Page.HATEOAS_NAME, "facebook")
-                        .attr(Page.HATEOAS_HREF, facebookUri)
-                    .up()
+                new JaxbBundle("facebook").attr(Page.HATEOAS_HREF, facebookUri)
             );
     }
 
@@ -82,8 +80,12 @@ public final class LoginRs extends AbstractRs {
      */
     @Path("/fb")
     @GET
-    public String fbauth() {
-        return "ok";
+    public Response fbauth(@PathParam("code") final String code) {
+        return Response
+            .status(Response.Status.TEMPORARY_REDIRECT)
+            .location(UriBuilder.fromPath("/").build())
+            .cookie()
+            .build();
     }
 
 }

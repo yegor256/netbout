@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import java.net.URL;
 import org.junit.Test;
 
 /**
@@ -41,16 +42,21 @@ public final class HubIdentityTest {
      */
     @Test
     public void testJaxbIsWorking() throws Exception {
-        // final Identity identity = new HubIdentity();
-        // final Source xml = JaxbConverter.the(identity);
-        // MatcherAssert.assertThat(
-        //     xml,
-        //     XmlMatchers.hasXPath("/identity/name")
-        // );
-        // MatcherAssert.assertThat(
-        //     xml,
-        //     XmlMatchers.hasXPath("/identity/photo")
-        // );
+        final User user = Mockito.mock(User.class);
+        final Identity identity = new HubIdentity(
+            user,
+            "John Doe",
+            new URL("http://localhost/pic.png")
+        );
+        final Source xml = JaxbConverter.the(identity);
+        MatcherAssert.assertThat(
+            xml,
+            XmlMatchers.hasXPath("/identity/name[.='John Doe']")
+        );
+        MatcherAssert.assertThat(
+            xml,
+            XmlMatchers.hasXPath("/identity/photo[starts-with(.,'http://')]")
+        );
     }
 
 }

@@ -78,22 +78,6 @@ abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public final Identity identity() {
-        if (this.entry == null) {
-            throw new IllegalStateException(
-                String.format(
-                    "%s#entry was never injected by JAX-RS",
-                    this.getClass().getName()
-                )
-            );
-        }
-        throw new LoginRequiredException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public UriInfo uriInfo() {
         if (this.uriInfo == null) {
             throw new IllegalStateException(
@@ -128,6 +112,23 @@ abstract class AbstractRs implements Resource {
      */
     public void setProviders(final Providers prov) {
         this.providers = prov;
+    }
+
+    /**
+     * Get current user identity, or throws {@link LoginRequiredException} if
+     * no user is logged in at the moment.
+     * @return The identity
+     */
+    protected final Identity identity() {
+        if (this.entry == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#entry was never injected by JAX-RS",
+                    this.getClass().getName()
+                )
+            );
+        }
+        throw new LoginRequiredException();
     }
 
 }

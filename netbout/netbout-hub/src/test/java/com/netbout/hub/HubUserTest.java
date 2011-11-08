@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/login.xsl" type="text/xsl"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -25,20 +23,50 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.hub;
+
+import java.net.URL;
+import org.junit.Test;
+
+/**
+ * Test case of {@link HubUser}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<page>
-    <version>
-        <name>1.0</name>
-        <revision>1342</revision>
-        <date>2011-09-23</date>
-    </version>
-    <links>
-        <link href="/xml/inbox.xml" name="home" />
-        <link href="/" name="logout" />
-        <link href="/xml/bout.xml" name="start" />
-    </links>
-    <facebook href="http://fb.com/..." />
-</page>
+ */
+public final class HubUserTest {
+
+    /**
+     * Identity manipulations.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testIdentityManipulations() throws Exception {
+        final Entry entry = Mockito.mock(Entry.class);
+        final User user = new HubUser(entry, "John Doe", "secret");
+        final String label = "Johnny";
+        final URL photo = new URL("http://img.netbout.com/logo.png");
+        user.identify(label, photo);
+        MatcherAssert.assertThat(
+            user.identity(label).photo(),
+            Matchers.equalTo(photo)
+        );
+    }
+
+    /**
+     * Registered identity can be authenticated later.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testAuthenticationMechanism() throws Exception {
+        final Entry entry = Mockito.mock(Entry.class);
+        final String name = "Johnny Walker";
+        final String secret = "swordfish";
+        final User user = new HubUser(entry, name, secret);
+        MatcherAssert.assertThat(
+            user.authenticated(name, secret),
+            Matchers.is(true)
+        );
+    }
+
+}

@@ -26,8 +26,12 @@
  */
 package com.netbout.hub;
 
+import com.ymock.util.Logger;
+import com.netbout.hub.data.BoutData;
 import com.netbout.spi.Entry;
 import com.netbout.spi.User;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Entry point to Hub.
@@ -38,11 +42,30 @@ import com.netbout.spi.User;
 public final class HubEntry implements Entry {
 
     /**
+     * All users registered in the system.
+     */
+    private final Collection<HubUser> users = new ArrayList<HubUser>();
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    public void register(final String name, final String secret) {
-        //...
+    public void register(final String name, final String secret)
+        throws DuplicateUserException {
+        for (HubUser user : this.users) {
+            if (user.getName().equals(name)) {
+                throw new DuplicateUserException(
+                    "User '%s' is already registered", name
+                );
+            }
+        }
+        this.users.add(new HubUser(this, name, secret));
+        Logger.info(
+            this,
+            "#register('%s', '%s'): registered",
+            name,
+            secret
+        );
     }
 
     /**
@@ -50,7 +73,20 @@ public final class HubEntry implements Entry {
      */
     @Override
     public User authenticate(final String name, final String secret) {
-        return null;
+        for (HubUser user : this.users) {
+            if (user.authenticated(name, secret)) {
+                Logger.info(
+                    this,
+                    "#authenticate('%s', '%s'): completed",
+                    name,
+                    secret
+                );
+                return user;
+            }
+        }
+        throw new AuthenticationException(
+            "User '%s' not found or password is not correct", name
+        );
     }
 
 }

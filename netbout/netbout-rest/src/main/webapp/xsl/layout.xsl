@@ -43,7 +43,7 @@
                 </title>
                 <xsl:call-template name="head" />
                 <link href="/css/global.css" rel="stylesheet" type="text/css"></link>
-                <link rel="icon" type="image/gif" href="/favicon.ico"/>
+                <link rel="icon" type="image/gif" href="http://img.netbout.com/favicon.ico"/>
             </head>
             <body>
                 <div id="version">
@@ -55,7 +55,7 @@
                         <xsl:attribute name="href">
                             <xsl:value-of select="/page/links/link[@name='home']/@href"/>
                         </xsl:attribute>
-                        <img src="/images/logo.png"/>
+                        <img src="http://img.netbout.com/logo.png"/>
                     </a>
                     <div id="crumbs">
                         <xsl:choose>

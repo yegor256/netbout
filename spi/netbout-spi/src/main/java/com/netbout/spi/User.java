@@ -29,6 +29,8 @@
  */
 package com.netbout.spi;
 
+import java.net.URL;
+
 /**
  * Authenticated user.
  *
@@ -58,8 +60,9 @@ public interface User {
     /**
      * Add new identity to the user.
      * @param name Unique name of the identity
+     * @param photo Photo of the identity
      * @throws DuplicateIdentityException If this identity already exists
      */
-    void identify(String name) throws DuplicateIdentityException;
+    void identify(String name, URL photo) throws DuplicateIdentityException;
 
 }

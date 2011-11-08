@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/login.xsl" type="text/xsl"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -25,20 +23,46 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.hub;
+
+import java.net.URL;
+import org.junit.Test;
+
+/**
+ * Test case of {@link HubMessage}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<page>
-    <version>
-        <name>1.0</name>
-        <revision>1342</revision>
-        <date>2011-09-23</date>
-    </version>
-    <links>
-        <link href="/xml/inbox.xml" name="home" />
-        <link href="/" name="logout" />
-        <link href="/xml/bout.xml" name="start" />
-    </links>
-    <facebook href="http://fb.com/..." />
-</page>
+ */
+public final class HubMessageTest {
+
+    /**
+     * Object can be converted to XML through JAXB.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testJaxbIsWorking() throws Exception {
+        final Bout bout = Mockito.mock(Bout.class);
+        final Identity identity = Mockito.mock(Identity.class);
+        final Message message = new HubMessage(
+            bout,
+            identity,
+            "this is a message",
+            new Date()
+        );
+        final Source xml = JaxbConverter.the(message);
+        MatcherAssert.assertThat(
+            xml,
+            XmlMatchers.hasXPath("/message/author/name[.='John Doe']")
+        );
+        MatcherAssert.assertThat(
+            xml,
+            XmlMatchers.hasXPath("/message/text[starts-with(.,'this is')]")
+        );
+        MatcherAssert.assertThat(
+            xml,
+            XmlMatchers.hasXPath("/message/date")
+        );
+    }
+
+}

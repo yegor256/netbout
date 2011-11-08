@@ -50,11 +50,4 @@ public interface Resource {
      */
     Providers providers();
 
-    /**
-     * Get current user identity, or throws {@link LoginRequiredException} if
-     * no user is logged in at the moment.
-     * @return The identity
-     */
-    Identity identity();
-
 }

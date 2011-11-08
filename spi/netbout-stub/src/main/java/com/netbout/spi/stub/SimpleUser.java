@@ -35,6 +35,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -110,7 +111,8 @@ final class SimpleUser implements User {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public void identify(final String label) throws DuplicateIdentityException {
+    public void identify(final String label, final URL photo)
+        throws DuplicateIdentityException {
         for (SimpleIdentity identity : this.identities) {
             if (identity.name().equals(label)) {
                 throw new DuplicateIdentityException(

@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/login.xsl" type="text/xsl"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -25,20 +23,54 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.data;
+
+import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
+
+/**
+ * Bout with data.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<page>
-    <version>
-        <name>1.0</name>
-        <revision>1342</revision>
-        <date>2011-09-23</date>
-    </version>
-    <links>
-        <link href="/xml/inbox.xml" name="home" />
-        <link href="/" name="logout" />
-        <link href="/xml/bout.xml" name="start" />
-    </links>
-    <facebook href="http://fb.com/..." />
-</page>
+ */
+final class ParticipantData {
+
+    /**
+     * The author.
+     */
+    private final Identity identity;
+
+    /**
+     * Is it confirmed?
+     */
+    private boolean confirmed;
+
+    /**
+     * Public ctor.
+     * @param idnt The identity
+     * @param aye Is it confirmed
+     */
+    public ParticipantData(final Identity idnt, final boolean aye) {
+        this.identity = idnt;
+        this.confirmed = aye;
+    }
+
+    /**
+     * Is it confirmed?
+     * @return The flag
+     */
+    public boolean isConfirmed() {
+        return this.confirmed;
+    }
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    public Identity getIdentity() {
+        return this.identity;
+    }
+
+}

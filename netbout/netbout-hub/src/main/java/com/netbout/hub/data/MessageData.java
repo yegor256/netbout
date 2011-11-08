@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/login.xsl" type="text/xsl"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -25,20 +23,67 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.data;
+
+import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
+
+/**
+ * One message in a bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<page>
-    <version>
-        <name>1.0</name>
-        <revision>1342</revision>
-        <date>2011-09-23</date>
-    </version>
-    <links>
-        <link href="/xml/inbox.xml" name="home" />
-        <link href="/" name="logout" />
-        <link href="/xml/bout.xml" name="start" />
-    </links>
-    <facebook href="http://fb.com/..." />
-</page>
+ */
+public final class MessageData {
+
+    /**
+     * The author.
+     */
+    private final Identity identity;
+
+    /**
+     * The text.
+     */
+    private final String text;
+
+    /**
+     * The date.
+     */
+    private final Date date = new Date();
+
+    /**
+     * Public ctor.
+     * @param idnt The identity
+     * @param txt The text
+     */
+    public MessageData(final Identity idnt, final String txt) {
+        this.identity = idnt;
+        this.text = txt;
+    }
+
+    /**
+     * Get text.
+     * @return The text
+     */
+    public String getText() {
+        return this.text;
+    }
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    public Identity getIdentity() {
+        return this.identity;
+    }
+
+    /**
+     * Get date.
+     * @return The date
+     */
+    public Date getDate() {
+        return this.date;
+    }
+
+}

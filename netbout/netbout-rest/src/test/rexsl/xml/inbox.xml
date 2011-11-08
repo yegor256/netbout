@@ -30,6 +30,11 @@
  * @version $Id$
  -->
 <page>
+    <version>
+        <name>1.0</name>
+        <revision>1342</revision>
+        <date>2011-09-23</date>
+    </version>
     <links>
         <link href="/xml/inbox.xml" name="home" />
         <link href="/" name="logout" />
