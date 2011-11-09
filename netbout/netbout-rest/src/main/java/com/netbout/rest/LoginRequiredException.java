@@ -40,11 +40,13 @@ final class LoginRequiredException extends WebApplicationException {
 
     /**
      * Constructor.
+     * @param msg The message
      */
-    public LoginRequiredException() {
+    public LoginRequiredException(final String msg) {
         super(
             Response
                 .status(Response.Status.TEMPORARY_REDIRECT)
+                .entity(msg)
                 .location(UriBuilder.fromPath("/g").build())
                 .build()
         );

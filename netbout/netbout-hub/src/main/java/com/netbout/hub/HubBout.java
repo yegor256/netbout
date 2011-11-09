@@ -41,6 +41,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -49,8 +51,10 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "identity")
+@XmlRootElement(name = "bout")
+@XmlType(name = "bout")
 @XmlAccessorType(XmlAccessType.NONE)
+@XmlSeeAlso({ HubMessage.class, HubParticipant.class })
 public final class HubBout implements Bout {
 
     /**
@@ -62,6 +66,13 @@ public final class HubBout implements Bout {
      * The data.
      */
     private BoutData data;
+
+    /**
+     * Public ctor for JAXB.
+     */
+    public HubBout() {
+        throw new IllegalStateException("This ctor should never be called");
+    }
 
     /**
      * Public ctor.
@@ -173,8 +184,8 @@ public final class HubBout implements Bout {
      */
     @XmlElement(name = "participant")
     @XmlElementWrapper(name = "participants")
-    public Collection<Participant> getParticipants() {
-        return this.participants();
+    public Collection<HubParticipant> getParticipants() {
+        return (Collection) this.participants();
     }
 
     /**

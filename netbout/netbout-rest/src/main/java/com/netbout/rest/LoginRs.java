@@ -39,8 +39,6 @@ import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
@@ -50,18 +48,19 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #112 Maybe we should migrate to some Facebook specific library, for
+ *  example RestFB (http://restfb.com/)
  */
 @Path("/g")
 public final class LoginRs extends AbstractRs {
 
     /**
      * Login page.
-     * @return The page, convertable to XML
+     * @return The JAX-RS response
      * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public Page login() {
+    public Response login() {
         final URI facebookUri = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
             // @checkstyle MultipleStringLiterals (3 lines)
@@ -80,24 +79,42 @@ public final class LoginRs extends AbstractRs {
             .init(this)
             .append(
                 new JaxbBundle("facebook").attr(Page.HATEOAS_HREF, facebookUri)
-            );
+            )
+            .anonymous()
+            .build();
+    }
+
+    /**
+     * Logout page.
+     * @return The JAX-RS response
+     * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
+     */
+    @Path("/out")
+    @GET
+    public Response logout() {
+        return Response
+            .status(Response.Status.TEMPORARY_REDIRECT)
+            // @checkstyle MultipleStringLiterals (1 line)
+            .location(UriBuilder.fromPath("/").build())
+            .build();
     }
 
     /**
      * Facebook authentication page (callback hits it).
      * @param code Facebook "authorization code"
-     * @return The response
+     * @return The JAX-RS response
      */
     @Path("/fb")
     @GET
     public Response fbauth(@PathParam("code") final String code) {
         return new PageBuilder()
-            .stylesheet("fbauth")
+            .stylesheet("none")
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.authenticate(code))
             .entity("")
             .status(Response.Status.TEMPORARY_REDIRECT)
+            // @checkstyle MultipleStringLiterals (1 line)
             .location(UriBuilder.fromPath("/").build())
             .build();
     }

@@ -36,17 +36,17 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">2.0</version>
+        <version netbout="yes">2.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-rest</artifactId>
     <packaging>war</packaging>
-    <name>netbout-rest</name>
+    <name>com.netbout:netbout-rest</name>
 
     <dependencies>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-hub</artifactId>
-            <version netbout="yes">2.0</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.netbout.spi</groupId>
@@ -73,6 +73,15 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version since="8 Nov 2011">1.5</version>
+        </dependency>
+        <dependency>
+            <!--
+            Javax Servlet API 2.3.
+            -->
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version since="26 Oct 2011">2.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <!-- JSON processing library -->
@@ -199,6 +208,28 @@
             <build>
                 <plugins>
                     <plugin>
+                        <!--
+                        This plugin will collect current build number
+                        from Subversion and save it into Maven property "buildNumber".
+                        -->
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>buildnumber-maven-plugin</artifactId>
+                        <version since="1 Aug 2011">1.0-beta-4</version>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                                <configuration>
+                                    <doCheck>false</doCheck>
+                                    <doUpdate>false</doUpdate>
+                                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>com.cloudbees</groupId>
                         <artifactId>bees-maven-plugin</artifactId>
                         <version since="30 Oct 2011">1.0-SNAPSHOT</version>
@@ -220,28 +251,6 @@
                 </plugins>
                 <pluginManagement>
                     <plugins>
-                        <plugin>
-                            <!--
-                            This plugin will collect current build number
-                            from Subversion and save it into Maven property "buildNumber".
-                            -->
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>buildnumber-maven-plugin</artifactId>
-                            <version since="1 Aug 2011">1.0-beta-4</version>
-                            <configuration>
-                                <doCheck>false</doCheck>
-                                <doUpdate>false</doUpdate>
-                                <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                            </configuration>
-                            <executions>
-                                <execution>
-                                    <phase>prepare-package</phase>
-                                    <goals>
-                                        <goal>create</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
                         <plugin>
                             <artifactId>maven-war-plugin</artifactId>
                             <version since="2 Dec 2010">2.1</version>

@@ -24,49 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
-
-import com.netbout.harness.PageConverter;
-import com.netbout.harness.ResourceBuilder;
-import javax.ws.rs.core.Response;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
 
 /**
- * Test case for {@link InboxRs}.
+ * Test harness.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class InboxRsTest {
-
-    /**
-     * Inbox page should be renderable.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testInboxPageRendering() throws Exception {
-        final InboxRs rest = new ResourceBuilder().build(InboxRs.class);
-        final Response response = rest.inbox("");
-        MatcherAssert.assertThat(
-            PageConverter.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/bouts")
-        );
-    }
-
-    /**
-     * Inbox page should be renderable.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testStartNewBout() throws Exception {
-        final InboxRs rest = new ResourceBuilder().build(InboxRs.class);
-        final Response response = rest.start();
-        MatcherAssert.assertThat(
-            response.getStatus(),
-            Matchers.equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
-        );
-    }
-
-}
+package com.netbout.harness;

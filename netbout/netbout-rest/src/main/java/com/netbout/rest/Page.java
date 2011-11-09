@@ -75,4 +75,10 @@ public interface Page {
      */
     Response.ResponseBuilder authenticated(Identity identity);
 
+    /**
+     * Create and return a JAX-RS response for anonymous user.
+     * @return The response builder
+     */
+    Response.ResponseBuilder anonymous();
+
 }

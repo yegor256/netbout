@@ -53,7 +53,7 @@ public final class Cryptor {
     /**
      * Salt for hash generation.
      */
-    private static final String SALT = "U*#p}\u041F\u0435\u0442\u0440";
+    private static final String SALT = "U*#p}*YQ2@-+==I<,.?//";
 
     /**
      * The entry to work with.
@@ -80,7 +80,7 @@ public final class Cryptor {
             .append(this.SEPARATOR)
             .append(this.toBase64(identity.name()))
             .append(this.SEPARATOR)
-            .append(this.toBase64(this.hash(identity.name())));
+            .append(this.hash(identity.name()));
         return builder.toString();
     }
 
@@ -117,13 +117,14 @@ public final class Cryptor {
         }
         final String uname = this.fromBase64(parts[0]);
         final String iname = this.fromBase64(parts[1]);
-        final String signature = this.fromBase64(parts[2]);
+        final String signature = parts[2];
         if (!signature.equals(this.hash(iname))) {
             throw new DecryptionException(
                 hash,
-                "Signature ('%s') mismatch, while '%s' expected",
+                "Signature ('%s') mismatch, while '%s' expected for '%s'",
                 signature,
-                this.hash(iname)
+                this.hash(iname),
+                iname
             );
         }
         Identity identity;
@@ -137,6 +138,7 @@ public final class Cryptor {
                 ex.getMessage()
             );
         }
+        assert identity != null;
         return identity;
     }
 

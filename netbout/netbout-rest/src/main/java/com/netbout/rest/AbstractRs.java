@@ -29,6 +29,8 @@ package com.netbout.rest;
 import com.netbout.hub.HubEntry;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -41,12 +43,12 @@ import javax.ws.rs.ext.Providers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-abstract class AbstractRs implements Resource {
+public abstract class AbstractRs implements Resource {
 
     /**
      * Entry to work with.
      */
-    private Entry entry = new HubEntry();
+    private Entry entry = HubEntry.INSTANCE;
 
     /**
      * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
@@ -64,7 +66,13 @@ abstract class AbstractRs implements Resource {
      * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
      */
     @Context
-    private HttpHeaders headers;
+    private HttpHeaders httpHeaders;
+
+    /**
+     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     */
+    @Context
+    private HttpServletRequest httpServletRequest;
 
     /**
      * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
@@ -76,7 +84,7 @@ abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public Entry entry() {
+    public final Entry entry() {
         return this.entry;
     }
 
@@ -84,7 +92,7 @@ abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public Providers providers() {
+    public final Providers providers() {
         if (this.providers == null) {
             throw new IllegalStateException(
                 String.format(
@@ -100,23 +108,23 @@ abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public HttpHeaders httpHeaders() {
-        if (this.headers == null) {
+    public final HttpHeaders httpHeaders() {
+        if (this.httpHeaders == null) {
             throw new IllegalStateException(
                 String.format(
-                    "%s#headers was never injected by JAX-RS",
+                    "%s#httpHeaders was never injected by JAX-RS",
                     this.getClass().getName()
                 )
             );
         }
-        return this.headers;
+        return this.httpHeaders;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UriInfo uriInfo() {
+    public final UriInfo uriInfo() {
         if (this.uriInfo == null) {
             throw new IllegalStateException(
                 String.format(
@@ -129,6 +137,22 @@ abstract class AbstractRs implements Resource {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final HttpServletRequest httpServletRequest() {
+        if (this.httpServletRequest == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#httpServletRequest was never injected by JAX-RS",
+                    this.getClass().getName()
+                )
+            );
+        }
+        return this.httpServletRequest;
+    }
+
+    /**
      * Set new entry.
      * @param ent The entry to work with
      */
@@ -137,10 +161,18 @@ abstract class AbstractRs implements Resource {
     }
 
     /**
+     * Set cookie.
+     * @param cke The cookie to set
+     */
+    public final void setCookie(final String cke) {
+        this.cookie = cke;
+    }
+
+    /**
      * Set URI Info, to be called by unit test.
      * @param info The info to inject
      */
-    public void setUriInfo(final UriInfo info) {
+    public final void setUriInfo(final UriInfo info) {
         this.uriInfo = info;
     }
 
@@ -148,7 +180,7 @@ abstract class AbstractRs implements Resource {
      * Set Providers, to be called by JAX-RS framework or a unit test.
      * @param prov List of providers
      */
-    public void setProviders(final Providers prov) {
+    public final void setProviders(final Providers prov) {
         this.providers = prov;
     }
 
@@ -156,8 +188,16 @@ abstract class AbstractRs implements Resource {
      * Set HttpHeaders, to be called by JAX-RS framework or a unit test.
      * @param hdrs List of headers
      */
-    public void setHttpHeaders(final HttpHeaders hdrs) {
-        this.headers = hdrs;
+    public final void setHttpHeaders(final HttpHeaders hdrs) {
+        this.httpHeaders = hdrs;
+    }
+
+    /**
+     * Set HttpServletRequest, to be called by JAX-RS framework or a unit test.
+     * @param request The request
+     */
+    public final void setHttpServletRequest(final HttpServletRequest request) {
+        this.httpServletRequest = request;
     }
 
     /**
@@ -175,12 +215,19 @@ abstract class AbstractRs implements Resource {
             );
         }
         if (this.cookie == null) {
-            throw new LoginRequiredException();
+            throw new LoginRequiredException("Cookie is absent");
         }
         try {
             return new Cryptor(this.entry()).decrypt(this.cookie);
         } catch (Cryptor.DecryptionException ex) {
-            throw new LoginRequiredException();
+            Logger.warn(
+                this,
+                "Decryption failure from %s calling '%s': %s",
+                this.httpServletRequest().getRemoteAddr(),
+                this.httpServletRequest().getRequestURI(),
+                ex.getMessage()
+            );
+            throw new LoginRequiredException("Cryptor failure");
         }
     }
 

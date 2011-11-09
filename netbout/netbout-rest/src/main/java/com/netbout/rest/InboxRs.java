@@ -26,11 +26,16 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of user's inbox.
@@ -42,18 +47,43 @@ import javax.ws.rs.core.Response;
 public final class InboxRs extends AbstractRs {
 
     /**
-     * Get bout.
-     * @return The bout, convertable to XML
+     * Get inbox.
+     * @param query Search query, if provided
+     * @return The JAX-RS response
      */
     @GET
-    public Response inbox() {
+    public Response inbox(
+        @QueryParam("q") @DefaultValue("") final String query) {
         final Identity identity = this.identity();
         return new PageBuilder()
             .stylesheet("inbox")
             .build(AbstractPage.class)
             .init(this)
-            .append(identity.inbox(""))
+            .append(JaxbGroup.build(identity.inbox(query), "bouts"))
             .authenticated(identity)
+            .build();
+    }
+
+    /**
+     * Start new bout.
+     * @return The JAX-RS response
+     */
+    @Path("/s")
+    @GET
+    public Response start() {
+        final Identity identity = this.identity();
+        final Bout bout = identity.start();
+        return new PageBuilder()
+            .stylesheet("none")
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(identity)
+            .entity(String.format("bout #%d created", bout.number()))
+            .status(Response.Status.TEMPORARY_REDIRECT)
+            .location(
+                UriBuilder.fromPath("/{num}")
+                    .build(bout.number().toString())
+            )
             .build();
     }
 

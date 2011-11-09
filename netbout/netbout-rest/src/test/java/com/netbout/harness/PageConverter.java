@@ -24,49 +24,57 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.harness;
 
-import com.netbout.harness.PageConverter;
-import com.netbout.harness.ResourceBuilder;
-import javax.ws.rs.core.Response;
+import com.netbout.rest.Page;
+import com.netbout.rest.Resource;
+import com.rexsl.core.XslResolver;
+import com.rexsl.test.XhtmlConverter;
+import java.io.StringWriter;
+import javax.ws.rs.core.MediaType;
+import javax.xml.bind.Marshaller;
+import javax.xml.transform.Source;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 import org.xmlmatchers.XmlMatchers;
 
 /**
- * Test case for {@link InboxRs}.
+ * Converts response to XML.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class InboxRsTest {
+public final class PageConverter {
 
     /**
-     * Inbox page should be renderable.
-     * @throws Exception If there is some problem inside
+     * It's utility class.
      */
-    @Test
-    public void testInboxPageRendering() throws Exception {
-        final InboxRs rest = new ResourceBuilder().build(InboxRs.class);
-        final Response response = rest.inbox("");
-        MatcherAssert.assertThat(
-            PageConverter.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/bouts")
-        );
+    private PageConverter() {
+        // empty
     }
 
     /**
-     * Inbox page should be renderable.
+     * Convert response to XML.
+     * @param page The page
+     * @param resource The resource, where this response came from
+     * @return The XML
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void testStartNewBout() throws Exception {
-        final InboxRs rest = new ResourceBuilder().build(InboxRs.class);
-        final Response response = rest.start();
+    public static Source the(final Page page, final Resource resource)
+        throws Exception {
+        final XslResolver resolver = (XslResolver) resource.providers()
+            .getContextResolver(
+                Marshaller.class,
+                MediaType.APPLICATION_XML_TYPE
+            );
+        final Marshaller mrsh = resolver.getContext(page.getClass());
+        mrsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        final StringWriter writer = new StringWriter();
+        mrsh.marshal(page, writer);
+        final Source source = XhtmlConverter.the(writer.toString());
         MatcherAssert.assertThat(
-            response.getStatus(),
-            Matchers.equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
+            source,
+            XmlMatchers.hasXPath("/page[@mcs]")
         );
+        return source;
     }
 
 }

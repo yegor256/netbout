@@ -42,7 +42,7 @@ public final class BoutData {
     /**
      * The title.
      */
-    private String title;
+    private String title = "";
 
     /**
      * The number.
@@ -65,6 +65,9 @@ public final class BoutData {
      * @return The number
      */
     public Long getNumber() {
+        if (this.number == null) {
+            throw new IllegalStateException("#setNumber() was never called");
+        }
         return this.number;
     }
 

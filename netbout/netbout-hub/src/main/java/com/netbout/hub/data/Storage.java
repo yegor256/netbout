@@ -71,7 +71,9 @@ public final class Storage {
                 max = num + 1;
             }
         }
-        this.bouts.put(max, new BoutData());
+        final BoutData data = new BoutData();
+        data.setNumber(max);
+        this.bouts.put(max, data);
         Logger.info(
             this,
             "#create(): bout #%d created",

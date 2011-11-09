@@ -41,6 +41,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -49,8 +51,10 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@XmlRootElement(name = "identity")
 @XmlType(name = "identity")
 @XmlAccessorType(XmlAccessType.NONE)
+@XmlSeeAlso(HubBout.class)
 public final class HubIdentity implements Identity {
 
     /**
@@ -72,6 +76,13 @@ public final class HubIdentity implements Identity {
      * The helper, if exists.
      */
     private Helper helper;
+
+    /**
+     * Public ctor for JAXB.
+     */
+    public HubIdentity() {
+        throw new IllegalStateException("This ctor should never be called");
+    }
 
     /**
      * Public ctor.
@@ -165,12 +176,12 @@ public final class HubIdentity implements Identity {
     }
 
     /**
-     * JAXB related method, to return the name of identity.
+     * JAXB related method, to return photo of identity.
      * @return The photo
      */
-    @XmlElement
-    public String getPhoto() {
-        return this.photo().toString();
+    @XmlElement(required = true)
+    public URL getPhoto() {
+        return this.photo();
     }
 
     /**
