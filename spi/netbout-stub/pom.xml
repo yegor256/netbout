@@ -39,17 +39,17 @@
     <parent>
         <groupId>com.netbout.spi</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">1.0-SNAPSHOT</version>
+        <version netbout="yes">2.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-stub</artifactId>
     <packaging>jar</packaging>
-    <name>netbout-stub</name>
+    <name>com.netbout.spi:netbout-stub</name>
 
     <dependencies>
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">1.0-SNAPSHOT</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
