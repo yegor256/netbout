@@ -27,7 +27,6 @@
 package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.JaxbGroup;
 import com.netbout.spi.Identity;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
@@ -102,6 +101,36 @@ public abstract class AbstractPage implements Page {
                             .build()
                 )
                 .up()
+                .add(Page.HATEOAS_LINK)
+                    .attr(Page.HATEOAS_NAME, "start")
+                    .attr(
+                        Page.HATEOAS_HREF,
+                        this.home.uriInfo()
+                            .getAbsolutePathBuilder()
+                            .replacePath("/s")
+                            .build()
+                )
+                .up()
+                .add(Page.HATEOAS_LINK)
+                    .attr(Page.HATEOAS_NAME, "login")
+                    .attr(
+                        Page.HATEOAS_HREF,
+                        this.home.uriInfo()
+                            .getAbsolutePathBuilder()
+                            .replacePath("/g")
+                            .build()
+                )
+                .up()
+                .add(Page.HATEOAS_LINK)
+                    .attr(Page.HATEOAS_NAME, "logout")
+                    .attr(
+                        Page.HATEOAS_HREF,
+                        this.home.uriInfo()
+                            .getAbsolutePathBuilder()
+                            .replacePath("/g/out")
+                            .build()
+                )
+                .up()
         );
         this.append(
             new JaxbBundle("version")
@@ -147,6 +176,7 @@ public abstract class AbstractPage implements Page {
     @Override
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
+        this.append(identity);
         return Response.ok()
             .entity(this)
             .cookie(

@@ -26,11 +26,15 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of one Bout.
@@ -38,26 +42,49 @@ import javax.ws.rs.core.MediaType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/{num: \\d+}")
+@Path("/{num : [0-9]+}")
 public final class BoutRs extends AbstractRs {
 
     /**
-     * Public ctor.
-     * @param num ID of the bout to work with
+     * Number of the bout.
      */
-    public BoutRs(@PathParam("num") final Long num) {
-        super();
+    @PathParam("num")
+    private Long number;
+
+    /**
+     * Set bout number.
+     * @param num The number
+     */
+    public void setNumber(final Long num) {
+        this.number = num;
     }
 
     /**
-     * Get bout.
-     * @return The bout, convertable to XML
+     * Get bout front page.
+     * @return The JAX-RS response
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public String bout() {
-        this.identity();
-        return "hello";
+    public Response front() {
+        final Identity identity = this.identity();
+        Bout bout;
+        try {
+            bout = identity.bout(this.number);
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new WebApplicationException(
+                Response
+                    .status(Response.Status.TEMPORARY_REDIRECT)
+                    .entity(ex.getMessage())
+                    .location(UriBuilder.fromPath("/").build())
+                    .build()
+            );
+        }
+        return new PageBuilder()
+            .stylesheet("bout")
+            .build(AbstractPage.class)
+            .init(this)
+            .append(bout)
+            .authenticated(identity)
+            .build();
     }
 
 }

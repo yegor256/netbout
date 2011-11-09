@@ -30,4 +30,4 @@
 
 import com.netbout.hub.HubEntry
 
-HubEntry.INSTANCE.user("John Doe").identity("johnny.doe");
+HubEntry.INSTANCE.user('John Doe').identity('johnny.doe')

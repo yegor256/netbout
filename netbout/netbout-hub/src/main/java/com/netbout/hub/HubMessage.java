@@ -33,6 +33,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -41,6 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@XmlRootElement(name = "message")
 @XmlType(name = "message")
 @XmlAccessorType(XmlAccessType.NONE)
 final class HubMessage implements Message {
@@ -64,6 +66,13 @@ final class HubMessage implements Message {
      * The date.
      */
     private Date date = new Date();
+
+    /**
+     * Public ctor for JAXB.
+     */
+    public HubMessage() {
+        throw new IllegalStateException("This ctor should never be called");
+    }
 
     /**
      * Public ctor.
@@ -102,8 +111,8 @@ final class HubMessage implements Message {
      * @return The author
      */
     @XmlElement
-    public Identity getAuthor() {
-        return this.author();
+    public HubIdentity getAuthor() {
+        return (HubIdentity) this.author();
     }
 
     /**

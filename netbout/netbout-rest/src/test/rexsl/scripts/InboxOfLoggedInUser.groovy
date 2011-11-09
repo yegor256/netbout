@@ -36,15 +36,27 @@ import org.junit.Assert
 import org.xmlmatchers.XmlMatchers
 import org.hamcrest.Matchers
 
-def r = new TestClient(rexsl.home)
+// user name: John Doe
+// identity name: johnny.doe
+def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
+
+new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    // user name: John Doe
-    // identity name: johnny.doe
-    .header('Cookie', 'netbout=Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd')
+    .header(HttpHeaders.COOKIE, cookie)
+    .get('/s')
+// redirect is happening here, but we don't catch it
+// @see http://trac.fazend.com/rexsl/ticket/53
+// Assert.assertThat(r1.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_TEMP))
+
+def r2 = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header(HttpHeaders.COOKIE, cookie)
     .get('/')
-Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
+Assert.assertThat(r2.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
 Assert.assertThat(
-   XhtmlConverter.the(r.body),
+   XhtmlConverter.the(r2.body),
    XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
 )
-Assert.assertThat(XhtmlConverter.the(r.body), XmlMatchers.hasXPath('/page/bouts'))
+Assert.assertThat(XhtmlConverter.the(r2.body), XmlMatchers.hasXPath('/page/identity/name[.="johnny.doe"]'))
+Assert.assertThat(XhtmlConverter.the(r2.body), XmlMatchers.hasXPath('/page/bouts'))
+Assert.assertThat(XhtmlConverter.the(r2.body), XmlMatchers.hasXPath('/page/bouts/bout/participants/participant'))

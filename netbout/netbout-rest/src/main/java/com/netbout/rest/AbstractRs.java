@@ -84,7 +84,7 @@ public abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public Entry entry() {
+    public final Entry entry() {
         return this.entry;
     }
 
@@ -92,7 +92,7 @@ public abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public Providers providers() {
+    public final Providers providers() {
         if (this.providers == null) {
             throw new IllegalStateException(
                 String.format(
@@ -108,7 +108,7 @@ public abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public HttpHeaders httpHeaders() {
+    public final HttpHeaders httpHeaders() {
         if (this.httpHeaders == null) {
             throw new IllegalStateException(
                 String.format(
@@ -124,7 +124,7 @@ public abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public UriInfo uriInfo() {
+    public final UriInfo uriInfo() {
         if (this.uriInfo == null) {
             throw new IllegalStateException(
                 String.format(
@@ -140,7 +140,7 @@ public abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public HttpServletRequest httpServletRequest() {
+    public final HttpServletRequest httpServletRequest() {
         if (this.httpServletRequest == null) {
             throw new IllegalStateException(
                 String.format(
@@ -172,7 +172,7 @@ public abstract class AbstractRs implements Resource {
      * Set URI Info, to be called by unit test.
      * @param info The info to inject
      */
-    public void setUriInfo(final UriInfo info) {
+    public final void setUriInfo(final UriInfo info) {
         this.uriInfo = info;
     }
 
@@ -180,7 +180,7 @@ public abstract class AbstractRs implements Resource {
      * Set Providers, to be called by JAX-RS framework or a unit test.
      * @param prov List of providers
      */
-    public void setProviders(final Providers prov) {
+    public final void setProviders(final Providers prov) {
         this.providers = prov;
     }
 
@@ -188,7 +188,7 @@ public abstract class AbstractRs implements Resource {
      * Set HttpHeaders, to be called by JAX-RS framework or a unit test.
      * @param hdrs List of headers
      */
-    public void setHttpHeaders(final HttpHeaders hdrs) {
+    public final void setHttpHeaders(final HttpHeaders hdrs) {
         this.httpHeaders = hdrs;
     }
 
@@ -196,7 +196,7 @@ public abstract class AbstractRs implements Resource {
      * Set HttpServletRequest, to be called by JAX-RS framework or a unit test.
      * @param request The request
      */
-    public void setHttpServletRequest(final HttpServletRequest request) {
+    public final void setHttpServletRequest(final HttpServletRequest request) {
         this.httpServletRequest = request;
     }
 

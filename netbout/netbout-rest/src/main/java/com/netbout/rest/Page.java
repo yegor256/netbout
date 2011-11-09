@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Identity;
-import java.util.Collection;
 import javax.ws.rs.core.Response;
 
 /**

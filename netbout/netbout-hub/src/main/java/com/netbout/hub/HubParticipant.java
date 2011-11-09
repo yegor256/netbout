@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -42,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@XmlRootElement(name = "participant")
 @XmlType(name = "participant")
 @XmlAccessorType(XmlAccessType.NONE)
 public final class HubParticipant implements Participant {
@@ -60,6 +62,13 @@ public final class HubParticipant implements Participant {
      * The identity.
      */
     private Identity identity;
+
+    /**
+     * Public ctor for JAXB.
+     */
+    public HubParticipant() {
+        throw new IllegalStateException("This ctor should never be called");
+    }
 
     /**
      * Public ctor.
@@ -95,8 +104,8 @@ public final class HubParticipant implements Participant {
      * @return The participant
      */
     @XmlElement
-    public Identity getIdentity() {
-        return this.identity();
+    public HubIdentity getIdentity() {
+        return (HubIdentity) this.identity();
     }
 
     /**

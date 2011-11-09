@@ -30,12 +30,10 @@ import com.netbout.hub.HubEntry;
 import com.netbout.rest.AbstractRs;
 import com.netbout.rest.Resource;
 import com.rexsl.core.XslResolver;
-import com.rexsl.test.JaxbConverter;
 import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
@@ -94,10 +92,10 @@ public final class ResourceBuilder {
         Mockito.doReturn("/").when(this.httpServletRequest)
             .getRequestURI();
         // providers
-        Mockito.doReturn(new XslResolver()).when(this.providers)
+        Mockito.doReturn(new XslResolver())
+            .when(this.providers)
             .getContextResolver(
-                Marshaller.class,
-                MediaType.APPLICATION_XML_TYPE
+                Marshaller.class, MediaType.APPLICATION_XML_TYPE
             );
     }
 
@@ -105,9 +103,11 @@ public final class ResourceBuilder {
      * Build an instance of provided class.
      * @param type The class to build
      * @param <T> The class of response
+     * @return The resource just created
      * @throws Exception If something is wrong
      */
     public <T> T build(final Class<? extends Resource> type) throws Exception {
+        // @checkstyle IllegalType (1 line)
         final AbstractRs rest = (AbstractRs) type.newInstance();
         rest.setUriInfo(this.uriInfo());
         rest.setHttpHeaders(this.httpHeaders());

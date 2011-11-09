@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "group")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
 public final class JaxbGroup {
 
@@ -82,6 +82,7 @@ public final class JaxbGroup {
      * Public ctor.
      * @param grp Group of elements
      * @param name Name of parent element
+     * @return The object just created
      */
     public static Object build(final Collection grp, final String name) {
         synchronized (JaxbGroup.TYPES) {
@@ -110,13 +111,14 @@ public final class JaxbGroup {
      */
     @XmlAnyElement(lax = true)
     @XmlMixed
-    public final Collection getGroup() {
+    public Collection getGroup() {
         return this.group;
     }
 
     /**
      * Construct new class.
      * @param name Name of root element
+     * @return Class just created
      */
     private static Class construct(final String name) {
         final ClassPool pool = ClassPool.getDefault();
@@ -133,10 +135,11 @@ public final class JaxbGroup {
             final Annotation annotation = attribute.getAnnotation(
                 XmlRootElement.class.getName()
             );
-            final StringMemberValue member =
-                (StringMemberValue) annotation.getMemberValue("name");
-            member.setValue(name);
-            annotation.addMemberValue("name", member);
+            annotation.addMemberValue(
+                "name",
+                new StringMemberValue(name, file.getConstPool())
+            );
+            attribute.addAnnotation(annotation);
             final Class cls = ctc.toClass();
             Logger.debug(
                 JaxbGroup.class,

@@ -32,11 +32,9 @@ import com.rexsl.core.XslResolver;
 import com.rexsl.test.XhtmlConverter;
 import java.io.StringWriter;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.Source;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.xmlmatchers.XmlMatchers;
 
 /**
@@ -45,6 +43,13 @@ import org.xmlmatchers.XmlMatchers;
  * @version $Id$
  */
 public final class PageConverter {
+
+    /**
+     * It's utility class.
+     */
+    private PageConverter() {
+        // empty
+    }
 
     /**
      * Convert response to XML.

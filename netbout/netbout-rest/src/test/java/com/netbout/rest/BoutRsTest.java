@@ -26,13 +26,13 @@
  */
 package com.netbout.rest;
 
-import java.net.URI;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import com.netbout.harness.PageConverter;
+import com.netbout.harness.ResourceBuilder;
+import com.netbout.spi.Bout;
+import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case for {@link BoutRs}.
@@ -47,14 +47,17 @@ public final class BoutRsTest {
      */
     @Test
     public void testBoutRendering() throws Exception {
-        final UriInfo info = Mockito.mock(UriInfo.class);
-        final URI home = new URI("http://localhost/g");
-        Mockito.doReturn(UriBuilder.fromUri(home))
-            .when(info).getAbsolutePathBuilder();
-        Mockito.doReturn(home).when(info).getAbsolutePath();
-        final BoutRs rest = new BoutRs(1L);
-        rest.setUriInfo(info);
-        MatcherAssert.assertThat(rest, Matchers.notNullValue());
+        final BoutRs rest = new ResourceBuilder().build(BoutRs.class);
+        final Bout bout = rest.entry()
+            .user("John Doe")
+            .identity("johnny.doe")
+            .start();
+        rest.setNumber(bout.number());
+        final Response response = rest.front();
+        MatcherAssert.assertThat(
+            PageConverter.the((Page) response.getEntity(), rest),
+            XmlMatchers.hasXPath("/page/bout/participants/participant/identity")
+        );
     }
 
 }
