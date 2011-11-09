@@ -43,6 +43,11 @@ import java.util.Collection;
 public final class HubEntry implements Entry {
 
     /**
+     * Static instance.
+     */
+    public static final HubEntry INSTANCE = new HubEntry();
+
+    /**
      * All users registered in the system.
      */
     private final Collection<HubUser> users = new ArrayList<HubUser>();

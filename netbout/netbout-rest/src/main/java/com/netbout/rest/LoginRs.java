@@ -60,8 +60,7 @@ public final class LoginRs extends AbstractRs {
      * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public Page login() {
+    public Response login() {
         final URI facebookUri = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
             // @checkstyle MultipleStringLiterals (3 lines)
@@ -80,7 +79,9 @@ public final class LoginRs extends AbstractRs {
             .init(this)
             .append(
                 new JaxbBundle("facebook").attr(Page.HATEOAS_HREF, facebookUri)
-            );
+            )
+            .anonymous()
+            .build();
     }
 
     /**

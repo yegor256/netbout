@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
+import com.netbout.rest.page.JaxbGroup;
 import com.netbout.spi.Identity;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
@@ -39,6 +40,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -58,6 +60,11 @@ public abstract class AbstractPage implements Page {
     private Resource home;
 
     /**
+     * When this page was started to build.
+     */
+    private final long start;
+
+    /**
      * Collection of elements.
      */
     private final Collection elements = new ArrayList();
@@ -66,7 +73,7 @@ public abstract class AbstractPage implements Page {
      * Public ctor.
      */
     public AbstractPage() {
-        // intentionally empty
+        this.start = System.nanoTime();
     }
 
     /**
@@ -152,6 +159,16 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Response.ResponseBuilder anonymous() {
+        return Response.ok()
+            .entity(this)
+            .type(MediaType.APPLICATION_XML);
+    }
+
+    /**
      * Get all elements.
      * @return Full list of injected elements
      */
@@ -159,6 +176,16 @@ public abstract class AbstractPage implements Page {
     @XmlMixed
     public final Collection<Object> getElements() {
         return this.elements;
+    }
+
+    /**
+     * Get time of page generation.
+     * @return Time in microseconds
+     */
+    @XmlAttribute
+    public final Long getMcs() {
+        // @checkstyle MagicNumber (1 line)
+        return (System.nanoTime() - this.start) / 1000L;
     }
 
 }

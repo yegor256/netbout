@@ -26,10 +26,13 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
@@ -43,16 +46,18 @@ public final class InboxRs extends AbstractRs {
 
     /**
      * Get bout.
+     * @param query Search query, if provided
      * @return The bout, convertable to XML
      */
     @GET
-    public Response inbox() {
+    public Response inbox(
+        @QueryParam("q") @DefaultValue("") final String query) {
         final Identity identity = this.identity();
         return new PageBuilder()
             .stylesheet("inbox")
             .build(AbstractPage.class)
             .init(this)
-            .append(identity.inbox(""))
+            .append(JaxbGroup.build(identity.inbox(query), "bouts"))
             .authenticated(identity)
             .build();
     }

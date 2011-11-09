@@ -28,23 +28,6 @@
  * @version $Id$
  */
 
-import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
+import com.netbout.hub.HubEntry
 
-def r = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    // user name: John Doe
-    // identity name: johnny.doe
-    .header('Cookie', 'netbout=Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd')
-    .get('/')
-Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-Assert.assertThat(
-   XhtmlConverter.the(r.body),
-   XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
-)
-Assert.assertThat(XhtmlConverter.the(r.body), XmlMatchers.hasXPath('/page/bouts'))
+HubEntry.INSTANCE.user("John Doe").identity("johnny.doe");

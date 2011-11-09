@@ -26,6 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.netbout.harness.PageConverter;
+import com.netbout.harness.ResourceBuilder;
 import com.rexsl.core.Manifests;
 import com.rexsl.test.JaxbConverter;
 import java.net.URI;
@@ -57,20 +59,11 @@ public final class LoginRsTest {
      */
     @Test
     public void testLoginPageRendering() throws Exception {
-        final LoginRs rest = new LoginRs();
-        rest.setUriInfo(this.uriInfo(new URI("http://localhost:99/")));
-        final Page page = rest.login();
+        final LoginRs rest = new ResourceBuilder().build(LoginRs.class);
+        final Response response = rest.login();
         MatcherAssert.assertThat(
-            JaxbConverter.the(page),
+            PageConverter.the((Page) response.getEntity(), rest),
             XmlMatchers.hasXPath("/page/facebook[@href]")
-        );
-        MatcherAssert.assertThat(
-            JaxbConverter.the(page),
-            XmlMatchers.hasXPath("/page/version/name[.='1.0']")
-        );
-        MatcherAssert.assertThat(
-            JaxbConverter.the(page),
-            XmlMatchers.hasXPath("/page/links/link[@name='self']")
         );
     }
 
@@ -81,11 +74,11 @@ public final class LoginRsTest {
     @Test
     public void testAuthenticationFromFacebook() throws Exception {
         final String code = "123";
-        final LoginRs rest = new LoginRs();
-        final URI home = new URI("http://localhost/");
-        rest.setUriInfo(this.uriInfo(home));
+        final ResourceBuilder builder = new ResourceBuilder();
+        final LoginRs rest = builder.build(LoginRs.class);
         final LoginRs spy = PowerMockito.spy(rest);
         final String token = "access_token=abc|cde&expires=5108";
+        final URI redirectUri = builder.uriInfo().getAbsolutePath();
         PowerMockito.doReturn(token).when(
             spy,
             // @checkstyle MultipleStringLiterals (1 line)
@@ -94,7 +87,7 @@ public final class LoginRsTest {
                 UriBuilder
                     .fromPath("https://graph.facebook.com/oauth/access_token")
                     .queryParam("client_id", Manifests.read("Netbout-FbId"))
-                    .queryParam("redirect_uri", home.toString())
+                    .queryParam("redirect_uri", redirectUri)
                     .queryParam(
                         "client_secret",
                         Manifests.read("Netbout-FbSecret")
@@ -115,21 +108,10 @@ public final class LoginRsTest {
             )
         );
         final Response response = spy.fbauth(code);
-        MatcherAssert.assertThat(response, Matchers.notNullValue());
-    }
-
-    /**
-     * Create mock UriInfo.
-     * @param home Home to return
-     * @return The UriInfo object
-     * @throws Exception If there is some problem inside
-     */
-    private UriInfo uriInfo(final URI home) throws Exception {
-        final UriInfo info = Mockito.mock(UriInfo.class);
-        Mockito.doReturn(UriBuilder.fromUri(home))
-            .when(info).getAbsolutePathBuilder();
-        Mockito.doReturn(home).when(info).getAbsolutePath();
-        return info;
+        MatcherAssert.assertThat(
+            response.getStatus(),
+            Matchers.equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
+        );
     }
 
 }

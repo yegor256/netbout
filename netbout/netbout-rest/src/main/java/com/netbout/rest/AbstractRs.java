@@ -43,12 +43,12 @@ import javax.ws.rs.ext.Providers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-abstract class AbstractRs implements Resource {
+public abstract class AbstractRs implements Resource {
 
     /**
      * Entry to work with.
      */
-    private Entry entry = new HubEntry();
+    private Entry entry = HubEntry.INSTANCE;
 
     /**
      * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
@@ -161,6 +161,14 @@ abstract class AbstractRs implements Resource {
     }
 
     /**
+     * Set cookie.
+     * @param cke The cookie to set
+     */
+    public final void setCookie(final String cke) {
+        this.cookie = cke;
+    }
+
+    /**
      * Set URI Info, to be called by unit test.
      * @param info The info to inject
      */
@@ -207,7 +215,7 @@ abstract class AbstractRs implements Resource {
             );
         }
         if (this.cookie == null) {
-            throw new LoginRequiredException();
+            throw new LoginRequiredException("Cookie is absent");
         }
         try {
             return new Cryptor(this.entry()).decrypt(this.cookie);
@@ -219,7 +227,7 @@ abstract class AbstractRs implements Resource {
                 this.httpServletRequest().getRequestURI(),
                 ex.getMessage()
             );
-            throw new LoginRequiredException();
+            throw new LoginRequiredException("Cryptor failure");
         }
     }
 
