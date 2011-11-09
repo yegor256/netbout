@@ -29,6 +29,8 @@ package com.netbout.rest;
 import com.netbout.hub.HubEntry;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -64,7 +66,13 @@ abstract class AbstractRs implements Resource {
      * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
      */
     @Context
-    private HttpHeaders headers;
+    private HttpHeaders httpHeaders;
+
+    /**
+     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     */
+    @Context
+    private HttpServletRequest httpServletRequest;
 
     /**
      * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
@@ -101,15 +109,15 @@ abstract class AbstractRs implements Resource {
      */
     @Override
     public HttpHeaders httpHeaders() {
-        if (this.headers == null) {
+        if (this.httpHeaders == null) {
             throw new IllegalStateException(
                 String.format(
-                    "%s#headers was never injected by JAX-RS",
+                    "%s#httpHeaders was never injected by JAX-RS",
                     this.getClass().getName()
                 )
             );
         }
-        return this.headers;
+        return this.httpHeaders;
     }
 
     /**
@@ -126,6 +134,22 @@ abstract class AbstractRs implements Resource {
             );
         }
         return this.uriInfo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpServletRequest httpServletRequest() {
+        if (this.httpServletRequest == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#httpServletRequest was never injected by JAX-RS",
+                    this.getClass().getName()
+                )
+            );
+        }
+        return this.httpServletRequest;
     }
 
     /**
@@ -157,7 +181,15 @@ abstract class AbstractRs implements Resource {
      * @param hdrs List of headers
      */
     public void setHttpHeaders(final HttpHeaders hdrs) {
-        this.headers = hdrs;
+        this.httpHeaders = hdrs;
+    }
+
+    /**
+     * Set HttpServletRequest, to be called by JAX-RS framework or a unit test.
+     * @param request The request
+     */
+    public void setHttpServletRequest(final HttpServletRequest request) {
+        this.httpServletRequest = request;
     }
 
     /**
@@ -180,6 +212,13 @@ abstract class AbstractRs implements Resource {
         try {
             return new Cryptor(this.entry()).decrypt(this.cookie);
         } catch (Cryptor.DecryptionException ex) {
+            Logger.warn(
+                this,
+                "Decryption failure from %s calling '%s': %s",
+                this.httpServletRequest().getRemoteAddr(),
+                this.httpServletRequest().getRequestURI(),
+                ex.getMessage()
+            );
             throw new LoginRequiredException();
         }
     }

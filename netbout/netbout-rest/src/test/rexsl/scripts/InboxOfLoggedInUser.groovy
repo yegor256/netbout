@@ -38,6 +38,7 @@ import org.hamcrest.Matchers
 
 def r = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header('Cookie', 'netbout=test')
     .get('/')
 Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
 //Assert.assertThat(

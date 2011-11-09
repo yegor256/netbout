@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.spi.Entry;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
@@ -62,5 +63,11 @@ public interface Resource {
      * @return Headers
      */
     HttpHeaders httpHeaders();
+
+    /**
+     * Request just received.
+     * @return The request
+     */
+    HttpServletRequest httpServletRequest();
 
 }

@@ -75,6 +75,15 @@
             <version since="8 Nov 2011">1.5</version>
         </dependency>
         <dependency>
+            <!--
+            Javax Servlet API 2.3.
+            -->
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version since="26 Oct 2011">2.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <!-- JSON processing library -->
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
