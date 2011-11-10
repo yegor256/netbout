@@ -32,10 +32,13 @@ import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Abstract RESTful resource.
@@ -78,10 +81,23 @@ public abstract class AbstractRs implements Resource {
     private String cookie;
 
     /**
+     * The message to show.
+     */
+    private String message = "";
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public final Entry entry() {
+        if (this.entry == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#entry was never injected by setEntry()",
+                    this.getClass().getName()
+                )
+            );
+        }
         return this.entry;
     }
 
@@ -147,6 +163,32 @@ public abstract class AbstractRs implements Resource {
             );
         }
         return this.httpServletRequest;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String message() {
+        return this.message;
+    }
+
+    /**
+     * Inject message, if it was sent.
+     * @param msg The message
+     */
+    @QueryParam("m")
+    @DefaultValue("")
+    public final void setMessage(final String msg) {
+        if (!msg.isEmpty()) {
+            String decoded;
+            try {
+                decoded = new String(new Base64().decode(msg), "UTF-8");
+            } catch (java.io.UnsupportedEncodingException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+            this.message = decoded;
+        }
     }
 
     /**
@@ -243,17 +285,6 @@ public abstract class AbstractRs implements Resource {
      * @return The identity
      */
     protected final Identity identity() {
-        if (this.entry == null) {
-            throw new IllegalStateException(
-                String.format(
-                    "%s#entry was never injected by JAX-RS",
-                    this.getClass().getName()
-                )
-            );
-        }
-        if (this.cookie == null) {
-            throw new LoginRequiredException("Cookie is absent");
-        }
         try {
             return new Cryptor(this.entry()).decrypt(this.cookie);
         } catch (Cryptor.DecryptionException ex) {
@@ -264,7 +295,7 @@ public abstract class AbstractRs implements Resource {
                 this.httpServletRequest().getRequestURI(),
                 ex.getMessage()
             );
-            throw new LoginRequiredException("Cryptor failure");
+            throw new ForwardException("/g");
         }
     }
 

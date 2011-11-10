@@ -95,7 +95,8 @@ public final class LoginRsTest {
                     .build()
             )
         );
-        PowerMockito.doReturn("{ name: 'John Doe' }").when(
+        final String json = "{ name: 'John Doe' }";
+        PowerMockito.doReturn(json).when(
             spy,
             // @checkstyle MultipleStringLiterals (1 line)
             "retrieve",

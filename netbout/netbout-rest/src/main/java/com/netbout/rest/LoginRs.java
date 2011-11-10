@@ -33,7 +33,6 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -41,7 +40,6 @@ import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
@@ -114,19 +112,7 @@ public final class LoginRs extends AbstractRs {
         try {
             identity = this.authenticate(code);
         } catch (IOException ex) {
-            Logger.warn(
-                this,
-                "#fbauth('%s'): failure: %s",
-                code,
-                ex.getMessage()
-            );
-            throw new WebApplicationException(
-                Response
-                    .status(Response.Status.TEMPORARY_REDIRECT)
-                    .entity(ex.getMessage())
-                    .location(UriBuilder.fromPath("/g").build())
-                    .build()
-            );
+            throw new ForwardException("/g", ex);
         }
         return new PageBuilder()
             .stylesheet("none")

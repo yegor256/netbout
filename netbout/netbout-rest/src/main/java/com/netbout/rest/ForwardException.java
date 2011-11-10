@@ -26,30 +26,85 @@
  */
 package com.netbout.rest;
 
+import java.net.URI;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.codec.binary.Base64;
 
 /**
- * Thrown when login is required, but is not provided in cookies.
+ * Thrown when necessary to forward user to another page and show a message
+ * over there.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class LoginRequiredException extends WebApplicationException {
+final class ForwardException extends WebApplicationException {
 
     /**
      * Constructor.
+     * @param uri Where to forward to
      * @param msg The message
      */
-    public LoginRequiredException(final String msg) {
+    public ForwardException(final URI uri, final String msg) {
         super(
             Response
                 .status(Response.Status.TEMPORARY_REDIRECT)
                 .entity(msg)
-                .location(UriBuilder.fromPath("/g").build())
+                .location(
+                    UriBuilder.fromUri(uri)
+                        .queryParam("m", ForwardException.encode(msg))
+                        .build())
                 .build()
         );
+    }
+
+    /**
+     * Constructor.
+     * @param uri Where to forward to
+     * @param msg The message
+     */
+    public ForwardException(final String uri, final String msg) {
+        this(UriBuilder.fromUri(uri).build(), msg);
+    }
+
+    /**
+     * Constructor.
+     * @param uri Where to forward to
+     */
+    public ForwardException(final String uri) {
+        this(UriBuilder.fromUri(uri).build(), "");
+    }
+
+    /**
+     * Constructor.
+     * @param uri Where to forward to
+     * @param cause Cause of trouble
+     */
+    public ForwardException(final String uri, final Exception cause) {
+        this(UriBuilder.fromUri(uri).build(), cause.getMessage());
+    }
+
+    /**
+     * Constructor.
+     * @param uri Where to forward to
+     * @param cause Cause of trouble
+     */
+    public ForwardException(final URI uri, final Exception cause) {
+        this(uri, cause.getMessage());
+    }
+
+    /**
+     * Encode message.
+     * @param text The text to encode
+     * @return Decoded text (from Base64)
+     */
+    private static String encode(final String text) {
+        try {
+            return new Base64().encodeToString(text.getBytes("UTF-8"));
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
 }

@@ -141,6 +141,7 @@ public abstract class AbstractPage implements Page {
                 .add("date", Manifests.read("Netbout-Date"))
                 .up()
         );
+        this.append(new JaxbBundle("message", this.home.message()));
         return this;
     }
 

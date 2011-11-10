@@ -103,6 +103,11 @@ form#box {
         font-size: 1.4em;
     }
 
+/* message to show */
+div#message {
+    color: red;
+}
+
 /* everything between header and footer */
 div#content {
     position: relative;

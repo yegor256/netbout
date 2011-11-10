@@ -110,6 +110,9 @@ public final class Cryptor {
      */
     public Identity decrypt(final String hash) throws
         Cryptor.DecryptionException {
+        if (hash == null) {
+            throw new DecryptionException(hash, "Hash is NULL");
+        }
         final String[] parts = StringUtils.split(hash, this.SEPARATOR);
         // @checkstyle MagicNumber (1 line)
         if (parts.length != 3) {
