@@ -51,33 +51,30 @@ public abstract class AbstractRs implements Resource {
     private Entry entry = HubEntry.INSTANCE;
 
     /**
-     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     * List of known JAX-RS providers.
      */
-    @Context
     private Providers providers;
 
     /**
-     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     * URI info.
      */
-    @Context
     private UriInfo uriInfo;
 
     /**
-     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     * Http headers.
      */
     @Context
     private HttpHeaders httpHeaders;
 
     /**
-     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     * HTTP servlet request.
      */
     @Context
     private HttpServletRequest httpServletRequest;
 
     /**
-     * Injected by JAX-RS, because of <tt>&#64;Context</tt> annotation.
+     * Cookie.
      */
-    @CookieParam("netbout")
     private String cookie;
 
     /**
@@ -158,46 +155,86 @@ public abstract class AbstractRs implements Resource {
      */
     public final void setEntry(final Entry ent) {
         this.entry = ent;
+        Logger.debug(
+            this,
+            "#setEntry('%s'): injected",
+            ent.getClass().getName()
+        );
     }
 
     /**
-     * Set cookie.
+     * Set cookie. Should be called by JAX-RS implemenation
+     * because of <tt>&#64;CookieParam</tt> annotation.
      * @param cke The cookie to set
      */
+    @CookieParam("netbout")
     public final void setCookie(final String cke) {
         this.cookie = cke;
+        Logger.debug(
+            this,
+            "#setCookie('%s'): injected",
+            cke
+        );
     }
 
     /**
-     * Set URI Info, to be called by unit test.
+     * Set URI Info. Should be called by JAX-RS implemenation
+     * because of <tt>&#64;Context</tt> annotation.
      * @param info The info to inject
      */
+    @Context
     public final void setUriInfo(final UriInfo info) {
         this.uriInfo = info;
+        Logger.debug(
+            this,
+            "#setUriInfo(%s): injected",
+            info.getClass().getName()
+        );
     }
 
     /**
-     * Set Providers, to be called by JAX-RS framework or a unit test.
+     * Set Providers. Should be called by JAX-RS implemenation
+     * because of <tt>&#64;Context</tt> annotation.
      * @param prov List of providers
      */
+    @Context
     public final void setProviders(final Providers prov) {
         this.providers = prov;
+        Logger.debug(
+            this,
+            "#setProviders(%s): injected",
+            prov.getClass().getName()
+        );
     }
 
     /**
-     * Set HttpHeaders, to be called by JAX-RS framework or a unit test.
+     * Set HttpHeaders. Should be called by JAX-RS implemenation
+     * because of <tt>&#64;Context</tt> annotation.
      * @param hdrs List of headers
      */
+    @Context
     public final void setHttpHeaders(final HttpHeaders hdrs) {
         this.httpHeaders = hdrs;
+        Logger.debug(
+            this,
+            "#setHttpHeaders(%s): injected",
+            hdrs.getClass().getName()
+        );
     }
 
     /**
-     * Set HttpServletRequest, to be called by JAX-RS framework or a unit test.
+     * Set HttpServletRequest. Should be called by JAX-RS implemenation
+     * because of <tt>&#64;Context</tt> annotation.
      * @param request The request
      */
+    @Context
     public final void setHttpServletRequest(final HttpServletRequest request) {
         this.httpServletRequest = request;
+        Logger.debug(
+            this,
+            "#setHttpServletRequest(%s): injected",
+            request.getClass().getName()
+        );
     }
 
     /**
