@@ -32,8 +32,6 @@ import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
@@ -78,7 +76,8 @@ public abstract class AbstractRs implements Resource {
     /**
      * Cookie.
      */
-    private String cookie = "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
+    private String cookie;
+    // = "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
 
     /**
      * The message to show.

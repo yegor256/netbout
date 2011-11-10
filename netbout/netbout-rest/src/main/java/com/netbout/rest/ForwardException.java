@@ -73,8 +73,7 @@ final class ForwardException extends WebApplicationException {
                         60 * 60,
                         // secure
                         false
-                    )
-                )
+                    ))
                 .build()
         );
     }

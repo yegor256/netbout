@@ -89,6 +89,7 @@ public abstract class AbstractPage implements Page {
     public final Page init(final Resource res) {
         this.home = res;
         this.link("self", this.home.uriInfo().getAbsolutePath());
+        // @checkstyle MultipleStringLiterals (1 line)
         this.link("home", "/");
         return this;
     }
@@ -105,8 +106,7 @@ public abstract class AbstractPage implements Page {
                 this.home.uriInfo()
                     .getAbsolutePathBuilder()
                     .replacePath(href)
-                    .build()
-        );
+                    .build());
         return this;
     }
 
@@ -162,6 +162,7 @@ public abstract class AbstractPage implements Page {
             .header(
                 "Set-Cookie",
                 String.format(
+                    // @checkstyle LineLength (1 line)
                     "netbout-msg=deleted;Domain=%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
                     this.home.uriInfo().getBaseUri().getHost(),
                     this.home.httpServletRequest().getContextPath()
@@ -174,6 +175,7 @@ public abstract class AbstractPage implements Page {
                     // value
                     new Cryptor(this.home.entry()).encrypt(identity),
                     // path
+                    // @checkstyle MultipleStringLiterals (1 line)
                     "/" + this.home.httpServletRequest().getContextPath(),
                     // domain
                     "." + this.home.uriInfo().getBaseUri().getHost(),
@@ -239,7 +241,7 @@ public abstract class AbstractPage implements Page {
                 .up()
         );
         this.append(new JaxbBundle("message", this.home.message()));
-        this.append(links);
+        this.append(this.links);
     }
 
 }

@@ -86,7 +86,7 @@ public final class ResourceBuilder {
         Mockito.doReturn(UriBuilder.fromUri(home))
             .when(this.uriInfo).getAbsolutePathBuilder();
         Mockito.doReturn(home).when(this.uriInfo).getAbsolutePath();
-        Mockito.doReturn(new URI("http://localhost:99/local"))
+        Mockito.doReturn(home)
             .when(this.uriInfo).getBaseUri();
         // httpServletRequest
         Mockito.doReturn("127.0.0.1").when(this.httpServletRequest)

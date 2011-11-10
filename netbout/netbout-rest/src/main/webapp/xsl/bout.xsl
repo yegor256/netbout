@@ -40,6 +40,9 @@
     <xsl:include href="/xsl/dudes.xsl" />
 
     <xsl:template name="title">
+        <xsl:text>#</xsl:text>
+        <xsl:value-of select="/page/bout/number"/>
+        <xsl:text>: </xsl:text>
         <xsl:value-of select="/page/bout/title"/>
     </xsl:template>
 
@@ -50,7 +53,17 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <xsl:value-of select="/page/bout/title"/>
+        <xsl:text>#</xsl:text>
+        <xsl:value-of select="/page/bout/number"/>
+        <xsl:text>: </xsl:text>
+        <xsl:choose>
+            <xsl:when test="/page/bout/title != ''">
+                <xsl:value-of select="/page/bout/title"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>untitled</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:call-template name="dudes">
             <xsl:with-param name="participants" select="/page/bout/participants" />
         </xsl:call-template>

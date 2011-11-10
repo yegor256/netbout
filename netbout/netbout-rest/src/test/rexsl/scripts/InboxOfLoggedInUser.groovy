@@ -59,3 +59,5 @@ Assert.assertThat(r2.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
     '/page/bouts',
     '/page/bouts/bout/participants/participant',
 ].each {
+    Assert.assertThat(XhtmlConverter.the(r2.body), XmlMatchers.hasXPath(it))
+}

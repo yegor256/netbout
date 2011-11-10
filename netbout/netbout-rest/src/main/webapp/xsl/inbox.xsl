@@ -61,6 +61,7 @@
                     <xsl:attribute name="href">
                         <xsl:value-of select="@href"/>
                     </xsl:attribute>
+                    <xsl:text>#</xsl:text>
                     <xsl:value-of select="number" />
                     <xsl:text>: </xsl:text>
                     <xsl:choose>

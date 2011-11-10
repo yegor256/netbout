@@ -32,7 +32,6 @@ import com.rexsl.test.TestClient
 import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 import org.junit.Assert
 import org.xmlmatchers.XmlMatchers
 import org.hamcrest.Matchers
@@ -54,7 +53,7 @@ def r2 = new TestClient(rexsl.home)
     .header(HttpHeaders.COOKIE, cookie)
     .body('text=Hello friend!')
     .post(uri + '/p')
-Assert.assertThat(r2.status, Matchers.equalTo(Response.Status.TEMPORARY_REDIRECT.statusCode))
+Assert.assertThat(r2.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
 
 def r3 = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
