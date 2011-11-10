@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -98,6 +99,18 @@ public final class HubBout implements Bout {
     @Override
     public Long number() {
         return this.data.getNumber();
+    }
+
+    /**
+     * HREF of the bout. This is a dirty hack at the moment, and should
+     * be refactored somehow. We shouldn't generate a link right here. We should
+     * use information provided by the client of this module, in order to
+     * build a real URL.
+     * @return The url
+     */
+    @XmlAttribute
+    public String getHref() {
+        return String.format("/%d", this.number());
     }
 
     /**

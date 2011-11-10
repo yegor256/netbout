@@ -53,8 +53,14 @@
         <xsl:value-of select="/page/bout/title"/>
         <xsl:call-template name="dudes">
             <xsl:with-param name="participants" select="/page/bout/participants" />
-            <xsl:with-param name="invite" select="'yes'" />
         </xsl:call-template>
+        <form method="post">
+            <xsl:attribute name="action">
+                <xsl:value-of select="/page/links/link[@name='invite']/@href"/>
+            </xsl:attribute>
+            <input name="name" />
+            <input value="invite" type="submit"/>
+        </form>
         <div id="holder">
             <ul id="titles">
                 <xsl:for-each select="/page/bout/stages/stage">
@@ -87,7 +93,10 @@
                 </xsl:for-each>
             </div>
         </div>
-        <form>
+        <form id="post" method="post">
+            <xsl:attribute name="action">
+                <xsl:value-of select="/page/links/link[@name='post']/@href"/>
+            </xsl:attribute>
             <dl><textarea name="text" cols="80" rows="5"></textarea></dl>
             <dl><input name="submit" type="submit" /></dl>
         </form>
@@ -97,10 +106,10 @@
                 <div class="header">
                     <img>
                         <xsl:attribute name="src">
-                            <xsl:value-of select="/page/bout/participants/participant[$message/author/text()=identity/name/text()]/photo"/>
+                            <xsl:value-of select="/page/bout/participants/participant[$message/author/name/text()=identity/name/text()]/identity/photo"/>
                         </xsl:attribute>
                     </img>
-                    <xsl:value-of select="/page/bout/participants/participant[$message/author/text()=identity/name/text()]/identity/name"/>
+                    <xsl:value-of select="/page/bout/participants/participant[$message/author/name/text()=identity/name/text()]/identity/name"/>
                 </div>
                 <xsl:value-of select="text"/>
             </div>

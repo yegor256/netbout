@@ -36,7 +36,6 @@
 
     <xsl:template name="dudes">
         <xsl:param name="participants" />
-        <xsl:param name="invite" />
         <div class="dudes">
             <xsl:for-each select="$participants/participant">
                 <div class="dude">
@@ -45,43 +44,27 @@
                         <xsl:value-of select="(position()-1) * 70"/>
                         <xsl:text>px;</xsl:text>
                     </xsl:attribute>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="@href"/>
+                    <img>
+                        <xsl:attribute name="src">
+                            <xsl:value-of select="identity/photo"/>
                         </xsl:attribute>
-                        <img>
-                            <xsl:attribute name="src">
-                                <xsl:value-of select="photo/@href"/>
+                        <xsl:if test="@confirmed != 'true'">
+                            <xsl:attribute name="class">
+                                <xsl:text>pending</xsl:text>
                             </xsl:attribute>
-                            <xsl:if test="@pending">
-                                <xsl:attribute name="class">
-                                    <xsl:text>pending</xsl:text>
-                                </xsl:attribute>
-                            </xsl:if>
-                        </img>
-                    </a>
+                        </xsl:if>
+                    </img>
                     <xsl:choose>
-                        <xsl:when test="string-length(identity) &gt; 10">
-                            <xsl:value-of select="substring(identity, 0, 8)"/>
+                        <xsl:when test="string-length(identity/name) &gt; 10">
+                            <xsl:value-of select="substring(identity/name, 0, 8)"/>
                             <xsl:text>...</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="identity"/>
+                            <xsl:value-of select="identity/name"/>
                         </xsl:otherwise>
                     </xsl:choose>
                 </div>
             </xsl:for-each>
-            <xsl:if test="$invite = 'yes'">
-                <form>
-                    <xsl:attribute name="style">
-                        <xsl:text>position: absolute; left: </xsl:text>
-                        <xsl:value-of select="count($participants/participant) * 70"/>
-                        <xsl:text>px;</xsl:text>
-                    </xsl:attribute>
-                    <input name="identity" />
-                    <input value="invite" type="submit"/>
-                </form>
-            </xsl:if>
         </div>
     </xsl:template>
 

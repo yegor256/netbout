@@ -104,10 +104,9 @@ public final class LoginRs extends AbstractRs {
         try {
             identity = this.authenticate(code);
         } catch (IOException ex) {
-            throw new ForwardException("/g", ex);
+            throw new ForwardException(this, "/g", ex);
         }
         return new PageBuilder()
-            .stylesheet("none")
             .build(AbstractPage.class)
             .init(this)
             .authenticated(identity)

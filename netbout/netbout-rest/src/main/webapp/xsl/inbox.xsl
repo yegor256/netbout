@@ -61,7 +61,16 @@
                     <xsl:attribute name="href">
                         <xsl:value-of select="@href"/>
                     </xsl:attribute>
-                    <xsl:value-of select="title" />
+                    <xsl:value-of select="number" />
+                    <xsl:text>: </xsl:text>
+                    <xsl:choose>
+                        <xsl:when test="title != ''">
+                            <xsl:value-of select="title" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>untitled</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </a>
                 <xsl:call-template name="dudes">
                     <xsl:with-param name="participants" select="participants" />

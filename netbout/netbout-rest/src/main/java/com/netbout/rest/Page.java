@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Identity;
+import java.net.URI;
 import javax.ws.rs.core.Response;
 
 /**
@@ -52,6 +53,22 @@ public interface Page {
      * HREF attribute.
      */
     String HATEOAS_HREF = "href";
+
+    /**
+     * Add new link.
+     * @param name The name of it
+     * @param href HREF of the link
+     * @return This object
+     */
+    Page link(String name, String href);
+
+    /**
+     * Add new link.
+     * @param name The name of it
+     * @param uri Absolute URI
+     * @return This object
+     */
+    Page link(String name, URI uri);
 
     /**
      * Append new JAXB-annotated element.

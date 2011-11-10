@@ -26,6 +26,7 @@
  */
 
 div#holder {
+    margin-top: 2em;
     margin-bottom: 2em;
 }
 
@@ -44,6 +45,10 @@ div#holder {
         font-size: 0.8em;
     }
 
+form#post {
+    margin-bottom: 2em;
+}
+
 div.message {
     border-top: 1px dotted gray;
     padding-top: 1em;
@@ -58,5 +63,5 @@ div.message {
 
         div.message div.header img {
             height: 50px;
-            width: 50px;
+            margin-right: 1em;
         }
