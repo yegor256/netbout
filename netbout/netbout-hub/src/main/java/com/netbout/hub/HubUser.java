@@ -101,6 +101,13 @@ public final class HubUser implements User {
         }
         final HubIdentity identity = new HubIdentity(this, label);
         this.identities.add(identity);
+        HelpQueue.exec(
+            "register-new-identity",
+            Boolean.class,
+            HelpQueue.SYNCHRONOUSLY,
+            this.name(),
+            label
+        );
         Logger.info(
             this,
             "#identity('%s'): created new",

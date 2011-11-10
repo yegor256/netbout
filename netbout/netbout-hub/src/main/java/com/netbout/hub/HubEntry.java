@@ -26,10 +26,12 @@
  */
 package com.netbout.hub;
 
+import com.netbout.hub.hop.Hop;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
+import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +53,18 @@ public final class HubEntry implements Entry {
      * All users registered in the system.
      */
     private final Collection<HubUser> users = new ArrayList<HubUser>();
+
+    /**
+     * Private ctor.
+     */
+    private HubEntry() {
+        try {
+            this.user("netbout").identity("nb:hop")
+                .promote(new CpaHelper(Hop.class));
+        } catch (com.netbout.spi.PromotionException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -93,6 +107,15 @@ public final class HubEntry implements Entry {
                 );
                 return user.identity(name);
             }
+        }
+        final String found = HelpQueue.exec(
+            "find-user-by-identity",
+            String.class,
+            HelpQueue.SYNCHRONOUSLY,
+            name
+        );
+        if (!found.isEmpty()) {
+            return this.user(found).identity(name);
         }
         throw new UnknownIdentityException("Identity '%s' not found", name);
     }
