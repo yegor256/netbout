@@ -47,6 +47,12 @@ public interface Resource {
     Entry entry();
 
     /**
+     * Message to show.
+     * @return The message
+     */
+    String message();
+
+    /**
      * Get URI Info.
      * @return URI info
      */

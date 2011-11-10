@@ -32,9 +32,7 @@ import com.netbout.spi.Identity;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of one Bout.
@@ -70,13 +68,7 @@ public final class BoutRs extends AbstractRs {
         try {
             bout = identity.bout(this.number);
         } catch (com.netbout.spi.BoutNotFoundException ex) {
-            throw new WebApplicationException(
-                Response
-                    .status(Response.Status.TEMPORARY_REDIRECT)
-                    .entity(ex.getMessage())
-                    .location(UriBuilder.fromPath("/").build())
-                    .build()
-            );
+            throw new ForwardException("/", ex);
         }
         return new PageBuilder()
             .stylesheet("bout")

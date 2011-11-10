@@ -87,6 +87,17 @@ public final class JaxbBundle {
 
     /**
      * Public ctor.
+     * @param nam The name of it
+     * @param text The content
+     */
+    public JaxbBundle(final String nam, final String text) {
+        this.parent = null;
+        this.name = nam;
+        this.content = text;
+    }
+
+    /**
+     * Public ctor.
      * @param prnt Parent bundle
      * @param nam The name of it
      * @param text The content

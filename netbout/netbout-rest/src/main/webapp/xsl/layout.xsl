@@ -98,6 +98,11 @@
                         <input value="find" type="submit" />
                     </form>
                 </xsl:if>
+                <xsl:if test="/page/message">
+                    <div id="message">
+                        <xsl:value-of select="/page/message"/>
+                    </div>
+                </xsl:if>
                 <div id="content">
                     <xsl:call-template name="content" />
                 </div>
