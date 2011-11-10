@@ -49,8 +49,6 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @todo #112 Maybe we should migrate to some Facebook specific library, for
- *  example RestFB (http://restfb.com/)
  */
 @Path("/g")
 public final class LoginRs extends AbstractRs {
@@ -66,13 +64,7 @@ public final class LoginRs extends AbstractRs {
             .fromPath("https://www.facebook.com/dialog/oauth")
             // @checkstyle MultipleStringLiterals (3 lines)
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
-            .queryParam(
-                "redirect_uri",
-                this.uriInfo().getAbsolutePathBuilder()
-                    .replacePath("/g/fb")
-                    .build()
-            )
-            .queryParam("scope", "email")
+            .queryParam("redirect_uri", this.redirectUri())
             .build();
         return new PageBuilder()
             .stylesheet("login")
@@ -158,7 +150,7 @@ public final class LoginRs extends AbstractRs {
                 // @checkstyle MultipleStringLiterals (5 lines)
                 .fromPath("https://graph.facebook.com/oauth/access_token")
                 .queryParam("client_id", Manifests.read("Netbout-FbId"))
-                .queryParam("redirect_uri", this.uriInfo().getAbsolutePath())
+                .queryParam("redirect_uri", this.redirectUri())
                 .queryParam("client_secret", Manifests.read("Netbout-FbSecret"))
                 .queryParam("code", code)
                 .build()
@@ -200,6 +192,16 @@ public final class LoginRs extends AbstractRs {
         } catch (com.restfb.exception.FacebookException ex) {
             throw new IOException(ex);
         }
+    }
+
+    /**
+     * Where facebook should redirect.
+     * @return The URI
+     */
+    private URI redirectUri() {
+        return this.uriInfo().getAbsolutePathBuilder()
+            .replacePath("/g/fb")
+            .build();
     }
 
     /**
