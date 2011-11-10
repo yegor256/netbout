@@ -86,6 +86,21 @@ public abstract class AbstractRs implements Resource {
     private String message = "";
 
     /**
+     * Send all JUL logging to SLF4J. Some libraries may use JUL for some
+     * reason and we should configure it properly.
+     */
+    static {
+        final java.util.logging.Logger rootLogger =
+            java.util.logging.LogManager.getLogManager().getLogger("");
+        final java.util.logging.Handler[] handlers =
+            rootLogger.getHandlers();
+        for (int idx = 0; idx < handlers.length; idx += 1) {
+            rootLogger.removeHandler(handlers[idx]);
+        }
+        org.slf4j.bridge.SLF4JBridgeHandler.install();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

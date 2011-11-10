@@ -76,9 +76,8 @@ public final class LoginRsTest {
         final ResourceBuilder builder = new ResourceBuilder();
         final LoginRs rest = builder.build(LoginRs.class);
         final LoginRs spy = PowerMockito.spy(rest);
-        final String token = "access_token=abc|cde&expires=5108";
         final URI redirectUri = builder.uriInfo().getAbsolutePath();
-        PowerMockito.doReturn(token).when(
+        PowerMockito.doReturn("access_token=abc|cde&expires=5108").when(
             spy,
             // @checkstyle MultipleStringLiterals (1 line)
             "retrieve",
@@ -95,18 +94,11 @@ public final class LoginRsTest {
                     .build()
             )
         );
-        final String json = "{ name: 'John Doe' }";
-        PowerMockito.doReturn(json).when(
-            spy,
-            // @checkstyle MultipleStringLiterals (1 line)
-            "retrieve",
-            Mockito.eq(
-                UriBuilder
-                    .fromPath("https://graph.facebook.com/me")
-                    .replaceQuery(token)
-                    .build()
-            )
-        );
+        final com.restfb.types.User fbuser =
+            Mockito.mock(com.restfb.types.User.class);
+        Mockito.doReturn("some-facebook-user-id").when(fbuser).getId();
+        Mockito.doReturn("John Doe").when(fbuser).getName();
+        PowerMockito.doReturn(fbuser).when(spy, "fbUser", "abc|cde");
         final Response response = spy.fbauth(code);
         MatcherAssert.assertThat(
             response.getStatus(),

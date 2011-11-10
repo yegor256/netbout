@@ -84,10 +84,13 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <!-- JSON processing library -->
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version since="1 Sep 2011">1.7.1</version>
+            <!--
+            Facebook Client
+            @see http://restfb.com/
+            -->
+            <groupId>com.restfb</groupId>
+            <artifactId>restfb</artifactId>
+            <version since="10 Nov 2011">1.6.9</version>
         </dependency>
         <dependency>
             <!--

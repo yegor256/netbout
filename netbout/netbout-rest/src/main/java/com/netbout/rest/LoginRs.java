@@ -26,17 +26,17 @@
  */
 package com.netbout.rest;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
 import com.rexsl.core.Manifests;
+import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -133,19 +133,27 @@ public final class LoginRs extends AbstractRs {
      * @throws IOException If some problem with FB
      */
     private Identity authenticate(final String code) throws IOException {
-        final String name = this.retrieveUserName(code);
-        final User user = this.entry().user(name);
-        return user.identity(name);
+        final String token = this.token(code);
+        final com.restfb.types.User fbuser = this.fbUser(token);
+        final User user = this.entry().user(fbuser.getId());
+        final Identity identity = user.identity(fbuser.getName());
+        identity.setPhoto(
+            UriBuilder
+                .fromPath("https://graph.facebook.com/{id}/picture")
+                .build(fbuser.getId())
+                .toURL()
+        );
+        return identity;
     }
 
     /**
-     * Get user name from Facebook, but the code provided.
+     * Retrieve facebook access token.
      * @param code Facebook "authorization code"
-     * @return The user name
+     * @return The token
      * @throws IOException If some problem with FB
      */
-    private String retrieveUserName(final String code) throws IOException {
-        final String token = this.retrieve(
+    private String token(final String code) throws IOException {
+        final String response = this.retrieve(
             UriBuilder
                 // @checkstyle MultipleStringLiterals (5 lines)
                 .fromPath("https://graph.facebook.com/oauth/access_token")
@@ -155,17 +163,43 @@ public final class LoginRs extends AbstractRs {
                 .queryParam("code", code)
                 .build()
         );
-        final String json = this.retrieve(
-            UriBuilder
-                .fromPath("https://graph.facebook.com/me")
-                .replaceQuery(token)
-                .build()
+        final String[] sectors = response.split("&");
+        for (String sector : sectors) {
+            final String[] pair = sector.split("=");
+            if (pair.length != 2) {
+                throw new IOException(
+                    String.format(
+                        "Invalid response: '%s'",
+                        response
+                    )
+                );
+            }
+            if ("access_token".equals(pair[0])) {
+                return pair[1];
+            }
+        }
+        throw new IOException(
+            String.format(
+                "Access token not found in response: '%s'",
+                response
+            )
         );
-        final Gson gson = new Gson();
-        final Map<String, String> map = gson.fromJson(
-            json, new LoginRs.JsonType().getType()
-        );
-        return map.get("name");
+    }
+
+    /**
+     * Get user name from Facebook, but the code provided.
+     * @param token Facebook access token
+     * @return The user found in FB
+     * @throws IOException If some problem with FB
+     */
+    private com.restfb.types.User fbUser(final String token)
+        throws IOException {
+        try {
+            final FacebookClient client = new DefaultFacebookClient(token);
+            return client.fetchObject("me", com.restfb.types.User.class);
+        } catch (com.restfb.exception.FacebookException ex) {
+            throw new IOException(ex);
+        }
     }
 
     /**
@@ -175,6 +209,7 @@ public final class LoginRs extends AbstractRs {
      * @throws IOException If some problem with FB
      */
     private String retrieve(final URI uri) throws IOException {
+        final long start = System.nanoTime();
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) uri.toURL().openConnection();
@@ -187,15 +222,15 @@ public final class LoginRs extends AbstractRs {
             throw ex;
         } finally {
             conn.disconnect();
+            Logger.debug(
+                this,
+                "#retrieve(%s): done [%d] in %.2fms",
+                uri,
+                conn.getResponseCode(),
+                // @checkstyle MagicNumber (1 line)
+                (double) (System.nanoTime() - start) / (1000L * 1000)
+            );
         }
-    }
-
-    /**
-     * Supplementary type.
-     * @see #retrieveUserName(String)
-     */
-    private static final class JsonType
-        extends TypeToken<Map<String, String>> {
     }
 
 }
