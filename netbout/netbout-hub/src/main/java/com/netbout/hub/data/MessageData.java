@@ -26,7 +26,6 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.spi.Identity;
 import java.util.Date;
 
 /**
@@ -40,7 +39,7 @@ public final class MessageData {
     /**
      * The author.
      */
-    private Identity author;
+    private String author;
 
     /**
      * The text.
@@ -56,7 +55,7 @@ public final class MessageData {
      * Set identity.
      * @param idnt The identity
      */
-    public void setAuthor(final Identity idnt) {
+    public void setAuthor(final String idnt) {
         this.author = idnt;
     }
 
@@ -80,7 +79,7 @@ public final class MessageData {
      * Get identity.
      * @return The identity
      */
-    public Identity getAuthor() {
+    public String getAuthor() {
         return this.author;
     }
 

@@ -128,7 +128,7 @@ public final class HubIdentity implements Identity {
             throw new IllegalStateException(ex);
         }
         final ParticipantData dude = new ParticipantData();
-        dude.setIdentity(this);
+        dude.setIdentity(this.name());
         dude.setConfirmed(true);
         data.addParticipant(dude);
         Logger.info(

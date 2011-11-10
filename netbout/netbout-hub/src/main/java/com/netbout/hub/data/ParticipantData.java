@@ -26,8 +26,6 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.spi.Identity;
-
 /**
  * Bout with data.
  *
@@ -39,7 +37,7 @@ public final class ParticipantData {
     /**
      * The participant.
      */
-    private Identity identity;
+    private String identity;
 
     /**
      * Is it confirmed?
@@ -50,7 +48,7 @@ public final class ParticipantData {
      * Set identity.
      * @param idnt The identity
      */
-    public void setIdentity(final Identity idnt) {
+    public void setIdentity(final String idnt) {
         this.identity = idnt;
     }
 
@@ -74,7 +72,7 @@ public final class ParticipantData {
      * Get identity.
      * @return The identity
      */
-    public Identity getIdentity() {
+    public String getIdentity() {
         return this.identity;
     }
 

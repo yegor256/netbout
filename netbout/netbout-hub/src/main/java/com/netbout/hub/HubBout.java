@@ -146,7 +146,7 @@ public final class HubBout implements Bout {
     @Override
     public Participant invite(final Identity friend) {
         final ParticipantData dude = new ParticipantData();
-        dude.setIdentity(friend);
+        dude.setIdentity(friend.name());
         dude.setConfirmed(false);
         this.data.addParticipant(dude);
         Logger.info(
@@ -156,7 +156,7 @@ public final class HubBout implements Bout {
         );
         ((HubIdentity) friend).invited(this);
         return new HubParticipant(
-            dude.getIdentity(),
+            friend,
             dude.isConfirmed()
         );
     }
@@ -169,12 +169,16 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantData dude : this.data.getParticipants()) {
-            participants.add(
-                new HubParticipant(
-                    dude.getIdentity(),
-                    dude.isConfirmed()
-                )
-            );
+            try {
+                participants.add(
+                    new HubParticipant(
+                        HubIdentity.friend(dude.getIdentity()),
+                        dude.isConfirmed()
+                    )
+                );
+            } catch (com.netbout.spi.UnknownIdentityException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
         Logger.info(
             this,
@@ -201,14 +205,18 @@ public final class HubBout implements Bout {
     public List<Message> messages(final String query) {
         final List<Message> messages = new ArrayList<Message>();
         for (MessageData msg : this.data.getMessages()) {
-            messages.add(
-                new HubMessage(
-                    this,
-                    msg.getAuthor(),
-                    msg.getText(),
-                    msg.getDate()
-                )
-            );
+            try {
+                messages.add(
+                    new HubMessage(
+                        this,
+                        HubIdentity.friend(msg.getAuthor()),
+                        msg.getText(),
+                        msg.getDate()
+                    )
+                );
+            } catch (com.netbout.spi.UnknownIdentityException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
         Logger.info(
             this,
@@ -235,7 +243,7 @@ public final class HubBout implements Bout {
     @Override
     public Message post(final String text) {
         final MessageData msg = new MessageData();
-        msg.setAuthor(this.viewer);
+        msg.setAuthor(this.viewer.name());
         msg.setText(text);
         this.data.addMessage(msg);
         Logger.info(
@@ -245,7 +253,7 @@ public final class HubBout implements Bout {
         );
         return new HubMessage(
             this,
-            msg.getAuthor(),
+            this.viewer,
             msg.getText(),
             msg.getDate()
         );

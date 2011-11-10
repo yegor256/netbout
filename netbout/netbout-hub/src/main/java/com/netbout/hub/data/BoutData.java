@@ -129,7 +129,7 @@ public final class BoutData {
             Boolean.class,
             HelpQueue.SYNCHRONOUSLY,
             this.number,
-            data.getIdentity().name()
+            data.getIdentity()
         );
     }
 
