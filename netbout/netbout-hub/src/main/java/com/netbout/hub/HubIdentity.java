@@ -31,13 +31,19 @@ import com.netbout.hub.data.ParticipantData;
 import com.netbout.hub.data.Storage;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -58,9 +64,10 @@ import javax.xml.bind.annotation.XmlType;
 public final class HubIdentity implements Identity {
 
     /**
-     * The user, holder of this identity.
+     * All identities known for us at the moment, and their users.
      */
-    private final HubUser user;
+    private static final Map<String, HubIdentity> ALL =
+        new HashMap<String, HubIdentity>();
 
     /**
      * The name.
@@ -68,14 +75,19 @@ public final class HubIdentity implements Identity {
     private final String name;
 
     /**
+     * Name of the user.
+     */
+    private final String user;
+
+    /**
      * The photo.
      */
     private URL photo;
 
     /**
-     * The helper, if exists.
+     * List of bouts where I'm a participant.
      */
-    private Helper helper;
+    private final Set<Long> bouts = new HashSet<Long>();
 
     /**
      * Public ctor for JAXB.
@@ -86,21 +98,13 @@ public final class HubIdentity implements Identity {
 
     /**
      * Public ctor.
-     * @param usr The user of this identity
      * @param nam The identity's name
+     * @param usr Name of the user
      * @see HubUser#identity(String)
      */
-    public HubIdentity(final HubUser usr, final String nam) {
-        this.user = usr;
+    public HubIdentity(final String nam, final String usr) {
         this.name = nam;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public User user() {
-        return this.user;
+        this.user = usr;
     }
 
     /**
@@ -120,6 +124,7 @@ public final class HubIdentity implements Identity {
             this,
             "#start(): bout started"
         );
+        this.bouts.add(num);
         return new HubBout(this, data);
     }
 
@@ -138,8 +143,16 @@ public final class HubIdentity implements Identity {
     @Override
     public List<Bout> inbox(final String query) {
         final List<Bout> list = new ArrayList<Bout>();
-        for (BoutData data : Storage.INSTANCE.inbox(this)) {
-            list.add(new HubBout(this, data));
+        final List<Long> broken = new ArrayList<Long>();
+        for (Long num : this.bouts) {
+            try {
+                list.add(this.bout(num));
+            } catch (com.netbout.spi.BoutNotFoundException ex) {
+                broken.add(num);
+            }
+        }
+        for (Long num : broken) {
+            this.bouts.remove(num);
         }
         Logger.info(
             this,
@@ -197,7 +210,6 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public void promote(final Helper hlp) {
-        this.helper = hlp;
         Logger.info(
             this,
             "#promote(%s): '%s' promoted",
@@ -207,11 +219,38 @@ public final class HubIdentity implements Identity {
     }
 
     /**
-     * Get helper, if it's set (NULL otherwise).
-     * @return The helper
+     * Make new identity or find existing one.
+     * @param label The name of identity
+     * @param usr Name of the user
+     * @return Identity found
+     * @throws DuplicateIdentityException If this identity is taken
      */
-    public Helper getHelper() {
-        return this.helper;
+    protected static Identity make(final String label, final String usr)
+        throws DuplicateIdentityException {
+        HubIdentity identity;
+        if (HubIdentity.ALL.containsKey(label)) {
+            identity = HubIdentity.ALL.get(label);
+            if (!identity.user.equals(usr)) {
+                throw new DuplicateIdentityException("Identity '%s' is taken");
+            }
+        } else {
+            identity = new HubIdentity(label, usr);
+            HubIdentity.ALL.put(label, identity);
+        }
+        return identity;
+    }
+
+    /**
+     * Find identity by name.
+     * @param label The name of identity
+     * @return Identity found
+     */
+    protected static Identity friend(final String label)
+        throws UnknownIdentityException {
+        if (HubIdentity.ALL.containsKey(label)) {
+            return HubIdentity.ALL.get(label);
+        }
+        throw new UnknownIdentityException("Identity '%s' not found", label);
     }
 
 }

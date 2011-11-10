@@ -26,6 +26,8 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import org.junit.Test;
 
 /**
@@ -56,6 +58,18 @@ public final class HubIdentityTest {
         //     xml,
         //     XmlMatchers.hasXPath("/identity/photo[starts-with(.,'http://')]")
         // );
+    }
+
+    /**
+     * Manipulate with bouts.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testBoutsManipulations() throws Exception {
+        final Identity identity = new HubEntry().user("Jeff").identity("jeff");
+        final Bout bout = identity.start();
+        bout.post("Hello!");
+        bout.invite(new HubEntry().user("Sarah").identity("sarah"));
     }
 
 }

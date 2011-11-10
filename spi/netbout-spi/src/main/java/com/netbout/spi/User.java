@@ -42,12 +42,6 @@ package com.netbout.spi;
 public interface User {
 
     /**
-     * Entry, where this user lives.
-     * @return The entry
-     */
-    Entry entry();
-
-    /**
      * Get name of the user.
      * @return The name
      */
@@ -57,7 +51,9 @@ public interface User {
      * Select the right identity to work from, or create one if it's absent.
      * @param name Unique name of the identity
      * @return The identity
+     * @throws DuplicateIdentityException If such identity belongs
+     *  to someone else
      */
-    Identity identity(String name);
+    Identity identity(String name) throws DuplicateIdentityException;
 
 }

@@ -61,7 +61,7 @@ public final class HubBout implements Bout {
     /**
      * The viewer.
      */
-    private HubIdentity identity;
+    private HubIdentity viewer;
 
     /**
      * The data.
@@ -81,16 +81,8 @@ public final class HubBout implements Bout {
      * @param dat The data
      */
     public HubBout(final HubIdentity idnt, final BoutData dat) {
-        this.identity = idnt;
+        this.viewer = idnt;
         this.data = dat;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity() {
-        return this.identity;
     }
 
     /**
@@ -161,7 +153,6 @@ public final class HubBout implements Bout {
             friend
         );
         return new HubParticipant(
-            this,
             dude.getIdentity(),
             dude.isConfirmed()
         );
@@ -177,7 +168,6 @@ public final class HubBout implements Bout {
         for (ParticipantData dude : this.data.getParticipants()) {
             participants.add(
                 new HubParticipant(
-                    this,
                     dude.getIdentity(),
                     dude.isConfirmed()
                 )
@@ -241,10 +231,7 @@ public final class HubBout implements Bout {
      */
     @Override
     public Message post(final String text) {
-        final MessageData msg = new MessageData(
-            this.identity(),
-            text
-        );
+        final MessageData msg = new MessageData(this.viewer, text);
         this.data.addMessage(msg);
         Logger.info(
             this,

@@ -48,14 +48,15 @@ public final class HubUserTest {
      */
     @Test
     public void testIdentityManipulations() throws Exception {
-        final Entry entry = Mockito.mock(Entry.class);
-        final User user = new HubUser(entry, "John Doe");
+        final Entry entry = new HubEntry();
+        final String name = "John Doe";
+        final User user = entry.user(name);
         final String label = "Johnny";
         final URL photo = new URL("http://img.netbout.com/logo.png");
         final Identity identity = user.identity(label);
         identity.setPhoto(photo);
         MatcherAssert.assertThat(
-            user.identity(label).photo(),
+            entry.user(name).identity(label).photo(),
             Matchers.equalTo(photo)
         );
     }

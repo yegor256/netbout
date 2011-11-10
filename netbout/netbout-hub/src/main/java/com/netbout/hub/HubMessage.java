@@ -94,14 +94,6 @@ final class HubMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public Bout bout() {
-        return this.bout;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Identity author() {
         return this.identity;
     }

@@ -49,11 +49,6 @@ import javax.xml.bind.annotation.XmlType;
 public final class HubParticipant implements Participant {
 
     /**
-     * Holder of this object.
-     */
-    private Bout bout;
-
-    /**
      * Is it confirmed?
      */
     private boolean confirmed;
@@ -72,23 +67,12 @@ public final class HubParticipant implements Participant {
 
     /**
      * Public ctor.
-     * @param holder Holder of this object
      * @param idnt Identity
      * @param aye Is it confirmed
      */
-    public HubParticipant(final Bout holder, final Identity idnt,
-        final boolean aye) {
-        this.bout = holder;
+    public HubParticipant(final Identity idnt, final boolean aye) {
         this.identity = idnt;
         this.confirmed = aye;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout() {
-        return this.bout;
     }
 
     /**

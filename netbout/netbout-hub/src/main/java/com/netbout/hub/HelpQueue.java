@@ -44,7 +44,23 @@ public final class HelpQueue {
      */
     public static <T> T exec(final String mnemo, final Class<T> type,
         final Integer priority, final Object... args) {
-        return (T) "";
+        final String output = "0";
+        Object result;
+        if (type.equals(String.class)) {
+            result = output;
+        } else if (type.equals(Long.class)) {
+            result = Long.valueOf(output);
+        } else if (type.equals(Boolean.class)) {
+            result = !output.isEmpty();
+        } else {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Result type '%s' is not supported",
+                    type.getName()
+                )
+            );
+        }
+        return (T) result;
     }
 
 }

@@ -45,50 +45,11 @@ import java.util.Collection;
 public final class HubEntry implements Entry {
 
     /**
-     * Static instance.
-     */
-    public static final HubEntry INSTANCE = new HubEntry();
-
-    /**
-     * All users registered in the system.
-     */
-    private final Collection<HubUser> users = new ArrayList<HubUser>();
-
-    /**
-     * Private ctor.
-     */
-    private HubEntry() {
-        try {
-            this.user("netbout").identity("nb:hop")
-                .promote(new CpaHelper(Hop.class));
-        } catch (com.netbout.spi.PromotionException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public User user(final String name) {
-        for (User existing : this.users) {
-            if (existing.name().equals(name)) {
-                Logger.info(
-                    this,
-                    "#user('%s'): user found",
-                    name
-                );
-                return existing;
-            }
-        }
-        final HubUser user = new HubUser(this, name);
-        this.users.add(user);
-        Logger.info(
-            this,
-            "#user('%s'): new user registered",
-            name
-        );
-        return user;
+        return new HubUser(name);
     }
 
     /**
@@ -98,26 +59,7 @@ public final class HubEntry implements Entry {
     @Override
     public Identity identity(final String name)
         throws UnknownIdentityException {
-        for (HubUser user : this.users) {
-            if (user.hasIdentity(name)) {
-                Logger.info(
-                    this,
-                    "#identity('%s'): identity found",
-                    name
-                );
-                return user.identity(name);
-            }
-        }
-        final String found = HelpQueue.exec(
-            "find-user-by-identity",
-            String.class,
-            HelpQueue.SYNCHRONOUSLY,
-            name
-        );
-        if (!found.isEmpty()) {
-            return this.user(found).identity(name);
-        }
-        throw new UnknownIdentityException("Identity '%s' not found", name);
+        return HubIdentity.friend(name);
     }
 
 }

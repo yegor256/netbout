@@ -40,12 +40,6 @@ import java.util.Date;
 public interface Message {
 
     /**
-     * Where this message is posted.
-     * @return The bout
-     */
-    Bout bout();
-
-    /**
      * Author of this message, his identity.
      * @return The author
      */

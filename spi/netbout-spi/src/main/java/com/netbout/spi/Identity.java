@@ -46,12 +46,6 @@ import java.util.List;
 public interface Identity {
 
     /**
-     * Who is the owner of this identity.
-     * @return The owner
-     */
-    User user();
-
-    /**
      * Start new bout.
      * @return The bout just created
      */
