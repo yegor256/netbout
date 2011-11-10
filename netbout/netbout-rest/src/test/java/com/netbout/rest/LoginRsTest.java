@@ -71,7 +71,8 @@ public final class LoginRsTest {
      */
     @Test
     public void testAuthenticationFromFacebook() throws Exception {
-        final String code = "123";
+        // @checkstyle LineLength (1 line)
+        final String code = "AQCJ9EpLpqvj9cbag0mU8z6cHqyk-2CN5cigCzwB1aykqqqpiFNzAjsnNbRRY7x4n4h2ZEmrRVHhHSHzcFTtXobWM8LJSCHSB1_cjvsJS2vy2DsqRA3qGRAjUY8pKk0tO2zYpX-kFpnn2V6Z1xxvb7uyP-qrV_mQNWSYHKfPWKL0yTxo-NpFAGT4mDYNXl_cCMs";
         final ResourceBuilder builder = new ResourceBuilder();
         final LoginRs rest = builder.build(LoginRs.class);
         final LoginRs spy = PowerMockito.spy(rest);

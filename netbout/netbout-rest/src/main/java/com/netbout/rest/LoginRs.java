@@ -33,12 +33,15 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import com.rexsl.core.Manifests;
+import com.ymock.util.Logger;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
@@ -106,12 +109,30 @@ public final class LoginRs extends AbstractRs {
      */
     @Path("/fb")
     @GET
-    public Response fbauth(@PathParam("code") final String code) {
+    public Response fbauth(@QueryParam("code") final String code) {
+        Identity identity;
+        try {
+            identity = this.authenticate(code);
+        } catch (IOException ex) {
+            Logger.warn(
+                this,
+                "#fbauth('%s'): failure: %s",
+                code,
+                ex.getMessage()
+            );
+            throw new WebApplicationException(
+                Response
+                    .status(Response.Status.TEMPORARY_REDIRECT)
+                    .entity(ex.getMessage())
+                    .location(UriBuilder.fromPath("/g").build())
+                    .build()
+            );
+        }
         return new PageBuilder()
             .stylesheet("none")
             .build(AbstractPage.class)
             .init(this)
-            .authenticated(this.authenticate(code))
+            .authenticated(identity)
             .entity("")
             .status(Response.Status.TEMPORARY_REDIRECT)
             // @checkstyle MultipleStringLiterals (1 line)
@@ -123,8 +144,9 @@ public final class LoginRs extends AbstractRs {
      * Authenticate the user through facebook.
      * @param code Facebook "authorization code"
      * @return The user found
+     * @throws IOException If some problem with FB
      */
-    private Identity authenticate(final String code) {
+    private Identity authenticate(final String code) throws IOException {
         final String name = this.retrieveUserName(code);
         final User user = this.entry().user(name);
         return user.identity(name);
@@ -134,8 +156,9 @@ public final class LoginRs extends AbstractRs {
      * Get user name from Facebook, but the code provided.
      * @param code Facebook "authorization code"
      * @return The user name
+     * @throws IOException If some problem with FB
      */
-    private String retrieveUserName(final String code) {
+    private String retrieveUserName(final String code) throws IOException {
         final String token = this.retrieve(
             UriBuilder
                 // @checkstyle MultipleStringLiterals (5 lines)
@@ -163,20 +186,19 @@ public final class LoginRs extends AbstractRs {
      * Retrive data from the URL through HTTP request.
      * @param uri The URI
      * @return The response, text body
+     * @throws IOException If some problem with FB
      */
-    private String retrieve(final URI uri) {
+    private String retrieve(final URI uri) throws IOException {
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) uri.toURL().openConnection();
         } catch (java.net.MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
-        } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IOException(ex);
         }
         try {
             return IOUtils.toString(conn.getInputStream());
         } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
+            throw ex;
         } finally {
             conn.disconnect();
         }
