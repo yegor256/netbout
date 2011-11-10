@@ -214,6 +214,16 @@ public final class HubBout implements Bout {
     }
 
     /**
+     * JAXB related method, to return messages of the bout.
+     * @return The collection
+     */
+    @XmlElement(name = "message")
+    @XmlElementWrapper(name = "messages")
+    public Collection<HubMessage> getMessages() {
+        return (Collection) this.messages("");
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
