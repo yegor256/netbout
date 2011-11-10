@@ -66,7 +66,7 @@ public final class PageBuilder {
     /**
      * Stylesheet to use.
      */
-    private String stylesheet;
+    private String stylesheet = "none";
 
     /**
      * Public ctor.

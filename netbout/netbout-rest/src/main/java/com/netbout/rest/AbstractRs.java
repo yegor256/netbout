@@ -32,8 +32,6 @@ import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
@@ -79,6 +77,7 @@ public abstract class AbstractRs implements Resource {
      * Cookie.
      */
     private String cookie;
+    // = "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
 
     /**
      * The message to show.
@@ -192,10 +191,9 @@ public abstract class AbstractRs implements Resource {
      * Inject message, if it was sent.
      * @param msg The message
      */
-    @QueryParam("m")
-    @DefaultValue("")
+    @CookieParam("netbout-msg")
     public final void setMessage(final String msg) {
-        if (!msg.isEmpty()) {
+        if (msg != null) {
             String decoded;
             try {
                 decoded = new String(new Base64().decode(msg), "UTF-8");
@@ -203,6 +201,12 @@ public abstract class AbstractRs implements Resource {
                 throw new IllegalArgumentException(ex);
             }
             this.message = decoded;
+            Logger.debug(
+                this,
+                "#setMessage('%s'): injected as '%s'",
+                msg,
+                decoded
+            );
         }
     }
 
@@ -226,12 +230,14 @@ public abstract class AbstractRs implements Resource {
      */
     @CookieParam("netbout")
     public final void setCookie(final String cke) {
-        this.cookie = cke;
-        Logger.debug(
-            this,
-            "#setCookie('%s'): injected",
-            cke
-        );
+        if (cke != null) {
+            this.cookie = cke;
+            Logger.debug(
+                this,
+                "#setCookie('%s'): injected",
+                cke
+            );
+        }
     }
 
     /**
@@ -310,7 +316,7 @@ public abstract class AbstractRs implements Resource {
                 this.httpServletRequest().getRequestURI(),
                 ex.getMessage()
             );
-            throw new ForwardException("/g");
+            throw new ForwardException(this, "/g");
         }
     }
 

@@ -53,9 +53,11 @@ def r2 = new TestClient(rexsl.home)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/')
 Assert.assertThat(r2.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-XhtmlConverter.the(r2.body).with {
-    Assert.assertThat(it, XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]"))
-    Assert.assertThat(it, XmlMatchers.hasXPath('/page/identity/name[.="johnny.doe"]'))
-    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bouts'))
-    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bouts/bout/participants/participant'))
+[
+    "/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]",
+    '/page/identity/name[.="johnny.doe"]',
+    '/page/bouts',
+    '/page/bouts/bout/participants/participant',
+].each {
+    Assert.assertThat(XhtmlConverter.the(r2.body), XmlMatchers.hasXPath(it))
 }

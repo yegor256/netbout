@@ -82,15 +82,19 @@ public final class ResourceBuilder {
         // register this user
         HubEntry.INSTANCE.user("John Doe").identity("johnny.doe");
         // uriInfo
-        final URI home = new URI("http://localhost:99/");
+        final URI home = new URI("http://localhost:99/local");
         Mockito.doReturn(UriBuilder.fromUri(home))
             .when(this.uriInfo).getAbsolutePathBuilder();
         Mockito.doReturn(home).when(this.uriInfo).getAbsolutePath();
+        Mockito.doReturn(home)
+            .when(this.uriInfo).getBaseUri();
         // httpServletRequest
         Mockito.doReturn("127.0.0.1").when(this.httpServletRequest)
             .getRemoteAddr();
         Mockito.doReturn("/").when(this.httpServletRequest)
             .getRequestURI();
+        Mockito.doReturn("/local").when(this.httpServletRequest)
+            .getContextPath();
         // providers
         Mockito.doReturn(new XslResolver())
             .when(this.providers)

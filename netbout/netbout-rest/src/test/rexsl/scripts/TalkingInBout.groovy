@@ -32,7 +32,6 @@ import com.rexsl.test.TestClient
 import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 import org.junit.Assert
 import org.xmlmatchers.XmlMatchers
 import org.hamcrest.Matchers
@@ -53,18 +52,20 @@ def r2 = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .body('text=Hello friend!')
-    .post(uri)
-Assert.assertThat(r2.status, Matchers.equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode()))
+    .post(uri + '/p')
+Assert.assertThat(r2.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
 
 def r3 = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get(uri)
 Assert.assertThat(r3.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-XhtmlConverter.the(r3.body).with {
-    Assert.assertThat(it, XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]"))
-    Assert.assertThat(it, XmlMatchers.hasXPath('/page/identity/name[.="johnny.doe"]'))
-    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bout'))
-    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bout/participants/participant'))
-    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bout/messages/message'))
+[
+    "/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]",
+    '/page/identity/name[.="johnny.doe"]',
+    '/page/bout[@href]',
+    '/page/bout/participants/participant',
+    '/page/bout/messages/message',
+].each {
+    Assert.assertThat(XhtmlConverter.the(r3.body), XmlMatchers.hasXPath(it))
 }

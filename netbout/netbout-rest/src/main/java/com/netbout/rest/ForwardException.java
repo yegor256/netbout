@@ -26,8 +26,10 @@
  */
 package com.netbout.rest;
 
+import com.rexsl.core.Manifests;
 import java.net.URI;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.codec.binary.Base64;
@@ -43,66 +45,79 @@ final class ForwardException extends WebApplicationException {
 
     /**
      * Constructor.
+     * @param res The originator of the exception
      * @param uri Where to forward to
      * @param msg The message
      */
-    public ForwardException(final URI uri, final String msg) {
+    public ForwardException(final Resource res, final URI uri,
+        final String msg) {
         super(
             Response
-                .status(Response.Status.TEMPORARY_REDIRECT)
+                .status(Response.Status.MOVED_PERMANENTLY)
                 .entity(msg)
-                .location(ForwardException.location(uri, msg))
+                .location(uri)
+                .cookie(
+                    new NewCookie(
+                        "netbout-msg",
+                        ForwardException.encode(msg),
+                        // path
+                        "/" + res.httpServletRequest().getContextPath(),
+                        // domain
+                        "." + res.uriInfo().getBaseUri().getHost(),
+                        // version
+                        Integer.valueOf(Manifests.read("Netbout-Revision")),
+                        // comment
+                        "netbout message",
+                        // maxAge, 1 hour
+                        // @checkstyle MagicNumber (1 line)
+                        60 * 60,
+                        // secure
+                        false
+                    ))
                 .build()
         );
     }
 
     /**
      * Constructor.
+     * @param res The originator of the exception
      * @param uri Where to forward to
      * @param msg The message
      */
-    public ForwardException(final String uri, final String msg) {
-        this(UriBuilder.fromUri(uri).build(), msg);
+    public ForwardException(final Resource res, final String uri,
+        final String msg) {
+        this(res, UriBuilder.fromUri(uri).build(), msg);
     }
 
     /**
      * Constructor.
+     * @param res The originator of the exception
      * @param uri Where to forward to
      */
-    public ForwardException(final String uri) {
-        this(UriBuilder.fromUri(uri).build(), "");
+    public ForwardException(final Resource res, final String uri) {
+        this(res, UriBuilder.fromUri(uri).build(), "");
     }
 
     /**
      * Constructor.
-     * @param uri Where to forward to
-     * @param cause Cause of trouble
-     */
-    public ForwardException(final String uri, final Exception cause) {
-        this(UriBuilder.fromUri(uri).build(), cause.getMessage());
-    }
-
-    /**
-     * Constructor.
+     * @param res The originator of the exception
      * @param uri Where to forward to
      * @param cause Cause of trouble
      */
-    public ForwardException(final URI uri, final Exception cause) {
-        this(uri, cause.getMessage());
+    public ForwardException(final Resource res, final String uri,
+        final Exception cause) {
+        this(res, UriBuilder.fromUri(uri).build(), cause.getMessage());
     }
 
     /**
-     * Create location.
-     * @param uri The address
-     * @param msg The message
-     * @return The location
+     * Constructor.
+     * @param res The originator of the exception
+     * @param uri Where to forward to
+     * @param cause Cause of trouble
      */
-    private static URI location(final URI uri, final String msg) {
-        final UriBuilder bldr = UriBuilder.fromUri(uri);
-        if (!msg.isEmpty()) {
-            bldr.queryParam("m", ForwardException.encode(msg));
-        }
-        return bldr.build();
+    public ForwardException(final Resource res, final URI uri,
+        final Exception cause) {
+        this(res, uri, cause.getMessage());
     }
 
     /**

@@ -29,13 +29,13 @@ package com.netbout.rest;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import java.net.URI;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of one Bout.
@@ -70,6 +70,8 @@ public final class BoutRs extends AbstractRs {
             .stylesheet("bout")
             .build(AbstractPage.class)
             .init(this)
+            .link("post", String.format("/%d/p", this.number))
+            .link("invite", String.format("/%d/i", this.number))
             .append(this.bout())
             .authenticated(this.identity())
             .build();
@@ -80,18 +82,51 @@ public final class BoutRs extends AbstractRs {
      * @param text Text of message just posted
      * @return The JAX-RS response
      */
+    @Path("/p")
     @POST
     public Response post(@FormParam("text") final String text) {
-        this.bout().post(text);
+        final Bout bout = this.bout();
+        bout.post(text);
         return new PageBuilder()
-            .stylesheet("none")
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
             .entity("")
-            .status(Response.Status.TEMPORARY_REDIRECT)
-            // @checkstyle MultipleStringLiterals (1 line)
-            .location(UriBuilder.fromPath("/").build())
+            .status(Response.Status.MOVED_PERMANENTLY)
+            .location(this.self(bout))
+            .build();
+    }
+
+    /**
+     * Invite new person.
+     * @param name Name of the invitee
+     * @return The JAX-RS response
+     */
+    @Path("/i")
+    @POST
+    public Response invite(@FormParam("name") final String name) {
+        final Bout bout = this.bout();
+        Identity friend;
+        try {
+            friend = this.entry().identity(name);
+        } catch (com.netbout.spi.UnknownIdentityException ex) {
+            throw new ForwardException(
+                this,
+                this.self(bout),
+                String.format(
+                    "Invitee '%s' not found",
+                    name
+                )
+            );
+        }
+        bout.invite(friend);
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(this.identity())
+            .entity("")
+            .status(Response.Status.MOVED_PERMANENTLY)
+            .location(this.self(bout))
             .build();
     }
 
@@ -106,9 +141,21 @@ public final class BoutRs extends AbstractRs {
             bout = identity.bout(this.number);
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             // @checkstyle MultipleStringLiterals (1 line)
-            throw new ForwardException("/", ex);
+            throw new ForwardException(this, "/", ex);
         }
         return bout;
+    }
+
+    /**
+     * Location of myself.
+     * @param bout The bout
+     * @return The location
+     */
+    private URI self(final Bout bout) {
+        return this.uriInfo()
+            .getAbsolutePathBuilder()
+            .replacePath("/{num}")
+            .build(bout.number());
     }
 
 }

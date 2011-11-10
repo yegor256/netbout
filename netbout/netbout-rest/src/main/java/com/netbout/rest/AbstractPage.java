@@ -30,6 +30,7 @@ import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Identity;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ws.rs.core.MediaType;
@@ -69,6 +70,11 @@ public abstract class AbstractPage implements Page {
     private final Collection elements = new ArrayList();
 
     /**
+     * Collection of links.
+     */
+    private final JaxbBundle links = new JaxbBundle("links");
+
+    /**
      * Public ctor.
      */
     public AbstractPage() {
@@ -82,68 +88,36 @@ public abstract class AbstractPage implements Page {
      */
     public final Page init(final Resource res) {
         this.home = res;
-        this.append(
-            new JaxbBundle("links")
-                .add(Page.HATEOAS_LINK)
-                    .attr(Page.HATEOAS_NAME, "self")
-                    .attr(
-                        Page.HATEOAS_HREF,
-                        this.home.uriInfo().getAbsolutePath()
-                )
-                .up()
-                .add(Page.HATEOAS_LINK)
-                    .attr(Page.HATEOAS_NAME, "home")
-                    .attr(
-                        Page.HATEOAS_HREF,
-                        this.home.uriInfo()
-                            .getAbsolutePathBuilder()
-                            // @checkstyle MultipleStringLiterals (1 line)
-                            .replacePath("/")
-                            .build()
-                )
-                .up()
-                .add(Page.HATEOAS_LINK)
-                    .attr(Page.HATEOAS_NAME, "start")
-                    .attr(
-                        Page.HATEOAS_HREF,
-                        this.home.uriInfo()
-                            .getAbsolutePathBuilder()
-                            .replacePath("/s")
-                            .build()
-                )
-                .up()
-                .add(Page.HATEOAS_LINK)
-                    .attr(Page.HATEOAS_NAME, "login")
-                    .attr(
-                        Page.HATEOAS_HREF,
-                        this.home.uriInfo()
-                            .getAbsolutePathBuilder()
-                            .replacePath("/g")
-                            .build()
-                )
-                .up()
-                .add(Page.HATEOAS_LINK)
-                    .attr(Page.HATEOAS_NAME, "logout")
-                    .attr(
-                        Page.HATEOAS_HREF,
-                        this.home.uriInfo()
-                            .getAbsolutePathBuilder()
-                            .replacePath("/g/out")
-                            .build()
-                )
-                .up()
-        );
-        this.append(
-            new JaxbBundle("version")
-                .add("name", Manifests.read("Netbout-Version"))
-                .up()
-                // @checkstyle MultipleStringLiterals (1 line)
-                .add("revision", Manifests.read("Netbout-Revision"))
-                .up()
-                .add("date", Manifests.read("Netbout-Date"))
-                .up()
-        );
-        this.append(new JaxbBundle("message", this.home.message()));
+        this.link("self", this.home.uriInfo().getAbsolutePath());
+        // @checkstyle MultipleStringLiterals (1 line)
+        this.link("home", "/");
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Page link(final String name, final String href) {
+        this.links.add(Page.HATEOAS_LINK)
+            .attr(Page.HATEOAS_NAME, name)
+            .attr(
+                Page.HATEOAS_HREF,
+                this.home.uriInfo()
+                    .getAbsolutePathBuilder()
+                    .replacePath(href)
+                    .build());
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Page link(final String name, final URI uri) {
+        this.links.add(Page.HATEOAS_LINK)
+            .attr(Page.HATEOAS_NAME, name)
+            .attr(Page.HATEOAS_HREF, uri);
         return this;
     }
 
@@ -180,8 +154,20 @@ public abstract class AbstractPage implements Page {
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
         this.append(identity);
+        this.link("logout", "/g/out");
+        this.link("start", "/s");
+        this.extend();
         return Response.ok()
             .entity(this)
+            .header(
+                "Set-Cookie",
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "netbout-msg=deleted;Domain=%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
+                    this.home.uriInfo().getBaseUri().getHost(),
+                    this.home.httpServletRequest().getContextPath()
+                )
+            )
             .cookie(
                 new NewCookie(
                     // name
@@ -190,17 +176,17 @@ public abstract class AbstractPage implements Page {
                     new Cryptor(this.home.entry()).encrypt(identity),
                     // path
                     // @checkstyle MultipleStringLiterals (1 line)
-                    "/",
+                    "/" + this.home.httpServletRequest().getContextPath(),
                     // domain
-                    ".netbout.com",
+                    "." + this.home.uriInfo().getBaseUri().getHost(),
                     // version
                     // @checkstyle MultipleStringLiterals (1 line)
                     Integer.valueOf(Manifests.read("Netbout-Revision")),
                     // comment
-                    "netbout.com cookie",
-                    // maxAge, 30 days
+                    "Netbout.com logged-in user",
+                    // maxAge, 90 days
                     // @checkstyle MagicNumber (1 line)
-                    60 * 24 * 30,
+                    60 * 60 * 24 * 90,
                     // secure
                     false
                 )
@@ -213,6 +199,8 @@ public abstract class AbstractPage implements Page {
      */
     @Override
     public final Response.ResponseBuilder anonymous() {
+        this.link("login", "/g");
+        this.extend();
         return Response.ok()
             .entity(this)
             .type(MediaType.APPLICATION_XML);
@@ -236,6 +224,24 @@ public abstract class AbstractPage implements Page {
     public final Long getMcs() {
         // @checkstyle MagicNumber (1 line)
         return (System.nanoTime() - this.start) / 1000L;
+    }
+
+    /**
+     * Extend page with mandatory elements.
+     */
+    private void extend() {
+        this.append(
+            new JaxbBundle("version")
+                .add("name", Manifests.read("Netbout-Version"))
+                .up()
+                // @checkstyle MultipleStringLiterals (1 line)
+                .add("revision", Manifests.read("Netbout-Revision"))
+                .up()
+                .add("date", Manifests.read("Netbout-Date"))
+                .up()
+        );
+        this.append(new JaxbBundle("message", this.home.message()));
+        this.append(this.links);
     }
 
 }

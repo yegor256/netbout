@@ -74,7 +74,6 @@ public final class InboxRs extends AbstractRs {
         final Identity identity = this.identity();
         final Bout bout = identity.start();
         return new PageBuilder()
-            .stylesheet("none")
             .build(AbstractPage.class)
             .init(this)
             .authenticated(identity)
