@@ -74,6 +74,13 @@
             <input name="name" />
             <input value="invite" type="submit"/>
         </form>
+        <form method="post">
+            <xsl:attribute name="action">
+                <xsl:value-of select="/page/links/link[@name='rename']/@href"/>
+            </xsl:attribute>
+            <input name="title" />
+            <input value="rename" type="submit"/>
+        </form>
         <div id="holder">
             <ul id="titles">
                 <xsl:for-each select="/page/bout/stages/stage">

@@ -92,6 +92,14 @@ public final class CpaHelper implements Helper {
     }
 
     /**
+     * Public ctor.
+     * @param type Use it to get name of package
+     */
+    public CpaHelper(final Class type) {
+        this(type.getPackage().getName());
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
