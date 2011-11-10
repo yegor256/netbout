@@ -97,6 +97,7 @@ public abstract class AbstractPage implements Page {
                         Page.HATEOAS_HREF,
                         this.home.uriInfo()
                             .getAbsolutePathBuilder()
+                            // @checkstyle MultipleStringLiterals (1 line)
                             .replacePath("/")
                             .build()
                 )
@@ -136,6 +137,7 @@ public abstract class AbstractPage implements Page {
             new JaxbBundle("version")
                 .add("name", Manifests.read("Netbout-Version"))
                 .up()
+                // @checkstyle MultipleStringLiterals (1 line)
                 .add("revision", Manifests.read("Netbout-Revision"))
                 .up()
                 .add("date", Manifests.read("Netbout-Date"))
@@ -182,8 +184,25 @@ public abstract class AbstractPage implements Page {
             .entity(this)
             .cookie(
                 new NewCookie(
+                    // name
                     "netbout",
-                    new Cryptor(this.home.entry()).encrypt(identity)
+                    // value
+                    new Cryptor(this.home.entry()).encrypt(identity),
+                    // path
+                    // @checkstyle MultipleStringLiterals (1 line)
+                    "/",
+                    // domain
+                    ".netbout.com",
+                    // version
+                    // @checkstyle MultipleStringLiterals (1 line)
+                    Integer.valueOf(Manifests.read("Netbout-Revision")),
+                    // comment
+                    "netbout.com cookie",
+                    // maxAge, 30 days
+                    // @checkstyle MagicNumber (1 line)
+                    60 * 24 * 30,
+                    // secure
+                    false
                 )
             )
             .type(MediaType.APPLICATION_XML);

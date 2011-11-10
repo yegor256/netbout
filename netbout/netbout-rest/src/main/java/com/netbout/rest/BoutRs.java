@@ -29,10 +29,13 @@ package com.netbout.rest;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of one Bout.
@@ -63,20 +66,49 @@ public final class BoutRs extends AbstractRs {
      */
     @GET
     public Response front() {
+        return new PageBuilder()
+            .stylesheet("bout")
+            .build(AbstractPage.class)
+            .init(this)
+            .append(this.bout())
+            .authenticated(this.identity())
+            .build();
+    }
+
+    /**
+     * Post new message to the bout.
+     * @param text Text of message just posted
+     * @return The JAX-RS response
+     */
+    @POST
+    public Response post(@FormParam("text") final String text) {
+        this.bout().post(text);
+        return new PageBuilder()
+            .stylesheet("none")
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(this.identity())
+            .entity("")
+            .status(Response.Status.TEMPORARY_REDIRECT)
+            // @checkstyle MultipleStringLiterals (1 line)
+            .location(UriBuilder.fromPath("/").build())
+            .build();
+    }
+
+    /**
+     * Get bout.
+     * @return The bout
+     */
+    private Bout bout() {
         final Identity identity = this.identity();
         Bout bout;
         try {
             bout = identity.bout(this.number);
         } catch (com.netbout.spi.BoutNotFoundException ex) {
+            // @checkstyle MultipleStringLiterals (1 line)
             throw new ForwardException("/", ex);
         }
-        return new PageBuilder()
-            .stylesheet("bout")
-            .build(AbstractPage.class)
-            .init(this)
-            .append(bout)
-            .authenticated(identity)
-            .build();
+        return bout;
     }
 
 }

@@ -88,7 +88,7 @@
             </div>
         </div>
         <form>
-            <dl><textarea cols="80" rows="5"></textarea></dl>
+            <dl><textarea name="text" cols="80" rows="5"></textarea></dl>
             <dl><input name="submit" type="submit" /></dl>
         </form>
         <xsl:for-each select="/page/bout/messages/message">

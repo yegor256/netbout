@@ -32,6 +32,7 @@ import com.rexsl.test.TestClient
 import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 import org.junit.Assert
 import org.xmlmatchers.XmlMatchers
 import org.hamcrest.Matchers
@@ -40,22 +41,30 @@ import org.hamcrest.Matchers
 // identity name: johnny.doe
 def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
 
-new TestClient(rexsl.home)
+def r1 = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
-// redirect is happening here, but we don't catch it
-// @see http://trac.fazend.com/rexsl/ticket/53
-// Assert.assertThat(r1.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_TEMP))
+Assert.assertThat(r1.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
+def bout = 2
 
+def uri = '/' + bout
 def r2 = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get('/')
-Assert.assertThat(r2.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-XhtmlConverter.the(r2.body).with {
-    Assert.assertThat(it, XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]"))
+    .body('text=Hello friend!')
+    .post(uri)
+Assert.assertThat(r2.status, Matchers.equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode()))
+
+def r3 = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header(HttpHeaders.COOKIE, cookie)
+    .get(uri)
+Assert.assertThat(r3.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
+XhtmlConverter.the(r3.body).with {
+    Assert.assertThat(it, XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]"))
     Assert.assertThat(it, XmlMatchers.hasXPath('/page/identity/name[.="johnny.doe"]'))
-    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bouts'))
-    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bouts/bout/participants/participant'))
+    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bout'))
+    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bout/participants/participant'))
+    Assert.assertThat(it, XmlMatchers.hasXPath('/page/bout/messages/message'))
 }

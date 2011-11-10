@@ -51,10 +51,7 @@ final class ForwardException extends WebApplicationException {
             Response
                 .status(Response.Status.TEMPORARY_REDIRECT)
                 .entity(msg)
-                .location(
-                    UriBuilder.fromUri(uri)
-                        .queryParam("m", ForwardException.encode(msg))
-                        .build())
+                .location(ForwardException.location(uri, msg))
                 .build()
         );
     }
@@ -92,6 +89,20 @@ final class ForwardException extends WebApplicationException {
      */
     public ForwardException(final URI uri, final Exception cause) {
         this(uri, cause.getMessage());
+    }
+
+    /**
+     * Create location.
+     * @param uri The address
+     * @param msg The message
+     * @return The location
+     */
+    private static URI location(final URI uri, final String msg) {
+        final UriBuilder bldr = UriBuilder.fromUri(uri);
+        if (!msg.isEmpty()) {
+            bldr.queryParam("m", ForwardException.encode(msg));
+        }
+        return bldr.build();
     }
 
     /**
