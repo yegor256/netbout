@@ -89,6 +89,15 @@ public final class LoginRs extends AbstractRs {
             .status(Response.Status.TEMPORARY_REDIRECT)
             // @checkstyle MultipleStringLiterals (1 line)
             .location(UriBuilder.fromPath("/").build())
+            .header(
+                "Set-Cookie",
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "netbout=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
+                    this.uriInfo().getBaseUri().getHost(),
+                    this.httpServletRequest().getContextPath()
+                )
+            )
             .build();
     }
 

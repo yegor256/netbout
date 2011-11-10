@@ -163,7 +163,7 @@ public abstract class AbstractPage implements Page {
                 "Set-Cookie",
                 String.format(
                     // @checkstyle LineLength (1 line)
-                    "netbout-msg=deleted;Domain=%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
+                    "netbout-msg=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
                     this.home.uriInfo().getBaseUri().getHost(),
                     this.home.httpServletRequest().getContextPath()
                 )
