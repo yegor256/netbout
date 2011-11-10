@@ -46,6 +46,12 @@ import java.util.List;
 public interface Identity {
 
     /**
+     * User.
+     * @return The user
+     */
+    User user();
+
+    /**
      * Start new bout.
      * @return The bout just created
      */

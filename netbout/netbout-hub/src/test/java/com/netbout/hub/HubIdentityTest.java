@@ -28,6 +28,8 @@ package com.netbout.hub;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -70,6 +72,10 @@ public final class HubIdentityTest {
         final Bout bout = identity.start();
         bout.post("Hello!");
         bout.invite(new HubEntry().user("Sarah").identity("sarah"));
+        MatcherAssert.assertThat(
+            identity.inbox("").size(),
+            Matchers.greaterThan(0)
+        );
     }
 
 }

@@ -49,7 +49,7 @@ public abstract class AbstractRs implements Resource {
     /**
      * Entry to work with.
      */
-    private Entry entry = HubEntry.INSTANCE;
+    private Entry entry = new HubEntry();
 
     /**
      * List of known JAX-RS providers.

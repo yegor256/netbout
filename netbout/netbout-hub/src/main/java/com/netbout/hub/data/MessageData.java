@@ -40,25 +40,31 @@ public final class MessageData {
     /**
      * The author.
      */
-    private final Identity identity;
+    private Identity author;
 
     /**
      * The text.
      */
-    private final String text;
+    private String text;
 
     /**
      * The date.
      */
-    private final Date date = new Date();
+    private Date date = new Date();
 
     /**
-     * Public ctor.
+     * Set identity.
      * @param idnt The identity
+     */
+    public void setAuthor(final Identity idnt) {
+        this.author = idnt;
+    }
+
+    /**
+     * Set text.
      * @param txt The text
      */
-    public MessageData(final Identity idnt, final String txt) {
-        this.identity = idnt;
+    public void setText(final String txt) {
         this.text = txt;
     }
 
@@ -74,8 +80,16 @@ public final class MessageData {
      * Get identity.
      * @return The identity
      */
-    public Identity getIdentity() {
-        return this.identity;
+    public Identity getAuthor() {
+        return this.author;
+    }
+
+    /**
+     * Set date.
+     * @param dte The date
+     */
+    public void setDate(final Date dte) {
+        this.date = dte;
     }
 
     /**

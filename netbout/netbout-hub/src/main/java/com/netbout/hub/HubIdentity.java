@@ -111,6 +111,14 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
+    public User user() {
+        return new HubUser(this.user);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Bout start() {
         final Long num = Storage.INSTANCE.create();
         BoutData data;
@@ -119,12 +127,17 @@ public final class HubIdentity implements Identity {
         } catch (BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        data.addParticipant(new ParticipantData(this, true));
+        final ParticipantData dude = new ParticipantData();
+        dude.setIdentity(this);
+        dude.setConfirmed(true);
+        data.addParticipant(dude);
         Logger.info(
             this,
             "#start(): bout started"
         );
-        this.bouts.add(num);
+        synchronized (this) {
+            this.bouts.add(num);
+        }
         return new HubBout(this, data);
     }
 
@@ -142,6 +155,18 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public List<Bout> inbox(final String query) {
+        if (this.bouts.isEmpty()) {
+            final Long[] nums = HelpQueue.exec(
+                "get-bouts-of-identity",
+                Long[].class,
+                HelpQueue.SYNCHRONOUSLY
+            );
+            synchronized (this) {
+                for (Long num : nums) {
+                    this.bouts.add(num);
+                }
+            }
+        }
         final List<Bout> list = new ArrayList<Bout>();
         final List<Long> broken = new ArrayList<Long>();
         for (Long num : this.bouts) {
@@ -151,8 +176,10 @@ public final class HubIdentity implements Identity {
                 broken.add(num);
             }
         }
-        for (Long num : broken) {
-            this.bouts.remove(num);
+        synchronized (this) {
+            for (Long num : broken) {
+                this.bouts.remove(num);
+            }
         }
         Logger.info(
             this,
@@ -202,7 +229,9 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public void setPhoto(final URL pic) {
-        this.photo = pic;
+        synchronized (this) {
+            this.photo = pic;
+        }
     }
 
     /**
@@ -216,6 +245,16 @@ public final class HubIdentity implements Identity {
             hlp.getClass().getName(),
             this.name()
         );
+    }
+
+    /**
+     * Notification that I've been invited to the bout.
+     * @param bout The bout
+     */
+    protected void invited(final Bout bout) {
+        synchronized (this) {
+            this.bouts.add(bout.number());
+        }
     }
 
     /**
@@ -235,7 +274,9 @@ public final class HubIdentity implements Identity {
             }
         } else {
             identity = new HubIdentity(label, usr);
-            HubIdentity.ALL.put(label, identity);
+            synchronized (HubIdentity.ALL) {
+                HubIdentity.ALL.put(label, identity);
+            }
         }
         return identity;
     }

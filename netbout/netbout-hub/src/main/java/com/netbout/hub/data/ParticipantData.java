@@ -37,9 +37,9 @@ import com.netbout.spi.Identity;
 public final class ParticipantData {
 
     /**
-     * The author.
+     * The participant.
      */
-    private final Identity identity;
+    private Identity identity;
 
     /**
      * Is it confirmed?
@@ -47,13 +47,19 @@ public final class ParticipantData {
     private boolean confirmed;
 
     /**
-     * Public ctor.
+     * Set identity.
      * @param idnt The identity
-     * @param aye Is it confirmed
      */
-    public ParticipantData(final Identity idnt, final boolean aye) {
+    public void setIdentity(final Identity idnt) {
         this.identity = idnt;
-        this.confirmed = aye;
+    }
+
+    /**
+     * Set status.
+     * @param flag The flag
+     */
+    public void setConfirmed(final boolean flag) {
+        this.confirmed = flag;
     }
 
     /**

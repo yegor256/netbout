@@ -73,9 +73,12 @@ public final class Storage {
         );
         final BoutData data = new BoutData();
         data.setNumber(max);
-        this.bouts.put(max, data);
+        data.setTitle("");
+        synchronized (this.bouts) {
+            this.bouts.put(max, data);
+        }
         HelpQueue.exec(
-            "start-new-bout",
+            "started-new-bout",
             Boolean.class,
             HelpQueue.SYNCHRONOUSLY,
             max
@@ -103,16 +106,18 @@ public final class Storage {
                 HelpQueue.SYNCHRONOUSLY,
                 num
             );
-            if (exists) {
-                final BoutData data = new BoutData();
-                data.setNumber(num);
-                this.bouts.put(num, data);
-                return data;
+            if (!exists) {
+                throw new BoutNotFoundException(
+                    "Bout #%d doesn't exist",
+                    num
+                );
             }
-            throw new BoutNotFoundException(
-                "Bout #%d doesn't exist",
-                num
-            );
+            final BoutData data = new BoutData();
+            data.setNumber(num);
+            synchronized (this.bouts) {
+                this.bouts.put(num, data);
+            }
+            return data;
         }
         Logger.info(
             this,

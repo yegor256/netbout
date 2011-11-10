@@ -26,6 +26,8 @@
  */
 package com.netbout.hub;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Queue of transactions processed by helpers.
  *
@@ -41,6 +43,12 @@ public final class HelpQueue {
 
     /**
      * Execute one request.
+     * @param mnemo Mnemo-code of the request
+     * @param type Type of response expected
+     * @param priority How important it is (0 means immediately)
+     * @param args Optional arguments
+     * @return The result
+     * @param <T> Type of response
      */
     public static <T> T exec(final String mnemo, final Class<T> type,
         final Integer priority, final Object... args) {
@@ -52,6 +60,14 @@ public final class HelpQueue {
             result = Long.valueOf(output);
         } else if (type.equals(Boolean.class)) {
             result = !output.isEmpty();
+        } else if (type.equals(Long[].class)) {
+            final String[] parts = StringUtils.split(output, ',');
+            result = new Long[parts.length];
+            for (int pos = 0; pos < parts.length; pos += 1) {
+                ((Long[]) result)[pos] = Long.valueOf(parts[pos]);
+            }
+        } else if (type.equals(String[].class)) {
+            result = StringUtils.split(output, ';');
         } else {
             throw new IllegalArgumentException(
                 String.format(

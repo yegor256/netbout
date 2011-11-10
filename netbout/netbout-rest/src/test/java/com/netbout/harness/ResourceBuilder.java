@@ -80,7 +80,7 @@ public final class ResourceBuilder {
      */
     public ResourceBuilder() throws Exception {
         // register this user
-        HubEntry.INSTANCE.user("John Doe").identity("johnny.doe");
+        new HubEntry().user("John Doe").identity("johnny.doe");
         // uriInfo
         final URI home = new URI("http://localhost:99/local");
         Mockito.doReturn(UriBuilder.fromUri(home))

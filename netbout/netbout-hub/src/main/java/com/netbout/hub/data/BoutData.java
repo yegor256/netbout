@@ -26,10 +26,11 @@
  */
 package com.netbout.hub.data;
 
-import com.ymock.util.Logger;
+import com.netbout.hub.HelpQueue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Bout with data.
@@ -42,7 +43,7 @@ public final class BoutData {
     /**
      * The title.
      */
-    private String title = "";
+    private String title;
 
     /**
      * The number.
@@ -52,13 +53,12 @@ public final class BoutData {
     /**
      * Collection of participants.
      */
-    private final Collection<ParticipantData> participants =
-        new ArrayList<ParticipantData>();
+    private Collection<ParticipantData> participants;
 
     /**
      * Ordered list of messages.
      */
-    private final List<MessageData> messages = new ArrayList<MessageData>();
+    private List<MessageData> messages;
 
     /**
      * Get its number.
@@ -76,12 +76,15 @@ public final class BoutData {
      * @param num The number
      */
     public void setNumber(final Long num) {
+        if (this.number != null) {
+            throw new IllegalStateException(
+                String.format(
+                    "setNumber() can't called for bout #%d",
+                    this.number
+                )
+            );
+        }
         this.number = num;
-        Logger.info(
-            this,
-            "#setNumber('%d'): changed",
-            num
-        );
     }
 
     /**
@@ -89,6 +92,14 @@ public final class BoutData {
      * @return The title
      */
     public String getTitle() {
+        if (this.title == null) {
+            this.title = HelpQueue.exec(
+                "get-bout-title",
+                String.class,
+                HelpQueue.SYNCHRONOUSLY,
+                this.number
+            );
+        }
         return this.title;
     }
 
@@ -98,10 +109,12 @@ public final class BoutData {
      */
     public void setTitle(final String text) {
         this.title = text;
-        Logger.info(
-            this,
-            "#setTitle('%s'): changed",
-            text
+        HelpQueue.exec(
+            "changed-bout-title",
+            Boolean.class,
+            HelpQueue.SYNCHRONOUSLY,
+            this.number,
+            this.title
         );
     }
 
@@ -110,12 +123,13 @@ public final class BoutData {
      * @param data The participant
      */
     public void addParticipant(final ParticipantData data) {
-        this.participants.add(data);
-        Logger.info(
-            this,
-            "#addParticipant('%s'): added (%d in total now)",
-            data.getIdentity().name(),
-            this.participants.size()
+        this.getParticipants().add(data);
+        HelpQueue.exec(
+            "added-bout-participant",
+            Boolean.class,
+            HelpQueue.SYNCHRONOUSLY,
+            this.number,
+            data.getIdentity().name()
         );
     }
 
@@ -124,16 +138,23 @@ public final class BoutData {
      * @return The list
      */
     public Collection<ParticipantData> getParticipants() {
-        return this.participants;
-    }
-
-    /**
-     * Get full list of messages.
-     * @param query The search query
-     * @return Messages
-     */
-    public List<MessageData> getMessages(final String query) {
-        return this.messages;
+        synchronized (this) {
+            if (this.participants == null) {
+                this.participants = new CopyOnWriteArrayList<ParticipantData>();
+                final String[] identities = HelpQueue.exec(
+                    "get-bout-participant-identities",
+                    String[].class,
+                    HelpQueue.SYNCHRONOUSLY,
+                    this.number
+                );
+                for (String identity : identities) {
+                    final ParticipantData data = new ParticipantData();
+                    // data.setIdentity();
+                    this.participants.add(data);
+                }
+            }
+            return this.participants;
+        }
     }
 
     /**
@@ -141,13 +162,38 @@ public final class BoutData {
      * @param data The data
      */
     public void addMessage(final MessageData data) {
-        this.messages.add(data);
-        Logger.info(
-            this,
-            "#addMessage('%s'): added (%d in total now)",
-            data.getText(),
-            this.messages.size()
+        this.getMessages().add(data);
+        HelpQueue.exec(
+            "added-bout-message",
+            Boolean.class,
+            HelpQueue.SYNCHRONOUSLY,
+            this.number,
+            data.getDate()
         );
+    }
+
+    /**
+     * Get full list of messages.
+     * @return Messages
+     */
+    public List<MessageData> getMessages() {
+        synchronized (this) {
+            if (this.messages == null) {
+                this.messages = new CopyOnWriteArrayList<MessageData>();
+                final String[] dates = HelpQueue.exec(
+                    "get-bout-message-dates",
+                    String[].class,
+                    HelpQueue.SYNCHRONOUSLY,
+                    this.number
+                );
+                for (String date : dates) {
+                    final MessageData data = new MessageData();
+                    // data.setIdentity();
+                    this.messages.add(data);
+                }
+            }
+            return this.messages;
+        }
     }
 
 }

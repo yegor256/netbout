@@ -30,6 +30,6 @@
 
 import com.netbout.hub.HubEntry
 
-HubEntry.INSTANCE.user('John Doe')
+new HubEntry().user('John Doe')
     .identity('johnny.doe')
     .setPhoto(new URL('http://www.robert-deniro.com/deniro.jpg'))

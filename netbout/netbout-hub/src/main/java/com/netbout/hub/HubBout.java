@@ -145,13 +145,16 @@ public final class HubBout implements Bout {
      */
     @Override
     public Participant invite(final Identity friend) {
-        final ParticipantData dude = new ParticipantData(friend, false);
+        final ParticipantData dude = new ParticipantData();
+        dude.setIdentity(friend);
+        dude.setConfirmed(false);
         this.data.addParticipant(dude);
         Logger.info(
             this,
             "#invite('%s'): success",
             friend
         );
+        ((HubIdentity) friend).invited(this);
         return new HubParticipant(
             dude.getIdentity(),
             dude.isConfirmed()
@@ -197,11 +200,11 @@ public final class HubBout implements Bout {
     @Override
     public List<Message> messages(final String query) {
         final List<Message> messages = new ArrayList<Message>();
-        for (MessageData msg : this.data.getMessages(query)) {
+        for (MessageData msg : this.data.getMessages()) {
             messages.add(
                 new HubMessage(
                     this,
-                    msg.getIdentity(),
+                    msg.getAuthor(),
                     msg.getText(),
                     msg.getDate()
                 )
@@ -231,7 +234,9 @@ public final class HubBout implements Bout {
      */
     @Override
     public Message post(final String text) {
-        final MessageData msg = new MessageData(this.viewer, text);
+        final MessageData msg = new MessageData();
+        msg.setAuthor(this.viewer);
+        msg.setText(text);
         this.data.addMessage(msg);
         Logger.info(
             this,
@@ -240,7 +245,7 @@ public final class HubBout implements Bout {
         );
         return new HubMessage(
             this,
-            msg.getIdentity(),
+            msg.getAuthor(),
             msg.getText(),
             msg.getDate()
         );
