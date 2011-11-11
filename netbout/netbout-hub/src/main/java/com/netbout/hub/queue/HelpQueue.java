@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.hub.queue;
 
 import com.ymock.util.Logger;
 import org.apache.commons.lang.StringUtils;

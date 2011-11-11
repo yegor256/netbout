@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.hub.data.BoutData;
 import com.netbout.hub.data.ParticipantData;
 import com.netbout.hub.data.Storage;
+import com.netbout.hub.queue.HelpQueue;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.DuplicateIdentityException;

@@ -24,37 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.hop;
-
-import com.netbout.spi.Message;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
 
 /**
- * Translates all messages from English to the local language of the bout.
+ * Helper that provides persistence through SQL.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Farm
-public final class Hop {
-
-    /**
-     * Translate message text for specified participant.
-     * @param msg The message to translate
-     * @return New text to show
-     */
-    @Operation("pre-render-message")
-    public String translate(final Message msg) {
-        final String text = msg.text();
-        final String result = text.replace("Hello", "Bonjour");
-        Logger.info(
-            "#translate(%s): translated to '%s'",
-            text,
-            result
-        );
-        return result;
-    }
-
-}
+package com.netbout.hub.sql;

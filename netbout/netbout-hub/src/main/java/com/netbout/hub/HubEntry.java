@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.hop.Hop;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnknownIdentityException;
