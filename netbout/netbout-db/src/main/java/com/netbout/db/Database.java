@@ -77,11 +77,9 @@ public final class Database {
             new DriverManagerConnectionFactory("jdbc:hsqldb:mem:testdb", "sa", ""),
             new GenericObjectPool(null),
             null,
-            "xxx",
-            // "SELECT 1 from INFORMATION_SCHEMA.SYSTEM_USERS",
-            true,
+            null,
             false,
-            Connection.TRANSACTION_NONE
+            true
         );
         DataSource source = new PoolingDataSource(factory.getPool());
         Database.update(source);

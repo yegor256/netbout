@@ -48,12 +48,11 @@ public final class BoutFarmTest {
      */
     @Test
     public void testBoutNumbering() throws Exception {
-        Database.connection();
-        // final Long num = this.farm.getNextBoutNumber();
-        // MatcherAssert.assertThat(
-        //     identity.bout(number).number(),
-        //     Matchers.equalTo(number)
-        // );
+        final Long num = this.farm.getNextBoutNumber();
+        MatcherAssert.assertThat(
+            num,
+            Matchers.greaterThan(0L)
+        );
     }
 
 }
