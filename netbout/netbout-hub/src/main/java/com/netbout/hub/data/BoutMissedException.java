@@ -24,50 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
-
-import com.netbout.spi.DuplicateIdentityException;
-import com.netbout.spi.Identity;
-import com.netbout.spi.User;
-import com.ymock.util.Logger;
+package com.netbout.hub.data;
 
 /**
- * User.
+ * Bout is not found in storage.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubUser implements User {
-
-    /**
-     * The name.
-     */
-    private final String name;
+public final class BoutMissedException extends Exception {
 
     /**
      * Public ctor.
-     * @param nme The name of it
-     * @see InMemoryEntry#user(String)
+     * @param number Number of the bout being missed
      */
-    public HubUser(final String nme) {
-        this.name = nme;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String name() {
-        return this.name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity(final String label)
-        throws DuplicateIdentityException {
-        return HubIdentity.make(label, this.name);
+    public BoutMissedException(final Long number) {
+        super(String.format("Bout #%d not found", number));
     }
 
 }

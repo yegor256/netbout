@@ -27,12 +27,7 @@
 package com.netbout.hub.data;
 
 import com.netbout.hub.HelpQueue;
-import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,10 +46,10 @@ public final class Storage {
         new ConcurrentHashMap<Long, BoutData>();
 
     /**
-     * Private ctor.
+     * It's utility class.
      */
     private Storage() {
-        // empty
+        //
     }
 
     /**
@@ -62,51 +57,64 @@ public final class Storage {
      * @return It's number (unique)
      */
     public static Long create() {
-        final Long max = HelpQueue.exec(
+        final Long number = HelpQueue.exec(
             "get-next-bout-number",
             Long.class,
             HelpQueue.SYNCHRONOUSLY
         );
         final BoutData data = new BoutData();
-        data.setNumber(max);
+        data.setNumber(number);
         data.setTitle("");
-        Storage.BOUTS.put(max, data);
+        Storage.BOUTS.put(number, data);
         HelpQueue.exec(
             "started-new-bout",
             Boolean.class,
             HelpQueue.SYNCHRONOUSLY,
-            max
+            number
         );
-        return max;
+        Logger.debug(
+            Storage.class,
+            "#create(): bout #%d created",
+            number
+        );
+        return number;
     }
 
     /**
      * Find and return bout from collection.
-     * @param num Number of the bout
-     * @return The bout found
-     * @throws BoutNotFoundException If this bout is not found
-     * @checkstyle RedundantThrows (4 lines)
+     * @param number Number of the bout
+     * @return The bout found or restored
+     * @throws BoutMissedException If this bout is not found
      */
-    public static BoutData find(final Long num) throws BoutNotFoundException {
-        if (!Storage.BOUTS.containsKey(num)) {
+    public static BoutData find(final Long number) throws BoutMissedException {
+        BoutData data;
+        if (Storage.BOUTS.containsKey(number)) {
+            data = Storage.BOUTS.get(number);
+            Logger.debug(
+                Storage.class,
+                "#find(#%d): bout data found",
+                number
+            );
+        } else {
             final Boolean exists = HelpQueue.exec(
                 "check-bout-existence",
                 Boolean.class,
                 HelpQueue.SYNCHRONOUSLY,
-                num
+                number
             );
             if (!exists) {
-                throw new BoutNotFoundException(
-                    "Bout #%d doesn't exist",
-                    num
-                );
+                throw new BoutMissedException(number);
             }
-            final BoutData data = new BoutData();
-            data.setNumber(num);
-            Storage.BOUTS.put(num, data);
-            return data;
+            data = new BoutData();
+            data.setNumber(number);
+            Storage.BOUTS.put(number, data);
+            Logger.debug(
+                Storage.class,
+                "#find(#%d): bout data restored",
+                number
+            );
         }
-        return Storage.BOUTS.get(num);
+        return data;
     }
 
 }

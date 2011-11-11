@@ -27,7 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.hub.data.ParticipantData;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
