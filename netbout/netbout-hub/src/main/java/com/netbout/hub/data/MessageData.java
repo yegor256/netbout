@@ -130,7 +130,7 @@ public final class MessageData {
         HelpQueue.exec(
             "changed-message-author",
             Boolean.class,
-            HelpQueue.SYNCHRONOUSLY,
+            HelpQueue.Priority.ASAP,
             this.bout,
             this.date,
             this.author
@@ -151,7 +151,7 @@ public final class MessageData {
             this.author = HelpQueue.exec(
                 "get-message-author",
                 String.class,
-                HelpQueue.SYNCHRONOUSLY,
+                HelpQueue.Priority.SYNCHRONOUSLY,
                 this.bout,
                 this.date
             );
@@ -179,7 +179,7 @@ public final class MessageData {
         HelpQueue.exec(
             "changed-message-text",
             Boolean.class,
-            HelpQueue.SYNCHRONOUSLY,
+            HelpQueue.Priority.ASAP,
             this.bout,
             this.date,
             this.text
@@ -200,7 +200,7 @@ public final class MessageData {
             this.text = HelpQueue.exec(
                 "get-message-text",
                 String.class,
-                HelpQueue.SYNCHRONOUSLY,
+                HelpQueue.Priority.SYNCHRONOUSLY,
                 this.bout,
                 this.date
             );

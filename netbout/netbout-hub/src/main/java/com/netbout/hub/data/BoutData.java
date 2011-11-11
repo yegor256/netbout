@@ -102,7 +102,7 @@ public final class BoutData {
             this.title = HelpQueue.exec(
                 "get-bout-title",
                 String.class,
-                HelpQueue.SYNCHRONOUSLY,
+                HelpQueue.Priority.SYNCHRONOUSLY,
                 this.number
             );
             Logger.debug(
@@ -124,7 +124,7 @@ public final class BoutData {
         HelpQueue.exec(
             "changed-bout-title",
             Boolean.class,
-            HelpQueue.SYNCHRONOUSLY,
+            HelpQueue.Priority.ASAP,
             this.number,
             this.title
         );
@@ -145,7 +145,7 @@ public final class BoutData {
         HelpQueue.exec(
             "added-bout-participant",
             Boolean.class,
-            HelpQueue.SYNCHRONOUSLY,
+            HelpQueue.Priority.ASAP,
             this.number,
             data.getIdentity()
         );
@@ -169,7 +169,7 @@ public final class BoutData {
                 final String[] identities = HelpQueue.exec(
                     "get-bout-participant-identities",
                     String[].class,
-                    HelpQueue.SYNCHRONOUSLY,
+                    HelpQueue.Priority.SYNCHRONOUSLY,
                     this.number
                 );
                 for (String identity : identities) {
@@ -198,7 +198,7 @@ public final class BoutData {
         HelpQueue.exec(
             "added-bout-message",
             Boolean.class,
-            HelpQueue.SYNCHRONOUSLY,
+            HelpQueue.Priority.ASAP,
             this.number,
             data.getDate().getTime(),
             data.getAuthor(),
@@ -223,7 +223,7 @@ public final class BoutData {
                 final Long[] dates = HelpQueue.exec(
                     "get-bout-message-dates",
                     Long[].class,
-                    HelpQueue.SYNCHRONOUSLY,
+                    HelpQueue.Priority.SYNCHRONOUSLY,
                     this.number
                 );
                 for (Long msec : dates) {

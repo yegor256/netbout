@@ -60,7 +60,7 @@ public final class Storage {
         final Long number = HelpQueue.exec(
             "get-next-bout-number",
             Long.class,
-            HelpQueue.SYNCHRONOUSLY
+            HelpQueue.Priority.SYNCHRONOUSLY
         );
         final BoutData data = new BoutData();
         data.setNumber(number);
@@ -69,7 +69,7 @@ public final class Storage {
         HelpQueue.exec(
             "started-new-bout",
             Boolean.class,
-            HelpQueue.SYNCHRONOUSLY,
+            HelpQueue.Priority.ASAP,
             number
         );
         Logger.debug(
@@ -99,7 +99,7 @@ public final class Storage {
             final Long exists = HelpQueue.exec(
                 "check-bout-existence",
                 Long.class,
-                HelpQueue.SYNCHRONOUSLY,
+                HelpQueue.Priority.SYNCHRONOUSLY,
                 number
             );
             if (exists != number) {

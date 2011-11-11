@@ -38,9 +38,12 @@ import org.apache.commons.lang.StringUtils;
 public final class HelpQueue {
 
     /**
-     * Execute immediately.
+     * Priority.
      */
-    public static final Integer SYNCHRONOUSLY = 0;
+    public enum Priority {
+        SYNCHRONOUSLY,
+        ASAP
+    }
 
     /**
      * Execute one request.
@@ -52,7 +55,7 @@ public final class HelpQueue {
      * @param <T> Type of response
      */
     public static <T> T exec(final String mnemo, final Class<T> type,
-        final Integer priority, final Object... args) {
+        final HelpQueue.Priority priority, final Object... args) {
         final String output = "0";
         Object result;
         if (type.equals(String.class)) {
@@ -79,7 +82,7 @@ public final class HelpQueue {
         }
         Logger.debug(
             HelpQueue.class,
-            "#exec(%s, %s, %d, ...): returned %s",
+            "#exec(%s, %s, %s, ...): returned %s",
             mnemo,
             type,
             priority,

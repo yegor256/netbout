@@ -170,7 +170,7 @@ public final class HubIdentity implements Identity {
             final Long[] nums = HelpQueue.exec(
                 "get-bouts-of-identity",
                 Long[].class,
-                HelpQueue.SYNCHRONOUSLY
+                HelpQueue.Priority.SYNCHRONOUSLY
             );
             for (Long num : nums) {
                 this.bouts.add(num);

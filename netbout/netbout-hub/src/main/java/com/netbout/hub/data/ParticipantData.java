@@ -119,7 +119,7 @@ public final class ParticipantData {
         HelpQueue.exec(
             "changed-participant-confirm-status",
             Boolean.class,
-            HelpQueue.SYNCHRONOUSLY,
+            HelpQueue.Priority.ASAP,
             this.bout,
             this.identity,
             this.confirmed
@@ -140,7 +140,7 @@ public final class ParticipantData {
             this.confirmed = HelpQueue.exec(
                 "get-participant-confirm-status",
                 Boolean.class,
-                HelpQueue.SYNCHRONOUSLY,
+                HelpQueue.Priority.SYNCHRONOUSLY,
                 this.bout,
                 this.identity
             );
