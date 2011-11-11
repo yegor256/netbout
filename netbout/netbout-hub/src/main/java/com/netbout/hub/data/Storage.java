@@ -57,21 +57,17 @@ public final class Storage {
      * @return It's number (unique)
      */
     public static Long create() {
-        final Long number = HelpQueue.exec(
-            "get-next-bout-number",
-            Long.class,
-            HelpQueue.Priority.SYNCHRONOUSLY
-        );
+        final Long number = HelpQueue.make("get-next-bout-number")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .exec(Long.class);
         final BoutData data = new BoutData();
         data.setNumber(number);
         data.setTitle("");
         Storage.BOUTS.put(number, data);
-        HelpQueue.exec(
-            "started-new-bout",
-            Boolean.class,
-            HelpQueue.Priority.ASAP,
-            number
-        );
+        HelpQueue.make("started-new-bout")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(number)
+            .exec(Boolean.class);
         Logger.debug(
             Storage.class,
             "#create(): bout #%d created",
@@ -96,12 +92,10 @@ public final class Storage {
                 number
             );
         } else {
-            final Long exists = HelpQueue.exec(
-                "check-bout-existence",
-                Long.class,
-                HelpQueue.Priority.SYNCHRONOUSLY,
-                number
-            );
+            final Long exists = HelpQueue.make("check-bout-existence")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(number)
+                .exec(Long.class);
             if (exists != number) {
                 throw new BoutMissedException(number);
             }

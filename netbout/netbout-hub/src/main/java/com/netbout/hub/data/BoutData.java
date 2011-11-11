@@ -99,12 +99,10 @@ public final class BoutData {
      */
     public String getTitle() {
         if (this.title == null) {
-            this.title = HelpQueue.exec(
-                "get-bout-title",
-                String.class,
-                HelpQueue.Priority.SYNCHRONOUSLY,
-                this.number
-            );
+            this.title = HelpQueue.make("get-bout-title")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.number)
+                .exec(String.class);
             Logger.debug(
                 this,
                 "#getTitle(): title '%s' loaded for bout #%d",
@@ -121,13 +119,11 @@ public final class BoutData {
      */
     public void setTitle(final String text) {
         this.title = text;
-        HelpQueue.exec(
-            "changed-bout-title",
-            Boolean.class,
-            HelpQueue.Priority.ASAP,
-            this.number,
-            this.title
-        );
+        HelpQueue.make("changed-bout-title")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.number)
+            .arg(this.title)
+            .exec(Boolean.class);
         Logger.debug(
             this,
             "#setTitle('%s'): set for bout #%d",
@@ -142,13 +138,11 @@ public final class BoutData {
      */
     public void addParticipant(final ParticipantData data) {
         this.getParticipants().add(data);
-        HelpQueue.exec(
-            "added-bout-participant",
-            Boolean.class,
-            HelpQueue.Priority.ASAP,
-            this.number,
-            data.getIdentity()
-        );
+        HelpQueue.make("added-bout-participant")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.number)
+            .arg(data.getIdentity())
+            .exec(Boolean.class);
         Logger.debug(
             this,
             "#addParticipant('%s'): added for bout #%d (%d total)",
@@ -166,12 +160,11 @@ public final class BoutData {
         synchronized (this) {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantData>();
-                final String[] identities = HelpQueue.exec(
-                    "get-bout-participant-identities",
-                    String[].class,
-                    HelpQueue.Priority.SYNCHRONOUSLY,
-                    this.number
-                );
+                final String[] identities = HelpQueue
+                    .make("get-bout-participant-identities")
+                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                    .arg(this.number)
+                    .exec(String[].class);
                 for (String identity : identities) {
                     final ParticipantData data = new ParticipantData();
                     data.setBout(this.number);
@@ -195,15 +188,13 @@ public final class BoutData {
      */
     public void addMessage(final MessageData data) {
         this.getMessages().add(data);
-        HelpQueue.exec(
-            "added-bout-message",
-            Boolean.class,
-            HelpQueue.Priority.ASAP,
-            this.number,
-            data.getDate().getTime(),
-            data.getAuthor(),
-            data.getText()
-        );
+        HelpQueue.make("added-bout-message")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.number)
+            .arg(data.getDate().getTime())
+            .arg(data.getAuthor())
+            .arg(data.getText())
+            .exec(Boolean.class);
         Logger.debug(
             this,
             "#addMessage(..): message by '%s' added to bout #%d",
@@ -220,12 +211,10 @@ public final class BoutData {
         synchronized (this) {
             if (this.messages == null) {
                 this.messages = new CopyOnWriteArrayList<MessageData>();
-                final Long[] dates = HelpQueue.exec(
-                    "get-bout-message-dates",
-                    Long[].class,
-                    HelpQueue.Priority.SYNCHRONOUSLY,
-                    this.number
-                );
+                final Long[] dates = HelpQueue.make("get-bout-message-dates")
+                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                    .arg(this.number)
+                    .exec(Long[].class);
                 for (Long msec : dates) {
                     final MessageData data = new MessageData();
                     data.setBout(this.number);

@@ -26,39 +26,47 @@
  */
 package com.netbout.hub.queue;
 
-import com.netbout.spi.Helper;
-import com.ymock.util.Logger;
+import com.netbout.spi.cpa.CpaHelper;
+import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.Operation;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Queue of transactions processed by helpers.
- *
+ * Test case of {@link HelpQueue}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HelpQueue {
+public final class HelpQueueTest {
 
     /**
-     * Priority.
+     * Simple synch transaction with a helper.
+     * @throws Exception If there is some problem inside
      */
-    public enum Priority {
-        SYNCHRONOUSLY,
-        ASAP
+    @Test
+    public void testSynchronousTransaction() throws Exception {
+        HelpQueue.register(new CpaHelper(this.getClass()));
+        final String result = HelpQueue.make("simple-translation")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .arg("test me")
+            .def("dosn't work")
+            .exec(String.class);
+        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
     }
 
-    /**
-     * Register new helper.
-     * @param helper The helper to register
-     */
-    public static void register(final Helper helper) {
-    }
+    @Farm
+    public static final class SimpleHelper {
+        /**
+         * Translate text.
+         * @param text The message to translate
+         * @return New text to show
+         */
+        @Operation("simple-translation")
+        public String translate(final String text) {
+            return text.replaceAll("[a-z]", "X");
+        }
 
-    /**
-     * Create one transaction.
-     * @param mnemo Mnemo-code of the request
-     * @return The transaction
-     */
-    public static Transaction make(final String mnemo) {
-        return new Transaction(mnemo);
     }
 
 }

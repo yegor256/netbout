@@ -24,41 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.queue;
-
-import com.netbout.spi.Helper;
-import com.ymock.util.Logger;
 
 /**
- * Queue of transactions processed by helpers.
+ * Tests of queue.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HelpQueue {
-
-    /**
-     * Priority.
-     */
-    public enum Priority {
-        SYNCHRONOUSLY,
-        ASAP
-    }
-
-    /**
-     * Register new helper.
-     * @param helper The helper to register
-     */
-    public static void register(final Helper helper) {
-    }
-
-    /**
-     * Create one transaction.
-     * @param mnemo Mnemo-code of the request
-     * @return The transaction
-     */
-    public static Transaction make(final String mnemo) {
-        return new Transaction(mnemo);
-    }
-
-}
+package com.netbout.hub.queue;

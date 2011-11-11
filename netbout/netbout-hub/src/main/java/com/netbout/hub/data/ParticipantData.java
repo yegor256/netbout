@@ -116,14 +116,12 @@ public final class ParticipantData {
      */
     public void setConfirmed(final Boolean flag) {
         this.confirmed = flag;
-        HelpQueue.exec(
-            "changed-participant-confirm-status",
-            Boolean.class,
-            HelpQueue.Priority.ASAP,
-            this.bout,
-            this.identity,
-            this.confirmed
-        );
+        HelpQueue.make("changed-participant-confirm-status")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.bout)
+            .arg(this.identity)
+            .arg(this.confirmed)
+            .exec(Boolean.class);
         Logger.debug(
             this,
             "#setConfirmed(%b): set",
@@ -137,13 +135,11 @@ public final class ParticipantData {
      */
     public Boolean isConfirmed() {
         if (this.confirmed == null) {
-            this.confirmed = HelpQueue.exec(
-                "get-participant-confirm-status",
-                Boolean.class,
-                HelpQueue.Priority.SYNCHRONOUSLY,
-                this.bout,
-                this.identity
-            );
+            this.confirmed = HelpQueue.make("get-participant-confirm-status")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.bout)
+                .arg(this.identity)
+                .exec(Boolean.class);
             Logger.debug(
                 this,
                 "#isConfirmed(): status loaded as %b for dude '%s' in bout #%d",

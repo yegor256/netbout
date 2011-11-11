@@ -127,14 +127,12 @@ public final class MessageData {
             );
         }
         this.author = idnt;
-        HelpQueue.exec(
-            "changed-message-author",
-            Boolean.class,
-            HelpQueue.Priority.ASAP,
-            this.bout,
-            this.date,
-            this.author
-        );
+        HelpQueue.make("changed-message-author")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.bout)
+            .arg(this.date)
+            .arg(this.author)
+            .exec(Boolean.class);
         Logger.debug(
             this,
             "#setAuthor('%s'): set",
@@ -148,13 +146,11 @@ public final class MessageData {
      */
     public String getAuthor() {
         if (this.author == null) {
-            this.author = HelpQueue.exec(
-                "get-message-author",
-                String.class,
-                HelpQueue.Priority.SYNCHRONOUSLY,
-                this.bout,
-                this.date
-            );
+            this.author = HelpQueue.make("get-message-author")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.bout)
+                .arg(this.date)
+                .exec(String.class);
             Logger.debug(
                 this,
                 "#getAuthor(): author '%s' loaded for msg in bout #%d",
@@ -176,14 +172,12 @@ public final class MessageData {
             );
         }
         this.text = txt;
-        HelpQueue.exec(
-            "changed-message-text",
-            Boolean.class,
-            HelpQueue.Priority.ASAP,
-            this.bout,
-            this.date,
-            this.text
-        );
+        HelpQueue.make("changed-message-text")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.bout)
+            .arg(this.date)
+            .arg(this.text)
+            .exec(Boolean.class);
         Logger.debug(
             this,
             "#setText('%s'): set",
@@ -197,13 +191,11 @@ public final class MessageData {
      */
     public String getText() {
         if (this.text == null) {
-            this.text = HelpQueue.exec(
-                "get-message-text",
-                String.class,
-                HelpQueue.Priority.SYNCHRONOUSLY,
-                this.bout,
-                this.date
-            );
+            this.text = HelpQueue.make("get-message-text")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.bout)
+                .arg(this.date)
+                .exec(String.class);
             Logger.debug(
                 this,
                 "#getText(): text '%s' loaded for msg in bout #%d",

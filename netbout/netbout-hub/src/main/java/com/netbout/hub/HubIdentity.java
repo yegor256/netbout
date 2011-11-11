@@ -168,11 +168,9 @@ public final class HubIdentity implements Identity {
     @Override
     public List<Bout> inbox(final String query) {
         if (this.bouts.isEmpty()) {
-            final Long[] nums = HelpQueue.exec(
-                "get-bouts-of-identity",
-                Long[].class,
-                HelpQueue.Priority.SYNCHRONOUSLY
-            );
+            final Long[] nums = HelpQueue.make("get-bouts-of-identity")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .exec(Long[].class);
             for (Long num : nums) {
                 this.bouts.add(num);
             }
