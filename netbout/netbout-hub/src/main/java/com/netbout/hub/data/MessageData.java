@@ -49,30 +49,40 @@ public final class MessageData {
     /**
      * The date.
      */
-    private Date date = new Date();
+    private Date date;
+
+    /**
+     * Set date.
+     * @param dte The date
+     */
+    public void setDate(final Date dte) {
+        if (this.date != null) {
+            throw new IllegalStateException(
+                "setDate() can only set date one time, not change"
+            );
+        }
+        this.date = dte;
+    }
+
+    /**
+     * Get date.
+     * @return The date
+     */
+    public Date getDate() {
+        return this.date;
+    }
 
     /**
      * Set identity.
      * @param idnt The identity
      */
     public void setAuthor(final String idnt) {
+        if (this.author != null) {
+            throw new IllegalStateException(
+                "setAuthor() can only set identity one time, not change"
+            );
+        }
         this.author = idnt;
-    }
-
-    /**
-     * Set text.
-     * @param txt The text
-     */
-    public void setText(final String txt) {
-        this.text = txt;
-    }
-
-    /**
-     * Get text.
-     * @return The text
-     */
-    public String getText() {
-        return this.text;
     }
 
     /**
@@ -84,19 +94,24 @@ public final class MessageData {
     }
 
     /**
-     * Set date.
-     * @param dte The date
+     * Set text.
+     * @param txt The text
      */
-    public void setDate(final Date dte) {
-        this.date = dte;
+    public void setText(final String txt) {
+        if (this.text != null) {
+            throw new IllegalStateException(
+                "setText() can only set text one time, not change"
+            );
+        }
+        this.text = txt;
     }
 
     /**
-     * Get date.
-     * @return The date
+     * Get text.
+     * @return The text
      */
-    public Date getDate() {
-        return this.date;
+    public String getText() {
+        return this.text;
     }
 
 }

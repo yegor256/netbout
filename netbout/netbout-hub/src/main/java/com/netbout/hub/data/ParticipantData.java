@@ -26,6 +26,8 @@
  */
 package com.netbout.hub.data;
 
+import com.netbout.hub.HelpQueue;
+
 /**
  * Bout with data.
  *
@@ -49,23 +51,12 @@ public final class ParticipantData {
      * @param idnt The identity
      */
     public void setIdentity(final String idnt) {
+        if (this.identity != null) {
+            throw new IllegalStateException(
+                "setIdentity() can only set identity one time, not change"
+            );
+        }
         this.identity = idnt;
-    }
-
-    /**
-     * Set status.
-     * @param flag The flag
-     */
-    public void setConfirmed(final boolean flag) {
-        this.confirmed = flag;
-    }
-
-    /**
-     * Is it confirmed?
-     * @return The flag
-     */
-    public boolean isConfirmed() {
-        return this.confirmed;
     }
 
     /**
@@ -74,6 +65,29 @@ public final class ParticipantData {
      */
     public String getIdentity() {
         return this.identity;
+    }
+
+    /**
+     * Set status.
+     * @param flag The flag
+     */
+    public void setConfirmed(final boolean flag) {
+        this.confirmed = flag;
+        // HelpQueue.exec(
+        //     "changed-participant-confirmed-status",
+        //     Boolean.class,
+        //     HelpQueue.SYNCHRONOUSLY,
+        //     this.number,
+        //     data.getIdentity()
+        // );
+    }
+
+    /**
+     * Is it confirmed?
+     * @return The flag
+     */
+    public boolean isConfirmed() {
+        return this.confirmed;
     }
 
 }

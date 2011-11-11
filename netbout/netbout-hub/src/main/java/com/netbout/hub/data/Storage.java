@@ -32,9 +32,9 @@ import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Storage of data.
@@ -45,14 +45,10 @@ import java.util.Map;
 public final class Storage {
 
     /**
-     * The singleton.
-     */
-    public static final Storage INSTANCE = new Storage();
-
-    /**
      * All bouts existing in the system.
      */
-    private final Map<Long, BoutData> bouts = new HashMap<Long, BoutData>();
+    private static final Map<Long, BoutData> BOUTS =
+        new ConcurrentHashMap<Long, BoutData>();
 
     /**
      * Private ctor.
@@ -65,7 +61,7 @@ public final class Storage {
      * Create new bout in the storage.
      * @return It's number (unique)
      */
-    public Long create() {
+    public static Long create() {
         final Long max = HelpQueue.exec(
             "get-next-bout-number",
             Long.class,
@@ -74,18 +70,11 @@ public final class Storage {
         final BoutData data = new BoutData();
         data.setNumber(max);
         data.setTitle("");
-        synchronized (this.bouts) {
-            this.bouts.put(max, data);
-        }
+        Storage.BOUTS.put(max, data);
         HelpQueue.exec(
             "started-new-bout",
             Boolean.class,
             HelpQueue.SYNCHRONOUSLY,
-            max
-        );
-        Logger.info(
-            this,
-            "#create(): bout #%d created",
             max
         );
         return max;
@@ -98,8 +87,8 @@ public final class Storage {
      * @throws BoutNotFoundException If this bout is not found
      * @checkstyle RedundantThrows (4 lines)
      */
-    public BoutData find(final Long num) throws BoutNotFoundException {
-        if (!this.bouts.containsKey(num)) {
+    public static BoutData find(final Long num) throws BoutNotFoundException {
+        if (!Storage.BOUTS.containsKey(num)) {
             final Boolean exists = HelpQueue.exec(
                 "check-bout-existence",
                 Boolean.class,
@@ -114,17 +103,10 @@ public final class Storage {
             }
             final BoutData data = new BoutData();
             data.setNumber(num);
-            synchronized (this.bouts) {
-                this.bouts.put(num, data);
-            }
+            Storage.BOUTS.put(num, data);
             return data;
         }
-        Logger.info(
-            this,
-            "#find(#%d): bout found",
-            num
-        );
-        return this.bouts.get(num);
+        return Storage.BOUTS.get(num);
     }
 
 }

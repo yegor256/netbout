@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.hub.data.MessageData;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -48,24 +49,14 @@ import javax.xml.bind.annotation.XmlType;
 final class HubMessage implements Message {
 
     /**
-     * The bout.
+     * The viewer.
      */
-    private Bout bout;
+    private Identity viewer;
 
     /**
-     * The author.
+     * The data.
      */
-    private Identity identity;
-
-    /**
-     * The text.
-     */
-    private String text;
-
-    /**
-     * The date.
-     */
-    private Date date = new Date();
+    private MessageData data;
 
     /**
      * Public ctor for JAXB.
@@ -76,18 +67,13 @@ final class HubMessage implements Message {
 
     /**
      * Public ctor.
-     * @param holder Owner of this message
-     * @param idnt The author
-     * @param txt The text
-     * @param when Date of it
+     * @param vwr The author
+     * @param dat The data
      * @checkstyle ParameterNumber (3 lines)
      */
-    public HubMessage(final Bout holder, final Identity idnt,
-        final String txt, final Date when) {
-        this.bout = holder;
-        this.identity = idnt;
-        this.text = txt;
-        this.date = when;
+    public HubMessage(final Identity vwr, final MessageData dat) {
+        this.viewer = vwr;
+        this.data = dat;
     }
 
     /**
@@ -95,7 +81,11 @@ final class HubMessage implements Message {
      */
     @Override
     public Identity author() {
-        return this.identity;
+        try {
+            return HubIdentity.friend(this.data.getAuthor());
+        } catch (com.netbout.spi.UnknownIdentityException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -112,7 +102,7 @@ final class HubMessage implements Message {
      */
     @Override
     public String text() {
-        return this.text;
+        return this.data.getText();
     }
 
     /**
@@ -129,7 +119,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Date date() {
-        return this.date;
+        return this.data.getDate();
     }
 
     /**

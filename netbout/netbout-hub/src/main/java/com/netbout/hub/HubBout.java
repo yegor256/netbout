@@ -36,6 +36,7 @@ import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -155,10 +156,7 @@ public final class HubBout implements Bout {
             friend
         );
         ((HubIdentity) friend).invited(this);
-        return new HubParticipant(
-            friend,
-            dude.isConfirmed()
-        );
+        return new HubParticipant(dude);
     }
 
     /**
@@ -169,16 +167,7 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantData dude : this.data.getParticipants()) {
-            try {
-                participants.add(
-                    new HubParticipant(
-                        HubIdentity.friend(dude.getIdentity()),
-                        dude.isConfirmed()
-                    )
-                );
-            } catch (com.netbout.spi.UnknownIdentityException ex) {
-                throw new IllegalStateException(ex);
-            }
+            participants.add(new HubParticipant(dude));
         }
         Logger.info(
             this,
@@ -208,10 +197,8 @@ public final class HubBout implements Bout {
             try {
                 messages.add(
                     new HubMessage(
-                        this,
                         HubIdentity.friend(msg.getAuthor()),
-                        msg.getText(),
-                        msg.getDate()
+                        msg
                     )
                 );
             } catch (com.netbout.spi.UnknownIdentityException ex) {
@@ -245,18 +232,14 @@ public final class HubBout implements Bout {
         final MessageData msg = new MessageData();
         msg.setAuthor(this.viewer.name());
         msg.setText(text);
+        msg.setDate(new Date());
         this.data.addMessage(msg);
         Logger.info(
             this,
             "#post('%s'): message posted",
             text
         );
-        return new HubMessage(
-            this,
-            this.viewer,
-            msg.getText(),
-            msg.getDate()
-        );
+        return new HubMessage(this.viewer, msg);
     }
 
 }

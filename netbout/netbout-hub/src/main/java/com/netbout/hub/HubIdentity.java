@@ -120,10 +120,10 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Bout start() {
-        final Long num = Storage.INSTANCE.create();
+        final Long num = Storage.create();
         BoutData data;
         try {
-            data = Storage.INSTANCE.find(num);
+            data = Storage.find(num);
         } catch (BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
@@ -147,7 +147,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Bout bout(final Long number) throws BoutNotFoundException {
-        return new HubBout(this, Storage.INSTANCE.find(number));
+        return new HubBout(this, Storage.find(number));
     }
 
     /**

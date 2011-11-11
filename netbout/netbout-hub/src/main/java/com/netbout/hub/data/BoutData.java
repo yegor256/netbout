@@ -29,6 +29,7 @@ package com.netbout.hub.data;
 import com.netbout.hub.HelpQueue;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -168,7 +169,9 @@ public final class BoutData {
             Boolean.class,
             HelpQueue.SYNCHRONOUSLY,
             this.number,
-            data.getDate()
+            data.getDate().getTime(),
+            data.getAuthor(),
+            data.getText()
         );
     }
 
@@ -180,15 +183,15 @@ public final class BoutData {
         synchronized (this) {
             if (this.messages == null) {
                 this.messages = new CopyOnWriteArrayList<MessageData>();
-                final String[] dates = HelpQueue.exec(
+                final Long[] dates = HelpQueue.exec(
                     "get-bout-message-dates",
-                    String[].class,
+                    Long[].class,
                     HelpQueue.SYNCHRONOUSLY,
                     this.number
                 );
-                for (String date : dates) {
+                for (Long msec : dates) {
                     final MessageData data = new MessageData();
-                    // data.setIdentity();
+                    data.setDate(new Date(msec));
                     this.messages.add(data);
                 }
             }
