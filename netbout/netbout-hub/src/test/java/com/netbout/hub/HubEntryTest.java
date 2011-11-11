@@ -28,59 +28,53 @@ package com.netbout.hub;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
-import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link HubUser}.
+ * Test case of {@link HubEntry}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubUserTest {
+public final class HubEntryTest {
 
     /**
-     * Name persistence.
+     * Find user by name and avoid duplicates.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPersistenceOfUserName() throws Exception {
+    public void testUserByNameFinding() throws Exception {
+        final String name = "Chuck Norris";
+        final User user = new HubEntry().user(name);
+        MatcherAssert.assertThat(
+            new HubEntry().user(name),
+            Matchers.equalTo(user)
+        );
+    }
+
+    /**
+     * Find friend's identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testFriendFinding() throws Exception {
         final String name = "Big Lebowski";
-        final User user = new HubEntry().user(name);
+        final Identity identity =
+            new HubEntry().user("Jeff Bridges").identity(name);
         MatcherAssert.assertThat(
-            new HubEntry().user(name).name(),
-            Matchers.equalTo(name)
+            new HubEntry().identity(name),
+            Matchers.equalTo(identity)
         );
     }
 
     /**
-     * Identities should be persistent for a given user.
+     * Find friend's identity.
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void testPersistenceOfIdentities() throws Exception {
-        final String name = "John Doe";
-        final User user = new HubEntry().user(name);
-        final String label = "Johnny";
-        final URL photo = new URL("http://img.netbout.com/logo.png");
-        final Identity identity = user.identity(label);
-        identity.setPhoto(photo);
-        MatcherAssert.assertThat(
-            new HubEntry().user(name).identity(label).photo(),
-            Matchers.equalTo(photo)
-        );
-    }
-
-    /**
-     * Duplicate identities should be prohibited.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = com.netbout.spi.DuplicateIdentityException.class)
-    public void testDuplicateIdentityCreation() throws Exception {
-        final String name = "Peter Pen";
-        new HubEntry().user("peter").identity(name);
-        new HubEntry().user("alex").identity(name);
+    @Test(expected = com.netbout.spi.UnknownIdentityException.class)
+    public void testFindingOfMissingFriend() throws Exception {
+        new HubEntry().identity("somebody unknown before");
     }
 
 }

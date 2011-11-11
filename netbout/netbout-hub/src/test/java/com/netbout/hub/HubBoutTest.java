@@ -27,60 +27,47 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.User;
-import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link HubUser}.
+ * Test case of {@link HubBout}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubUserTest {
+public final class HubBoutTest {
 
     /**
-     * Name persistence.
+     * Bout number persistence.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPersistenceOfUserName() throws Exception {
-        final String name = "Big Lebowski";
-        final User user = new HubEntry().user(name);
+    public void testPersistenceOfBoutNumber() throws Exception {
+        final Identity identity = new HubEntry()
+            .user("Robert DeNiro").identity("rob");
+        final Long number = identity.start().number();
         MatcherAssert.assertThat(
-            new HubEntry().user(name).name(),
-            Matchers.equalTo(name)
+            identity.bout(number).number(),
+            Matchers.equalTo(number)
         );
     }
 
     /**
-     * Identities should be persistent for a given user.
+     * Rename bout.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPersistenceOfIdentities() throws Exception {
-        final String name = "John Doe";
-        final User user = new HubEntry().user(name);
-        final String label = "Johnny";
-        final URL photo = new URL("http://img.netbout.com/logo.png");
-        final Identity identity = user.identity(label);
-        identity.setPhoto(photo);
+    public void testRenameOperation() throws Exception {
+        final Identity identity = new HubEntry()
+            .user("Al Capone").identity("capone");
+        final Long number = identity.start().number();
+        final String title = "hello, world!";
+        identity.bout(number).rename(title);
         MatcherAssert.assertThat(
-            new HubEntry().user(name).identity(label).photo(),
-            Matchers.equalTo(photo)
+            identity.bout(number).title(),
+            Matchers.equalTo(title)
         );
-    }
-
-    /**
-     * Duplicate identities should be prohibited.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = com.netbout.spi.DuplicateIdentityException.class)
-    public void testDuplicateIdentityCreation() throws Exception {
-        final String name = "Peter Pen";
-        new HubEntry().user("peter").identity(name);
-        new HubEntry().user("alex").identity(name);
     }
 
 }

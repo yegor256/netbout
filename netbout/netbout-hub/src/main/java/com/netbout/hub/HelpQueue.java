@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.ymock.util.Logger;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -76,6 +77,14 @@ public final class HelpQueue {
                 )
             );
         }
+        Logger.debug(
+            HelpQueue.class,
+            "#exec(%s, %s, %d, ...): returned %s",
+            mnemo,
+            type,
+            priority,
+            result.getClass().getName()
+        );
         return (T) result;
     }
 

@@ -242,4 +242,18 @@ public final class HubBout implements Bout {
         return new HubMessage(this.viewer, msg);
     }
 
+    /**
+     * This identity is a participant here?
+     * @param identity The identity
+     * @return Is it?
+     */
+    protected boolean isParticipant(final Identity identity) {
+        for (ParticipantData dude : this.data.getParticipants()) {
+            if (dude.getIdentity().equals(identity.name())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

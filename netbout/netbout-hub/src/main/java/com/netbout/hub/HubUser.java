@@ -40,7 +40,8 @@ import com.ymock.util.Logger;
 public final class HubUser implements User {
 
     /**
-     * The name.
+     * The name of it.
+     * @see #HubUser(String)
      */
     private final String name;
 
@@ -57,17 +58,41 @@ public final class HubUser implements User {
      * {@inheritDoc}
      */
     @Override
-    public String name() {
-        return this.name;
+    public boolean equals(final Object obj) {
+        return (obj instanceof HubUser)
+            && this.name.equals(((HubUser) obj).name);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return this.name.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    @Override
     public Identity identity(final String label)
         throws DuplicateIdentityException {
-        return HubIdentity.make(label, this.name);
+        final Identity identity = HubIdentity.make(label, this);
+        Logger.debug(
+            this,
+            "#identity('%s'): found",
+            label
+        );
+        return identity;
     }
 
 }

@@ -27,7 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.hub.data.MessageData;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import java.util.Date;

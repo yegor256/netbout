@@ -96,13 +96,13 @@ public final class Storage {
                 number
             );
         } else {
-            final Boolean exists = HelpQueue.exec(
+            final Long exists = HelpQueue.exec(
                 "check-bout-existence",
-                Boolean.class,
+                Long.class,
                 HelpQueue.SYNCHRONOUSLY,
                 number
             );
-            if (!exists) {
+            if (exists != number) {
                 throw new BoutMissedException(number);
             }
             data = new BoutData();

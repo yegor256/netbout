@@ -27,7 +27,7 @@
 package com.netbout.hub.data;
 
 import com.netbout.hub.HelpQueue;
-import java.util.ArrayList;
+import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -85,6 +85,11 @@ public final class BoutData {
                 )
             );
         }
+        Logger.debug(
+            this,
+            "#setNumber(%d): set",
+            num
+        );
         this.number = num;
     }
 
@@ -98,6 +103,12 @@ public final class BoutData {
                 "get-bout-title",
                 String.class,
                 HelpQueue.SYNCHRONOUSLY,
+                this.number
+            );
+            Logger.debug(
+                this,
+                "#getTitle(): title '%s' loaded for bout #%d",
+                this.title,
                 this.number
             );
         }
@@ -117,6 +128,12 @@ public final class BoutData {
             this.number,
             this.title
         );
+        Logger.debug(
+            this,
+            "#setTitle('%s'): set for bout #%d",
+            this.title,
+            this.number
+        );
     }
 
     /**
@@ -131,6 +148,13 @@ public final class BoutData {
             HelpQueue.SYNCHRONOUSLY,
             this.number,
             data.getIdentity()
+        );
+        Logger.debug(
+            this,
+            "#addParticipant('%s'): added for bout #%d (%d total)",
+            data.getIdentity(),
+            this.number,
+            this.getParticipants().size()
         );
     }
 
@@ -150,9 +174,16 @@ public final class BoutData {
                 );
                 for (String identity : identities) {
                     final ParticipantData data = new ParticipantData();
-                    // data.setIdentity();
+                    data.setBout(this.number);
+                    data.setIdentity(identity);
                     this.participants.add(data);
                 }
+                Logger.debug(
+                    this,
+                    "#getParticipants(): reloaded %d participants for bout #%d",
+                    this.participants.size(),
+                    this.number
+                );
             }
             return this.participants;
         }
@@ -173,6 +204,12 @@ public final class BoutData {
             data.getAuthor(),
             data.getText()
         );
+        Logger.debug(
+            this,
+            "#addMessage(..): message by '%s' added to bout #%d",
+            data.getAuthor(),
+            this.number
+        );
     }
 
     /**
@@ -191,9 +228,16 @@ public final class BoutData {
                 );
                 for (Long msec : dates) {
                     final MessageData data = new MessageData();
+                    data.setBout(this.number);
                     data.setDate(new Date(msec));
                     this.messages.add(data);
                 }
+                Logger.debug(
+                    this,
+                    "#getMessages(): reloaded %d messages for bout #%d",
+                    this.messages.size(),
+                    this.number
+                );
             }
             return this.messages;
         }

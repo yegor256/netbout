@@ -26,6 +26,8 @@
  */
 package com.netbout.hub.data;
 
+import com.netbout.hub.HelpQueue;
+import com.ymock.util.Logger;
 import java.util.Date;
 
 /**
@@ -35,6 +37,16 @@ import java.util.Date;
  * @version $Id$
  */
 public final class MessageData {
+
+    /**
+     * Number of bout.
+     */
+    private Long bout;
+
+    /**
+     * The date.
+     */
+    private Date date;
 
     /**
      * The author.
@@ -47,9 +59,33 @@ public final class MessageData {
     private String text;
 
     /**
-     * The date.
+     * Set bout number.
+     * @param num The number
      */
-    private Date date;
+    public void setBout(final Long num) {
+        if (this.bout != null) {
+            throw new IllegalStateException(
+                "setBout() can only set number one time, not change"
+            );
+        }
+        this.bout = num;
+        Logger.debug(
+            this,
+            "#setBout('%d'): set",
+            this.bout
+        );
+    }
+
+    /**
+     * Get bout number.
+     * @return The identity
+     */
+    public Long getBout() {
+        if (this.bout == null) {
+            throw new IllegalStateException("#setBout() was never called");
+        }
+        return this.bout;
+    }
 
     /**
      * Set date.
@@ -62,6 +98,11 @@ public final class MessageData {
             );
         }
         this.date = dte;
+        Logger.debug(
+            this,
+            "#setDate('%s'): set",
+            this.date
+        );
     }
 
     /**
@@ -69,6 +110,9 @@ public final class MessageData {
      * @return The date
      */
     public Date getDate() {
+        if (this.date == null) {
+            throw new IllegalStateException("#setDate() was never called");
+        }
         return this.date;
     }
 
@@ -83,6 +127,19 @@ public final class MessageData {
             );
         }
         this.author = idnt;
+        HelpQueue.exec(
+            "changed-message-author",
+            Boolean.class,
+            HelpQueue.SYNCHRONOUSLY,
+            this.bout,
+            this.date,
+            this.author
+        );
+        Logger.debug(
+            this,
+            "#setAuthor('%s'): set",
+            this.author
+        );
     }
 
     /**
@@ -90,6 +147,21 @@ public final class MessageData {
      * @return The identity
      */
     public String getAuthor() {
+        if (this.author == null) {
+            this.author = HelpQueue.exec(
+                "get-message-author",
+                String.class,
+                HelpQueue.SYNCHRONOUSLY,
+                this.bout,
+                this.date
+            );
+            Logger.debug(
+                this,
+                "#getAuthor(): author '%s' loaded for msg in bout #%d",
+                this.author,
+                this.bout
+            );
+        }
         return this.author;
     }
 
@@ -104,6 +176,19 @@ public final class MessageData {
             );
         }
         this.text = txt;
+        HelpQueue.exec(
+            "changed-message-text",
+            Boolean.class,
+            HelpQueue.SYNCHRONOUSLY,
+            this.bout,
+            this.date,
+            this.text
+        );
+        Logger.debug(
+            this,
+            "#setText('%s'): set",
+            this.text
+        );
     }
 
     /**
@@ -111,6 +196,21 @@ public final class MessageData {
      * @return The text
      */
     public String getText() {
+        if (this.text == null) {
+            this.text = HelpQueue.exec(
+                "get-message-text",
+                String.class,
+                HelpQueue.SYNCHRONOUSLY,
+                this.bout,
+                this.date
+            );
+            Logger.debug(
+                this,
+                "#getText(): text '%s' loaded for msg in bout #%d",
+                this.text,
+                this.bout
+            );
+        }
         return this.text;
     }
 

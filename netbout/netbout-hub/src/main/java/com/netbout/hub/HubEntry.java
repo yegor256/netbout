@@ -31,7 +31,6 @@ import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
-import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
 
 /**
@@ -47,7 +46,13 @@ public final class HubEntry implements Entry {
      */
     @Override
     public User user(final String name) {
-        return new HubUser(name);
+        final User user = new HubUser(name);
+        Logger.debug(
+            this,
+            "#user('%s'): instantiated",
+            name
+        );
+        return user;
     }
 
     /**
@@ -57,7 +62,13 @@ public final class HubEntry implements Entry {
     @Override
     public Identity identity(final String name)
         throws UnknownIdentityException {
-        return HubIdentity.friend(name);
+        final Identity identity = HubIdentity.friend(name);
+        Logger.debug(
+            this,
+            "#identity('%s'): found",
+            name
+        );
+        return identity;
     }
 
 }

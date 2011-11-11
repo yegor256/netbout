@@ -27,6 +27,7 @@
 package com.netbout.hub.data;
 
 import com.netbout.hub.HelpQueue;
+import com.ymock.util.Logger;
 
 /**
  * Bout with data.
@@ -37,6 +38,11 @@ import com.netbout.hub.HelpQueue;
 public final class ParticipantData {
 
     /**
+     * Number of bout.
+     */
+    private Long bout;
+
+    /**
      * The participant.
      */
     private String identity;
@@ -44,7 +50,36 @@ public final class ParticipantData {
     /**
      * Is it confirmed?
      */
-    private boolean confirmed;
+    private Boolean confirmed;
+
+    /**
+     * Set bout number.
+     * @param num The number
+     */
+    public void setBout(final Long num) {
+        if (this.bout != null) {
+            throw new IllegalStateException(
+                "setBout() can only set number one time, not change"
+            );
+        }
+        this.bout = num;
+        Logger.debug(
+            this,
+            "#setBout('%d'): set",
+            this.bout
+        );
+    }
+
+    /**
+     * Get bout number.
+     * @return The identity
+     */
+    public Long getBout() {
+        if (this.bout == null) {
+            throw new IllegalStateException("#setBout() was never called");
+        }
+        return this.bout;
+    }
 
     /**
      * Set identity.
@@ -57,6 +92,11 @@ public final class ParticipantData {
             );
         }
         this.identity = idnt;
+        Logger.debug(
+            this,
+            "#setIdentity('%s'): set",
+            this.identity
+        );
     }
 
     /**
@@ -64,6 +104,9 @@ public final class ParticipantData {
      * @return The identity
      */
     public String getIdentity() {
+        if (this.identity == null) {
+            throw new IllegalStateException("#setIdentity() was never called");
+        }
         return this.identity;
     }
 
@@ -71,22 +114,44 @@ public final class ParticipantData {
      * Set status.
      * @param flag The flag
      */
-    public void setConfirmed(final boolean flag) {
+    public void setConfirmed(final Boolean flag) {
         this.confirmed = flag;
-        // HelpQueue.exec(
-        //     "changed-participant-confirmed-status",
-        //     Boolean.class,
-        //     HelpQueue.SYNCHRONOUSLY,
-        //     this.number,
-        //     data.getIdentity()
-        // );
+        HelpQueue.exec(
+            "changed-participant-confirm-status",
+            Boolean.class,
+            HelpQueue.SYNCHRONOUSLY,
+            this.bout,
+            this.identity,
+            this.confirmed
+        );
+        Logger.debug(
+            this,
+            "#setConfirmed(%b): set",
+            this.confirmed
+        );
     }
 
     /**
      * Is it confirmed?
      * @return The flag
      */
-    public boolean isConfirmed() {
+    public Boolean isConfirmed() {
+        if (this.confirmed == null) {
+            this.confirmed = HelpQueue.exec(
+                "get-participant-confirm-status",
+                Boolean.class,
+                HelpQueue.SYNCHRONOUSLY,
+                this.bout,
+                this.identity
+            );
+            Logger.debug(
+                this,
+                "#isConfirmed(): status loaded as %b for dude '%s' in bout #%d",
+                this.confirmed,
+                this.identity,
+                this.bout
+            );
+        }
         return this.confirmed;
     }
 

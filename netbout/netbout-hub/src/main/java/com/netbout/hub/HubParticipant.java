@@ -29,7 +29,6 @@ package com.netbout.hub;
 import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
-import com.ymock.util.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;

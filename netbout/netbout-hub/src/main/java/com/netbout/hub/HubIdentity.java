@@ -39,11 +39,11 @@ import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -67,7 +67,7 @@ public final class HubIdentity implements Identity {
      * All identities known for us at the moment, and their users.
      */
     private static final Map<String, HubIdentity> ALL =
-        new HashMap<String, HubIdentity>();
+        new ConcurrentHashMap<String, HubIdentity>();
 
     /**
      * The name.
@@ -77,7 +77,7 @@ public final class HubIdentity implements Identity {
     /**
      * Name of the user.
      */
-    private final String user;
+    private final User user;
 
     /**
      * The photo.
@@ -87,7 +87,7 @@ public final class HubIdentity implements Identity {
     /**
      * List of bouts where I'm a participant.
      */
-    private final Set<Long> bouts = new HashSet<Long>();
+    private final Set<Long> bouts = new CopyOnWriteArraySet<Long>();
 
     /**
      * Public ctor for JAXB.
@@ -99,10 +99,10 @@ public final class HubIdentity implements Identity {
     /**
      * Public ctor.
      * @param nam The identity's name
-     * @param usr Name of the user
+     * @param usr The user
      * @see HubUser#identity(String)
      */
-    public HubIdentity(final String nam, final String usr) {
+    public HubIdentity(final String nam, final User usr) {
         this.name = nam;
         this.user = usr;
     }
@@ -112,7 +112,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public User user() {
-        return new HubUser(this.user);
+        return this.user;
     }
 
     /**
@@ -131,13 +131,11 @@ public final class HubIdentity implements Identity {
         dude.setIdentity(this.name());
         dude.setConfirmed(true);
         data.addParticipant(dude);
-        Logger.info(
+        Logger.debug(
             this,
             "#start(): bout started"
         );
-        synchronized (this) {
-            this.bouts.add(num);
-        }
+        this.bouts.add(num);
         return new HubBout(this, data);
     }
 
@@ -147,11 +145,20 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Bout bout(final Long number) throws BoutNotFoundException {
+        final HubBout bout;
         try {
-            return new HubBout(this, Storage.find(number));
+            bout = new HubBout(this, Storage.find(number));
         } catch (com.netbout.hub.data.BoutMissedException ex) {
             throw new BoutNotFoundException(ex);
         }
+        if (!bout.isParticipant(this)) {
+            throw new BoutNotFoundException(
+                "'%s' is not a participant in bout #%d",
+                this.name(),
+                bout.number()
+            );
+        }
+        return bout;
     }
 
     /**
@@ -165,10 +172,8 @@ public final class HubIdentity implements Identity {
                 Long[].class,
                 HelpQueue.SYNCHRONOUSLY
             );
-            synchronized (this) {
-                for (Long num : nums) {
-                    this.bouts.add(num);
-                }
+            for (Long num : nums) {
+                this.bouts.add(num);
             }
         }
         final List<Bout> list = new ArrayList<Bout>();
@@ -180,12 +185,10 @@ public final class HubIdentity implements Identity {
                 broken.add(num);
             }
         }
-        synchronized (this) {
-            for (Long num : broken) {
-                this.bouts.remove(num);
-            }
+        for (Long num : broken) {
+            this.bouts.remove(num);
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#inbox('%s'): %d bouts found",
             query,
@@ -256,9 +259,7 @@ public final class HubIdentity implements Identity {
      * @param bout The bout
      */
     protected void invited(final Bout bout) {
-        synchronized (this) {
-            this.bouts.add(bout.number());
-        }
+        this.bouts.add(bout.number());
     }
 
     /**
@@ -267,20 +268,29 @@ public final class HubIdentity implements Identity {
      * @param usr Name of the user
      * @return Identity found
      * @throws DuplicateIdentityException If this identity is taken
+     * @checkstyle RedundantThrows (4 lines)
      */
-    protected static Identity make(final String label, final String usr)
+    protected static Identity make(final String label, final User usr)
         throws DuplicateIdentityException {
         HubIdentity identity;
         if (HubIdentity.ALL.containsKey(label)) {
             identity = HubIdentity.ALL.get(label);
             if (!identity.user.equals(usr)) {
-                throw new DuplicateIdentityException("Identity '%s' is taken");
+                throw new DuplicateIdentityException(
+                    "Identity '%s' is taken",
+                    label
+                );
             }
         } else {
             identity = new HubIdentity(label, usr);
-            synchronized (HubIdentity.ALL) {
-                HubIdentity.ALL.put(label, identity);
-            }
+            HubIdentity.ALL.put(label, identity);
+            Logger.debug(
+                HubIdentity.class,
+                "#make('%s', '%s'): created (%d total)",
+                label,
+                usr.name(),
+                HubIdentity.ALL.size()
+            );
         }
         return identity;
     }
@@ -289,13 +299,25 @@ public final class HubIdentity implements Identity {
      * Find identity by name.
      * @param label The name of identity
      * @return Identity found
+     * @throws UnknownIdentityException If this identity is not found
+     * @checkstyle RedundantThrows (3 lines)
      */
     protected static Identity friend(final String label)
         throws UnknownIdentityException {
         if (HubIdentity.ALL.containsKey(label)) {
-            return HubIdentity.ALL.get(label);
+            final Identity identity = HubIdentity.ALL.get(label);
+            Logger.debug(
+                HubIdentity.class,
+                "#friend('%s'): found (%d total)",
+                label,
+                HubIdentity.ALL.size()
+            );
+            return identity;
         }
-        throw new UnknownIdentityException("Identity '%s' not found", label);
+        throw new UnknownIdentityException(
+            "Identity '%s' not found",
+            label
+        );
     }
 
 }
