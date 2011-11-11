@@ -29,6 +29,7 @@ package com.netbout.db;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
+import java.sql.SQLException;
 
 /**
  * Bout manipulations.
@@ -42,10 +43,32 @@ public final class BoutFarm {
     /**
      * Read next bout number.
      * @return Next bout number
+     * @throws SQLException If some SQL problem inside
      */
     @Operation("get-next-bout-number")
-    public String getNextBoutNumber() {
-        return "123";
+    public Long getNextBoutNumber() throws SQLException {
+        return Database.connection()
+            .createStatement()
+            .executeQuery("SELECT MAX(number) + 1 FROM bout")
+            .getLong(0);
+    }
+
+    /**
+     * New bout was just started.
+     * @param bout Number of the bout just started
+     */
+    @Operation("started-new-bout")
+    public void startedNewBout(final Long number) {
+    }
+
+    /**
+     * Bout title was just changed.
+     * @param bout Number of bout
+     * @param title New title
+     * @return Nothing
+     */
+    @Operation("changed-bout-title")
+    public void changedBoutTitle(final Long bout, final String title) {
     }
 
 }

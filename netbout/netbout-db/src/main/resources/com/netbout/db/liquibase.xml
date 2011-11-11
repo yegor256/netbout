@@ -1,4 +1,5 @@
-/**
+<?xml version='1.0'?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -9,7 +10,7 @@
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
- * incident to the author by email.
+ * incident to the author by email: privacy@netbout.com.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,57 +24,28 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.hub;
-
-import com.netbout.spi.Entry;
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
-import com.netbout.spi.User;
-import com.ymock.util.Logger;
-
-/**
- * Entry point to Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-public final class HubEntry implements Entry {
+ -->
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    static {
-        com.netbout.hub.queue.HelpQueue.register(
-            new com.netbout.spi.cpa.CpaHelper("com.netbout.db")
-        );
-    }
+    <changeSet id="1" author="yegor">
+        <comment>All bouts in this table</comment>
+        <createTable>
+            <column name="number" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="varchar(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="boolean" defaultValueBoolean="true"/>
+        </createTable>
+    </changeSet>
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public User user(final String name) {
-        final User user = new HubUser(name);
-        Logger.debug(
-            this,
-            "#user('%s'): instantiated",
-            name
-        );
-        return user;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    @Override
-    public Identity identity(final String name)
-        throws UnknownIdentityException {
-        final Identity identity = HubIdentity.friend(name);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            name
-        );
-        return identity;
-    }
-
-}
+</databaseChangeLog>

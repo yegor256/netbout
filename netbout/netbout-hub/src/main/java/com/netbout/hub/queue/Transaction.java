@@ -169,10 +169,11 @@ public final class Transaction {
         }
         Logger.debug(
             Transaction.class,
-            "#exec(%s, %s, %s, ...): returned %s",
+            "#exec(%s, %s, %s, ...): returned '%s' (%s)",
             this.mnemo,
             type,
             this.priority,
+            output,
             result.getClass().getName()
         );
         return (T) result;

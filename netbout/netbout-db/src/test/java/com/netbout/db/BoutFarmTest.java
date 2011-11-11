@@ -24,56 +24,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.db;
 
-import com.netbout.spi.Entry;
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
-import com.netbout.spi.User;
-import com.ymock.util.Logger;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Entry point to Hub.
- *
+ * Test case of {@link BoutFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntry implements Entry {
-
-    static {
-        com.netbout.hub.queue.HelpQueue.register(
-            new com.netbout.spi.cpa.CpaHelper("com.netbout.db")
-        );
-    }
+public final class BoutFarmTest {
 
     /**
-     * {@inheritDoc}
+     * Farm to work with.
      */
-    @Override
-    public User user(final String name) {
-        final User user = new HubUser(name);
-        Logger.debug(
-            this,
-            "#user('%s'): instantiated",
-            name
-        );
-        return user;
-    }
+    private final BoutFarm farm = new BoutFarm();
 
     /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
+     * Bout number persistence.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Identity identity(final String name)
-        throws UnknownIdentityException {
-        final Identity identity = HubIdentity.friend(name);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            name
-        );
-        return identity;
+    @Test
+    public void testBoutNumbering() throws Exception {
+        Database.connection();
+        // final Long num = this.farm.getNextBoutNumber();
+        // MatcherAssert.assertThat(
+        //     identity.bout(number).number(),
+        //     Matchers.equalTo(number)
+        // );
     }
 
 }

@@ -52,6 +52,25 @@
             <artifactId>netbout-stub</artifactId>
         </dependency>
         <dependency>
+            <!-- Liquibase DB migration tool -->
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version since="11 Nov 2011">2.0.3</version>
+        </dependency>
+        <dependency>
+            <!-- Apache DBCP connection pool -->
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version since="11 Nov 2011">1.4</version>
+        </dependency>
+        <dependency>
+            <!-- HyperSQL and its JDBC connector are used in unit tests -->
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version since="12 October 2010">1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- Forward all calls to SLF4J to LOG4J. -->
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -80,6 +99,13 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
+        </dependency>
+        <dependency>
+            <!-- JDBC 4 -->
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version since="11 Nov 2011">6.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
