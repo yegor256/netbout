@@ -28,6 +28,8 @@ package com.netbout.hub.queue;
 
 import com.netbout.spi.Helper;
 import com.ymock.util.Logger;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Queue of transactions processed by helpers.
@@ -45,17 +47,18 @@ public final class HelpQueue {
         ASAP
     }
 
-    // /**
-    //  * List of registered helpers.
-    //  */
-    // private static final List<Helper> HELPERS =
-    //     new CopyOnWriteArrayList<Helper>();
+    /**
+     * List of registered helpers.
+     */
+    private static final List<Helper> HELPERS =
+        new CopyOnWriteArrayList<Helper>();
 
     /**
      * Register new helper.
      * @param helper The helper to register
      */
     public static void register(final Helper helper) {
+        HelpQueue.HELPERS.add(helper);
     }
 
     /**
@@ -65,6 +68,26 @@ public final class HelpQueue {
      */
     public static Transaction make(final String mnemo) {
         return new Transaction(mnemo);
+    }
+
+    /**
+     * Execute one transaction.
+     * @param trans The transaction to execute
+     * @return The result
+     */
+    protected static String execute(final Transaction trans) {
+        final String mnemo = trans.getMnemo();
+        String result;
+        for (Helper helper : HelpQueue.HELPERS) {
+            if (helper.supports().contains(mnemo)) {
+                try {
+                    return helper.execute(mnemo, trans.getArgs());
+                } catch (com.netbout.spi.OperationFailureException ex) {
+                    throw new IllegalArgumentException(ex);
+                }
+            }
+        }
+        return trans.getDef();
     }
 
 }

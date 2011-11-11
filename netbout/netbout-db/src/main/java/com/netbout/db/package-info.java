@@ -26,9 +26,9 @@
  */
 
 /**
- * Helper that provides persistence through SQL.
+ * Data farms.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.hub.sql;
+package com.netbout.db;

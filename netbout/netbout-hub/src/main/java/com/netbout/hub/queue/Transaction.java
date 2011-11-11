@@ -55,6 +55,11 @@ public final class Transaction {
     private Long bout;
 
     /**
+     * Default value.
+     */
+    private String def = "0";
+
+    /**
      * Arguments.
      */
     private final List<String> args = new ArrayList<String>();
@@ -83,6 +88,7 @@ public final class Transaction {
      * @return This object
      */
     public Transaction scope(final Long bout) {
+        // tbd
         return this;
     }
 
@@ -101,8 +107,33 @@ public final class Transaction {
      * @param val The value
      * @return This object
      */
-    public Transaction def(final Object val) {
+    public Transaction def(final String val) {
+        this.def = val;
         return this;
+    }
+
+    /**
+     * Get mnemo.
+     * @return The mnemo
+     */
+    public String getMnemo() {
+        return this.mnemo;
+    }
+
+    /**
+     * Get arguments as array.
+     * @return The args
+     */
+    public String[] getArgs() {
+        return this.args.toArray(new String[] {});
+    }
+
+    /**
+     * Get default result value.
+     * @return The value
+     */
+    public String getDef() {
+        return this.def;
     }
 
     /**
@@ -112,7 +143,7 @@ public final class Transaction {
      * @return The result
      */
     public <T> T exec(final Class<T> type) {
-        final String output = "0";
+        final String output = HelpQueue.execute(this);
         Object result;
         if (type.equals(String.class)) {
             result = output;
