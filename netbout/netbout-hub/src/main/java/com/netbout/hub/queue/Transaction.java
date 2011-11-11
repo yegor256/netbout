@@ -27,6 +27,8 @@
 package com.netbout.hub.queue;
 
 import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -48,6 +50,16 @@ public final class Transaction {
     private HelpQueue.Priority priority;
 
     /**
+     * Scope (number of bout where it's happening).
+     */
+    private Long bout;
+
+    /**
+     * Arguments.
+     */
+    private final List<String> args = new ArrayList<String>();
+
+    /**
      * Public ctor.
      * @param text Mnemo-code of the request
      */
@@ -66,11 +78,21 @@ public final class Transaction {
     }
 
     /**
+     * Set scope, if necessary.
+     * @param bout Number of bout where this transaction is happening
+     * @return This object
+     */
+    public Transaction scope(final Long bout) {
+        return this;
+    }
+
+    /**
      * Add argument.
      * @param arg The argument
      * @return This object
      */
-    public Transaction arg(final Object arg) {
+    public Transaction arg(final String arg) {
+        this.args.add(arg);
         return this;
     }
 

@@ -40,12 +40,12 @@ public final class ParticipantData {
     /**
      * Number of bout.
      */
-    private Long bout;
+    private final Long bout;
 
     /**
      * The participant.
      */
-    private String identity;
+    private final String identity;
 
     /**
      * Is it confirmed?
@@ -53,21 +53,13 @@ public final class ParticipantData {
     private Boolean confirmed;
 
     /**
-     * Set bout number.
+     * Public ctor.
      * @param num The number
+     * @param idnt The identity
      */
-    public void setBout(final Long num) {
-        if (this.bout != null) {
-            throw new IllegalStateException(
-                "setBout() can only set number one time, not change"
-            );
-        }
+    public ParticipantData(final Long num, final String idnt) {
         this.bout = num;
-        Logger.debug(
-            this,
-            "#setBout('%d'): set",
-            this.bout
-        );
+        this.identity = idnt;
     }
 
     /**
@@ -75,28 +67,7 @@ public final class ParticipantData {
      * @return The identity
      */
     public Long getBout() {
-        if (this.bout == null) {
-            throw new IllegalStateException("#setBout() was never called");
-        }
         return this.bout;
-    }
-
-    /**
-     * Set identity.
-     * @param idnt The identity
-     */
-    public void setIdentity(final String idnt) {
-        if (this.identity != null) {
-            throw new IllegalStateException(
-                "setIdentity() can only set identity one time, not change"
-            );
-        }
-        this.identity = idnt;
-        Logger.debug(
-            this,
-            "#setIdentity('%s'): set",
-            this.identity
-        );
     }
 
     /**
@@ -104,9 +75,6 @@ public final class ParticipantData {
      * @return The identity
      */
     public String getIdentity() {
-        if (this.identity == null) {
-            throw new IllegalStateException("#setIdentity() was never called");
-        }
         return this.identity;
     }
 
@@ -118,9 +86,9 @@ public final class ParticipantData {
         this.confirmed = flag;
         HelpQueue.make("changed-participant-confirm-status")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.bout)
-            .arg(this.identity)
-            .arg(this.confirmed)
+            .arg(this.getBout().toString())
+            .arg(this.getIdentity())
+            .arg(this.confirmed.toString())
             .exec(Boolean.class);
         Logger.debug(
             this,
@@ -137,8 +105,8 @@ public final class ParticipantData {
         if (this.confirmed == null) {
             this.confirmed = HelpQueue.make("get-participant-confirm-status")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.bout)
-                .arg(this.identity)
+                .arg(this.getBout().toString())
+                .arg(this.getIdentity())
                 .exec(Boolean.class);
             Logger.debug(
                 this,

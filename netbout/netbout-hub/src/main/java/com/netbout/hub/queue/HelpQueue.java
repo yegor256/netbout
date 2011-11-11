@@ -45,6 +45,12 @@ public final class HelpQueue {
         ASAP
     }
 
+    // /**
+    //  * List of registered helpers.
+    //  */
+    // private static final List<Helper> HELPERS =
+    //     new CopyOnWriteArrayList<Helper>();
+
     /**
      * Register new helper.
      * @param helper The helper to register

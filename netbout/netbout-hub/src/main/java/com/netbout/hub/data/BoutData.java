@@ -42,14 +42,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class BoutData {
 
     /**
+     * The number.
+     */
+    private final Long number;
+
+    /**
      * The title.
      */
     private String title;
-
-    /**
-     * The number.
-     */
-    private Long number;
 
     /**
      * Collection of participants.
@@ -62,35 +62,19 @@ public final class BoutData {
     private List<MessageData> messages;
 
     /**
+     * Public ctor.
+     * @param num The number
+     */
+    public BoutData(final Long num) {
+        this.number = num;
+    }
+
+    /**
      * Get its number.
      * @return The number
      */
     public Long getNumber() {
-        if (this.number == null) {
-            throw new IllegalStateException("#setNumber() was never called");
-        }
         return this.number;
-    }
-
-    /**
-     * Set its number.
-     * @param num The number
-     */
-    public void setNumber(final Long num) {
-        if (this.number != null) {
-            throw new IllegalStateException(
-                String.format(
-                    "setNumber() can't called for bout #%d",
-                    this.number
-                )
-            );
-        }
-        Logger.debug(
-            this,
-            "#setNumber(%d): set",
-            num
-        );
-        this.number = num;
     }
 
     /**
@@ -101,7 +85,7 @@ public final class BoutData {
         if (this.title == null) {
             this.title = HelpQueue.make("get-bout-title")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.number)
+                .arg(this.number.toString())
                 .exec(String.class);
             Logger.debug(
                 this,
@@ -121,7 +105,7 @@ public final class BoutData {
         this.title = text;
         HelpQueue.make("changed-bout-title")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.number)
+            .arg(this.number.toString())
             .arg(this.title)
             .exec(Boolean.class);
         Logger.debug(
@@ -140,7 +124,7 @@ public final class BoutData {
         this.getParticipants().add(data);
         HelpQueue.make("added-bout-participant")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.number)
+            .arg(this.number.toString())
             .arg(data.getIdentity())
             .exec(Boolean.class);
         Logger.debug(
@@ -163,13 +147,12 @@ public final class BoutData {
                 final String[] identities = HelpQueue
                     .make("get-bout-participant-identities")
                     .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                    .arg(this.number)
+                    .arg(this.number.toString())
                     .exec(String[].class);
                 for (String identity : identities) {
-                    final ParticipantData data = new ParticipantData();
-                    data.setBout(this.number);
-                    data.setIdentity(identity);
-                    this.participants.add(data);
+                    this.participants.add(
+                        new ParticipantData(this.number, identity)
+                    );
                 }
                 Logger.debug(
                     this,
@@ -190,8 +173,8 @@ public final class BoutData {
         this.getMessages().add(data);
         HelpQueue.make("added-bout-message")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.number)
-            .arg(data.getDate().getTime())
+            .arg(this.number.toString())
+            .arg(String.valueOf(data.getDate().getTime()))
             .arg(data.getAuthor())
             .arg(data.getText())
             .exec(Boolean.class);
@@ -213,13 +196,12 @@ public final class BoutData {
                 this.messages = new CopyOnWriteArrayList<MessageData>();
                 final Long[] dates = HelpQueue.make("get-bout-message-dates")
                     .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                    .arg(this.number)
+                    .arg(this.number.toString())
                     .exec(Long[].class);
                 for (Long msec : dates) {
-                    final MessageData data = new MessageData();
-                    data.setBout(this.number);
-                    data.setDate(new Date(msec));
-                    this.messages.add(data);
+                    this.messages.add(
+                        new MessageData(this.number, new Date(msec))
+                    );
                 }
                 Logger.debug(
                     this,

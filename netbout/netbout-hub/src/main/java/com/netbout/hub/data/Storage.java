@@ -60,13 +60,12 @@ public final class Storage {
         final Long number = HelpQueue.make("get-next-bout-number")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
             .exec(Long.class);
-        final BoutData data = new BoutData();
-        data.setNumber(number);
+        final BoutData data = new BoutData(number);
         data.setTitle("");
         Storage.BOUTS.put(number, data);
         HelpQueue.make("started-new-bout")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(number)
+            .arg(number.toString())
             .exec(Boolean.class);
         Logger.debug(
             Storage.class,
@@ -94,13 +93,12 @@ public final class Storage {
         } else {
             final Long exists = HelpQueue.make("check-bout-existence")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(number)
+                .arg(number.toString())
                 .exec(Long.class);
             if (exists != number) {
                 throw new BoutMissedException(number);
             }
-            data = new BoutData();
-            data.setNumber(number);
+            data = new BoutData(number);
             Storage.BOUTS.put(number, data);
             Logger.debug(
                 Storage.class,

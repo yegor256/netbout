@@ -41,12 +41,12 @@ public final class MessageData {
     /**
      * Number of bout.
      */
-    private Long bout;
+    private final Long bout;
 
     /**
      * The date.
      */
-    private Date date;
+    private final Date date;
 
     /**
      * The author.
@@ -59,21 +59,13 @@ public final class MessageData {
     private String text;
 
     /**
-     * Set bout number.
+     * Public ctor.
      * @param num The number
+     * @param dte The date
      */
-    public void setBout(final Long num) {
-        if (this.bout != null) {
-            throw new IllegalStateException(
-                "setBout() can only set number one time, not change"
-            );
-        }
+    public MessageData(final Long num, final Date dte) {
         this.bout = num;
-        Logger.debug(
-            this,
-            "#setBout('%d'): set",
-            this.bout
-        );
+        this.date = dte;
     }
 
     /**
@@ -81,28 +73,7 @@ public final class MessageData {
      * @return The identity
      */
     public Long getBout() {
-        if (this.bout == null) {
-            throw new IllegalStateException("#setBout() was never called");
-        }
         return this.bout;
-    }
-
-    /**
-     * Set date.
-     * @param dte The date
-     */
-    public void setDate(final Date dte) {
-        if (this.date != null) {
-            throw new IllegalStateException(
-                "setDate() can only set date one time, not change"
-            );
-        }
-        this.date = dte;
-        Logger.debug(
-            this,
-            "#setDate('%s'): set",
-            this.date
-        );
     }
 
     /**
@@ -110,9 +81,6 @@ public final class MessageData {
      * @return The date
      */
     public Date getDate() {
-        if (this.date == null) {
-            throw new IllegalStateException("#setDate() was never called");
-        }
         return this.date;
     }
 
@@ -129,8 +97,8 @@ public final class MessageData {
         this.author = idnt;
         HelpQueue.make("changed-message-author")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.bout)
-            .arg(this.date)
+            .arg(this.bout.toString())
+            .arg(String.valueOf(this.date.getTime()))
             .arg(this.author)
             .exec(Boolean.class);
         Logger.debug(
@@ -148,8 +116,8 @@ public final class MessageData {
         if (this.author == null) {
             this.author = HelpQueue.make("get-message-author")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.bout)
-                .arg(this.date)
+                .arg(this.bout.toString())
+                .arg(String.valueOf(this.date.getTime()))
                 .exec(String.class);
             Logger.debug(
                 this,
@@ -174,8 +142,8 @@ public final class MessageData {
         this.text = txt;
         HelpQueue.make("changed-message-text")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.bout)
-            .arg(this.date)
+            .arg(this.bout.toString())
+            .arg(String.valueOf(this.date.getTime()))
             .arg(this.text)
             .exec(Boolean.class);
         Logger.debug(
@@ -193,8 +161,8 @@ public final class MessageData {
         if (this.text == null) {
             this.text = HelpQueue.make("get-message-text")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.bout)
-                .arg(this.date)
+                .arg(this.bout.toString())
+                .arg(String.valueOf(this.date.getTime()))
                 .exec(String.class);
             Logger.debug(
                 this,

@@ -146,8 +146,8 @@ public final class HubBout implements Bout {
      */
     @Override
     public Participant invite(final Identity friend) {
-        final ParticipantData dude = new ParticipantData();
-        dude.setIdentity(friend.name());
+        final ParticipantData dude =
+            new ParticipantData(this.number(), friend.name());
         dude.setConfirmed(false);
         this.data.addParticipant(dude);
         Logger.info(
@@ -229,10 +229,9 @@ public final class HubBout implements Bout {
      */
     @Override
     public Message post(final String text) {
-        final MessageData msg = new MessageData();
+        final MessageData msg = new MessageData(this.number(), new Date());
         msg.setAuthor(this.viewer.name());
         msg.setText(text);
-        msg.setDate(new Date());
         this.data.addMessage(msg);
         Logger.info(
             this,

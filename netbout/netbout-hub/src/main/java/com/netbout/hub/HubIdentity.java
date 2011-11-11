@@ -128,8 +128,7 @@ public final class HubIdentity implements Identity {
         } catch (com.netbout.hub.data.BoutMissedException ex) {
             throw new IllegalStateException(ex);
         }
-        final ParticipantData dude = new ParticipantData();
-        dude.setIdentity(this.name());
+        final ParticipantData dude = new ParticipantData(num, this.name());
         dude.setConfirmed(true);
         data.addParticipant(dude);
         Logger.debug(
