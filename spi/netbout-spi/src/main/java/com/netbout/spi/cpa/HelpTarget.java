@@ -31,6 +31,7 @@ package com.netbout.spi.cpa;
 
 import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
+import com.netbout.spi.TypeMapper;
 import com.ymock.util.Logger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -84,7 +85,7 @@ final class HelpTarget {
         } catch (java.lang.reflect.InvocationTargetException ex) {
             throw new IllegalStateException(ex);
         }
-        return this.revert(result);
+        return TypeMapper.toText(result);
     }
 
     /**
@@ -106,80 +107,9 @@ final class HelpTarget {
         }
         Object[] converted = new Object[args.length];
         for (int pos = 0; pos < args.length; pos += 1) {
-            converted[pos] = this.convert(args[pos], types[pos]);
+            converted[pos] = TypeMapper.toObject(args[pos], types[pos]);
         }
         return converted;
-    }
-
-    /**
-     * Convert one value to the type.
-     * @param value The value to convert
-     * @param type Expected type
-     * @return New value of new type
-     * @param <T> Type of response expected
-     * @throws HelperException If some problem inside
-     */
-    public <T> T convert(final String value, final Class<T> type)
-        throws HelperException {
-        Object ready;
-        if (type.equals(String.class)) {
-            ready = value;
-        } else if (type.equals(Long.class)) {
-            ready = Long.valueOf(value);
-        } else if (type.equals(Boolean.class)) {
-            ready = Boolean.valueOf(value);
-        } else {
-            throw new HelperException(
-                "Can't convert '%s' to unsupported type %s",
-                value,
-                type.getName()
-            );
-        }
-        return (T) ready;
-    }
-
-    /**
-     * Convert one value to string.
-     * @param value The value to convert
-     * @return String representation of it
-     * @throws HelperException If some problem inside
-     */
-    public String revert(final Object value) throws HelperException {
-        if (value == null) {
-            return "NULL";
-        }
-        String ready;
-        final Class type = value.getClass();
-        if (type.equals(String.class)) {
-            ready = String.format("\"%s\"", value.toString());
-        } else if (type.equals(Long.class)) {
-            ready = value.toString();
-        } else if (type.equals(Integer.class)) {
-            ready = value.toString();
-        } else if (type.equals(Boolean.class)) {
-            if ((Boolean) value) {
-                ready = "1";
-            } else {
-                ready = "0";
-            }
-        } else if (type.equals(Long[].class)) {
-            ready = StringUtils.join((Long[]) value, ",");
-        } else if (type.equals(String[].class)) {
-            String[] quoted = new String[((String[]) value).length];
-            for (int pos = 0; pos < ((String[]) value).length; pos += 1) {
-                quoted[pos] = ((String[]) value)[pos].replace("\"", "\\\"");
-            }
-            ready = String.format(
-                "\"%s\"",
-                StringUtils.join(quoted, "\",\"")
-            );
-        } else {
-            throw new HelperException(
-                "Can't revert %s to String",
-                type.getName()
-            );
-        }
-        return ready;
     }
 
 }

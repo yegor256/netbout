@@ -47,18 +47,6 @@ public interface Helper {
 
     /**
      * Send one single query to the helper, in order to get atomic response.
-     *
-     * <p>Response may contain one of the following:
-     *
-     * <ul>
-     * <li><tt>NULL</tt>
-     * <li>plain text in UTF-8 in double quotes
-     * <li>integer number (convertable to {@link Long})
-     * <li>list of {@link Long} numbers separated by <tt>,</tt> (comma)
-     * <li>list of texts in double quotes separated by <tt>,</tt> (double quote
-     * inside the text should be escaped by a backslash)
-     * </ul>
-     *
      * @param mnemo Name of the request, unique ID of what should be done
      * @param args Collection of arguments, if necessary
      * @return The response as explained above

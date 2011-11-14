@@ -55,7 +55,7 @@ public final class CpaHelperTest {
             Matchers.hasItem("comparison")
         );
         MatcherAssert.assertThat(
-            helper.execute("comparison", "alpha-12", "6"),
+            helper.execute("comparison", "\"alpha-12\"", "6"),
             Matchers.equalTo("1")
         );
         MatcherAssert.assertThat(
@@ -63,7 +63,7 @@ public final class CpaHelperTest {
             Matchers.equalTo("NULL")
         );
         MatcherAssert.assertThat(
-            helper.execute("echo", "text"),
+            helper.execute("echo", "\"text\""),
             Matchers.equalTo("\"text\"")
         );
         MatcherAssert.assertThat(
