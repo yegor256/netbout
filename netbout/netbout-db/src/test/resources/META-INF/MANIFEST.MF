@@ -1,0 +1,4 @@
+Netbout-JdbcDriver: org.hsqldb.jdbcDriver
+Netbout-JdbcUrl: jdbc:hsqldb:mem:testdb
+Netbout-JdbcUser: sa
+Netbout-JdbcPassword: 

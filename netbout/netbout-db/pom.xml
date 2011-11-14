@@ -52,7 +52,15 @@
             <artifactId>netbout-stub</artifactId>
         </dependency>
         <dependency>
-            <!-- Liquibase DB migration tool -->
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-core</artifactId>
+            <version since="15 Oct 2011">1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <!--
+            Liquibase DB migration tool
+            @see http://www.liquibase.org/
+            -->
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version since="11 Nov 2011">2.0.3</version>

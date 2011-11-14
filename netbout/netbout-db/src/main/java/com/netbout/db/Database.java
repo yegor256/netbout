@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -68,13 +69,8 @@ public final class Database {
      * @return The data source
      */
     private static DataSource datasource() {
-        try {
-            Class.forName("org.hsqldb.jdbcDriver");
-        } catch (ClassNotFoundException ex) {
-            throw new IllegalStateException(ex);
-        }
         final PoolableConnectionFactory factory = new PoolableConnectionFactory(
-            new DriverManagerConnectionFactory("jdbc:hsqldb:mem:testdb", "sa", ""),
+            Database.factory(),
             new GenericObjectPool(null),
             null,
             null,
@@ -87,20 +83,49 @@ public final class Database {
     }
 
     /**
-     * Update DB schema.
-     * @param The data source
+     * Create and return connection factory.
+     * @return The connection factory
+     */
+    private static ConnectionFactory factory() {
+        final String driver = Manifests.read("Netbout-JdbcDriver");
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalStateException(ex);
+        }
+        String pwd = Manifests.read("Netbout-JdbcPassword");
+        System.out.println("PWD: '" + pwd + "'");
+        // if ("-".equals(pwd)) {
+        //     pwd = "";
+        // }
+        final ConnectionFactory factory = new DriverManagerConnectionFactory(
+            Manifests.read("Netbout-JdbcUrl"),
+            Manifests.read("Netbout-JdbcUser"),
+            pwd
+        );
+        Logger.debug(
+            Database.class,
+            "#factory(): connection factory created with JDBC driver '%s'",
+            driver
+        );
+        return factory;
+    }
+
+    /**
+     * Update DB schema to the latest version.
+     * @param The data source to work with
      */
     private static void update(final DataSource source) {
         try {
             final Liquibase liquibase = new Liquibase(
-                Database.class.getResource("liquibase.xml").getFile(),
+                "com/netbout/db/liquibase.xml",
                 new ClassLoaderResourceAccessor(),
                 new JdbcConnection(source.getConnection())
             );
-            liquibase.validate();
-            if (liquibase.isSafeToRunMigration()) {
+            // liquibase.validate();
+            // if (liquibase.isSafeToRunMigration()) {
                 liquibase.update(1, "test");
-            }
+            // }
         } catch (liquibase.exception.LiquibaseException ex) {
             throw new IllegalStateException(ex);
         } catch (java.sql.SQLException ex) {

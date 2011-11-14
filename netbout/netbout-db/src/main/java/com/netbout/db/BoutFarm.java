@@ -29,6 +29,7 @@ package com.netbout.db;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -47,10 +48,14 @@ public final class BoutFarm {
      */
     @Operation("get-next-bout-number")
     public Long getNextBoutNumber() throws SQLException {
-        return Database.connection()
+        final ResultSet rset = Database.connection()
             .createStatement()
-            .executeQuery("SELECT MAX(number) + 1 FROM bout")
-            .getLong(0);
+            .executeQuery("SELECT MAX(number) + 1 FROM bout");
+        if (rset.wasNull()) {
+            return 1L;
+        } else {
+            return rset.getLong(0);
+        }
     }
 
     /**

@@ -32,19 +32,33 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet id="1" author="yegor">
-        <comment>All bouts in this table</comment>
-        <createTable>
-            <column name="number" type="int">
+        <createTable tableName="bout">
+            <column name="number" type="int"
+                autoIncrement="true" startWith="1" incrementBy="1"
+                remarks="Unique number of the bout">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="title" type="varchar(250)">
-                <constraints nullable="false"/>
+            <column name="title" type="varchar(250)"
+                remarks="Title of the bout">
+                <constraints nullable="false" />
             </column>
-            <column name="active" type="boolean" defaultValueBoolean="true"/>
+            <column name="active" type="boolean" defaultValueBoolean="false"
+                remarks="Is it active at the moment or just a placeholder?"/>
+        </createTable>
+        <createTable tableName="message">
+            <column name="number" type="int"
+                autoIncrement="true" startWith="1" incrementBy="1"
+                remarks="Unique number of the message">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="text" type="varchar(250)">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime" />
         </createTable>
     </changeSet>
 

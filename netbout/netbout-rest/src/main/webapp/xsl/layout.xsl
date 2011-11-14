@@ -47,8 +47,9 @@
             </head>
             <body>
                 <div id="version">
-                    <xsl:text>r.</xsl:text>
+                    <xsl:text>r</xsl:text>
                     <xsl:value-of select="/page/version/revision"/>
+                    <xsl:value-of select="round(/page/@mcs div (1000 * 1000))"/>
                 </div>
                 <div id="bar">
                     <a id="logo">

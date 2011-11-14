@@ -33,7 +33,16 @@ import com.rexsl.test.XhtmlConverter
 import org.junit.Assert
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 
-def xhtml = XhtmlConverter.the(rexsl.document)
-def ctx = new SimpleNamespaceContext().withBinding('x', 'http://www.w3.org/1999/xhtml')
-
-Assert.assertThat(xhtml, hasXPath('//x:html', ctx))
+[
+    '//x:html',
+    '//x:div[@id="version" and contains(.,"r9988") and contains(.,"0.3ms")]',
+].each { xpath ->
+    Assert.assertThat(
+        XhtmlConverter.the(rexsl.document),
+        hasXPath(
+            xpath,
+            new SimpleNamespaceContext()
+            .withBinding('x', 'http://www.w3.org/1999/xhtml')
+        )
+    )
+}
