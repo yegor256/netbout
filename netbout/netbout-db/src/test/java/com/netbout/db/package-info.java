@@ -24,54 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.db;
-
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 /**
- * Test case of {@link BoutFarm}.
+ * Data farms, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutFarmTest {
-
-    /**
-     * Farm to work with.
-     */
-    private final BoutFarm farm = new BoutFarm();
-
-    /**
-     * Bout number persistence.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testBoutNumbering() throws Exception {
-        final Long first = this.farm.getNextBoutNumber();
-        MatcherAssert.assertThat(first, Matchers.greaterThan(0L));
-        final Long second = this.farm.getNextBoutNumber();
-        MatcherAssert.assertThat(second, Matchers.equalTo(first + 1));
-    }
-
-    /**
-     * Let's record that a new bout was just started.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testRecordBoutStartingEvent() throws Exception {
-        final Long num = this.farm.getNextBoutNumber();
-        this.farm.startedNewBout(num);
-    }
-
-    /**
-     * Starting new bout with invalid number should lead to exception.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = java.sql.SQLException.class)
-    public void testRecordBoutStartingWithInvalidNumber() throws Exception {
-        // @checkstyle MagicNumber (1 line)
-        this.farm.startedNewBout(777L);
-    }
-
-}
+package com.netbout.db;

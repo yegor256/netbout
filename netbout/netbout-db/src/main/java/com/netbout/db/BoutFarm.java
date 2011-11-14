@@ -29,8 +29,10 @@ package com.netbout.db;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Bout manipulations.
@@ -48,29 +50,47 @@ public final class BoutFarm {
      */
     @Operation("get-next-bout-number")
     public Long getNextBoutNumber() throws SQLException {
-        final ResultSet rset = Database.connection()
-            .createStatement()
-            .executeQuery("SELECT MAX(number) + 1 FROM bout");
-        if (rset.wasNull()) {
-            return 1L;
-        } else {
-            return rset.getLong(0);
+        final Statement stmt = Database.connection().createStatement();
+        stmt.execute("INSERT INTO bout (title) VALUES ('')");
+        final ResultSet rset = stmt.getGeneratedKeys();
+        if (rset == null || !rset.next()) {
+            throw new SQLException("Can't retrieve ID of inserted bout");
         }
+        final Long number = rset.getLong(1);
+        Logger.debug(
+            this,
+            "#getNextBoutNumber(): retrieved %d",
+            number
+        );
+        return number;
     }
 
     /**
      * New bout was just started.
-     * @param bout Number of the bout just started
+     * @param number Number of the bout just started
+     * @throws SQLException If some SQL problem inside
      */
     @Operation("started-new-bout")
-    public void startedNewBout(final Long number) {
+    public void startedNewBout(final Long number) throws SQLException {
+        final PreparedStatement stmt = Database.connection().prepareStatement(
+            "UPDATE bout SET active = 1 WHERE number = ?"
+        );
+        stmt.setLong(1, number);
+        final int updated = stmt.executeUpdate();
+        if (updated != 1) {
+            throw new SQLException("Bout not found");
+        }
+        Logger.debug(
+            this,
+            "#startedNewBout(%d): updated",
+            number
+        );
     }
 
     /**
      * Bout title was just changed.
      * @param bout Number of bout
      * @param title New title
-     * @return Nothing
      */
     @Operation("changed-bout-title")
     public void changedBoutTitle(final Long bout, final String title) {

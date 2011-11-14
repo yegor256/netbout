@@ -34,13 +34,11 @@ import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.impl.GenericKeyedObjectPoolFactory;
-import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
+import org.apache.commons.dbcp.PoolableConnectionFactory;
+import org.apache.commons.dbcp.PoolingDataSource;
+import org.apache.commons.pool.impl.GenericObjectPool;
 
 /**
  * Database-related utility class.
@@ -56,12 +54,19 @@ public final class Database {
     private static final DataSource SOURCE = Database.datasource();
 
     /**
+     * Private ctor.
+     */
+    private Database() {
+        // intentionally empty
+    }
+
+    /**
      * Read next bout number.
      * @return Next bout number
      * @throws SQLException If some SQL error
      */
     public static Connection connection() throws SQLException {
-        return Database.datasource().getConnection();
+        return Database.SOURCE.getConnection();
     }
 
     /**
@@ -77,7 +82,7 @@ public final class Database {
             false,
             true
         );
-        DataSource source = new PoolingDataSource(factory.getPool());
+        final DataSource source = new PoolingDataSource(factory.getPool());
         Database.update(source);
         return source;
     }
@@ -93,15 +98,10 @@ public final class Database {
         } catch (ClassNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        String pwd = Manifests.read("Netbout-JdbcPassword");
-        System.out.println("PWD: '" + pwd + "'");
-        // if ("-".equals(pwd)) {
-        //     pwd = "";
-        // }
         final ConnectionFactory factory = new DriverManagerConnectionFactory(
             Manifests.read("Netbout-JdbcUrl"),
             Manifests.read("Netbout-JdbcUser"),
-            pwd
+            Manifests.read("Netbout-JdbcPassword")
         );
         Logger.debug(
             Database.class,
@@ -113,7 +113,7 @@ public final class Database {
 
     /**
      * Update DB schema to the latest version.
-     * @param The data source to work with
+     * @param source The data source to work with
      */
     private static void update(final DataSource source) {
         try {
@@ -122,10 +122,7 @@ public final class Database {
                 new ClassLoaderResourceAccessor(),
                 new JdbcConnection(source.getConnection())
             );
-            // liquibase.validate();
-            // if (liquibase.isSafeToRunMigration()) {
-                liquibase.update(1, "test");
-            // }
+            liquibase.update(1, "test");
         } catch (liquibase.exception.LiquibaseException ex) {
             throw new IllegalStateException(ex);
         } catch (java.sql.SQLException ex) {

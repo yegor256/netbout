@@ -72,10 +72,10 @@
             <version since="11 Nov 2011">1.4</version>
         </dependency>
         <dependency>
-            <!-- HyperSQL and its JDBC connector are used in unit tests -->
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version since="12 October 2010">1.8.0.10</version>
+            <!-- In-memory JDBC database to be used in unit tests -->
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version since="14 Nov 2011">1.3.161</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -116,5 +116,25 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
+                                <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}</Netbout-JdbcUrl>
+                                <Netbout-JdbcUser>${mysql.user}</Netbout-JdbcUser>
+                                <Netbout-JdbcPassword>${mysql.password}</Netbout-JdbcPassword>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>
