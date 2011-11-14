@@ -83,7 +83,13 @@ public final class HelpQueue {
                 try {
                     return helper.execute(mnemo, trans.getArgs());
                 } catch (com.netbout.spi.HelperException ex) {
-                    throw new IllegalArgumentException(ex);
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Failed to execute '%s'",
+                            mnemo
+                        ),
+                        ex
+                    );
                 }
             }
         }

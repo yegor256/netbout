@@ -86,7 +86,7 @@ public final class MessageFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-bout-messages")
-    public List<Long> getBoutMessages(final Long bout) throws SQLException {
+    public Long[] getBoutMessages(final Long bout) throws SQLException {
         final Connection conn = Database.connection();
         final List<Long> numbers = new ArrayList<Long>();
         try {
@@ -107,7 +107,7 @@ public final class MessageFarm {
             bout,
             numbers.size()
         );
-        return numbers;
+        return numbers.toArray(new Long[]{});
     }
 
     /**

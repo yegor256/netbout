@@ -169,6 +169,7 @@ public final class HubIdentity implements Identity {
         if (this.bouts.isEmpty()) {
             final Long[] nums = HelpQueue.make("get-bouts-of-identity")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .asDefault(new Long[]{})
                 .exec(Long[].class);
             for (Long num : nums) {
                 this.bouts.add(num);
@@ -243,11 +244,12 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void promote(final Helper hlp) {
+    public void promote(final Helper helper) {
+        HelpQueue.register(helper);
         Logger.info(
             this,
             "#promote(%s): '%s' promoted",
-            hlp.getClass().getName(),
+            helper.getClass().getName(),
             this.name()
         );
     }

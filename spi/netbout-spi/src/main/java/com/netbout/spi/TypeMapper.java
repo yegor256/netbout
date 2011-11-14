@@ -96,7 +96,7 @@ public final class TypeMapper {
             );
         } else {
             throw new HelperException(
-                "Can't revert %s to String",
+                "Can't convert %s to String",
                 type.getName()
             );
         }

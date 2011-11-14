@@ -35,7 +35,7 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext
 
 [
     '//x:div[@class="bout"]',
-    '//x:div[@id="version" and contains(.,"r789") and contains(.,"5.5sec")]',
+    '//x:div[@id="version" and contains(.,"r789") and contains(.,"5.50s")]',
 ].each { xpath ->
     Assert.assertThat(
         XhtmlConverter.the(rexsl.document),

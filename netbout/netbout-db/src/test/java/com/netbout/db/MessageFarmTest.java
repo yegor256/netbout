@@ -69,10 +69,10 @@ public final class MessageFarmTest {
     public void testAddMessageAndRetrieveItBack() throws Exception {
         final Long number = this.farm.createBoutMessage(this.bout);
         this.farm.changedMessageDate(number, new Date());
-        final List<Long> nums = this.farm.getBoutMessages(this.bout);
+        final Long[] nums = this.farm.getBoutMessages(this.bout);
         MatcherAssert.assertThat(
             nums,
-            Matchers.hasItem(number)
+            Matchers.hasItemInArray(number)
         );
     }
 
