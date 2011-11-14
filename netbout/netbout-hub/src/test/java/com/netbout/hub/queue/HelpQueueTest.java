@@ -52,7 +52,7 @@ public final class HelpQueueTest {
         final String result = HelpQueue.make("simple-translation")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
             .arg("test me")
-            .def("dosn't work")
+            .asDefault("doesn't work")
             .exec(String.class);
         MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
     }
@@ -67,7 +67,7 @@ public final class HelpQueueTest {
         final Integer size = 4;
         final Long[] list = HelpQueue.make("simple-list")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .arg(size.toString())
+            .arg(size)
             .exec(Long[].class);
         MatcherAssert.assertThat(list.length, Matchers.equalTo(size));
     }

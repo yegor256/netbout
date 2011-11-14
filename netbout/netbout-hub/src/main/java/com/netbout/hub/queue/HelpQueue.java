@@ -87,7 +87,14 @@ public final class HelpQueue {
                 }
             }
         }
-        return trans.getDef();
+        result = trans.getDefault();
+        Logger.debug(
+            HelpQueue.class,
+            "#execute(%s): no helpers found, returning default: '%s'",
+            trans.getMnemo(),
+            result
+        );
+        return result;
     }
 
 }

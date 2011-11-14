@@ -121,10 +121,10 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Bout start() {
-        final Long num = Storage.create();
+        final Long num = Storage.INSTANCE.create();
         BoutData data;
         try {
-            data = Storage.find(num);
+            data = Storage.INSTANCE.find(num);
         } catch (com.netbout.hub.data.BoutMissedException ex) {
             throw new IllegalStateException(ex);
         }
@@ -147,7 +147,7 @@ public final class HubIdentity implements Identity {
     public Bout bout(final Long number) throws BoutNotFoundException {
         final HubBout bout;
         try {
-            bout = new HubBout(this, Storage.find(number));
+            bout = new HubBout(this, Storage.INSTANCE.find(number));
         } catch (com.netbout.hub.data.BoutMissedException ex) {
             throw new BoutNotFoundException(ex);
         }

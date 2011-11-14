@@ -28,11 +28,12 @@ package com.netbout.hub.data;
 
 import com.netbout.hub.queue.HelpQueue;
 import com.ymock.util.Logger;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Storage of data.
+ * Storage of data, it's a singleton.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -40,39 +41,48 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class Storage {
 
     /**
+     * The singleton.
+     */
+    public static final Storage INSTANCE = new Storage();
+
+    /**
      * All bouts existing in the system.
      */
-    private static final Map<Long, BoutData> BOUTS =
+    private final Map<Long, BoutData> bouts =
         new ConcurrentHashMap<Long, BoutData>();
 
     /**
-     * It's utility class.
+     * It's a singleton.
      */
     private Storage() {
-        //
+        this.bouts.put(0L, new BoutData(0L));
     }
 
     /**
      * Create new bout in the storage.
      * @return It's number (unique)
      */
-    public static Long create() {
-        final Long number = HelpQueue.make("get-next-bout-number")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .exec(Long.class);
-        final BoutData data = new BoutData(number);
+    public Long create() {
+        BoutData data;
+        synchronized (this.bouts) {
+            final Long number = HelpQueue.make("get-next-bout-number")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .asDefault(Collections.max(this.bouts.keySet()) + 1)
+                .exec(Long.class);
+            data = new BoutData(number);
+            this.bouts.put(data.getNumber(), data);
+        }
         data.setTitle("");
-        Storage.BOUTS.put(number, data);
         HelpQueue.make("started-new-bout")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(number.toString())
+            .arg(data.getNumber())
             .exec(Boolean.class);
         Logger.debug(
             Storage.class,
             "#create(): bout #%d created",
-            number
+            data.getNumber()
         );
-        return number;
+        return data.getNumber();
     }
 
     /**
@@ -81,10 +91,10 @@ public final class Storage {
      * @return The bout found or restored
      * @throws BoutMissedException If this bout is not found
      */
-    public static BoutData find(final Long number) throws BoutMissedException {
+    public BoutData find(final Long number) throws BoutMissedException {
         BoutData data;
-        if (Storage.BOUTS.containsKey(number)) {
-            data = Storage.BOUTS.get(number);
+        if (this.bouts.containsKey(number)) {
+            data = this.bouts.get(number);
             Logger.debug(
                 Storage.class,
                 "#find(#%d): bout data found",
@@ -93,13 +103,13 @@ public final class Storage {
         } else {
             final Long exists = HelpQueue.make("check-bout-existence")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(number.toString())
+                .arg(number)
                 .exec(Long.class);
             if (exists != number) {
                 throw new BoutMissedException(number);
             }
             data = new BoutData(number);
-            Storage.BOUTS.put(number, data);
+            this.bouts.put(number, data);
             Logger.debug(
                 Storage.class,
                 "#find(#%d): bout data restored",

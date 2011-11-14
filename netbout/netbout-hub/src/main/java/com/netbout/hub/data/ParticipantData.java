@@ -86,9 +86,9 @@ public final class ParticipantData {
         this.confirmed = flag;
         HelpQueue.make("changed-participant-confirm-status")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.getBout().toString())
-            .arg(this.getIdentity())
-            .arg(this.confirmed.toString())
+            .arg(this.bout)
+            .arg(this.identity)
+            .arg(this.confirmed)
             .exec(Boolean.class);
         Logger.debug(
             this,
@@ -105,8 +105,8 @@ public final class ParticipantData {
         if (this.confirmed == null) {
             this.confirmed = HelpQueue.make("get-participant-confirm-status")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.getBout().toString())
-                .arg(this.getIdentity())
+                .arg(this.bout)
+                .arg(this.identity)
                 .exec(Boolean.class);
             Logger.debug(
                 this,

@@ -85,7 +85,7 @@ public final class BoutData {
         if (this.title == null) {
             this.title = HelpQueue.make("get-bout-title")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.number.toString())
+                .arg(this.number)
                 .exec(String.class);
             Logger.debug(
                 this,
@@ -105,7 +105,7 @@ public final class BoutData {
         this.title = text;
         HelpQueue.make("changed-bout-title")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.number.toString())
+            .arg(this.number)
             .arg(this.title)
             .exec(Boolean.class);
         Logger.debug(
@@ -124,7 +124,7 @@ public final class BoutData {
         this.getParticipants().add(data);
         HelpQueue.make("added-bout-participant")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.number.toString())
+            .arg(this.number)
             .arg(data.getIdentity())
             .exec(Boolean.class);
         Logger.debug(
@@ -147,7 +147,8 @@ public final class BoutData {
                 final String[] identities = HelpQueue
                     .make("get-bout-participant-identities")
                     .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                    .arg(this.number.toString())
+                    .arg(this.number)
+                    .asDefault(new String[]{})
                     .exec(String[].class);
                 for (String identity : identities) {
                     this.participants.add(
@@ -172,7 +173,7 @@ public final class BoutData {
     public MessageData addMessage() {
         final Long num = HelpQueue.make("create-bout-message")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .arg(this.number.toString())
+            .arg(this.number)
             .exec(Long.class);
         final MessageData data = new MessageData(num);
         this.getMessages().add(data);
@@ -195,7 +196,8 @@ public final class BoutData {
                 this.messages = new CopyOnWriteArrayList<MessageData>();
                 final Long[] nums = HelpQueue.make("get-bout-messages")
                     .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                    .arg(this.number.toString())
+                    .arg(this.number)
+                    .asDefault(new Long[]{})
                     .exec(Long[].class);
                 for (Long num : nums) {
                     this.messages.add(new MessageData(num));

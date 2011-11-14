@@ -82,8 +82,8 @@ public final class MessageData {
         this.date = dte;
         HelpQueue.make("changed-message-date")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.number.toString())
-            .arg(String.valueOf(this.date.getTime()))
+            .arg(this.number)
+            .arg(this.date)
             .exec(Boolean.class);
         Logger.debug(
             this,
@@ -101,7 +101,7 @@ public final class MessageData {
             this.date = new Date(
                 HelpQueue.make("get-message-date")
                     .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                    .arg(this.number.toString())
+                    .arg(this.number)
                     .exec(Long.class)
             );
             Logger.debug(
@@ -122,7 +122,7 @@ public final class MessageData {
         this.author = idnt;
         HelpQueue.make("changed-message-author")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.number.toString())
+            .arg(this.number)
             .arg(this.author)
             .exec(Boolean.class);
         Logger.debug(
@@ -140,7 +140,7 @@ public final class MessageData {
         if (this.author == null) {
             this.author = HelpQueue.make("get-message-author")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.number.toString())
+                .arg(this.number)
                 .exec(String.class);
             Logger.debug(
                 this,
@@ -160,7 +160,7 @@ public final class MessageData {
         this.text = txt;
         HelpQueue.make("changed-message-text")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.number.toString())
+            .arg(this.number)
             .arg(this.text)
             .exec(Boolean.class);
         Logger.debug(
@@ -178,7 +178,7 @@ public final class MessageData {
         if (this.text == null) {
             this.text = HelpQueue.make("get-message-text")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.number.toString())
+                .arg(this.number)
                 .exec(String.class);
             Logger.debug(
                 this,

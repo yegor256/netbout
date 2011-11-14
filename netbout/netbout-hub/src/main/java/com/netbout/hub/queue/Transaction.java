@@ -26,6 +26,7 @@
  */
 package com.netbout.hub.queue;
 
+import com.netbout.spi.TypeMapper;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public final class Transaction {
     /**
      * Default value.
      */
-    private String def = "0";
+    private String def = "NULL";
 
     /**
      * Arguments.
@@ -97,8 +98,12 @@ public final class Transaction {
      * @param arg The argument
      * @return This object
      */
-    public Transaction arg(final String arg) {
-        this.args.add(arg);
+    public Transaction arg(final Object arg) {
+        try {
+            this.args.add(TypeMapper.toText(arg));
+        } catch (com.netbout.spi.HelperException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return this;
     }
 
@@ -107,33 +112,13 @@ public final class Transaction {
      * @param val The value
      * @return This object
      */
-    public Transaction def(final String val) {
-        this.def = val;
+    public Transaction asDefault(final Object val) {
+        try {
+            this.def = TypeMapper.toText(val);
+        } catch (com.netbout.spi.HelperException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return this;
-    }
-
-    /**
-     * Get mnemo.
-     * @return The mnemo
-     */
-    public String getMnemo() {
-        return this.mnemo;
-    }
-
-    /**
-     * Get arguments as array.
-     * @return The args
-     */
-    public String[] getArgs() {
-        return this.args.toArray(new String[] {});
-    }
-
-    /**
-     * Get default result value.
-     * @return The value
-     */
-    public String getDef() {
-        return this.def;
     }
 
     /**
@@ -144,48 +129,44 @@ public final class Transaction {
      */
     public <T> T exec(final Class<T> type) {
         final String output = HelpQueue.execute(this);
-        Object result = this.convert(output, type);
+        Object result;
+        try {
+            result = TypeMapper.toObject(output, type);
+        } catch (com.netbout.spi.HelperException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         Logger.debug(
             Transaction.class,
-            "#exec(%s, %s, %s, ...): returned '%s' (%s)",
-            this.mnemo,
-            type,
-            this.priority,
+            "#exec(%s): returned '%s' (%s)",
+            type.getName(),
             output,
-            result.getClass().getName()
+            result
         );
         return (T) result;
     }
 
     /**
-     * Convert from string to the type required.
-     * @param data The data to convert
-     * @param type Type of resposne
-     * @return The result
+     * Get arguments as array.
+     * @return The args
      */
-    public Object convert(final String data, final Class type) {
-        Object result;
-        if (type.equals(String.class)) {
-            result = data.substring(1, data.length() - 1);
-        } else if (type.equals(Long.class)) {
-            result = Long.valueOf(data);
-        } else if (type.equals(Boolean.class)) {
-            result = data != "0";
-        } else if (type.equals(Long[].class)) {
-            final String[] parts = StringUtils.split(data, ',');
-            result = new Long[parts.length];
-            for (int pos = 0; pos < parts.length; pos += 1) {
-                ((Long[]) result)[pos] = Long.valueOf(parts[pos]);
-            }
-        } else {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Result type '%s' is not supported",
-                    type.getName()
-                )
-            );
-        }
-        return result;
+    protected String[] getArgs() {
+        return this.args.toArray(new String[] {});
+    }
+
+    /**
+     * Get default result value.
+     * @return The value
+     */
+    protected String getDefault() {
+        return this.def;
+    }
+
+    /**
+     * Get mnemo.
+     * @return The mnemo
+     */
+    protected String getMnemo() {
+        return this.mnemo;
     }
 
 }
