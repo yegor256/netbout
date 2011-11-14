@@ -63,7 +63,7 @@
             <column name="text" type="VARCHAR(250)"
                 remarks="Text of the message in UTF-8">
             </column>
-            <column name="date" type="BIGINT"
+            <column name="date" type="DATETIME"
                 remarks="When this message was posted"/>
             <column name="author" type="VARCHAR(250)"
                 remarks="Author of this message (the identity)">

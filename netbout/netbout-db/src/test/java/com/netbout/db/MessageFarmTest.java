@@ -67,13 +67,12 @@ public final class MessageFarmTest {
      */
     @Test
     public void testAddMessageAndRetrieveItBack() throws Exception {
-        final Long date = new Date().getTime();
-        this.farm.addedBoutMessage(this.bout, date);
-        this.farm.addedBoutMessage(this.bout, new Date().getTime());
-        final List<Long> dates = this.farm.getBoutMessageDates(this.bout);
+        final Long number = this.farm.createBoutMessage(this.bout);
+        this.farm.changedMessageDate(number, new Date());
+        final List<Long> nums = this.farm.getBoutMessages(this.bout);
         MatcherAssert.assertThat(
-            dates,
-            Matchers.hasItem(date)
+            nums,
+            Matchers.hasItem(number)
         );
     }
 
@@ -83,12 +82,12 @@ public final class MessageFarmTest {
      */
     @Test
     public void testChangeMessageAuthor() throws Exception {
-        final Long date = new Date().getTime();
-        this.farm.addedBoutMessage(this.bout, date);
+        final Long number = this.farm.createBoutMessage(this.bout);
+        this.farm.changedMessageDate(number, new Date());
         final String author = "Jeff Bridges";
-        this.farm.changedMessageAuthor(this.bout, date, author);
+        this.farm.changedMessageAuthor(number, author);
         MatcherAssert.assertThat(
-            this.farm.getMessageAuthor(this.bout, date),
+            this.farm.getMessageAuthor(number),
             Matchers.equalTo(author)
         );
     }
@@ -99,12 +98,12 @@ public final class MessageFarmTest {
      */
     @Test
     public void testChangeMessageText() throws Exception {
-        final Long date = new Date().getTime();
-        this.farm.addedBoutMessage(this.bout, date);
+        final Long number = this.farm.createBoutMessage(this.bout);
+        this.farm.changedMessageDate(number, new Date());
         final String text = "hello, dude! :)";
-        this.farm.changedMessageText(this.bout, date, text);
+        this.farm.changedMessageText(number, text);
         MatcherAssert.assertThat(
-            this.farm.getMessageText(this.bout, date),
+            this.farm.getMessageText(number),
             Matchers.equalTo(text)
         );
     }

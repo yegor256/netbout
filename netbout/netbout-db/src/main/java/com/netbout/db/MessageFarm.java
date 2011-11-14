@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,86 +48,152 @@ import java.util.List;
 public final class MessageFarm {
 
     /**
-     * New message added to the bout.
+     * Create new message in a bout and return its unique number.
      * @param bout The bout
-     * @param date When this message was posted
+     * @return The number of the message
      * @throws SQLException If some SQL problem inside
      */
-    @Operation("added-bout-message")
-    public void addedBoutMessage(final Long bout, final Long date)
+    @Operation("create-bout-message")
+    public Long createBoutMessage(final Long bout)
         throws SQLException {
         final Connection conn = Database.connection();
         Long number;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO message (bout, date) VALUES (?, ?)"
+                "INSERT INTO message (bout) VALUES (?)"
             );
             stmt.setLong(1, bout);
-            stmt.setLong(2, date);
             stmt.execute();
             final ResultSet rset = stmt.getGeneratedKeys();
             rset.next();
-            rset.getLong(1);
+            number = rset.getLong(1);
         } finally {
             conn.close();
         }
         Logger.debug(
             this,
-            "#addedBoutMessage(#%d, %d): added",
+            "#createBoutMessage(#%d): created message #%d",
             bout,
-            date
+            number
         );
+        return number;
     }
 
     /**
-     * Get list of dates of all bout messages.
+     * Get list of numbers of all bout messages.
      * @param bout The bout where it happened
-     * @return List of dates
+     * @return List of numbers
      * @throws SQLException If some SQL problem inside
      */
-    @Operation("get-bout-message-dates")
-    public List<Long> getBoutMessageDates(final Long bout) throws SQLException {
+    @Operation("get-bout-messages")
+    public List<Long> getBoutMessages(final Long bout) throws SQLException {
         final Connection conn = Database.connection();
-        final List<Long> dates = new ArrayList<Long>();
+        final List<Long> numbers = new ArrayList<Long>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT date FROM message WHERE bout = ? ORDER BY date"
+                "SELECT number FROM message WHERE bout = ? AND date IS NOT NULL ORDER BY date"
             );
             stmt.setLong(1, bout);
             final ResultSet rset = stmt.executeQuery();
             while (rset.next()) {
-                dates.add(rset.getLong(1));
+                numbers.add(rset.getLong(1));
             }
         } finally {
             conn.close();
         }
         Logger.debug(
             this,
-            "#getBoutMessageDates(#%d): retrieved %d dates",
+            "#getBoutMessages(#%d): retrieved %d message number(s)",
             bout,
-            dates.size()
+            numbers.size()
         );
-        return dates;
+        return numbers;
+    }
+
+    /**
+     * Get message date.
+     * @param number Number of the message
+     * @return The date
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("get-message-date")
+    public Date getMessageDate(final Long number)
+        throws SQLException {
+        final Connection conn = Database.connection();
+        Date date;
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT date FROM message WHERE number = ?"
+            );
+            stmt.setLong(1, number);
+            final ResultSet rset = stmt.executeQuery();
+            rset.next();
+            date = rset.getDate(1);
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#getMessageDate(#%d): retrieved '%s'",
+            number,
+            date
+        );
+        return date;
+    }
+
+    /**
+     * Changed message date.
+     * @param number The bout where it happened
+     * @param date The date of the message to change
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("changed-message-date")
+    public void changedMessageDate(final Long number, final Date date)
+        throws SQLException {
+        final Connection conn = Database.connection();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "UPDATE message SET date = ? WHERE number = ?"
+            );
+            stmt.setDate(1, new java.sql.Date(date.getTime()));
+            stmt.setLong(2, number);
+            final int updated = stmt.executeUpdate();
+            if (updated != 1) {
+                throw new SQLException(
+                    String.format(
+                        "Message #%d not found, can't set date to '%s'",
+                        number,
+                        date
+                    )
+                );
+            }
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#changedMessageDate(#%d, '%s'): updated",
+            number,
+            date
+        );
     }
 
     /**
      * Get message author.
-     * @param bout The bout where it happened
-     * @param date When this message was posted
+     * @param number Number of the message
      * @return Name of the author
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-message-author")
-    public String getMessageAuthor(final Long bout, final Long date)
+    public String getMessageAuthor(final Long number)
         throws SQLException {
         final Connection conn = Database.connection();
         String author;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT author FROM message WHERE bout = ? AND date = ?"
+                "SELECT author FROM message WHERE number = ?"
             );
-            stmt.setLong(1, bout);
-            stmt.setLong(2, date);
+            stmt.setLong(1, number);
             final ResultSet rset = stmt.executeQuery();
             rset.next();
             author = rset.getString(1);
@@ -135,9 +202,8 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#getMessageAuthor(#%d, %d): retrieved '%s'",
-            bout,
-            date,
+            "#getMessageAuthor(#%d): retrieved '%s'",
+            number,
             author
         );
         return author;
@@ -145,56 +211,51 @@ public final class MessageFarm {
 
     /**
      * Changed message author.
-     * @param bout The bout where it happened
-     * @param date When this message was posted
+     * @param number The bout where it happened
      * @param author The author of the message to change
      * @throws SQLException If some SQL problem inside
      */
     @Operation("changed-message-author")
-    public void changedMessageAuthor(final Long bout, final Long date,
-        final String author) throws SQLException {
+    public void changedMessageAuthor(final Long number, final String author)
+        throws SQLException {
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "UPDATE message SET author = ? WHERE bout = ? AND date = ?"
+                "UPDATE message SET author = ? WHERE number = ?"
             );
             stmt.setString(1, author);
-            stmt.setLong(2, bout);
-            stmt.setLong(3, date);
+            stmt.setLong(2, number);
             final int updated = stmt.executeUpdate();
             if (updated != 1) {
-                throw new SQLException("Bout not found");
+                throw new SQLException("Message not found");
             }
         } finally {
             conn.close();
         }
         Logger.debug(
             this,
-            "#changedMessageAuthor(#%d, %d, '%s'): updated",
-            bout,
-            date,
+            "#changedMessageAuthor(#%d, '%s'): updated",
+            number,
             author
         );
     }
 
     /**
      * Get message text.
-     * @param bout The bout where it happened
-     * @param date When this message was posted
+     * @param number The number of the message
      * @return Text of the message
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-message-text")
-    public String getMessageText(final Long bout, final Long date)
+    public String getMessageText(final Long number)
         throws SQLException {
         final Connection conn = Database.connection();
         String text;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT text FROM message WHERE bout = ? AND date = ?"
+                "SELECT text FROM message WHERE number = ?"
             );
-            stmt.setLong(1, bout);
-            stmt.setLong(2, date);
+            stmt.setLong(1, number);
             final ResultSet rset = stmt.executeQuery();
             rset.next();
             text = rset.getString(1);
@@ -203,9 +264,8 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#getMessageText(#%d, %d): retrieved '%s'",
-            bout,
-            date,
+            "#getMessageText(#%d): retrieved '%s'",
+            number,
             text
         );
         return text;
@@ -219,28 +279,26 @@ public final class MessageFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("changed-message-text")
-    public void changedMessageText(final Long bout, final Long date,
+    public void changedMessageText(final Long number,
         final String text) throws SQLException {
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "UPDATE message SET text = ? WHERE bout = ? AND date = ?"
+                "UPDATE message SET text = ? WHERE number = ?"
             );
             stmt.setString(1, text);
-            stmt.setLong(2, bout);
-            stmt.setLong(3, date);
+            stmt.setLong(2, number);
             final int updated = stmt.executeUpdate();
             if (updated != 1) {
-                throw new SQLException("Bout not found, can't change msg text");
+                throw new SQLException("Message not found, can't save text");
             }
         } finally {
             conn.close();
         }
         Logger.debug(
             this,
-            "#changedMessageText(#%d, %d, '%s'): updated",
-            bout,
-            date,
+            "#changedMessageText(#%d, '%s'): updated",
+            number,
             text
         );
     }
