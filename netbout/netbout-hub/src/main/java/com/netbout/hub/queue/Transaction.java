@@ -137,10 +137,9 @@ public final class Transaction {
         }
         Logger.debug(
             Transaction.class,
-            "#exec(%s): returned '%s' (%s)",
+            "#exec(%s): returned '%s'",
             type.getName(),
-            output,
-            result
+            output
         );
         return (T) result;
     }
