@@ -29,7 +29,9 @@
  */
 package com.netbout.spi;
 
+import java.util.Date;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Mapper of types to String and backwards.
@@ -79,6 +81,8 @@ public final class TypeMapper {
             } else {
                 result = "0";
             }
+        } else if (type.equals(Date.class)) {
+            result = TypeMapper.asText((Date) data);
         } else if (type.equals(Long[].class)) {
             result = StringUtils.join((Long[]) data, ",");
         } else if (type.equals(String[].class)) {
@@ -119,6 +123,8 @@ public final class TypeMapper {
             result = Long.valueOf(text);
         } else if (type.equals(Boolean.class)) {
             result = text != "0";
+        } else if (type.equals(Date.class)) {
+            result = TypeMapper.asDate(text);
         } else if (type.equals(Long[].class)) {
             final String[] parts = StringUtils.split(text, ',');
             result = new Long[parts.length];
@@ -146,6 +152,24 @@ public final class TypeMapper {
             );
         }
         return (T) result;
+    }
+
+    /**
+     * Convert date to text.
+     * @param date The date to convert
+     * @return The text
+     */
+    private static String asText(final Date date) {
+        return ISODateTimeFormat.dateTime().print(date.getTime());
+    }
+
+    /**
+     * Convert text to date.
+     * @param text The text to convert
+     * @return The date
+     */
+    private static Date asDate(final String text) {
+        return new Date(ISODateTimeFormat.dateTime().parseMillis(text));
     }
 
 }

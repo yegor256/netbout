@@ -52,6 +52,11 @@
             <version since="1 Nov 2011">0.9.5</version>
         </dependency>
         <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version since="14 Nov 2011">2.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.ymock</groupId>
             <artifactId>ymock-util</artifactId>
         </dependency>

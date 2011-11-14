@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.ArrayList;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -57,6 +58,13 @@ public final class TypeMapperTest {
         triples.add(new Triple("1,2", new Long[] {1L, 2L}, Long[].class));
         triples.add(
             new Triple("\"a\",\"b\"", new String[] {"a", "b"}, String[].class)
+        );
+        triples.add(
+            new Triple(
+                "1970-01-01T01:20:34.567+01:00",
+                new Date(1234567L),
+                Date.class
+            )
         );
         for (Triple triple : triples) {
             triple.validate();
