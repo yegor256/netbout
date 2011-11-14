@@ -137,7 +137,8 @@ public final class Transaction {
         }
         Logger.debug(
             Transaction.class,
-            "#exec(%s): returned '%s'",
+            "#exec(%s, %s): returned '%s'",
+            this.mnemo,
             type.getName(),
             output
         );
