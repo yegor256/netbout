@@ -47,14 +47,21 @@ public interface Helper {
 
     /**
      * Send one single query to the helper, in order to get atomic response.
+     *
+     * <p>Response may contain one of the following:
+     *
+     * <ul>
+     * <li><tt>NULL</tt>
+     * <li>plain text in UTF-8 in double quotes
+     * <li>integer number (convertable to {@link Long})
+     * <li>list of {@link Long} numbers separated by <tt>,</tt> (comma)
+     * </ul>
+     *
      * @param mnemo Name of the request, unique ID of what should be done
-     * @param type What is the type of response we're expecting
      * @param args Collection of arguments, if necessary
-     * @param <T> Type of response we're expecting
-     * @return The response
-     * @throws OperationFailureException If helper can't perform this request
+     * @return The response as explained above
+     * @throws HelperException If helper can't perform this request
      */
-    <T> T execute(String mnemo, Class<T> type, Object... args)
-        throws OperationFailureException;
+    String execute(String mnemo, String... args) throws HelperException;
 
 }

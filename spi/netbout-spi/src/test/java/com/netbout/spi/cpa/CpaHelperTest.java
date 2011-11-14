@@ -50,14 +50,25 @@ public final class CpaHelperTest {
         final Helper helper = new CpaHelper(
             this.getClass().getPackage().getName()
         );
-        final String opName = "sample-op";
         MatcherAssert.assertThat(
             helper.supports(),
-            Matchers.hasItem(opName)
+            Matchers.hasItem("comparison")
         );
         MatcherAssert.assertThat(
-            helper.execute(opName, String.class, "alpha-12"),
-            Matchers.equalTo("alpha-XX")
+            helper.execute("comparison", "alpha-12", "6"),
+            Matchers.equalTo("1")
+        );
+        MatcherAssert.assertThat(
+            helper.execute("empty"),
+            Matchers.equalTo("NULL")
+        );
+        MatcherAssert.assertThat(
+            helper.execute("echo", "text"),
+            Matchers.equalTo("\"text\"")
+        );
+        MatcherAssert.assertThat(
+            helper.execute("list", "4"),
+            Matchers.equalTo("5,5,5,5")
         );
     }
 
@@ -71,9 +82,37 @@ public final class CpaHelperTest {
          * @param text The text to translate
          * @return The translated text
          */
-        @Operation("sample-op")
-        public String translate(final String text) {
-            return text.replaceAll("[0-9]", "X");
+        @Operation("comparison")
+        public Boolean longerThan(final String text, final Long len) {
+            return text.length() > len;
+        }
+        /**
+         * Empty operation with no result and no args.
+         */
+        @Operation("empty")
+        public void empty() {
+        }
+        /**
+         * List as output.
+         * @param size Size of the list to return
+         * @return The list just created
+         */
+        @Operation("list")
+        public Long[] list(final Long size) {
+            final Long[] list = new Long[size.intValue()];
+            for (int pos = 0; pos < size; pos += 1) {
+                list[pos] = 5L;
+            }
+            return list;
+        }
+        /**
+         * Return back the same message as being sent.
+         * @param msg The message
+         * @return The same message
+         */
+        @Operation("echo")
+        public String echo(final String msg) {
+            return msg;
         }
     }
 

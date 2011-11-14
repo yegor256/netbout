@@ -34,15 +34,15 @@ package com.netbout.spi;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see Helper#operation(String,Class,Objeсt)
+ * @see Helper#execute(String,String[])
  */
-public final class OperationFailureException extends Exception {
+public final class HelperException extends Exception {
 
     /**
      * Public ctor.
      * @param cause Root cause of the exception
      */
-    public OperationFailureException(final Throwable cause) {
+    public HelperException(final Throwable cause) {
         super(cause);
     }
 
@@ -51,8 +51,7 @@ public final class OperationFailureException extends Exception {
      * @param message Root cause of the exception
      * @param args Arguments for <tt>String.format()</tt>
      */
-    public OperationFailureException(final String message,
-        final Object... args) {
+    public HelperException(final String message, final Object... args) {
         super(String.format(message, args));
     }
 
@@ -61,8 +60,7 @@ public final class OperationFailureException extends Exception {
      * @param message Additional message
      * @param cause Root cause of the exception
      */
-    public OperationFailureException(final String message,
-        final Throwable cause) {
+    public HelperException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
