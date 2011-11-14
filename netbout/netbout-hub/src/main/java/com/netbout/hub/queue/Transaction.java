@@ -144,29 +144,7 @@ public final class Transaction {
      */
     public <T> T exec(final Class<T> type) {
         final String output = HelpQueue.execute(this);
-        Object result;
-        if (type.equals(String.class)) {
-            result = output;
-        } else if (type.equals(Long.class)) {
-            result = Long.valueOf(output);
-        } else if (type.equals(Boolean.class)) {
-            result = !output.isEmpty();
-        } else if (type.equals(Long[].class)) {
-            final String[] parts = StringUtils.split(output, ',');
-            result = new Long[parts.length];
-            for (int pos = 0; pos < parts.length; pos += 1) {
-                ((Long[]) result)[pos] = Long.valueOf(parts[pos]);
-            }
-        } else if (type.equals(String[].class)) {
-            result = StringUtils.split(output, ';');
-        } else {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Result type '%s' is not supported",
-                    type.getName()
-                )
-            );
-        }
+        Object result = this.convert(output, type);
         Logger.debug(
             Transaction.class,
             "#exec(%s, %s, %s, ...): returned '%s' (%s)",
@@ -177,6 +155,37 @@ public final class Transaction {
             result.getClass().getName()
         );
         return (T) result;
+    }
+
+    /**
+     * Convert from string to the type required.
+     * @param data The data to convert
+     * @param type Type of resposne
+     * @return The result
+     */
+    public Object convert(final String data, final Class type) {
+        Object result;
+        if (type.equals(String.class)) {
+            result = data.substring(1, data.length() - 1);
+        } else if (type.equals(Long.class)) {
+            result = Long.valueOf(data);
+        } else if (type.equals(Boolean.class)) {
+            result = data != "0";
+        } else if (type.equals(Long[].class)) {
+            final String[] parts = StringUtils.split(data, ',');
+            result = new Long[parts.length];
+            for (int pos = 0; pos < parts.length; pos += 1) {
+                ((Long[]) result)[pos] = Long.valueOf(parts[pos]);
+            }
+        } else {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Result type '%s' is not supported",
+                    type.getName()
+                )
+            );
+        }
+        return result;
     }
 
 }

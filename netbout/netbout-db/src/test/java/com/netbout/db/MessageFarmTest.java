@@ -26,71 +26,86 @@
  */
 package com.netbout.db;
 
+import java.util.Date;
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test case of {@link BoutFarm}.
+ * Test case of {@link MessageFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutFarmTest {
+public final class MessageFarmTest {
 
     /**
      * Farm to work with.
      */
-    private final BoutFarm farm = new BoutFarm();
+    private final MessageFarm farm = new MessageFarm();
 
     /**
-     * Bout number persistence.
+     * Bout number to work with.
+     */
+    private Long bout;
+
+    /**
+     * Start new bout to work with.
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void testBoutNumbering() throws Exception {
-        final Long first = this.farm.getNextBoutNumber();
-        MatcherAssert.assertThat(first, Matchers.greaterThan(0L));
-        final Long second = this.farm.getNextBoutNumber();
-        MatcherAssert.assertThat(second, Matchers.equalTo(first + 1));
+    @Before
+    public void prepareNewBout() throws Exception {
+        final BoutFarm bfarm = new BoutFarm();
+        this.bout = bfarm.getNextBoutNumber();
+        bfarm.startedNewBout(bout);
     }
 
     /**
-     * Let's record that a new bout was just started.
+     * Add new message to a bout and retrieve it back.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testRecordBoutStartingEvent() throws Exception {
-        final Long num = this.farm.getNextBoutNumber();
-        this.farm.startedNewBout(num);
-    }
-
-    /**
-     * Starting new bout with invalid number should lead to exception.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = java.sql.SQLException.class)
-    public void testRecordBoutStartingWithInvalidNumber() throws Exception {
-        // @checkstyle MagicNumber (1 line)
-        this.farm.startedNewBout(777L);
-    }
-
-    /**
-     * Let's change bout title and read it back.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testBoutTitleChanging() throws Exception {
-        final Long num = this.farm.getNextBoutNumber();
-        this.farm.startedNewBout(num);
+    public void testAddMessageAndRetrieveItBack() throws Exception {
+        final Long date = new Date().getTime();
+        this.farm.addedBoutMessage(this.bout, date);
+        this.farm.addedBoutMessage(this.bout, new Date().getTime());
+        final List<Long> dates = this.farm.getBoutMessageDates(this.bout);
         MatcherAssert.assertThat(
-            this.farm.getBoutTitle(num),
-            Matchers.equalTo("")
+            dates,
+            Matchers.hasItem(date)
         );
-        final String title = "interesting discussion about something...";
-        this.farm.changedBoutTitle(num, title);
+    }
+
+    /**
+     * Set and change message author.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testChangeMessageAuthor() throws Exception {
+        final Long date = new Date().getTime();
+        this.farm.addedBoutMessage(this.bout, date);
+        final String author = "Jeff Bridges";
+        this.farm.changedMessageAuthor(this.bout, date, author);
         MatcherAssert.assertThat(
-            this.farm.getBoutTitle(num),
-            Matchers.equalTo(title)
+            this.farm.getMessageAuthor(this.bout, date),
+            Matchers.equalTo(author)
+        );
+    }
+
+    /**
+     * Set and change message text.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testChangeMessageText() throws Exception {
+        final Long date = new Date().getTime();
+        this.farm.addedBoutMessage(this.bout, date);
+        final String text = "hello, dude! :)";
+        this.farm.changedMessageText(this.bout, date, text);
+        MatcherAssert.assertThat(
+            this.farm.getMessageText(this.bout, date),
+            Matchers.equalTo(text)
         );
     }
 

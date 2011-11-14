@@ -24,70 +24,26 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.queue;
+package com.netbout.db;
 
-import com.netbout.spi.Helper;
+import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Queue of transactions processed by helpers.
+ * Manipulations with bout participants.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HelpQueue {
-
-    /**
-     * Priority.
-     */
-    public enum Priority {
-        SYNCHRONOUSLY,
-        ASAP
-    }
-
-    /**
-     * List of registered helpers.
-     */
-    private static final List<Helper> HELPERS =
-        new CopyOnWriteArrayList<Helper>();
-
-    /**
-     * Register new helper.
-     * @param helper The helper to register
-     */
-    public static void register(final Helper helper) {
-        HelpQueue.HELPERS.add(helper);
-    }
-
-    /**
-     * Create one transaction.
-     * @param mnemo Mnemo-code of the request
-     * @return The transaction
-     */
-    public static Transaction make(final String mnemo) {
-        return new Transaction(mnemo);
-    }
-
-    /**
-     * Execute one transaction.
-     * @param trans The transaction to execute
-     * @return The result
-     */
-    protected static String execute(final Transaction trans) {
-        final String mnemo = trans.getMnemo();
-        String result;
-        for (Helper helper : HelpQueue.HELPERS) {
-            if (helper.supports().contains(mnemo)) {
-                try {
-                    return helper.execute(mnemo, trans.getArgs());
-                } catch (com.netbout.spi.HelperException ex) {
-                    throw new IllegalArgumentException(ex);
-                }
-            }
-        }
-        return trans.getDef();
-    }
+@Farm
+public final class ParticipantFarm {
 
 }

@@ -40,12 +40,6 @@ import com.ymock.util.Logger;
  */
 public final class HubEntry implements Entry {
 
-    static {
-        com.netbout.hub.queue.HelpQueue.register(
-            new com.netbout.spi.cpa.CpaHelper("com.netbout.db")
-        );
-    }
-
     /**
      * {@inheritDoc}
      */

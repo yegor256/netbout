@@ -36,29 +36,38 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet id="1" author="yegor">
-        <createTable tableName="bout">
-            <column name="number" type="int"
+        <createTable tableName="bout" remarks="All registered bouts">
+            <column name="number" type="BIGINT"
                 autoIncrement="true" startWith="1" incrementBy="1"
                 remarks="Unique number of the bout">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" nullable="false" />
             </column>
-            <column name="title" type="varchar(250)"
+            <column name="title" type="VARCHAR(250)"
                 remarks="Title of the bout">
                 <constraints nullable="false" />
             </column>
-            <column name="active" type="boolean" defaultValueBoolean="false"
+            <column name="active" type="BOOLEAN" defaultValueBoolean="false"
                 remarks="Is it active at the moment or just a placeholder?"/>
         </createTable>
-        <createTable tableName="message">
-            <column name="number" type="int"
+        <createTable tableName="message" remarks="All messages posted to bouts">
+            <column name="number" type="BIGINT"
                 autoIncrement="true" startWith="1" incrementBy="1"
                 remarks="Unique number of the message">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="text" type="varchar(250)">
-                <constraints nullable="false" />
+            <column name="bout" type="BIGINT"
+                remarks="What bout this message is related to">
+                <constraints nullable="false" foreignKeyName="message2bout"
+                    references="bout(number)" />
             </column>
-            <column name="created" type="datetime" />
+            <column name="text" type="VARCHAR(250)"
+                remarks="Text of the message in UTF-8">
+            </column>
+            <column name="date" type="BIGINT"
+                remarks="When this message was posted"/>
+            <column name="author" type="VARCHAR(250)"
+                remarks="Author of this message (the identity)">
+            </column>
         </createTable>
     </changeSet>
 

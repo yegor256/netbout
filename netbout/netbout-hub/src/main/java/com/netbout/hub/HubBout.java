@@ -229,10 +229,10 @@ public final class HubBout implements Bout {
      */
     @Override
     public Message post(final String text) {
-        final MessageData msg = new MessageData(this.number(), new Date());
+        final MessageData msg = this.data.addMessage();
+        msg.setDate(new Date());
         msg.setAuthor(this.viewer.name());
         msg.setText(text);
-        this.data.addMessage(msg);
         Logger.info(
             this,
             "#post('%s'): message posted",

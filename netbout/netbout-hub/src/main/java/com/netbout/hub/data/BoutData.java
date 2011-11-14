@@ -167,23 +167,22 @@ public final class BoutData {
 
     /**
      * Post new message.
-     * @param data The data
+     * @return The data
      */
-    public void addMessage(final MessageData data) {
-        this.getMessages().add(data);
-        HelpQueue.make("added-bout-message")
-            .priority(HelpQueue.Priority.ASAP)
+    public MessageData addMessage() {
+        final Long num = HelpQueue.make("create-bout-message")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
             .arg(this.number.toString())
-            .arg(String.valueOf(data.getDate().getTime()))
-            .arg(data.getAuthor())
-            .arg(data.getText())
-            .exec(Boolean.class);
+            .exec(Long.class);
+        final MessageData data = new MessageData(num);
+        this.getMessages().add(data);
         Logger.debug(
             this,
-            "#addMessage(..): message by '%s' added to bout #%d",
-            data.getAuthor(),
+            "#addMessage(): new empty message #%d added to bout #%d",
+            data.getNumber(),
             this.number
         );
+        return data;
     }
 
     /**
@@ -194,14 +193,12 @@ public final class BoutData {
         synchronized (this) {
             if (this.messages == null) {
                 this.messages = new CopyOnWriteArrayList<MessageData>();
-                final Long[] dates = HelpQueue.make("get-bout-message-dates")
+                final Long[] nums = HelpQueue.make("get-bout-messages")
                     .priority(HelpQueue.Priority.SYNCHRONOUSLY)
                     .arg(this.number.toString())
                     .exec(Long[].class);
-                for (Long msec : dates) {
-                    this.messages.add(
-                        new MessageData(this.number, new Date(msec))
-                    );
+                for (Long num : nums) {
+                    this.messages.add(new MessageData(num));
                 }
                 Logger.debug(
                     this,

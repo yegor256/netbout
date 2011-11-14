@@ -29,6 +29,8 @@ package com.netbout.hub.queue;
 import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
+import java.util.ArrayList;
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -55,6 +57,21 @@ public final class HelpQueueTest {
         MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
     }
 
+    /**
+     * List returned should be processed properly.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testTransactionReturningList() throws Exception {
+        HelpQueue.register(new CpaHelper(this.getClass()));
+        final Integer size = 4;
+        final Long[] list = HelpQueue.make("simple-list")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .arg(size.toString())
+            .exec(Long[].class);
+        MatcherAssert.assertThat(list.length, Matchers.equalTo(size));
+    }
+
     @Farm
     public static final class SimpleHelper {
         /**
@@ -66,7 +83,19 @@ public final class HelpQueueTest {
         public String translate(final String text) {
             return text.replaceAll("[a-z]", "X");
         }
-
+        /**
+         * Return list.
+         * @param size Size of list to return
+         * @return The list
+         */
+        @Operation("simple-list")
+        public Long[] list(final Long size) {
+            final Long[] list = new Long[size.intValue()];
+            for (int pos = 0; pos < size; pos += 1) {
+                list[pos] = 5L;
+            }
+            return list;
+        }
     }
 
 }

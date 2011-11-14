@@ -29,6 +29,7 @@ package com.netbout.db;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -50,13 +51,17 @@ public final class BoutFarm {
      */
     @Operation("get-next-bout-number")
     public Long getNextBoutNumber() throws SQLException {
-        final Statement stmt = Database.connection().createStatement();
-        stmt.execute("INSERT INTO bout (title) VALUES ('')");
-        final ResultSet rset = stmt.getGeneratedKeys();
-        if (rset == null || !rset.next()) {
-            throw new SQLException("Can't retrieve ID of inserted bout");
+        final Connection conn = Database.connection();
+        Long number;
+        try {
+            final Statement stmt = conn.createStatement();
+            stmt.execute("INSERT INTO bout (title) VALUES ('')");
+            final ResultSet rset = stmt.getGeneratedKeys();
+            rset.next();
+            number = rset.getLong(1);
+        } finally {
+            conn.close();
         }
-        final Long number = rset.getLong(1);
         Logger.debug(
             this,
             "#getNextBoutNumber(): retrieved %d",
@@ -72,13 +77,18 @@ public final class BoutFarm {
      */
     @Operation("started-new-bout")
     public void startedNewBout(final Long number) throws SQLException {
-        final PreparedStatement stmt = Database.connection().prepareStatement(
-            "UPDATE bout SET active = 1 WHERE number = ?"
-        );
-        stmt.setLong(1, number);
-        final int updated = stmt.executeUpdate();
-        if (updated != 1) {
-            throw new SQLException("Bout not found");
+        final Connection conn = Database.connection();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "UPDATE bout SET active = 1 WHERE number = ?"
+            );
+            stmt.setLong(1, number);
+            final int updated = stmt.executeUpdate();
+            if (updated != 1) {
+                throw new SQLException("Bout not found");
+            }
+        } finally {
+            conn.close();
         }
         Logger.debug(
             this,
@@ -88,12 +98,64 @@ public final class BoutFarm {
     }
 
     /**
+     * Get bout title.
+     * @param number Number of bout
+     * @return The title
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("get-bout-title")
+    public String getBoutTitle(final Long number) throws SQLException {
+        final Connection conn = Database.connection();
+        String title;
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT title FROM bout WHERE number = ?"
+            );
+            stmt.setLong(1, number);
+            final ResultSet rset = stmt.executeQuery();
+            rset.next();
+            title = rset.getString(1);
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#getBoutTitle(%d): retrieved '%s'",
+            number,
+            title
+        );
+        return title;
+    }
+
+    /**
      * Bout title was just changed.
-     * @param bout Number of bout
+     * @param number Number of bout
      * @param title New title
+     * @throws SQLException If some SQL problem inside
      */
     @Operation("changed-bout-title")
-    public void changedBoutTitle(final Long bout, final String title) {
+    public void changedBoutTitle(final Long number, final String title)
+        throws SQLException {
+        final Connection conn = Database.connection();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "UPDATE bout SET title = ? WHERE number = ?"
+            );
+            stmt.setString(1, title);
+            stmt.setLong(2, number);
+            final int updated = stmt.executeUpdate();
+            if (updated != 1) {
+                throw new SQLException("Bout not found, title can't be changed");
+            }
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#changedBoutTitle(%d, '%s'): updated",
+            number,
+            title
+        );
     }
 
 }

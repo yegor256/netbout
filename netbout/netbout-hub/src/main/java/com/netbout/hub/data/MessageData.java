@@ -39,14 +39,14 @@ import java.util.Date;
 public final class MessageData {
 
     /**
-     * Number of bout.
+     * Number of the message.
      */
-    private final Long bout;
+    private final Long number;
 
     /**
      * The date.
      */
-    private final Date date;
+    private Date date;
 
     /**
      * The author.
@@ -60,27 +60,57 @@ public final class MessageData {
 
     /**
      * Public ctor.
-     * @param num The number
-     * @param dte The date
+     * @param num The number of this message
      */
-    public MessageData(final Long num, final Date dte) {
-        this.bout = num;
+    protected MessageData(final Long num) {
+        this.number = num;
+    }
+
+    /**
+     * Get message number.
+     * @return The number of it
+     */
+    public Long getNumber() {
+        return this.number;
+    }
+
+    /**
+     * Set date of the message.
+     * @param dte The identity
+     */
+    public void setDate(final Date dte) {
         this.date = dte;
+        HelpQueue.make("changed-message-date")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.number.toString())
+            .arg(String.valueOf(this.date.getTime()))
+            .exec(Boolean.class);
+        Logger.debug(
+            this,
+            "#setDate('%s'): set",
+            this.date
+        );
     }
 
     /**
-     * Get bout number.
-     * @return The identity
-     */
-    public Long getBout() {
-        return this.bout;
-    }
-
-    /**
-     * Get date.
+     * Get date of the message.
      * @return The date
      */
     public Date getDate() {
+        if (this.date == null) {
+            this.date = new Date(
+                HelpQueue.make("get-message-date")
+                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                    .arg(this.number.toString())
+                    .exec(Long.class)
+            );
+            Logger.debug(
+                this,
+                "#getDate(): date '%s' loaded for msg #%d",
+                this.date,
+                this.number
+            );
+        }
         return this.date;
     }
 
@@ -89,16 +119,10 @@ public final class MessageData {
      * @param idnt The identity
      */
     public void setAuthor(final String idnt) {
-        if (this.author != null) {
-            throw new IllegalStateException(
-                "setAuthor() can only set identity one time, not change"
-            );
-        }
         this.author = idnt;
         HelpQueue.make("changed-message-author")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.bout.toString())
-            .arg(String.valueOf(this.date.getTime()))
+            .arg(this.number.toString())
             .arg(this.author)
             .exec(Boolean.class);
         Logger.debug(
@@ -116,14 +140,13 @@ public final class MessageData {
         if (this.author == null) {
             this.author = HelpQueue.make("get-message-author")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.bout.toString())
-                .arg(String.valueOf(this.date.getTime()))
+                .arg(this.number.toString())
                 .exec(String.class);
             Logger.debug(
                 this,
-                "#getAuthor(): author '%s' loaded for msg in bout #%d",
+                "#getAuthor(): author '%s' loaded for msg #%d",
                 this.author,
-                this.bout
+                this.number
             );
         }
         return this.author;
@@ -134,16 +157,10 @@ public final class MessageData {
      * @param txt The text
      */
     public void setText(final String txt) {
-        if (this.text != null) {
-            throw new IllegalStateException(
-                "setText() can only set text one time, not change"
-            );
-        }
         this.text = txt;
         HelpQueue.make("changed-message-text")
             .priority(HelpQueue.Priority.ASAP)
-            .arg(this.bout.toString())
-            .arg(String.valueOf(this.date.getTime()))
+            .arg(this.number.toString())
             .arg(this.text)
             .exec(Boolean.class);
         Logger.debug(
@@ -161,14 +178,13 @@ public final class MessageData {
         if (this.text == null) {
             this.text = HelpQueue.make("get-message-text")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.bout.toString())
-                .arg(String.valueOf(this.date.getTime()))
+                .arg(this.number.toString())
                 .exec(String.class);
             Logger.debug(
                 this,
-                "#getText(): text '%s' loaded for msg in bout #%d",
+                "#getText(): text '%s' loaded for msg #%d",
                 this.text,
-                this.bout
+                this.number
             );
         }
         return this.text;
