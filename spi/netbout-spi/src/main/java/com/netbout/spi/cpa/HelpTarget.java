@@ -164,6 +164,15 @@ final class HelpTarget {
             }
         } else if (type.equals(Long[].class)) {
             ready = StringUtils.join((Long[]) value, ",");
+        } else if (type.equals(String[].class)) {
+            String[] quoted = new String[((String[]) value).length];
+            for (int pos = 0; pos < ((String[]) value).length; pos += 1) {
+                quoted[pos] = ((String[]) value)[pos].replace("\"", "\\\"");
+            }
+            ready = String.format(
+                "\"%s\"",
+                StringUtils.join(quoted, "\",\"")
+            );
         } else {
             throw new HelperException(
                 "Can't revert %s to String",

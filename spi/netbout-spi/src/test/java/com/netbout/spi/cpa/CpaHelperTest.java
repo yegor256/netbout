@@ -70,6 +70,10 @@ public final class CpaHelperTest {
             helper.execute("list", "4"),
             Matchers.equalTo("5,5,5,5")
         );
+        MatcherAssert.assertThat(
+            helper.execute("texts"),
+            Matchers.equalTo("\"o n e\",\"\\\"two\\\"\"")
+        );
     }
 
     /**
@@ -103,6 +107,17 @@ public final class CpaHelperTest {
             for (int pos = 0; pos < size; pos += 1) {
                 list[pos] = 5L;
             }
+            return list;
+        }
+        /**
+         * List of texts.
+         * @return The list just created
+         */
+        @Operation("texts")
+        public String[] texts() {
+            final String[] list = new String[2];
+            list[0] = "o n e";
+            list[1] = "\"two\"";
             return list;
         }
         /**

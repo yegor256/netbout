@@ -55,6 +55,8 @@ public interface Helper {
      * <li>plain text in UTF-8 in double quotes
      * <li>integer number (convertable to {@link Long})
      * <li>list of {@link Long} numbers separated by <tt>,</tt> (comma)
+     * <li>list of texts in double quotes separated by <tt>,</tt> (double quote
+     * inside the text should be escaped by a backslash)
      * </ul>
      *
      * @param mnemo Name of the request, unique ID of what should be done
