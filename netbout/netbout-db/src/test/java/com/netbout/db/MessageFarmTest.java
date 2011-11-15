@@ -58,7 +58,7 @@ public final class MessageFarmTest {
     public void prepareNewBout() throws Exception {
         final BoutFarm bfarm = new BoutFarm();
         this.bout = bfarm.getNextBoutNumber();
-        bfarm.startedNewBout(bout);
+        bfarm.startedNewBout(this.bout);
     }
 
     /**

@@ -60,7 +60,8 @@ public final class MessageFarm {
         Long number;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO message (bout) VALUES (?)"
+                "INSERT INTO message (bout) VALUES (?)",
+                Statement.RETURN_GENERATED_KEYS
             );
             stmt.setLong(1, bout);
             stmt.execute();

@@ -34,6 +34,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Bout manipulations.
@@ -55,7 +57,10 @@ public final class BoutFarm {
         Long number;
         try {
             final Statement stmt = conn.createStatement();
-            stmt.execute("INSERT INTO bout (title) VALUES ('')");
+            stmt.execute(
+                "INSERT INTO bout DEFAULT VALUES",
+                Statement.RETURN_GENERATED_KEYS
+            );
             final ResultSet rset = stmt.getGeneratedKeys();
             rset.next();
             number = rset.getLong(1);
@@ -77,24 +82,38 @@ public final class BoutFarm {
      */
     @Operation("started-new-bout")
     public void startedNewBout(final Long number) throws SQLException {
+        this.changedBoutTitle(number, "");
+    }
+
+    /**
+     * Get list of bouts that belong to some identity.
+     * @param identity The identity of bout participant
+     * @return List of numbers
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("get-bout-messages")
+    public Long[] getBoutMessages(final Long bout) throws SQLException {
         final Connection conn = Database.connection();
+        final List<Long> numbers = new ArrayList<Long>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "UPDATE bout SET active = 1 WHERE number = ?"
+                "SELECT number FROM message WHERE bout = ? AND date IS NOT NULL ORDER BY date"
             );
-            stmt.setLong(1, number);
-            final int updated = stmt.executeUpdate();
-            if (updated != 1) {
-                throw new SQLException("Bout not found");
+            stmt.setLong(1, bout);
+            final ResultSet rset = stmt.executeQuery();
+            while (rset.next()) {
+                numbers.add(rset.getLong(1));
             }
         } finally {
             conn.close();
         }
         Logger.debug(
             this,
-            "#startedNewBout(%d): updated",
-            number
+            "#getBoutMessages(#%d): retrieved %d message number(s)",
+            bout,
+            numbers.size()
         );
+        return numbers.toArray(new Long[]{});
     }
 
     /**

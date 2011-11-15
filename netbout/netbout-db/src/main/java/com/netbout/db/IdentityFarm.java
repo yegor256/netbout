@@ -38,40 +38,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manipulations with bout participants.
+ * Manipulations on the level of identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @Farm
-public final class ParticipantFarm {
+public final class IdentityFarm {
 
     /**
-     * Added new participant to the bout.
-     * @param bout The bout
-     * @param identity The name of the person
+     * Get list of bouts that belong to some identity.
+     * @param identity The identity of bout participant
+     * @return List of bout numbers
      * @throws SQLException If some SQL problem inside
      */
-    @Operation("added-bout-participant")
-    public void addedBoutParticipant(final Long bout, final String identity)
-        throws SQLException {
+    @Operation("get-bouts-of-identity")
+    public Long[] getBoutsOfIdentity(final String name) throws SQLException {
         final Connection conn = Database.connection();
+        final List<Long> numbers = new ArrayList<Long>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO participant (bout, identity) VALUES (?, ?)"
+                "SELECT number FROM bout JOIN participant ON bout.number = participant.bout WHERE identity = ?"
             );
-            stmt.setLong(1, bout);
-            stmt.setString(2, identity);
-            stmt.execute();
+            stmt.setString(1, name);
+            final ResultSet rset = stmt.executeQuery();
+            while (rset.next()) {
+                numbers.add(rset.getLong(1));
+            }
         } finally {
             conn.close();
         }
         Logger.debug(
             this,
-            "#addedBoutParticipant(#%d, '%s'): added",
-            bout,
-            identity
+            "#getBoutsOfIdentity('%s'): retrieved %d bout number(s)",
+            name,
+            numbers.size()
         );
+        return numbers.toArray(new Long[]{});
     }
 
 }

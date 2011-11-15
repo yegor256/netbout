@@ -26,52 +26,36 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Manipulations with bout participants.
- *
+ * Test case of {@link IdentityFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Farm
-public final class ParticipantFarm {
+public final class IdentityFarmTest {
 
     /**
-     * Added new participant to the bout.
-     * @param bout The bout
-     * @param identity The name of the person
-     * @throws SQLException If some SQL problem inside
+     * Farm to work with.
      */
-    @Operation("added-bout-participant")
-    public void addedBoutParticipant(final Long bout, final String identity)
-        throws SQLException {
-        final Connection conn = Database.connection();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO participant (bout, identity) VALUES (?, ?)"
-            );
-            stmt.setLong(1, bout);
-            stmt.setString(2, identity);
-            stmt.execute();
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#addedBoutParticipant(#%d, '%s'): added",
-            bout,
-            identity
-        );
+    private final IdentityFarm farm = new IdentityFarm();
+
+    /**
+     * Find bouts of some identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testBoutsFinding() throws Exception {
+        final BoutFarm bfarm = new BoutFarm();
+        final Long bout = bfarm.getNextBoutNumber();
+        bfarm.startedNewBout(bout);
+        final ParticipantFarm pfarm = new ParticipantFarm();
+        final String identity = "Steve Jobs";
+        pfarm.addedBoutParticipant(bout, identity);
+        final Long[] numbers = this.farm.getBoutsOfIdentity(identity);
+        MatcherAssert.assertThat(numbers, Matchers.hasItemInArray(bout));
     }
 
 }
