@@ -34,7 +34,6 @@ package com.netbout.spi;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see Bout#invite(String)
  */
 public final class UnknownIdentityException extends Exception {
 

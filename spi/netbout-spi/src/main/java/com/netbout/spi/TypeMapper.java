@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import java.util.Date;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -40,11 +41,11 @@ import org.joda.time.format.ISODateTimeFormat;
  *
  * <ul>
  * <li><tt>NULL</tt>
+ * <li><tt>true</tt> or <tt>false</tt>
  * <li>plain text in UTF-8 in double quotes
  * <li>integer number (convertable to {@link Long})
  * <li>list of {@link Long} numbers separated by <tt>,</tt> (comma)
- * <li>list of texts in double quotes separated by <tt>,</tt> (double quote
- * inside the text should be escaped by a backslash)
+ * <li>list of texts in double quotes separated by <tt>,</tt>
  * </ul>
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
@@ -58,45 +59,54 @@ public final class TypeMapper {
     private static final String TEXT_NULL = "NULL";
 
     /**
+     * Separator between name and hash.
+     */
+    private static final String SEPARATOR = ",";
+
+    /**
+     * Encoding to be used.
+     */
+    private static final String ENCODING = "UTF-8";
+
+    /**
+     * It's a utility class.
+     */
+    private TypeMapper() {
+        // empty
+    }
+
+    /**
      * Convert from given type to string.
      * @param data Data to convert
      * @return The response as explained above
      * @throws HelperException If there is some problem inside
      */
-    public static String toText(Object data) throws HelperException {
+    public static String toText(final Object data) throws HelperException {
         if (data == null) {
             return TypeMapper.TEXT_NULL;
         }
         String result;
         final Class type = data.getClass();
         if (type.equals(String.class)) {
-            result = String.format("\"%s\"", data.toString());
+            result = TypeMapper.quote(data.toString());
         } else if (type.equals(Long.class)) {
             result = data.toString();
-        } else if (type.equals(Integer.class)) {
-            result = data.toString();
         } else if (type.equals(Boolean.class)) {
-            if ((Boolean) data) {
-                result = "1";
-            } else {
-                result = "0";
-            }
+            result = data.toString();
         } else if (type.equals(Date.class)) {
             result = TypeMapper.asText((Date) data);
         } else if (type.equals(Long[].class)) {
-            result = StringUtils.join((Long[]) data, ",");
+            result = TypeMapper.join((Long[]) data);
         } else if (type.equals(String[].class)) {
-            String[] quoted = new String[((String[]) data).length];
+            final String[] quoted = new String[((String[]) data).length];
             for (int pos = 0; pos < ((String[]) data).length; pos += 1) {
-                quoted[pos] = ((String[]) data)[pos].replace("\"", "\\\"");
+                quoted[pos] = TypeMapper.quote(((String[]) data)[pos]);
             }
-            result = String.format(
-                "\"%s\"",
-                StringUtils.join(quoted, "\",\"")
-            );
+            result = TypeMapper.join(quoted);
         } else {
             throw new HelperException(
-                "Can't convert %s to String",
+                "Can't convert '%s' (%s) to String",
+                data.toString(),
                 type.getName()
             );
         }
@@ -110,23 +120,24 @@ public final class TypeMapper {
      * @param <T> The type of response
      * @return The data
      * @throws HelperException If there is some problem inside
+     * @checkstyle CyclomaticComplexity (40 lines)
      */
-    public static <T> T toObject(String text, Class<T> type)
+    public static <T> T toObject(final String text, final Class<T> type)
         throws HelperException {
         if (text == TypeMapper.TEXT_NULL) {
             return null;
         }
         Object result;
         if (type.equals(String.class)) {
-            result = text.substring(1, text.length() - 1);
+            result = TypeMapper.unquote(text);
         } else if (type.equals(Long.class)) {
             result = Long.valueOf(text);
         } else if (type.equals(Boolean.class)) {
-            result = text != "0";
+            result = Boolean.valueOf(text);
         } else if (type.equals(Date.class)) {
             result = TypeMapper.asDate(text);
         } else if (type.equals(Long[].class)) {
-            final String[] parts = StringUtils.split(text, ',');
+            final String[] parts = TypeMapper.split(text);
             result = new Long[parts.length];
             for (int pos = 0; pos < parts.length; pos += 1) {
                 ((Long[]) result)[pos] = Long.valueOf(parts[pos]);
@@ -135,13 +146,10 @@ public final class TypeMapper {
             if (text.isEmpty()) {
                 result = new String[0];
             } else {
-                final String[] parts = StringUtils.split(
-                    text.substring(1, text.length() - 1),
-                    "\",\""
-                );
+                final String[] parts = TypeMapper.split(text);
                 result = new String[parts.length];
                 for (int pos = 0; pos < parts.length; pos += 1) {
-                    ((String[]) result)[pos] = parts[pos];
+                    ((String[]) result)[pos] = TypeMapper.unquote(parts[pos]);
                 }
             }
         } else {
@@ -152,6 +160,52 @@ public final class TypeMapper {
             );
         }
         return (T) result;
+    }
+
+    /**
+     * Quote the text.
+     * @param text The text to quote
+     * @return The text safely quoted/encoded
+     */
+    private static String quote(final String text) {
+        try {
+            return new Base64().encodeToString(
+                text.getBytes(TypeMapper.ENCODING)
+            );
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Un-quote the text.
+     * @param text The text safely quoted/encoded
+     * @return Normal text
+     */
+    private static String unquote(final String text) {
+        try {
+            return new String(new Base64().decode(text), TypeMapper.ENCODING);
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Join group of objects.
+     * @param group The group of them
+     * @return Text
+     */
+    private static String join(final Object[] group) {
+        return StringUtils.join(group, TypeMapper.SEPARATOR);
+    }
+
+    /**
+     * Split text to group of objects.
+     * @param text The text
+     * @return Group
+     */
+    private static String[] split(final String text) {
+        return StringUtils.split(text, TypeMapper.SEPARATOR);
     }
 
     /**

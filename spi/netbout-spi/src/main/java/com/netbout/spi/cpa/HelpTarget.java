@@ -29,15 +29,9 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
 import com.netbout.spi.TypeMapper;
-import com.ymock.util.Logger;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
-import org.reflections.Reflections;
 
 /**
  * Classpath annotations helper.
@@ -105,7 +99,7 @@ final class HelpTarget {
                 args.length
             );
         }
-        Object[] converted = new Object[args.length];
+        final Object[] converted = new Object[args.length];
         for (int pos = 0; pos < args.length; pos += 1) {
             converted[pos] = TypeMapper.toObject(args[pos], types[pos]);
         }

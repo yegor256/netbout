@@ -41,7 +41,6 @@ import java.util.List;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
 public interface Identity {
 

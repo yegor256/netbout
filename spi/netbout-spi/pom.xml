@@ -61,6 +61,12 @@
             <artifactId>ymock-util</artifactId>
         </dependency>
         <dependency>
+            <!-- Base64 codec -->
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version since="8 Nov 2011">1.5</version>
+        </dependency>
+        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>

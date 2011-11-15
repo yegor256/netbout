@@ -37,7 +37,6 @@ package com.netbout.spi;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see Entry#authenticate(String,String)
  */
 public interface User {
 

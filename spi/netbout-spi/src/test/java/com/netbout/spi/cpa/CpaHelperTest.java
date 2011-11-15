@@ -30,6 +30,8 @@
 package com.netbout.spi.cpa;
 
 import com.netbout.spi.Helper;
+import com.netbout.spi.TypeMapper;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -51,28 +53,33 @@ public final class CpaHelperTest {
             this.getClass().getPackage().getName()
         );
         MatcherAssert.assertThat(
-            helper.supports(),
-            Matchers.hasItem("comparison")
+            helper.supports().size(),
+            Matchers.greaterThan(0)
         );
         MatcherAssert.assertThat(
-            helper.execute("comparison", "\"alpha-12\"", "6"),
-            Matchers.equalTo("1")
+            helper.execute("comparison", TypeMapper.toText("alpha-12"), "6"),
+            Matchers.equalTo("true")
         );
         MatcherAssert.assertThat(
             helper.execute("empty"),
             Matchers.equalTo("NULL")
         );
+        final String text = "some text in quotes";
         MatcherAssert.assertThat(
-            helper.execute("echo", "\"text\""),
-            Matchers.equalTo("\"text\"")
+            TypeMapper.toObject(
+                helper.execute("echo", TypeMapper.toText(text)),
+                String.class
+            ),
+            Matchers.equalTo(text)
         );
         MatcherAssert.assertThat(
             helper.execute("list", "4"),
-            Matchers.equalTo("5,5,5,5")
+            Matchers.containsString(",")
         );
         MatcherAssert.assertThat(
-            helper.execute("texts"),
-            Matchers.equalTo("\"o n e\",\"\\\"two\\\"\"")
+            TypeMapper.toObject(helper.execute("texts"), String[].class),
+            // @checkstyle MultipleStringLiterals (1 line)
+            Matchers.hasItemInArray("o n e")
         );
     }
 
@@ -84,6 +91,7 @@ public final class CpaHelperTest {
         /**
          * Sample operation.
          * @param text The text to translate
+         * @param len Length to compare with
          * @return The translated text
          */
         @Operation("comparison")
@@ -105,7 +113,7 @@ public final class CpaHelperTest {
         public Long[] list(final Long size) {
             final Long[] list = new Long[size.intValue()];
             for (int pos = 0; pos < size; pos += 1) {
-                list[pos] = 5L;
+                list[pos] = new Random().nextLong();
             }
             return list;
         }
@@ -116,6 +124,7 @@ public final class CpaHelperTest {
         @Operation("texts")
         public String[] texts() {
             final String[] list = new String[2];
+            // @checkstyle MultipleStringLiterals (1 line)
             list[0] = "o n e";
             list[1] = "\"two\"";
             return list;

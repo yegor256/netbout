@@ -27,31 +27,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
 
 /**
- * Thowable when promotion of identity fails.
+ * SPI, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PromotionException extends Exception {
-
-    /**
-     * Public ctor.
-     * @param cause Root cause of the exception
-     */
-    public PromotionException(final Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Public ctor.
-     * @param message Additional message
-     * @param cause Root cause of the exception
-     */
-    public PromotionException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-}
+package com.netbout.spi;

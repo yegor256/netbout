@@ -34,7 +34,6 @@ package com.netbout.spi;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
 public final class DuplicateIdentityException extends Exception {
 

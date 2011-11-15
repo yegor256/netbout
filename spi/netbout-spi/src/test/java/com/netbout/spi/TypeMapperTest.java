@@ -29,9 +29,9 @@
  */
 package com.netbout.spi;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.ArrayList;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -51,17 +51,19 @@ public final class TypeMapperTest {
     public void testBothWaysConversion() throws Exception {
         final Collection<Triple> triples = new ArrayList<Triple>();
         triples.add(new Triple("NULL", null, String.class));
-        triples.add(new Triple("\"test me\"", "test me", String.class));
+        triples.add(new Triple("dGVzdCBtZQ==", "test me", String.class));
+        // @checkstyle MagicNumber (1 line)
         triples.add(new Triple("-76", new Long(-76L), Long.class));
-        triples.add(new Triple("1", Boolean.TRUE, Boolean.class));
-        triples.add(new Triple("0", Boolean.FALSE, Boolean.class));
+        triples.add(new Triple("true", Boolean.TRUE, Boolean.class));
+        triples.add(new Triple("false", Boolean.FALSE, Boolean.class));
         triples.add(new Triple("1,2", new Long[] {1L, 2L}, Long[].class));
         triples.add(
-            new Triple("\"a\",\"b\"", new String[] {"a", "b"}, String[].class)
+            new Triple("YQ==,Yg==", new String[] {"a", "b"}, String[].class)
         );
         triples.add(
             new Triple(
                 "1970-01-01T01:20:34.567+01:00",
+                // @checkstyle MagicNumber (1 line)
                 new Date(1234567L),
                 Date.class
             )
@@ -81,7 +83,7 @@ public final class TypeMapperTest {
          */
         private final Object object;
         /**
-         * The type
+         * The type.
          */
         private final Class type;
         /**
@@ -96,7 +98,7 @@ public final class TypeMapperTest {
             this.type = tpe;
         }
         /**
-         * Validate this triple
+         * Validate this triple.
          * @throws HelperException If some problem inside
          */
         public void validate() throws HelperException {
