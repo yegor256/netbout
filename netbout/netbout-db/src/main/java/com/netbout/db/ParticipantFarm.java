@@ -74,4 +74,72 @@ public final class ParticipantFarm {
         );
     }
 
+    /**
+     * Get participant status.
+     * @param number The number of the bout
+     * @param identity The participant
+     * @return Status of the participant
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("get-participant-status")
+    public Boolean getParticipantStatus(final Long bout, final String identity)
+        throws SQLException {
+        final Connection conn = Database.connection();
+        Boolean status;
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT confirmed FROM participant WHERE bout = ? AND identity = ?"
+            );
+            stmt.setLong(1, bout);
+            stmt.setString(2, identity);
+            final ResultSet rset = stmt.executeQuery();
+            rset.next();
+            status = rset.getBoolean(1);
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#getParticipantStatus(#%d, '%s'): retrieved '%b'",
+            bout,
+            identity,
+            status
+        );
+        return status;
+    }
+
+    /**
+     * Changed participant status.
+     * @param number The number of the bout
+     * @param identity The participant
+     * @param status The status to set
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("changed-participant-status")
+    public void changedParticipantStatus(final Long bout,
+        final String identity, final Boolean status) throws SQLException {
+        final Connection conn = Database.connection();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "UPDATE participant SET confirmed = ? WHERE bout = ? AND identity = ?"
+            );
+            stmt.setBoolean(1, status);
+            stmt.setLong(2, bout);
+            stmt.setString(3, identity);
+            final int updated = stmt.executeUpdate();
+            if (updated != 1) {
+                throw new SQLException("Participant not found, can't save status");
+            }
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#changedParticipantStatus(#%d, '%s', %b): updated",
+            bout,
+            identity,
+            status
+        );
+    }
+
 }
