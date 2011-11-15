@@ -132,11 +132,11 @@ public final class Cryptor {
         }
         Identity identity;
         try {
-            identity = this.entry.identity(iname);
-        } catch (com.netbout.spi.UnknownIdentityException ex) {
+            identity = this.entry.user(uname).identity(iname);
+        } catch (com.netbout.spi.DuplicateIdentityException ex) {
             throw new DecryptionException(
                 hash,
-                "Identity '%s' not found: %s",
+                "Identity '%s' is duplicated: %s",
                 iname,
                 ex.getMessage()
             );

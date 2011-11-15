@@ -52,10 +52,26 @@ public final class IdentityFarmTest {
         final Long bout = bfarm.getNextBoutNumber();
         bfarm.startedNewBout(bout);
         final ParticipantFarm pfarm = new ParticipantFarm();
-        final String identity = "Steve Jobs";
+        final String identity = "Steven Jobs";
+        this.farm.changedIdentityPhoto(identity, "");
         pfarm.addedBoutParticipant(bout, identity);
         final Long[] numbers = this.farm.getBoutsOfIdentity(identity);
         MatcherAssert.assertThat(numbers, Matchers.hasItemInArray(bout));
+    }
+
+    /**
+     * Set and change identity photo.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testChangeIdentityPhoto() throws Exception {
+        final String name = "John Cleese";
+        final String photo = "http://localhost/img.png";
+        this.farm.changedIdentityPhoto(name, photo);
+        MatcherAssert.assertThat(
+            this.farm.getIdentityPhoto(name),
+            Matchers.equalTo(photo)
+        );
     }
 
 }

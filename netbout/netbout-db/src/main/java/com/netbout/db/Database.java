@@ -51,7 +51,18 @@ public final class Database {
     /**
      * Datasource to use.
      */
-    private static final DataSource SOURCE = Database.datasource();
+    private static DataSource source;
+
+    /**
+     * Reconnect on class initialization.
+     */
+    static {
+        try {
+            Database.reconnect();
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
 
     /**
      * Private ctor.
@@ -66,7 +77,16 @@ public final class Database {
      * @throws SQLException If some SQL error
      */
     public static Connection connection() throws SQLException {
-        return Database.SOURCE.getConnection();
+        return Database.source.getConnection();
+    }
+
+    /**
+     * Reconnect.
+     * @throws SQLException If some SQL error
+     */
+    public static void reconnect() throws SQLException {
+        Database.source = Database.datasource();
+        Database.update();
     }
 
     /**
@@ -83,7 +103,6 @@ public final class Database {
             true
         );
         final DataSource source = new PoolingDataSource(factory.getPool());
-        Database.update(source);
         return source;
     }
 
@@ -98,34 +117,35 @@ public final class Database {
         } catch (ClassNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
+        final String url = Manifests.read("Netbout-JdbcUrl");
         final ConnectionFactory factory = new DriverManagerConnectionFactory(
-            Manifests.read("Netbout-JdbcUrl"),
+            url,
             Manifests.read("Netbout-JdbcUser"),
             Manifests.read("Netbout-JdbcPassword")
         );
-        Logger.debug(
+        Logger.info(
             Database.class,
-            "#factory(): connection factory created with JDBC driver '%s'",
-            driver
+            "#factory(): created with '%s' at '%s'",
+            driver,
+            url
         );
         return factory;
     }
 
     /**
      * Update DB schema to the latest version.
-     * @param source The data source to work with
      */
-    private static void update(final DataSource source) {
+    private static void update() {
         try {
             final Liquibase liquibase = new Liquibase(
                 "com/netbout/db/liquibase.xml",
                 new ClassLoaderResourceAccessor(),
-                new JdbcConnection(source.getConnection())
+                new JdbcConnection(Database.source.getConnection())
             );
             liquibase.update(1, "test");
         } catch (liquibase.exception.LiquibaseException ex) {
             throw new IllegalStateException(ex);
-        } catch (java.sql.SQLException ex) {
+        } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
     }

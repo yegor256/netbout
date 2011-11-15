@@ -68,7 +68,12 @@ public final class MessageFarmTest {
     @Test
     public void testAddMessageAndRetrieveItBack() throws Exception {
         final Long number = this.farm.createBoutMessage(this.bout);
-        this.farm.changedMessageDate(number, new Date());
+        final Date date = new Date();
+        this.farm.changedMessageDate(number, date);
+        MatcherAssert.assertThat(
+            this.farm.getMessageDate(number),
+            Matchers.equalTo(date)
+        );
         final Long[] nums = this.farm.getBoutMessages(this.bout);
         MatcherAssert.assertThat(
             nums,
@@ -85,6 +90,7 @@ public final class MessageFarmTest {
         final Long number = this.farm.createBoutMessage(this.bout);
         this.farm.changedMessageDate(number, new Date());
         final String author = "Jeff Bridges";
+        new IdentityFarm().changedIdentityPhoto(author, "");
         this.farm.changedMessageAuthor(number, author);
         MatcherAssert.assertThat(
             this.farm.getMessageAuthor(number),

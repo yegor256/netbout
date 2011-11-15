@@ -32,20 +32,24 @@ import com.netbout.db.Database
 import com.rexsl.core.Manifests
 
 Manifests.inject("Netbout-JdbcDriver", "com.mysql.jdbc.Driver")
-Manifests.inject("Nebout-JdbcUrl", "jdbc:mysql://localhost:3306/netbout")
-Manifests.inject("Nebout-JdbcUser", "netbout")
-Manifests.inject("Nebout-JdbcPassword", "netbout")
+Manifests.inject("Netbout-JdbcUrl", "jdbc:mysql://localhost:3306/netbout")
+Manifests.inject("Netbout-JdbcUser", "netbout")
+Manifests.inject("Netbout-JdbcPassword", "netbout")
 
 def conn = Database.connection();
 [
     "DELETE FROM message",
     "DELETE FROM participant",
     "DELETE FROM bout",
-    "INSERT INTO bout (title) VALUES ('interesting discussion...')",
-    "INSERT INTO participant (bout, identity, confirmed) VALUES (1, 'Axel Groom', 1)",
+    "DELETE FROM identity",
+    "INSERT INTO identity (name, photo) VALUES ('j.depp', 'http://www.ofcelebrity.net/photos/johnny-depp-6.jpg')",
+    "INSERT INTO identity (name, photo) VALUES ('johnny.doe', 'http://www.topnews.in/light/files/John-Turturro.jpg')",
+    "INSERT INTO bout (number, title) VALUES (1, 'interesting discussion...')",
+    "INSERT INTO participant (bout, identity, confirmed) VALUES (1, 'j.depp', 1)",
     "INSERT INTO participant (bout, identity, confirmed) VALUES (1, 'johnny.doe', 1)",
-    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 03:18:34', 'Axel Groom', 'hi all!')",
-    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 04:23:66', 'johnny.doe', 'works for me')",
+    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 03:18:34', 'j.depp', 'hi all!')",
+    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 04:23:11', 'johnny.doe', 'works for me')",
+    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 05:28:22', 'j.depp', 'most recent message')",
 ].each { sql ->
     def stmt = conn.createStatement();
     stmt.execute(sql);

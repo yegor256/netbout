@@ -84,8 +84,7 @@ div#bar {
         }
 
         div#bar div#crumbs img#photo {
-            width: 18px;
-            height: 18px;
+            height: 24px;
             position: relative;
         }
 

@@ -266,7 +266,7 @@ public final class HubIdentity implements Identity {
         synchronized (this) {
             this.photo = pic;
         }
-        HelpQueue.make("saved-identity-photo")
+        HelpQueue.make("changed-identity-photo")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
             .arg(this.name)
             .arg(this.photo.toString())
@@ -308,7 +308,7 @@ public final class HubIdentity implements Identity {
         HubIdentity identity;
         if (HubIdentity.ALL.containsKey(label)) {
             identity = HubIdentity.ALL.get(label);
-            if (!identity.user.equals(usr)) {
+            if (identity.user != null && !identity.user.equals(usr)) {
                 throw new DuplicateIdentityException(
                     "Identity '%s' is taken",
                     label
@@ -370,7 +370,7 @@ public final class HubIdentity implements Identity {
             return identity;
         }
         throw new UnknownIdentityException(
-            "Identity '%s' not found",
+            "friend('%s') found nothing",
             label
         );
     }

@@ -36,6 +36,7 @@ import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -192,8 +193,11 @@ public final class HubBout implements Bout {
      */
     @Override
     public List<Message> messages(final String query) {
+        final List<MessageData> datas =
+            new ArrayList<MessageData>(this.data.getMessages());
+        Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
-        for (MessageData msg : this.data.getMessages()) {
+        for (MessageData msg : datas) {
             messages.add(
                 new HubMessage(
                     HubIdentity.make(msg.getAuthor()),

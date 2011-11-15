@@ -77,4 +77,84 @@ public final class IdentityFarm {
         return numbers.toArray(new Long[]{});
     }
 
+    /**
+     * Get identity photo.
+     * @param name The name of the identity
+     * @return Photo of the identity
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("get-identity-photo")
+    public String getIdentityPhoto(final String name)
+        throws SQLException {
+        final Connection conn = Database.connection();
+        String photo;
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT photo FROM identity WHERE name = ?"
+            );
+            stmt.setString(1, name);
+            final ResultSet rset = stmt.executeQuery();
+            rset.next();
+            photo = rset.getString(1);
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#getIdentityPhoto('%s'): retrieved '%s'",
+            name,
+            photo
+        );
+        return photo;
+    }
+
+    /**
+     * Changed identity photo.
+     * @param name The name of identity
+     * @param photo The photo to set
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("changed-identity-photo")
+    public void changedIdentityPhoto(final String name,
+        final String photo) throws SQLException {
+        final Connection conn = Database.connection();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT name FROM identity WHERE name = ?"
+            );
+            stmt.setString(1, name);
+            final ResultSet rset = stmt.executeQuery();
+            if (rset.next()) {
+                final PreparedStatement ustmt = conn.prepareStatement(
+                    "UPDATE identity SET photo = ? WHERE name = ?"
+                );
+                ustmt.setString(1, photo);
+                ustmt.setString(2, name);
+                ustmt.executeUpdate();
+                Logger.debug(
+                    this,
+                    "#changedIdentityPhoto('%s', '%s'): updated",
+                    name,
+                    photo
+                );
+            } else {
+                final PreparedStatement istmt = conn.prepareStatement(
+                    "INSERT INTO identity (name, photo) VALUES (?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
+                );
+                istmt.setString(1, name);
+                istmt.setString(2, photo);
+                istmt.executeUpdate();
+                Logger.debug(
+                    this,
+                    "#changedIdentityPhoto('%s', '%s'): inserted",
+                    name,
+                    photo
+                );
+            }
+        } finally {
+            conn.close();
+        }
+    }
+
 }

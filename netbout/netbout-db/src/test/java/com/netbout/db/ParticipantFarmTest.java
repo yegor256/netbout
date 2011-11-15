@@ -66,6 +66,7 @@ public final class ParticipantFarmTest {
     @Test
     public void testBoutStatusChanging() throws Exception {
         final String identity = "Steve Jobs";
+        new IdentityFarm().changedIdentityPhoto(identity, "");
         this.farm.addedBoutParticipant(this.bout, identity);
         MatcherAssert.assertThat(
             this.farm.getParticipantStatus(this.bout, identity),
@@ -85,6 +86,7 @@ public final class ParticipantFarmTest {
     @Test
     public void testBoutParticipantsReading() throws Exception {
         final String identity = "Bill Gates";
+        new IdentityFarm().changedIdentityPhoto(identity, "");
         this.farm.addedBoutParticipant(this.bout, identity);
         final String[] names = this.farm.getBoutParticipants(this.bout);
         MatcherAssert.assertThat(

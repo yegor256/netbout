@@ -92,7 +92,7 @@ public final class MessageFarm {
         final List<Long> numbers = new ArrayList<Long>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT number FROM message WHERE bout = ? AND date IS NOT NULL ORDER BY date"
+                "SELECT number FROM message WHERE bout = ? AND date IS NOT NULL"
             );
             stmt.setLong(1, bout);
             final ResultSet rset = stmt.executeQuery();
@@ -129,7 +129,7 @@ public final class MessageFarm {
             stmt.setLong(1, number);
             final ResultSet rset = stmt.executeQuery();
             rset.next();
-            date = new Date(rset.getDate(1).getTime());
+            date = new Date(rset.getTimestamp(1).getTime());
         } finally {
             conn.close();
         }
@@ -156,7 +156,7 @@ public final class MessageFarm {
             final PreparedStatement stmt = conn.prepareStatement(
                 "UPDATE message SET date = ? WHERE number = ?"
             );
-            stmt.setDate(1, new java.sql.Date(date.getTime()));
+            stmt.setTimestamp(1, new java.sql.Timestamp(date.getTime()));
             stmt.setLong(2, number);
             final int updated = stmt.executeUpdate();
             if (updated != 1) {

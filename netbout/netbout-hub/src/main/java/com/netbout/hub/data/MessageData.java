@@ -36,7 +36,7 @@ import java.util.Date;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MessageData {
+public final class MessageData implements Comparable<MessageData> {
 
     /**
      * Number of the message.
@@ -64,6 +64,14 @@ public final class MessageData {
      */
     protected MessageData(final Long num) {
         this.number = num;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final MessageData data) {
+        return this.getDate().compareTo(data.getDate());
     }
 
     /**

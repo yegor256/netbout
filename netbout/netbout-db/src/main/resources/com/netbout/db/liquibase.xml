@@ -37,6 +37,16 @@
 
     <changeSet id="1" author="yegor">
 
+        <createTable tableName="identity" remarks="All registered identities">
+            <column name="name" type="VARCHAR(250)"
+                remarks="Unique name of identity">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="photo" type="VARCHAR(1024)"
+                remarks="URL of his photo">
+            </column>
+        </createTable>
+
         <createTable tableName="bout" remarks="All registered bouts">
             <column name="number" type="BIGINT"
                 autoIncrement="true" startWith="1" incrementBy="1"
@@ -56,8 +66,8 @@
             </column>
             <column name="bout" type="BIGINT"
                 remarks="What bout this message is related to">
-                <constraints nullable="false" foreignKeyName="message2bout"
-                    references="bout(number)" />
+                <constraints nullable="false"
+                    foreignKeyName="message2bout" references="bout(number)" />
             </column>
             <column name="date" type="DATETIME"
                 remarks="When this message was posted (NULL for placeholder not a message)"/>
@@ -66,6 +76,7 @@
             </column>
             <column name="author" type="VARCHAR(250)"
                 remarks="Author of this message (the identity)">
+                <constraints foreignKeyName="message2identity" references="identity(name)" />
             </column>
         </createTable>
 
@@ -77,7 +88,8 @@
             </column>
             <column name="identity" type="VARCHAR(250)"
                 remarks="Identity of the person">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" nullable="false"
+                    foreignKeyName="participant2identity" references="identity(name)" />
             </column>
             <column name="confirmed" type="BOOLEAN"
                 remarks="Participation was confirmed">
