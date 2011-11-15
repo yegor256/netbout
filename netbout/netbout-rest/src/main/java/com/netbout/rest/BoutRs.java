@@ -72,6 +72,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .link("post", String.format("/%d/p", this.number))
             .link("invite", String.format("/%d/i", this.number))
+            .link("rename", String.format("/%d/r", this.number))
             .append(this.bout())
             .authenticated(this.identity())
             .build();
@@ -87,6 +88,26 @@ public final class BoutRs extends AbstractRs {
     public Response post(@FormParam("text") final String text) {
         final Bout bout = this.bout();
         bout.post(text);
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(this.identity())
+            .entity("")
+            .status(Response.Status.MOVED_PERMANENTLY)
+            .location(this.self(bout))
+            .build();
+    }
+
+    /**
+     * Rename this bout.
+     * @param title New title to set
+     * @return The JAX-RS response
+     */
+    @Path("/r")
+    @POST
+    public Response rename(@FormParam("title") final String title) {
+        final Bout bout = this.bout();
+        bout.rename(title);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

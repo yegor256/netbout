@@ -26,10 +26,11 @@
  */
 package com.netbout.hub.data;
 
+import com.netbout.hub.queue.HelpQueue;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Bout with data.
@@ -40,48 +41,39 @@ import java.util.List;
 public final class BoutData {
 
     /**
-     * The title.
-     */
-    private String title = "";
-
-    /**
      * The number.
      */
-    private Long number;
+    private final Long number;
+
+    /**
+     * The title.
+     */
+    private String title;
 
     /**
      * Collection of participants.
      */
-    private final Collection<ParticipantData> participants =
-        new ArrayList<ParticipantData>();
+    private Collection<ParticipantData> participants;
 
     /**
      * Ordered list of messages.
      */
-    private final List<MessageData> messages = new ArrayList<MessageData>();
+    private List<MessageData> messages;
+
+    /**
+     * Public ctor.
+     * @param num The number
+     */
+    public BoutData(final Long num) {
+        this.number = num;
+    }
 
     /**
      * Get its number.
      * @return The number
      */
     public Long getNumber() {
-        if (this.number == null) {
-            throw new IllegalStateException("#setNumber() was never called");
-        }
         return this.number;
-    }
-
-    /**
-     * Set its number.
-     * @param num The number
-     */
-    public void setNumber(final Long num) {
-        this.number = num;
-        Logger.info(
-            this,
-            "#setNumber('%d'): changed",
-            num
-        );
     }
 
     /**
@@ -89,6 +81,18 @@ public final class BoutData {
      * @return The title
      */
     public String getTitle() {
+        if (this.title == null) {
+            this.title = HelpQueue.make("get-bout-title")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.number)
+                .exec(String.class);
+            Logger.debug(
+                this,
+                "#getTitle(): title '%s' loaded for bout #%d",
+                this.title,
+                this.number
+            );
+        }
         return this.title;
     }
 
@@ -98,10 +102,16 @@ public final class BoutData {
      */
     public void setTitle(final String text) {
         this.title = text;
-        Logger.info(
+        HelpQueue.make("changed-bout-title")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.number)
+            .arg(this.title)
+            .exec();
+        Logger.debug(
             this,
-            "#setTitle('%s'): changed",
-            text
+            "#setTitle('%s'): set for bout #%d",
+            this.title,
+            this.number
         );
     }
 
@@ -110,12 +120,18 @@ public final class BoutData {
      * @param data The participant
      */
     public void addParticipant(final ParticipantData data) {
-        this.participants.add(data);
-        Logger.info(
+        this.getParticipants().add(data);
+        HelpQueue.make("added-bout-participant")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.number)
+            .arg(data.getIdentity())
+            .exec();
+        Logger.debug(
             this,
-            "#addParticipant('%s'): added (%d in total now)",
-            data.getIdentity().name(),
-            this.participants.size()
+            "#addParticipant('%s'): added for bout #%d (%d total)",
+            data.getIdentity(),
+            this.number,
+            this.getParticipants().size()
         );
     }
 
@@ -124,30 +140,76 @@ public final class BoutData {
      * @return The list
      */
     public Collection<ParticipantData> getParticipants() {
-        return this.participants;
-    }
-
-    /**
-     * Get full list of messages.
-     * @param query The search query
-     * @return Messages
-     */
-    public List<MessageData> getMessages(final String query) {
-        return this.messages;
+        synchronized (this) {
+            if (this.participants == null) {
+                this.participants = new CopyOnWriteArrayList<ParticipantData>();
+                final String[] identities = HelpQueue
+                    .make("get-bout-participants")
+                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                    .arg(this.number)
+                    .asDefault(new String[]{})
+                    .exec(String[].class);
+                for (String identity : identities) {
+                    this.participants.add(
+                        new ParticipantData(this.number, identity)
+                    );
+                }
+                Logger.debug(
+                    this,
+                    "#getParticipants(): reloaded %d participants for bout #%d",
+                    this.participants.size(),
+                    this.number
+                );
+            }
+            return this.participants;
+        }
     }
 
     /**
      * Post new message.
-     * @param data The data
+     * @return The data
      */
-    public void addMessage(final MessageData data) {
-        this.messages.add(data);
-        Logger.info(
+    public MessageData addMessage() {
+        final Long num = HelpQueue.make("create-bout-message")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .arg(this.number)
+            .exec(Long.class);
+        final MessageData data = new MessageData(num);
+        this.getMessages().add(data);
+        Logger.debug(
             this,
-            "#addMessage('%s'): added (%d in total now)",
-            data.getText(),
-            this.messages.size()
+            "#addMessage(): new empty message #%d added to bout #%d",
+            data.getNumber(),
+            this.number
         );
+        return data;
+    }
+
+    /**
+     * Get full list of messages.
+     * @return Messages
+     */
+    public List<MessageData> getMessages() {
+        synchronized (this) {
+            if (this.messages == null) {
+                this.messages = new CopyOnWriteArrayList<MessageData>();
+                final Long[] nums = HelpQueue.make("get-bout-messages")
+                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                    .arg(this.number)
+                    .asDefault(new Long[]{})
+                    .exec(Long[].class);
+                for (Long num : nums) {
+                    this.messages.add(new MessageData(num));
+                }
+                Logger.debug(
+                    this,
+                    "#getMessages(): reloaded %d messages for bout #%d",
+                    this.messages.size(),
+                    this.number
+                );
+            }
+            return this.messages;
+        }
     }
 
 }

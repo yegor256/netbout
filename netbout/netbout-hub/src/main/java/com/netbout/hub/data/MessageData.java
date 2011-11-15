@@ -26,7 +26,8 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.spi.Identity;
+import com.netbout.hub.queue.HelpQueue;
+import com.ymock.util.Logger;
 import java.util.Date;
 
 /**
@@ -35,31 +36,144 @@ import java.util.Date;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MessageData {
+public final class MessageData implements Comparable<MessageData> {
 
     /**
-     * The author.
+     * Number of the message.
      */
-    private final Identity identity;
-
-    /**
-     * The text.
-     */
-    private final String text;
+    private final Long number;
 
     /**
      * The date.
      */
-    private final Date date = new Date();
+    private Date date;
+
+    /**
+     * The author.
+     */
+    private String author;
+
+    /**
+     * The text.
+     */
+    private String text;
 
     /**
      * Public ctor.
+     * @param num The number of this message
+     */
+    protected MessageData(final Long num) {
+        this.number = num;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final MessageData data) {
+        return this.getDate().compareTo(data.getDate());
+    }
+
+    /**
+     * Get message number.
+     * @return The number of it
+     */
+    public Long getNumber() {
+        return this.number;
+    }
+
+    /**
+     * Set date of the message.
+     * @param dte The identity
+     */
+    public void setDate(final Date dte) {
+        this.date = dte;
+        HelpQueue.make("changed-message-date")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.number)
+            .arg(this.date)
+            .exec();
+        Logger.debug(
+            this,
+            "#setDate('%s'): set",
+            this.date
+        );
+    }
+
+    /**
+     * Get date of the message.
+     * @return The date
+     */
+    public Date getDate() {
+        if (this.date == null) {
+            this.date = HelpQueue.make("get-message-date")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.number)
+                .exec(Date.class);
+            Logger.debug(
+                this,
+                "#getDate(): date '%s' loaded for msg #%d",
+                this.date,
+                this.number
+            );
+        }
+        return this.date;
+    }
+
+    /**
+     * Set identity.
      * @param idnt The identity
+     */
+    public void setAuthor(final String idnt) {
+        this.author = idnt;
+        HelpQueue.make("changed-message-author")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.number)
+            .arg(this.author)
+            .exec();
+        Logger.debug(
+            this,
+            "#setAuthor('%s'): set",
+            this.author
+        );
+    }
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    public String getAuthor() {
+        if (this.author == null) {
+            this.author = HelpQueue.make("get-message-author")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.number)
+                .exec(String.class);
+            Logger.debug(
+                this,
+                "#getAuthor(): author '%s' loaded for msg #%d",
+                this.author,
+                this.number
+            );
+        }
+        return this.author;
+    }
+
+    /**
+     * Set text.
      * @param txt The text
      */
-    public MessageData(final Identity idnt, final String txt) {
-        this.identity = idnt;
+    public void setText(final String txt) {
         this.text = txt;
+        HelpQueue.make("changed-message-text")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.number)
+            .arg(this.text)
+            .exec();
+        Logger.debug(
+            this,
+            "#setText('%s'): set",
+            this.text
+        );
     }
 
     /**
@@ -67,23 +181,19 @@ public final class MessageData {
      * @return The text
      */
     public String getText() {
+        if (this.text == null) {
+            this.text = HelpQueue.make("get-message-text")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.number)
+                .exec(String.class);
+            Logger.debug(
+                this,
+                "#getText(): text '%s' loaded for msg #%d",
+                this.text,
+                this.number
+            );
+        }
         return this.text;
-    }
-
-    /**
-     * Get identity.
-     * @return The identity
-     */
-    public Identity getIdentity() {
-        return this.identity;
-    }
-
-    /**
-     * Get date.
-     * @return The date
-     */
-    public Date getDate() {
-        return this.date;
     }
 
 }

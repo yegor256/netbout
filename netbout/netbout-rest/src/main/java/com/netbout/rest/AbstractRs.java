@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.netbout.hub.HubEntry;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
+import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
@@ -49,7 +50,7 @@ public abstract class AbstractRs implements Resource {
     /**
      * Entry to work with.
      */
-    private Entry entry = HubEntry.INSTANCE;
+    private Entry entry = new HubEntry();
 
     /**
      * List of known JAX-RS providers.
@@ -97,6 +98,23 @@ public abstract class AbstractRs implements Resource {
             rootLogger.removeHandler(handlers[idx]);
         }
         org.slf4j.bridge.SLF4JBridgeHandler.install();
+    }
+
+    /**
+     * Register basic helper in a hub.
+     */
+    static {
+        Identity persistor;
+        try {
+            persistor = new HubEntry().user("netbout").identity("nb:db");
+        } catch (com.netbout.spi.DuplicateIdentityException ex) {
+            throw new IllegalStateException(ex);
+        }
+        try {
+            persistor.promote(new CpaHelper("com.netbout.db"));
+        } catch (com.netbout.spi.PromotionException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**

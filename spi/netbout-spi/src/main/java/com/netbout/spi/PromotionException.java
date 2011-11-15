@@ -34,7 +34,6 @@ package com.netbout.spi;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see Identity#promote(String)
  */
 public final class PromotionException extends Exception {
 

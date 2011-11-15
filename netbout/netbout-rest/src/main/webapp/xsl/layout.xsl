@@ -47,8 +47,11 @@
             </head>
             <body>
                 <div id="version">
-                    <xsl:text>r.</xsl:text>
+                    <xsl:text>r</xsl:text>
                     <xsl:value-of select="/page/version/revision"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="format-number(/page/@mcs div (1000 * 1000), '0.00')"/>
+                    <xsl:text>s</xsl:text>
                 </div>
                 <div id="bar">
                     <a id="logo">

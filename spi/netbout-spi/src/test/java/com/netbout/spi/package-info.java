@@ -27,43 +27,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
 
 /**
- * Thowable when operation fails because of some problem inside a helper.
+ * SPI, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see Helper#operation(String,Class,Objeсt)
  */
-public final class OperationFailureException extends Exception {
-
-    /**
-     * Public ctor.
-     * @param cause Root cause of the exception
-     */
-    public OperationFailureException(final Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Public ctor.
-     * @param message Root cause of the exception
-     * @param args Arguments for <tt>String.format()</tt>
-     */
-    public OperationFailureException(final String message,
-        final Object... args) {
-        super(String.format(message, args));
-    }
-
-    /**
-     * Public ctor.
-     * @param message Additional message
-     * @param cause Root cause of the exception
-     */
-    public OperationFailureException(final String message,
-        final Throwable cause) {
-        super(message, cause);
-    }
-
-}
+package com.netbout.spi;

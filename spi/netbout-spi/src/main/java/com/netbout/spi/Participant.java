@@ -38,12 +38,6 @@ package com.netbout.spi;
 public interface Participant {
 
     /**
-     * Where is this person a participant.
-     * @return The bout, holder of this participant
-     */
-    Bout bout();
-
-    /**
      * Who is a participant.
      * @return The identity of the participant
      */

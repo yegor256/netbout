@@ -30,7 +30,7 @@
 package com.netbout.spi.stub;
 
 import com.netbout.spi.Helper;
-import com.netbout.spi.OperationFailureException;
+import com.netbout.spi.HelperException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +47,7 @@ final class ChainedHelper implements Helper {
     /**
      * Fallback value.
      */
-    private final Object fallback;
+    private final String fallback;
 
     /**
      * Was it started already?
@@ -63,7 +63,7 @@ final class ChainedHelper implements Helper {
      * Public ctor.
      * @param val The fallback value
      */
-    public ChainedHelper(final Object val) {
+    public ChainedHelper(final String val) {
         this.fallback = val;
     }
 
@@ -92,38 +92,35 @@ final class ChainedHelper implements Helper {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public <T> T execute(final String mnemo, final Class<T> type,
-        final Object... args) throws OperationFailureException {
+    public String execute(final String mnemo, final String... args)
+        throws HelperException {
         final boolean dup = ChainedHelperProvider.INSTANCE.isDuplicate(
             this,
-            this.hash(mnemo, type, args)
+            this.hash(mnemo, args)
         );
         if (dup) {
-            return (T) this.fallback;
+            return this.fallback;
         }
         this.started = true;
         for (Helper helper : this.helpers) {
             if (!helper.supports().contains(mnemo)) {
                 continue;
             }
-            return (T) helper.execute(mnemo, type, args);
+            return helper.execute(mnemo, args);
         }
-        throw new IllegalArgumentException("Operation not supported");
+        throw new HelperException("Operation not supported");
     }
 
     /**
      * Calculate unique hash code of these args.
      * @param mnemo The mnemo
-     * @param type The type
      * @param args Arguments
      * @return The hash (unique string for these three args)
      */
-    private String hash(final String mnemo, final Class type,
-        final Object... args) {
+    private String hash(final String mnemo, final Object... args) {
         return String.format(
-            "%s:%s:%s",
+            "%s:%s",
             mnemo,
-            type.getName(),
             StringUtils.join(args, ":")
         );
     }

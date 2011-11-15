@@ -70,14 +70,6 @@ final class SimpleBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public Identity identity() {
-        return this.identity;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Long number() {
         return this.data.getNumber();
     }
@@ -172,7 +164,7 @@ final class SimpleBout implements Bout {
     @Override
     public Message post(final String text) {
         final MessageData msg = new MessageData(
-            this.identity(),
+            this.identity,
             text
         );
         this.data.addMessage(msg);

@@ -79,9 +79,9 @@ final class SimpleMessage implements Message {
     }
 
     /**
-     * {@inheritDoc}
+     * Get link to bout.
+     * @return The bout
      */
-    @Override
     public Bout bout() {
         return this.bout;
     }
@@ -102,8 +102,8 @@ final class SimpleMessage implements Message {
         try {
             return ChainedHelperProvider.INSTANCE
                 .local(this.bout(), this.text)
-                .execute("pre-render-message", String.class, this);
-        } catch (com.netbout.spi.OperationFailureException ex) {
+                .execute("pre-render-message", this.text);
+        } catch (com.netbout.spi.HelperException ex) {
             throw new IllegalStateException(ex);
         }
     }

@@ -26,10 +26,9 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
+import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
-import com.ymock.util.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -49,19 +48,9 @@ import javax.xml.bind.annotation.XmlType;
 public final class HubParticipant implements Participant {
 
     /**
-     * Holder of this object.
+     * The data.
      */
-    private Bout bout;
-
-    /**
-     * Is it confirmed?
-     */
-    private boolean confirmed;
-
-    /**
-     * The identity.
-     */
-    private Identity identity;
+    private ParticipantData data;
 
     /**
      * Public ctor for JAXB.
@@ -72,23 +61,10 @@ public final class HubParticipant implements Participant {
 
     /**
      * Public ctor.
-     * @param holder Holder of this object
-     * @param idnt Identity
-     * @param aye Is it confirmed
+     * @param dat The data
      */
-    public HubParticipant(final Bout holder, final Identity idnt,
-        final boolean aye) {
-        this.bout = holder;
-        this.identity = idnt;
-        this.confirmed = aye;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout() {
-        return this.bout;
+    public HubParticipant(final ParticipantData dat) {
+        this.data = dat;
     }
 
     /**
@@ -96,7 +72,11 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public Identity identity() {
-        return this.identity;
+        try {
+            return HubIdentity.friend(this.data.getIdentity());
+        } catch (com.netbout.spi.UnknownIdentityException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -113,7 +93,7 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public boolean confirmed() {
-        return this.confirmed;
+        return this.data.isConfirmed();
     }
 
     /**
@@ -130,12 +110,7 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public void confirm(final boolean aye) {
-        this.confirmed = aye;
-        Logger.info(
-            this,
-            "#confirm(%b): done",
-            aye
-        );
+        this.data.setConfirmed(aye);
     }
 
 }

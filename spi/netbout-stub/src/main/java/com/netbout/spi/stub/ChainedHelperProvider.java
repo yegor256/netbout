@@ -99,7 +99,7 @@ final class ChainedHelperProvider {
      * @param fallback Fallback value to return
      * @return The chain to execute an operation
      */
-    public ChainedHelper local(final Bout bout, final Object fallback) {
+    public ChainedHelper local(final Bout bout, final String fallback) {
         final ChainedHelper chain = new ChainedHelper(fallback);
         for (Participant dude : bout.participants()) {
             final Helper helper =

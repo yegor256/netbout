@@ -52,8 +52,23 @@
             <version since="1 Nov 2011">0.9.5</version>
         </dependency>
         <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version since="14 Nov 2011">2.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.ymock</groupId>
             <artifactId>ymock-util</artifactId>
+        </dependency>
+        <dependency>
+            <!-- Base64 codec -->
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version since="8 Nov 2011">1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

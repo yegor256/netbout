@@ -30,17 +30,26 @@
 package com.netbout.spi.cpa;
 
 import com.netbout.spi.Helper;
-import com.netbout.spi.OperationFailureException;
+import com.netbout.spi.HelperException;
 import com.ymock.util.Logger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import org.apache.commons.lang.StringUtils;
 import org.reflections.Reflections;
 
 /**
  * Classpath annotations helper.
+ *
+ * <p>Your classes should be annotated with <tt>&#64;Farm</tt> and
+ * <tt>&#64;Operation</tt> annotations. Every operation should accept one of
+ * following types: {@link Long}, {@link String}, {@link Boolean}.
+ * Every operation should return one of the
+ * following types: <tt>void</tt>, {@link String}, {@link Long},
+ * {@link Boolean}, and an array of {@link Long}. All other types will lead
+ * to runtime exception in {@link #CpaHelper(String)} constructor.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -50,7 +59,7 @@ public final class CpaHelper implements Helper {
     /**
      * All discovered operations.
      */
-    private final Map<String, Target> ops = new HashMap<String, Target>();
+    private final ConcurrentMap<String, HelpTarget> ops;
 
     /**
      * Public ctor.
@@ -58,37 +67,15 @@ public final class CpaHelper implements Helper {
      *  and farms
      */
     public CpaHelper(final String pkg) {
-        final Reflections reflections = new Reflections(pkg);
-        for (Class tfarm : reflections.getTypesAnnotatedWith(Farm.class)) {
-            Logger.info(
-                this,
-                "#CpaHelper(%s): @Farm found at '%s'",
-                pkg,
-                tfarm.getName()
-            );
-            Object farm;
-            try {
-                farm = tfarm.newInstance();
-            } catch (InstantiationException ex) {
-                throw new IllegalArgumentException(ex);
-            } catch (IllegalAccessException ex) {
-                throw new IllegalArgumentException(ex);
-            }
-            for (Method method : tfarm.getDeclaredMethods()) {
-                final Annotation atn = method.getAnnotation(Operation.class);
-                if (atn == null) {
-                    continue;
-                }
-                final String mnemo = ((Operation) atn).value();
-                this.ops.put(mnemo, new Target(farm, method));
-                Logger.info(
-                    this,
-                    "#CpaHelper(%s): @Operation('%s') found",
-                    pkg,
-                    mnemo
-                );
-            }
-        }
+        this.ops = this.discover(pkg);
+    }
+
+    /**
+     * Public ctor.
+     * @param type Use it to get name of package
+     */
+    public CpaHelper(final Class type) {
+        this(type.getPackage().getName());
     }
 
     /**
@@ -103,60 +90,76 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public <T> T execute(final String mnemo, final Class<T> type,
-        final Object... args) throws OperationFailureException {
+    public String execute(final String mnemo, final String... args)
+        throws HelperException {
         if (!this.ops.containsKey(mnemo)) {
-            throw new IllegalArgumentException("Operation not supported");
+            throw new HelperException("Operation not supported");
         }
-        final Object result = this.ops.get(mnemo).execute(args);
-        Logger.info(
+        final long start = System.currentTimeMillis();
+        final String result = this.ops.get(mnemo).execute(args);
+        Logger.debug(
             this,
-            "#execute(%s, %s, %d args): done with %s as a result",
+            "#execute('%s', '%s'): done with '%s' in %.2fms",
             mnemo,
-            type.getName(),
-            args.length,
-            result.getClass().getName()
+            StringUtils.join(args, "', '"),
+            result,
+            (double) (System.currentTimeMillis() - start)
         );
-        return (T) result;
+        return result;
     }
 
     /**
-     * Connection between farm and operation.
+     * Discover all targets and return them.
+     * @param pkg Name of package
+     * @return Associative array of discovered targets/operations
      */
-    private static final class Target {
-        /**
-         * The farm.
-         */
-        private final Object farm;
-        /**
-         * The method to call.
-         */
-        private final Method method;
-        /**
-         * Public ctor.
-         * @param frm Farm object
-         * @param mtd Method to call on this farm
-         */
-        public Target(final Object frm, final Method mtd) {
-            this.farm = frm;
-            this.method = mtd;
-        }
-        /**
-         * Execute it with arguments.
-         * @param args Arguments
-         * @return The response
-         * @throws OperationFailureException If some problem inside
-         */
-        public Object execute(final Object[] args)
-            throws OperationFailureException {
+    private ConcurrentMap<String, HelpTarget> discover(final String pkg) {
+        final ConcurrentMap<String, HelpTarget> targets =
+            new ConcurrentHashMap<String, HelpTarget>();
+        final Reflections reflections = new Reflections(pkg);
+        for (Class tfarm : reflections.getTypesAnnotatedWith(Farm.class)) {
+            Logger.info(
+                this,
+                "#discover(%s): @Farm found at '%s'",
+                pkg,
+                tfarm.getName()
+            );
+            Object farm;
             try {
-                return this.method.invoke(this.farm, args);
+                farm = tfarm.newInstance();
+            } catch (InstantiationException ex) {
+                throw new IllegalArgumentException(ex);
             } catch (IllegalAccessException ex) {
-                throw new IllegalStateException(ex);
-            } catch (java.lang.reflect.InvocationTargetException ex) {
-                throw new IllegalStateException(ex);
+                throw new IllegalArgumentException(ex);
             }
+            targets.putAll(this.inFarm(farm));
         }
+        return targets;
+    }
+
+    /**
+     * Discover all methods in the provided farm.
+     * @param farm The object annotated with {@link Farm}
+     * @return Associative array of discovered targets/operations
+     */
+    private ConcurrentMap<String, HelpTarget> inFarm(final Object farm) {
+        final ConcurrentMap<String, HelpTarget> targets =
+            new ConcurrentHashMap<String, HelpTarget>();
+        for (Method method : farm.getClass().getDeclaredMethods()) {
+            final Annotation atn = method.getAnnotation(Operation.class);
+            if (atn == null) {
+                continue;
+            }
+            final String mnemo = ((Operation) atn).value();
+            targets.put(mnemo, new HelpTarget(farm, method));
+            Logger.info(
+                this,
+                "#inFarm(%s): @Operation('%s') found",
+                farm.getClass().getName(),
+                mnemo
+            );
+        }
+        return targets;
     }
 
 }

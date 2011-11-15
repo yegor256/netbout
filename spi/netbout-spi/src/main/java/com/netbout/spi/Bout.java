@@ -41,12 +41,6 @@ import java.util.List;
 public interface Bout {
 
     /**
-     * Who is viewing this bout now.
-     * @return The identity of the viewer
-     */
-    Identity identity();
-
-    /**
      * Get its unique number.
      * @return The number of the bout
      */

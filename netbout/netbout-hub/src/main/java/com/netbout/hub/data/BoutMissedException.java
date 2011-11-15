@@ -23,13 +23,23 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.data;
+
+/**
+ * Bout is not found in storage.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+public final class BoutMissedException extends Exception {
 
-import com.netbout.hub.HubEntry
+    /**
+     * Public ctor.
+     * @param number Number of the bout being missed
+     */
+    public BoutMissedException(final Long number) {
+        super(String.format("Bout #%d not found", number));
+    }
 
-HubEntry.INSTANCE.user('John Doe')
-    .identity('johnny.doe')
-    .setPhoto(new URL('http://www.robert-deniro.com/deniro.jpg'))
+}

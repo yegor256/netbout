@@ -89,6 +89,15 @@ public final class LoginRs extends AbstractRs {
             .status(Response.Status.TEMPORARY_REDIRECT)
             // @checkstyle MultipleStringLiterals (1 line)
             .location(UriBuilder.fromPath("/").build())
+            .header(
+                "Set-Cookie",
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "netbout=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
+                    this.uriInfo().getBaseUri().getHost(),
+                    this.httpServletRequest().getContextPath()
+                )
+            )
             .build();
     }
 
@@ -127,7 +136,12 @@ public final class LoginRs extends AbstractRs {
         final String token = this.token(code);
         final com.restfb.types.User fbuser = this.fbUser(token);
         final User user = this.entry().user(fbuser.getId());
-        final Identity identity = user.identity(fbuser.getName());
+        Identity identity;
+        try {
+            identity = user.identity(fbuser.getName());
+        } catch (com.netbout.spi.DuplicateIdentityException ex) {
+            throw new IOException(ex);
+        }
         identity.setPhoto(
             UriBuilder
                 .fromPath("https://graph.facebook.com/{id}/picture")

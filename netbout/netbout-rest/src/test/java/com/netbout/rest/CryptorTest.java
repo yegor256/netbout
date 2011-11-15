@@ -47,14 +47,16 @@ public final class CryptorTest {
      */
     @Test
     public void testEncryptionDecryption() throws Exception {
-        final String name = "\u041F\u0435\u0442\u0440 I";
+        final String uname = "Alex Doe";
+        final String iname = "\u041F\u0435\u0442\u0440 I";
         final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn(name).when(identity).name();
+        Mockito.doReturn(iname).when(identity).name();
         final User user = Mockito.mock(User.class);
         Mockito.doReturn(user).when(identity).user();
-        Mockito.doReturn("Alex Doe").when(user).name();
+        Mockito.doReturn(uname).when(user).name();
         final Entry entry = Mockito.mock(Entry.class);
-        Mockito.doReturn(identity).when(entry).identity(name);
+        Mockito.doReturn(user).when(entry).user(uname);
+        Mockito.doReturn(identity).when(user).identity(iname);
         final String hash = new Cryptor(entry).encrypt(identity);
         MatcherAssert.assertThat(
             hash.matches("[\\w=\\+\\./]+"),

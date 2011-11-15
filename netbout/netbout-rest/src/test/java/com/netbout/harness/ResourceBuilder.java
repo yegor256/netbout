@@ -31,6 +31,7 @@ import com.netbout.rest.AbstractRs;
 import com.netbout.rest.Resource;
 import com.rexsl.core.XslResolver;
 import java.net.URI;
+import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -79,8 +80,6 @@ public final class ResourceBuilder {
      * @throws Exception If something is wrong
      */
     public ResourceBuilder() throws Exception {
-        // register this user
-        HubEntry.INSTANCE.user("John Doe").identity("johnny.doe");
         // uriInfo
         final URI home = new URI("http://localhost:99/local");
         Mockito.doReturn(UriBuilder.fromUri(home))
@@ -113,6 +112,9 @@ public final class ResourceBuilder {
     public <T> T build(final Class<? extends Resource> type) throws Exception {
         // @checkstyle IllegalType (1 line)
         final AbstractRs rest = (AbstractRs) type.newInstance();
+        // register this user
+        new HubEntry().user("John Doe").identity("johnny.doe")
+            .setPhoto(new URL("http://localhost/image.png"));
         rest.setUriInfo(this.uriInfo());
         rest.setHttpHeaders(this.httpHeaders());
         rest.setHttpServletRequest(this.httpServletRequest());

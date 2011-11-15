@@ -30,6 +30,8 @@
 package com.netbout.spi.cpa;
 
 import com.netbout.spi.Helper;
+import com.netbout.spi.TypeMapper;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -50,14 +52,34 @@ public final class CpaHelperTest {
         final Helper helper = new CpaHelper(
             this.getClass().getPackage().getName()
         );
-        final String opName = "sample-op";
         MatcherAssert.assertThat(
-            helper.supports(),
-            Matchers.hasItem(opName)
+            helper.supports().size(),
+            Matchers.greaterThan(0)
         );
         MatcherAssert.assertThat(
-            helper.execute(opName, String.class, "alpha-12"),
-            Matchers.equalTo("alpha-XX")
+            helper.execute("comparison", TypeMapper.toText("alpha-12"), "6"),
+            Matchers.equalTo("true")
+        );
+        MatcherAssert.assertThat(
+            helper.execute("empty"),
+            Matchers.equalTo("NULL")
+        );
+        final String text = "some text in quotes";
+        MatcherAssert.assertThat(
+            TypeMapper.toObject(
+                helper.execute("echo", TypeMapper.toText(text)),
+                String.class
+            ),
+            Matchers.equalTo(text)
+        );
+        MatcherAssert.assertThat(
+            helper.execute("list", "4"),
+            Matchers.containsString(",")
+        );
+        MatcherAssert.assertThat(
+            TypeMapper.toObject(helper.execute("texts"), String[].class),
+            // @checkstyle MultipleStringLiterals (1 line)
+            Matchers.hasItemInArray("o n e")
         );
     }
 
@@ -69,11 +91,52 @@ public final class CpaHelperTest {
         /**
          * Sample operation.
          * @param text The text to translate
+         * @param len Length to compare with
          * @return The translated text
          */
-        @Operation("sample-op")
-        public String translate(final String text) {
-            return text.replaceAll("[0-9]", "X");
+        @Operation("comparison")
+        public Boolean longerThan(final String text, final Long len) {
+            return text.length() > len;
+        }
+        /**
+         * Empty operation with no result and no args.
+         */
+        @Operation("empty")
+        public void empty() {
+        }
+        /**
+         * List as output.
+         * @param size Size of the list to return
+         * @return The list just created
+         */
+        @Operation("list")
+        public Long[] list(final Long size) {
+            final Long[] list = new Long[size.intValue()];
+            for (int pos = 0; pos < size; pos += 1) {
+                list[pos] = new Random().nextLong();
+            }
+            return list;
+        }
+        /**
+         * List of texts.
+         * @return The list just created
+         */
+        @Operation("texts")
+        public String[] texts() {
+            final String[] list = new String[2];
+            // @checkstyle MultipleStringLiterals (1 line)
+            list[0] = "o n e";
+            list[1] = "\"two\"";
+            return list;
+        }
+        /**
+         * Return back the same message as being sent.
+         * @param msg The message
+         * @return The same message
+         */
+        @Operation("echo")
+        public String echo(final String msg) {
+            return msg;
         }
     }
 

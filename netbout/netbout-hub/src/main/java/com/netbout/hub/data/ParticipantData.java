@@ -26,7 +26,8 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.spi.Identity;
+import com.netbout.hub.queue.HelpQueue;
+import com.ymock.util.Logger;
 
 /**
  * Bout with data.
@@ -37,39 +38,85 @@ import com.netbout.spi.Identity;
 public final class ParticipantData {
 
     /**
-     * The author.
+     * Number of bout.
      */
-    private final Identity identity;
+    private final Long bout;
+
+    /**
+     * The participant.
+     */
+    private final String identity;
 
     /**
      * Is it confirmed?
      */
-    private boolean confirmed;
+    private Boolean confirmed;
 
     /**
      * Public ctor.
+     * @param num The number
      * @param idnt The identity
-     * @param aye Is it confirmed
      */
-    public ParticipantData(final Identity idnt, final boolean aye) {
+    public ParticipantData(final Long num, final String idnt) {
+        this.bout = num;
         this.identity = idnt;
-        this.confirmed = aye;
     }
 
     /**
-     * Is it confirmed?
-     * @return The flag
+     * Get bout number.
+     * @return The identity
      */
-    public boolean isConfirmed() {
-        return this.confirmed;
+    public Long getBout() {
+        return this.bout;
     }
 
     /**
      * Get identity.
      * @return The identity
      */
-    public Identity getIdentity() {
+    public String getIdentity() {
         return this.identity;
+    }
+
+    /**
+     * Set status.
+     * @param flag The flag
+     */
+    public void setConfirmed(final Boolean flag) {
+        this.confirmed = flag;
+        HelpQueue.make("changed-participant-status")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(this.bout)
+            .arg(this.identity)
+            .arg(this.confirmed)
+            .exec();
+        Logger.debug(
+            this,
+            "#setConfirmed(%b): set",
+            this.confirmed
+        );
+    }
+
+    /**
+     * Is it confirmed?
+     * @return The flag
+     */
+    public Boolean isConfirmed() {
+        if (this.confirmed == null) {
+            this.confirmed = HelpQueue.make("get-participant-status")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.bout)
+                .arg(this.identity)
+                .exec(Boolean.class);
+            Logger.debug(
+                this,
+                "#isConfirmed(): status loaded as %b for dude '%s' in bout #%d",
+                this.confirmed,
+                this.identity,
+                this.bout
+            );
+        }
+        return this.confirmed;
     }
 
 }

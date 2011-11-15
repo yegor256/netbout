@@ -29,15 +29,22 @@ package com.netbout.hub;
 import com.netbout.hub.data.BoutData;
 import com.netbout.hub.data.ParticipantData;
 import com.netbout.hub.data.Storage;
+import com.netbout.hub.queue.HelpQueue;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -50,6 +57,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (300 lines)
  */
 @XmlRootElement(name = "identity")
 @XmlType(name = "identity")
@@ -58,9 +66,10 @@ import javax.xml.bind.annotation.XmlType;
 public final class HubIdentity implements Identity {
 
     /**
-     * The user, holder of this identity.
+     * All identities known for us at the moment, and their objects.
      */
-    private final HubUser user;
+    private static final Map<String, HubIdentity> ALL =
+        new ConcurrentHashMap<String, HubIdentity>();
 
     /**
      * The name.
@@ -68,14 +77,19 @@ public final class HubIdentity implements Identity {
     private final String name;
 
     /**
+     * Name of the user.
+     */
+    private final User user;
+
+    /**
      * The photo.
      */
     private URL photo;
 
     /**
-     * The helper, if exists.
+     * List of bouts where I'm a participant.
      */
-    private Helper helper;
+    private final Set<Long> bouts = new CopyOnWriteArraySet<Long>();
 
     /**
      * Public ctor for JAXB.
@@ -86,13 +100,23 @@ public final class HubIdentity implements Identity {
 
     /**
      * Public ctor.
-     * @param usr The user of this identity
      * @param nam The identity's name
+     * @param usr The user
      * @see HubUser#identity(String)
      */
-    public HubIdentity(final HubUser usr, final String nam) {
-        this.user = usr;
+    public HubIdentity(final String nam, final User usr) {
         this.name = nam;
+        this.user = usr;
+    }
+
+    /**
+     * Public ctor, when user is not known.
+     * @param nam The identity's name
+     * @see HubUser#make(String)
+     */
+    public HubIdentity(final String nam) {
+        this.name = nam;
+        this.user = null;
     }
 
     /**
@@ -100,6 +124,14 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public User user() {
+        if (this.user == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "User is unknow for identity '%s'",
+                    this.name
+                )
+            );
+        }
         return this.user;
     }
 
@@ -112,14 +144,17 @@ public final class HubIdentity implements Identity {
         BoutData data;
         try {
             data = Storage.INSTANCE.find(num);
-        } catch (BoutNotFoundException ex) {
+        } catch (com.netbout.hub.data.BoutMissedException ex) {
             throw new IllegalStateException(ex);
         }
-        data.addParticipant(new ParticipantData(this, true));
-        Logger.info(
+        final ParticipantData dude = new ParticipantData(num, this.name());
+        data.addParticipant(dude);
+        dude.setConfirmed(true);
+        Logger.debug(
             this,
             "#start(): bout started"
         );
+        this.bouts.add(num);
         return new HubBout(this, data);
     }
 
@@ -129,7 +164,20 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Bout bout(final Long number) throws BoutNotFoundException {
-        return new HubBout(this, Storage.INSTANCE.find(number));
+        final HubBout bout;
+        try {
+            bout = new HubBout(this, Storage.INSTANCE.find(number));
+        } catch (com.netbout.hub.data.BoutMissedException ex) {
+            throw new BoutNotFoundException(ex);
+        }
+        if (!bout.isParticipant(this)) {
+            throw new BoutNotFoundException(
+                "'%s' is not a participant in bout #%d",
+                this.name(),
+                bout.number()
+            );
+        }
+        return bout;
     }
 
     /**
@@ -137,11 +185,25 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public List<Bout> inbox(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
-        for (BoutData data : Storage.INSTANCE.inbox(this)) {
-            list.add(new HubBout(this, data));
+        if (this.bouts.isEmpty()) {
+            final Long[] nums = HelpQueue.make("get-bouts-of-identity")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.name)
+                .asDefault(new Long[]{})
+                .exec(Long[].class);
+            for (Long num : nums) {
+                this.bouts.add(num);
+            }
         }
-        Logger.info(
+        final List<Bout> list = new ArrayList<Bout>();
+        for (Long num : this.bouts) {
+            try {
+                list.add(this.bout(num));
+            } catch (com.netbout.spi.BoutNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        Logger.debug(
             this,
             "#inbox('%s'): %d bouts found",
             query,
@@ -172,6 +234,19 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public URL photo() {
+        if (this.photo == null) {
+            try {
+                this.photo = new URL(
+                    HelpQueue.make("get-identity-photo")
+                        .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                        .arg(this.name)
+                        .asDefault("http://img.netbout.com/unknown.png")
+                        .exec(String.class)
+                );
+            } catch (java.net.MalformedURLException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
         return this.photo;
     }
 
@@ -189,29 +264,114 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public void setPhoto(final URL pic) {
-        this.photo = pic;
+        synchronized (this) {
+            this.photo = pic;
+        }
+        HelpQueue.make("changed-identity-photo")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .arg(this.name)
+            .arg(this.photo.toString())
+            .exec();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void promote(final Helper hlp) {
-        this.helper = hlp;
+    public void promote(final Helper helper) {
+        HelpQueue.register(helper);
         Logger.info(
             this,
             "#promote(%s): '%s' promoted",
-            hlp.getClass().getName(),
+            helper.getClass().getName(),
             this.name()
         );
     }
 
     /**
-     * Get helper, if it's set (NULL otherwise).
-     * @return The helper
+     * Notification that I've been invited to the bout.
+     * @param bout The bout
      */
-    public Helper getHelper() {
-        return this.helper;
+    protected void invited(final Bout bout) {
+        this.bouts.add(bout.number());
+    }
+
+    /**
+     * Make new identity or find existing one.
+     * @param label The name of identity
+     * @param usr Name of the user
+     * @return Identity found
+     * @throws DuplicateIdentityException If this identity is taken
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    protected static Identity make(final String label, final User usr)
+        throws DuplicateIdentityException {
+        HubIdentity identity;
+        if (HubIdentity.ALL.containsKey(label)) {
+            identity = HubIdentity.ALL.get(label);
+            if (identity.user != null && !identity.user.equals(usr)) {
+                throw new DuplicateIdentityException(
+                    "Identity '%s' is taken",
+                    label
+                );
+            }
+        } else {
+            identity = new HubIdentity(label, usr);
+            HubIdentity.ALL.put(label, identity);
+            Logger.debug(
+                HubIdentity.class,
+                "#make('%s', '%s'): created (%d total)",
+                label,
+                usr.name(),
+                HubIdentity.ALL.size()
+            );
+        }
+        return identity;
+    }
+
+    /**
+     * Make new identity or find existing one.
+     * @param label The name of identity
+     * @return Identity found
+     */
+    protected static Identity make(final String label) {
+        if (HubIdentity.ALL.containsKey(label)) {
+            return HubIdentity.ALL.get(label);
+        }
+        final HubIdentity identity = new HubIdentity(label);
+        HubIdentity.ALL.put(label, identity);
+        Logger.debug(
+            HubIdentity.class,
+            "#make('%s'): created just by name (%d total)",
+            label,
+            HubIdentity.ALL.size()
+        );
+        return identity;
+    }
+
+    /**
+     * Find identity by name.
+     * @param label The name of identity
+     * @return Identity found
+     * @throws UnknownIdentityException If this identity is not found
+     * @checkstyle RedundantThrows (3 lines)
+     */
+    protected static Identity friend(final String label)
+        throws UnknownIdentityException {
+        if (HubIdentity.ALL.containsKey(label)) {
+            final Identity identity = HubIdentity.ALL.get(label);
+            Logger.debug(
+                HubIdentity.class,
+                "#friend('%s'): found (%d total)",
+                label,
+                HubIdentity.ALL.size()
+            );
+            return identity;
+        }
+        throw new UnknownIdentityException(
+            "friend('%s') found nothing",
+            label
+        );
     }
 
 }

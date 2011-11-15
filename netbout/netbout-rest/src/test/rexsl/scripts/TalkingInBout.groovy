@@ -45,7 +45,7 @@ def r1 = new TestClient(rexsl.home)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
 Assert.assertThat(r1.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-def bout = 2
+def bout = new XmlSlurper().parseText(r1.body).bout.number
 
 def uri = '/' + bout
 def r2 = new TestClient(rexsl.home)

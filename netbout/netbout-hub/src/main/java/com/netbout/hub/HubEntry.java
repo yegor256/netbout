@@ -31,8 +31,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Entry point to Hub.
@@ -43,35 +41,14 @@ import java.util.Collection;
 public final class HubEntry implements Entry {
 
     /**
-     * Static instance.
-     */
-    public static final HubEntry INSTANCE = new HubEntry();
-
-    /**
-     * All users registered in the system.
-     */
-    private final Collection<HubUser> users = new ArrayList<HubUser>();
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public User user(final String name) {
-        for (User existing : this.users) {
-            if (existing.name().equals(name)) {
-                Logger.info(
-                    this,
-                    "#user('%s'): user found",
-                    name
-                );
-                return existing;
-            }
-        }
-        final HubUser user = new HubUser(this, name);
-        this.users.add(user);
-        Logger.info(
+        final User user = new HubUser(name);
+        Logger.debug(
             this,
-            "#user('%s'): new user registered",
+            "#user('%s'): instantiated",
             name
         );
         return user;
@@ -84,17 +61,13 @@ public final class HubEntry implements Entry {
     @Override
     public Identity identity(final String name)
         throws UnknownIdentityException {
-        for (HubUser user : this.users) {
-            if (user.hasIdentity(name)) {
-                Logger.info(
-                    this,
-                    "#identity('%s'): identity found",
-                    name
-                );
-                return user.identity(name);
-            }
-        }
-        throw new UnknownIdentityException("Identity '%s' not found", name);
+        final Identity identity = HubIdentity.friend(name);
+        Logger.debug(
+            this,
+            "#identity('%s'): found",
+            name
+        );
+        return identity;
     }
 
 }

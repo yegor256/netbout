@@ -36,6 +36,8 @@ import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -61,7 +63,7 @@ public final class HubBout implements Bout {
     /**
      * The viewer.
      */
-    private HubIdentity identity;
+    private HubIdentity viewer;
 
     /**
      * The data.
@@ -81,16 +83,8 @@ public final class HubBout implements Bout {
      * @param dat The data
      */
     public HubBout(final HubIdentity idnt, final BoutData dat) {
-        this.identity = idnt;
+        this.viewer = idnt;
         this.data = dat;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity() {
-        return this.identity;
     }
 
     /**
@@ -153,18 +147,17 @@ public final class HubBout implements Bout {
      */
     @Override
     public Participant invite(final Identity friend) {
-        final ParticipantData dude = new ParticipantData(friend, false);
+        final ParticipantData dude =
+            new ParticipantData(this.number(), friend.name());
+        dude.setConfirmed(false);
         this.data.addParticipant(dude);
-        Logger.info(
+        Logger.debug(
             this,
             "#invite('%s'): success",
             friend
         );
-        return new HubParticipant(
-            this,
-            dude.getIdentity(),
-            dude.isConfirmed()
-        );
+        ((HubIdentity) friend).invited(this);
+        return new HubParticipant(dude);
     }
 
     /**
@@ -175,15 +168,9 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantData dude : this.data.getParticipants()) {
-            participants.add(
-                new HubParticipant(
-                    this,
-                    dude.getIdentity(),
-                    dude.isConfirmed()
-                )
-            );
+            participants.add(new HubParticipant(dude));
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#participants(): %d participants found",
             participants.size()
@@ -206,18 +193,19 @@ public final class HubBout implements Bout {
      */
     @Override
     public List<Message> messages(final String query) {
+        final List<MessageData> datas =
+            new ArrayList<MessageData>(this.data.getMessages());
+        Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
-        for (MessageData msg : this.data.getMessages(query)) {
+        for (MessageData msg : datas) {
             messages.add(
                 new HubMessage(
-                    this,
-                    msg.getIdentity(),
-                    msg.getText(),
-                    msg.getDate()
+                    HubIdentity.make(msg.getAuthor()),
+                    msg
                 )
             );
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#messages('%s'): %d messages found",
             query,
@@ -241,22 +229,30 @@ public final class HubBout implements Bout {
      */
     @Override
     public Message post(final String text) {
-        final MessageData msg = new MessageData(
-            this.identity(),
-            text
-        );
-        this.data.addMessage(msg);
-        Logger.info(
+        final MessageData msg = this.data.addMessage();
+        msg.setDate(new Date());
+        msg.setAuthor(this.viewer.name());
+        msg.setText(text);
+        Logger.debug(
             this,
             "#post('%s'): message posted",
             text
         );
-        return new HubMessage(
-            this,
-            msg.getIdentity(),
-            msg.getText(),
-            msg.getDate()
-        );
+        return new HubMessage(this.viewer, msg);
+    }
+
+    /**
+     * This identity is a participant here?
+     * @param identity The identity
+     * @return Is it?
+     */
+    protected boolean isParticipant(final Identity identity) {
+        for (ParticipantData dude : this.data.getParticipants()) {
+            if (dude.getIdentity().equals(identity.name())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

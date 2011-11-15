@@ -55,7 +55,7 @@ div#version {
     top: 0;
     padding: 0.2em 0.5em;
     font-size: 0.8em;
-    background-color: black;
+    background-color: gray;
     color: white;
 }
 
@@ -84,8 +84,7 @@ div#bar {
         }
 
         div#bar div#crumbs img#photo {
-            width: 18px;
-            height: 18px;
+            height: 24px;
             position: relative;
         }
 

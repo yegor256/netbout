@@ -47,14 +47,15 @@ public interface Helper {
 
     /**
      * Send one single query to the helper, in order to get atomic response.
+     *
+     * <p>All arguments will be encoded by {@link TypeMapper}. You should
+     * decode them inside the method.
+     *
      * @param mnemo Name of the request, unique ID of what should be done
-     * @param type What is the type of response we're expecting
-     * @param args Collection of arguments, if necessary
-     * @param <T> Type of response we're expecting
-     * @return The response
-     * @throws OperationFailureException If helper can't perform this request
+     * @param args Collection of arguments, encoded by {@link TypeMapper}
+     * @return The response, ready for decoding by {@link TypeMapper}
+     * @throws HelperException If helper can't perform this request
      */
-    <T> T execute(String mnemo, Class<T> type, Object... args)
-        throws OperationFailureException;
+    String execute(String mnemo, String... args) throws HelperException;
 
 }

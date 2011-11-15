@@ -26,17 +26,14 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.Identity;
+import com.netbout.hub.queue.HelpQueue;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Storage of data.
+ * Storage of data, it's a singleton.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -51,13 +48,14 @@ public final class Storage {
     /**
      * All bouts existing in the system.
      */
-    private final Map<Long, BoutData> bouts = new HashMap<Long, BoutData>();
+    private final Map<Long, BoutData> bouts =
+        new ConcurrentHashMap<Long, BoutData>();
 
     /**
-     * Private ctor.
+     * It's a singleton.
      */
     private Storage() {
-        // empty
+        this.bouts.put(0L, new BoutData(0L));
     }
 
     /**
@@ -65,60 +63,61 @@ public final class Storage {
      * @return It's number (unique)
      */
     public Long create() {
-        Long max = 1L;
-        for (Long num : this.bouts.keySet()) {
-            if (num >= max) {
-                max = num + 1;
-            }
+        BoutData data;
+        synchronized (this.bouts) {
+            final Long number = HelpQueue.make("get-next-bout-number")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .asDefault(Collections.max(this.bouts.keySet()) + 1)
+                .exec(Long.class);
+            data = new BoutData(number);
+            this.bouts.put(data.getNumber(), data);
         }
-        final BoutData data = new BoutData();
-        data.setNumber(max);
-        this.bouts.put(max, data);
-        Logger.info(
-            this,
+        data.setTitle("");
+        HelpQueue.make("started-new-bout")
+            .priority(HelpQueue.Priority.ASAP)
+            .arg(data.getNumber())
+            .exec();
+        Logger.debug(
+            Storage.class,
             "#create(): bout #%d created",
-            max
+            data.getNumber()
         );
-        return max;
+        return data.getNumber();
     }
 
     /**
      * Find and return bout from collection.
-     * @param num Number of the bout
-     * @return The bout found
-     * @throws BoutNotFoundException If this bout is not found
-     * @checkstyle RedundantThrows (4 lines)
+     * @param number Number of the bout
+     * @return The bout found or restored
+     * @throws BoutMissedException If this bout is not found
      */
-    public BoutData find(final Long num) throws BoutNotFoundException {
-        if (!this.bouts.containsKey(num)) {
-            throw new BoutNotFoundException(
-                "Bout %d doesn't exist", num
+    public BoutData find(final Long number) throws BoutMissedException {
+        BoutData data;
+        if (this.bouts.containsKey(number)) {
+            data = this.bouts.get(number);
+            Logger.debug(
+                Storage.class,
+                "#find(#%d): bout data found",
+                number
+            );
+        } else {
+            final Boolean exists = HelpQueue.make("check-bout-existence")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(number)
+                .asDefault(Boolean.FALSE)
+                .exec(Boolean.class);
+            if (!exists) {
+                throw new BoutMissedException(number);
+            }
+            data = new BoutData(number);
+            this.bouts.put(number, data);
+            Logger.debug(
+                Storage.class,
+                "#find(#%d): bout data restored",
+                number
             );
         }
-        Logger.info(
-            this,
-            "#find(#%d): bout found",
-            num
-        );
-        return this.bouts.get(num);
-    }
-
-    /**
-     * Return all bouts in storage.
-     * @param person Who should we get bouts for
-     * @return All bouts that belong to this person
-     */
-    public Collection<BoutData> inbox(final Identity person) {
-        final List<BoutData> list = new ArrayList<BoutData>();
-        for (BoutData data : this.bouts.values()) {
-            for (ParticipantData dude : data.getParticipants()) {
-                if (person.equals(dude.getIdentity())) {
-                    list.add(data);
-                    break;
-                }
-            }
-        }
-        return list;
+        return data;
     }
 
 }

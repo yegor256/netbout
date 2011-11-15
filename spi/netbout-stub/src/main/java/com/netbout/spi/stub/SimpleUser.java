@@ -72,9 +72,9 @@ final class SimpleUser implements User {
     }
 
     /**
-     * {@inheritDoc}
+     * Get link to Entry.
+     * @return The entry
      */
-    @Override
     public Entry entry() {
         return this.entry;
     }

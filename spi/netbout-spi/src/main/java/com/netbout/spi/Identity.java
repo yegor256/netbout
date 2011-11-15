@@ -41,13 +41,12 @@ import java.util.List;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see User#identify(String)
  */
 public interface Identity {
 
     /**
-     * Who is the owner of this identity.
-     * @return The owner
+     * User.
+     * @return The user
      */
     User user();
 

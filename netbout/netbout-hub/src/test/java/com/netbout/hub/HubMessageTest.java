@@ -26,6 +26,10 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -62,6 +66,22 @@ public final class HubMessageTest {
         //     xml,
         //     XmlMatchers.hasXPath("/message/date")
         // );
+    }
+
+    /**
+     * Talking in bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testMessagePosting() throws Exception {
+        final Identity identity = new HubEntry()
+            .user("Mark III").identity("mark");
+        final Bout bout = identity.start();
+        bout.post("hi there!");
+        MatcherAssert.assertThat(
+            bout.messages("").size(),
+            Matchers.equalTo(1)
+        );
     }
 
 }

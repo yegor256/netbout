@@ -26,14 +26,12 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link HubUser}.
@@ -43,21 +41,46 @@ import org.mockito.Mockito;
 public final class HubUserTest {
 
     /**
-     * Identity manipulations.
+     * Name persistence.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testIdentityManipulations() throws Exception {
-        final Entry entry = Mockito.mock(Entry.class);
-        final User user = new HubUser(entry, "John Doe");
+    public void testPersistenceOfUserName() throws Exception {
+        final String name = "Big Lebowski";
+        final User user = new HubEntry().user(name);
+        MatcherAssert.assertThat(
+            new HubEntry().user(name).name(),
+            Matchers.equalTo(name)
+        );
+    }
+
+    /**
+     * Identities should be persistent for a given user.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testPersistenceOfIdentities() throws Exception {
+        final String name = "John Doe";
+        final User user = new HubEntry().user(name);
         final String label = "Johnny";
         final URL photo = new URL("http://img.netbout.com/logo.png");
         final Identity identity = user.identity(label);
         identity.setPhoto(photo);
         MatcherAssert.assertThat(
-            user.identity(label).photo(),
+            new HubEntry().user(name).identity(label).photo(),
             Matchers.equalTo(photo)
         );
+    }
+
+    /**
+     * Duplicate identities should be prohibited.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = com.netbout.spi.DuplicateIdentityException.class)
+    public void testDuplicateIdentityCreation() throws Exception {
+        final String name = "Peter Pen";
+        new HubEntry().user("peter").identity(name);
+        new HubEntry().user("alex").identity(name);
     }
 
 }

@@ -29,7 +29,6 @@
  */
 package com.netbout.foo;
 
-import com.netbout.spi.Message;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
@@ -45,12 +44,11 @@ public final class Translator {
 
     /**
      * Translate message text for specified participant.
-     * @param msg The message to translate
+     * @param text The message to translate
      * @return New text to show
      */
     @Operation("pre-render-message")
-    public String translate(final Message msg) {
-        final String text = msg.text();
+    public String translate(final String text) {
         final String result = text.replace("Hello", "Bonjour");
         Logger.info(
             "#translate(%s): translated to '%s'",

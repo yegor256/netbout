@@ -26,12 +26,10 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Entry;
+import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * User.
@@ -42,29 +40,17 @@ import java.util.Collection;
 public final class HubUser implements User {
 
     /**
-     * The entry.
-     */
-    private final Entry entry;
-
-    /**
-     * The name.
+     * The name of it.
+     * @see #HubUser(String)
      */
     private final String name;
 
     /**
-     * Collection of identities that belong to this user.
-     */
-    private final Collection<HubIdentity> identities =
-        new ArrayList<HubIdentity>();
-
-    /**
      * Public ctor.
-     * @param ent The entry
      * @param nme The name of it
      * @see InMemoryEntry#user(String)
      */
-    public HubUser(final Entry ent, final String nme) {
-        this.entry = ent;
+    public HubUser(final String nme) {
         this.name = nme;
     }
 
@@ -72,8 +58,17 @@ public final class HubUser implements User {
      * {@inheritDoc}
      */
     @Override
-    public Entry entry() {
-        return this.entry;
+    public boolean equals(final Object obj) {
+        return (obj instanceof HubUser)
+            && this.name.equals(((HubUser) obj).name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.name.hashCode();
     }
 
     /**
@@ -86,41 +81,18 @@ public final class HubUser implements User {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity identity(final String label) {
-        for (HubIdentity identity : this.identities) {
-            if (identity.name().equals(label)) {
-                Logger.info(
-                    this,
-                    "#identity('%s'): found",
-                    label
-                );
-                return identity;
-            }
-        }
-        final HubIdentity identity = new HubIdentity(this, label);
-        this.identities.add(identity);
-        Logger.info(
+    public Identity identity(final String label)
+        throws DuplicateIdentityException {
+        final Identity identity = HubIdentity.make(label, this);
+        Logger.debug(
             this,
-            "#identity('%s'): created new",
+            "#identity('%s'): found",
             label
         );
         return identity;
-    }
-
-    /**
-     * User has this identity?
-     * @param label The name of the identity to find
-     * @return It has?
-     */
-    protected boolean hasIdentity(final String label) {
-        for (HubIdentity identity : this.identities) {
-            if (identity.name().equals(label)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

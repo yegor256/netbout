@@ -26,6 +26,12 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.User;
+import java.net.URL;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -56,6 +62,86 @@ public final class HubIdentityTest {
         //     xml,
         //     XmlMatchers.hasXPath("/identity/photo[starts-with(.,'http://')]")
         // );
+    }
+
+    /**
+     * Backlink to user should point into right direction.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testBacklinkToUser() throws Exception {
+        final User user = new HubEntry().user("Chuck Norris");
+        final Identity identity = user.identity("chuck");
+        MatcherAssert.assertThat(
+            identity.user(),
+            Matchers.equalTo(user)
+        );
+    }
+
+    /**
+     * Name is persistent.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testNamePersistence() throws Exception {
+        final User user = new HubEntry().user("Johnny Depp");
+        final String name = "depp";
+        MatcherAssert.assertThat(
+            user.identity(name).name(),
+            Matchers.equalTo(name)
+        );
+    }
+
+    /**
+     * Photo is persistent.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testPhotoPersistence() throws Exception {
+        final User user = new HubEntry().user("Bruce Willis");
+        final String name = "bruce";
+        final URL photo = new URL("http://localhost/photo.png");
+        user.identity(name).setPhoto(photo);
+        MatcherAssert.assertThat(
+            user.identity(name).photo(),
+            Matchers.equalTo(photo)
+        );
+    }
+
+    /**
+     * Manipulate with bouts.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testBoutsManipulations() throws Exception {
+        final Identity identity = new HubEntry().user("Jeffy").identity("je");
+        final Long number = identity.start().number();
+        final Bout bout = identity.bout(number);
+        MatcherAssert.assertThat(
+            identity.inbox("").size(),
+            Matchers.equalTo(1)
+        );
+    }
+
+    /**
+     * Find bout that belongs to someone else.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = com.netbout.spi.BoutNotFoundException.class)
+    public void testFindingOfNotMyBout() throws Exception {
+        final Long num = new HubEntry().user("Victor").identity("vic")
+            .start().number();
+        new HubEntry().user("Michael").identity("mike").bout(num);
+    }
+
+    /**
+     * Find non-existing bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = com.netbout.spi.BoutNotFoundException.class)
+    public void testFindingOfNonExistingBout() throws Exception {
+        // @checkstyle MagicNumber (1 line)
+        new HubEntry().user("Sarah").identity("sarah").bout(3456L);
     }
 
 }
