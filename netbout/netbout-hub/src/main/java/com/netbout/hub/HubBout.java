@@ -151,7 +151,7 @@ public final class HubBout implements Bout {
             new ParticipantData(this.number(), friend.name());
         dude.setConfirmed(false);
         this.data.addParticipant(dude);
-        Logger.info(
+        Logger.debug(
             this,
             "#invite('%s'): success",
             friend
@@ -170,7 +170,7 @@ public final class HubBout implements Bout {
         for (ParticipantData dude : this.data.getParticipants()) {
             participants.add(new HubParticipant(dude));
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#participants(): %d participants found",
             participants.size()
@@ -205,7 +205,7 @@ public final class HubBout implements Bout {
                 )
             );
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#messages('%s'): %d messages found",
             query,
@@ -233,7 +233,7 @@ public final class HubBout implements Bout {
         msg.setDate(new Date());
         msg.setAuthor(this.viewer.name());
         msg.setText(text);
-        Logger.info(
+        Logger.debug(
             this,
             "#post('%s'): message posted",
             text
