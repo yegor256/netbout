@@ -214,7 +214,8 @@ public final class TypeMapper {
      * @return The text
      */
     private static String asText(final Date date) {
-        return ISODateTimeFormat.dateTime().print(date.getTime());
+        return ISODateTimeFormat.dateHourMinuteSecondMillis()
+            .print(date.getTime());
     }
 
     /**
@@ -223,7 +224,9 @@ public final class TypeMapper {
      * @return The date
      */
     private static Date asDate(final String text) {
-        return new Date(ISODateTimeFormat.dateTime().parseMillis(text));
+        return new Date(
+            ISODateTimeFormat.dateHourMinuteSecondMillis().parseMillis(text)
+        );
     }
 
 }

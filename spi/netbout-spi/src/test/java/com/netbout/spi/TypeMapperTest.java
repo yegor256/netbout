@@ -60,9 +60,10 @@ public final class TypeMapperTest {
         triples.add(
             new Triple("YQ==,Yg==", new String[] {"a", "b"}, String[].class)
         );
+        final Date date = new Date();
         triples.add(
             new Triple(
-                "1970-01-01T01:20:34.567+01:00",
+                "1970-01-01T01:20:34.567",
                 // @checkstyle MagicNumber (1 line)
                 new Date(1234567L),
                 Date.class
