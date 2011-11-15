@@ -129,7 +129,7 @@ public final class MessageFarm {
             stmt.setLong(1, number);
             final ResultSet rset = stmt.executeQuery();
             rset.next();
-            date = rset.getDate(1);
+            date = new Date(rset.getDate(1).getTime());
         } finally {
             conn.close();
         }

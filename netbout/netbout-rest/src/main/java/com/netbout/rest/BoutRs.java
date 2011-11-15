@@ -72,6 +72,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .link("post", String.format("/%d/p", this.number))
             .link("invite", String.format("/%d/i", this.number))
+            .link("rename", String.format("/%d/r", this.number))
             .append(this.bout())
             .authenticated(this.identity())
             .build();

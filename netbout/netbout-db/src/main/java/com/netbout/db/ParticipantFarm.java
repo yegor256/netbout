@@ -159,7 +159,14 @@ public final class ParticipantFarm {
             stmt.setString(3, identity);
             final int updated = stmt.executeUpdate();
             if (updated != 1) {
-                throw new SQLException("Participant not found, can't save status");
+                throw new SQLException(
+                    String.format(
+                        "Participant #%d:'%s' not found, can't save status as %b",
+                        bout,
+                        identity,
+                        status
+                    )
+                );
             }
         } finally {
             conn.close();

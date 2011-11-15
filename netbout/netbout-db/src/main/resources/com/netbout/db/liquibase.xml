@@ -61,7 +61,7 @@
             </column>
             <column name="date" type="DATETIME"
                 remarks="When this message was posted (NULL for placeholder not a message)"/>
-            <column name="text" type="VARCHAR(250)"
+            <column name="text" type="CLOB"
                 remarks="Text of the message in UTF-8">
             </column>
             <column name="author" type="VARCHAR(250)"
@@ -83,6 +83,10 @@
                 remarks="Participation was confirmed">
             </column>
         </createTable>
+
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB, DEFAULT CHARSET=UTF8"/>
+        </modifySql>
 
     </changeSet>
 

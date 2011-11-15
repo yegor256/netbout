@@ -94,4 +94,26 @@ public final class BoutFarmTest {
         );
     }
 
+    /**
+     * Check bout existence.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testBoutExistenceChecking() throws Exception {
+        final Long num = this.farm.getNextBoutNumber();
+        this.farm.startedNewBout(num);
+        MatcherAssert.assertThat(
+            this.farm.checkBoutExistence(num),
+            Matchers.equalTo(true)
+        );
+        MatcherAssert.assertThat(
+            this.farm.checkBoutExistence(this.farm.getNextBoutNumber()),
+            Matchers.equalTo(false)
+        );
+        MatcherAssert.assertThat(
+            this.farm.checkBoutExistence(7263L),
+            Matchers.equalTo(false)
+        );
+    }
+
 }

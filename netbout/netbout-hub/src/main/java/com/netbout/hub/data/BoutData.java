@@ -145,7 +145,7 @@ public final class BoutData {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantData>();
                 final String[] identities = HelpQueue
-                    .make("get-bout-participant-identities")
+                    .make("get-bout-participants")
                     .priority(HelpQueue.Priority.SYNCHRONOUSLY)
                     .arg(this.number)
                     .asDefault(new String[]{})

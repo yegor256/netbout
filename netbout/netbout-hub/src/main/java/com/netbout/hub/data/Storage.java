@@ -101,11 +101,12 @@ public final class Storage {
                 number
             );
         } else {
-            final Long exists = HelpQueue.make("check-bout-existence")
+            final Boolean exists = HelpQueue.make("check-bout-existence")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
                 .arg(number)
-                .exec(Long.class);
-            if (exists != number) {
+                .asDefault(Boolean.FALSE)
+                .exec(Boolean.class);
+            if (!exists) {
                 throw new BoutMissedException(number);
             }
             data = new BoutData(number);

@@ -58,7 +58,7 @@ public final class BoutFarm {
         try {
             final Statement stmt = conn.createStatement();
             stmt.execute(
-                "INSERT INTO bout DEFAULT VALUES",
+                "INSERT INTO bout () VALUES ()",
                 Statement.RETURN_GENERATED_KEYS
             );
             final ResultSet rset = stmt.getGeneratedKeys();
@@ -73,6 +73,35 @@ public final class BoutFarm {
             number
         );
         return number;
+    }
+
+    /**
+     * Check bout existence.
+     * @return Next bout number
+     * @return It exists?
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("check-bout-existence")
+    public Boolean checkBoutExistence(final Long number) throws SQLException {
+        final Connection conn = Database.connection();
+        Boolean exists;
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT number FROM bout WHERE number = ? AND title IS NOT NULL"
+            );
+            stmt.setLong(1, number);
+            final ResultSet rset = stmt.executeQuery();
+            exists = rset.next();
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#checkBoutExistence(#%d): retrieved %b",
+            number,
+            exists
+        );
+        return exists;
     }
 
     /**

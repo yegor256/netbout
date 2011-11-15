@@ -98,12 +98,10 @@ public final class MessageData {
      */
     public Date getDate() {
         if (this.date == null) {
-            this.date = new Date(
-                HelpQueue.make("get-message-date")
-                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                    .arg(this.number)
-                    .exec(Long.class)
-            );
+            this.date = HelpQueue.make("get-message-date")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.number)
+                .exec(Date.class);
             Logger.debug(
                 this,
                 "#getDate(): date '%s' loaded for msg #%d",

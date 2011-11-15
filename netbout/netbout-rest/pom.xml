@@ -88,6 +88,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- JDBC connector to MySQL -->
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version since="12 Oct 2010">5.1.17</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <!--
             Javax Servlet API 2.3.
             -->
@@ -279,7 +286,7 @@
                                         <Netbout-FbId>${fb.id}</Netbout-FbId>
                                         <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
                                         <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
-                                        <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}</Netbout-JdbcUrl>
+                                        <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}?autoReconnect=true&amp;sessionVariables=storage_engine=InnoDB</Netbout-JdbcUrl>
                                         <Netbout-JdbcUser>${mysql.user}</Netbout-JdbcUser>
                                         <Netbout-JdbcPassword>${mysql.password}</Netbout-JdbcPassword>
                                     </manifestEntries>

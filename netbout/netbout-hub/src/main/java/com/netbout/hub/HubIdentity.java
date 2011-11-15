@@ -129,8 +129,8 @@ public final class HubIdentity implements Identity {
             throw new IllegalStateException(ex);
         }
         final ParticipantData dude = new ParticipantData(num, this.name());
-        dude.setConfirmed(true);
         data.addParticipant(dude);
+        dude.setConfirmed(true);
         Logger.debug(
             this,
             "#start(): bout started"
@@ -169,6 +169,7 @@ public final class HubIdentity implements Identity {
         if (this.bouts.isEmpty()) {
             final Long[] nums = HelpQueue.make("get-bouts-of-identity")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.name)
                 .asDefault(new Long[]{})
                 .exec(Long[].class);
             for (Long num : nums) {
@@ -176,16 +177,12 @@ public final class HubIdentity implements Identity {
             }
         }
         final List<Bout> list = new ArrayList<Bout>();
-        final List<Long> broken = new ArrayList<Long>();
         for (Long num : this.bouts) {
             try {
                 list.add(this.bout(num));
             } catch (com.netbout.spi.BoutNotFoundException ex) {
-                broken.add(num);
+                throw new IllegalStateException(ex);
             }
-        }
-        for (Long num : broken) {
-            this.bouts.remove(num);
         }
         Logger.debug(
             this,
