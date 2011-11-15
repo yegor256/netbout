@@ -64,12 +64,12 @@ public final class HelpQueueTest {
     public void testTransactionReturningList() throws Exception {
         HelpQueue.register(new CpaHelper(this.getClass()));
         // @checkstyle MagicNumber (1 line)
-        final Integer size = new Random().nextInt(20);
+        final Long size = new Long(new Random().nextInt(20));
         final Long[] list = HelpQueue.make("simple-list")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
             .arg(size)
             .exec(Long[].class);
-        MatcherAssert.assertThat(list.length, Matchers.equalTo(size));
+        MatcherAssert.assertThat(new Long(list.length), Matchers.equalTo(size));
     }
 
     @Farm

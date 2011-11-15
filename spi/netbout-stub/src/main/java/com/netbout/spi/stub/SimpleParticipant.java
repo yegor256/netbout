@@ -71,9 +71,9 @@ final class SimpleParticipant implements Participant {
     }
 
     /**
-     * {@inheritDoc}
+     * Get link to bout.
+     * @return The bout
      */
-    @Override
     public Bout bout() {
         return this.bout;
     }
