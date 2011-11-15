@@ -32,6 +32,8 @@ package com.netbout.spi;
 import java.util.Date;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
@@ -214,8 +216,7 @@ public final class TypeMapper {
      * @return The text
      */
     private static String asText(final Date date) {
-        return ISODateTimeFormat.dateHourMinuteSecondMillis()
-            .print(date.getTime());
+        return TypeMapper.dateFormatter().print(date.getTime());
     }
 
     /**
@@ -224,9 +225,15 @@ public final class TypeMapper {
      * @return The date
      */
     private static Date asDate(final String text) {
-        return new Date(
-            ISODateTimeFormat.dateHourMinuteSecondMillis().parseMillis(text)
-        );
+        return new Date(TypeMapper.dateFormatter().parseMillis(text));
+    }
+
+    /**
+     * Create and return date time formatter.
+     * @return The formatter
+     */
+    private static DateTimeFormatter dateFormatter() {
+        return ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
     }
 
 }

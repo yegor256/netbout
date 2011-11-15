@@ -63,9 +63,9 @@ public final class TypeMapperTest {
         final Date date = new Date();
         triples.add(
             new Triple(
-                "1970-01-01T01:20:34.567",
+                "2009-02-13T23:31:30.123Z",
                 // @checkstyle MagicNumber (1 line)
-                new Date(1234567L),
+                new Date(1234567890123L),
                 Date.class
             )
         );
