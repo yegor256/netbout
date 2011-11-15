@@ -114,7 +114,6 @@ final class ChainedHelper implements Helper {
     /**
      * Calculate unique hash code of these args.
      * @param mnemo The mnemo
-     * @param type The type
      * @param args Arguments
      * @return The hash (unique string for these three args)
      */
