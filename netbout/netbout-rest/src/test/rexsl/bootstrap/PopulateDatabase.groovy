@@ -27,14 +27,22 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+package com.netbout.rest.rexsl
 
 import com.netbout.db.Database
 import com.rexsl.core.Manifests
+import com.ymock.util.Logger
 
-Manifests.inject('Netbout-JdbcDriver', 'com.mysql.jdbc.Driver')
-Manifests.inject('Netbout-JdbcUrl', 'jdbc:mysql://localhost:3306/netbout')
-Manifests.inject('Netbout-JdbcUser', 'netbout')
-Manifests.inject('Netbout-JdbcPassword', 'secret')
+def driver = 'com.mysql.jdbc.Driver'
+def url = 'jdbc:mysql://test-db.netbout.com:3306/netbout-test'
+def user = 'netbout-test'
+def password = 'secret'
+
+Manifests.inject('Netbout-JdbcDriver', driver)
+Manifests.inject('Netbout-JdbcUrl', url)
+Manifests.inject('Netbout-JdbcUser', user)
+Manifests.inject('Netbout-JdbcPassword', password)
+Logger.info(this, 'Test database is ready')
 
 def conn = Database.connection()
 [
