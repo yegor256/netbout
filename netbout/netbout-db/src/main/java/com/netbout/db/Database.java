@@ -102,8 +102,7 @@ public final class Database {
             false,
             true
         );
-        final DataSource source = new PoolingDataSource(factory.getPool());
-        return source;
+        return new PoolingDataSource(factory.getPool());
     }
 
     /**

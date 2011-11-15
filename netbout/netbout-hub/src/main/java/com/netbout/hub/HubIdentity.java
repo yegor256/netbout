@@ -57,6 +57,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (300 lines)
  */
 @XmlRootElement(name = "identity")
 @XmlType(name = "identity")
@@ -332,8 +333,6 @@ public final class HubIdentity implements Identity {
      * Make new identity or find existing one.
      * @param label The name of identity
      * @return Identity found
-     * @throws DuplicateIdentityException If this identity is taken
-     * @checkstyle RedundantThrows (4 lines)
      */
     protected static Identity make(final String label) {
         if (HubIdentity.ALL.containsKey(label)) {

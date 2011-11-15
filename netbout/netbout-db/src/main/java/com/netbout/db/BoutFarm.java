@@ -77,7 +77,7 @@ public final class BoutFarm {
 
     /**
      * Check bout existence.
-     * @return Next bout number
+     * @param number Bout number to check
      * @return It exists?
      * @throws SQLException If some SQL problem inside
      */
@@ -115,9 +115,9 @@ public final class BoutFarm {
     }
 
     /**
-     * Get list of bouts that belong to some identity.
-     * @param identity The identity of bout participant
-     * @return List of numbers
+     * Get list of messages that belong to the specified bout.
+     * @param bout Number of the bout to work with
+     * @return List of message numbers
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-bout-messages")
@@ -126,6 +126,7 @@ public final class BoutFarm {
         final List<Long> numbers = new ArrayList<Long>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
+                // @checkstyle LineLength (1 line)
                 "SELECT number FROM message WHERE bout = ? AND date IS NOT NULL ORDER BY date"
             );
             stmt.setLong(1, bout);
@@ -193,7 +194,12 @@ public final class BoutFarm {
             stmt.setLong(2, number);
             final int updated = stmt.executeUpdate();
             if (updated != 1) {
-                throw new SQLException("Bout not found, title can't be changed");
+                throw new SQLException(
+                    String.format(
+                        "Bout #%d not found, title can't be changed",
+                        number
+                    )
+                );
             }
         } finally {
             conn.close();

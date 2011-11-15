@@ -48,7 +48,7 @@ public final class IdentityFarm {
 
     /**
      * Get list of bouts that belong to some identity.
-     * @param identity The identity of bout participant
+     * @param name The identity of bout participant
      * @return List of bout numbers
      * @throws SQLException If some SQL problem inside
      */
@@ -58,6 +58,7 @@ public final class IdentityFarm {
         final List<Long> numbers = new ArrayList<Long>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
+                // @checkstyle LineLength (1 line)
                 "SELECT number FROM bout JOIN participant ON bout.number = participant.bout WHERE identity = ?"
             );
             stmt.setString(1, name);

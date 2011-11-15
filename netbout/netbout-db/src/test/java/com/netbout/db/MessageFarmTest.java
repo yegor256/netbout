@@ -27,7 +27,6 @@
 package com.netbout.db;
 
 import java.util.Date;
-import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;

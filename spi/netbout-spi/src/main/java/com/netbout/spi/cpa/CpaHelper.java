@@ -97,7 +97,7 @@ public final class CpaHelper implements Helper {
         }
         final long start = System.currentTimeMillis();
         final String result = this.ops.get(mnemo).execute(args);
-        Logger.info(
+        Logger.debug(
             this,
             "#execute('%s', '%s'): done with '%s' in %.2fms",
             mnemo,

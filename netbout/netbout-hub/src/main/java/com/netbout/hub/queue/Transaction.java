@@ -30,7 +30,6 @@ import com.netbout.spi.TypeMapper;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * One transaction.
@@ -49,11 +48,6 @@ public final class Transaction {
      * Priority.
      */
     private HelpQueue.Priority priority;
-
-    /**
-     * Scope (number of bout where it's happening).
-     */
-    private Long bout;
 
     /**
      * Default value.
@@ -85,10 +79,10 @@ public final class Transaction {
 
     /**
      * Set scope, if necessary.
-     * @param bout Number of bout where this transaction is happening
+     * @param number Number of bout where this transaction is happening
      * @return This object
      */
-    public Transaction scope(final Long bout) {
+    public Transaction scope(final Long number) {
         // tbd
         return this;
     }

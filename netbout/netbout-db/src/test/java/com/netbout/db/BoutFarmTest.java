@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -111,7 +112,7 @@ public final class BoutFarmTest {
             Matchers.equalTo(false)
         );
         MatcherAssert.assertThat(
-            this.farm.checkBoutExistence(7263L),
+            this.farm.checkBoutExistence(new Random().nextLong()),
             Matchers.equalTo(false)
         );
     }

@@ -33,7 +33,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +57,7 @@ public final class ParticipantFarm {
         final List<String> names = new ArrayList<String>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
+                // @checkstyle LineLength (1 line)
                 "SELECT identity FROM participant JOIN bout ON bout.number = participant.bout WHERE bout = ?"
             );
             stmt.setLong(1, bout);
@@ -107,7 +107,7 @@ public final class ParticipantFarm {
 
     /**
      * Get participant status.
-     * @param number The number of the bout
+     * @param bout The number of the bout
      * @param identity The participant
      * @return Status of the participant
      * @throws SQLException If some SQL problem inside
@@ -119,6 +119,7 @@ public final class ParticipantFarm {
         Boolean status;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
+                // @checkstyle LineLength (1 line)
                 "SELECT confirmed FROM participant WHERE bout = ? AND identity = ?"
             );
             stmt.setLong(1, bout);
@@ -141,7 +142,7 @@ public final class ParticipantFarm {
 
     /**
      * Changed participant status.
-     * @param number The number of the bout
+     * @param bout The number of the bout
      * @param identity The participant
      * @param status The status to set
      * @throws SQLException If some SQL problem inside
@@ -152,16 +153,18 @@ public final class ParticipantFarm {
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
+                // @checkstyle LineLength (1 line)
                 "UPDATE participant SET confirmed = ? WHERE bout = ? AND identity = ?"
             );
             stmt.setBoolean(1, status);
             stmt.setLong(2, bout);
+            // @checkstyle MagicNumber (1 line)
             stmt.setString(3, identity);
             final int updated = stmt.executeUpdate();
             if (updated != 1) {
                 throw new SQLException(
                     String.format(
-                        "Participant #%d:'%s' not found, can't save status as %b",
+                        "Participant #%d:'%s' not found, can't set status '%b'",
                         bout,
                         identity,
                         status

@@ -43,7 +43,13 @@ public final class HelpQueue {
      * Priority.
      */
     public enum Priority {
+        /**
+         * Run it immediately.
+         */
         SYNCHRONOUSLY,
+        /**
+         * Run it as soon as possible.
+         */
         ASAP
     }
 
@@ -52,6 +58,13 @@ public final class HelpQueue {
      */
     private static final List<Helper> HELPERS =
         new CopyOnWriteArrayList<Helper>();
+
+    /**
+     * It's a utility class.
+     */
+    private HelpQueue() {
+        // empty
+    }
 
     /**
      * Register new helper.

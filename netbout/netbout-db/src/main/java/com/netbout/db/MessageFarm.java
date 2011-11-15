@@ -274,8 +274,7 @@ public final class MessageFarm {
 
     /**
      * Changed message text.
-     * @param bout The bout where it happened
-     * @param date When this message was posted
+     * @param number The bout where it happened
      * @param text The text to set
      * @throws SQLException If some SQL problem inside
      */
