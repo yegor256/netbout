@@ -76,7 +76,7 @@ public final class Storage {
         HelpQueue.make("started-new-bout")
             .priority(HelpQueue.Priority.ASAP)
             .arg(data.getNumber())
-            .exec(Boolean.class);
+            .exec();
         Logger.debug(
             Storage.class,
             "#create(): bout #%d created",

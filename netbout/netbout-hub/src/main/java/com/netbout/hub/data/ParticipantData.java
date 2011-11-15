@@ -89,7 +89,7 @@ public final class ParticipantData {
             .arg(this.bout)
             .arg(this.identity)
             .arg(this.confirmed)
-            .exec(Boolean.class);
+            .exec();
         Logger.debug(
             this,
             "#setConfirmed(%b): set",

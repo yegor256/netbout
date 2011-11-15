@@ -194,16 +194,12 @@ public final class HubBout implements Bout {
     public List<Message> messages(final String query) {
         final List<Message> messages = new ArrayList<Message>();
         for (MessageData msg : this.data.getMessages()) {
-            try {
-                messages.add(
-                    new HubMessage(
-                        HubIdentity.friend(msg.getAuthor()),
-                        msg
-                    )
-                );
-            } catch (com.netbout.spi.UnknownIdentityException ex) {
-                throw new IllegalStateException(ex);
-            }
+            messages.add(
+                new HubMessage(
+                    HubIdentity.make(msg.getAuthor()),
+                    msg
+                )
+            );
         }
         Logger.info(
             this,

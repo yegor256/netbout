@@ -84,7 +84,7 @@ public final class MessageData {
             .priority(HelpQueue.Priority.ASAP)
             .arg(this.number)
             .arg(this.date)
-            .exec(Boolean.class);
+            .exec();
         Logger.debug(
             this,
             "#setDate('%s'): set",
@@ -122,7 +122,7 @@ public final class MessageData {
             .priority(HelpQueue.Priority.ASAP)
             .arg(this.number)
             .arg(this.author)
-            .exec(Boolean.class);
+            .exec();
         Logger.debug(
             this,
             "#setAuthor('%s'): set",
@@ -160,7 +160,7 @@ public final class MessageData {
             .priority(HelpQueue.Priority.ASAP)
             .arg(this.number)
             .arg(this.text)
-            .exec(Boolean.class);
+            .exec();
         Logger.debug(
             this,
             "#setText('%s'): set",

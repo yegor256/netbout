@@ -65,7 +65,7 @@ import javax.xml.bind.annotation.XmlType;
 public final class HubIdentity implements Identity {
 
     /**
-     * All identities known for us at the moment, and their users.
+     * All identities known for us at the moment, and their objects.
      */
     private static final Map<String, HubIdentity> ALL =
         new ConcurrentHashMap<String, HubIdentity>();
@@ -109,10 +109,28 @@ public final class HubIdentity implements Identity {
     }
 
     /**
+     * Public ctor, when user is not known.
+     * @param nam The identity's name
+     * @see HubUser#make(String)
+     */
+    public HubIdentity(final String nam) {
+        this.name = nam;
+        this.user = null;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public User user() {
+        if (this.user == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "User is unknow for identity '%s'",
+                    this.name
+                )
+            );
+        }
         return this.user;
     }
 
@@ -215,6 +233,19 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public URL photo() {
+        if (this.photo == null) {
+            try {
+                this.photo = new URL(
+                    HelpQueue.make("get-identity-photo")
+                        .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                        .arg(this.name)
+                        .asDefault("http://img.netbout.com/unknown.png")
+                        .exec(String.class)
+                );
+            } catch (java.net.MalformedURLException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
         return this.photo;
     }
 
@@ -235,6 +266,11 @@ public final class HubIdentity implements Identity {
         synchronized (this) {
             this.photo = pic;
         }
+        HelpQueue.make("saved-identity-photo")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .arg(this.name)
+            .arg(this.photo.toString())
+            .exec();
     }
 
     /**
@@ -289,6 +325,28 @@ public final class HubIdentity implements Identity {
                 HubIdentity.ALL.size()
             );
         }
+        return identity;
+    }
+
+    /**
+     * Make new identity or find existing one.
+     * @param label The name of identity
+     * @return Identity found
+     * @throws DuplicateIdentityException If this identity is taken
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    protected static Identity make(final String label) {
+        if (HubIdentity.ALL.containsKey(label)) {
+            return HubIdentity.ALL.get(label);
+        }
+        final HubIdentity identity = new HubIdentity(label);
+        HubIdentity.ALL.put(label, identity);
+        Logger.debug(
+            HubIdentity.class,
+            "#make('%s'): created just by name (%d total)",
+            label,
+            HubIdentity.ALL.size()
+        );
         return identity;
     }
 

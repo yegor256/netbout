@@ -107,7 +107,7 @@ public final class BoutData {
             .priority(HelpQueue.Priority.ASAP)
             .arg(this.number)
             .arg(this.title)
-            .exec(Boolean.class);
+            .exec();
         Logger.debug(
             this,
             "#setTitle('%s'): set for bout #%d",
@@ -126,7 +126,7 @@ public final class BoutData {
             .priority(HelpQueue.Priority.ASAP)
             .arg(this.number)
             .arg(data.getIdentity())
-            .exec(Boolean.class);
+            .exec();
         Logger.debug(
             this,
             "#addParticipant('%s'): added for bout #%d (%d total)",

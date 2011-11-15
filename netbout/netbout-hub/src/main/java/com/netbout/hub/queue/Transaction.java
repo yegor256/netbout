@@ -146,6 +146,18 @@ public final class Transaction {
     }
 
     /**
+     * Execute and return nothing.
+     */
+    public void exec() {
+        HelpQueue.execute(this);
+        Logger.debug(
+            Transaction.class,
+            "#exec(%s): done",
+            this.mnemo
+        );
+    }
+
+    /**
      * Get arguments as array.
      * @return The args
      */
