@@ -47,6 +47,37 @@ import java.util.List;
 public final class ParticipantFarm {
 
     /**
+     * Get list of names of bout participants.
+     * @param bout The number of the bout
+     * @return List of names
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("get-bout-participants")
+    public String[] getBoutParticipants(final Long bout) throws SQLException {
+        final Connection conn = Database.connection();
+        final List<String> names = new ArrayList<String>();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT identity FROM participant JOIN bout ON bout.number = participant.bout WHERE bout = ?"
+            );
+            stmt.setLong(1, bout);
+            final ResultSet rset = stmt.executeQuery();
+            while (rset.next()) {
+                names.add(rset.getString(1));
+            }
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#getBoutParticipants('%s'): retrieved %d name(s)",
+            bout,
+            names.size()
+        );
+        return names.toArray(new String[]{});
+    }
+
+    /**
      * Added new participant to the bout.
      * @param bout The bout
      * @param identity The name of the person

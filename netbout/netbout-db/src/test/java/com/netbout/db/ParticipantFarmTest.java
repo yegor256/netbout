@@ -66,15 +66,30 @@ public final class ParticipantFarmTest {
     @Test
     public void testBoutStatusChanging() throws Exception {
         final String identity = "Steve Jobs";
-        this.farm.addedBoutParticipant(bout, identity);
+        this.farm.addedBoutParticipant(this.bout, identity);
         MatcherAssert.assertThat(
-            this.farm.getParticipantStatus(bout, identity),
+            this.farm.getParticipantStatus(this.bout, identity),
             Matchers.equalTo(false)
         );
-        this.farm.changedParticipantStatus(bout, identity, true);
+        this.farm.changedParticipantStatus(this.bout, identity, true);
         MatcherAssert.assertThat(
-            this.farm.getParticipantStatus(bout, identity),
+            this.farm.getParticipantStatus(this.bout, identity),
             Matchers.equalTo(true)
+        );
+    }
+
+    /**
+     * Read all participants of the bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testBoutParticipantsReading() throws Exception {
+        final String identity = "Bill Gates";
+        this.farm.addedBoutParticipant(this.bout, identity);
+        final String[] names = this.farm.getBoutParticipants(this.bout);
+        MatcherAssert.assertThat(
+            names,
+            Matchers.hasItemInArray(identity)
         );
     }
 
