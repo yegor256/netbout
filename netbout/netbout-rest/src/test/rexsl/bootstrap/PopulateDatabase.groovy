@@ -38,7 +38,7 @@ def url = 'jdbc:mysql://test-db.netbout.com:3306/netbout-test'
 def user = 'netbout-test'
 def password = 'secret'
 
-url = 'jdbc:mysql://localhost:3306/netbout'
+//url = 'jdbc:mysql://localhost:3306/netbout'
 
 Manifests.inject('Netbout-JdbcDriver', driver)
 Manifests.inject('Netbout-JdbcUrl', url)
