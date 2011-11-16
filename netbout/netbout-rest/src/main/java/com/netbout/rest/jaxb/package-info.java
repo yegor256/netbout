@@ -24,50 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
-
-import com.netbout.spi.Entry;
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
-import com.netbout.spi.User;
-import com.ymock.util.Logger;
 
 /**
- * Entry point to Hub.
+ * JAXB extensions.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntry implements Entry {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public User user(final String name) {
-        final User user = new HubUser(name);
-        Logger.debug(
-            this,
-            "#user('%s'): instantiated",
-            name
-        );
-        return user;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    @Override
-    public Identity identity(final String name)
-        throws UnknownIdentityException {
-        final Identity identity = HubIdentity.make(name);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            name
-        );
-        return identity;
-    }
-
-}
+package com.netbout.rest.jaxb;

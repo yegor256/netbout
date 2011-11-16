@@ -24,62 +24,28 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.rest;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.User;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 
 /**
- * Test case of {@link HubEntry}.
+ * JAX-RS resource that always throws a runtime exception.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntryTest {
+@Path("/exception")
+public final class ExceptionThrowingRs {
 
     /**
-     * Find user by name and avoid duplicates.
-     * @throws Exception If there is some problem inside
+     * Get bout front page.
+     * @param text The case of exception to set
+     * @return The JAX-RS response
      */
-    @Test
-    public void testUserByNameFinding() throws Exception {
-        final String name = "Chuck Norris";
-        final User user = new HubEntry().user(name);
-        MatcherAssert.assertThat(
-            new HubEntry().user(name),
-            Matchers.equalTo(user)
-        );
-    }
-
-    /**
-     * Find friend's identity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testFriendFinding() throws Exception {
-        final String name = "Big Lebowski";
-        final Identity identity =
-            new HubEntry().user("Jeff Bridges").identity(name);
-        MatcherAssert.assertThat(
-            new HubEntry().identity(name),
-            Matchers.equalTo(identity)
-        );
-    }
-
-    /**
-     * Find friend's identity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testFindingOfMissingFriend() throws Exception {
-        final Identity identity =
-            new HubEntry().identity("somebody unknown before");
-        MatcherAssert.assertThat(
-            identity.photo(),
-            Matchers.notNullValue()
-        );
+    @GET
+    public String throwIt(@QueryParam("text") final String text) {
+        throw new IllegalStateException(text);
     }
 
 }

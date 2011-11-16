@@ -78,6 +78,8 @@ public abstract class AbstractRs implements Resource {
      * Cookie.
      */
     private String cookie;
+    // Uncomment this line if you don't have a cookie saved by your
+    // local browser yet.
     // = "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
 
     /**

@@ -218,12 +218,11 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
-     * Get time of page generation.
+     * Get time of page generation, in nanoseconds.
      * @return Time in nanoseconds
      */
     @XmlAttribute
     public final Long getNano() {
-        // @checkstyle MagicNumber (1 line)
         return System.nanoTime() - this.start;
     }
 

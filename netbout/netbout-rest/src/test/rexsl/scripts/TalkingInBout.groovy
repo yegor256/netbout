@@ -90,7 +90,6 @@ Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
 [
     "/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]",
     '/page/identity/name[.="johnny.doe"]',
-    '/page/bout[@href]',
     '/page/bout/title[.="new interesting discussion..."]',
     '/page/bout/participants/participant',
     '/page/bout/messages/message/text[contains(.,"friends")]',

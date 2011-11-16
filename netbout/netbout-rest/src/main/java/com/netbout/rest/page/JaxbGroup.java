@@ -27,6 +27,7 @@
 package com.netbout.rest.page;
 
 import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,12 +36,15 @@ import javassist.CtClass;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.ClassMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
  * JAXB group of elements.
@@ -87,7 +91,10 @@ public final class JaxbGroup {
     public static Object build(final Collection grp, final String name) {
         synchronized (JaxbGroup.TYPES) {
             if (!JaxbGroup.TYPES.containsKey(name)) {
-                JaxbGroup.TYPES.put(name, JaxbGroup.construct(name));
+                JaxbGroup.TYPES.put(
+                    name,
+                    JaxbGroup.construct(JaxbGroup.types(grp), name)
+                );
             }
             try {
                 return JaxbGroup.TYPES.get(name)
@@ -117,10 +124,12 @@ public final class JaxbGroup {
 
     /**
      * Construct new class.
+     * @param types Types used in the collection
      * @param name Name of root element
      * @return Class just created
      */
-    private static Class construct(final String name) {
+    private static Class construct(final Collection<Class> types,
+        final String name) {
         final ClassPool pool = ClassPool.getDefault();
         try {
             final CtClass ctc = pool.getAndRename(
@@ -132,14 +141,8 @@ public final class JaxbGroup {
                 (AnnotationsAttribute) file.getAttribute(
                     AnnotationsAttribute.visibleTag
                 );
-            final Annotation annotation = attribute.getAnnotation(
-                XmlRootElement.class.getName()
-            );
-            annotation.addMemberValue(
-                "name",
-                new StringMemberValue(name, file.getConstPool())
-            );
-            attribute.addAnnotation(annotation);
+            attribute.addAnnotation(JaxbGroup.xmlRootElement(file, name));
+            attribute.addAnnotation(JaxbGroup.xmlSeeAlso(file, types));
             final Class cls = ctc.toClass();
             Logger.debug(
                 JaxbGroup.class,
@@ -153,6 +156,74 @@ public final class JaxbGroup {
         } catch (javassist.CannotCompileException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * Find all types used in the collection.
+     * @param group The collection
+     * @return List of types used there
+     */
+    private static Collection<Class> types(final Collection group) {
+        final Collection<Class> types = new ArrayList<Class>();
+        for (Object element : group) {
+            types.add(element.getClass());
+        }
+        return types;
+    }
+
+    /**
+     * Create new <tt>XmlRootElement</tt> annotation.
+     * @param file Javassist file to work with
+     * @param name Name of root element
+     * @return The annotation
+     */
+    private static Annotation xmlRootElement(final ClassFile file,
+        final String name) {
+        final AnnotationsAttribute attribute =
+            (AnnotationsAttribute) file.getAttribute(
+                AnnotationsAttribute.visibleTag
+            );
+        final Annotation annotation = attribute.getAnnotation(
+            XmlRootElement.class.getName()
+        );
+        annotation.addMemberValue(
+            "name",
+            new StringMemberValue(name, file.getConstPool())
+        );
+        return annotation;
+    }
+
+    /**
+     * Create new <tt>XmlSeeAlso</tt> annotation.
+     * @param file Javassist file to work with
+     * @param types The class to refer to
+     * @return The annotation
+     */
+    private static Annotation xmlSeeAlso(final ClassFile file,
+        final Collection<Class> types) {
+        final AnnotationsAttribute attribute =
+            (AnnotationsAttribute) file.getAttribute(
+                AnnotationsAttribute.visibleTag
+            );
+        final Annotation annotation = new Annotation(
+            XmlSeeAlso.class.getName(),
+            file.getConstPool()
+        );
+        final ArrayMemberValue member = new ArrayMemberValue(
+            file.getConstPool()
+        );
+        final ClassMemberValue[] values = new ClassMemberValue[types.size()];
+        int pos = 0;
+        for (Class type : types) {
+            values[pos] = new ClassMemberValue(
+                type.getName(),
+                file.getConstPool()
+            );
+            pos += 1;
+        }
+        member.setValue(values);
+        annotation.addMemberValue("value", member);
+        return annotation;
     }
 
 }

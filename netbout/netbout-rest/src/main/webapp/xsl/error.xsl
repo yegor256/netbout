@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -23,51 +24,31 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.hub;
-
-import com.netbout.spi.Entry;
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
-import com.netbout.spi.User;
-import com.ymock.util.Logger;
-
-/**
- * Entry point to Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-public final class HubEntry implements Entry {
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public User user(final String name) {
-        final User user = new HubUser(name);
-        Logger.debug(
-            this,
-            "#user('%s'): instantiated",
-            name
-        );
-        return user;
-    }
+    <xsl:output method="xhtml"/>
 
-    /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    @Override
-    public Identity identity(final String name)
-        throws UnknownIdentityException {
-        final Identity identity = HubIdentity.make(name);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            name
-        );
-        return identity;
-    }
+    <xsl:include href="/xsl/layout.xsl" />
 
-}
+    <xsl:template name="title">
+        <xsl:text>error</xsl:text>
+    </xsl:template>
+
+    <xsl:template name="head">
+    </xsl:template>
+
+    <xsl:template name="content">
+        <p>
+            page not found
+        </p>
+    </xsl:template>
+
+</xsl:stylesheet>

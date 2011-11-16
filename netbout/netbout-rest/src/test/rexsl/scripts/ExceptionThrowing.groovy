@@ -23,51 +23,26 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.hub;
-
-import com.netbout.spi.Entry;
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
-import com.netbout.spi.User;
-import com.ymock.util.Logger;
-
-/**
- * Entry point to Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntry implements Entry {
+package com.netbout.rest.rexsl.scripts
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public User user(final String name) {
-        final User user = new HubUser(name);
-        Logger.debug(
-            this,
-            "#user('%s'): instantiated",
-            name
-        );
-        return user;
-    }
+import com.rexsl.test.TestClient
+//import com.rexsl.test.XhtmlConverter
+//import org.junit.Assert
+//import org.xmlmatchers.XmlMatchers
+//import org.hamcrest.Matchers
+//import org.xmlmatchers.namespace.SimpleNamespaceContext
 
-    /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    @Override
-    public Identity identity(final String name)
-        throws UnknownIdentityException {
-        final Identity identity = HubIdentity.make(name);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            name
-        );
-        return identity;
-    }
-
-}
+new TestClient(rexsl.home).get('/exception?text=hello')
+//Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_INTERNAL_ERROR))
+//Assert.assertThat(
+//    XhtmlConverter.the(r.body),
+//    XmlMatchers.hasXPath(
+//        '//title[contains(.,"error")]',
+//        new SimpleNamespaceContext()
+//        .withBinding('x', 'http://www.w3.org/1999/xhtml')
+//    )
+//)

@@ -38,6 +38,8 @@ def url = 'jdbc:mysql://test-db.netbout.com:3306/netbout-test'
 def user = 'netbout-test'
 def password = 'secret'
 
+url = 'jdbc:mysql://localhost:3306/netbout'
+
 Manifests.inject('Netbout-JdbcDriver', driver)
 Manifests.inject('Netbout-JdbcUrl', url)
 Manifests.inject('Netbout-JdbcUser', user)
@@ -58,10 +60,10 @@ def conn = Database.connection()
     "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 03:18:34', 'j.depp', 'hi all!')",
     "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 04:23:11', 'johnny.doe', 'works for me')",
     "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 05:28:22', 'j.depp', 'most recent message')",
-].each { sql ->
+].each { query ->
     def stmt = conn.createStatement()
-    stmt.execute(sql)
-    Logger.info(this, 'SQL executed: %s', sql)
+    stmt.execute(query)
+    Logger.info(this, 'SQL executed: %s', query)
 }
 conn.close()
-Logger.info(this, 'Test database is ready')
+Logger.info(this, 'Test database is ready at %s', url)

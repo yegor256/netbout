@@ -349,29 +349,4 @@ public final class HubIdentity implements Identity {
         return identity;
     }
 
-    /**
-     * Find identity by name.
-     * @param label The name of identity
-     * @return Identity found
-     * @throws UnknownIdentityException If this identity is not found
-     * @checkstyle RedundantThrows (3 lines)
-     */
-    protected static Identity friend(final String label)
-        throws UnknownIdentityException {
-        if (HubIdentity.ALL.containsKey(label)) {
-            final Identity identity = HubIdentity.ALL.get(label);
-            Logger.debug(
-                HubIdentity.class,
-                "#friend('%s'): found (%d total)",
-                label,
-                HubIdentity.ALL.size()
-            );
-            return identity;
-        }
-        throw new UnknownIdentityException(
-            "friend('%s') found nothing",
-            label
-        );
-    }
-
 }

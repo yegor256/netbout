@@ -72,11 +72,7 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public Identity identity() {
-        try {
-            return HubIdentity.friend(this.data.getIdentity());
-        } catch (com.netbout.spi.UnknownIdentityException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return HubIdentity.make(this.data.getIdentity());
     }
 
     /**
