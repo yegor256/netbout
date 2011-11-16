@@ -49,11 +49,10 @@ public interface Entry {
     User user(String name);
 
     /**
-     * Find an identity by name.
+     * Find an identity by name or create one if it's absent.
      * @param name Unique name of identity
      * @return The identity just found
-     * @throws UnknownIdentityException If this identity doesn't exist
      */
-    Identity identity(String name) throws UnknownIdentityException;
+    Identity identity(String name);
 
 }
