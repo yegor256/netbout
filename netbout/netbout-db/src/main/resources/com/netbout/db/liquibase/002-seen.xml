@@ -48,6 +48,9 @@
                     foreignKeyName="seen2identity" references="identity(name)" />
             </column>
         </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB, DEFAULT CHARSET=UTF8"/>
+        </modifySql>
     </changeSet>
 
 </databaseChangeLog>
