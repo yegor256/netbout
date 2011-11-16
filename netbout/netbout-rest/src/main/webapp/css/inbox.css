@@ -34,7 +34,7 @@ div.bout{
         font-size: 1.2em;
     }
 
-        div.bout a.title.unread{
+        div.bout a.unread{
             font-weight: bold;
         }
 

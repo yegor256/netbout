@@ -29,7 +29,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<page mcs="5500123">
+<page nano="5500123999">
     <version>
         <name>1.0</name>
         <revision>789</revision>
@@ -45,7 +45,8 @@
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
     </identity>
     <bouts>
-        <bout id="5463" href="/xml/bout.xml" unread="yes">
+        <bout href="/xml/bout.xml" seen="3" messages="6">
+            <number>65</number>
             <title>PHP programming in NetBout project</title>
             <participants>
                 <participant>
@@ -58,7 +59,8 @@
                 </participant>
             </participants>
         </bout>
-        <bout id="6363" href="/xml/bout.xml" unread="yes">
+        <bout href="/xml/bout.xml" seen="4" messages="5">
+            <number>876</number>
             <title>some personal issues to discuss urgently</title>
             <participants>
                 <participant>
@@ -75,7 +77,8 @@
                 </participant>
             </participants>
         </bout>
-        <bout id="63775" href="/xml/bout.xml">
+        <bout href="/xml/bout.xml" seen="6" messages="6">
+            <number>6365</number>
             <title>how about joining my team next week?</title>
             <participants>
                 <participant>

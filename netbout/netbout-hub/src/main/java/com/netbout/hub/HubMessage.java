@@ -32,6 +32,7 @@ import com.netbout.spi.Message;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -58,6 +59,11 @@ final class HubMessage implements Message {
     private MessageData data;
 
     /**
+     * The message has been seen by the viewer.
+     */
+    private Boolean seen;
+
+    /**
      * Public ctor for JAXB.
      */
     public HubMessage() {
@@ -80,11 +86,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Identity author() {
-        try {
-            return HubIdentity.friend(this.data.getAuthor());
-        } catch (com.netbout.spi.UnknownIdentityException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return HubIdentity.make(this.data.getAuthor());
     }
 
     /**
@@ -101,6 +103,7 @@ final class HubMessage implements Message {
      */
     @Override
     public String text() {
+        this.data.addSeenBy(this.viewer.name());
         return this.data.getText();
     }
 
@@ -128,6 +131,23 @@ final class HubMessage implements Message {
     @XmlElement
     public Date getDate() {
         return this.date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean seen() {
+        return this.data.isSeenBy(this.viewer.name());
+    }
+
+    /**
+     * JAXB related method.
+     * @return The status of whether this message was seen
+     */
+    @XmlAttribute
+    public Boolean getSeen() {
+        return this.seen();
     }
 
 }

@@ -29,6 +29,8 @@ package com.netbout.hub.data;
 import com.netbout.hub.queue.HelpQueue;
 import com.ymock.util.Logger;
 import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * One message in a bout.
@@ -59,10 +61,17 @@ public final class MessageData implements Comparable<MessageData> {
     private String text;
 
     /**
+     * Who already have seen this message, and who haven't?
+     */
+    private ConcurrentMap<String, Boolean> seenBy =
+        new ConcurrentHashMap<String, Boolean>();
+
+    /**
      * Public ctor.
      * @param num The number of this message
      */
     protected MessageData(final Long num) {
+        assert num != null;
         this.number = num;
     }
 
@@ -133,8 +142,9 @@ public final class MessageData implements Comparable<MessageData> {
             .exec();
         Logger.debug(
             this,
-            "#setAuthor('%s'): set",
-            this.author
+            "#setAuthor('%s'): set for msg #%d",
+            this.author,
+            this.number
         );
     }
 
@@ -171,8 +181,9 @@ public final class MessageData implements Comparable<MessageData> {
             .exec();
         Logger.debug(
             this,
-            "#setText('%s'): set",
-            this.text
+            "#setText('%s'): set for msg #%d",
+            this.text,
+            this.number
         );
     }
 
@@ -194,6 +205,52 @@ public final class MessageData implements Comparable<MessageData> {
             );
         }
         return this.text;
+    }
+
+    /**
+     * Add indentity, who has seen the message.
+     * @param identity The identity
+     */
+    public void addSeenBy(final String identity) {
+        if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
+            HelpQueue.make("message-was-seen")
+                .priority(HelpQueue.Priority.ASAP)
+                .arg(this.number)
+                .arg(identity)
+                .exec();
+            Logger.debug(
+                this,
+                "#addSeenBy('%s'): set for msg #%d",
+                identity,
+                this.number
+            );
+        }
+        this.seenBy.put(identity, true);
+    }
+
+    /**
+     * Was it seen by this identity?
+     * @param identity The identity
+     * @return Was it seen?
+     */
+    public Boolean isSeenBy(final String identity) {
+        if (!this.seenBy.containsKey(identity)) {
+            final Boolean status = HelpQueue.make("was-message-seen")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.number)
+                .arg(identity)
+                .asDefault(Boolean.FALSE)
+                .exec(Boolean.class);
+            this.seenBy.put(identity, status);
+            Logger.debug(
+                this,
+                "#isSeenBy('%s'): %b loaded for msg #%d",
+                identity,
+                status,
+                this.number
+            );
+        }
+        return this.seenBy.get(identity);
     }
 
 }

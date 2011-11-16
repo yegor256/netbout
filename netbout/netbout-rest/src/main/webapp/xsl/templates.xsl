@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -26,39 +27,29 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-package com.netbout.rest.rexsl.scripts
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
+    <xsl:template name="nano">
+        <xsl:param name="nano" as="xs:integer"/>
+        <xsl:choose>
+            <xsl:when test="$nano &gt; 1000 * 1000 * 1000">
+                <xsl:value-of select="format-number($nano div (1000 * 1000 * 1000), '0.000')"/>
+                <xsl:text>s</xsl:text>
+            </xsl:when>
+            <xsl:when test="$nano &gt; 1000 * 1000">
+                <xsl:value-of select="round($nano div (1000 * 1000))"/>
+                <xsl:text>ms</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="format-number($nano div (1000 * 1000), '0.#')"/>
+                <xsl:text>ms</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
-// In this script we are trying to make different hits to the site
-// from anonymous user. All of our hits should lead to /login page.
-
-[
-    '/',
-    '/123',
-    '/g'
-].each { url ->
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get(url)
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-    Assert.assertThat(
-        XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/login.xsl')]")
-    )
-    Assert.assertThat(
-        XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath('/page/facebook[@href]')
-    )
-    Assert.assertThat(
-        XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath("/page/links/link[@name='self']")
-    )
-}
+</xsl:stylesheet>

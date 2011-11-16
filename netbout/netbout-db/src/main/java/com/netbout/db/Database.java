@@ -141,7 +141,7 @@ public final class Database {
                 new ClassLoaderResourceAccessor(),
                 new JdbcConnection(Database.source.getConnection())
             );
-            liquibase.update(1, "test");
+            liquibase.update("netbout");
         } catch (liquibase.exception.LiquibaseException ex) {
             throw new IllegalStateException(ex);
         } catch (SQLException ex) {

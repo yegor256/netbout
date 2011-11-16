@@ -65,6 +65,7 @@ public final class BoutData {
      * @param num The number
      */
     public BoutData(final Long num) {
+        assert num != null;
         this.number = num;
     }
 
@@ -173,6 +174,7 @@ public final class BoutData {
         final Long num = HelpQueue.make("create-bout-message")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
             .arg(this.number)
+            .asDefault(new Long(1L))
             .exec(Long.class);
         final MessageData data = new MessageData(num);
         this.getMessages().add(data);

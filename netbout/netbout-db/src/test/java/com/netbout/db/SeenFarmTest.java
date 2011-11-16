@@ -23,42 +23,48 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.db;
+
+import java.util.Date;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+/**
+ * Test case of {@link SeenFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class SeenFarmTest {
 
-import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
+    /**
+     * Farm to work with.
+     */
+    private final SeenFarm farm = new SeenFarm();
 
-// In this script we are trying to make different hits to the site
-// from anonymous user. All of our hits should lead to /login page.
+    /**
+     * Find bouts of some identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testMessageSeenFlag() throws Exception {
+        final String identity = "Felix";
+        new IdentityFarm().changedIdentityPhoto(identity, "");
+        final Long bout = new BoutFarm().getNextBoutNumber();
+        new BoutFarm().startedNewBout(bout);
+        new ParticipantFarm().addedBoutParticipant(bout, identity);
+        final Long msg = new MessageFarm().createBoutMessage(bout);
+        new MessageFarm().changedMessageDate(msg, new Date());
+        MatcherAssert.assertThat(
+            this.farm.wasMessageSeen(msg, identity),
+            Matchers.equalTo(false)
+        );
+        this.farm.messageWasSeen(msg, identity);
+        MatcherAssert.assertThat(
+            this.farm.wasMessageSeen(msg, identity),
+            Matchers.equalTo(true)
+        );
+    }
 
-[
-    '/',
-    '/123',
-    '/g'
-].each { url ->
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get(url)
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-    Assert.assertThat(
-        XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/login.xsl')]")
-    )
-    Assert.assertThat(
-        XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath('/page/facebook[@href]')
-    )
-    Assert.assertThat(
-        XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath("/page/links/link[@name='self']")
-    )
 }

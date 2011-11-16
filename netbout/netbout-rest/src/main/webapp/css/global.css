@@ -34,6 +34,11 @@ img {
     border: 0;
 }
 
+input,
+textarea {
+    font-size: 1.4em;
+}
+
 ul, ol {
     margin-left: 2em;
 }
@@ -95,11 +100,9 @@ form#box {
 }
 
     form#box input {
-        font-size: 1.4em;
     }
 
     form#box input[type='submit'] {
-        font-size: 1.4em;
     }
 
 /* message to show */

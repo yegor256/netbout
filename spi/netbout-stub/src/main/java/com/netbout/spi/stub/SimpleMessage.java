@@ -98,6 +98,14 @@ final class SimpleMessage implements Message {
      * {@inheritDoc}
      */
     @Override
+    public Boolean seen() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String text() {
         try {
             return ChainedHelperProvider.INSTANCE

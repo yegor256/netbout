@@ -57,4 +57,10 @@ public interface Message {
      */
     Date date();
 
+    /**
+     * This message has been already seen by the viewer?
+     * @return Did he see it or not?
+     */
+    Boolean seen();
+
 }

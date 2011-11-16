@@ -27,6 +27,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+package com.netbout.rest.rexsl.xhtml
 
 import static org.xmlmatchers.XmlMatchers.hasXPath
 import com.rexsl.test.XhtmlConverter
@@ -35,7 +36,7 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext
 
 [
     '//x:html',
-    '//x:div[@id="version" and contains(.,"r9988") and contains(.,"0.00s")]',
+    '//x:div[@id="version" and contains(.,"r9988") and contains(.,"0.3ms")]',
 ].each { xpath ->
     Assert.assertThat(
         XhtmlConverter.the(rexsl.document),

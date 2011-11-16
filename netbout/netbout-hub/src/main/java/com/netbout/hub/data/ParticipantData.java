@@ -58,7 +58,9 @@ public final class ParticipantData {
      * @param idnt The identity
      */
     public ParticipantData(final Long num, final String idnt) {
+        assert num != null;
         this.bout = num;
+        assert idnt != null;
         this.identity = idnt;
     }
 

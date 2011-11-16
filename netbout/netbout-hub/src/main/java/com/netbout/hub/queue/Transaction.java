@@ -30,6 +30,7 @@ import com.netbout.spi.TypeMapper;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * One transaction.
@@ -131,10 +132,11 @@ public final class Transaction {
         }
         Logger.debug(
             Transaction.class,
-            "#exec(%s, %s): returned '%s'",
+            "#exec(%s, %s): returned '%s' for [%s]",
             this.mnemo,
             type.getName(),
-            output
+            output,
+            this.argsAsText()
         );
         return (T) result;
     }
@@ -146,8 +148,9 @@ public final class Transaction {
         HelpQueue.execute(this);
         Logger.debug(
             Transaction.class,
-            "#exec(%s): done",
-            this.mnemo
+            "#exec(%s): done for [%s]",
+            this.mnemo,
+            this.argsAsText()
         );
     }
 
@@ -173,6 +176,17 @@ public final class Transaction {
      */
     protected String getMnemo() {
         return this.mnemo;
+    }
+
+    /**
+     * Arguments as text, for logging.
+     * @return The text
+     */
+    private String argsAsText() {
+        return String.format(
+            "'%s'",
+            StringUtils.join(this.args, "', '")
+        );
     }
 
 }
