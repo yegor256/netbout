@@ -27,10 +27,8 @@
 package com.netbout.hub;
 
 import com.netbout.hub.data.MessageData;
-import com.netbout.hub.queue.HelpQueue;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.ymock.util.Logger;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -63,7 +61,7 @@ final class HubMessage implements Message {
     /**
      * The message has been seen by the viewer.
      */
-    private Boolean seen = null;
+    private Boolean seen;
 
     /**
      * Public ctor for JAXB.

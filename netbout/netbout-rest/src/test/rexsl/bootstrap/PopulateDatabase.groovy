@@ -27,7 +27,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl
+package com.netbout.rest.rexsl.bootstrap
 
 import com.netbout.db.Database
 import com.rexsl.core.Manifests

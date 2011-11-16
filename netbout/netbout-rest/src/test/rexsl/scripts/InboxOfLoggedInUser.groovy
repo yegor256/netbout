@@ -27,6 +27,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+package com.netbout.rest.rexsl.scripts
 
 import com.rexsl.test.TestClient
 import com.rexsl.test.XhtmlConverter

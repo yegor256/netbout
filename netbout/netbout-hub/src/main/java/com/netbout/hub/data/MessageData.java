@@ -230,7 +230,7 @@ public final class MessageData implements Comparable<MessageData> {
 
     /**
      * Was it seen by this identity?
-     * @param name The identity
+     * @param identity The identity
      * @return Was it seen?
      */
     public Boolean isSeenBy(final String identity) {

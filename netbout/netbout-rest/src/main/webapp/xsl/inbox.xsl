@@ -39,10 +39,17 @@
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
 
-    <xsl:template name="title">
-        <xsl:text>inbox (</xsl:text>
+    <xsl:variable name="unread">
         <xsl:value-of select="count(/page/bouts/bout[@seen &lt; @messages])"/>
-        <xsl:text>)</xsl:text>
+    </xsl:variable>
+
+    <xsl:template name="title">
+        <xsl:text>inbox</xsl:text>
+        <xsl:if test="$unread &gt; 0">
+            <xsl:text> (</xsl:text>
+            <xsl:value-of select="$unread"/>
+            <xsl:text>)</xsl:text>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template name="head">
