@@ -27,11 +27,14 @@
 package com.netbout.hub;
 
 import com.netbout.hub.data.MessageData;
+import com.netbout.hub.queue.HelpQueue;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.ymock.util.Logger;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -56,6 +59,11 @@ final class HubMessage implements Message {
      * The data.
      */
     private MessageData data;
+
+    /**
+     * The message has been seen by the viewer.
+     */
+    private Boolean seen = null;
 
     /**
      * Public ctor for JAXB.
@@ -101,6 +109,7 @@ final class HubMessage implements Message {
      */
     @Override
     public String text() {
+        this.data.addSeenBy(this.viewer.name());
         return this.data.getText();
     }
 
@@ -128,6 +137,23 @@ final class HubMessage implements Message {
     @XmlElement
     public Date getDate() {
         return this.date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean seen() {
+        return this.data.isSeenBy(this.viewer.name());
+    }
+
+    /**
+     * JAXB related method.
+     * @return The status of whether this message was seen
+     */
+    @XmlAttribute
+    public Boolean getSeen() {
+        return this.seen();
     }
 
 }

@@ -92,6 +92,7 @@ public final class Storage {
      * @throws BoutMissedException If this bout is not found
      */
     public BoutData find(final Long number) throws BoutMissedException {
+        assert number != null;
         BoutData data;
         if (this.bouts.containsKey(number)) {
             data = this.bouts.get(number);

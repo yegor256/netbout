@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -81,6 +82,34 @@ public final class HubMessageTest {
         MatcherAssert.assertThat(
             bout.messages("").size(),
             Matchers.equalTo(1)
+        );
+    }
+
+    /**
+     * Message should change its "SEEN" status automatically.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testMessageSeenStatus() throws Exception {
+        final Identity writer = new HubEntry().user("Emilio").identity("emi");
+        final Identity reader = new HubEntry().user("Doug").identity("doug");
+        final Bout wbout = writer.start();
+        final Message wmessage = wbout.post("simple text, why not?");
+        MatcherAssert.assertThat(
+            wmessage.seen(),
+            Matchers.equalTo(Boolean.TRUE)
+        );
+        wbout.invite(reader);
+        final Bout rbout = reader.bout(wbout.number());
+        final Message rmessage = rbout.messages("").get(0);
+        MatcherAssert.assertThat(
+            rmessage.seen(),
+            Matchers.equalTo(Boolean.FALSE)
+        );
+        rmessage.text();
+        MatcherAssert.assertThat(
+            rmessage.seen(),
+            Matchers.equalTo(Boolean.TRUE)
         );
     }
 

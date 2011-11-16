@@ -149,8 +149,8 @@ public final class HubBout implements Bout {
     public Participant invite(final Identity friend) {
         final ParticipantData dude =
             new ParticipantData(this.number(), friend.name());
-        dude.setConfirmed(false);
         this.data.addParticipant(dude);
+        dude.setConfirmed(false);
         Logger.debug(
             this,
             "#invite('%s'): success",
@@ -198,12 +198,7 @@ public final class HubBout implements Bout {
         Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
         for (MessageData msg : datas) {
-            messages.add(
-                new HubMessage(
-                    HubIdentity.make(msg.getAuthor()),
-                    msg
-                )
-            );
+            messages.add(new HubMessage(this.viewer, msg));
         }
         Logger.debug(
             this,
@@ -238,7 +233,33 @@ public final class HubBout implements Bout {
             "#post('%s'): message posted",
             text
         );
-        return new HubMessage(this.viewer, msg);
+        final Message message = new HubMessage(this.viewer, msg);
+        message.text();
+        return message;
+    }
+
+    /**
+     * How many messages are there?
+     * @return Total number of messages
+     */
+    @XmlAttribute(name = "messages")
+    public Integer getTotalNumberOfMessages() {
+        return this.messages("").size();
+    }
+
+    /**
+     * How many seen messages are there?
+     * @return Total number of messages which were already seen
+     */
+    @XmlAttribute(name = "seen")
+    public Integer getTotalNumberOfSeenMessages() {
+        Integer count = 0;
+        for (Message msg : this.messages("")) {
+            if (msg.seen()) {
+                count += 1;
+            }
+        }
+        return count;
     }
 
     /**
