@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -27,46 +26,30 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<rom>
-    <configuration>
-        <sources>
-            <directory>${rempl.dir}</directory>
-        </sources>
-        <pdd>
-            <include>*.java,*.xml,*.properties,*.html</include>
-        </pdd>
-        <its>
-            <bridge>com.rempl.readers.its.trac.XmlRpcBridge</bridge>
-            <issueUrlBuilder>com.rempl.readers.its.trac.TracIssueUrlBuilder</issueUrlBuilder>
-            <codeUrlBuilder>com.rempl.readers.its.trac.TracCodeUrlBuilder</codeUrlBuilder>
-            <params>
-                <url>http://trac.fazend.com/netbout/</url>
-                <repoPrefix>trunk/netbout</repoPrefix>
-                <user>${trac.user}</user>
-                <password>${trac.password}</password>
-            </params>
-        </its>
-    </configuration>
-    <readers>
-        <reader>
-            <groupId>com.rempl.readers</groupId>
-            <artifactId>reader-pdd</artifactId>
-            <version>1.1.3</version>
-        </reader>
-    </readers>
-    <reporters>
-        <reporter>
-            <groupId>com.rempl.reporters</groupId>
-            <artifactId>reporter-pdd</artifactId>
-            <version>1.1.3</version>
-        </reporter>
-    </reporters>
-    <dependencies>
-        <dependency>
-            <groupId>com.rempl.readers.its</groupId>
-            <artifactId>bridge-trac</artifactId>
-            <version>1.1.3</version>
-        </dependency>
-    </dependencies>
-</rom>
+ */
+package com.netbout.rest.rexsl.scripts
+
+import com.rexsl.test.TestClient
+//import com.rexsl.test.XhtmlConverter
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+//import org.junit.Assert
+//import org.xmlmatchers.XmlMatchers
+//import org.hamcrest.Matchers
+
+// In this script we are trying to make different hits to the
+// pages that definitely don't exist in the system. All of them
+// should lead to 404 HTTP code
+
+[
+    '/some-strange-name',
+].each { url ->
+    new TestClient(rexsl.home)
+        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .get(url)
+//    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_NOT_FOUND))
+//    Assert.assertThat(
+//        XhtmlConverter.the(r.body),
+//        XmlMatchers.hasXPath("/page/links/link[@name='self']")
+//    )
+}

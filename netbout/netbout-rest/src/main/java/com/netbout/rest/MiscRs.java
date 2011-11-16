@@ -24,62 +24,34 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.rest;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.User;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.rest.page.PageBuilder;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 /**
- * Test case of {@link HubEntry}.
+ * Miscellaneous pages.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntryTest {
+@Path("/m")
+public final class MiscRs extends AbstractRs {
 
     /**
-     * Find user by name and avoid duplicates.
-     * @throws Exception If there is some problem inside
+     * Get bout front page.
+     * @return The JAX-RS response
      */
-    @Test
-    public void testUserByNameFinding() throws Exception {
-        final String name = "Chuck Norris";
-        final User user = new HubEntry().user(name);
-        MatcherAssert.assertThat(
-            new HubEntry().user(name),
-            Matchers.equalTo(user)
-        );
+    @GET
+    @Path("/404")
+    public Response notFoundPage() {
+        return new PageBuilder()
+            .stylesheet("error")
+            .build(AbstractPage.class)
+            .init(this)
+            .anonymous()
+            .build();
     }
-
-    /**
-     * Find friend's identity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testFriendFinding() throws Exception {
-        final String name = "Big Lebowski";
-        final Identity identity =
-            new HubEntry().user("Jeff Bridges").identity(name);
-        MatcherAssert.assertThat(
-            new HubEntry().identity(name),
-            Matchers.equalTo(identity)
-        );
-    }
-
-    /**
-     * Find friend's identity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testFindingOfMissingFriend() throws Exception {
-        final Identity identity =
-            new HubEntry().identity("somebody unknown before");
-        MatcherAssert.assertThat(
-            identity.photo(),
-            Matchers.notNullValue()
-        );
-    }
-
 }

@@ -28,45 +28,27 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<rom>
-    <configuration>
-        <sources>
-            <directory>${rempl.dir}</directory>
-        </sources>
-        <pdd>
-            <include>*.java,*.xml,*.properties,*.html</include>
-        </pdd>
-        <its>
-            <bridge>com.rempl.readers.its.trac.XmlRpcBridge</bridge>
-            <issueUrlBuilder>com.rempl.readers.its.trac.TracIssueUrlBuilder</issueUrlBuilder>
-            <codeUrlBuilder>com.rempl.readers.its.trac.TracCodeUrlBuilder</codeUrlBuilder>
-            <params>
-                <url>http://trac.fazend.com/netbout/</url>
-                <repoPrefix>trunk/netbout</repoPrefix>
-                <user>${trac.user}</user>
-                <password>${trac.password}</password>
-            </params>
-        </its>
-    </configuration>
-    <readers>
-        <reader>
-            <groupId>com.rempl.readers</groupId>
-            <artifactId>reader-pdd</artifactId>
-            <version>1.1.3</version>
-        </reader>
-    </readers>
-    <reporters>
-        <reporter>
-            <groupId>com.rempl.reporters</groupId>
-            <artifactId>reporter-pdd</artifactId>
-            <version>1.1.3</version>
-        </reporter>
-    </reporters>
-    <dependencies>
-        <dependency>
-            <groupId>com.rempl.readers.its</groupId>
-            <artifactId>bridge-trac</artifactId>
-            <version>1.1.3</version>
-        </dependency>
-    </dependencies>
-</rom>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
+
+    <xsl:output method="xhtml"/>
+
+    <xsl:include href="/xsl/layout.xsl" />
+
+    <xsl:template name="title">
+        <xsl:text>error</xsl:text>
+    </xsl:template>
+
+    <xsl:template name="head">
+    </xsl:template>
+
+    <xsl:template name="content">
+        <p>
+            page not found
+        </p>
+    </xsl:template>
+
+</xsl:stylesheet>

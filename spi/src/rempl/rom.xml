@@ -34,7 +34,7 @@
 <rom>
     <configuration>
         <sources>
-            <directory>.</directory>
+            <directory>${rempl.dir}</directory>
         </sources>
         <pdd>
             <include>*.java,*.xml,*.properties,*.html</include>

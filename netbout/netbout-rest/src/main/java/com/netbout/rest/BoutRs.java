@@ -127,20 +127,7 @@ public final class BoutRs extends AbstractRs {
     @POST
     public Response invite(@FormParam("name") final String name) {
         final Bout bout = this.bout();
-        Identity friend;
-        try {
-            friend = this.entry().identity(name);
-        } catch (com.netbout.spi.UnknownIdentityException ex) {
-            throw new ForwardException(
-                this,
-                this.self(bout),
-                String.format(
-                    "Invitee '%s' not found",
-                    name
-                )
-            );
-        }
-        bout.invite(friend);
+        bout.invite(this.entry().identity(name));
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

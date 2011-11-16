@@ -28,7 +28,6 @@ package com.netbout.hub;
 
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
 
@@ -56,12 +55,10 @@ public final class HubEntry implements Entry {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity identity(final String name)
-        throws UnknownIdentityException {
-        final Identity identity = HubIdentity.friend(name);
+    public Identity identity(final String name) {
+        final Identity identity = HubIdentity.make(name);
         Logger.debug(
             this,
             "#identity('%s'): found",

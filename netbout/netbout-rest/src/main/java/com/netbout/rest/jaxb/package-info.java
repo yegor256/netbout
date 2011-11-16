@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,49 +23,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+
+/**
+ * JAXB extensions.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<rom>
-    <configuration>
-        <sources>
-            <directory>${rempl.dir}</directory>
-        </sources>
-        <pdd>
-            <include>*.java,*.xml,*.properties,*.html</include>
-        </pdd>
-        <its>
-            <bridge>com.rempl.readers.its.trac.XmlRpcBridge</bridge>
-            <issueUrlBuilder>com.rempl.readers.its.trac.TracIssueUrlBuilder</issueUrlBuilder>
-            <codeUrlBuilder>com.rempl.readers.its.trac.TracCodeUrlBuilder</codeUrlBuilder>
-            <params>
-                <url>http://trac.fazend.com/netbout/</url>
-                <repoPrefix>trunk/netbout</repoPrefix>
-                <user>${trac.user}</user>
-                <password>${trac.password}</password>
-            </params>
-        </its>
-    </configuration>
-    <readers>
-        <reader>
-            <groupId>com.rempl.readers</groupId>
-            <artifactId>reader-pdd</artifactId>
-            <version>1.1.3</version>
-        </reader>
-    </readers>
-    <reporters>
-        <reporter>
-            <groupId>com.rempl.reporters</groupId>
-            <artifactId>reporter-pdd</artifactId>
-            <version>1.1.3</version>
-        </reporter>
-    </reporters>
-    <dependencies>
-        <dependency>
-            <groupId>com.rempl.readers.its</groupId>
-            <artifactId>bridge-trac</artifactId>
-            <version>1.1.3</version>
-        </dependency>
-    </dependencies>
-</rom>
+ */
+package com.netbout.rest.jaxb;

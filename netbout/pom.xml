@@ -136,6 +136,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+        <rempl.dir>${basedir}</rempl.dir>
     </properties>
 
     <repositories>
