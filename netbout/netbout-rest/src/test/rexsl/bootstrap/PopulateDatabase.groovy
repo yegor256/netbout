@@ -42,10 +42,10 @@ Manifests.inject('Netbout-JdbcDriver', driver)
 Manifests.inject('Netbout-JdbcUrl', url)
 Manifests.inject('Netbout-JdbcUser', user)
 Manifests.inject('Netbout-JdbcPassword', password)
-Logger.info(this, 'Test database is ready')
 
 def conn = Database.connection()
 [
+    'DELETE FROM seen',
     'DELETE FROM message',
     'DELETE FROM participant',
     'DELETE FROM bout',
@@ -61,5 +61,7 @@ def conn = Database.connection()
 ].each { sql ->
     def stmt = conn.createStatement()
     stmt.execute(sql)
+    Logger.info(this, 'SQL executed: %s', sql)
 }
 conn.close()
+Logger.info(this, 'Test database is ready')

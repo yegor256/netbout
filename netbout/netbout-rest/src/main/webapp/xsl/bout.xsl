@@ -135,6 +135,11 @@
                     </b>
                     <xsl:text> at </xsl:text>
                     <xsl:value-of select="$message/date"/>
+                    <span style="color: red;">
+                        <xsl:if test="@seen = 'false'">
+                            <xsl:text> new</xsl:text>
+                        </xsl:if>
+                    </span>
                 </div>
                 <xsl:value-of select="text"/>
             </div>

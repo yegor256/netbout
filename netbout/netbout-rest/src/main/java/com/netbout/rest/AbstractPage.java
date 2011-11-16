@@ -60,7 +60,8 @@ public abstract class AbstractPage implements Page {
     private Resource home;
 
     /**
-     * When this page was started to build.
+     * When this page was started to build, in nanoseconds.
+     * @see #getNano()
      */
     private final long start;
 
@@ -218,12 +219,12 @@ public abstract class AbstractPage implements Page {
 
     /**
      * Get time of page generation.
-     * @return Time in microseconds
+     * @return Time in nanoseconds
      */
     @XmlAttribute
-    public final Long getMcs() {
+    public final Long getNano() {
         // @checkstyle MagicNumber (1 line)
-        return (System.nanoTime() - this.start) / 1000L;
+        return System.nanoTime() - this.start;
     }
 
     /**

@@ -72,7 +72,7 @@ public final class PageConverter {
         final Source source = XhtmlConverter.the(writer.toString());
         MatcherAssert.assertThat(
             source,
-            XmlMatchers.hasXPath("/page[@mcs]")
+            XmlMatchers.hasXPath("/page[@nano]")
         );
         return source;
     }

@@ -88,11 +88,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Identity author() {
-        try {
-            return HubIdentity.friend(this.data.getAuthor());
-        } catch (com.netbout.spi.UnknownIdentityException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return HubIdentity.make(this.data.getAuthor());
     }
 
     /**

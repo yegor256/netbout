@@ -34,11 +34,12 @@
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
+    <xsl:include href="/xsl/templates.xsl" />
+
     <xsl:template match="/">
         <html>
             <head>
                 <title>
-                    <xsl:text>netbout: </xsl:text>
                     <xsl:call-template name="title" />
                 </title>
                 <xsl:call-template name="head" />
@@ -50,8 +51,9 @@
                     <xsl:text>r</xsl:text>
                     <xsl:value-of select="/page/version/revision"/>
                     <xsl:text> </xsl:text>
-                    <xsl:value-of select="format-number(/page/@mcs div (1000 * 1000), '0.000')"/>
-                    <xsl:text>s</xsl:text>
+                    <xsl:call-template name="nano">
+                        <xsl:with-param name="nano" select="/page/@nano" />
+                    </xsl:call-template>
                 </div>
                 <div id="bar">
                     <a id="logo">

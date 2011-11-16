@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/login.xsl" type="text/xsl"?>
 <!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
@@ -29,16 +28,28 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<page nano="300000">
-    <version>
-        <name>1.0</name>
-        <revision>9988</revision>
-        <date>2011-09-23</date>
-    </version>
-    <links>
-        <link href="/xml/inbox.xml" name="home" />
-        <link href="/" name="logout" />
-        <link href="/xml/bout.xml" name="start" />
-    </links>
-    <facebook href="http://fb.com/..." />
-</page>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
+
+    <xsl:template name="nano">
+        <xsl:param name="nano" as="xs:integer"/>
+        <xsl:choose>
+            <xsl:when test="$nano &gt; 1000 * 1000 * 1000">
+                <xsl:value-of select="format-number($nano div (1000 * 1000 * 1000), '0.000')"/>
+                <xsl:text>s</xsl:text>
+            </xsl:when>
+            <xsl:when test="$nano &gt; 1000 * 1000">
+                <xsl:value-of select="round($nano div (1000 * 1000))"/>
+                <xsl:text>ms</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="format-number($nano div (1000 * 1000), '0.#')"/>
+                <xsl:text>ms</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+</xsl:stylesheet>

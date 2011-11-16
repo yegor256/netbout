@@ -55,17 +55,35 @@ def r2 = new TestClient(rexsl.home)
     .post(uri + '/p')
 Assert.assertThat(r2.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
 
+// invite new participant
 def r3 = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
+    .body('name=j.depp')
+    .post(uri + '/i')
+Assert.assertThat(r3.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
+
+// rename bout
+def r4 = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header(HttpHeaders.COOKIE, cookie)
+    .body('title=new title')
+    .post(uri + '/r')
+Assert.assertThat(r4.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
+
+// read final page
+def r5 = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header(HttpHeaders.COOKIE, cookie)
     .get(uri)
-Assert.assertThat(r3.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
+Assert.assertThat(r5.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
 [
     "/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]",
     '/page/identity/name[.="johnny.doe"]',
     '/page/bout[@href]',
+    '/page/bout/title[.="new title"]',
     '/page/bout/participants/participant',
     '/page/bout/messages/message',
 ].each {
-    Assert.assertThat(XhtmlConverter.the(r3.body), XmlMatchers.hasXPath(it))
+    Assert.assertThat(XhtmlConverter.the(r5.body), XmlMatchers.hasXPath(it))
 }

@@ -212,18 +212,20 @@ public final class MessageData implements Comparable<MessageData> {
      * @param identity The identity
      */
     public void addSeenBy(final String identity) {
+        if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
+            HelpQueue.make("message-was-seen")
+                .priority(HelpQueue.Priority.ASAP)
+                .arg(this.number)
+                .arg(identity)
+                .exec();
+            Logger.debug(
+                this,
+                "#addSeenBy('%s'): set for msg #%d",
+                identity,
+                this.number
+            );
+        }
         this.seenBy.put(identity, true);
-        HelpQueue.make("message-was-seen")
-            .priority(HelpQueue.Priority.ASAP)
-            .arg(this.number)
-            .arg(identity)
-            .exec();
-        Logger.debug(
-            this,
-            "#addSeenBy('%s'): set for msg #%d",
-            identity,
-            this.number
-        );
     }
 
     /**

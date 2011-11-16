@@ -40,7 +40,9 @@
     <xsl:include href="/xsl/dudes.xsl" />
 
     <xsl:template name="title">
-        <xsl:text>inbox</xsl:text>
+        <xsl:text>inbox (</xsl:text>
+        <xsl:value-of select="count(/page/bouts/bout[@seen &lt; @messages])"/>
+        <xsl:text>)</xsl:text>
     </xsl:template>
 
     <xsl:template name="head">
@@ -53,9 +55,9 @@
             <div class="bout">
                 <a class="title unread">
                     <xsl:attribute name="class">
-                        <xsl:text>title </xsl:text>
-                        <xsl:if test="@unread">
-                            <xsl:text>unread</xsl:text>
+                        <xsl:text>title</xsl:text>
+                        <xsl:if test="@seen &lt; @messages">
+                            <xsl:text> unread</xsl:text>
                         </xsl:if>
                     </xsl:attribute>
                     <xsl:attribute name="href">
@@ -72,6 +74,11 @@
                             <xsl:text>untitled</xsl:text>
                         </xsl:otherwise>
                     </xsl:choose>
+                    <xsl:if test="@seen &lt; @messages">
+                        <xsl:text> (</xsl:text>
+                        <xsl:value-of select="@messages - @seen"/>
+                        <xsl:text> unread)</xsl:text>
+                    </xsl:if>
                 </a>
                 <xsl:call-template name="dudes">
                     <xsl:with-param name="participants" select="participants" />
