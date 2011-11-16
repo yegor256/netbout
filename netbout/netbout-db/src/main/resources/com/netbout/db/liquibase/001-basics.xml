@@ -1,0 +1,105 @@
+<?xml version='1.0'?>
+<!--
+ * Copyright (c) 2009-2011, netBout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email: privacy@netbout.com.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ -->
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="1" author="yegor">
+
+        <createTable tableName="identity" remarks="All registered identities">
+            <column name="name" type="VARCHAR(250)"
+                remarks="Unique name of identity">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="photo" type="VARCHAR(1024)"
+                remarks="URL of his photo">
+            </column>
+        </createTable>
+
+        <createTable tableName="bout" remarks="All registered bouts">
+            <column name="number" type="BIGINT"
+                autoIncrement="true" startWith="1" incrementBy="1"
+                remarks="Unique number of the bout">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="title" type="VARCHAR(250)"
+                remarks="Title of the bout (NULL for placeholder not a bout)">
+            </column>
+        </createTable>
+
+        <createTable tableName="message" remarks="All messages posted to bouts">
+            <column name="number" type="BIGINT"
+                autoIncrement="true" startWith="1" incrementBy="1"
+                remarks="Unique number of the message">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="bout" type="BIGINT"
+                remarks="What bout this message is related to">
+                <constraints nullable="false"
+                    foreignKeyName="message2bout" references="bout(number)" />
+            </column>
+            <column name="date" type="DATETIME"
+                remarks="When this message was posted (NULL for placeholder not a message)"/>
+            <column name="text" type="CLOB"
+                remarks="Text of the message in UTF-8">
+            </column>
+            <column name="author" type="VARCHAR(250)"
+                remarks="Author of this message (the identity)">
+                <constraints foreignKeyName="message2identity" references="identity(name)" />
+            </column>
+        </createTable>
+
+        <createTable tableName="participant" remarks="List of bout participants">
+            <column name="bout" type="BIGINT"
+                remarks="What bout this person participates in">
+                <constraints primaryKey="true"  nullable="false"
+                    foreignKeyName="participant2bout" references="bout(number)" />
+            </column>
+            <column name="identity" type="VARCHAR(250)"
+                remarks="Identity of the person">
+                <constraints primaryKey="true" nullable="false"
+                    foreignKeyName="participant2identity" references="identity(name)" />
+            </column>
+            <column name="confirmed" type="BOOLEAN"
+                remarks="Participation was confirmed">
+            </column>
+        </createTable>
+
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB, DEFAULT CHARSET=UTF8"/>
+        </modifySql>
+
+    </changeSet>
+
+</databaseChangeLog>
