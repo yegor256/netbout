@@ -35,7 +35,6 @@ import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnknownIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.net.URL;
