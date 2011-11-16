@@ -136,6 +136,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <rempl.dir>${basedir}</rempl.dir>
     </properties>
 
     <repositories>
