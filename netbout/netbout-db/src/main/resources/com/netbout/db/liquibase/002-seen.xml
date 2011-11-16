@@ -35,12 +35,19 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <!--
-    @see http://liquibase.jira.com/browse/CORE-1073
-    -->
-    <!-- <includeAll path="liquibase" relativeToChangelogFile="true" /> -->
-
-    <include file="liquibase/001-basics.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/002-seen.xml" relativeToChangelogFile="true" />
+    <changeSet id="2" author="yegor">
+        <createTable tableName="seen" remarks="Who seen which message">
+            <column name="message" type="BIGINT"
+                remarks="Unique number of the message">
+                <constraints primaryKey="true" nullable="false"
+                    foreignKeyName="seen2message" references="message(number)" />
+            </column>
+            <column name="identity" type="VARCHAR(250)"
+                remarks="Viewer of this message (the identity)">
+                <constraints primaryKey="true" nullable="false"
+                    foreignKeyName="seen2identity" references="identity(name)" />
+            </column>
+        </createTable>
+    </changeSet>
 
 </databaseChangeLog>
