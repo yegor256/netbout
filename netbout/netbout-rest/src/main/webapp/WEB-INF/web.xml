@@ -54,6 +54,10 @@
         <servlet-name>default</servlet-name>
         <url-pattern>/xsl/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/html/*</url-pattern>
+    </servlet-mapping>
 
     <filter>
         <filter-name>XsltFilter</filter-name>
@@ -85,7 +89,7 @@
     </error-page>
     <error-page>
         <exception-type>java.lang.RuntimeException</exception-type>
-        <location>/re.html</location>
+        <location>/html/re.html</location>
     </error-page>
 
     <mime-mapping>
