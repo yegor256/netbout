@@ -329,7 +329,7 @@ public abstract class AbstractRs implements Resource {
         try {
             return new Cryptor(this.entry()).decrypt(this.cookie);
         } catch (Cryptor.DecryptionException ex) {
-            Logger.warn(
+            Logger.debug(
                 this,
                 "Decryption failure from %s calling '%s': %s",
                 this.httpServletRequest().getRemoteAddr(),

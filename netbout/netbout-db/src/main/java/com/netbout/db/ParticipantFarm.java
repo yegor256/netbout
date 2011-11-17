@@ -125,7 +125,15 @@ public final class ParticipantFarm {
             stmt.setLong(1, bout);
             stmt.setString(2, identity);
             final ResultSet rset = stmt.executeQuery();
-            rset.next();
+            if (!rset.next()) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Participant '%s' not found in bout #%d",
+                        identity,
+                        bout
+                    )
+                );
+            }
             status = rset.getBoolean(1);
         } finally {
             conn.close();
