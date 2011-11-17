@@ -48,7 +48,7 @@ public final class ExceptionTrap extends HttpServlet {
      * {@inheritDoc}
      */
     @Override
-    public void doGet(final HttpServletRequest request,
+    public void service(final HttpServletRequest request,
         final HttpServletResponse response) throws java.io.IOException {
         response.setContentType("text/html");
         final VelocityContext context = new VelocityContext();
@@ -89,12 +89,13 @@ public final class ExceptionTrap extends HttpServlet {
      */
     private void extend(final VelocityContext context,
         final HttpServletRequest request, final String suffix) {
-        context.put(
-            suffix,
-            request.getAttribute(
-                String.format("javax.servlet.error.%s", suffix)
-            )
+        String attr = (String) request.getAttribute(
+            String.format("javax.servlet.error.%s", suffix)
         );
+        if (attr == null) {
+            attr = "NULL";
+        }
+        context.put(suffix, attr);
     }
 
     /**

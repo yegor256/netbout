@@ -305,7 +305,7 @@ public final class HubIdentity implements Identity {
      */
     protected static HubIdentity make(final String label, final User usr)
         throws DuplicateIdentityException {
-        HubIdentity identity = HubIdentity.make(label);
+        final HubIdentity identity = HubIdentity.make(label);
         if (identity.user != null && !identity.user.equals(usr)) {
             throw new DuplicateIdentityException(
                 "Identity '%s' is already taken by '%s'",
