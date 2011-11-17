@@ -20,6 +20,12 @@
                 mean time click "Back" button in your browser and try
                 to do something else.
             </p>
+            <p style="white-space: pre-line;">code: ${code}
+                message: ${message}
+                request_uri: ${request_uri}
+                exception_type: ${exception_type}
+            </p>
+            <pre>${stacktrace}</pre>
         </div>
     </body>
 </html>
