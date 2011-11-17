@@ -36,7 +36,7 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">1.3</version>
+        <version netbout="yes">2.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-hub</artifactId>
     <packaging>jar</packaging>
