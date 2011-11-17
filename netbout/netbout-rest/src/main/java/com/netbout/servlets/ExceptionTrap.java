@@ -89,9 +89,9 @@ public final class ExceptionTrap extends HttpServlet {
      */
     private void extend(final VelocityContext context,
         final HttpServletRequest request, final String suffix) {
-        String attr = (String) request.getAttribute(
+        String attr = request.getAttribute(
             String.format("javax.servlet.error.%s", suffix)
-        );
+        ).toString();
         if (attr == null) {
             attr = "NULL";
         }

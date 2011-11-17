@@ -124,9 +124,10 @@ public final class IdentityFarm {
             final ResultSet rset = stmt.executeQuery();
             if (!rset.next()) {
                 final PreparedStatement istmt = conn.prepareStatement(
-                    "INSERT INTO identity (name) VALUES (?)"
+                    "INSERT INTO identity (name, photo) VALUES (?, ?)"
                 );
                 istmt.setString(1, name);
+                istmt.setString(2, "http://img.netbout.com/unknown.png");
                 istmt.executeUpdate();
                 Logger.debug(
                     this,
