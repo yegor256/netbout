@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 /**
@@ -109,6 +110,15 @@ public final class ExceptionTrap extends HttpServlet {
             "cp.resource.loader.class",
             ClasspathResourceLoader.class.getName()
         );
+        engine.setProperty(
+            RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
+            "org.apache.velocity.runtime.log.Log4JLogChute"
+        );
+        engine.setProperty(
+            "runtime.log.logsystem.log4j.logger",
+            "org.apache.velocity"
+        );
+        engine.init();
         return engine;
     }
 
