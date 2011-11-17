@@ -110,6 +110,37 @@ public final class IdentityFarm {
     }
 
     /**
+     * Identity was mentioned in the app and should be registed here.
+     * @param name The name of identity
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("identity-mentioned")
+    public void identityMentioned(final String name) throws SQLException {
+        final Connection conn = Database.connection();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT name FROM identity WHERE name = ?"
+            );
+            stmt.setString(1, name);
+            final ResultSet rset = stmt.executeQuery();
+            if (!rset.next()) {
+                final PreparedStatement istmt = conn.prepareStatement(
+                    "INSERT INTO identity (name) VALUES (?)"
+                );
+                istmt.setString(1, name);
+                istmt.executeUpdate();
+                Logger.debug(
+                    this,
+                    "#identityMentioned('%s'): inserted",
+                    name
+                );
+            }
+        } finally {
+            conn.close();
+        }
+    }
+
+    /**
      * Changed identity photo.
      * @param name The name of identity
      * @param photo The photo to set
@@ -118,41 +149,21 @@ public final class IdentityFarm {
     @Operation("changed-identity-photo")
     public void changedIdentityPhoto(final String name,
         final String photo) throws SQLException {
+        this.identityMentioned(name);
         final Connection conn = Database.connection();
         try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT name FROM identity WHERE name = ?"
+            final PreparedStatement ustmt = conn.prepareStatement(
+                "UPDATE identity SET photo = ? WHERE name = ?"
             );
-            stmt.setString(1, name);
-            final ResultSet rset = stmt.executeQuery();
-            if (rset.next()) {
-                final PreparedStatement ustmt = conn.prepareStatement(
-                    "UPDATE identity SET photo = ? WHERE name = ?"
-                );
-                ustmt.setString(1, photo);
-                ustmt.setString(2, name);
-                ustmt.executeUpdate();
-                Logger.debug(
-                    this,
-                    "#changedIdentityPhoto('%s', '%s'): updated",
-                    name,
-                    photo
-                );
-            } else {
-                final PreparedStatement istmt = conn.prepareStatement(
-                    "INSERT INTO identity (name, photo) VALUES (?, ?)",
-                    Statement.RETURN_GENERATED_KEYS
-                );
-                istmt.setString(1, name);
-                istmt.setString(2, photo);
-                istmt.executeUpdate();
-                Logger.debug(
-                    this,
-                    "#changedIdentityPhoto('%s', '%s'): inserted",
-                    name,
-                    photo
-                );
-            }
+            ustmt.setString(1, photo);
+            ustmt.setString(2, name);
+            ustmt.executeUpdate();
+            Logger.debug(
+                this,
+                "#changedIdentityPhoto('%s', '%s'): updated",
+                name,
+                photo
+            );
         } finally {
             conn.close();
         }
