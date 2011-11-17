@@ -25,98 +25,10 @@
  * SUCH DAMAGE.
  */
 
-* {
-    margin: 0;
-    padding: 0;
-}
-
-img {
-    border: 0;
-}
-
-input,
-textarea {
-    font-size: 1.4em;
-}
-
-p {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
-
-ul, ol {
-    margin-left: 2em;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    font-size: 12pt;
-    line-height: 1.3em;
-    min-height: 100%;
-    position: relative;
-    color: #122632;
-    padding: 1em;
-}
-
-/* top right label about deployed version */
-div#version {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 0.2em 0.5em;
-    font-size: 0.8em;
-    background-color: gray;
-    color: white;
-}
-
-/* top bar */
-div#bar {
-    position: relative;
-    height: 1em;
-    margin-bottom: 1em;
-}
-
-    div#bar a#logo {
-        position: absolute;
-        bottom: 0px;
-        left: 0px;
-    }
-
-    div#bar div#crumbs {
-        position: absolute;
-        left: 5em;
-        bottom: 0px;
-    }
-
-        div#bar div#crumbs span {
-            position: relative;
-            margin-right: 1em;
-        }
-
-        div#bar div#crumbs img#photo {
-            height: 24px;
-            position: relative;
-        }
-
-/* search box */
-form#box {
-    position: relative;
-    margin-bottom: 1em;
-}
-
-    form#box input {
-    }
-
-    form#box input[type='submit'] {
-    }
-
-/* message to show */
-div#message {
-    color: red;
-}
-
-/* everything between header and footer */
-div#content {
-    position: relative;
-}
-
+/**
+ * Supplementary servlets.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ */
+package com.netbout.servlets;
