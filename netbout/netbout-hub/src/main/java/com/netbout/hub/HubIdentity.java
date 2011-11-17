@@ -78,7 +78,7 @@ public final class HubIdentity implements Identity {
     /**
      * Name of the user.
      */
-    private final User user;
+    private User user;
 
     /**
      * The photo.
@@ -126,7 +126,7 @@ public final class HubIdentity implements Identity {
         if (this.user == null) {
             throw new IllegalStateException(
                 String.format(
-                    "User is unknow for identity '%s'",
+                    "User is unknown for identity '%s'",
                     this.name
                 )
             );
@@ -303,28 +303,17 @@ public final class HubIdentity implements Identity {
      * @throws DuplicateIdentityException If this identity is taken
      * @checkstyle RedundantThrows (4 lines)
      */
-    protected static Identity make(final String label, final User usr)
+    protected static HubIdentity make(final String label, final User usr)
         throws DuplicateIdentityException {
-        HubIdentity identity;
-        if (HubIdentity.ALL.containsKey(label)) {
-            identity = HubIdentity.ALL.get(label);
-            if (identity.user != null && !identity.user.equals(usr)) {
-                throw new DuplicateIdentityException(
-                    "Identity '%s' is taken",
-                    label
-                );
-            }
-        } else {
-            identity = new HubIdentity(label, usr);
-            HubIdentity.ALL.put(label, identity);
-            Logger.debug(
-                HubIdentity.class,
-                "#make('%s', '%s'): created (%d total)",
+        HubIdentity identity = HubIdentity.make(label);
+        if (identity.user != null && !identity.user.equals(usr)) {
+            throw new DuplicateIdentityException(
+                "Identity '%s' is already taken by '%s'",
                 label,
-                usr.name(),
-                HubIdentity.ALL.size()
+                identity.user.name()
             );
         }
+        identity.user = usr;
         return identity;
     }
 
@@ -333,12 +322,16 @@ public final class HubIdentity implements Identity {
      * @param label The name of identity
      * @return Identity found
      */
-    protected static Identity make(final String label) {
+    protected static HubIdentity make(final String label) {
         if (HubIdentity.ALL.containsKey(label)) {
             return HubIdentity.ALL.get(label);
         }
         final HubIdentity identity = new HubIdentity(label);
         HubIdentity.ALL.put(label, identity);
+        HelpQueue.make("identity-mentioned")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .arg(label)
+            .exec();
         Logger.debug(
             HubIdentity.class,
             "#make('%s'): created just by name (%d total)",
