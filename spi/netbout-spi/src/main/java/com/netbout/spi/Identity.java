@@ -37,7 +37,7 @@ import java.util.List;
  *
  * <p>This is the main entry point to all bouts which belong to the user. An
  * instance of this interface can be obtained from
- * {@link User#identify(String)}.
+ * {@link User#identity(String)}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

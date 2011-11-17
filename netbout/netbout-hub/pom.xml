@@ -48,10 +48,6 @@
             <artifactId>netbout-spi</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.netbout.spi</groupId>
-            <artifactId>netbout-stub</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
             <version since="2 Nov 2011">0.2.3</version>

@@ -33,7 +33,7 @@ package com.netbout.spi;
  * Authenticated user.
  *
  * <p>Instance of this interface can be retrieved from
- * {@link Entry#authenticate(String,String)}.
+ * {@link Entry#user(String)}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
