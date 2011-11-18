@@ -115,7 +115,7 @@ public final class JaxbBundle {
      * @return This object
      */
     public JaxbBundle add(final String nam) {
-        return this.add(nam, null);
+        return this.add(nam, "");
     }
 
     /**
@@ -124,8 +124,17 @@ public final class JaxbBundle {
      * @param txt The text
      * @return This object
      */
-    public JaxbBundle add(final String nam, final String txt) {
-        final JaxbBundle child = new JaxbBundle(this, nam, txt);
+    public JaxbBundle add(final String nam, final Object txt) {
+        if (txt == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Can't add(%s, NULL) to '%s'",
+                    nam,
+                    this.name
+                )
+            );
+        }
+        final JaxbBundle child = new JaxbBundle(this, nam, txt.toString());
         this.children.add(child);
         return child;
     }
@@ -182,9 +191,7 @@ public final class JaxbBundle {
         for (JaxbBundle child : this.children) {
             element.appendChild(child.element(doc));
         }
-        if (this.content != null) {
-            element.appendChild(doc.createTextNode(this.content));
-        }
+        element.appendChild(doc.createTextNode(this.content));
         return element;
     }
 

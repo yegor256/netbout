@@ -26,9 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 /**
@@ -41,17 +43,33 @@ import javax.ws.rs.core.Response;
 public final class MiscRs extends AbstractRs {
 
     /**
-     * Get bout front page.
+     * Get "error" page by code.
+     * @param code Error code
      * @return The JAX-RS response
+     * @todo #122 Should be implemented nicely,
+     *  see http://stackoverflow.com/questions/8179547
      */
     @GET
-    @Path("/404")
-    public Response notFoundPage() {
+    @Path("/{code : \\d{3}}")
+    public Response notFoundPage(@PathParam("code") final Integer code) {
+        final Response.Status status = Response.Status.fromStatusCode(code);
+        String message = "unknown";
+        if (status != null) {
+            message = status.toString();
+        }
         return new PageBuilder()
             .stylesheet("error")
             .build(AbstractPage.class)
             .init(this)
+            .append(
+                new JaxbBundle("error")
+                    .add("code", code)
+                    .up()
+                    .add("message", message)
+                    .up()
+            )
             .anonymous()
             .build();
     }
+
 }

@@ -39,7 +39,8 @@
     <xsl:include href="/xsl/layout.xsl" />
 
     <xsl:template name="title">
-        <xsl:text>error</xsl:text>
+        <xsl:value-of select="/page/error/code"/>
+        <xsl:text>: error</xsl:text>
     </xsl:template>
 
     <xsl:template name="head">
@@ -47,7 +48,15 @@
 
     <xsl:template name="content">
         <p>
-            page not found
+            <span style="color: red;">
+                <xsl:value-of select="/page/error/code"/>
+                <xsl:text>: </xsl:text>
+                <xsl:value-of select="/page/error/message"/>
+            </span>
+            <xsl:text>.
+                Maybe the page you're requesting is no longer available,
+                try to submit some other request.
+            </xsl:text>
         </p>
     </xsl:template>
 
