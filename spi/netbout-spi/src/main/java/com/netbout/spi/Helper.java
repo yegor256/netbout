@@ -43,14 +43,16 @@ public interface Helper {
      * Set entry (will be called by the Hub, before
      * {@link #execute(String,String[])}).
      * @param entry The entry
+     * @throws HelperException If helper can't perform this request
      */
-    void init(Entry entry);
+    void init(Entry entry) throws HelperException;
 
     /**
      * Returns full list of supported operations (their mnemos).
      * @return The list of names
+     * @throws HelperException If helper can't perform this request
      */
-    Collection<String> supports();
+    Collection<String> supports() throws HelperException;
 
     /**
      * Send one single query to the helper, in order to get atomic response.

@@ -92,18 +92,18 @@ public final class HelpQueue {
         final String mnemo = trans.getMnemo();
         String result;
         for (Helper helper : HelpQueue.HELPERS) {
-            if (helper.supports().contains(mnemo)) {
-                try {
+            try {
+                if (helper.supports().contains(mnemo)) {
                     return helper.execute(mnemo, trans.getArgs());
-                } catch (com.netbout.spi.HelperException ex) {
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "Failed to execute '%s'",
-                            mnemo
-                        ),
-                        ex
-                    );
                 }
+            } catch (com.netbout.spi.HelperException ex) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Failed to execute '%s'",
+                        mnemo
+                    ),
+                    ex
+                );
             }
         }
         result = trans.getDefault();

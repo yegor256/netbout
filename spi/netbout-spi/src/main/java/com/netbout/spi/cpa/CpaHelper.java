@@ -93,7 +93,7 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public void init(final Entry ent) {
+    public void init(final Entry ent) throws HelperException {
         final long start = System.currentTimeMillis();
         this.entry = ent;
         this.ops = this.discover();
@@ -110,7 +110,10 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public Collection<String> supports() {
+    public Collection<String> supports() throws HelperException {
+        if (this.ops == null) {
+            throw new HelperException("Helper wasn't initialized with init()");
+        }
         return this.ops.keySet();
     }
 

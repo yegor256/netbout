@@ -31,6 +31,7 @@ package com.netbout.spi.cpa;
 
 import com.netbout.spi.Entry;
 import com.netbout.spi.Helper;
+import com.netbout.spi.HelperException;
 import com.netbout.spi.TypeMapper;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
@@ -85,6 +86,32 @@ public final class CpaHelperTest {
             // @checkstyle MultipleStringLiterals (1 line)
             Matchers.hasItemInArray("o n e")
         );
+    }
+
+    /**
+     * Helper can't be used without a call to {@link Helper#init()}.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = HelperException.class)
+    public void testSupportsWithoutInit() throws Exception {
+        final Helper helper = new CpaHelper(
+            this.getClass().getPackage().getName()
+        );
+        helper.supports();
+    }
+
+    /**
+     * Helper can't execute unknown operation.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = HelperException.class)
+    public void testCallToUnknownOperation() throws Exception {
+        final Helper helper = new CpaHelper(
+            this.getClass().getPackage().getName()
+        );
+        final Entry entry = Mockito.mock(Entry.class);
+        helper.init(entry);
+        helper.execute("unknown-operation");
     }
 
     /**

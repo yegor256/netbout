@@ -26,12 +26,15 @@
  */
 package com.netbout.hub.queue;
 
+import com.netbout.hub.HubEntry;
+import com.netbout.spi.Helper;
 import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -42,12 +45,22 @@ import org.junit.Test;
 public final class HelpQueueTest {
 
     /**
+     * Register new helper.
+     * @throws Exception If there is some problem inside
+     */
+    @Before
+    public void register() throws Exception {
+        final Helper helper = new CpaHelper(this.getClass());
+        helper.init(new HubEntry());
+        HelpQueue.register(helper);
+    }
+
+    /**
      * Simple synch transaction with a helper.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void testSynchronousTransaction() throws Exception {
-        HelpQueue.register(new CpaHelper(this.getClass()));
         final String result = HelpQueue.make("simple-translation")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
             .arg("test me")
@@ -62,7 +75,6 @@ public final class HelpQueueTest {
      */
     @Test
     public void testTransactionReturningList() throws Exception {
-        HelpQueue.register(new CpaHelper(this.getClass()));
         // @checkstyle MagicNumber (1 line)
         final Long size = new Long(new Random().nextInt(20));
         final Long[] list = HelpQueue.make("simple-list")

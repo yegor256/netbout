@@ -30,6 +30,7 @@ import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
+import java.util.List;
 
 /**
  * Entry point to Hub.
@@ -65,6 +66,22 @@ public final class HubEntry implements Entry {
             name
         );
         return identity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Identity> find(final String keyword) {
+        final List<Identity> identities =
+            (List) HubIdentity.findByKeyword(keyword);
+        Logger.debug(
+            this,
+            "#find('%s'): found %d identities",
+            keyword,
+            identities.size()
+        );
+        return identities;
     }
 
 }

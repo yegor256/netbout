@@ -34,6 +34,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Helper;
+import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -89,6 +91,11 @@ public final class HubIdentity implements Identity {
      * List of bouts where I'm a participant.
      */
     private final Set<Long> bouts = new CopyOnWriteArraySet<Long>();
+
+    /**
+     * List of aliases.
+     */
+    private final List<String> aliases = new CopyOnWriteArrayList<String>();
 
     /**
      * Public ctor for JAXB.
@@ -277,7 +284,37 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void promote(final Helper helper) {
+    public List<String> aliases() {
+        final List<String> list = this.aliases;
+        Logger.info(
+            this,
+            "#aliases(): %d returned",
+            list.size()
+        );
+        return list;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void alias(final String name,
+        final Identity.AliasStatus status) {
+        this.aliases.add(name);
+        Logger.info(
+            this,
+            "#alias(%s, %s): done",
+            name,
+            status
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void promote(final Helper helper) throws HelperException {
+        helper.init(new HubEntry());
         HelpQueue.register(helper);
         Logger.info(
             this,
@@ -339,6 +376,15 @@ public final class HubIdentity implements Identity {
             HubIdentity.ALL.size()
         );
         return identity;
+    }
+
+    /**
+     * Find identities by name (including aliases).
+     * @param keyword The keyword to find by
+     * @return Identities found
+     */
+    protected static List<HubIdentity> findByKeyword(final String keyword) {
+        return null;
     }
 
 }
