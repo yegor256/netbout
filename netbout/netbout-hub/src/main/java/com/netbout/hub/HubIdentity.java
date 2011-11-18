@@ -40,6 +40,7 @@ import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -90,12 +91,12 @@ public final class HubIdentity implements Identity {
     /**
      * List of bouts where I'm a participant.
      */
-    private final Set<Long> bouts = new CopyOnWriteArraySet<Long>();
+    private Set<Long> bouts;
 
     /**
      * List of aliases.
      */
-    private final List<String> aliases = new CopyOnWriteArrayList<String>();
+    private List<String> aliases = new CopyOnWriteArrayList<String>();
 
     /**
      * Public ctor for JAXB.
@@ -160,7 +161,7 @@ public final class HubIdentity implements Identity {
             this,
             "#start(): bout started"
         );
-        this.bouts.add(num);
+        this.myBouts().add(num);
         return new HubBout(this, data);
     }
 
@@ -191,18 +192,8 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public List<Bout> inbox(final String query) {
-        if (this.bouts.isEmpty()) {
-            final Long[] nums = HelpQueue.make("get-bouts-of-identity")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.name)
-                .asDefault(new Long[]{})
-                .exec(Long[].class);
-            for (Long num : nums) {
-                this.bouts.add(num);
-            }
-        }
         final List<Bout> list = new ArrayList<Bout>();
-        for (Long num : this.bouts) {
+        for (Long num : this.myBouts()) {
             try {
                 list.add(this.bout(num));
             } catch (com.netbout.spi.BoutNotFoundException ex) {
@@ -285,7 +276,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public List<String> aliases() {
-        final List<String> list = this.aliases;
+        final List<String> list = new ArrayList<String>(this.myAliases());
         Logger.info(
             this,
             "#aliases(): %d returned",
@@ -298,15 +289,54 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void alias(final String name,
-        final Identity.AliasStatus status) {
-        this.aliases.add(name);
-        Logger.info(
-            this,
-            "#alias(%s, %s): done",
-            name,
-            status
-        );
+    public void alias(final String alias, final Identity.AliasStatus status) {
+        switch (status) {
+            case PRIMARY:
+                this.myAliases().add(0, alias);
+                HelpQueue.make("primary-alias-added")
+                    .priority(HelpQueue.Priority.ASAP)
+                    .arg(this.name)
+                    .arg(alias)
+                    .exec();
+                Logger.info(
+                    this,
+                    "#alias('%s', %s): added primary alias to '%s'",
+                    alias,
+                    status,
+                    this.name
+                );
+                break;
+            case SECONDARY:
+                this.myAliases().add(alias);
+                HelpQueue.make("secondary-alias-added")
+                    .priority(HelpQueue.Priority.ASAP)
+                    .arg(this.name)
+                    .arg(alias)
+                    .exec();
+                Logger.info(
+                    this,
+                    "#alias('%s', %s): added alias to '%s'",
+                    alias,
+                    status,
+                    this.name
+                );
+                break;
+            case EXPIRED:
+                this.myAliases().remove(alias);
+                HelpQueue.make("removed-alias")
+                    .priority(HelpQueue.Priority.ASAP)
+                    .arg(this.name)
+                    .arg(alias)
+                    .exec();
+                Logger.info(
+                    this,
+                    "#alias('%s', %s): removed alias of '%s'",
+                    alias,
+                    status,
+                    this.name
+                );
+                break;
+        }
     }
 
     /**
@@ -329,7 +359,7 @@ public final class HubIdentity implements Identity {
      * @param bout The bout
      */
     protected void invited(final Bout bout) {
-        this.bouts.add(bout.number());
+        this.myBouts().add(bout.number());
     }
 
     /**
@@ -385,6 +415,46 @@ public final class HubIdentity implements Identity {
      */
     protected static List<HubIdentity> findByKeyword(final String keyword) {
         return null;
+    }
+
+    /**
+     * Return a link to my list of bouts.
+     * @return The list of them
+     */
+    private Set<Long> myBouts() {
+        synchronized (this) {
+            if (this.bouts == null) {
+                this.bouts = new CopyOnWriteArraySet<Long>(
+                    Arrays.asList(
+                        HelpQueue.make("get-bouts-of-identity")
+                            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                            .arg(this.name)
+                            .asDefault(new Long[]{})
+                            .exec(Long[].class)
+                    )
+                );
+            }
+        }
+        return this.bouts;
+    }
+
+    /**
+     * Returns a link to the list of aliases.
+     * @return The link to the list of them
+     */
+    private List<String> myAliases() {
+        synchronized (this) {
+            if (this.aliases == null) {
+                this.aliases = new CopyOnWriteArrayList<String>(
+                    HelpQueue.make("get-aliases-of-identity")
+                        .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                        .arg(this.name)
+                        .asDefault(new String[]{})
+                        .exec(String[].class)
+                );
+            }
+        }
+        return this.aliases;
     }
 
 }

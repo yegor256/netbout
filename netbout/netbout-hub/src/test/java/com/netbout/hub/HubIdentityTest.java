@@ -124,6 +124,40 @@ public final class HubIdentityTest {
     }
 
     /**
+     * Manipulate with aliases.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testAliasesManipulations() throws Exception {
+        final Identity identity = new HubEntry().user("Matt").identity("mat");
+        MatcherAssert.assertThat(
+            identity.aliases().size(),
+            Matchers.equalTo(0)
+        );
+        final String primary = "mat@example.com";
+        final String secondary = "matthew.johnson@example.com";
+        identity.alias(primary, Identity.AliasStatus.PRIMARY);
+        identity.alias(secondary, Identity.AliasStatus.SECONDARY);
+        MatcherAssert.assertThat(
+            identity.aliases().size(),
+            Matchers.equalTo(2)
+        );
+        MatcherAssert.assertThat(
+            identity.aliases().get(0),
+            Matchers.equalTo(primary)
+        );
+        MatcherAssert.assertThat(
+            identity.aliases().get(1),
+            Matchers.equalTo(secondary)
+        );
+        identity.alias(primary, Identity.AliasStatus.EXPIRED);
+        MatcherAssert.assertThat(
+            identity.aliases().get(0),
+            Matchers.equalTo(secondary)
+        );
+    }
+
+    /**
      * Find bout that belongs to someone else.
      * @throws Exception If there is some problem inside
      */
