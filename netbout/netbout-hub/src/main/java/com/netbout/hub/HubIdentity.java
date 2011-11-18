@@ -414,7 +414,21 @@ public final class HubIdentity implements Identity {
      * @return Identities found
      */
     protected static List<HubIdentity> findByKeyword(final String keyword) {
-        return null;
+        final List<HubIdentity> found = new ArrayList<HubIdentity>();
+        for (HubIdentity identity : HubIdentity.ALL.values()) {
+            if (identity.matchesKeyword(keyword)) {
+                found.add(identity);
+            }
+        }
+        final String[] external = HelpQueue.make("find-identities-by-keyword")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .arg(keyword)
+            .asDefault(new String[]{})
+            .exec(String[].class);
+        for (String name : external) {
+            found.add(HubIdentity.make(name));
+        }
+        return found;
     }
 
     /**
@@ -455,6 +469,19 @@ public final class HubIdentity implements Identity {
             }
         }
         return this.aliases;
+    }
+
+    /**
+     * Does this identity matches a keyword?
+     * @param keyword The keyword
+     * @return Yes or no?
+     */
+    private boolean matchesKeyword(final String keyword) {
+        boolean matches = this.name.contains(keyword);
+        for (String alias : this.myAliases()) {
+            matches |= alias.contains(keyword);
+        }
+        return matches;
     }
 
 }

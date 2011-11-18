@@ -155,6 +155,10 @@ public final class HubIdentityTest {
             identity.aliases().get(0),
             Matchers.equalTo(secondary)
         );
+        MatcherAssert.assertThat(
+            HubIdentity.findByKeyword("mat").size(),
+            Matchers.greaterThan(0)
+        );
     }
 
     /**
