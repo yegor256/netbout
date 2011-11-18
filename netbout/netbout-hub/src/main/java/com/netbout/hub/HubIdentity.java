@@ -41,6 +41,7 @@ import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,7 +97,7 @@ public final class HubIdentity implements Identity {
     /**
      * List of aliases.
      */
-    private List<String> aliases = new CopyOnWriteArrayList<String>();
+    private Set<String> aliases;
 
     /**
      * Public ctor for JAXB.
@@ -275,8 +276,8 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public List<String> aliases() {
-        final List<String> list = new ArrayList<String>(this.myAliases());
+    public Set<String> aliases() {
+        final Set<String> list = new HashSet<String>(this.myAliases());
         Logger.info(
             this,
             "#aliases(): %d returned",
@@ -289,53 +290,27 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void alias(final String alias, final Identity.AliasStatus status) {
-        switch (status) {
-            case PRIMARY:
-                this.myAliases().add(0, alias);
-                HelpQueue.make("primary-alias-added")
-                    .priority(HelpQueue.Priority.ASAP)
-                    .arg(this.name)
-                    .arg(alias)
-                    .exec();
-                Logger.info(
-                    this,
-                    "#alias('%s', %s): added primary alias to '%s'",
-                    alias,
-                    status,
-                    this.name
-                );
-                break;
-            case SECONDARY:
-                this.myAliases().add(alias);
-                HelpQueue.make("secondary-alias-added")
-                    .priority(HelpQueue.Priority.ASAP)
-                    .arg(this.name)
-                    .arg(alias)
-                    .exec();
-                Logger.info(
-                    this,
-                    "#alias('%s', %s): added alias to '%s'",
-                    alias,
-                    status,
-                    this.name
-                );
-                break;
-            case EXPIRED:
-                this.myAliases().remove(alias);
-                HelpQueue.make("removed-alias")
-                    .priority(HelpQueue.Priority.ASAP)
-                    .arg(this.name)
-                    .arg(alias)
-                    .exec();
-                Logger.info(
-                    this,
-                    "#alias('%s', %s): removed alias of '%s'",
-                    alias,
-                    status,
-                    this.name
-                );
-                break;
+    public void alias(final String alias) {
+        if (this.myAliases().contains(alias)) {
+            Logger.info(
+                this,
+                "#alias('%s'): it's already set for '%s'",
+                alias,
+                this.name
+            );
+        } else {
+            HelpQueue.make("added-identity-alias")
+                .priority(HelpQueue.Priority.ASAP)
+                .arg(this.name)
+                .arg(alias)
+                .exec();
+            Logger.info(
+                this,
+                "#alias('%s'): added for '%s'",
+                alias,
+                this.name
+            );
+            this.myAliases().add(alias);
         }
     }
 
@@ -456,15 +431,17 @@ public final class HubIdentity implements Identity {
      * Returns a link to the list of aliases.
      * @return The link to the list of them
      */
-    private List<String> myAliases() {
+    private Set<String> myAliases() {
         synchronized (this) {
             if (this.aliases == null) {
-                this.aliases = new CopyOnWriteArrayList<String>(
-                    HelpQueue.make("get-aliases-of-identity")
-                        .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                        .arg(this.name)
-                        .asDefault(new String[]{})
-                        .exec(String[].class)
+                this.aliases = new CopyOnWriteArraySet<String>(
+                    Arrays.asList(
+                        HelpQueue.make("get-aliases-of-identity")
+                            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                            .arg(this.name)
+                            .asDefault(new String[]{})
+                            .exec(String[].class)
+                    )
                 );
             }
         }

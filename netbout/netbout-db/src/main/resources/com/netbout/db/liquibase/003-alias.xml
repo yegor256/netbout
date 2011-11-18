@@ -35,13 +35,21 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <!--
-    @see http://liquibase.jira.com/browse/CORE-1073
-    -->
-    <!-- <includeAll path="liquibase" relativeToChangelogFile="true" /> -->
-
-    <include file="liquibase/001-basics.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/002-seen.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/003-alias.xml" relativeToChangelogFile="true" />
+    <changeSet id="3" author="yegor">
+        <createTable tableName="alias" remarks="Aliases of identities">
+            <column name="identity" type="VARCHAR(250)"
+                remarks="The identity, owner of the alias">
+                <constraints primaryKey="true" nullable="false"
+                    foreignKeyName="alias2identity" references="identity(name)" />
+            </column>
+            <column name="name" type="VARCHAR(250)"
+                remarks="Alias of the identity">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB, DEFAULT CHARSET=UTF8"/>
+        </modifySql>
+    </changeSet>
 
 </databaseChangeLog>

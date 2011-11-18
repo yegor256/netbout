@@ -46,6 +46,46 @@ import java.util.List;
 public final class IdentityFarm {
 
     /**
+     * Find identities by keyword.
+     * @param keyword The keyword
+     * @return List of identities
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("find-identities-by-keyword")
+    public String[] findIdentitiesByKeyword(final String keyword)
+        throws SQLException {
+        final long start = System.currentTimeMillis();
+        final Connection conn = Database.connection();
+        final List<String> names = new ArrayList<String>();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                // @checkstyle LineLength (1 line)
+                "SELECT identity.name FROM identity JOIN alias ON alias.identity = identity.name WHERE UCASE(identity.name) LIKE ? OR UCASE(alias.name) LIKE ?"
+            );
+            final String matcher = String.format(
+                "%%%s%%",
+                keyword.toUpperCase()
+            );
+            stmt.setString(1, matcher);
+            stmt.setString(2, matcher);
+            final ResultSet rset = stmt.executeQuery();
+            while (rset.next()) {
+                names.add(rset.getString(1));
+            }
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#findIdentitiesByKeyword('%s'): retrieved %d identitie(s) [%dms]",
+            keyword,
+            names.size(),
+            System.currentTimeMillis() - start
+        );
+        return names.toArray(new String[]{});
+    }
+
+    /**
      * Get list of bouts that belong to some identity.
      * @param name The identity of bout participant
      * @return List of bout numbers

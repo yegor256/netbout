@@ -134,26 +134,16 @@ public final class HubIdentityTest {
             identity.aliases().size(),
             Matchers.equalTo(0)
         );
-        final String primary = "mat@example.com";
-        final String secondary = "matthew.johnson@example.com";
-        identity.alias(primary, Identity.AliasStatus.PRIMARY);
-        identity.alias(secondary, Identity.AliasStatus.SECONDARY);
+        final String alias = "mat@example.com";
+        identity.alias(alias);
+        identity.alias("matthew.gilbert@example.com");
         MatcherAssert.assertThat(
             identity.aliases().size(),
             Matchers.equalTo(2)
         );
         MatcherAssert.assertThat(
-            identity.aliases().get(0),
-            Matchers.equalTo(primary)
-        );
-        MatcherAssert.assertThat(
-            identity.aliases().get(1),
-            Matchers.equalTo(secondary)
-        );
-        identity.alias(primary, Identity.AliasStatus.EXPIRED);
-        MatcherAssert.assertThat(
-            identity.aliases().get(0),
-            Matchers.equalTo(secondary)
+            identity.aliases(),
+            Matchers.hasItem(alias)
         );
         MatcherAssert.assertThat(
             HubIdentity.findByKeyword("mat").size(),
