@@ -56,6 +56,7 @@ public final class MessageFarm {
     @Operation("create-bout-message")
     public Long createBoutMessage(final Long bout)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         Long number;
         try {
@@ -73,9 +74,10 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#createBoutMessage(#%d): created message #%d",
+            "#createBoutMessage(#%d): created message #%d [%dms]",
             bout,
-            number
+            number,
+            System.currentTimeMillis() - start
         );
         return number;
     }
@@ -88,6 +90,7 @@ public final class MessageFarm {
      */
     @Operation("get-bout-messages")
     public Long[] getBoutMessages(final Long bout) throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         final List<Long> numbers = new ArrayList<Long>();
         try {
@@ -104,9 +107,10 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#getBoutMessages(#%d): retrieved %d message number(s)",
+            "#getBoutMessages(#%d): retrieved %d message number(s) [%dms]",
             bout,
-            numbers.size()
+            numbers.size(),
+            System.currentTimeMillis() - start
         );
         return numbers.toArray(new Long[]{});
     }
@@ -120,6 +124,7 @@ public final class MessageFarm {
     @Operation("get-message-date")
     public Date getMessageDate(final Long number)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         Date date;
         try {
@@ -135,9 +140,10 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#getMessageDate(#%d): retrieved '%s'",
+            "#getMessageDate(#%d): retrieved '%s' [%dms]",
             number,
-            date
+            date,
+            System.currentTimeMillis() - start
         );
         return date;
     }
@@ -151,6 +157,7 @@ public final class MessageFarm {
     @Operation("changed-message-date")
     public void changedMessageDate(final Long number, final Date date)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
@@ -173,9 +180,10 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#changedMessageDate(#%d, '%s'): updated",
+            "#changedMessageDate(#%d, '%s'): updated [%dms]",
             number,
-            date
+            date,
+            System.currentTimeMillis() - start
         );
     }
 
@@ -188,6 +196,7 @@ public final class MessageFarm {
     @Operation("get-message-author")
     public String getMessageAuthor(final Long number)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         String author;
         try {
@@ -203,9 +212,10 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#getMessageAuthor(#%d): retrieved '%s'",
+            "#getMessageAuthor(#%d): retrieved '%s' [%dms]",
             number,
-            author
+            author,
+            System.currentTimeMillis() - start
         );
         return author;
     }
@@ -219,6 +229,7 @@ public final class MessageFarm {
     @Operation("changed-message-author")
     public void changedMessageAuthor(final Long number, final String author)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
@@ -235,9 +246,10 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#changedMessageAuthor(#%d, '%s'): updated",
+            "#changedMessageAuthor(#%d, '%s'): updated [%dms]",
             number,
-            author
+            author,
+            System.currentTimeMillis() - start
         );
     }
 
@@ -250,6 +262,7 @@ public final class MessageFarm {
     @Operation("get-message-text")
     public String getMessageText(final Long number)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         String text;
         try {
@@ -265,9 +278,10 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#getMessageText(#%d): retrieved '%s'",
+            "#getMessageText(#%d): retrieved '%s' [%dms]",
             number,
-            text
+            text,
+            System.currentTimeMillis() - start
         );
         return text;
     }
@@ -281,6 +295,7 @@ public final class MessageFarm {
     @Operation("changed-message-text")
     public void changedMessageText(final Long number,
         final String text) throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
@@ -297,9 +312,10 @@ public final class MessageFarm {
         }
         Logger.debug(
             this,
-            "#changedMessageText(#%d, '%s'): updated",
+            "#changedMessageText(#%d, '%s'): updated [%dms]",
             number,
-            text
+            text,
+            System.currentTimeMillis() - start
         );
     }
 

@@ -110,6 +110,7 @@ public final class Database {
      * @return The connection factory
      */
     private static ConnectionFactory factory() {
+        final long start = System.currentTimeMillis();
         final String driver = Manifests.read("Netbout-JdbcDriver");
         try {
             Class.forName(driver);
@@ -124,9 +125,10 @@ public final class Database {
         );
         Logger.info(
             Database.class,
-            "#factory(): created with '%s' at '%s'",
+            "#factory(): created with '%s' at '%s' [%dms]",
             driver,
-            url
+            url,
+            System.currentTimeMillis() - start
         );
         return factory;
     }
@@ -135,6 +137,7 @@ public final class Database {
      * Update DB schema to the latest version.
      */
     private static void update() {
+        final long start = System.currentTimeMillis();
         try {
             final Liquibase liquibase = new Liquibase(
                 "com/netbout/db/liquibase.xml",
@@ -147,6 +150,11 @@ public final class Database {
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
+        Logger.info(
+            Database.class,
+            "#update(): updated DB schema [%dms]",
+            System.currentTimeMillis() - start
+        );
     }
 
 }
