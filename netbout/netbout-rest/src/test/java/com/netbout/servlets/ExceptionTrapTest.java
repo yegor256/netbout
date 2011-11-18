@@ -78,8 +78,8 @@ public final class ExceptionTrapTest {
         final HttpServlet servlet = new ExceptionTrap();
         final HttpServletRequest request =
             Mockito.mock(HttpServletRequest.class);
-        Mockito.doReturn("GET").when(request).getMethod();
-        Mockito.doReturn("/").when(request).getRequestURI();
+        Mockito.doReturn("POST").when(request).getMethod();
+        Mockito.doReturn("/test").when(request).getRequestURI();
         final HttpServletResponse response =
             Mockito.mock(HttpServletResponse.class);
         final StringWriter writer = new StringWriter();
