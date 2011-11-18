@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Participant;
 import java.net.URI;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -66,13 +67,18 @@ public final class BoutRs extends AbstractRs {
      */
     @GET
     public Response front() {
-        return new PageBuilder()
+        final Page page = new PageBuilder()
             .stylesheet("bout")
             .build(AbstractPage.class)
             .init(this)
             .link("post", String.format("/%d/p", this.number))
             .link("invite", String.format("/%d/i", this.number))
             .link("rename", String.format("/%d/r", this.number))
+            .link("leave", String.format("/%d/leave", this.number));
+        if (!this.participant().confirmed()) {
+            page.link("join", String.format("/%d/join", this.number));
+        }
+        return page
             .append(this.bout())
             .authenticated(this.identity())
             .build();
@@ -139,6 +145,42 @@ public final class BoutRs extends AbstractRs {
     }
 
     /**
+     * Confirm participation.
+     * @return The JAX-RS response
+     */
+    @Path("/join")
+    @GET
+    public Response join() {
+        this.participant().confirm(true);
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(this.identity())
+            .entity("")
+            .status(Response.Status.MOVED_PERMANENTLY)
+            .location(this.self(this.bout()))
+            .build();
+    }
+
+    /**
+     * Leave this bout.
+     * @return The JAX-RS response
+     */
+    @Path("/leave")
+    @GET
+    public Response leave() {
+        this.participant().confirm(false);
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(this.identity())
+            .entity("")
+            .status(Response.Status.MOVED_PERMANENTLY)
+            .location(this.self(this.bout()))
+            .build();
+    }
+
+    /**
      * Get bout.
      * @return The bout
      */
@@ -152,6 +194,19 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(this, "/", ex);
         }
         return bout;
+    }
+
+    /**
+     * Get me as a participant.
+     * @return The participant
+     */
+    private Participant participant() {
+        for (Participant participant : this.bout().participants()) {
+            if (participant.identity().equals(this.identity())) {
+                return participant;
+            }
+        }
+        throw new IllegalStateException("Can't find myself in the bout");
     }
 
     /**
