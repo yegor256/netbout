@@ -112,6 +112,7 @@ public abstract class AbstractRs implements Resource {
         } catch (com.netbout.spi.DuplicateIdentityException ex) {
             throw new IllegalStateException(ex);
         }
+        persistor.alias("Netbout Database Manager");
         try {
             persistor.promote(new CpaHelper("com.netbout.db"));
         } catch (com.netbout.spi.HelperException ex) {

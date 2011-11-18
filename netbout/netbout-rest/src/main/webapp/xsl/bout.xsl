@@ -69,18 +69,38 @@
             <xsl:with-param name="participants" select="/page/bout/participants" />
         </xsl:call-template>
         <xsl:if test="$participant/@confirmed = 'true'">
-            <form method="post">
+            <form method="get">
                 <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@name='invite']/@href"/>
+                    <xsl:value-of select="/page/links/link[@name='suggest']/@href"/>
                 </xsl:attribute>
-                <input name="name" />
+                <input name="q" />
                 <input value="invite" type="submit"/>
             </form>
+            <xsl:if test="/page/invitees">
+                <ul>
+                    <xsl:for-each select="/page/invitees/invitee">
+                        <li>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="@href"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="alias"/>
+                            </a>
+                        </li>
+                    </xsl:for-each>
+                </ul>
+            </xsl:if>
+        </xsl:if>
+        <xsl:if test="$participant/@confirmed = 'true'">
             <form method="post">
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@name='rename']/@href"/>
                 </xsl:attribute>
-                <input name="title" />
+                <input name="title" size="50">
+                    <xsl:attribute name="value">
+                        <xsl:value-of select="/page/bout/title"/>
+                    </xsl:attribute>
+                </input>
                 <input value="rename" type="submit"/>
             </form>
         </xsl:if>

@@ -26,32 +26,29 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.hub.HubParticipant;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Message;
-import java.util.Collection;
+import com.netbout.spi.Identity;
+import java.util.Iterator;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Short version of a bout.
+ * Invitee for a bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "bout")
+@XmlRootElement(name = "invitee")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class ShortBout {
+public final class Invitee {
 
     /**
-     * The original bout.
+     * The original identity.
      */
-    private Bout bout;
+    private final Identity identity;
 
     /**
      * URI builder.
@@ -61,81 +58,65 @@ public final class ShortBout {
     /**
      * Public ctor for JAXB.
      */
-    public ShortBout() {
+    public Invitee() {
         throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
      * Public ctor.
-     * @param parent Parent bout to refer to
+     * @param idnt Parent identity to refer to
+     * @parma bldr Uri builder
      */
-    public ShortBout(final Bout parent, final UriBuilder bldr) {
-        this.bout = parent;
+    public Invitee(final Identity idnt, final UriBuilder bldr) {
+        this.identity = idnt;
         this.builder = bldr;
     }
 
     /**
-     * HREF of the bout.
+     * HREF of the invitee.
      * @return The url
      */
     @XmlAttribute
     public String getHref() {
         return this.builder
-            .path("/{num}")
-            .build(this.bout.number())
+            .path("/i")
+            .queryParam("name", this.identity.name())
+            .build()
             .toString();
     }
 
     /**
      * JAXB related method, to return the number of the bout.
-     * @return The number
+     * @return The alias
      */
     @XmlElement
-    public Long getNumber() {
-        return this.bout.number();
+    public String getAlias() {
+        final Iterator<String> iter = this.identity.aliases().iterator();
+        String alias;
+        if (iter.hasNext()) {
+            alias = iter.next();
+        } else {
+            alias = this.identity.name();
+        }
+        return alias;
     }
 
     /**
      * JAXB related method, to return the title of the bout.
-     * @return The title
+     * @return The name
      */
     @XmlElement
-    public String getTitle() {
-        return this.bout.title();
+    public String getName() {
+        return this.identity.name();
     }
 
     /**
-     * JAXB related method, to return participants of the bout.
-     * @return The collection
+     * JAXB related method, to return the title of the bout.
+     * @return The photo
      */
-    @XmlElement(name = "participant")
-    @XmlElementWrapper(name = "participants")
-    public Collection<HubParticipant> getParticipants() {
-        return (Collection) this.bout.participants();
-    }
-
-    /**
-     * How many messages are there?
-     * @return Total number of messages
-     */
-    @XmlAttribute(name = "messages")
-    public Integer getTotalNumberOfMessages() {
-        return this.bout.messages("").size();
-    }
-
-    /**
-     * How many seen messages are there?
-     * @return Total number of messages which were already seen
-     */
-    @XmlAttribute(name = "seen")
-    public Integer getTotalNumberOfSeenMessages() {
-        Integer count = 0;
-        for (Message msg : this.bout.messages("")) {
-            if (msg.seen()) {
-                count += 1;
-            }
-        }
-        return count;
+    @XmlElement
+    public String getPhoto() {
+        return this.identity.photo().toString();
     }
 
 }

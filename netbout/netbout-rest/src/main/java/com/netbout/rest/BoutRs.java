@@ -26,17 +26,23 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.Invitee;
+import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of one Bout.
@@ -67,20 +73,37 @@ public final class BoutRs extends AbstractRs {
      */
     @GET
     public Response front() {
-        final Page page = new PageBuilder()
-            .stylesheet("bout")
-            .build(AbstractPage.class)
-            .init(this)
-            .link("leave", String.format("/%d/leave", this.number));
-        if (this.participant().confirmed()) {
-            page.link("post", String.format("/%d/p", this.number))
-                .link("invite", String.format("/%d/i", this.number))
-                .link("rename", String.format("/%d/r", this.number));
-        } else {
-            page.link("join", String.format("/%d/join", this.number));
+        return this.page()
+            .authenticated(this.identity())
+            .build();
+    }
+
+    /**
+     * Get bout front page, with suggestions for invites.
+     * @param keyword The keyword to use
+     * @return The JAX-RS response
+     */
+    @GET
+    @Path("/s")
+    public Response suggest(@QueryParam("q") final String keyword) {
+        if (keyword == null) {
+            throw new ForwardException(
+                this,
+                this.self(),
+                "Query param 'q' missed"
+            );
         }
-        return page
-            .append(this.bout())
+        final List<Invitee> invitees = new ArrayList<Invitee>();
+        for (Identity identity : this.entry().find(keyword)) {
+            invitees.add(
+                new Invitee(
+                    identity,
+                    UriBuilder.fromUri(this.self())
+                )
+            );
+        }
+        return this.page()
+            .append(JaxbGroup.build(invitees, "invitees"))
             .authenticated(this.identity())
             .build();
     }
@@ -94,6 +117,13 @@ public final class BoutRs extends AbstractRs {
     @POST
     public Response post(@FormParam("text") final String text) {
         final Bout bout = this.bout();
+        if (text == null) {
+            throw new ForwardException(
+                this,
+                this.self(bout),
+                "Form param 'text' missed"
+            );
+        }
         bout.post(text);
         return new PageBuilder()
             .build(AbstractPage.class)
@@ -114,6 +144,13 @@ public final class BoutRs extends AbstractRs {
     @POST
     public Response rename(@FormParam("title") final String title) {
         final Bout bout = this.bout();
+        if (title == null) {
+            throw new ForwardException(
+                this,
+                this.self(bout),
+                "Form param 'title' missed"
+            );
+        }
         bout.rename(title);
         return new PageBuilder()
             .build(AbstractPage.class)
@@ -131,9 +168,16 @@ public final class BoutRs extends AbstractRs {
      * @return The JAX-RS response
      */
     @Path("/i")
-    @POST
-    public Response invite(@FormParam("name") final String name) {
+    @GET
+    public Response invite(@QueryParam("name") final String name) {
         final Bout bout = this.bout();
+        if (name == null) {
+            throw new ForwardException(
+                this,
+                this.self(bout),
+                "Form param 'name' missed"
+            );
+        }
         bout.invite(this.entry().identity(name));
         return new PageBuilder()
             .build(AbstractPage.class)
@@ -159,7 +203,7 @@ public final class BoutRs extends AbstractRs {
             .authenticated(this.identity())
             .entity("")
             .status(Response.Status.MOVED_PERMANENTLY)
-            .location(this.self(this.bout()))
+            .location(this.self())
             .build();
     }
 
@@ -177,7 +221,7 @@ public final class BoutRs extends AbstractRs {
             .authenticated(this.identity())
             .entity("")
             .status(Response.Status.MOVED_PERMANENTLY)
-            .location(this.self(this.bout()))
+            .location(this.self())
             .build();
     }
 
@@ -211,6 +255,28 @@ public final class BoutRs extends AbstractRs {
     }
 
     /**
+     * Main page.
+     * @return The page
+     */
+    private Page page() {
+        final Page page = new PageBuilder()
+            .stylesheet("bout")
+            .build(AbstractPage.class)
+            .init(this)
+            .append(this.bout())
+            .link("leave", String.format("/%d/leave", this.number));
+        if (this.participant().confirmed()) {
+            page.link("post", String.format("/%d/p", this.number))
+                .link("invite", String.format("/%d/i", this.number))
+                .link("suggest", String.format("/%d/s", this.number))
+                .link("rename", String.format("/%d/r", this.number));
+        } else {
+            page.link("join", String.format("/%d/join", this.number));
+        }
+        return page;
+    }
+
+    /**
      * Location of myself.
      * @param bout The bout
      * @return The location
@@ -220,6 +286,14 @@ public final class BoutRs extends AbstractRs {
             .getAbsolutePathBuilder()
             .replacePath("/{num}")
             .build(bout.number());
+    }
+
+    /**
+     * Location of myself.
+     * @return The location
+     */
+    private URI self() {
+        return this.self(this.bout());
     }
 
 }

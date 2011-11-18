@@ -30,6 +30,7 @@ import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -164,7 +165,7 @@ public final class JaxbGroup {
      * @return List of types used there
      */
     private static Collection<Class> types(final Collection group) {
-        final Collection<Class> types = new ArrayList<Class>();
+        final Collection<Class> types = new HashSet<Class>();
         for (Object element : group) {
             types.add(element.getClass());
         }
@@ -189,6 +190,11 @@ public final class JaxbGroup {
         annotation.addMemberValue(
             "name",
             new StringMemberValue(name, file.getConstPool())
+        );
+        Logger.debug(
+            JaxbGroup.class,
+            "#xmlRootElement(.., '%s'): annotation created",
+            name
         );
         return annotation;
     }
@@ -223,6 +229,11 @@ public final class JaxbGroup {
         }
         member.setValue(values);
         annotation.addMemberValue("value", member);
+        Logger.debug(
+            JaxbGroup.class,
+            "#xmlSeeAlso(.., %d classes): annotation created",
+            types.size()
+        );
         return annotation;
     }
 

@@ -399,8 +399,8 @@ public final class HubIdentity implements Identity {
      * @param keyword The keyword to find by
      * @return Identities found
      */
-    protected static List<HubIdentity> findByKeyword(final String keyword) {
-        final List<HubIdentity> found = new ArrayList<HubIdentity>();
+    protected static Set<HubIdentity> findByKeyword(final String keyword) {
+        final Set<HubIdentity> found = new HashSet<HubIdentity>();
         for (HubIdentity identity : HubIdentity.ALL.values()) {
             if (identity.matchesKeyword(keyword)) {
                 found.add(identity);
