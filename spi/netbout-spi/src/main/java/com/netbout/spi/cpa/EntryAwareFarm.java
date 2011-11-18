@@ -27,42 +27,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.cpa;
 
-import java.util.Collection;
+import com.netbout.spi.Entry;
 
 /**
- * Helper, implementation of identity.
+ * Farm should implement this interface if it needs {@link Entry} to
+ * be injected during initialization.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Helper {
+public interface EntryAwareFarm {
 
     /**
-     * Set entry (will be called by the Hub, before
-     * {@link #execute(String,String[])}).
+     * Set entry.
      * @param entry The entry
      */
     void init(Entry entry);
-
-    /**
-     * Returns full list of supported operations (their mnemos).
-     * @return The list of names
-     */
-    Collection<String> supports();
-
-    /**
-     * Send one single query to the helper, in order to get atomic response.
-     *
-     * <p>All arguments will be encoded by {@link TypeMapper}. You should
-     * decode them inside the method.
-     *
-     * @param mnemo Name of the request, unique ID of what should be done
-     * @param args Collection of arguments, encoded by {@link TypeMapper}
-     * @return The response, ready for decoding by {@link TypeMapper}
-     * @throws HelperException If helper can't perform this request
-     */
-    String execute(String mnemo, String... args) throws HelperException;
 
 }

@@ -45,6 +45,24 @@ import java.util.List;
 public interface Identity {
 
     /**
+     * Status of the alias.
+     */
+    public enum AliasStatus {
+        /**
+         * Primary status of the identity.
+         */
+        PRIMARY,
+        /**
+         * One of secondary aliases.
+         */
+        SECONDARY,
+        /**
+         * The alias no longer available.
+         */
+        EXPIRED
+    }
+
+    /**
      * User.
      * @return The user
      */
@@ -73,8 +91,8 @@ public interface Identity {
     Bout bout(Long number) throws BoutNotFoundException;
 
     /**
-     * Get name of the identity.
-     * @return The name
+     * Get name of the identity, which is unique in the system.
+     * @return The name of the identity
      */
     String name();
 
@@ -85,16 +103,29 @@ public interface Identity {
     URL photo();
 
     /**
+     * Set photo of the identity.
+     * @param photo The photo
+     */
+    void setPhoto(URL photo);
+
+    /**
+     * Get all aliases.
+     * @return List of all aliases
+     */
+    List<String> aliases();
+
+    /**
+     * Add new alias.
+     * @param alias The alias
+     * @param status The status of the alias
+     */
+    void alias(String alias, Identity.AliasStatus status);
+
+    /**
      * This identity should be promoted to an active helper.
      * @param helper The helper that can help us to process data
      * @throws PromotionException If there is some problem
      */
     void promote(Helper helper) throws PromotionException;
-
-    /**
-     * Set photo of the identity.
-     * @param photo The photo
-     */
-    void setPhoto(URL photo);
 
 }

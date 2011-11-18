@@ -29,6 +29,8 @@
  */
 package com.netbout.spi;
 
+import java.util.List;
+
 /**
  * Entry point to the netbout.
  *
@@ -54,5 +56,12 @@ public interface Entry {
      * @return The identity just found
      */
     Identity identity(String name);
+
+    /**
+     * Find a list of identities by text keyword.
+     * @param keyword The keyword to find
+     * @return The list of found identities
+     */
+    List<Identity> find(String keyword);
 
 }
