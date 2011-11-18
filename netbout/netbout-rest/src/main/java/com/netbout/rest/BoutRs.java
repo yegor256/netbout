@@ -71,11 +71,12 @@ public final class BoutRs extends AbstractRs {
             .stylesheet("bout")
             .build(AbstractPage.class)
             .init(this)
-            .link("post", String.format("/%d/p", this.number))
-            .link("invite", String.format("/%d/i", this.number))
-            .link("rename", String.format("/%d/r", this.number))
             .link("leave", String.format("/%d/leave", this.number));
-        if (!this.participant().confirmed()) {
+        if (this.participant().confirmed()) {
+            page.link("post", String.format("/%d/p", this.number))
+                .link("invite", String.format("/%d/i", this.number))
+                .link("rename", String.format("/%d/r", this.number));
+        } else {
             page.link("join", String.format("/%d/join", this.number));
         }
         return page

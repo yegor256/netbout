@@ -125,6 +125,9 @@ public final class HubBout implements Bout {
      */
     @Override
     public void rename(final String text) {
+        if (!this.confirmed()) {
+            throw new IllegalStateException("You can't rename until you join");
+        }
         this.data.setTitle(text);
     }
 
@@ -134,6 +137,9 @@ public final class HubBout implements Bout {
      */
     @Override
     public Participant invite(final Identity friend) {
+        if (!this.confirmed()) {
+            throw new IllegalStateException("You can't invite until you join");
+        }
         final ParticipantData dude =
             new ParticipantData(this.number(), friend.name());
         this.data.addParticipant(dude);
@@ -211,6 +217,9 @@ public final class HubBout implements Bout {
      */
     @Override
     public Message post(final String text) {
+        if (!this.confirmed()) {
+            throw new IllegalStateException("You can't post until you join");
+        }
         final MessageData msg = this.data.addMessage();
         msg.setDate(new Date());
         msg.setAuthor(this.viewer.name());
@@ -237,6 +246,19 @@ public final class HubBout implements Bout {
             }
         }
         return false;
+    }
+
+    /**
+     * This identity has confirmed participation?
+     * @return Is it?
+     */
+    private boolean confirmed() {
+        for (Participant dude : this.participants()) {
+            if (dude.identity().equals(this.viewer)) {
+                return dude.confirmed();
+            }
+        }
+        throw new IllegalStateException("Can't find myself in participants");
     }
 
 }
