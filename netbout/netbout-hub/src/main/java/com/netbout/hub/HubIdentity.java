@@ -51,6 +51,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -284,6 +285,16 @@ public final class HubIdentity implements Identity {
             list.size()
         );
         return list;
+    }
+
+    /**
+     * JAXB related method, to return aliases of identity.
+     * @return The list of aliases
+     */
+    @XmlElement(name = "alias")
+    @XmlElementWrapper(name = "aliases")
+    public Set<String> getAliases() {
+        return this.aliases();
     }
 
     /**

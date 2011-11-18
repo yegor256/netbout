@@ -50,6 +50,7 @@ Manifests.inject('Netbout-JdbcPassword', password)
 
 def conn = Database.connection()
 [
+    'DELETE FROM alias',
     'DELETE FROM seen',
     'DELETE FROM message',
     'DELETE FROM participant',
@@ -57,6 +58,8 @@ def conn = Database.connection()
     'DELETE FROM identity',
     "INSERT INTO identity (name, photo) VALUES ('j.depp', 'http://www.ofcelebrity.net/photos/johnny-depp-6.jpg')",
     "INSERT INTO identity (name, photo) VALUES ('johnny.doe', 'http://www.topnews.in/light/files/John-Turturro.jpg')",
+    "INSERT INTO alias (identity, name) VALUES ('johnny.doe', 'Johnny Doe')",
+    "INSERT INTO alias (identity, name) VALUES ('j.depp', 'Johnny Depp')",
     "INSERT INTO bout (number, title) VALUES (1, 'interesting discussion...')",
     "INSERT INTO participant (bout, identity, confirmed) VALUES (1, 'j.depp', 1)",
     "INSERT INTO participant (bout, identity, confirmed) VALUES (1, 'johnny.doe', 1)",

@@ -71,6 +71,7 @@ public final class MiscRs extends AbstractRs {
                     .up()
             )
             .anonymous()
+            .status(code)
             .build();
     }
 

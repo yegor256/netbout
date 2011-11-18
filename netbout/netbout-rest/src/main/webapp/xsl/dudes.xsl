@@ -54,13 +54,14 @@
                             </xsl:attribute>
                         </xsl:if>
                     </img>
+                    <xsl:variable name="name" select="identity/aliases/alias[position() = 1]"/>
                     <xsl:choose>
-                        <xsl:when test="string-length(identity/name) &gt; 10">
-                            <xsl:value-of select="substring(identity/name, 0, 8)"/>
+                        <xsl:when test="string-length($name) &gt; 10">
+                            <xsl:value-of select="substring($name, 0, 8)"/>
                             <xsl:text>...</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="identity/name"/>
+                            <xsl:value-of select="$name"/>
                         </xsl:otherwise>
                     </xsl:choose>
                 </div>

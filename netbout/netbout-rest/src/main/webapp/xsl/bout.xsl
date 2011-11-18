@@ -131,7 +131,7 @@
                     </img>
                     <xsl:text>by </xsl:text>
                     <b>
-                    <xsl:value-of select="/page/bout/participants/participant[$message/author/name/text()=identity/name/text()]/identity/name"/>
+                    <xsl:value-of select="/page/bout/participants/participant[$message/author/name/text()=identity/name/text()]/identity/aliases/alias[position() = 1]"/>
                     </b>
                     <xsl:text> at </xsl:text>
                     <xsl:value-of select="$message/date"/>

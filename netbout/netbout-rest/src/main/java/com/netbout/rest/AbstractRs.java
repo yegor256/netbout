@@ -114,7 +114,7 @@ public abstract class AbstractRs implements Resource {
         }
         try {
             persistor.promote(new CpaHelper("com.netbout.db"));
-        } catch (com.netbout.spi.PromotionException ex) {
+        } catch (com.netbout.spi.HelperException ex) {
             throw new IllegalStateException(ex);
         }
         try {

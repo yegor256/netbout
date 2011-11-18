@@ -138,10 +138,11 @@ public final class LoginRs extends AbstractRs {
         final User user = this.entry().user(fbuser.getId());
         Identity identity;
         try {
-            identity = user.identity(fbuser.getName());
+            identity = user.identity(fbuser.getId());
         } catch (com.netbout.spi.DuplicateIdentityException ex) {
             throw new IOException(ex);
         }
+        identity.alias(fbuser.getName());
         identity.setPhoto(
             UriBuilder
                 .fromPath("https://graph.facebook.com/{id}/picture")
