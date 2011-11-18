@@ -12,7 +12,7 @@
         </div>
         <div id="content">
             <p>
-                <b>Internal application error.</b>
+                <b style="color: red;">Internal application error</b>.
             </p>
             <p>
                 Netbout team already received a notification about this

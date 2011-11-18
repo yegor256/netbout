@@ -69,4 +69,22 @@ public final class ExceptionTrapTest {
         );
     }
 
+    /**
+     * Render servlet page with all nulls.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testPageRenderingWithNULLs() throws Exception {
+        final HttpServlet servlet = new ExceptionTrap();
+        final HttpServletRequest request =
+            Mockito.mock(HttpServletRequest.class);
+        Mockito.doReturn("POST").when(request).getMethod();
+        Mockito.doReturn("/test").when(request).getRequestURI();
+        final HttpServletResponse response =
+            Mockito.mock(HttpServletResponse.class);
+        final StringWriter writer = new StringWriter();
+        Mockito.doReturn(new PrintWriter(writer)).when(response).getWriter();
+        servlet.service(request, response);
+    }
+
 }

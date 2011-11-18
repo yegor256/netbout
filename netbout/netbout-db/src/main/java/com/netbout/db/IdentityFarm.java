@@ -53,6 +53,7 @@ public final class IdentityFarm {
      */
     @Operation("get-bouts-of-identity")
     public Long[] getBoutsOfIdentity(final String name) throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         final List<Long> numbers = new ArrayList<Long>();
         try {
@@ -70,9 +71,10 @@ public final class IdentityFarm {
         }
         Logger.debug(
             this,
-            "#getBoutsOfIdentity('%s'): retrieved %d bout number(s)",
+            "#getBoutsOfIdentity('%s'): retrieved %d bout number(s) [%dms]",
             name,
-            numbers.size()
+            numbers.size(),
+            System.currentTimeMillis() - start
         );
         return numbers.toArray(new Long[]{});
     }
@@ -86,6 +88,7 @@ public final class IdentityFarm {
     @Operation("get-identity-photo")
     public String getIdentityPhoto(final String name)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         String photo;
         try {
@@ -101,9 +104,10 @@ public final class IdentityFarm {
         }
         Logger.debug(
             this,
-            "#getIdentityPhoto('%s'): retrieved '%s'",
+            "#getIdentityPhoto('%s'): retrieved '%s' [%dms]",
             name,
-            photo
+            photo,
+            System.currentTimeMillis() - start
         );
         return photo;
     }
@@ -115,6 +119,7 @@ public final class IdentityFarm {
      */
     @Operation("identity-mentioned")
     public void identityMentioned(final String name) throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
@@ -131,8 +136,9 @@ public final class IdentityFarm {
                 istmt.executeUpdate();
                 Logger.debug(
                     this,
-                    "#identityMentioned('%s'): inserted",
-                    name
+                    "#identityMentioned('%s'): inserted [%dms]",
+                    name,
+                    System.currentTimeMillis() - start
                 );
             }
         } finally {
@@ -149,6 +155,7 @@ public final class IdentityFarm {
     @Operation("changed-identity-photo")
     public void changedIdentityPhoto(final String name,
         final String photo) throws SQLException {
+        final long start = System.currentTimeMillis();
         this.identityMentioned(name);
         final Connection conn = Database.connection();
         try {
@@ -160,9 +167,10 @@ public final class IdentityFarm {
             ustmt.executeUpdate();
             Logger.debug(
                 this,
-                "#changedIdentityPhoto('%s', '%s'): updated",
+                "#changedIdentityPhoto('%s', '%s'): updated [%dms]",
                 name,
-                photo
+                photo,
+                System.currentTimeMillis() - start
             );
         } finally {
             conn.close();

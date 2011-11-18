@@ -117,6 +117,13 @@ public abstract class AbstractRs implements Resource {
         } catch (com.netbout.spi.PromotionException ex) {
             throw new IllegalStateException(ex);
         }
+        try {
+            persistor.setPhoto(
+                new java.net.URL("http://img.netbout.com/db.png")
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**

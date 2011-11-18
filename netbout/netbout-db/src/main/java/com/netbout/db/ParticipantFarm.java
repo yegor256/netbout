@@ -53,6 +53,7 @@ public final class ParticipantFarm {
      */
     @Operation("get-bout-participants")
     public String[] getBoutParticipants(final Long bout) throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         final List<String> names = new ArrayList<String>();
         try {
@@ -70,9 +71,10 @@ public final class ParticipantFarm {
         }
         Logger.debug(
             this,
-            "#getBoutParticipants('%s'): retrieved %d name(s)",
+            "#getBoutParticipants('%s'): retrieved %d name(s) [%dms]",
             bout,
-            names.size()
+            names.size(),
+            System.currentTimeMillis() - start
         );
         return names.toArray(new String[]{});
     }
@@ -86,6 +88,7 @@ public final class ParticipantFarm {
     @Operation("added-bout-participant")
     public void addedBoutParticipant(final Long bout, final String identity)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
@@ -99,9 +102,10 @@ public final class ParticipantFarm {
         }
         Logger.debug(
             this,
-            "#addedBoutParticipant(#%d, '%s'): added",
+            "#addedBoutParticipant(#%d, '%s'): added [%dms]",
             bout,
-            identity
+            identity,
+            System.currentTimeMillis() - start
         );
     }
 
@@ -115,6 +119,7 @@ public final class ParticipantFarm {
     @Operation("get-participant-status")
     public Boolean getParticipantStatus(final Long bout, final String identity)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         Boolean status;
         try {
@@ -140,10 +145,11 @@ public final class ParticipantFarm {
         }
         Logger.debug(
             this,
-            "#getParticipantStatus(#%d, '%s'): retrieved '%b'",
+            "#getParticipantStatus(#%d, '%s'): retrieved '%b' [%dms]",
             bout,
             identity,
-            status
+            status,
+            System.currentTimeMillis() - start
         );
         return status;
     }
@@ -158,6 +164,7 @@ public final class ParticipantFarm {
     @Operation("changed-participant-status")
     public void changedParticipantStatus(final Long bout,
         final String identity, final Boolean status) throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
@@ -184,10 +191,11 @@ public final class ParticipantFarm {
         }
         Logger.debug(
             this,
-            "#changedParticipantStatus(#%d, '%s', %b): updated",
+            "#changedParticipantStatus(#%d, '%s', %b): updated [%dms]",
             bout,
             identity,
-            status
+            status,
+            System.currentTimeMillis() - start
         );
     }
 

@@ -52,6 +52,7 @@ public final class SeenFarm {
     @Operation("message-was-seen")
     public void messageWasSeen(final Long msg, final String identity)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
@@ -65,9 +66,10 @@ public final class SeenFarm {
         }
         Logger.debug(
             this,
-            "#messageWasSeen(#%d, '%s'): inserted",
+            "#messageWasSeen(#%d, '%s'): inserted [%dms]",
             msg,
-            identity
+            identity,
+            System.currentTimeMillis() - start
         );
     }
 
@@ -81,6 +83,7 @@ public final class SeenFarm {
     @Operation("was-message-seen")
     public Boolean wasMessageSeen(final Long msg, final String identity)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         Boolean seen;
         try {
@@ -96,10 +99,11 @@ public final class SeenFarm {
         }
         Logger.debug(
             this,
-            "#wasMessageSeen(#%d, '%s'): retrieved %b",
+            "#wasMessageSeen(#%d, '%s'): retrieved %b [%dms]",
             msg,
             identity,
-            seen
+            seen,
+            System.currentTimeMillis() - start
         );
         return seen;
     }

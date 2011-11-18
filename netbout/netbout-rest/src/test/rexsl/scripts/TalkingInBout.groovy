@@ -82,6 +82,7 @@ rename(cookie, bout, 'new interesting discussion...')
 post(cookie, bout, 'Hello, friends!')
 invite(cookie, bout, 'j.depp')
 invite(cookie, bout, 'somebody-we-dont-know-yet')
+invite(cookie, bout, 'nb:db')
 
 def r = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)

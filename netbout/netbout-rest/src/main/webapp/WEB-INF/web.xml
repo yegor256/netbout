@@ -101,6 +101,11 @@
         <location>/m/404</location>
     </error-page>
 
+    <error-page>
+        <error-code>405</error-code>
+        <location>/m/405</location>
+    </error-page>
+
     <mime-mapping>
         <extension>xsl</extension>
         <mime-type>text/xsl</mime-type>

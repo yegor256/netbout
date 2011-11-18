@@ -53,6 +53,7 @@ public final class BoutFarm {
      */
     @Operation("get-next-bout-number")
     public Long getNextBoutNumber() throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         Long number;
         try {
@@ -69,8 +70,9 @@ public final class BoutFarm {
         }
         Logger.debug(
             this,
-            "#getNextBoutNumber(): retrieved %d",
-            number
+            "#getNextBoutNumber(): retrieved %d [%dms]",
+            number,
+            System.currentTimeMillis() - start
         );
         return number;
     }
@@ -83,6 +85,7 @@ public final class BoutFarm {
      */
     @Operation("check-bout-existence")
     public Boolean checkBoutExistence(final Long number) throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         Boolean exists;
         try {
@@ -97,9 +100,10 @@ public final class BoutFarm {
         }
         Logger.debug(
             this,
-            "#checkBoutExistence(#%d): retrieved %b",
+            "#checkBoutExistence(#%d): retrieved %b [%dms]",
             number,
-            exists
+            exists,
+            System.currentTimeMillis() - start
         );
         return exists;
     }
@@ -122,6 +126,7 @@ public final class BoutFarm {
      */
     @Operation("get-bout-messages")
     public Long[] getBoutMessages(final Long bout) throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         final List<Long> numbers = new ArrayList<Long>();
         try {
@@ -139,9 +144,10 @@ public final class BoutFarm {
         }
         Logger.debug(
             this,
-            "#getBoutMessages(#%d): retrieved %d message number(s)",
+            "#getBoutMessages(#%d): retrieved %d message number(s) [%dms]",
             bout,
-            numbers.size()
+            numbers.size(),
+            System.currentTimeMillis() - start
         );
         return numbers.toArray(new Long[]{});
     }
@@ -154,6 +160,7 @@ public final class BoutFarm {
      */
     @Operation("get-bout-title")
     public String getBoutTitle(final Long number) throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         String title;
         try {
@@ -169,9 +176,10 @@ public final class BoutFarm {
         }
         Logger.debug(
             this,
-            "#getBoutTitle(%d): retrieved '%s'",
+            "#getBoutTitle(%d): retrieved '%s' [%dms]",
             number,
-            title
+            title,
+            System.currentTimeMillis() - start
         );
         return title;
     }
@@ -185,6 +193,7 @@ public final class BoutFarm {
     @Operation("changed-bout-title")
     public void changedBoutTitle(final Long number, final String title)
         throws SQLException {
+        final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
@@ -206,9 +215,10 @@ public final class BoutFarm {
         }
         Logger.debug(
             this,
-            "#changedBoutTitle(%d, '%s'): updated",
+            "#changedBoutTitle(%d, '%s'): updated [%dms]",
             number,
-            title
+            title,
+            System.currentTimeMillis() - start
         );
     }
 
