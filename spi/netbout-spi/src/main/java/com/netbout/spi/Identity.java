@@ -31,6 +31,7 @@ package com.netbout.spi;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Identity.
@@ -43,24 +44,6 @@ import java.util.List;
  * @version $Id$
  */
 public interface Identity {
-
-    /**
-     * Status of the alias.
-     */
-    public enum AliasStatus {
-        /**
-         * Primary status of the identity.
-         */
-        PRIMARY,
-        /**
-         * One of secondary aliases.
-         */
-        SECONDARY,
-        /**
-         * The alias no longer available.
-         */
-        EXPIRED
-    }
 
     /**
      * User.
@@ -112,14 +95,13 @@ public interface Identity {
      * Get all aliases.
      * @return List of all aliases
      */
-    List<String> aliases();
+    Set<String> aliases();
 
     /**
      * Add new alias.
      * @param alias The alias
-     * @param status The status of the alias
      */
-    void alias(String alias, Identity.AliasStatus status);
+    void alias(String alias);
 
     /**
      * This identity should be promoted to an active helper.
