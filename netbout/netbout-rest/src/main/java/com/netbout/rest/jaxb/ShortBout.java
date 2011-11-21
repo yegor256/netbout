@@ -51,12 +51,12 @@ public final class ShortBout {
     /**
      * The original bout.
      */
-    private Bout bout;
+    private transient Bout bout;
 
     /**
      * URI builder.
      */
-    private final UriBuilder builder;
+    private final transient UriBuilder builder;
 
     /**
      * Public ctor for JAXB.
@@ -66,13 +66,23 @@ public final class ShortBout {
     }
 
     /**
-     * Public ctor.
+     * Private ctor.
      * @param parent Parent bout to refer to
      * @param bldr URI builder
      */
     public ShortBout(final Bout parent, final UriBuilder bldr) {
         this.bout = parent;
         this.builder = bldr;
+    }
+
+    /**
+     * Builder.
+     * @param parent Parent bout to refer to
+     * @param bldr URI builder
+     * @return The instance just created
+     */
+    public static ShortBout build(final Bout parent, final UriBuilder bldr) {
+        return new ShortBout(parent, bldr);
     }
 
     /**

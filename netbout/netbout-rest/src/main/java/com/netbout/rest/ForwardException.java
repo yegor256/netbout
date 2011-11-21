@@ -61,9 +61,15 @@ final class ForwardException extends WebApplicationException {
                         "netbout-msg",
                         ForwardException.encode(msg),
                         // path
-                        "/" + res.httpServletRequest().getContextPath(),
+                        String.format(
+                            "/%s",
+                            res.httpServletRequest().getContextPath()
+                        ),
                         // domain
-                        "." + res.uriInfo().getBaseUri().getHost(),
+                        String.format(
+                            ".%s",
+                            res.uriInfo().getBaseUri().getHost()
+                        ),
                         // version
                         Integer.valueOf(Manifests.read("Netbout-Revision")),
                         // comment

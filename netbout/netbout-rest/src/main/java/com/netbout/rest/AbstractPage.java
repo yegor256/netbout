@@ -57,23 +57,23 @@ public abstract class AbstractPage implements Page {
     /**
      * Home resource of this page.
      */
-    private Resource home;
+    private transient Resource home;
 
     /**
      * When this page was started to build, in nanoseconds.
      * @see #getNano()
      */
-    private final long start;
+    private final transient long start;
 
     /**
      * Collection of elements.
      */
-    private final Collection elements = new ArrayList();
+    private final transient Collection elements = new ArrayList();
 
     /**
      * Collection of links.
      */
-    private final JaxbBundle links = new JaxbBundle("links");
+    private final transient JaxbBundle links = new JaxbBundle("links");
 
     /**
      * Public ctor.
@@ -107,7 +107,8 @@ public abstract class AbstractPage implements Page {
                 this.home.uriInfo()
                     .getAbsolutePathBuilder()
                     .replacePath(href)
-                    .build());
+                    .build()
+            );
         return this;
     }
 
@@ -177,9 +178,15 @@ public abstract class AbstractPage implements Page {
                     new Cryptor(this.home.entry()).encrypt(identity),
                     // path
                     // @checkstyle MultipleStringLiterals (1 line)
-                    "/" + this.home.httpServletRequest().getContextPath(),
+                    String.format(
+                        "/%s",
+                        this.home.httpServletRequest().getContextPath()
+                    ),
                     // domain
-                    "." + this.home.uriInfo().getBaseUri().getHost(),
+                    String.format(
+                        ".%s",
+                        this.home.uriInfo().getBaseUri().getHost()
+                    ),
                     // version
                     // @checkstyle MultipleStringLiterals (1 line)
                     Integer.valueOf(Manifests.read("Netbout-Revision")),

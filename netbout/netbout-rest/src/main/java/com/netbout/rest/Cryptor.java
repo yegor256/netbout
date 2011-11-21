@@ -58,7 +58,7 @@ public final class Cryptor {
     /**
      * The entry to work with.
      */
-    private final Entry entry;
+    private final transient Entry entry;
 
     /**
      * Public ctor.
@@ -76,9 +76,9 @@ public final class Cryptor {
     public String encrypt(final Identity identity) {
         final StringBuilder builder = new StringBuilder();
         builder
-            .append(this.toBase64(identity.user().name()))
+            .append(this.toBase(identity.user().name()))
             .append(this.SEPARATOR)
-            .append(this.toBase64(identity.name()))
+            .append(this.toBase(identity.name()))
             .append(this.SEPARATOR)
             .append(this.hash(identity.name()));
         return builder.toString();
@@ -118,8 +118,8 @@ public final class Cryptor {
         if (parts.length != 3) {
             throw new DecryptionException(hash, "Not enough parts");
         }
-        final String uname = this.fromBase64(parts[0]);
-        final String iname = this.fromBase64(parts[1]);
+        final String uname = this.fromBase(parts[0]);
+        final String iname = this.fromBase(parts[1]);
         final String signature = parts[2];
         if (!signature.equals(this.hash(iname))) {
             throw new DecryptionException(
@@ -159,7 +159,7 @@ public final class Cryptor {
      * @param text The text to encode
      * @return Encoded text
      */
-    private String toBase64(final String text) {
+    private String toBase(final String text) {
         try {
             return new Base64().encodeToString(text.getBytes(this.ENCODING));
         } catch (java.io.UnsupportedEncodingException ex) {
@@ -172,7 +172,7 @@ public final class Cryptor {
      * @param text The text to decode
      * @return Decoded text
      */
-    private String fromBase64(final String text) {
+    private String fromBase(final String text) {
         try {
             return new String(new Base64().decode(text), this.ENCODING);
         } catch (java.io.UnsupportedEncodingException ex) {

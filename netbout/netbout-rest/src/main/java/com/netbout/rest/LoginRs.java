@@ -60,7 +60,7 @@ public final class LoginRs extends AbstractRs {
      */
     @GET
     public Response login() {
-        final URI facebookUri = UriBuilder
+        final URI fburi = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
             // @checkstyle MultipleStringLiterals (3 lines)
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
@@ -71,7 +71,7 @@ public final class LoginRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .append(
-                new JaxbBundle("facebook").attr(Page.HATEOAS_HREF, facebookUri)
+                new JaxbBundle("facebook").attr(Page.HATEOAS_HREF, fburi)
             )
             .anonymous()
             .build();
@@ -235,7 +235,7 @@ public final class LoginRs extends AbstractRs {
         try {
             return IOUtils.toString(conn.getInputStream());
         } catch (java.io.IOException ex) {
-            throw ex;
+            throw new IllegalArgumentException(ex);
         } finally {
             conn.disconnect();
             Logger.debug(

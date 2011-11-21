@@ -61,7 +61,7 @@ public final class InboxRs extends AbstractRs {
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
         for (Bout bout : identity.inbox(query)) {
             bouts.add(
-                new ShortBout(
+                ShortBout.build(
                     bout,
                     this.uriInfo().getAbsolutePathBuilder()
                 )

@@ -66,22 +66,15 @@ public final class PageBuilder {
     /**
      * Stylesheet to use.
      */
-    private String stylesheet = "none";
-
-    /**
-     * Public ctor.
-     */
-    public PageBuilder() {
-        // intentionally empty
-    }
+    private transient String xsl = "none";
 
     /**
      * Configure the stylesheet to be used.
-     * @param xsl Name of stylesheet
+     * @param name Name of stylesheet
      * @return This object
      */
-    public PageBuilder stylesheet(final String xsl) {
-        this.stylesheet = xsl;
+    public PageBuilder stylesheet(final String name) {
+        this.xsl = name;
         return this;
     }
 
@@ -121,11 +114,13 @@ public final class PageBuilder {
             final String name = String.format(
                 "%s$%s$%d",
                 base.getName(),
-                this.stylesheet.replaceAll("[^\\w]", ""),
-                Math.abs(this.stylesheet.hashCode())
+                this.xsl.replaceAll("[^\\w]", ""),
+                Math.abs(this.xsl.hashCode())
             );
             Class cls;
-            if (ClassPool.getDefault().getOrNull(name) != null) {
+            if (ClassPool.getDefault().getOrNull(name) == null) {
+                cls = this.construct(name, base);
+            } else {
                 try {
                     cls = Class.forName(name);
                 } catch (ClassNotFoundException ex) {
@@ -134,9 +129,7 @@ public final class PageBuilder {
                 // let's double check that the class found really is the
                 // class we're looking for
                 assert ((Stylesheet) cls.getAnnotation(Stylesheet.class))
-                    .value().equals(this.stylesheet);
-            } else {
-                cls = this.construct(name, base);
+                    .value().equals(this.xsl);
             }
             return cls;
         }
@@ -164,7 +157,7 @@ public final class PageBuilder {
             );
             annotation.addMemberValue(
                 "value",
-                new StringMemberValue(this.stylesheet, file.getConstPool())
+                new StringMemberValue(this.xsl, file.getConstPool())
             );
             attribute.addAnnotation(annotation);
             for (Annotation existing : this.annotations(ctc, parent)) {

@@ -50,34 +50,34 @@ public abstract class AbstractRs implements Resource {
     /**
      * Entry to work with.
      */
-    private Entry entry = new HubEntry();
+    private transient Entry entry = new HubEntry();
 
     /**
      * List of known JAX-RS providers.
      */
-    private Providers providers;
+    private transient Providers providers;
 
     /**
      * URI info.
      */
-    private UriInfo uriInfo;
+    private transient UriInfo uriInfo;
 
     /**
      * Http headers.
      */
     @Context
-    private HttpHeaders httpHeaders;
+    private transient HttpHeaders httpHeaders;
 
     /**
      * HTTP servlet request.
      */
     @Context
-    private HttpServletRequest httpServletRequest;
+    private transient HttpServletRequest httpRequest;
 
     /**
      * Cookie.
      */
-    private String cookie;
+    private transient String cookie;
     // Uncomment this line if you don't have a cookie saved by your
     // local browser yet.
     // = "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
@@ -85,7 +85,7 @@ public abstract class AbstractRs implements Resource {
     /**
      * The message to show.
      */
-    private String message = "";
+    private transient String message = "";
 
     /**
      * Send all JUL logging to SLF4J. Some libraries may use JUL for some
@@ -196,15 +196,15 @@ public abstract class AbstractRs implements Resource {
      */
     @Override
     public final HttpServletRequest httpServletRequest() {
-        if (this.httpServletRequest == null) {
+        if (this.httpRequest == null) {
             throw new IllegalStateException(
                 String.format(
-                    "%s#httpServletRequest was never injected by JAX-RS",
+                    "%s#httpRequest was never injected by JAX-RS",
                     this.getClass().getName()
                 )
             );
         }
-        return this.httpServletRequest;
+        return this.httpRequest;
     }
 
     /**
@@ -320,7 +320,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Context
     public final void setHttpServletRequest(final HttpServletRequest request) {
-        this.httpServletRequest = request;
+        this.httpRequest = request;
         Logger.debug(
             this,
             "#setHttpServletRequest(%s): injected",
@@ -344,7 +344,7 @@ public abstract class AbstractRs implements Resource {
                 this.httpServletRequest().getRequestURI(),
                 ex.getMessage()
             );
-            throw new ForwardException(this, "/g");
+            throw new ForwardException(this, "/g", ex);
         }
     }
 

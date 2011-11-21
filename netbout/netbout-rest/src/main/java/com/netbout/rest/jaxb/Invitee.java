@@ -48,12 +48,12 @@ public final class Invitee {
     /**
      * The original identity.
      */
-    private final Identity identity;
+    private final transient Identity identity;
 
     /**
      * URI builder.
      */
-    private final UriBuilder builder;
+    private final transient UriBuilder builder;
 
     /**
      * Public ctor for JAXB.
