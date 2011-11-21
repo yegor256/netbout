@@ -32,7 +32,6 @@ import com.netbout.hub.data.Storage;
 import com.netbout.hub.queue.HelpQueue;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
@@ -43,9 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -60,19 +57,12 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (300 lines)
  */
 @XmlRootElement(name = "identity")
 @XmlType(name = "identity")
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlSeeAlso(HubBout.class)
 public final class HubIdentity implements Identity {
-
-    /**
-     * All identities known for us at the moment, and their objects.
-     */
-    private static final Map<String, HubIdentity> ALL =
-        new ConcurrentHashMap<String, HubIdentity>();
 
     /**
      * The name.
@@ -132,7 +122,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public User user() {
-        if (this.iuser == null) {
+        if (!this.isAssigned()) {
             throw new IllegalStateException(
                 String.format(
                     "User is unknown for identity '%s'",
@@ -349,74 +339,58 @@ public final class HubIdentity implements Identity {
     }
 
     /**
-     * Make new identity or find existing one.
-     * @param label The name of identity
-     * @param usr Name of the user
-     * @return Identity found
-     * @throws DuplicateIdentityException If this identity is taken
-     * @checkstyle RedundantThrows (4 lines)
+     * Does this identity matches a keyword?
+     * @param keyword The keyword
+     * @return Yes or no?
      */
-    protected static HubIdentity make(final String label, final User usr)
-        throws DuplicateIdentityException {
-        final HubIdentity identity = HubIdentity.make(label);
-        if (identity.iuser != null && !identity.iuser.equals(usr)) {
-            throw new DuplicateIdentityException(
-                "Identity '%s' is already taken by '%s'",
-                label,
-                identity.iuser.name()
-            );
+    protected boolean matchesKeyword(final String keyword) {
+        boolean matches = this.iname.contains(keyword);
+        for (String alias : this.myAliases()) {
+            matches |= alias.contains(keyword);
         }
-        identity.iuser = usr;
-        return identity;
+        return matches;
     }
 
     /**
-     * Make new identity or find existing one.
-     * @param label The name of identity
-     * @return Identity found
+     * Does this identity belongs to the specified user?
+     * @param user The user
+     * @return Yes or no?
      */
-    protected static HubIdentity make(final String label) {
-        HubIdentity identity;
-        if (HubIdentity.ALL.containsKey(label)) {
-            identity = HubIdentity.ALL.get(label);
-        } else {
-            identity = new HubIdentity(label);
-            HubIdentity.ALL.put(label, identity);
-            HelpQueue.make("identity-mentioned")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(label)
-                .exec();
-            Logger.debug(
-                HubIdentity.class,
-                "#make('%s'): created just by name (%d total)",
-                label,
-                HubIdentity.ALL.size()
+    protected boolean belongsTo(final User user) {
+        if (!this.isAssigned()) {
+            throw new IllegalStateException(
+                String.format(
+                    "Identity '%s' is not assigned to any user yet",
+                    this.iname
+                )
             );
         }
-        return identity;
+        return this.iuser.equals(user);
     }
 
     /**
-     * Find identities by name (including aliases).
-     * @param keyword The keyword to find by
-     * @return Identities found
+     * Does this identity belongs to some user already?
+     * @return Yes or no?
      */
-    protected static Set<HubIdentity> findByKeyword(final String keyword) {
-        final Set<HubIdentity> found = new HashSet<HubIdentity>();
-        for (HubIdentity identity : HubIdentity.ALL.values()) {
-            if (identity.matchesKeyword(keyword)) {
-                found.add(identity);
-            }
+    protected boolean isAssigned() {
+        return this.iuser != null;
+    }
+
+    /**
+     * Assign the identity to the given user.
+     * @param user The user
+     */
+    protected void assignTo(final User user) {
+        if (this.isAssigned()) {
+            throw new IllegalStateException(
+                String.format(
+                    "Identity '%s' already belongs to '%s'",
+                    this.iname,
+                    this.iuser.name()
+                )
+            );
         }
-        final String[] external = HelpQueue.make("find-identities-by-keyword")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .arg(keyword)
-            .asDefault(new String[]{})
-            .exec(String[].class);
-        for (String name : external) {
-            found.add(HubIdentity.make(name));
-        }
-        return found;
+        this.iuser = user;
     }
 
     /**
@@ -459,19 +433,6 @@ public final class HubIdentity implements Identity {
             }
         }
         return this.ialiases;
-    }
-
-    /**
-     * Does this identity matches a keyword?
-     * @param keyword The keyword
-     * @return Yes or no?
-     */
-    private boolean matchesKeyword(final String keyword) {
-        boolean matches = this.iname.contains(keyword);
-        for (String alias : this.myAliases()) {
-            matches |= alias.contains(keyword);
-        }
-        return matches;
     }
 
 }

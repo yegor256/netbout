@@ -240,12 +240,14 @@ public final class HubBout implements Bout {
      * @return Is it?
      */
     protected boolean isParticipant(final Identity identity) {
+        boolean found = false;
         for (ParticipantData dude : this.data.getParticipants()) {
             if (dude.getIdentity().equals(identity.name())) {
-                return true;
+                found = true;
+                break;
             }
         }
-        return false;
+        return found;
     }
 
     /**

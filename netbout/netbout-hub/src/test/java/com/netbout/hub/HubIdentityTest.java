@@ -128,14 +128,14 @@ public final class HubIdentityTest {
      */
     @Test
     public void testAliasesManipulations() throws Exception {
-        final Identity identity = new HubEntry().user("Matt").identity("mati");
+        final Identity identity = new HubEntry().user("Lori").identity("lo");
         MatcherAssert.assertThat(
             identity.aliases().size(),
             Matchers.equalTo(0)
         );
-        final String alias = "mat@example.com";
+        final String alias = "lori@example.com";
         identity.alias(alias);
-        identity.alias("matthew.gilbert@example.com");
+        identity.alias("lorisa.townsend@example.com");
         MatcherAssert.assertThat(
             identity.aliases().size(),
             Matchers.equalTo(2)
@@ -143,10 +143,6 @@ public final class HubIdentityTest {
         MatcherAssert.assertThat(
             identity.aliases(),
             Matchers.hasItem(alias)
-        );
-        MatcherAssert.assertThat(
-            HubIdentity.findByKeyword("mat").size(),
-            Matchers.greaterThan(0)
         );
     }
 

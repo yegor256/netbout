@@ -90,7 +90,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Identity author() {
-        return HubIdentity.make(this.data.getAuthor());
+        return Identities.make(this.data.getAuthor());
     }
 
     /**

@@ -81,7 +81,7 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public Identity identity() {
-        return HubIdentity.make(this.data.getIdentity());
+        return Identities.make(this.data.getIdentity());
     }
 
     /**

@@ -86,7 +86,7 @@ public final class HubUser implements User {
     @Override
     public Identity identity(final String label)
         throws DuplicateIdentityException {
-        final Identity identity = HubIdentity.make(label, this);
+        final Identity identity = Identities.make(label, this);
         Logger.debug(
             this,
             "#identity('%s'): found",

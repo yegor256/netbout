@@ -26,62 +26,32 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
-import com.netbout.spi.User;
-import com.ymock.util.Logger;
-import java.util.Set;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Entry point to Hub.
- *
+ * Test case of {@link Identities}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntry implements Entry {
+public final class IdentitiesTest {
 
     /**
-     * {@inheritDoc}
+     * Manipulate with aliases.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public User user(final String name) {
-        final User user = new HubUser(name);
-        Logger.debug(
-            this,
-            "#user('%s'): instantiated",
-            name
+    @Test
+    public void testAliasesManipulations() throws Exception {
+        final Identity identity = new HubEntry().user("Matt").identity("mati");
+        final String alias = "mat@example.com";
+        identity.alias(alias);
+        identity.alias("matthew.gilbert@example.com");
+        MatcherAssert.assertThat(
+            Identities.findByKeyword("mat").size(),
+            Matchers.greaterThan(0)
         );
-        return user;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity(final String name) {
-        final Identity identity = Identities.make(name);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            name
-        );
-        return identity;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Identity> find(final String keyword) {
-        final Set<Identity> identities =
-            (Set) Identities.findByKeyword(keyword);
-        Logger.debug(
-            this,
-            "#find('%s'): found %d identities",
-            keyword,
-            identities.size()
-        );
-        return identities;
     }
 
 }
