@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.jaxb.LongBout;
 import com.netbout.rest.jaxb.Invitee;
+import com.netbout.rest.jaxb.LongBout;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;

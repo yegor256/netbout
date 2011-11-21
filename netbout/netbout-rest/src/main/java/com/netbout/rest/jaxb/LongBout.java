@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -96,7 +95,7 @@ public final class LongBout {
     public List<LongMessage> getMessages() {
         final List<LongMessage> messages = new ArrayList<LongMessage>();
         for (Message msg : this.bout.messages("")) {
-            messages.add(new LongMessage(msg));
+            messages.add(LongMessage.build(msg));
         }
         return messages;
     }
@@ -111,7 +110,7 @@ public final class LongBout {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
-            dudes.add(new LongParticipant(dude));
+            dudes.add(LongParticipant.build(dude));
         }
         return dudes;
     }

@@ -32,14 +32,7 @@ import com.netbout.rest.BoutRs;
 import com.netbout.rest.Page;
 import com.netbout.rest.Resource;
 import com.rexsl.core.Stylesheet;
-import com.rexsl.core.XslResolver;
 import com.rexsl.test.JaxbConverter;
-import java.net.URI;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -47,7 +40,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
 
 /**

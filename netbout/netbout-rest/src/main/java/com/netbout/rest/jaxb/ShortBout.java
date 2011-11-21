@@ -126,7 +126,7 @@ public final class ShortBout {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
-            dudes.add(new LongParticipant(dude));
+            dudes.add(LongParticipant.build(dude));
         }
         return dudes;
     }

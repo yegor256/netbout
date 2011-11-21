@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -60,8 +59,17 @@ public final class LongParticipant {
      * Private ctor.
      * @param dude The participant
      */
-    public LongParticipant(final Participant dude) {
+    private LongParticipant(final Participant dude) {
         this.participant = dude;
+    }
+
+    /**
+     * Build it.
+     * @param dude The participant
+     * @return The instance of the class
+     */
+    public static LongParticipant build(final Participant dude) {
+        return new LongParticipant(dude);
     }
 
     /**

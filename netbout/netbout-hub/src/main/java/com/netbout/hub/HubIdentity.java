@@ -236,7 +236,7 @@ public final class HubIdentity implements Identity {
     @Override
     public Set<String> aliases() {
         final Set<String> list = new HashSet<String>(this.myAliases());
-        Logger.info(
+        Logger.debug(
             this,
             "#aliases(): %d returned",
             list.size()
@@ -250,7 +250,7 @@ public final class HubIdentity implements Identity {
     @Override
     public void alias(final String alias) {
         if (this.myAliases().contains(alias)) {
-            Logger.info(
+            Logger.debug(
                 this,
                 "#alias('%s'): it's already set for '%s'",
                 alias,
@@ -262,7 +262,7 @@ public final class HubIdentity implements Identity {
                 .arg(this.iname)
                 .arg(alias)
                 .exec();
-            Logger.info(
+            Logger.debug(
                 this,
                 "#alias('%s'): added for '%s'",
                 alias,

@@ -40,7 +40,7 @@ public final class AliasBuilder {
     /**
      * The identity.
      */
-    private transient Identity identity;
+    private final transient Identity identity;
 
     /**
      * Private ctor.
