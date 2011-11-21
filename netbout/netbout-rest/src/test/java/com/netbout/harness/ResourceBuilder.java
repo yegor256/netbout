@@ -79,8 +79,9 @@ public final class ResourceBuilder {
     public ResourceBuilder() throws Exception {
         final URI home = new URI("http://localhost:99/local");
         Mockito.doReturn(UriBuilder.fromUri(home))
-            .when(this.iuriInfo).getAbsolutePathBuilder();
-        Mockito.doReturn(home).when(this.iuriInfo).getAbsolutePath();
+            .when(this.iuriInfo).getBaseUriBuilder();
+        Mockito.doReturn(home)
+            .when(this.iuriInfo).getAbsolutePath();
         Mockito.doReturn(home)
             .when(this.iuriInfo).getBaseUri();
         Mockito.doReturn("localhost").when(this.ihttpRequest)

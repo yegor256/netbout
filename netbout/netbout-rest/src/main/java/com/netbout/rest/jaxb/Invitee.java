@@ -96,7 +96,7 @@ public final class Invitee {
     }
 
     /**
-     * JAXB related method, to return the number of the bout.
+     * JAXB related method, to return the alias of this person.
      * @return The alias
      */
     @XmlElement
@@ -112,7 +112,7 @@ public final class Invitee {
     }
 
     /**
-     * JAXB related method, to return the title of the bout.
+     * JAXB related method, to return the name.
      * @return The name
      */
     @XmlElement
@@ -121,7 +121,7 @@ public final class Invitee {
     }
 
     /**
-     * JAXB related method, to return the title of the bout.
+     * JAXB related method, to return the photo of the identity.
      * @return The photo
      */
     @XmlElement

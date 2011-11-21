@@ -77,8 +77,9 @@ public final class LoginRsTest {
         final LoginRs rest = builder.build(LoginRs.class);
         final LoginRs spy = PowerMockito.spy(rest);
         final URI redirect = builder.uriInfo()
-            .getAbsolutePathBuilder()
-            .replacePath("/g/fb")
+            .getBaseUriBuilder()
+            .clone()
+            .path("/g/fb")
             .build();
         PowerMockito.doReturn("access_token=abc|cde&expires=5108").when(
             spy,

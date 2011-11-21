@@ -57,13 +57,13 @@ public final class BoutRs extends AbstractRs {
     /**
      * Number of the bout.
      */
-    @PathParam("num")
     private transient Long number;
 
     /**
      * Set bout number.
      * @param num The number
      */
+    @PathParam("num")
     public void setNumber(final Long num) {
         this.number = num;
     }
@@ -90,7 +90,7 @@ public final class BoutRs extends AbstractRs {
         if (keyword == null) {
             throw new ForwardException(
                 this,
-                this.self(),
+                this.self(""),
                 "Query param 'q' missed"
             );
         }
@@ -99,7 +99,7 @@ public final class BoutRs extends AbstractRs {
             invitees.add(
                 Invitee.build(
                     identity,
-                    UriBuilder.fromUri(this.self())
+                    UriBuilder.fromUri(this.self(""))
                 )
             );
         }
@@ -121,7 +121,7 @@ public final class BoutRs extends AbstractRs {
         if (text == null) {
             throw new ForwardException(
                 this,
-                this.self(bout),
+                this.self(""),
                 "Form param 'text' missed"
             );
         }
@@ -130,9 +130,8 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .entity("")
             .status(Response.Status.MOVED_PERMANENTLY)
-            .location(this.self(bout))
+            .location(this.self(""))
             .build();
     }
 
@@ -148,7 +147,7 @@ public final class BoutRs extends AbstractRs {
         if (title == null) {
             throw new ForwardException(
                 this,
-                this.self(bout),
+                this.self(""),
                 "Form param 'title' missed"
             );
         }
@@ -157,9 +156,8 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .entity("")
             .status(Response.Status.MOVED_PERMANENTLY)
-            .location(this.self(bout))
+            .location(this.self(""))
             .build();
     }
 
@@ -175,7 +173,7 @@ public final class BoutRs extends AbstractRs {
         if (name == null) {
             throw new ForwardException(
                 this,
-                this.self(bout),
+                this.self(""),
                 "Form param 'name' missed"
             );
         }
@@ -184,9 +182,8 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .entity("")
             .status(Response.Status.MOVED_PERMANENTLY)
-            .location(this.self(bout))
+            .location(this.self(""))
             .build();
     }
 
@@ -202,9 +199,8 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .entity("")
             .status(Response.Status.MOVED_PERMANENTLY)
-            .location(this.self())
+            .location(this.self(""))
             .build();
     }
 
@@ -220,9 +216,8 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .entity("")
             .status(Response.Status.MOVED_PERMANENTLY)
-            .location(this.self())
+            .location(this.self(""))
             .build();
     }
 
@@ -265,36 +260,30 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .append(this.bout())
-            .link("leave", String.format("/%d/leave", this.number));
+            .link("leave", this.self("/leave"));
         if (this.participant().confirmed()) {
-            page.link("post", String.format("/%d/p", this.number))
-                .link("invite", String.format("/%d/i", this.number))
-                .link("suggest", String.format("/%d/s", this.number))
-                .link("rename", String.format("/%d/r", this.number));
+            page.link("post", this.self("/p"))
+                .link("invite", this.self("/i"))
+                .link("suggest", this.self("/s"))
+                .link("rename", this.self("/r"));
         } else {
-            page.link("join", String.format("/%d/join", this.number));
+            page.link("join", this.self("/join"));
         }
         return page;
     }
 
     /**
      * Location of myself.
-     * @param bout The bout
+     * @param path The path to add
      * @return The location
      */
-    private URI self(final Bout bout) {
+    private URI self(final String path) {
         return this.uriInfo()
-            .getAbsolutePathBuilder()
-            .replacePath("/{num}")
-            .build(bout.number());
-    }
-
-    /**
-     * Location of myself.
-     * @return The location
-     */
-    private URI self() {
-        return this.self(this.bout());
+            .getBaseUriBuilder()
+            .clone()
+            .path("/{num}")
+            .path(path)
+            .build(this.bout().number());
     }
 
 }

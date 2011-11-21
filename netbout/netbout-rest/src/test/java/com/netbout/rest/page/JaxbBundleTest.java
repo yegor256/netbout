@@ -26,7 +26,9 @@
  */
 package com.netbout.rest.page;
 
+import com.netbout.harness.ResourceBuilder;
 import com.netbout.rest.AbstractPage;
+import com.netbout.rest.BoutRs;
 import com.netbout.rest.Page;
 import com.netbout.rest.Resource;
 import com.rexsl.core.XslResolver;
@@ -92,7 +94,7 @@ public final class JaxbBundleTest {
         final Page page = new PageBuilder()
             .stylesheet("test")
             .build(AbstractPage.class)
-            .init(this.resource())
+            .init((Resource) new ResourceBuilder().build(BoutRs.class))
             .append(bundle.element())
             .append("Test me");
         MatcherAssert.assertThat(
@@ -101,29 +103,6 @@ public final class JaxbBundleTest {
                 "/page/alpha/beta-2/gamma[contains(.,'works')]"
             )
         );
-    }
-
-    /**
-     * Create resource.
-     * @return The resource, mocked
-     * @throws Exception If there is some problem inside
-     */
-    private Resource resource() throws Exception {
-        final Resource resource = Mockito.mock(Resource.class);
-        final Providers providers = Mockito.mock(Providers.class);
-        Mockito.doReturn(providers).when(resource).providers();
-        final XslResolver resolver = new XslResolver();
-        Mockito.doReturn(resolver).when(providers).getContextResolver(
-            Marshaller.class,
-            MediaType.APPLICATION_XML_TYPE
-        );
-        final UriInfo info = Mockito.mock(UriInfo.class);
-        Mockito.doReturn(info).when(resource).uriInfo();
-        final URI home = new URI("http://localhost/x");
-        Mockito.doReturn(UriBuilder.fromUri(home))
-            .when(info).getAbsolutePathBuilder();
-        Mockito.doReturn(home).when(info).getAbsolutePath();
-        return resource;
     }
 
 }

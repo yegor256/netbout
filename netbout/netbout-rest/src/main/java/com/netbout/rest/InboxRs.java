@@ -63,7 +63,7 @@ public final class InboxRs extends AbstractRs {
             bouts.add(
                 ShortBout.build(
                     bout,
-                    this.uriInfo().getAbsolutePathBuilder()
+                    this.uriInfo().getBaseUriBuilder().clone()
                 )
             );
         }
@@ -92,8 +92,11 @@ public final class InboxRs extends AbstractRs {
             .entity(String.format("bout #%d created", bout.number()))
             .status(Response.Status.TEMPORARY_REDIRECT)
             .location(
-                UriBuilder.fromPath("/{num}")
-                    .build(bout.number().toString())
+                this.uriInfo()
+                    .getBaseUriBuilder()
+                    .clone()
+                    .path("/{num}")
+                    .build(bout.number())
             )
             .build();
     }

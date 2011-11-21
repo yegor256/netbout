@@ -26,7 +26,9 @@
  */
 package com.netbout.rest.page;
 
+import com.netbout.harness.ResourceBuilder;
 import com.netbout.rest.AbstractPage;
+import com.netbout.rest.BoutRs;
 import com.netbout.rest.Page;
 import com.netbout.rest.Resource;
 import com.rexsl.core.Stylesheet;
@@ -61,13 +63,11 @@ public final class PageBuilderTest {
      */
     @Test
     public void testJaxbIsWorking() throws Exception {
-        final Resource resource = this.resource();
         final String stylesheet = "test-stylesheet";
         final Page page = new PageBuilder()
             .stylesheet(stylesheet)
             .build(AbstractPage.class)
-            .init(resource);
-        // double check duplicate instantiation
+            .init((Resource) new ResourceBuilder().build(BoutRs.class));
         new PageBuilder().stylesheet(stylesheet).build(AbstractPage.class);
         MatcherAssert.assertThat(
             page.getClass().getAnnotation(Stylesheet.class),
@@ -83,29 +83,6 @@ public final class PageBuilderTest {
             JaxbConverter.the(page, PageBuilderTest.Foo.class),
             XmlMatchers.hasXPath("/page/foo/message[contains(.,'hello')]")
         );
-    }
-
-    /**
-     * Create resource.
-     * @return The resource, mocked
-     * @throws Exception If there is some problem inside
-     */
-    private Resource resource() throws Exception {
-        final Resource resource = Mockito.mock(Resource.class);
-        final Providers providers = Mockito.mock(Providers.class);
-        Mockito.doReturn(providers).when(resource).providers();
-        final XslResolver resolver = new XslResolver();
-        Mockito.doReturn(resolver).when(providers).getContextResolver(
-            Marshaller.class,
-            MediaType.APPLICATION_XML_TYPE
-        );
-        final UriInfo info = Mockito.mock(UriInfo.class);
-        Mockito.doReturn(info).when(resource).uriInfo();
-        final URI home = new URI("http://localhost/x");
-        Mockito.doReturn(UriBuilder.fromUri(home))
-            .when(info).getAbsolutePathBuilder();
-        Mockito.doReturn(home).when(info).getAbsolutePath();
-        return resource;
     }
 
     /**

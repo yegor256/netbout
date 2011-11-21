@@ -90,8 +90,7 @@ public abstract class AbstractPage implements Page {
     public final Page init(final Resource res) {
         this.home = res;
         this.link("self", this.home.uriInfo().getAbsolutePath());
-        // @checkstyle MultipleStringLiterals (1 line)
-        this.link("home", "/");
+        this.link("home", this.home.uriInfo().getBaseUri());
         return this;
     }
 
@@ -104,10 +103,7 @@ public abstract class AbstractPage implements Page {
             .attr(Page.HATEOAS_NAME, name)
             .attr(
                 Page.HATEOAS_HREF,
-                this.home.uriInfo()
-                    .getAbsolutePathBuilder()
-                    .replacePath(href)
-                    .build()
+                this.home.uriInfo().getBaseUriBuilder().path(href).build()
             );
         return this;
     }

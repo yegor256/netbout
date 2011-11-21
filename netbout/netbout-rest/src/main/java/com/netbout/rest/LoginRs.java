@@ -87,8 +87,7 @@ public final class LoginRs extends AbstractRs {
     public Response logout() {
         return Response
             .status(Response.Status.TEMPORARY_REDIRECT)
-            // @checkstyle MultipleStringLiterals (1 line)
-            .location(UriBuilder.fromPath("/").build())
+            .location(this.uriInfo().getBaseUri())
             .header(
                 "Set-Cookie",
                 String.format(
@@ -119,10 +118,8 @@ public final class LoginRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(identity)
-            .entity("")
             .status(Response.Status.TEMPORARY_REDIRECT)
-            // @checkstyle MultipleStringLiterals (1 line)
-            .location(UriBuilder.fromPath("/").build())
+            .location(this.uriInfo().getBaseUri())
             .build();
     }
 
@@ -213,9 +210,7 @@ public final class LoginRs extends AbstractRs {
      * @return The URI
      */
     private URI redirectUri() {
-        return this.uriInfo().getAbsolutePathBuilder()
-            .replacePath("/g/fb")
-            .build();
+        return this.uriInfo().getBaseUriBuilder().clone().path("/g/fb").build();
     }
 
     /**
@@ -225,7 +220,7 @@ public final class LoginRs extends AbstractRs {
      * @throws IOException If some problem with FB
      */
     private String retrieve(final URI uri) throws IOException {
-        final long start = System.nanoTime();
+        final long start = System.currentTimeMillis();
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) uri.toURL().openConnection();
@@ -240,11 +235,10 @@ public final class LoginRs extends AbstractRs {
             conn.disconnect();
             Logger.debug(
                 this,
-                "#retrieve(%s): done [%d] in %.2fms",
+                "#retrieve(%s): done [%d] in %dms",
                 uri,
                 conn.getResponseCode(),
-                // @checkstyle MagicNumber (1 line)
-                (double) (System.nanoTime() - start) / (1000L * 1000)
+                System.currentTimeMillis() - start
             );
         }
     }
