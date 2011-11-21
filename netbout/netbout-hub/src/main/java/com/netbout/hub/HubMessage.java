@@ -30,12 +30,6 @@ import com.netbout.hub.data.MessageData;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import java.util.Date;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Message in a hub.
@@ -43,27 +37,17 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "message")
-@XmlType(name = "message")
-@XmlAccessorType(XmlAccessType.NONE)
 final class HubMessage implements Message {
 
     /**
      * The viewer.
      */
-    private transient Identity viewer;
+    private final transient Identity viewer;
 
     /**
      * The data.
      */
-    private transient MessageData data;
-
-    /**
-     * Public ctor for JAXB.
-     */
-    public HubMessage() {
-        throw new IllegalStateException("This ctor should never be called");
-    }
+    private final transient MessageData data;
 
     /**
      * Public ctor.
@@ -94,30 +78,12 @@ final class HubMessage implements Message {
     }
 
     /**
-     * JAXB related method.
-     * @return The author
-     */
-    @XmlElement
-    public HubIdentity getAuthor() {
-        return (HubIdentity) this.author();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public String text() {
         this.data.addSeenBy(this.viewer.name());
         return this.data.getText();
-    }
-
-    /**
-     * JAXB related method.
-     * @return The text
-     */
-    @XmlElement
-    public String getText() {
-        return this.text();
     }
 
     /**
@@ -129,29 +95,11 @@ final class HubMessage implements Message {
     }
 
     /**
-     * JAXB related method.
-     * @return The date
-     */
-    @XmlElement
-    public Date getDate() {
-        return this.date();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public Boolean seen() {
         return this.data.isSeenBy(this.viewer.name());
-    }
-
-    /**
-     * JAXB related method.
-     * @return The status of whether this message was seen
-     */
-    @XmlAttribute
-    public Boolean getSeen() {
-        return this.seen();
     }
 
 }

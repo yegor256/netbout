@@ -44,13 +44,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Identity.
@@ -60,10 +53,6 @@ import javax.xml.bind.annotation.XmlType;
  * @todo #123 This class needs refactoring. We should get rid of NULL in iuser
  *  and should break it into smaller classes - it's too big now.
  */
-@XmlRootElement(name = "identity")
-@XmlType(name = "identity")
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlSeeAlso(HubBout.class)
 @SuppressWarnings("PMD.TooManyMethods")
 public final class HubIdentity implements Identity {
 
@@ -91,13 +80,6 @@ public final class HubIdentity implements Identity {
      * List of aliases.
      */
     private transient Set<String> ialiases;
-
-    /**
-     * Public ctor for JAXB.
-     */
-    public HubIdentity() {
-        throw new IllegalStateException("This ctor should never be called");
-    }
 
     /**
      * Public ctor.
@@ -213,15 +195,6 @@ public final class HubIdentity implements Identity {
     }
 
     /**
-     * JAXB related method, to return the name of identity.
-     * @return The name
-     */
-    @XmlElement
-    public String getName() {
-        return this.name();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -240,15 +213,6 @@ public final class HubIdentity implements Identity {
             }
         }
         return this.iphoto;
-    }
-
-    /**
-     * JAXB related method, to return photo of identity.
-     * @return The photo
-     */
-    @XmlElement(required = true)
-    public URL getPhoto() {
-        return this.photo();
     }
 
     /**
@@ -278,16 +242,6 @@ public final class HubIdentity implements Identity {
             list.size()
         );
         return list;
-    }
-
-    /**
-     * JAXB related method, to return aliases of identity.
-     * @return The list of aliases
-     */
-    @XmlElement(name = "alias")
-    @XmlElementWrapper(name = "aliases")
-    public Set<String> getAliases() {
-        return this.aliases();
     }
 
     /**

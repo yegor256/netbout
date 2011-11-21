@@ -39,13 +39,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Identity.
@@ -53,28 +46,17 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "bout")
-@XmlType(name = "bout")
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlSeeAlso({ HubMessage.class, HubParticipant.class })
 public final class HubBout implements Bout {
 
     /**
      * The viewer.
      */
-    private transient HubIdentity viewer;
+    private final transient HubIdentity viewer;
 
     /**
      * The data.
      */
-    private transient BoutData data;
-
-    /**
-     * Public ctor for JAXB.
-     */
-    public HubBout() {
-        throw new IllegalStateException("This ctor should never be called");
-    }
+    private final transient BoutData data;
 
     /**
      * Public ctor.
@@ -95,29 +77,11 @@ public final class HubBout implements Bout {
     }
 
     /**
-     * JAXB related method, to return the number of the bout.
-     * @return The number
-     */
-    @XmlElement
-    public Long getNumber() {
-        return this.number();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public String title() {
         return this.data.getTitle();
-    }
-
-    /**
-     * JAXB related method, to return the title of the bout.
-     * @return The title
-     */
-    @XmlElement
-    public String getTitle() {
-        return this.title();
     }
 
     /**
@@ -172,16 +136,6 @@ public final class HubBout implements Bout {
     }
 
     /**
-     * JAXB related method, to return participants of the bout.
-     * @return The collection
-     */
-    @XmlElement(name = "participant")
-    @XmlElementWrapper(name = "participants")
-    public Collection<HubParticipant> getParticipants() {
-        return (Collection) this.participants();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -200,16 +154,6 @@ public final class HubBout implements Bout {
             messages.size()
         );
         return messages;
-    }
-
-    /**
-     * JAXB related method, to return messages of the bout.
-     * @return The collection
-     */
-    @XmlElement(name = "message")
-    @XmlElementWrapper(name = "messages")
-    public Collection<HubMessage> getMessages() {
-        return (Collection) this.messages("");
     }
 
     /**

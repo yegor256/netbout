@@ -41,29 +41,6 @@ import org.junit.Test;
 public final class HubIdentityTest {
 
     /**
-     * Object can be converted to XML through JAXB.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testJaxbIsWorking() throws Exception {
-        // final User user = Mockito.mock(User.class);
-        // final Identity identity = new HubIdentity(
-        //     user,
-        //     "John Doe",
-        //     new URL("http://localhost/pic.png")
-        // );
-        // final Source xml = JaxbConverter.the(identity);
-        // MatcherAssert.assertThat(
-        //     xml,
-        //     XmlMatchers.hasXPath("/identity/name[.='John Doe']")
-        // );
-        // MatcherAssert.assertThat(
-        //     xml,
-        //     XmlMatchers.hasXPath("/identity/photo[starts-with(.,'http://')]")
-        // );
-    }
-
-    /**
      * Backlink to user should point into right direction.
      * @throws Exception If there is some problem inside
      */

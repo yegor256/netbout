@@ -41,35 +41,6 @@ import org.junit.Test;
 public final class HubMessageTest {
 
     /**
-     * Object can be converted to XML through JAXB.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testJaxbIsWorking() throws Exception {
-        // final Bout bout = Mockito.mock(Bout.class);
-        // final Identity identity = Mockito.mock(Identity.class);
-        // final Message message = new HubMessage(
-        //     bout,
-        //     identity,
-        //     "this is a message",
-        //     new Date()
-        // );
-        // final Source xml = JaxbConverter.the(message);
-        // MatcherAssert.assertThat(
-        //     xml,
-        //     XmlMatchers.hasXPath("/message/author/name[.='John Doe']")
-        // );
-        // MatcherAssert.assertThat(
-        //     xml,
-        //     XmlMatchers.hasXPath("/message/text[starts-with(.,'this is')]")
-        // );
-        // MatcherAssert.assertThat(
-        //     xml,
-        //     XmlMatchers.hasXPath("/message/date")
-        // );
-    }
-
-    /**
      * Talking in bout.
      * @throws Exception If there is some problem inside
      */

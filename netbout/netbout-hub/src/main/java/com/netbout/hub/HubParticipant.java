@@ -29,12 +29,6 @@ package com.netbout.hub;
 import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Identity.
@@ -42,22 +36,12 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "participant")
-@XmlType(name = "participant")
-@XmlAccessorType(XmlAccessType.NONE)
 public final class HubParticipant implements Participant {
 
     /**
      * The data.
      */
-    private transient ParticipantData data;
-
-    /**
-     * Public ctor for JAXB.
-     */
-    public HubParticipant() {
-        throw new IllegalStateException("This ctor should never be called");
-    }
+    private final transient ParticipantData data;
 
     /**
      * Public ctor.
@@ -85,29 +69,11 @@ public final class HubParticipant implements Participant {
     }
 
     /**
-     * JAXB related method.
-     * @return The participant
-     */
-    @XmlElement
-    public HubIdentity getIdentity() {
-        return (HubIdentity) this.identity();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public boolean confirmed() {
         return this.data.isConfirmed();
-    }
-
-    /**
-     * JAXB related method.
-     * @return Is it confirmed?
-     */
-    @XmlAttribute
-    public boolean isConfirmed() {
-        return this.confirmed();
     }
 
     /**
