@@ -138,7 +138,7 @@ public final class Cryptor {
                 hash,
                 "Identity '%s' is duplicated: %s",
                 iname,
-                ex.getMessage()
+                ex
             );
         }
         assert identity != null;

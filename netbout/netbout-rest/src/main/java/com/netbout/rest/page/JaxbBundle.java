@@ -41,6 +41,7 @@ import org.w3c.dom.Element;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.NullAssignment")
 public final class JaxbBundle {
 
     /**

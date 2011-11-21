@@ -50,6 +50,7 @@ import javax.ws.rs.core.UriBuilder;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 @Path("/{num : [0-9]+}")
 public final class BoutRs extends AbstractRs {
 
@@ -57,7 +58,7 @@ public final class BoutRs extends AbstractRs {
      * Number of the bout.
      */
     @PathParam("num")
-    private Long number;
+    private transient Long number;
 
     /**
      * Set bout number.
@@ -96,7 +97,7 @@ public final class BoutRs extends AbstractRs {
         final List<Invitee> invitees = new ArrayList<Invitee>();
         for (Identity identity : this.entry().find(keyword)) {
             invitees.add(
-                new Invitee(
+                Invitee.build(
                     identity,
                     UriBuilder.fromUri(this.self())
                 )
