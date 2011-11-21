@@ -77,12 +77,15 @@ public final class ExceptionTrap extends HttpServlet {
      * @return The stacktrace
      */
     private String stacktrace(final Throwable exp) {
+        String text;
         if (exp == null) {
-            return "no stacktrace";
+            text = "no stacktrace";
+        } else {
+            final StringWriter writer = new StringWriter();
+            exp.printStackTrace(new PrintWriter(writer));
+            text = writer.toString();
         }
-        final StringWriter writer = new StringWriter();
-        exp.printStackTrace(new PrintWriter(writer));
-        return writer.toString();
+        return text;
     }
 
     /**

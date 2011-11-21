@@ -43,36 +43,45 @@ public final class MessageData implements Comparable<MessageData> {
     /**
      * Number of the message.
      */
-    private final Long number;
+    private final transient Long number;
 
     /**
      * The date.
      */
-    private Date date;
+    private transient Date date;
 
     /**
      * The author.
      */
-    private String author;
+    private transient String author;
 
     /**
      * The text.
      */
-    private String text;
+    private transient String text;
 
     /**
      * Who already have seen this message, and who haven't?
      */
-    private ConcurrentMap<String, Boolean> seenBy =
+    private final transient ConcurrentMap<String, Boolean> seenBy =
         new ConcurrentHashMap<String, Boolean>();
 
     /**
      * Public ctor.
      * @param num The number of this message
      */
-    protected MessageData(final Long num) {
+    private MessageData(final Long num) {
         assert num != null;
         this.number = num;
+    }
+
+    /**
+     * Build new object.
+     * @param num The number of this message
+     * @return The object
+     */
+    protected static MessageData build(final Long num) {
+        return new MessageData(num);
     }
 
     /**

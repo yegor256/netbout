@@ -30,12 +30,6 @@ import com.netbout.hub.data.MessageData;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import java.util.Date;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Message in a hub.
@@ -43,42 +37,36 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "message")
-@XmlType(name = "message")
-@XmlAccessorType(XmlAccessType.NONE)
 final class HubMessage implements Message {
 
     /**
      * The viewer.
      */
-    private Identity viewer;
+    private final transient Identity viewer;
 
     /**
      * The data.
      */
-    private MessageData data;
-
-    /**
-     * The message has been seen by the viewer.
-     */
-    private Boolean seen;
-
-    /**
-     * Public ctor for JAXB.
-     */
-    public HubMessage() {
-        throw new IllegalStateException("This ctor should never be called");
-    }
+    private final transient MessageData data;
 
     /**
      * Public ctor.
      * @param vwr The author
      * @param dat The data
-     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubMessage(final Identity vwr, final MessageData dat) {
+    private HubMessage(final Identity vwr, final MessageData dat) {
         this.viewer = vwr;
         this.data = dat;
+    }
+
+    /**
+     * Build new object.
+     * @param vwr The author
+     * @param dat The data
+     * @return The object just built
+     */
+    public static HubMessage build(final Identity vwr, final MessageData dat) {
+        return new HubMessage(vwr, dat);
     }
 
     /**
@@ -86,16 +74,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Identity author() {
-        return HubIdentity.make(this.data.getAuthor());
-    }
-
-    /**
-     * JAXB related method.
-     * @return The author
-     */
-    @XmlElement
-    public HubIdentity getAuthor() {
-        return (HubIdentity) this.author();
+        return Identities.make(this.data.getAuthor());
     }
 
     /**
@@ -108,15 +87,6 @@ final class HubMessage implements Message {
     }
 
     /**
-     * JAXB related method.
-     * @return The text
-     */
-    @XmlElement
-    public String getText() {
-        return this.text();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -125,29 +95,11 @@ final class HubMessage implements Message {
     }
 
     /**
-     * JAXB related method.
-     * @return The date
-     */
-    @XmlElement
-    public Date getDate() {
-        return this.date();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public Boolean seen() {
         return this.data.isSeenBy(this.viewer.name());
-    }
-
-    /**
-     * JAXB related method.
-     * @return The status of whether this message was seen
-     */
-    @XmlAttribute
-    public Boolean getSeen() {
-        return this.seen();
     }
 
 }

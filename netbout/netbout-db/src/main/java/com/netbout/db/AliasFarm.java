@@ -33,71 +33,69 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Seen statuses.
+ * Manipulations with aliases.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @Farm
-public final class SeenFarm {
+public final class AliasFarm {
 
     /**
-     * Mark this message as seen by the specified identity.
-     * @param msg The number of the message
-     * @param identity The viewer
+     * Primary alias was added to the identity.
+     * @param identity The identity
+     * @param alias The alias just added
      * @throws SQLException If some SQL problem inside
      */
-    @Operation("message-was-seen")
-    public void messageWasSeen(final Long msg, final String identity)
+    @Operation("added-identity-alias")
+    public void addedIdentityAlias(final String identity, final String alias)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO seen (message, identity) VALUES (?, ?)"
+                "INSERT INTO alias (identity, name) VALUES (?, ?)"
             );
-            stmt.setLong(1, msg);
-            stmt.setString(2, identity);
+            stmt.setString(1, identity);
+            stmt.setString(2, alias);
             stmt.execute();
         } finally {
             conn.close();
         }
         Logger.debug(
             this,
-            "#messageWasSeen(#%d, '%s'): inserted [%dms]",
-            msg,
+            "#primaryAliasAdded('%s', '%s'): inserted [%dms]",
             identity,
+            alias,
             System.currentTimeMillis() - start
         );
     }
 
     /**
-     * This message was seen by this identity?
-     * @param msg The number of the message
-     * @param identity The viewer
-     * @return Was it seen?
+     * Get list of aliases that belong to some identity.
+     * @param name The identity of bout participant
+     * @return List of aliases
      * @throws SQLException If some SQL problem inside
      */
-    @Operation("was-message-seen")
-    public Boolean wasMessageSeen(final Long msg, final String identity)
+    @Operation("get-aliases-of-identity")
+    public String[] getAliasesOfIdentity(final String name)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
-        Boolean seen;
+        final List<String> aliases = new ArrayList<String>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT message FROM seen WHERE message = ? AND identity = ?"
+                "SELECT name FROM alias WHERE identity = ?"
             );
-            stmt.setLong(1, msg);
-            stmt.setString(2, identity);
+            stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
             try {
-                if (rset.next()) {
-                    seen = true;
-                } else {
-                    seen = false;
+                while (rset.next()) {
+                    aliases.add(rset.getString(1));
                 }
             } finally {
                 rset.close();
@@ -107,13 +105,12 @@ public final class SeenFarm {
         }
         Logger.debug(
             this,
-            "#wasMessageSeen(#%d, '%s'): retrieved %b [%dms]",
-            msg,
-            identity,
-            seen,
+            "#getAliasesOfIdentity('%s'): retrieved %d aliase(s) [%dms]",
+            name,
+            aliases.size(),
             System.currentTimeMillis() - start
         );
-        return seen;
+        return aliases.toArray(new String[]{});
     }
 
 }

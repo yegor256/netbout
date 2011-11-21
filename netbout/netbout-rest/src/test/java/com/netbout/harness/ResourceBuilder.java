@@ -51,52 +51,47 @@ public final class ResourceBuilder {
     /**
      * Providers.
      */
-    private Providers providers = Mockito.mock(Providers.class);
+    private final transient Providers iproviders =
+        Mockito.mock(Providers.class);
 
     /**
      * URI info.
      */
-    private UriInfo uriInfo = Mockito.mock(UriInfo.class);
+    private final transient UriInfo iuriInfo =
+        Mockito.mock(UriInfo.class);
 
     /**
      * Http headers.
      */
-    private HttpHeaders httpHeaders = Mockito.mock(HttpHeaders.class);
+    private final transient HttpHeaders ihttpHeaders =
+        Mockito.mock(HttpHeaders.class);
 
     /**
      * Servlet request.
      */
-    private HttpServletRequest httpServletRequest =
+    private final transient HttpServletRequest ihttpRequest =
         Mockito.mock(HttpServletRequest.class);
-
-    /**
-     * Cookie. User name: 'John Doe', identity name: 'johnny.doe'.
-     */
-    private String cookie =
-        "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
 
     /**
      * Public ctor.
      * @throws Exception If something is wrong
      */
     public ResourceBuilder() throws Exception {
-        // uriInfo
         final URI home = new URI("http://localhost:99/local");
         Mockito.doReturn(UriBuilder.fromUri(home))
-            .when(this.uriInfo).getAbsolutePathBuilder();
-        Mockito.doReturn(home).when(this.uriInfo).getAbsolutePath();
+            .when(this.iuriInfo).getBaseUriBuilder();
         Mockito.doReturn(home)
-            .when(this.uriInfo).getBaseUri();
-        // httpServletRequest
-        Mockito.doReturn("127.0.0.1").when(this.httpServletRequest)
+            .when(this.iuriInfo).getAbsolutePath();
+        Mockito.doReturn(home)
+            .when(this.iuriInfo).getBaseUri();
+        Mockito.doReturn("localhost").when(this.ihttpRequest)
             .getRemoteAddr();
-        Mockito.doReturn("/").when(this.httpServletRequest)
+        Mockito.doReturn("/").when(this.ihttpRequest)
             .getRequestURI();
-        Mockito.doReturn("/local").when(this.httpServletRequest)
+        Mockito.doReturn("/local").when(this.ihttpRequest)
             .getContextPath();
-        // providers
         Mockito.doReturn(new XslResolver())
-            .when(this.providers)
+            .when(this.iproviders)
             .getContextResolver(
                 Marshaller.class, MediaType.APPLICATION_XML_TYPE
             );
@@ -129,7 +124,7 @@ public final class ResourceBuilder {
      * @throws Exception If there is some problem inside
      */
     public UriInfo uriInfo() throws Exception {
-        return this.uriInfo;
+        return this.iuriInfo;
     }
 
     /**
@@ -138,7 +133,7 @@ public final class ResourceBuilder {
      * @throws Exception If there is some problem inside
      */
     public HttpHeaders httpHeaders() throws Exception {
-        return this.httpHeaders;
+        return this.ihttpHeaders;
     }
 
     /**
@@ -147,7 +142,7 @@ public final class ResourceBuilder {
      * @throws Exception If there is some problem inside
      */
     public HttpServletRequest httpServletRequest() throws Exception {
-        return this.httpServletRequest;
+        return this.ihttpRequest;
     }
 
     /**
@@ -156,16 +151,17 @@ public final class ResourceBuilder {
      * @throws Exception If there is some problem inside
      */
     public Providers providers() throws Exception {
-        return this.providers;
+        return this.iproviders;
     }
 
     /**
      * Create cookie.
+     * <p>User name: 'John Doe', identity name: 'johnny.doe'.
      * @return The cookie
      * @throws Exception If there is some problem inside
      */
     public String cookie() throws Exception {
-        return this.cookie;
+        return "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
     }
 
 }

@@ -42,12 +42,12 @@ public final class MessageFarmTest {
     /**
      * Farm to work with.
      */
-    private final MessageFarm farm = new MessageFarm();
+    private final transient MessageFarm farm = new MessageFarm();
 
     /**
      * Bout number to work with.
      */
-    private Long bout;
+    private transient Long bout;
 
     /**
      * Start new bout to work with.

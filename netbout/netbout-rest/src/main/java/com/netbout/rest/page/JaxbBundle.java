@@ -27,9 +27,9 @@
 package com.netbout.rest.page;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -41,32 +41,35 @@ import org.w3c.dom.Element;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.NullAssignment")
 public final class JaxbBundle {
 
     /**
      * Parent bundle, if exists.
      */
-    private final JaxbBundle parent;
+    private final transient JaxbBundle parent;
 
     /**
      * Name of it.
      */
-    private final String name;
+    private final transient String name;
 
     /**
      * Text content of it.
      */
-    private final String content;
+    private final transient String content;
 
     /**
      * Children.
      */
-    private final List<JaxbBundle> children = new ArrayList<JaxbBundle>();
+    private final transient List<JaxbBundle> children =
+        new ArrayList<JaxbBundle>();
 
     /**
      * Attributes.
      */
-    private final Map<String, String> attrs = new HashMap<String, String>();
+    private final transient ConcurrentMap<String, String> attrs =
+        new ConcurrentHashMap<String, String>();
 
     /**
      * Default ctor, for JAXB.
@@ -153,7 +156,9 @@ public final class JaxbBundle {
     /**
      * Return parent.
      * @return The parent bundle
+     * @checkstyle MethodName (3 lines)
      */
+    @SuppressWarnings("PMD.ShortMethodName")
     public JaxbBundle up() {
         return this.parent;
     }
@@ -185,7 +190,7 @@ public final class JaxbBundle {
      */
     private Element element(final Document doc) {
         final Element element = doc.createElement(this.name);
-        for (Map.Entry<String, String> attr : this.attrs.entrySet()) {
+        for (ConcurrentMap.Entry<String, String> attr : this.attrs.entrySet()) {
             element.setAttribute(attr.getKey(), attr.getValue());
         }
         for (JaxbBundle child : this.children) {

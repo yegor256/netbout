@@ -53,12 +53,18 @@ import org.joda.time.format.ISODateTimeFormat;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class TypeMapper {
 
     /**
      * NULL representation in text.
      */
     private static final String TEXT_NULL = "NULL";
+
+    /**
+     * NULL representation in object.
+     */
+    private static final Object OBJECT_NULL = null;
 
     /**
      * Separator between name and hash.
@@ -84,33 +90,34 @@ public final class TypeMapper {
      * @throws HelperException If there is some problem inside
      */
     public static String toText(final Object data) throws HelperException {
-        if (data == null) {
-            return TypeMapper.TEXT_NULL;
-        }
         String result;
-        final Class type = data.getClass();
-        if (type.equals(String.class)) {
-            result = TypeMapper.quote(data.toString());
-        } else if (type.equals(Long.class)) {
-            result = data.toString();
-        } else if (type.equals(Boolean.class)) {
-            result = data.toString();
-        } else if (type.equals(Date.class)) {
-            result = TypeMapper.asText((Date) data);
-        } else if (type.equals(Long[].class)) {
-            result = TypeMapper.join((Long[]) data);
-        } else if (type.equals(String[].class)) {
-            final String[] quoted = new String[((String[]) data).length];
-            for (int pos = 0; pos < ((String[]) data).length; pos += 1) {
-                quoted[pos] = TypeMapper.quote(((String[]) data)[pos]);
-            }
-            result = TypeMapper.join(quoted);
+        if (data == TypeMapper.OBJECT_NULL) {
+            result = TypeMapper.TEXT_NULL;
         } else {
-            throw new HelperException(
-                "Can't convert '%s' (%s) to String",
-                data.toString(),
-                type.getName()
-            );
+            final Class type = data.getClass();
+            if (type.equals(String.class)) {
+                result = TypeMapper.quote(data.toString());
+            } else if (type.equals(Long.class)) {
+                result = data.toString();
+            } else if (type.equals(Boolean.class)) {
+                result = data.toString();
+            } else if (type.equals(Date.class)) {
+                result = TypeMapper.asText((Date) data);
+            } else if (type.equals(Long[].class)) {
+                result = TypeMapper.join((Long[]) data);
+            } else if (type.equals(String[].class)) {
+                final String[] quoted = new String[((String[]) data).length];
+                for (int pos = 0; pos < ((String[]) data).length; pos += 1) {
+                    quoted[pos] = TypeMapper.quote(((String[]) data)[pos]);
+                }
+                result = TypeMapper.join(quoted);
+            } else {
+                throw new HelperException(
+                    "Can't convert '%s' (%s) to String",
+                    data.toString(),
+                    type.getName()
+                );
+            }
         }
         return result;
     }
@@ -124,13 +131,13 @@ public final class TypeMapper {
      * @throws HelperException If there is some problem inside
      * @checkstyle CyclomaticComplexity (40 lines)
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     public static <T> T toObject(final String text, final Class<T> type)
         throws HelperException {
-        if (text == TypeMapper.TEXT_NULL) {
-            return null;
-        }
         Object result;
-        if (type.equals(String.class)) {
+        if (text == TypeMapper.TEXT_NULL) {
+            result = TypeMapper.OBJECT_NULL;
+        } else if (type.equals(String.class)) {
             result = TypeMapper.unquote(text);
         } else if (type.equals(Long.class)) {
             result = Long.valueOf(text);

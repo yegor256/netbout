@@ -28,69 +28,51 @@ package com.netbout.db;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test case of {@link ParticipantFarm}.
+ * Test case of {@link AliasFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ParticipantFarmTest {
+public final class AliasFarmTest {
 
     /**
      * Farm to work with.
      */
-    private final transient ParticipantFarm farm = new ParticipantFarm();
+    private final transient AliasFarm farm = new AliasFarm();
 
     /**
-     * Bout number to work with.
-     */
-    private transient Long bout;
-
-    /**
-     * Start new bout to work with.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void prepareNewBout() throws Exception {
-        final BoutFarm bfarm = new BoutFarm();
-        this.bout = bfarm.getNextBoutNumber();
-        bfarm.startedNewBout(this.bout);
-    }
-
-    /**
-     * Manipulate with participant status.
+     * Find aliases of some identity.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBoutStatusChanging() throws Exception {
-        final String identity = "Steve Jobs";
-        new IdentityFarm().changedIdentityPhoto(identity, "");
-        this.farm.addedBoutParticipant(this.bout, identity);
-        MatcherAssert.assertThat(
-            this.farm.getParticipantStatus(this.bout, identity),
-            Matchers.equalTo(false)
-        );
-        this.farm.changedParticipantStatus(this.bout, identity, true);
-        MatcherAssert.assertThat(
-            this.farm.getParticipantStatus(this.bout, identity),
-            Matchers.equalTo(true)
-        );
+    public void testAliasFinding() throws Exception {
+        final String identity = "William Shakespear";
+        final String alias = "willy@example.com";
+        new IdentityFarm().identityMentioned(identity);
+        this.farm.addedIdentityAlias(identity, alias);
+        final String[] aliases = this.farm.getAliasesOfIdentity(identity);
+        MatcherAssert.assertThat(aliases, Matchers.hasItemInArray(alias));
     }
 
     /**
-     * Read all participants of the bout.
+     * Find identity by keyword.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBoutParticipantsReading() throws Exception {
-        final String identity = "Bill Gates";
-        new IdentityFarm().changedIdentityPhoto(identity, "");
-        this.farm.addedBoutParticipant(this.bout, identity);
-        final String[] names = this.farm.getBoutParticipants(this.bout);
+    public void testGlobalFinding() throws Exception {
+        final String identity = "Martin Fowler";
+        final String alias = "martin@example.com";
+        final IdentityFarm ifarm = new IdentityFarm();
+        ifarm.identityMentioned(identity);
+        this.farm.addedIdentityAlias(identity, alias);
         MatcherAssert.assertThat(
-            names,
+            ifarm.findIdentitiesByKeyword("FOWLER"),
+            Matchers.hasItemInArray(identity)
+        );
+        MatcherAssert.assertThat(
+            ifarm.findIdentitiesByKeyword("MARTIN"),
             Matchers.hasItemInArray(identity)
         );
     }

@@ -24,64 +24,88 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.rest.jaxb;
 
-import com.netbout.hub.data.ParticipantData;
-import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Identity.
+ * Participant convertable to XML through JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubParticipant implements Participant {
+@XmlRootElement(name = "participant")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class LongParticipant {
 
     /**
-     * The data.
+     * The bout.
      */
-    private final transient ParticipantData data;
+    private transient Participant participant;
 
     /**
-     * Public ctor.
-     * @param dat The data
+     * Public ctor for JAXB.
      */
-    private HubParticipant(final ParticipantData dat) {
-        this.data = dat;
+    public LongParticipant() {
+        throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
-     * Build new object.
-     * @param dat The data
-     * @return The object just built
+     * Private ctor.
+     * @param dude The participant
      */
-    public static HubParticipant build(final ParticipantData dat) {
-        return new HubParticipant(dat);
+    private LongParticipant(final Participant dude) {
+        this.participant = dude;
     }
 
     /**
-     * {@inheritDoc}
+     * Build it.
+     * @param dude The participant
+     * @return The instance of the class
      */
-    @Override
-    public Identity identity() {
-        return Identities.make(this.data.getIdentity());
+    public static LongParticipant build(final Participant dude) {
+        return new LongParticipant(dude);
     }
 
     /**
-     * {@inheritDoc}
+     * Get its identity.
+     * @return The name
      */
-    @Override
-    public boolean confirmed() {
-        return this.data.isConfirmed();
+    @XmlElement
+    public String getIdentity() {
+        return this.participant.identity().name();
     }
 
     /**
-     * {@inheritDoc}
+     * Get his alias.
+     * @return The alias
      */
-    @Override
-    public void confirm(final boolean aye) {
-        this.data.setConfirmed(aye);
+    @XmlElement
+    public String getAlias() {
+        return new AliasBuilder(this.participant.identity()).build();
+    }
+
+    /**
+     * Get its photo.
+     * @return The photo
+     */
+    @XmlElement
+    public String getPhoto() {
+        return this.participant.identity().photo().toString();
+    }
+
+    /**
+     * Is he confirmed?
+     * @return Is it?
+     */
+    @XmlAttribute
+    public Boolean isConfirmed() {
+        return this.participant.confirmed();
     }
 
 }

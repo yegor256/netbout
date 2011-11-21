@@ -76,9 +76,10 @@ public final class LoginRsTest {
         final ResourceBuilder builder = new ResourceBuilder();
         final LoginRs rest = builder.build(LoginRs.class);
         final LoginRs spy = PowerMockito.spy(rest);
-        final URI redirectUri = builder.uriInfo()
-            .getAbsolutePathBuilder()
-            .replacePath("/g/fb")
+        final URI redirect = builder.uriInfo()
+            .getBaseUriBuilder()
+            .clone()
+            .path("/g/fb")
             .build();
         PowerMockito.doReturn("access_token=abc|cde&expires=5108").when(
             spy,
@@ -88,7 +89,7 @@ public final class LoginRsTest {
                 UriBuilder
                     .fromPath("https://graph.facebook.com/oauth/access_token")
                     .queryParam("client_id", Manifests.read("Netbout-FbId"))
-                    .queryParam("redirect_uri", redirectUri)
+                    .queryParam("redirect_uri", redirect)
                     .queryParam(
                         "client_secret",
                         Manifests.read("Netbout-FbSecret")

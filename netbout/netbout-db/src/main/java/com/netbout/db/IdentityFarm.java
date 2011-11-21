@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Manipulations on the level of identity.
@@ -44,6 +45,50 @@ import java.util.List;
  */
 @Farm
 public final class IdentityFarm {
+
+    /**
+     * Find identities by keyword.
+     * @param keyword The keyword
+     * @return List of identities
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("find-identities-by-keyword")
+    public String[] findIdentitiesByKeyword(final String keyword)
+        throws SQLException {
+        final long start = System.currentTimeMillis();
+        final Connection conn = Database.connection();
+        final List<String> names = new ArrayList<String>();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                // @checkstyle LineLength (1 line)
+                "SELECT identity.name FROM identity JOIN alias ON alias.identity = identity.name WHERE UCASE(identity.name) LIKE ? OR UCASE(alias.name) LIKE ?"
+            );
+            final String matcher = String.format(
+                "%%%s%%",
+                keyword.toUpperCase(Locale.ENGLISH)
+            );
+            stmt.setString(1, matcher);
+            stmt.setString(2, matcher);
+            final ResultSet rset = stmt.executeQuery();
+            try {
+                while (rset.next()) {
+                    names.add(rset.getString(1));
+                }
+            } finally {
+                rset.close();
+            }
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#findIdentitiesByKeyword('%s'): retrieved %d identitie(s) [%dms]",
+            keyword,
+            names.size(),
+            System.currentTimeMillis() - start
+        );
+        return names.toArray(new String[]{});
+    }
 
     /**
      * Get list of bouts that belong to some identity.
@@ -63,8 +108,12 @@ public final class IdentityFarm {
             );
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
-            while (rset.next()) {
-                numbers.add(rset.getLong(1));
+            try {
+                while (rset.next()) {
+                    numbers.add(rset.getLong(1));
+                }
+            } finally {
+                rset.close();
             }
         } finally {
             conn.close();
@@ -97,8 +146,19 @@ public final class IdentityFarm {
             );
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
-            rset.next();
-            photo = rset.getString(1);
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Identity '%s' not found, can't read photo",
+                            name
+                        )
+                    );
+                }
+                photo = rset.getString(1);
+            } finally {
+                rset.close();
+            }
         } finally {
             conn.close();
         }
@@ -127,19 +187,23 @@ public final class IdentityFarm {
             );
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
-            if (!rset.next()) {
-                final PreparedStatement istmt = conn.prepareStatement(
-                    "INSERT INTO identity (name, photo) VALUES (?, ?)"
-                );
-                istmt.setString(1, name);
-                istmt.setString(2, "http://img.netbout.com/unknown.png");
-                istmt.executeUpdate();
-                Logger.debug(
-                    this,
-                    "#identityMentioned('%s'): inserted [%dms]",
-                    name,
-                    System.currentTimeMillis() - start
-                );
+            try {
+                if (!rset.next()) {
+                    final PreparedStatement istmt = conn.prepareStatement(
+                        "INSERT INTO identity (name, photo) VALUES (?, ?)"
+                    );
+                    istmt.setString(1, name);
+                    istmt.setString(2, "http://img.netbout.com/unknown.png");
+                    istmt.executeUpdate();
+                    Logger.debug(
+                        this,
+                        "#identityMentioned('%s'): inserted [%dms]",
+                        name,
+                        System.currentTimeMillis() - start
+                    );
+                }
+            } finally {
+                rset.close();
             }
         } finally {
             conn.close();

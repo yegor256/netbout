@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import java.net.URL;
@@ -40,29 +39,6 @@ import org.junit.Test;
  * @version $Id$
  */
 public final class HubIdentityTest {
-
-    /**
-     * Object can be converted to XML through JAXB.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testJaxbIsWorking() throws Exception {
-        // final User user = Mockito.mock(User.class);
-        // final Identity identity = new HubIdentity(
-        //     user,
-        //     "John Doe",
-        //     new URL("http://localhost/pic.png")
-        // );
-        // final Source xml = JaxbConverter.the(identity);
-        // MatcherAssert.assertThat(
-        //     xml,
-        //     XmlMatchers.hasXPath("/identity/name[.='John Doe']")
-        // );
-        // MatcherAssert.assertThat(
-        //     xml,
-        //     XmlMatchers.hasXPath("/identity/photo[starts-with(.,'http://')]")
-        // );
-    }
 
     /**
      * Backlink to user should point into right direction.
@@ -116,10 +92,34 @@ public final class HubIdentityTest {
     public void testBoutsManipulations() throws Exception {
         final Identity identity = new HubEntry().user("Jeffy").identity("je");
         final Long number = identity.start().number();
-        final Bout bout = identity.bout(number);
+        identity.bout(number);
         MatcherAssert.assertThat(
             identity.inbox("").size(),
             Matchers.equalTo(1)
+        );
+    }
+
+    /**
+     * Manipulate with aliases.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testAliasesManipulations() throws Exception {
+        final Identity identity = new HubEntry().user("Lori").identity("lo");
+        MatcherAssert.assertThat(
+            identity.aliases().size(),
+            Matchers.equalTo(0)
+        );
+        final String alias = "lori@example.com";
+        identity.alias(alias);
+        identity.alias("lorisa.townsend@example.com");
+        MatcherAssert.assertThat(
+            identity.aliases().size(),
+            Matchers.equalTo(2)
+        );
+        MatcherAssert.assertThat(
+            identity.aliases(),
+            Matchers.hasItem(alias)
         );
     }
 

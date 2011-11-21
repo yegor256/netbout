@@ -41,7 +41,7 @@ public final class SeenFarmTest {
     /**
      * Farm to work with.
      */
-    private final SeenFarm farm = new SeenFarm();
+    private final transient SeenFarm farm = new SeenFarm();
 
     /**
      * Find bouts of some identity.

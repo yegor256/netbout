@@ -267,7 +267,7 @@
                     <plugin>
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
-                        <version since="1 Nov 2011">0.1.5</version>
+                        <version since="21 Nov 2011">0.1.7</version>
                         <dependencies>
                             <dependency>
                                 <groupId>com.netbout</groupId>

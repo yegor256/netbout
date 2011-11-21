@@ -24,75 +24,90 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.rest.jaxb;
 
-import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Identity;
-import com.netbout.spi.User;
-import com.ymock.util.Logger;
+import java.util.Collection;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * User.
+ * Identity convertable to XML through JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubUser implements User {
+@XmlRootElement(name = "identity")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class LongIdentity {
 
     /**
-     * The name of it.
-     * @see #HubUser(String)
+     * The identity.
      */
-    private final transient String uname;
+    private transient Identity identity;
 
     /**
-     * Public ctor.
-     * @param name The name of it
-     * @see InMemoryEntry#user(String)
+     * Public ctor for JAXB.
      */
-    public HubUser(final String name) {
-        this.uname = name;
+    public LongIdentity() {
+        throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
-     * {@inheritDoc}
+     * Private ctor.
+     * @param idnt The identity
      */
-    @Override
-    public boolean equals(final Object obj) {
-        return (obj instanceof HubUser)
-            && this.uname.equals(((HubUser) obj).uname);
+    public LongIdentity(final Identity idnt) {
+        this.identity = idnt;
     }
 
     /**
-     * {@inheritDoc}
+     * Get user name.
+     * @return The name
      */
-    @Override
-    public int hashCode() {
-        return this.uname.hashCode();
+    @XmlElement
+    public String getUser() {
+        return this.identity.user().name();
     }
 
     /**
-     * {@inheritDoc}
+     * Get name.
+     * @return The name
      */
-    @Override
-    public String name() {
-        return this.uname;
+    @XmlElement
+    public String getName() {
+        return this.identity.name();
     }
 
     /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
+     * Get his alias.
+     * @return The alias
      */
-    @Override
-    public Identity identity(final String label)
-        throws DuplicateIdentityException {
-        final Identity identity = Identities.make(label, this);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            label
-        );
-        return identity;
+    @XmlElement
+    public String getAlias() {
+        return new AliasBuilder(this.identity).build();
+    }
+
+    /**
+     * Get photo.
+     * @return The photo
+     */
+    @XmlElement
+    public String getPhoto() {
+        return this.identity.photo().toString();
+    }
+
+    /**
+     * List of aliases.
+     * @return The list
+     */
+    @XmlElement(name = "alias")
+    @XmlElementWrapper(name = "aliases")
+    public Collection<String> getAliases() {
+        return this.identity.aliases();
     }
 
 }

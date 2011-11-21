@@ -29,6 +29,7 @@
  */
 package com.netbout.spi.cpa;
 
+import com.netbout.spi.Entry;
 import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
 import com.ymock.util.Logger;
@@ -57,17 +58,27 @@ import org.reflections.Reflections;
 public final class CpaHelper implements Helper {
 
     /**
+     * Name of package we're discovering.
+     */
+    private final transient String pkg;
+
+    /**
+     * The entry we're working with.
+     */
+    private transient Entry entry;
+
+    /**
      * All discovered operations.
      */
-    private final ConcurrentMap<String, HelpTarget> ops;
+    private transient ConcurrentMap<String, HelpTarget> ops;
 
     /**
      * Public ctor.
-     * @param pkg Name of the package where to look for annotated methods
+     * @param name Name of the package where to look for annotated methods
      *  and farms
      */
-    public CpaHelper(final String pkg) {
-        this.ops = this.discover(pkg);
+    public CpaHelper(final String name) {
+        this.pkg = name;
     }
 
     /**
@@ -82,7 +93,27 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public Collection<String> supports() {
+    public void init(final Entry ent) throws HelperException {
+        final long start = System.currentTimeMillis();
+        this.entry = ent;
+        this.ops = this.discover();
+        Logger.debug(
+            this,
+            "#init('%s'): %d targets discovered in %dms",
+            ent.getClass().getName(),
+            this.ops.size(),
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<String> supports() throws HelperException {
+        if (this.ops == null) {
+            throw new HelperException("Helper wasn't initialized with init()");
+        }
         return this.ops.keySet();
     }
 
@@ -99,29 +130,28 @@ public final class CpaHelper implements Helper {
         final String result = this.ops.get(mnemo).execute(args);
         Logger.debug(
             this,
-            "#execute('%s', '%s'): done with '%s' in %.2fms",
+            "#execute('%s', '%s'): done with '%s' in %dms",
             mnemo,
             StringUtils.join(args, "', '"),
             result,
-            (double) (System.currentTimeMillis() - start)
+            System.currentTimeMillis() - start
         );
         return result;
     }
 
     /**
      * Discover all targets and return them.
-     * @param pkg Name of package
      * @return Associative array of discovered targets/operations
      */
-    private ConcurrentMap<String, HelpTarget> discover(final String pkg) {
+    private ConcurrentMap<String, HelpTarget> discover() {
         final ConcurrentMap<String, HelpTarget> targets =
             new ConcurrentHashMap<String, HelpTarget>();
-        final Reflections reflections = new Reflections(pkg);
+        final Reflections reflections = new Reflections(this.pkg);
         for (Class tfarm : reflections.getTypesAnnotatedWith(Farm.class)) {
             Logger.info(
                 this,
                 "#discover(%s): @Farm found at '%s'",
-                pkg,
+                this.pkg,
                 tfarm.getName()
             );
             Object farm;
@@ -131,6 +161,9 @@ public final class CpaHelper implements Helper {
                 throw new IllegalArgumentException(ex);
             } catch (IllegalAccessException ex) {
                 throw new IllegalArgumentException(ex);
+            }
+            if (farm instanceof EntryAwareFarm) {
+                ((EntryAwareFarm) farm).init(this.entry);
             }
             targets.putAll(this.inFarm(farm));
         }
@@ -151,7 +184,7 @@ public final class CpaHelper implements Helper {
                 continue;
             }
             final String mnemo = ((Operation) atn).value();
-            targets.put(mnemo, new HelpTarget(farm, method));
+            targets.put(mnemo, HelpTarget.build(farm, method));
             Logger.info(
                 this,
                 "#inFarm(%s): @Operation('%s') found",

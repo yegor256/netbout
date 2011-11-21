@@ -31,75 +31,45 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.ws.rs.core.UriBuilder;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Short version of a bout.
+ * Bout convertable to XML through JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @XmlRootElement(name = "bout")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class ShortBout {
+public final class LongBout {
 
     /**
-     * The original bout.
+     * The bout.
      */
     private transient Bout bout;
 
     /**
-     * URI builder.
-     */
-    private final transient UriBuilder builder;
-
-    /**
      * Public ctor for JAXB.
      */
-    public ShortBout() {
+    public LongBout() {
         throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
      * Private ctor.
-     * @param parent Parent bout to refer to
-     * @param bldr URI builder
+     * @param bot The bout
      */
-    public ShortBout(final Bout parent, final UriBuilder bldr) {
-        this.bout = parent;
-        this.builder = bldr;
+    public LongBout(final Bout bot) {
+        this.bout = bot;
     }
 
     /**
-     * Builder.
-     * @param parent Parent bout to refer to
-     * @param bldr URI builder
-     * @return The instance just created
-     */
-    public static ShortBout build(final Bout parent, final UriBuilder bldr) {
-        return new ShortBout(parent, bldr);
-    }
-
-    /**
-     * HREF of the bout.
-     * @return The url
-     */
-    @XmlAttribute
-    public String getHref() {
-        return this.builder
-            .path("/{num}")
-            .build(this.bout.number())
-            .toString();
-    }
-
-    /**
-     * JAXB related method, to return the number of the bout.
+     * Get number.
      * @return The number
      */
     @XmlElement
@@ -108,7 +78,7 @@ public final class ShortBout {
     }
 
     /**
-     * JAXB related method, to return the title of the bout.
+     * Get its title.
      * @return The title
      */
     @XmlElement
@@ -117,8 +87,22 @@ public final class ShortBout {
     }
 
     /**
-     * JAXB related method, to return participants of the bout.
-     * @return The collection
+     * List of messages in it.
+     * @return The list
+     */
+    @XmlElement(name = "message")
+    @XmlElementWrapper(name = "messages")
+    public List<LongMessage> getMessages() {
+        final List<LongMessage> messages = new ArrayList<LongMessage>();
+        for (Message msg : this.bout.messages("")) {
+            messages.add(LongMessage.build(msg));
+        }
+        return messages;
+    }
+
+    /**
+     * List of participants.
+     * @return The list
      */
     @XmlElement(name = "participant")
     @XmlElementWrapper(name = "participants")
@@ -129,30 +113,6 @@ public final class ShortBout {
             dudes.add(LongParticipant.build(dude));
         }
         return dudes;
-    }
-
-    /**
-     * How many messages are there?
-     * @return Total number of messages
-     */
-    @XmlAttribute(name = "messages")
-    public Integer getTotalNumberOfMessages() {
-        return this.bout.messages("").size();
-    }
-
-    /**
-     * How many seen messages are there?
-     * @return Total number of messages which were already seen
-     */
-    @XmlAttribute(name = "seen")
-    public Integer getTotalNumberOfSeenMessages() {
-        Integer count = 0;
-        for (Message msg : this.bout.messages("")) {
-            if (msg.seen()) {
-                count += 1;
-            }
-        }
-        return count;
     }
 
 }

@@ -27,10 +27,10 @@
 package com.netbout.rest.page;
 
 import com.ymock.util.Logger;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.bytecode.AnnotationsAttribute;
@@ -59,13 +59,13 @@ public final class JaxbGroup {
     /**
      * Classes already created before.
      */
-    private static final Map<String, Class> TYPES =
-        new HashMap<String, Class>();
+    private static final ConcurrentMap<String, Class> READY =
+        new ConcurrentHashMap<String, Class>();
 
     /**
      * Collection of elements.
      */
-    private final Collection group;
+    private final transient Collection group;
 
     /**
      * Public ctor, for JAXB.
@@ -89,15 +89,15 @@ public final class JaxbGroup {
      * @return The object just created
      */
     public static Object build(final Collection grp, final String name) {
-        synchronized (JaxbGroup.TYPES) {
-            if (!JaxbGroup.TYPES.containsKey(name)) {
-                JaxbGroup.TYPES.put(
+        synchronized (JaxbGroup.READY) {
+            if (!JaxbGroup.READY.containsKey(name)) {
+                JaxbGroup.READY.put(
                     name,
                     JaxbGroup.construct(JaxbGroup.types(grp), name)
                 );
             }
             try {
-                return JaxbGroup.TYPES.get(name)
+                return JaxbGroup.READY.get(name)
                     .getDeclaredConstructor(Collection.class)
                     .newInstance(grp);
             } catch (NoSuchMethodException ex) {
@@ -164,7 +164,7 @@ public final class JaxbGroup {
      * @return List of types used there
      */
     private static Collection<Class> types(final Collection group) {
-        final Collection<Class> types = new ArrayList<Class>();
+        final Collection<Class> types = new HashSet<Class>();
         for (Object element : group) {
             types.add(element.getClass());
         }
@@ -190,6 +190,11 @@ public final class JaxbGroup {
             "name",
             new StringMemberValue(name, file.getConstPool())
         );
+        Logger.debug(
+            JaxbGroup.class,
+            "#xmlRootElement(.., '%s'): annotation created",
+            name
+        );
         return annotation;
     }
 
@@ -199,12 +204,9 @@ public final class JaxbGroup {
      * @param types The class to refer to
      * @return The annotation
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private static Annotation xmlSeeAlso(final ClassFile file,
         final Collection<Class> types) {
-        final AnnotationsAttribute attribute =
-            (AnnotationsAttribute) file.getAttribute(
-                AnnotationsAttribute.visibleTag
-            );
         final Annotation annotation = new Annotation(
             XmlSeeAlso.class.getName(),
             file.getConstPool()
@@ -223,6 +225,11 @@ public final class JaxbGroup {
         }
         member.setValue(values);
         annotation.addMemberValue("value", member);
+        Logger.debug(
+            JaxbGroup.class,
+            "#xmlSeeAlso(.., %d classes): annotation created",
+            types.size()
+        );
         return annotation;
     }
 

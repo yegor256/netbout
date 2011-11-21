@@ -39,13 +39,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Identity.
@@ -53,28 +46,17 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "bout")
-@XmlType(name = "bout")
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlSeeAlso({ HubMessage.class, HubParticipant.class })
 public final class HubBout implements Bout {
 
     /**
      * The viewer.
      */
-    private HubIdentity viewer;
+    private final transient HubIdentity viewer;
 
     /**
      * The data.
      */
-    private BoutData data;
-
-    /**
-     * Public ctor for JAXB.
-     */
-    public HubBout() {
-        throw new IllegalStateException("This ctor should never be called");
-    }
+    private final transient BoutData data;
 
     /**
      * Public ctor.
@@ -95,15 +77,6 @@ public final class HubBout implements Bout {
     }
 
     /**
-     * JAXB related method, to return the number of the bout.
-     * @return The number
-     */
-    @XmlElement
-    public Long getNumber() {
-        return this.number();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -112,19 +85,13 @@ public final class HubBout implements Bout {
     }
 
     /**
-     * JAXB related method, to return the title of the bout.
-     * @return The title
-     */
-    @XmlElement
-    public String getTitle() {
-        return this.title();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public void rename(final String text) {
+        if (!this.confirmed()) {
+            throw new IllegalStateException("You can't rename until you join");
+        }
         this.data.setTitle(text);
     }
 
@@ -134,8 +101,11 @@ public final class HubBout implements Bout {
      */
     @Override
     public Participant invite(final Identity friend) {
+        if (!this.confirmed()) {
+            throw new IllegalStateException("You can't invite until you join");
+        }
         final ParticipantData dude =
-            new ParticipantData(this.number(), friend.name());
+            ParticipantData.build(this.number(), friend.name());
         this.data.addParticipant(dude);
         dude.setConfirmed(false);
         Logger.debug(
@@ -144,7 +114,7 @@ public final class HubBout implements Bout {
             friend
         );
         ((HubIdentity) friend).invited(this);
-        return new HubParticipant(dude);
+        return HubParticipant.build(dude);
     }
 
     /**
@@ -155,7 +125,7 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantData dude : this.data.getParticipants()) {
-            participants.add(new HubParticipant(dude));
+            participants.add(HubParticipant.build(dude));
         }
         Logger.debug(
             this,
@@ -163,16 +133,6 @@ public final class HubBout implements Bout {
             participants.size()
         );
         return participants;
-    }
-
-    /**
-     * JAXB related method, to return participants of the bout.
-     * @return The collection
-     */
-    @XmlElement(name = "participant")
-    @XmlElementWrapper(name = "participants")
-    public Collection<HubParticipant> getParticipants() {
-        return (Collection) this.participants();
     }
 
     /**
@@ -185,7 +145,7 @@ public final class HubBout implements Bout {
         Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
         for (MessageData msg : datas) {
-            messages.add(new HubMessage(this.viewer, msg));
+            messages.add(HubMessage.build(this.viewer, msg));
         }
         Logger.debug(
             this,
@@ -197,20 +157,13 @@ public final class HubBout implements Bout {
     }
 
     /**
-     * JAXB related method, to return messages of the bout.
-     * @return The collection
-     */
-    @XmlElement(name = "message")
-    @XmlElementWrapper(name = "messages")
-    public Collection<HubMessage> getMessages() {
-        return (Collection) this.messages("");
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public Message post(final String text) {
+        if (!this.confirmed()) {
+            throw new IllegalStateException("You can't post until you join");
+        }
         final MessageData msg = this.data.addMessage();
         msg.setDate(new Date());
         msg.setAuthor(this.viewer.name());
@@ -220,7 +173,7 @@ public final class HubBout implements Bout {
             "#post('%s'): message posted",
             text
         );
-        final Message message = new HubMessage(this.viewer, msg);
+        final Message message = HubMessage.build(this.viewer, msg);
         message.text();
         return message;
     }
@@ -231,12 +184,27 @@ public final class HubBout implements Bout {
      * @return Is it?
      */
     protected boolean isParticipant(final Identity identity) {
+        boolean found = false;
         for (ParticipantData dude : this.data.getParticipants()) {
             if (dude.getIdentity().equals(identity.name())) {
-                return true;
+                found = true;
+                break;
             }
         }
-        return false;
+        return found;
+    }
+
+    /**
+     * This identity has confirmed participation?
+     * @return Is it?
+     */
+    private boolean confirmed() {
+        for (Participant dude : this.participants()) {
+            if (dude.identity().equals(this.viewer)) {
+                return dude.confirmed();
+            }
+        }
+        throw new IllegalStateException("Can't find myself in participants");
     }
 
 }

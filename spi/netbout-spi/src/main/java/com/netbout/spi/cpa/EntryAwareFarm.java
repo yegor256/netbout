@@ -27,31 +27,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.cpa;
+
+import com.netbout.spi.Entry;
 
 /**
- * Thowable when promotion of identity fails.
+ * Farm should implement this interface if it needs {@link Entry} to
+ * be injected during initialization.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PromotionException extends Exception {
+public interface EntryAwareFarm {
 
     /**
-     * Public ctor.
-     * @param cause Root cause of the exception
+     * Set entry.
+     * @param entry The entry
      */
-    public PromotionException(final Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Public ctor.
-     * @param message Additional message
-     * @param cause Root cause of the exception
-     */
-    public PromotionException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+    void init(Entry entry);
 
 }

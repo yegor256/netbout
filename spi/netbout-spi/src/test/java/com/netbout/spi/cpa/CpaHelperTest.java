@@ -29,12 +29,15 @@
  */
 package com.netbout.spi.cpa;
 
+import com.netbout.spi.Entry;
 import com.netbout.spi.Helper;
+import com.netbout.spi.HelperException;
 import com.netbout.spi.TypeMapper;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case for {@link CpaHelper}.
@@ -52,6 +55,8 @@ public final class CpaHelperTest {
         final Helper helper = new CpaHelper(
             this.getClass().getPackage().getName()
         );
+        final Entry entry = Mockito.mock(Entry.class);
+        helper.init(entry);
         MatcherAssert.assertThat(
             helper.supports().size(),
             Matchers.greaterThan(0)
@@ -84,10 +89,43 @@ public final class CpaHelperTest {
     }
 
     /**
+     * Helper can't be used without a call to {@link Helper#init()}.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = HelperException.class)
+    public void testSupportsWithoutInit() throws Exception {
+        final Helper helper = new CpaHelper(
+            this.getClass().getPackage().getName()
+        );
+        helper.supports();
+    }
+
+    /**
+     * Helper can't execute unknown operation.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = HelperException.class)
+    public void testCallToUnknownOperation() throws Exception {
+        final Helper helper = new CpaHelper(
+            this.getClass().getPackage().getName()
+        );
+        final Entry entry = Mockito.mock(Entry.class);
+        helper.init(entry);
+        helper.execute("unknown-operation");
+    }
+
+    /**
      * Sample farm.
      */
     @Farm
-    public static final class SampleFarm {
+    public static final class SampleFarm implements EntryAwareFarm {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void init(final Entry entry) {
+            MatcherAssert.assertThat(entry, Matchers.notNullValue());
+        }
         /**
          * Sample operation.
          * @param text The text to translate
@@ -103,6 +141,7 @@ public final class CpaHelperTest {
          */
         @Operation("empty")
         public void empty() {
+            // intentionally empty
         }
         /**
          * List as output.
@@ -112,8 +151,9 @@ public final class CpaHelperTest {
         @Operation("list")
         public Long[] list(final Long size) {
             final Long[] list = new Long[size.intValue()];
+            final Random random = new Random();
             for (int pos = 0; pos < size; pos += 1) {
-                list[pos] = new Random().nextLong();
+                list[pos] = random.nextLong();
             }
             return list;
         }

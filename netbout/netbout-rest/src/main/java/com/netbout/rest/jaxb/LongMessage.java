@@ -24,75 +24,89 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.rest.jaxb;
 
-import com.netbout.spi.DuplicateIdentityException;
-import com.netbout.spi.Identity;
-import com.netbout.spi.User;
-import com.ymock.util.Logger;
+import com.netbout.spi.Message;
+import java.util.Date;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * User.
+ * Message convertable to XML through JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubUser implements User {
+@XmlRootElement(name = "message")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class LongMessage {
 
     /**
-     * The name of it.
-     * @see #HubUser(String)
+     * The message.
      */
-    private final transient String uname;
+    private transient Message message;
 
     /**
-     * Public ctor.
-     * @param name The name of it
-     * @see InMemoryEntry#user(String)
+     * Public ctor for JAXB.
      */
-    public HubUser(final String name) {
-        this.uname = name;
+    public LongMessage() {
+        throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
-     * {@inheritDoc}
+     * Private ctor.
+     * @param msg The message
      */
-    @Override
-    public boolean equals(final Object obj) {
-        return (obj instanceof HubUser)
-            && this.uname.equals(((HubUser) obj).uname);
+    private LongMessage(final Message msg) {
+        this.message = msg;
     }
 
     /**
-     * {@inheritDoc}
+     * Build it.
+     * @param msg The message
+     * @return The instance of the class
      */
-    @Override
-    public int hashCode() {
-        return this.uname.hashCode();
+    public static LongMessage build(final Message msg) {
+        return new LongMessage(msg);
     }
 
     /**
-     * {@inheritDoc}
+     * Get author.
+     * @return The author
      */
-    @Override
-    public String name() {
-        return this.uname;
+    @XmlElement
+    public String getAuthor() {
+        return this.message.author().name();
     }
 
     /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
+     * Get its text.
+     * @return The text
      */
-    @Override
-    public Identity identity(final String label)
-        throws DuplicateIdentityException {
-        final Identity identity = Identities.make(label, this);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            label
-        );
-        return identity;
+    @XmlElement
+    public String getText() {
+        return this.message.text();
+    }
+
+    /**
+     * Get its date.
+     * @return The date
+     */
+    @XmlElement
+    public Date getDate() {
+        return this.message.date();
+    }
+
+    /**
+     * Was it seen by the author already?
+     * @return The status
+     */
+    @XmlAttribute
+    public Boolean getSeen() {
+        return this.message.seen();
     }
 
 }

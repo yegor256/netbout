@@ -38,7 +38,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of user's inbox.
@@ -60,7 +59,12 @@ public final class InboxRs extends AbstractRs {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
         for (Bout bout : identity.inbox(query)) {
-            bouts.add(new ShortBout(bout));
+            bouts.add(
+                ShortBout.build(
+                    bout,
+                    this.uriInfo().getBaseUriBuilder().clone()
+                )
+            );
         }
         return new PageBuilder()
             .stylesheet("inbox")
@@ -87,8 +91,11 @@ public final class InboxRs extends AbstractRs {
             .entity(String.format("bout #%d created", bout.number()))
             .status(Response.Status.TEMPORARY_REDIRECT)
             .location(
-                UriBuilder.fromPath("/{num}")
-                    .build(bout.number().toString())
+                this.uriInfo()
+                    .getBaseUriBuilder()
+                    .clone()
+                    .path("/{num}")
+                    .build(bout.number())
             )
             .build();
     }

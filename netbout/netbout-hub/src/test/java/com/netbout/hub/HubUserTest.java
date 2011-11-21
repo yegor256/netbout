@@ -47,7 +47,7 @@ public final class HubUserTest {
     @Test
     public void testPersistenceOfUserName() throws Exception {
         final String name = "Big Lebowski";
-        final User user = new HubEntry().user(name);
+        new HubEntry().user(name);
         MatcherAssert.assertThat(
             new HubEntry().user(name).name(),
             Matchers.equalTo(name)

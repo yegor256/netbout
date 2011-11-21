@@ -73,7 +73,7 @@
                                     </img>
                                 </span>
                                 <span>
-                                    <xsl:value-of select="/page/identity/name"/>
+                                    <xsl:value-of select="/page/identity/aliases/alias[position() = 1]"/>
                                 </span>
                                 <span>
                                     <a>

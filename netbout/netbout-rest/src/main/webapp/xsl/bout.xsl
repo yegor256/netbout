@@ -53,6 +53,7 @@
     </xsl:template>
 
     <xsl:template name="content">
+        <xsl:variable name="participant" select="/page/bout/participants/participant[identity=/page/identity/name]"/>
         <xsl:text>#</xsl:text>
         <xsl:value-of select="/page/bout/number"/>
         <xsl:text>: </xsl:text>
@@ -67,20 +68,70 @@
         <xsl:call-template name="dudes">
             <xsl:with-param name="participants" select="/page/bout/participants" />
         </xsl:call-template>
-        <form method="post">
-            <xsl:attribute name="action">
-                <xsl:value-of select="/page/links/link[@name='invite']/@href"/>
-            </xsl:attribute>
-            <input name="name" />
-            <input value="invite" type="submit"/>
-        </form>
-        <form method="post">
-            <xsl:attribute name="action">
-                <xsl:value-of select="/page/links/link[@name='rename']/@href"/>
-            </xsl:attribute>
-            <input name="title" />
-            <input value="rename" type="submit"/>
-        </form>
+        <xsl:if test="$participant/@confirmed = 'true'">
+            <form method="get">
+                <xsl:attribute name="action">
+                    <xsl:value-of select="/page/links/link[@name='suggest']/@href"/>
+                </xsl:attribute>
+                <input name="q" />
+                <input value="invite" type="submit"/>
+            </form>
+            <xsl:if test="/page/invitees">
+                <ul>
+                    <xsl:for-each select="/page/invitees/invitee">
+                        <li>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="@href"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="alias"/>
+                            </a>
+                        </li>
+                    </xsl:for-each>
+                </ul>
+            </xsl:if>
+        </xsl:if>
+        <xsl:if test="$participant/@confirmed = 'true'">
+            <form method="post">
+                <xsl:attribute name="action">
+                    <xsl:value-of select="/page/links/link[@name='rename']/@href"/>
+                </xsl:attribute>
+                <input name="title" size="50">
+                    <xsl:attribute name="value">
+                        <xsl:value-of select="/page/bout/title"/>
+                    </xsl:attribute>
+                </input>
+                <input value="rename" type="submit"/>
+            </form>
+        </xsl:if>
+        <p>
+            <xsl:choose>
+                <xsl:when test="$participant/@confirmed = 'true'">
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="/page/links/link[@name='leave']/@href"/>
+                        </xsl:attribute>
+                        <xsl:text>I want to leave this bout</xsl:text>
+                    </a>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>Do you agree to join this bout: </xsl:text>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="/page/links/link[@name='join']/@href"/>
+                        </xsl:attribute>
+                        <xsl:text>yes, of course</xsl:text>
+                    </a>
+                    <xsl:text> or </xsl:text>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="/page/links/link[@name='leave']/@href"/>
+                        </xsl:attribute>
+                        <xsl:text>no, I refuse</xsl:text>
+                    </a>
+                </xsl:otherwise>
+            </xsl:choose>
+        </p>
         <div id="holder">
             <ul id="titles">
                 <xsl:for-each select="/page/bout/stages/stage">
@@ -113,25 +164,27 @@
                 </xsl:for-each>
             </div>
         </div>
-        <form id="post" method="post">
-            <xsl:attribute name="action">
-                <xsl:value-of select="/page/links/link[@name='post']/@href"/>
-            </xsl:attribute>
-            <dl><textarea name="text" cols="80" rows="5"></textarea></dl>
-            <dl><input name="submit" type="submit" /></dl>
-        </form>
+        <xsl:if test="$participant/@confirmed = 'true'">
+            <form id="post" method="post">
+                <xsl:attribute name="action">
+                    <xsl:value-of select="/page/links/link[@name='post']/@href"/>
+                </xsl:attribute>
+                <dl><textarea name="text" cols="80" rows="5"></textarea></dl>
+                <dl><input name="submit" type="submit" /></dl>
+            </form>
+        </xsl:if>
         <xsl:for-each select="/page/bout/messages/message">
             <xsl:variable name="message" select="."/>
             <div class="message">
                 <div class="header">
                     <img>
                         <xsl:attribute name="src">
-                            <xsl:value-of select="/page/bout/participants/participant[$message/author/name/text()=identity/name/text()]/identity/photo"/>
+                            <xsl:value-of select="/page/bout/participants/participant[$message/author=identity]/photo"/>
                         </xsl:attribute>
                     </img>
                     <xsl:text>by </xsl:text>
                     <b>
-                    <xsl:value-of select="/page/bout/participants/participant[$message/author/name/text()=identity/name/text()]/identity/name"/>
+                    <xsl:value-of select="/page/bout/participants/participant[$message/author=identity]/alias"/>
                     </b>
                     <xsl:text> at </xsl:text>
                     <xsl:value-of select="$message/date"/>

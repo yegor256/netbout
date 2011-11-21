@@ -41,7 +41,7 @@ public final class BoutFarmTest {
     /**
      * Farm to work with.
      */
-    private final BoutFarm farm = new BoutFarm();
+    private final transient BoutFarm farm = new BoutFarm();
 
     /**
      * Bout number persistence.

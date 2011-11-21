@@ -32,90 +32,75 @@ import com.netbout.hub.data.Storage;
 import com.netbout.hub.queue.HelpQueue;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.Helper;
+import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (300 lines)
+ * @todo #123 This class needs refactoring. We should get rid of NULL in iuser
+ *  and should break it into smaller classes - it's too big now.
  */
-@XmlRootElement(name = "identity")
-@XmlType(name = "identity")
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlSeeAlso(HubBout.class)
+@SuppressWarnings("PMD.TooManyMethods")
 public final class HubIdentity implements Identity {
-
-    /**
-     * All identities known for us at the moment, and their objects.
-     */
-    private static final Map<String, HubIdentity> ALL =
-        new ConcurrentHashMap<String, HubIdentity>();
 
     /**
      * The name.
      */
-    private final String name;
+    private final transient String iname;
 
     /**
      * Name of the user.
      */
-    private User user;
+    private transient User iuser;
 
     /**
      * The photo.
      */
-    private URL photo;
+    private transient URL iphoto;
 
     /**
      * List of bouts where I'm a participant.
      */
-    private final Set<Long> bouts = new CopyOnWriteArraySet<Long>();
+    private transient Set<Long> ibouts;
 
     /**
-     * Public ctor for JAXB.
+     * List of aliases.
      */
-    public HubIdentity() {
-        throw new IllegalStateException("This ctor should never be called");
-    }
+    private transient Set<String> ialiases;
 
     /**
      * Public ctor.
-     * @param nam The identity's name
-     * @param usr The user
-     * @see HubUser#identity(String)
+     * @param name The identity's name
+     * @param user The user
+     * @see Identities#make(String,User)
      */
-    public HubIdentity(final String nam, final User usr) {
-        this.name = nam;
-        this.user = usr;
+    public HubIdentity(final String name, final User user) {
+        this.iname = name;
+        this.iuser = user;
     }
 
     /**
      * Public ctor, when user is not known.
-     * @param nam The identity's name
-     * @see HubUser#make(String)
+     * @param name The identity's name
+     * @see Identities#make(String)
      */
-    public HubIdentity(final String nam) {
-        this.name = nam;
-        this.user = null;
+    @SuppressWarnings("PMD.NullAssignment")
+    public HubIdentity(final String name) {
+        this.iname = name;
+        this.iuser = null;
     }
 
     /**
@@ -123,15 +108,15 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public User user() {
-        if (this.user == null) {
+        if (!this.isAssigned()) {
             throw new IllegalStateException(
                 String.format(
                     "User is unknown for identity '%s'",
-                    this.name
+                    this.iname
                 )
             );
         }
-        return this.user;
+        return this.iuser;
     }
 
     /**
@@ -146,14 +131,14 @@ public final class HubIdentity implements Identity {
         } catch (com.netbout.hub.data.BoutMissedException ex) {
             throw new IllegalStateException(ex);
         }
-        final ParticipantData dude = new ParticipantData(num, this.name());
+        final ParticipantData dude = ParticipantData.build(num, this.name());
         data.addParticipant(dude);
         dude.setConfirmed(true);
         Logger.debug(
             this,
             "#start(): bout started"
         );
-        this.bouts.add(num);
+        this.myBouts().add(num);
         return new HubBout(this, data);
     }
 
@@ -184,18 +169,8 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public List<Bout> inbox(final String query) {
-        if (this.bouts.isEmpty()) {
-            final Long[] nums = HelpQueue.make("get-bouts-of-identity")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.name)
-                .asDefault(new Long[]{})
-                .exec(Long[].class);
-            for (Long num : nums) {
-                this.bouts.add(num);
-            }
-        }
         final List<Bout> list = new ArrayList<Bout>();
-        for (Long num : this.bouts) {
+        for (Long num : this.myBouts()) {
             try {
                 list.add(this.bout(num));
             } catch (com.netbout.spi.BoutNotFoundException ex) {
@@ -216,16 +191,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public String name() {
-        return this.name;
-    }
-
-    /**
-     * JAXB related method, to return the name of identity.
-     * @return The name
-     */
-    @XmlElement
-    public String getName() {
-        return this.name();
+        return this.iname;
     }
 
     /**
@@ -233,12 +199,12 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public URL photo() {
-        if (this.photo == null) {
+        if (this.iphoto == null) {
             try {
-                this.photo = new URL(
+                this.iphoto = new URL(
                     HelpQueue.make("get-identity-photo")
                         .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                        .arg(this.name)
+                        .arg(this.iname)
                         .asDefault("http://img.netbout.com/unknown.png")
                         .exec(String.class)
                 );
@@ -246,16 +212,7 @@ public final class HubIdentity implements Identity {
                 throw new IllegalStateException(ex);
             }
         }
-        return this.photo;
-    }
-
-    /**
-     * JAXB related method, to return photo of identity.
-     * @return The photo
-     */
-    @XmlElement(required = true)
-    public URL getPhoto() {
-        return this.photo();
+        return this.iphoto;
     }
 
     /**
@@ -264,12 +221,12 @@ public final class HubIdentity implements Identity {
     @Override
     public void setPhoto(final URL pic) {
         synchronized (this) {
-            this.photo = pic;
+            this.iphoto = pic;
         }
         HelpQueue.make("changed-identity-photo")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .arg(this.name)
-            .arg(this.photo.toString())
+            .arg(this.iname)
+            .arg(this.iphoto.toString())
             .exec();
     }
 
@@ -277,7 +234,51 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void promote(final Helper helper) {
+    public Set<String> aliases() {
+        final Set<String> list = new HashSet<String>(this.myAliases());
+        Logger.debug(
+            this,
+            "#aliases(): %d returned",
+            list.size()
+        );
+        return list;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void alias(final String alias) {
+        if (this.myAliases().contains(alias)) {
+            Logger.debug(
+                this,
+                "#alias('%s'): it's already set for '%s'",
+                alias,
+                this.iname
+            );
+        } else {
+            HelpQueue.make("added-identity-alias")
+                .priority(HelpQueue.Priority.ASAP)
+                .arg(this.iname)
+                .arg(alias)
+                .exec();
+            Logger.debug(
+                this,
+                "#alias('%s'): added for '%s'",
+                alias,
+                this.iname
+            );
+            this.myAliases().add(alias);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (3 lines)
+     */
+    @Override
+    public void promote(final Helper helper) throws HelperException {
+        helper.init(new HubEntry());
         HelpQueue.register(helper);
         Logger.info(
             this,
@@ -292,53 +293,104 @@ public final class HubIdentity implements Identity {
      * @param bout The bout
      */
     protected void invited(final Bout bout) {
-        this.bouts.add(bout.number());
+        this.myBouts().add(bout.number());
     }
 
     /**
-     * Make new identity or find existing one.
-     * @param label The name of identity
-     * @param usr Name of the user
-     * @return Identity found
-     * @throws DuplicateIdentityException If this identity is taken
-     * @checkstyle RedundantThrows (4 lines)
+     * Does this identity matches a keyword?
+     * @param keyword The keyword
+     * @return Yes or no?
      */
-    protected static HubIdentity make(final String label, final User usr)
-        throws DuplicateIdentityException {
-        final HubIdentity identity = HubIdentity.make(label);
-        if (identity.user != null && !identity.user.equals(usr)) {
-            throw new DuplicateIdentityException(
-                "Identity '%s' is already taken by '%s'",
-                label,
-                identity.user.name()
+    protected boolean matchesKeyword(final String keyword) {
+        boolean matches = this.iname.contains(keyword);
+        for (String alias : this.myAliases()) {
+            matches |= alias.contains(keyword);
+        }
+        return matches;
+    }
+
+    /**
+     * Does this identity belongs to the specified user?
+     * @param user The user
+     * @return Yes or no?
+     */
+    protected boolean belongsTo(final User user) {
+        if (!this.isAssigned()) {
+            throw new IllegalStateException(
+                String.format(
+                    "Identity '%s' is not assigned to any user yet",
+                    this.iname
+                )
             );
         }
-        identity.user = usr;
-        return identity;
+        return this.iuser.equals(user);
     }
 
     /**
-     * Make new identity or find existing one.
-     * @param label The name of identity
-     * @return Identity found
+     * Does this identity belongs to some user already?
+     * @return Yes or no?
      */
-    protected static HubIdentity make(final String label) {
-        if (HubIdentity.ALL.containsKey(label)) {
-            return HubIdentity.ALL.get(label);
+    protected boolean isAssigned() {
+        return this.iuser != null;
+    }
+
+    /**
+     * Assign the identity to the given user.
+     * @param user The user
+     */
+    protected void assignTo(final User user) {
+        if (this.isAssigned()) {
+            throw new IllegalStateException(
+                String.format(
+                    "Identity '%s' already belongs to '%s'",
+                    this.iname,
+                    this.iuser.name()
+                )
+            );
         }
-        final HubIdentity identity = new HubIdentity(label);
-        HubIdentity.ALL.put(label, identity);
-        HelpQueue.make("identity-mentioned")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .arg(label)
-            .exec();
-        Logger.debug(
-            HubIdentity.class,
-            "#make('%s'): created just by name (%d total)",
-            label,
-            HubIdentity.ALL.size()
-        );
-        return identity;
+        this.iuser = user;
+    }
+
+    /**
+     * Return a link to my list of bouts.
+     * @return The list of them
+     */
+    private Set<Long> myBouts() {
+        synchronized (this) {
+            if (this.ibouts == null) {
+                this.ibouts = new CopyOnWriteArraySet<Long>(
+                    Arrays.asList(
+                        HelpQueue.make("get-bouts-of-identity")
+                            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                            .arg(this.iname)
+                            .asDefault(new Long[]{})
+                            .exec(Long[].class)
+                    )
+                );
+            }
+        }
+        return this.ibouts;
+    }
+
+    /**
+     * Returns a link to the list of aliases.
+     * @return The link to the list of them
+     */
+    private Set<String> myAliases() {
+        synchronized (this) {
+            if (this.ialiases == null) {
+                this.ialiases = new CopyOnWriteArraySet<String>(
+                    Arrays.asList(
+                        HelpQueue.make("get-aliases-of-identity")
+                            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                            .arg(this.iname)
+                            .asDefault(new String[]{})
+                            .exec(String[].class)
+                    )
+                );
+            }
+        }
+        return this.ialiases;
     }
 
 }

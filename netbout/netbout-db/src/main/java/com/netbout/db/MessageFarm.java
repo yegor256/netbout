@@ -67,8 +67,12 @@ public final class MessageFarm {
             stmt.setLong(1, bout);
             stmt.execute();
             final ResultSet rset = stmt.getGeneratedKeys();
-            rset.next();
-            number = rset.getLong(1);
+            try {
+                rset.next();
+                number = rset.getLong(1);
+            } finally {
+                rset.close();
+            }
         } finally {
             conn.close();
         }
@@ -99,8 +103,12 @@ public final class MessageFarm {
             );
             stmt.setLong(1, bout);
             final ResultSet rset = stmt.executeQuery();
-            while (rset.next()) {
-                numbers.add(rset.getLong(1));
+            try {
+                while (rset.next()) {
+                    numbers.add(rset.getLong(1));
+                }
+            } finally {
+                rset.close();
             }
         } finally {
             conn.close();
@@ -133,8 +141,19 @@ public final class MessageFarm {
             );
             stmt.setLong(1, number);
             final ResultSet rset = stmt.executeQuery();
-            rset.next();
-            date = new Date(rset.getTimestamp(1).getTime());
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Message #%d not found, can't get date",
+                            number
+                        )
+                    );
+                }
+                date = new Date(rset.getTimestamp(1).getTime());
+            } finally {
+                rset.close();
+            }
         } finally {
             conn.close();
         }
@@ -205,8 +224,19 @@ public final class MessageFarm {
             );
             stmt.setLong(1, number);
             final ResultSet rset = stmt.executeQuery();
-            rset.next();
-            author = rset.getString(1);
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Message #%d not found, can't get author",
+                            number
+                        )
+                    );
+                }
+                author = rset.getString(1);
+            } finally {
+                rset.close();
+            }
         } finally {
             conn.close();
         }
@@ -271,8 +301,19 @@ public final class MessageFarm {
             );
             stmt.setLong(1, number);
             final ResultSet rset = stmt.executeQuery();
-            rset.next();
-            text = rset.getString(1);
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Message #%d not found, can't read text",
+                            number
+                        )
+                    );
+                }
+                text = rset.getString(1);
+            } finally {
+                rset.close();
+            }
         } finally {
             conn.close();
         }

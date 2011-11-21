@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Identity;
 import com.rexsl.core.Manifests;
@@ -57,23 +58,23 @@ public abstract class AbstractPage implements Page {
     /**
      * Home resource of this page.
      */
-    private Resource home;
+    private transient Resource home;
 
     /**
      * When this page was started to build, in nanoseconds.
      * @see #getNano()
      */
-    private final long start;
+    private final transient long start;
 
     /**
      * Collection of elements.
      */
-    private final Collection elements = new ArrayList();
+    private final transient Collection elements = new ArrayList();
 
     /**
      * Collection of links.
      */
-    private final JaxbBundle links = new JaxbBundle("links");
+    private final transient JaxbBundle links = new JaxbBundle("links");
 
     /**
      * Public ctor.
@@ -90,8 +91,7 @@ public abstract class AbstractPage implements Page {
     public final Page init(final Resource res) {
         this.home = res;
         this.link("self", this.home.uriInfo().getAbsolutePath());
-        // @checkstyle MultipleStringLiterals (1 line)
-        this.link("home", "/");
+        this.link("home", this.home.uriInfo().getBaseUri());
         return this;
     }
 
@@ -104,10 +104,8 @@ public abstract class AbstractPage implements Page {
             .attr(Page.HATEOAS_NAME, name)
             .attr(
                 Page.HATEOAS_HREF,
-                this.home.uriInfo()
-                    .getAbsolutePathBuilder()
-                    .replacePath(href)
-                    .build());
+                this.home.uriInfo().getBaseUriBuilder().path(href).build()
+            );
         return this;
     }
 
@@ -154,7 +152,7 @@ public abstract class AbstractPage implements Page {
     @Override
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
-        this.append(identity);
+        this.append(new LongIdentity(identity));
         this.link("logout", "/g/out");
         this.link("start", "/s");
         this.extend();
@@ -177,9 +175,15 @@ public abstract class AbstractPage implements Page {
                     new Cryptor(this.home.entry()).encrypt(identity),
                     // path
                     // @checkstyle MultipleStringLiterals (1 line)
-                    "/" + this.home.httpServletRequest().getContextPath(),
+                    String.format(
+                        "/%s",
+                        this.home.httpServletRequest().getContextPath()
+                    ),
                     // domain
-                    "." + this.home.uriInfo().getBaseUri().getHost(),
+                    String.format(
+                        ".%s",
+                        this.home.uriInfo().getBaseUri().getHost()
+                    ),
                     // version
                     // @checkstyle MultipleStringLiterals (1 line)
                     Integer.valueOf(Manifests.read("Netbout-Revision")),

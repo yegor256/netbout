@@ -50,34 +50,34 @@ public abstract class AbstractRs implements Resource {
     /**
      * Entry to work with.
      */
-    private Entry entry = new HubEntry();
+    private transient Entry ientry = new HubEntry();
 
     /**
      * List of known JAX-RS providers.
      */
-    private Providers providers;
+    private transient Providers iproviders;
 
     /**
      * URI info.
      */
-    private UriInfo uriInfo;
+    private transient UriInfo iuriInfo;
 
     /**
      * Http headers.
      */
     @Context
-    private HttpHeaders httpHeaders;
+    private transient HttpHeaders ihttpHeaders;
 
     /**
      * HTTP servlet request.
      */
     @Context
-    private HttpServletRequest httpServletRequest;
+    private transient HttpServletRequest ihttpRequest;
 
     /**
      * Cookie.
      */
-    private String cookie;
+    private transient String icookie;
     // Uncomment this line if you don't have a cookie saved by your
     // local browser yet.
     // = "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
@@ -85,7 +85,7 @@ public abstract class AbstractRs implements Resource {
     /**
      * The message to show.
      */
-    private String message = "";
+    private transient String imessage = "";
 
     /**
      * Send all JUL logging to SLF4J. Some libraries may use JUL for some
@@ -112,9 +112,10 @@ public abstract class AbstractRs implements Resource {
         } catch (com.netbout.spi.DuplicateIdentityException ex) {
             throw new IllegalStateException(ex);
         }
+        persistor.alias("Netbout Database Manager");
         try {
             persistor.promote(new CpaHelper("com.netbout.db"));
-        } catch (com.netbout.spi.PromotionException ex) {
+        } catch (com.netbout.spi.HelperException ex) {
             throw new IllegalStateException(ex);
         }
         try {
@@ -131,7 +132,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Override
     public final Entry entry() {
-        if (this.entry == null) {
+        if (this.ientry == null) {
             throw new IllegalStateException(
                 String.format(
                     "%s#entry was never injected by setEntry()",
@@ -139,7 +140,7 @@ public abstract class AbstractRs implements Resource {
                 )
             );
         }
-        return this.entry;
+        return this.ientry;
     }
 
     /**
@@ -147,7 +148,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Override
     public final Providers providers() {
-        if (this.providers == null) {
+        if (this.iproviders == null) {
             throw new IllegalStateException(
                 String.format(
                     "%s#providers was never injected by JAX-RS",
@@ -155,7 +156,7 @@ public abstract class AbstractRs implements Resource {
                 )
             );
         }
-        return this.providers;
+        return this.iproviders;
     }
 
     /**
@@ -163,7 +164,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Override
     public final HttpHeaders httpHeaders() {
-        if (this.httpHeaders == null) {
+        if (this.ihttpHeaders == null) {
             throw new IllegalStateException(
                 String.format(
                     "%s#httpHeaders was never injected by JAX-RS",
@@ -171,7 +172,7 @@ public abstract class AbstractRs implements Resource {
                 )
             );
         }
-        return this.httpHeaders;
+        return this.ihttpHeaders;
     }
 
     /**
@@ -179,7 +180,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Override
     public final UriInfo uriInfo() {
-        if (this.uriInfo == null) {
+        if (this.iuriInfo == null) {
             throw new IllegalStateException(
                 String.format(
                     "%s#uriInfo was never injected by JAX-RS",
@@ -187,7 +188,7 @@ public abstract class AbstractRs implements Resource {
                 )
             );
         }
-        return this.uriInfo;
+        return this.iuriInfo;
     }
 
     /**
@@ -195,15 +196,15 @@ public abstract class AbstractRs implements Resource {
      */
     @Override
     public final HttpServletRequest httpServletRequest() {
-        if (this.httpServletRequest == null) {
+        if (this.ihttpRequest == null) {
             throw new IllegalStateException(
                 String.format(
-                    "%s#httpServletRequest was never injected by JAX-RS",
+                    "%s#httpRequest was never injected by JAX-RS",
                     this.getClass().getName()
                 )
             );
         }
-        return this.httpServletRequest;
+        return this.ihttpRequest;
     }
 
     /**
@@ -211,7 +212,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Override
     public final String message() {
-        return this.message;
+        return this.imessage;
     }
 
     /**
@@ -227,7 +228,7 @@ public abstract class AbstractRs implements Resource {
             } catch (java.io.UnsupportedEncodingException ex) {
                 throw new IllegalArgumentException(ex);
             }
-            this.message = decoded;
+            this.imessage = decoded;
             Logger.debug(
                 this,
                 "#setMessage('%s'): injected as '%s'",
@@ -242,27 +243,27 @@ public abstract class AbstractRs implements Resource {
      * @param ent The entry to work with
      */
     public final void setEntry(final Entry ent) {
-        this.entry = ent;
+        this.ientry = ent;
         Logger.debug(
             this,
             "#setEntry('%s'): injected",
-            ent.getClass().getName()
+            this.ientry.getClass().getName()
         );
     }
 
     /**
      * Set cookie. Should be called by JAX-RS implemenation
      * because of <tt>&#64;CookieParam</tt> annotation.
-     * @param cke The cookie to set
+     * @param cookie The cookie to set
      */
     @CookieParam("netbout")
-    public final void setCookie(final String cke) {
-        if (cke != null) {
-            this.cookie = cke;
+    public final void setCookie(final String cookie) {
+        if (cookie != null) {
+            this.icookie = cookie;
             Logger.debug(
                 this,
                 "#setCookie('%s'): injected",
-                cke
+                cookie
             );
         }
     }
@@ -274,7 +275,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Context
     public final void setUriInfo(final UriInfo info) {
-        this.uriInfo = info;
+        this.iuriInfo = info;
         Logger.debug(
             this,
             "#setUriInfo(%s): injected",
@@ -289,7 +290,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Context
     public final void setProviders(final Providers prov) {
-        this.providers = prov;
+        this.iproviders = prov;
         Logger.debug(
             this,
             "#setProviders(%s): injected",
@@ -304,7 +305,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Context
     public final void setHttpHeaders(final HttpHeaders hdrs) {
-        this.httpHeaders = hdrs;
+        this.ihttpHeaders = hdrs;
         Logger.debug(
             this,
             "#setHttpHeaders(%s): injected",
@@ -319,7 +320,7 @@ public abstract class AbstractRs implements Resource {
      */
     @Context
     public final void setHttpServletRequest(final HttpServletRequest request) {
-        this.httpServletRequest = request;
+        this.ihttpRequest = request;
         Logger.debug(
             this,
             "#setHttpServletRequest(%s): injected",
@@ -334,7 +335,7 @@ public abstract class AbstractRs implements Resource {
      */
     protected final Identity identity() {
         try {
-            return new Cryptor(this.entry()).decrypt(this.cookie);
+            return new Cryptor(this.entry()).decrypt(this.icookie);
         } catch (Cryptor.DecryptionException ex) {
             Logger.debug(
                 this,
@@ -343,7 +344,7 @@ public abstract class AbstractRs implements Resource {
                 this.httpServletRequest().getRequestURI(),
                 ex.getMessage()
             );
-            throw new ForwardException(this, "/g");
+            throw new ForwardException(this, "/g", ex);
         }
     }
 

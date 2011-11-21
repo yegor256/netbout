@@ -29,8 +29,8 @@ package com.netbout.hub.data;
 import com.netbout.hub.queue.HelpQueue;
 import com.ymock.util.Logger;
 import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Storage of data, it's a singleton.
@@ -48,7 +48,7 @@ public final class Storage {
     /**
      * All bouts existing in the system.
      */
-    private final Map<Long, BoutData> bouts =
+    private final transient ConcurrentMap<Long, BoutData> bouts =
         new ConcurrentHashMap<Long, BoutData>();
 
     /**
