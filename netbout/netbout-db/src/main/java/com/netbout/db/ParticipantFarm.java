@@ -63,8 +63,12 @@ public final class ParticipantFarm {
             );
             stmt.setLong(1, bout);
             final ResultSet rset = stmt.executeQuery();
-            while (rset.next()) {
-                names.add(rset.getString(1));
+            try {
+                while (rset.next()) {
+                    names.add(rset.getString(1));
+                }
+            } finally {
+                rset.close();
             }
         } finally {
             conn.close();
@@ -130,16 +134,20 @@ public final class ParticipantFarm {
             stmt.setLong(1, bout);
             stmt.setString(2, identity);
             final ResultSet rset = stmt.executeQuery();
-            if (!rset.next()) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "Participant '%s' not found in bout #%d",
-                        identity,
-                        bout
-                    )
-                );
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Participant '%s' not found in bout #%d",
+                            identity,
+                            bout
+                        )
+                    );
+                }
+                status = rset.getBoolean(1);
+            } finally {
+                rset.close();
             }
-            status = rset.getBoolean(1);
         } finally {
             conn.close();
         }

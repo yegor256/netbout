@@ -40,7 +40,7 @@ public final class IdentityFarmTest {
     /**
      * Farm to work with.
      */
-    private final IdentityFarm farm = new IdentityFarm();
+    private final transient IdentityFarm farm = new IdentityFarm();
 
     /**
      * Find bouts of some identity.

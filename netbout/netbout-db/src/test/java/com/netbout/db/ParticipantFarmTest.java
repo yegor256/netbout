@@ -41,12 +41,12 @@ public final class ParticipantFarmTest {
     /**
      * Farm to work with.
      */
-    private final ParticipantFarm farm = new ParticipantFarm();
+    private final transient ParticipantFarm farm = new ParticipantFarm();
 
     /**
      * Bout number to work with.
      */
-    private Long bout;
+    private transient Long bout;
 
     /**
      * Start new bout to work with.

@@ -57,11 +57,14 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #123 This class needs refactoring. We should get rid of NULL in iuser
+ *  and should break it into smaller classes - it's too big now.
  */
 @XmlRootElement(name = "identity")
 @XmlType(name = "identity")
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlSeeAlso(HubBout.class)
+@SuppressWarnings("PMD.TooManyMethods")
 public final class HubIdentity implements Identity {
 
     /**
@@ -98,22 +101,23 @@ public final class HubIdentity implements Identity {
 
     /**
      * Public ctor.
-     * @param nam The identity's name
-     * @param usr The user
-     * @see #make(String,User)
+     * @param name The identity's name
+     * @param user The user
+     * @see Identities#make(String,User)
      */
-    public HubIdentity(final String nam, final User usr) {
-        this.iname = nam;
-        this.iuser = usr;
+    public HubIdentity(final String name, final User user) {
+        this.iname = name;
+        this.iuser = user;
     }
 
     /**
      * Public ctor, when user is not known.
-     * @param nam The identity's name
-     * @see #make(String)
+     * @param name The identity's name
+     * @see Identities#make(String)
      */
-    public HubIdentity(final String nam) {
-        this.iname = nam;
+    @SuppressWarnings("PMD.NullAssignment")
+    public HubIdentity(final String name) {
+        this.iname = name;
         this.iuser = null;
     }
 

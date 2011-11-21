@@ -93,8 +93,12 @@ public final class AliasFarm {
             );
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
-            while (rset.next()) {
-                aliases.add(rset.getString(1));
+            try {
+                while (rset.next()) {
+                    aliases.add(rset.getString(1));
+                }
+            } finally {
+                rset.close();
             }
         } finally {
             conn.close();

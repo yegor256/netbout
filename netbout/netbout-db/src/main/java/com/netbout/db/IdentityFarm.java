@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Manipulations on the level of identity.
@@ -64,13 +65,17 @@ public final class IdentityFarm {
             );
             final String matcher = String.format(
                 "%%%s%%",
-                keyword.toUpperCase()
+                keyword.toUpperCase(Locale.ENGLISH)
             );
             stmt.setString(1, matcher);
             stmt.setString(2, matcher);
             final ResultSet rset = stmt.executeQuery();
-            while (rset.next()) {
-                names.add(rset.getString(1));
+            try {
+                while (rset.next()) {
+                    names.add(rset.getString(1));
+                }
+            } finally {
+                rset.close();
             }
         } finally {
             conn.close();
@@ -103,8 +108,12 @@ public final class IdentityFarm {
             );
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
-            while (rset.next()) {
-                numbers.add(rset.getLong(1));
+            try {
+                while (rset.next()) {
+                    numbers.add(rset.getLong(1));
+                }
+            } finally {
+                rset.close();
             }
         } finally {
             conn.close();
@@ -137,8 +146,19 @@ public final class IdentityFarm {
             );
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
-            rset.next();
-            photo = rset.getString(1);
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Identity '%s' not found, can't read photo",
+                            name
+                        )
+                    );
+                }
+                photo = rset.getString(1);
+            } finally {
+                rset.close();
+            }
         } finally {
             conn.close();
         }
@@ -167,19 +187,23 @@ public final class IdentityFarm {
             );
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
-            if (!rset.next()) {
-                final PreparedStatement istmt = conn.prepareStatement(
-                    "INSERT INTO identity (name, photo) VALUES (?, ?)"
-                );
-                istmt.setString(1, name);
-                istmt.setString(2, "http://img.netbout.com/unknown.png");
-                istmt.executeUpdate();
-                Logger.debug(
-                    this,
-                    "#identityMentioned('%s'): inserted [%dms]",
-                    name,
-                    System.currentTimeMillis() - start
-                );
+            try {
+                if (!rset.next()) {
+                    final PreparedStatement istmt = conn.prepareStatement(
+                        "INSERT INTO identity (name, photo) VALUES (?, ?)"
+                    );
+                    istmt.setString(1, name);
+                    istmt.setString(2, "http://img.netbout.com/unknown.png");
+                    istmt.executeUpdate();
+                    Logger.debug(
+                        this,
+                        "#identityMentioned('%s'): inserted [%dms]",
+                        name,
+                        System.currentTimeMillis() - start
+                    );
+                }
+            } finally {
+                rset.close();
             }
         } finally {
             conn.close();

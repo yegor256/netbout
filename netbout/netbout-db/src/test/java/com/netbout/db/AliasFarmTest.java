@@ -40,7 +40,7 @@ public final class AliasFarmTest {
     /**
      * Farm to work with.
      */
-    private final AliasFarm farm = new AliasFarm();
+    private final transient AliasFarm farm = new AliasFarm();
 
     /**
      * Find aliases of some identity.

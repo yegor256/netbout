@@ -93,7 +93,15 @@ public final class SeenFarm {
             stmt.setLong(1, msg);
             stmt.setString(2, identity);
             final ResultSet rset = stmt.executeQuery();
-            seen = rset.next();
+            try {
+                if (rset.next()) {
+                    seen = true;
+                } else {
+                    seen = false;
+                }
+            } finally {
+                rset.close();
+            }
         } finally {
             conn.close();
         }
