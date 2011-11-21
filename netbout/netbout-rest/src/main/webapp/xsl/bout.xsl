@@ -53,7 +53,7 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <xsl:variable name="participant" select="/page/bout/participants/participant[identity/name/text()=/page/identity/name/text()]"/>
+        <xsl:variable name="participant" select="/page/bout/participants/participant[identity=/page/identity/name]"/>
         <xsl:text>#</xsl:text>
         <xsl:value-of select="/page/bout/number"/>
         <xsl:text>: </xsl:text>
@@ -179,12 +179,12 @@
                 <div class="header">
                     <img>
                         <xsl:attribute name="src">
-                            <xsl:value-of select="/page/bout/participants/participant[$message/author/name/text()=identity/name/text()]/identity/photo"/>
+                            <xsl:value-of select="/page/bout/participants/participant[$message/author=identity]/photo"/>
                         </xsl:attribute>
                     </img>
                     <xsl:text>by </xsl:text>
                     <b>
-                    <xsl:value-of select="/page/bout/participants/participant[$message/author/name/text()=identity/name/text()]/identity/aliases/alias[position() = 1]"/>
+                    <xsl:value-of select="/page/bout/participants/participant[$message/author=identity]/alias"/>
                     </b>
                     <xsl:text> at </xsl:text>
                     <xsl:value-of select="$message/date"/>

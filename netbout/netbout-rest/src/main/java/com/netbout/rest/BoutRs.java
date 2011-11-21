@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.LongBout;
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
@@ -259,7 +260,7 @@ public final class BoutRs extends AbstractRs {
             .stylesheet("bout")
             .build(AbstractPage.class)
             .init(this)
-            .append(this.bout())
+            .append(new LongBout(this.bout()))
             .link("leave", this.self("/leave"));
         if (this.participant().confirmed()) {
             page.link("post", this.self("/p"))

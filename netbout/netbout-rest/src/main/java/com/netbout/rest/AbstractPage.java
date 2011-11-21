@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Identity;
 import com.rexsl.core.Manifests;
@@ -151,7 +152,7 @@ public abstract class AbstractPage implements Page {
     @Override
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
-        this.append(identity);
+        this.append(new LongIdentity(identity));
         this.link("logout", "/g/out");
         this.link("start", "/s");
         this.extend();

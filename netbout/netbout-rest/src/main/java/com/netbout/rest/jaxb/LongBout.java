@@ -26,100 +26,94 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.spi.Identity;
-import java.util.Iterator;
-import javax.ws.rs.core.UriBuilder;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Invitee for a bout.
+ * Bout convertable to XML through JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "invitee")
+@XmlRootElement(name = "bout")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class Invitee {
+public final class LongBout {
 
     /**
-     * The original identity.
+     * The bout.
      */
-    private final transient Identity identity;
-
-    /**
-     * URI builder.
-     */
-    private final transient UriBuilder builder;
+    private transient Bout bout;
 
     /**
      * Public ctor for JAXB.
      */
-    public Invitee() {
+    public LongBout() {
         throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
-     * Public ctor.
-     * @param idnt Parent identity to refer to
-     * @param bldr Uri builder
+     * Private ctor.
+     * @param bot The bout
      */
-    private Invitee(final Identity idnt, final UriBuilder bldr) {
-        this.identity = idnt;
-        this.builder = bldr;
+    public LongBout(final Bout bot) {
+        this.bout = bot;
     }
 
     /**
-     * Build it.
-     * @param idnt Parent identity to refer to
-     * @param bldr Uri builder
-     * @return The object just created
-     */
-    public static Invitee build(final Identity idnt, final UriBuilder bldr) {
-        return new Invitee(idnt, bldr);
-    }
-
-    /**
-     * HREF of the invitee.
-     * @return The url
-     */
-    @XmlAttribute
-    public String getHref() {
-        return this.builder
-            .path("/i")
-            .queryParam("name", this.identity.name())
-            .build()
-            .toString();
-    }
-
-    /**
-     * Get his alias.
-     * @return The alias
+     * Get number.
+     * @return The number
      */
     @XmlElement
-    public String getAlias() {
-        return new AliasBuilder(this.identity).build();
+    public Long getNumber() {
+        return this.bout.number();
     }
 
     /**
-     * JAXB related method, to return the name.
-     * @return The name
+     * Get its title.
+     * @return The title
      */
     @XmlElement
-    public String getName() {
-        return this.identity.name();
+    public String getTitle() {
+        return this.bout.title();
     }
 
     /**
-     * JAXB related method, to return the photo of the identity.
-     * @return The photo
+     * List of messages in it.
+     * @return The list
      */
-    @XmlElement
-    public String getPhoto() {
-        return this.identity.photo().toString();
+    @XmlElement(name = "message")
+    @XmlElementWrapper(name = "messages")
+    public List<LongMessage> getMessages() {
+        final List<LongMessage> messages = new ArrayList<LongMessage>();
+        for (Message msg : this.bout.messages("")) {
+            messages.add(new LongMessage(msg));
+        }
+        return messages;
+    }
+
+    /**
+     * List of participants.
+     * @return The list
+     */
+    @XmlElement(name = "participant")
+    @XmlElementWrapper(name = "participants")
+    public Collection<LongParticipant> getParticipants() {
+        final Collection<LongParticipant> dudes =
+            new ArrayList<LongParticipant>();
+        for (Participant dude : this.bout.participants()) {
+            dudes.add(new LongParticipant(dude));
+        }
+        return dudes;
     }
 
 }

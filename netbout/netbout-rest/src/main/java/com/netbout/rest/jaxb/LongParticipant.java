@@ -26,73 +26,51 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.spi.Identity;
-import java.util.Iterator;
-import javax.ws.rs.core.UriBuilder;
+import com.netbout.spi.Participant;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Invitee for a bout.
+ * Participant convertable to XML through JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "invitee")
+@XmlRootElement(name = "participant")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class Invitee {
+public final class LongParticipant {
 
     /**
-     * The original identity.
+     * The bout.
      */
-    private final transient Identity identity;
-
-    /**
-     * URI builder.
-     */
-    private final transient UriBuilder builder;
+    private transient Participant participant;
 
     /**
      * Public ctor for JAXB.
      */
-    public Invitee() {
+    public LongParticipant() {
         throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
-     * Public ctor.
-     * @param idnt Parent identity to refer to
-     * @param bldr Uri builder
+     * Private ctor.
+     * @param dude The participant
      */
-    private Invitee(final Identity idnt, final UriBuilder bldr) {
-        this.identity = idnt;
-        this.builder = bldr;
+    public LongParticipant(final Participant dude) {
+        this.participant = dude;
     }
 
     /**
-     * Build it.
-     * @param idnt Parent identity to refer to
-     * @param bldr Uri builder
-     * @return The object just created
+     * Get its identity.
+     * @return The name
      */
-    public static Invitee build(final Identity idnt, final UriBuilder bldr) {
-        return new Invitee(idnt, bldr);
-    }
-
-    /**
-     * HREF of the invitee.
-     * @return The url
-     */
-    @XmlAttribute
-    public String getHref() {
-        return this.builder
-            .path("/i")
-            .queryParam("name", this.identity.name())
-            .build()
-            .toString();
+    @XmlElement
+    public String getIdentity() {
+        return this.participant.identity().name();
     }
 
     /**
@@ -101,25 +79,25 @@ public final class Invitee {
      */
     @XmlElement
     public String getAlias() {
-        return new AliasBuilder(this.identity).build();
+        return new AliasBuilder(this.participant.identity()).build();
     }
 
     /**
-     * JAXB related method, to return the name.
-     * @return The name
-     */
-    @XmlElement
-    public String getName() {
-        return this.identity.name();
-    }
-
-    /**
-     * JAXB related method, to return the photo of the identity.
+     * Get its photo.
      * @return The photo
      */
     @XmlElement
     public String getPhoto() {
-        return this.identity.photo().toString();
+        return this.participant.identity().photo().toString();
+    }
+
+    /**
+     * Is he confirmed?
+     * @return Is it?
+     */
+    @XmlAttribute
+    public Boolean isConfirmed() {
+        return this.participant.confirmed();
     }
 
 }

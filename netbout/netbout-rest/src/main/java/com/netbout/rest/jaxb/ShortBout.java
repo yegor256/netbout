@@ -26,9 +26,10 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.hub.HubParticipant;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -121,8 +122,13 @@ public final class ShortBout {
      */
     @XmlElement(name = "participant")
     @XmlElementWrapper(name = "participants")
-    public Collection<HubParticipant> getParticipants() {
-        return (Collection) this.bout.participants();
+    public Collection<LongParticipant> getParticipants() {
+        final Collection<LongParticipant> dudes =
+            new ArrayList<LongParticipant>();
+        for (Participant dude : this.bout.participants()) {
+            dudes.add(new LongParticipant(dude));
+        }
+        return dudes;
     }
 
     /**

@@ -46,7 +46,7 @@
                     </xsl:attribute>
                     <img>
                         <xsl:attribute name="src">
-                            <xsl:value-of select="identity/photo"/>
+                            <xsl:value-of select="photo"/>
                         </xsl:attribute>
                         <xsl:if test="@confirmed != 'true'">
                             <xsl:attribute name="class">
@@ -54,7 +54,7 @@
                             </xsl:attribute>
                         </xsl:if>
                     </img>
-                    <xsl:variable name="name" select="identity/aliases/alias[position() = 1]"/>
+                    <xsl:variable name="name" select="alias"/>
                     <xsl:choose>
                         <xsl:when test="string-length($name) &gt; 10">
                             <xsl:value-of select="substring($name, 0, 8)"/>
