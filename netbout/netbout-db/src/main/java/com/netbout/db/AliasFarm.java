@@ -33,7 +33,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +82,8 @@ public final class AliasFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-aliases-of-identity")
-    public String[] getAliasesOfIdentity(final String name) throws SQLException {
+    public String[] getAliasesOfIdentity(final String name)
+        throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         final List<String> aliases = new ArrayList<String>();

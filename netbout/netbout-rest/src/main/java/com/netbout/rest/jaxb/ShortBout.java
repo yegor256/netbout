@@ -68,6 +68,7 @@ public final class ShortBout {
     /**
      * Public ctor.
      * @param parent Parent bout to refer to
+     * @param bldr URI builder
      */
     public ShortBout(final Bout parent, final UriBuilder bldr) {
         this.bout = parent;

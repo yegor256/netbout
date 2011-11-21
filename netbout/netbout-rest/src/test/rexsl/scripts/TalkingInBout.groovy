@@ -33,6 +33,7 @@ import com.rexsl.test.TestClient
 import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
 import org.junit.Assert
 import org.xmlmatchers.XmlMatchers
 import org.hamcrest.Matchers
@@ -51,7 +52,7 @@ def rename(cookie, bout, title) {
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .header(HttpHeaders.COOKIE, cookie)
         .body('title=' + title)
-        .post("/${bout}/r")
+        .post(UriBuilder.fromPath('/{bout}/r').build(bout).toString())
     Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
 }
 
@@ -59,9 +60,13 @@ def invite(cookie, bout, identity) {
     def r = new TestClient(rexsl.home)
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .header(HttpHeaders.COOKIE, cookie)
-        .body('name=' + identity)
-        .post("/${bout}/i")
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
+        .get(
+            UriBuilder.fromPath('/{bout}/i')
+                .queryParam('name', identity)
+                .build(bout)
+                .toString()
+        )
+    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
 }
 
 def post(cookie, bout, text) {
@@ -69,7 +74,7 @@ def post(cookie, bout, text) {
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .header(HttpHeaders.COOKIE, cookie)
         .body('text=' + text)
-        .post("/${bout}/p")
+        .post(UriBuilder.fromPath('/{bout}/p').build(bout).toString())
     Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
 }
 
@@ -87,7 +92,7 @@ invite(cookie, bout, 'nb:db')
 def r = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get("/${bout}")
+    .get(UriBuilder.fromPath('/{bout}').build(bout).toString())
 Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
 [
     "/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]",

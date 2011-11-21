@@ -27,7 +27,6 @@
 package com.netbout.rest.page;
 
 import com.ymock.util.Logger;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;

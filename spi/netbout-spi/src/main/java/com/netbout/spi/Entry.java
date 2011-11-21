@@ -29,7 +29,7 @@
  */
 package com.netbout.spi;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Entry point to the netbout.
@@ -62,6 +62,6 @@ public interface Entry {
      * @param keyword The keyword to find
      * @return The list of found identities
      */
-    List<Identity> find(String keyword);
+    Set<Identity> find(String keyword);
 
 }

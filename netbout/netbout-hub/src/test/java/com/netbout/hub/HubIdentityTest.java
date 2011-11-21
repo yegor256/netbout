@@ -129,7 +129,7 @@ public final class HubIdentityTest {
      */
     @Test
     public void testAliasesManipulations() throws Exception {
-        final Identity identity = new HubEntry().user("Matt").identity("mat");
+        final Identity identity = new HubEntry().user("Matt").identity("mati");
         MatcherAssert.assertThat(
             identity.aliases().size(),
             Matchers.equalTo(0)

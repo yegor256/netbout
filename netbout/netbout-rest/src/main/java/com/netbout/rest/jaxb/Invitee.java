@@ -65,7 +65,7 @@ public final class Invitee {
     /**
      * Public ctor.
      * @param idnt Parent identity to refer to
-     * @parma bldr Uri builder
+     * @param bldr Uri builder
      */
     public Invitee(final Identity idnt, final UriBuilder bldr) {
         this.identity = idnt;
