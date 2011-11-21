@@ -43,15 +43,15 @@ public final class HubUser implements User {
      * The name of it.
      * @see #HubUser(String)
      */
-    private final String name;
+    private final transient String uname;
 
     /**
      * Public ctor.
-     * @param nme The name of it
+     * @param name The name of it
      * @see InMemoryEntry#user(String)
      */
-    public HubUser(final String nme) {
-        this.name = nme;
+    public HubUser(final String name) {
+        this.uname = name;
     }
 
     /**
@@ -60,7 +60,7 @@ public final class HubUser implements User {
     @Override
     public boolean equals(final Object obj) {
         return (obj instanceof HubUser)
-            && this.name.equals(((HubUser) obj).name);
+            && this.uname.equals(((HubUser) obj).uname);
     }
 
     /**
@@ -68,7 +68,7 @@ public final class HubUser implements User {
      */
     @Override
     public int hashCode() {
-        return this.name.hashCode();
+        return this.uname.hashCode();
     }
 
     /**
@@ -76,7 +76,7 @@ public final class HubUser implements User {
      */
     @Override
     public String name() {
-        return this.name;
+        return this.uname;
     }
 
     /**

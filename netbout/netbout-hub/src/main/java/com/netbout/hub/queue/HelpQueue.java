@@ -90,11 +90,12 @@ public final class HelpQueue {
      */
     protected static String execute(final Transaction trans) {
         final String mnemo = trans.getMnemo();
-        String result;
+        String result = null;
         for (Helper helper : HelpQueue.HELPERS) {
             try {
                 if (helper.supports().contains(mnemo)) {
-                    return helper.execute(mnemo, trans.getArgs());
+                    result = helper.execute(mnemo, trans.getArgs());
+                    break;
                 }
             } catch (com.netbout.spi.HelperException ex) {
                 throw new IllegalArgumentException(
@@ -106,13 +107,15 @@ public final class HelpQueue {
                 );
             }
         }
-        result = trans.getDefault();
-        Logger.debug(
-            HelpQueue.class,
-            "#execute(%s): no helpers found, returning default: '%s'",
-            trans.getMnemo(),
-            result
-        );
+        if (result == null) {
+            result = trans.getDefault();
+            Logger.debug(
+                HelpQueue.class,
+                "#execute(%s): no helpers found, returning default: '%s'",
+                trans.getMnemo(),
+                result
+            );
+        }
         return result;
     }
 

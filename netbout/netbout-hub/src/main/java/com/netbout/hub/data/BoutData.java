@@ -43,22 +43,22 @@ public final class BoutData {
     /**
      * The number.
      */
-    private final Long number;
+    private final transient Long number;
 
     /**
      * The title.
      */
-    private String title;
+    private transient String title;
 
     /**
      * Collection of participants.
      */
-    private Collection<ParticipantData> participants;
+    private transient Collection<ParticipantData> participants;
 
     /**
      * Ordered list of messages.
      */
-    private List<MessageData> messages;
+    private transient List<MessageData> messages;
 
     /**
      * Public ctor.
@@ -152,7 +152,7 @@ public final class BoutData {
                     .exec(String[].class);
                 for (String identity : identities) {
                     this.participants.add(
-                        new ParticipantData(this.number, identity)
+                        ParticipantData.build(this.number, identity)
                     );
                 }
                 Logger.debug(
@@ -176,7 +176,7 @@ public final class BoutData {
             .arg(this.number)
             .asDefault(new Long(1L))
             .exec(Long.class);
-        final MessageData data = new MessageData(num);
+        final MessageData data = MessageData.build(num);
         this.getMessages().add(data);
         Logger.debug(
             this,
@@ -201,7 +201,7 @@ public final class BoutData {
                     .asDefault(new Long[]{})
                     .exec(Long[].class);
                 for (Long num : nums) {
-                    this.messages.add(new MessageData(num));
+                    this.messages.add(MessageData.build(num));
                 }
                 Logger.debug(
                     this,

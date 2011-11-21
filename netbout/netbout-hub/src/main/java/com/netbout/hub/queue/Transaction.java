@@ -43,22 +43,22 @@ public final class Transaction {
     /**
      * Mnemo.
      */
-    private final String mnemo;
+    private final transient String mnemo;
 
     /**
      * Priority.
      */
-    private HelpQueue.Priority priority;
+    private transient HelpQueue.Priority tpriority;
 
     /**
      * Default value.
      */
-    private String def = "NULL";
+    private transient String def = "NULL";
 
     /**
      * Arguments.
      */
-    private final List<String> args = new ArrayList<String>();
+    private final transient List<String> args = new ArrayList<String>();
 
     /**
      * Public ctor.
@@ -74,7 +74,7 @@ public final class Transaction {
      * @return This object
      */
     public Transaction priority(final HelpQueue.Priority pri) {
-        this.priority = pri;
+        this.tpriority = pri;
         return this;
     }
 
@@ -123,6 +123,7 @@ public final class Transaction {
      * @return The result
      */
     public <T> T exec(final Class<T> type) {
+        assert this.tpriority != null;
         final String output = HelpQueue.execute(this);
         Object result;
         try {

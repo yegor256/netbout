@@ -40,28 +40,38 @@ public final class ParticipantData {
     /**
      * Number of bout.
      */
-    private final Long bout;
+    private final transient Long bout;
 
     /**
      * The participant.
      */
-    private final String identity;
+    private final transient String identity;
 
     /**
      * Is it confirmed?
      */
-    private Boolean confirmed;
+    private transient Boolean confirmed;
 
     /**
      * Public ctor.
      * @param num The number
      * @param idnt The identity
      */
-    public ParticipantData(final Long num, final String idnt) {
+    private ParticipantData(final Long num, final String idnt) {
         assert num != null;
         this.bout = num;
         assert idnt != null;
         this.identity = idnt;
+    }
+
+    /**
+     * Build new object.
+     * @param num The number
+     * @param idnt The identity
+     * @return The object
+     */
+    public static ParticipantData build(final Long num, final String idnt) {
+        return new ParticipantData(num, idnt);
     }
 
     /**

@@ -60,17 +60,17 @@ public final class CpaHelper implements Helper {
     /**
      * Name of package we're discovering.
      */
-    private final String pkg;
+    private final transient String pkg;
 
     /**
      * The entry we're working with.
      */
-    private Entry entry;
+    private transient Entry entry;
 
     /**
      * All discovered operations.
      */
-    private ConcurrentMap<String, HelpTarget> ops;
+    private transient ConcurrentMap<String, HelpTarget> ops;
 
     /**
      * Public ctor.
@@ -184,7 +184,7 @@ public final class CpaHelper implements Helper {
                 continue;
             }
             final String mnemo = ((Operation) atn).value();
-            targets.put(mnemo, new HelpTarget(farm, method));
+            targets.put(mnemo, HelpTarget.build(farm, method));
             Logger.info(
                 this,
                 "#inFarm(%s): @Operation('%s') found",

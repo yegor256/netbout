@@ -141,6 +141,7 @@ public final class CpaHelperTest {
          */
         @Operation("empty")
         public void empty() {
+            // intentionally empty
         }
         /**
          * List as output.
@@ -150,8 +151,9 @@ public final class CpaHelperTest {
         @Operation("list")
         public Long[] list(final Long size) {
             final Long[] list = new Long[size.intValue()];
+            final Random random = new Random();
             for (int pos = 0; pos < size; pos += 1) {
-                list[pos] = new Random().nextLong();
+                list[pos] = random.nextLong();
             }
             return list;
         }

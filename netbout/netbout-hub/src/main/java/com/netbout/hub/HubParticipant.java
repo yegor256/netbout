@@ -50,7 +50,7 @@ public final class HubParticipant implements Participant {
     /**
      * The data.
      */
-    private ParticipantData data;
+    private transient ParticipantData data;
 
     /**
      * Public ctor for JAXB.
@@ -63,8 +63,17 @@ public final class HubParticipant implements Participant {
      * Public ctor.
      * @param dat The data
      */
-    public HubParticipant(final ParticipantData dat) {
+    private HubParticipant(final ParticipantData dat) {
         this.data = dat;
+    }
+
+    /**
+     * Build new object.
+     * @param dat The data
+     * @return The object just built
+     */
+    public static HubParticipant build(final ParticipantData dat) {
+        return new HubParticipant(dat);
     }
 
     /**
@@ -97,7 +106,7 @@ public final class HubParticipant implements Participant {
      * @return Is it confirmed?
      */
     @XmlAttribute
-    public boolean getConfirmed() {
+    public boolean isConfirmed() {
         return this.confirmed();
     }
 

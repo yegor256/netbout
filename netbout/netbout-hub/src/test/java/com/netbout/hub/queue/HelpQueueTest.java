@@ -103,8 +103,9 @@ public final class HelpQueueTest {
         @Operation("simple-list")
         public Long[] list(final Long size) {
             final Long[] list = new Long[size.intValue()];
+            final Random random = new Random();
             for (int pos = 0; pos < size; pos += 1) {
-                list[pos] = new Random().nextLong();
+                list[pos] = random.nextLong();
             }
             return list;
         }

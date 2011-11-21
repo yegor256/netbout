@@ -62,12 +62,12 @@ public final class HubBout implements Bout {
     /**
      * The viewer.
      */
-    private HubIdentity viewer;
+    private transient HubIdentity viewer;
 
     /**
      * The data.
      */
-    private BoutData data;
+    private transient BoutData data;
 
     /**
      * Public ctor for JAXB.
@@ -141,7 +141,7 @@ public final class HubBout implements Bout {
             throw new IllegalStateException("You can't invite until you join");
         }
         final ParticipantData dude =
-            new ParticipantData(this.number(), friend.name());
+            ParticipantData.build(this.number(), friend.name());
         this.data.addParticipant(dude);
         dude.setConfirmed(false);
         Logger.debug(
@@ -150,7 +150,7 @@ public final class HubBout implements Bout {
             friend
         );
         ((HubIdentity) friend).invited(this);
-        return new HubParticipant(dude);
+        return HubParticipant.build(dude);
     }
 
     /**
@@ -161,7 +161,7 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantData dude : this.data.getParticipants()) {
-            participants.add(new HubParticipant(dude));
+            participants.add(HubParticipant.build(dude));
         }
         Logger.debug(
             this,
@@ -191,7 +191,7 @@ public final class HubBout implements Bout {
         Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
         for (MessageData msg : datas) {
-            messages.add(new HubMessage(this.viewer, msg));
+            messages.add(HubMessage.build(this.viewer, msg));
         }
         Logger.debug(
             this,
@@ -229,7 +229,7 @@ public final class HubBout implements Bout {
             "#post('%s'): message posted",
             text
         );
-        final Message message = new HubMessage(this.viewer, msg);
+        final Message message = HubMessage.build(this.viewer, msg);
         message.text();
         return message;
     }

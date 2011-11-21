@@ -77,27 +77,27 @@ public final class HubIdentity implements Identity {
     /**
      * The name.
      */
-    private final String name;
+    private final transient String iname;
 
     /**
      * Name of the user.
      */
-    private User user;
+    private transient User iuser;
 
     /**
      * The photo.
      */
-    private URL photo;
+    private transient URL iphoto;
 
     /**
      * List of bouts where I'm a participant.
      */
-    private Set<Long> bouts;
+    private transient Set<Long> ibouts;
 
     /**
      * List of aliases.
      */
-    private Set<String> aliases;
+    private transient Set<String> ialiases;
 
     /**
      * Public ctor for JAXB.
@@ -110,21 +110,21 @@ public final class HubIdentity implements Identity {
      * Public ctor.
      * @param nam The identity's name
      * @param usr The user
-     * @see HubUser#identity(String)
+     * @see #make(String,User)
      */
     public HubIdentity(final String nam, final User usr) {
-        this.name = nam;
-        this.user = usr;
+        this.iname = nam;
+        this.iuser = usr;
     }
 
     /**
      * Public ctor, when user is not known.
      * @param nam The identity's name
-     * @see HubUser#make(String)
+     * @see #make(String)
      */
     public HubIdentity(final String nam) {
-        this.name = nam;
-        this.user = null;
+        this.iname = nam;
+        this.iuser = null;
     }
 
     /**
@@ -132,15 +132,15 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public User user() {
-        if (this.user == null) {
+        if (this.iuser == null) {
             throw new IllegalStateException(
                 String.format(
                     "User is unknown for identity '%s'",
-                    this.name
+                    this.iname
                 )
             );
         }
-        return this.user;
+        return this.iuser;
     }
 
     /**
@@ -155,7 +155,7 @@ public final class HubIdentity implements Identity {
         } catch (com.netbout.hub.data.BoutMissedException ex) {
             throw new IllegalStateException(ex);
         }
-        final ParticipantData dude = new ParticipantData(num, this.name());
+        final ParticipantData dude = ParticipantData.build(num, this.name());
         data.addParticipant(dude);
         dude.setConfirmed(true);
         Logger.debug(
@@ -215,7 +215,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public String name() {
-        return this.name;
+        return this.iname;
     }
 
     /**
@@ -232,12 +232,12 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public URL photo() {
-        if (this.photo == null) {
+        if (this.iphoto == null) {
             try {
-                this.photo = new URL(
+                this.iphoto = new URL(
                     HelpQueue.make("get-identity-photo")
                         .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                        .arg(this.name)
+                        .arg(this.iname)
                         .asDefault("http://img.netbout.com/unknown.png")
                         .exec(String.class)
                 );
@@ -245,7 +245,7 @@ public final class HubIdentity implements Identity {
                 throw new IllegalStateException(ex);
             }
         }
-        return this.photo;
+        return this.iphoto;
     }
 
     /**
@@ -263,12 +263,12 @@ public final class HubIdentity implements Identity {
     @Override
     public void setPhoto(final URL pic) {
         synchronized (this) {
-            this.photo = pic;
+            this.iphoto = pic;
         }
         HelpQueue.make("changed-identity-photo")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .arg(this.name)
-            .arg(this.photo.toString())
+            .arg(this.iname)
+            .arg(this.iphoto.toString())
             .exec();
     }
 
@@ -306,19 +306,19 @@ public final class HubIdentity implements Identity {
                 this,
                 "#alias('%s'): it's already set for '%s'",
                 alias,
-                this.name
+                this.iname
             );
         } else {
             HelpQueue.make("added-identity-alias")
                 .priority(HelpQueue.Priority.ASAP)
-                .arg(this.name)
+                .arg(this.iname)
                 .arg(alias)
                 .exec();
             Logger.info(
                 this,
                 "#alias('%s'): added for '%s'",
                 alias,
-                this.name
+                this.iname
             );
             this.myAliases().add(alias);
         }
@@ -359,14 +359,14 @@ public final class HubIdentity implements Identity {
     protected static HubIdentity make(final String label, final User usr)
         throws DuplicateIdentityException {
         final HubIdentity identity = HubIdentity.make(label);
-        if (identity.user != null && !identity.user.equals(usr)) {
+        if (identity.iuser != null && !identity.iuser.equals(usr)) {
             throw new DuplicateIdentityException(
                 "Identity '%s' is already taken by '%s'",
                 label,
-                identity.user.name()
+                identity.iuser.name()
             );
         }
-        identity.user = usr;
+        identity.iuser = usr;
         return identity;
     }
 
@@ -376,21 +376,23 @@ public final class HubIdentity implements Identity {
      * @return Identity found
      */
     protected static HubIdentity make(final String label) {
+        HubIdentity identity;
         if (HubIdentity.ALL.containsKey(label)) {
-            return HubIdentity.ALL.get(label);
+            identity = HubIdentity.ALL.get(label);
+        } else {
+            identity = new HubIdentity(label);
+            HubIdentity.ALL.put(label, identity);
+            HelpQueue.make("identity-mentioned")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(label)
+                .exec();
+            Logger.debug(
+                HubIdentity.class,
+                "#make('%s'): created just by name (%d total)",
+                label,
+                HubIdentity.ALL.size()
+            );
         }
-        final HubIdentity identity = new HubIdentity(label);
-        HubIdentity.ALL.put(label, identity);
-        HelpQueue.make("identity-mentioned")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .arg(label)
-            .exec();
-        Logger.debug(
-            HubIdentity.class,
-            "#make('%s'): created just by name (%d total)",
-            label,
-            HubIdentity.ALL.size()
-        );
         return identity;
     }
 
@@ -423,19 +425,19 @@ public final class HubIdentity implements Identity {
      */
     private Set<Long> myBouts() {
         synchronized (this) {
-            if (this.bouts == null) {
-                this.bouts = new CopyOnWriteArraySet<Long>(
+            if (this.ibouts == null) {
+                this.ibouts = new CopyOnWriteArraySet<Long>(
                     Arrays.asList(
                         HelpQueue.make("get-bouts-of-identity")
                             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                            .arg(this.name)
+                            .arg(this.iname)
                             .asDefault(new Long[]{})
                             .exec(Long[].class)
                     )
                 );
             }
         }
-        return this.bouts;
+        return this.ibouts;
     }
 
     /**
@@ -444,19 +446,19 @@ public final class HubIdentity implements Identity {
      */
     private Set<String> myAliases() {
         synchronized (this) {
-            if (this.aliases == null) {
-                this.aliases = new CopyOnWriteArraySet<String>(
+            if (this.ialiases == null) {
+                this.ialiases = new CopyOnWriteArraySet<String>(
                     Arrays.asList(
                         HelpQueue.make("get-aliases-of-identity")
                             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                            .arg(this.name)
+                            .arg(this.iname)
                             .asDefault(new String[]{})
                             .exec(String[].class)
                     )
                 );
             }
         }
-        return this.aliases;
+        return this.ialiases;
     }
 
     /**
@@ -465,7 +467,7 @@ public final class HubIdentity implements Identity {
      * @return Yes or no?
      */
     private boolean matchesKeyword(final String keyword) {
-        boolean matches = this.name.contains(keyword);
+        boolean matches = this.iname.contains(keyword);
         for (String alias : this.myAliases()) {
             matches |= alias.contains(keyword);
         }

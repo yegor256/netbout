@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import java.net.URL;
@@ -116,7 +115,7 @@ public final class HubIdentityTest {
     public void testBoutsManipulations() throws Exception {
         final Identity identity = new HubEntry().user("Jeffy").identity("je");
         final Long number = identity.start().number();
-        final Bout bout = identity.bout(number);
+        identity.bout(number);
         MatcherAssert.assertThat(
             identity.inbox("").size(),
             Matchers.equalTo(1)

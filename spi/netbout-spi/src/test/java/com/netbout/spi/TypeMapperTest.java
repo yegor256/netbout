@@ -60,7 +60,6 @@ public final class TypeMapperTest {
         triples.add(
             new Triple("YQ==,Yg==", new String[] {"a", "b"}, String[].class)
         );
-        final Date date = new Date();
         triples.add(
             new Triple(
                 "2009-02-13T23:31:30.123Z",
@@ -78,15 +77,15 @@ public final class TypeMapperTest {
         /**
          * The text.
          */
-        private final String text;
+        private final transient String text;
         /**
          * The object.
          */
-        private final Object object;
+        private final transient Object object;
         /**
          * The type.
          */
-        private final Class type;
+        private final transient Class type;
         /**
          * Public ctor.
          * @param txt The text

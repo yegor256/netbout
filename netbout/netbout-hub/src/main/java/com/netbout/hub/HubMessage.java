@@ -51,17 +51,12 @@ final class HubMessage implements Message {
     /**
      * The viewer.
      */
-    private Identity viewer;
+    private transient Identity viewer;
 
     /**
      * The data.
      */
-    private MessageData data;
-
-    /**
-     * The message has been seen by the viewer.
-     */
-    private Boolean seen;
+    private transient MessageData data;
 
     /**
      * Public ctor for JAXB.
@@ -74,11 +69,20 @@ final class HubMessage implements Message {
      * Public ctor.
      * @param vwr The author
      * @param dat The data
-     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubMessage(final Identity vwr, final MessageData dat) {
+    private HubMessage(final Identity vwr, final MessageData dat) {
         this.viewer = vwr;
         this.data = dat;
+    }
+
+    /**
+     * Build new object.
+     * @param vwr The author
+     * @param dat The data
+     * @return The object just built
+     */
+    public static HubMessage build(final Identity vwr, final MessageData dat) {
+        return new HubMessage(vwr, dat);
     }
 
     /**

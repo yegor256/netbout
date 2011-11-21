@@ -44,21 +44,31 @@ final class HelpTarget {
     /**
      * The farm.
      */
-    private final Object farm;
+    private final transient Object farm;
 
     /**
      * The method to call.
      */
-    private final Method method;
+    private final transient Method method;
 
     /**
-     * Public ctor.
+     * Private ctor, use {@link #build(Object,Method)} instead.
      * @param frm Farm object
      * @param mtd Method to call on this farm
      */
-    public HelpTarget(final Object frm, final Method mtd) {
+    private HelpTarget(final Object frm, final Method mtd) {
         this.farm = frm;
         this.method = mtd;
+    }
+
+    /**
+     * Build new object.
+     * @param frm Farm object
+     * @param mtd Method to call on this farm
+     * @return The target created
+     */
+    public static HelpTarget build(final Object frm, final Method mtd) {
+        return new HelpTarget(frm, mtd);
     }
 
     /**
