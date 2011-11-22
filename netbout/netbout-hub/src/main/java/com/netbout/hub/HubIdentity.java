@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Pattern;
 
 /**
  * Identity.
@@ -303,8 +304,12 @@ public final class HubIdentity implements Identity {
      */
     protected boolean matchesKeyword(final String keyword) {
         boolean matches = this.iname.contains(keyword);
+        final Pattern pattern = Pattern.compile(
+            Pattern.quote(keyword),
+            Pattern.CASE_INSENSITIVE
+        );
         for (String alias : this.myAliases()) {
-            matches |= alias.contains(keyword);
+            matches |= pattern.matcher(alias).find();
         }
         return matches;
     }
