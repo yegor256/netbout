@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
 import com.netbout.spi.User;
+import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
 import java.util.Set;
 

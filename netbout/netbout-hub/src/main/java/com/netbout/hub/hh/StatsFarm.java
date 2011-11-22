@@ -28,7 +28,9 @@ package com.netbout.hub.hh;
 
 import com.netbout.hub.Identities;
 import com.netbout.hub.data.Storage;
+import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,7 +48,20 @@ import org.w3c.dom.Element;
  * @version $Id$
  */
 @Farm
-public final class StatsFarm {
+public final class StatsFarm implements IdentityAware {
+
+    /**
+     * Me.
+     */
+    private Identity identity;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(final Identity idnt) {
+        this.identity = idnt;
+    }
 
     // /**
     //  * Post new request to the stage, and calculate new cookie.
@@ -63,6 +78,22 @@ public final class StatsFarm {
     // }
 
     /**
+     * Does this stage exist in the bout?
+     * @param number Bout where it is happening
+     * @param stage Name of stage to render
+     * @return Does it?
+     * @throws Exception If some problem inside
+     */
+    @Operation("does-stage-exist")
+    public Boolean doesStageExist(final Long number, final String stage) {
+        Boolean exists = null;
+        if (this.identity.name().equals(stage)) {
+            exists = Boolean.TRUE;
+        }
+        return exists;
+    }
+
+    /**
      * Get XML of the stage.
      * @param number Bout where it is happening
      * @param stage Name of stage to render
@@ -74,7 +105,7 @@ public final class StatsFarm {
     public String renderStageXml(final Long number, final String stage,
         final String place) throws Exception {
         String xml = null;
-        if ("nb:hh".equals(stage)) {
+        if (this.identity.name().equals(stage)) {
             final Document doc = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder().newDocument();
             final Element root = doc.createElement("data");

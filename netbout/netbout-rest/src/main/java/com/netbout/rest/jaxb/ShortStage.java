@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
  * Short version of a stage.
@@ -97,7 +98,7 @@ public final class ShortStage {
      * Name of identity.
      * @return The number
      */
-    @XmlAttribute
+    @XmlValue
     public String getName() {
         return this.identity;
     }

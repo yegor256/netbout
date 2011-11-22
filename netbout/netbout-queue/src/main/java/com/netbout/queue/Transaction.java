@@ -165,7 +165,7 @@ public final class Transaction implements Token {
     public <T> T exec(final Class<T> type) {
         assert this.tpriority != null;
         HelpQueue.execute(this);
-        if (this.result == null) {
+        if (this.result == null || "NULL".equals(this.result)) {
             this.result = this.def;
         }
         Logger.debug(

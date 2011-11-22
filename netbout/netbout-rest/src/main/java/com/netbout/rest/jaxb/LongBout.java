@@ -170,14 +170,23 @@ public final class LongBout {
      * List of stages, their names.
      * @return The list
      */
-    private String[] stages() {
-        return HelpQueue
-            .make("get-bout-stages")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .arg(this.bout.number())
-            .scope(this.bout.number())
-            .asDefault(new String[]{})
-            .exec(String[].class);
+    private Collection<String> stages() {
+        final Collection<String> stages = new ArrayList<String>();
+        for (Participant dude : this.bout.participants()) {
+            final String name = dude.identity().name();
+            final Boolean exists = HelpQueue
+                .make("does-stage-exist")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.bout.number())
+                .arg(name)
+                .scope(this.bout.number())
+                .asDefault(Boolean.FALSE)
+                .exec(Boolean.class);
+            if (exists) {
+                stages.add(name);
+            }
+        }
+        return stages;
     }
 
 }

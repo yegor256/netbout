@@ -73,7 +73,11 @@
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@name='suggest']/@href"/>
                 </xsl:attribute>
-                <input name="q" />
+                <input name="q">
+                    <xsl:attribute name="value">
+                        <xsl:value-of select="/page/keyword"/>
+                    </xsl:attribute>
+                </input>
                 <input value="invite" type="submit"/>
             </form>
             <xsl:if test="/page/invitees">
@@ -137,9 +141,9 @@
                 <ul id="titles">
                     <xsl:for-each select="/page/bout/stages/stage">
                         <xsl:choose>
-                            <xsl:when test="not(@href)">
+                            <xsl:when test=". = /page/bout/stage/@name">
                                 <li>
-                                    <xsl:value-of select="@name"/>
+                                    <xsl:value-of select="."/>
                                 </li>
                             </xsl:when>
                             <xsl:otherwise>
@@ -148,7 +152,7 @@
                                         <xsl:attribute name="href">
                                             <xsl:value-of select="@href"/>
                                         </xsl:attribute>
-                                        <xsl:value-of select="@name"/>
+                                        <xsl:value-of select="."/>
                                     </a>
                                 </li>
                             </xsl:otherwise>
@@ -157,7 +161,7 @@
                 </ul>
                 <xsl:if test="/page/bout/stage">
                     <div id="stage">
-                        <xsl:copy-of select="/page/bout/stage/content"/>
+                        <xsl:copy-of select="/page/bout/stage"/>
                         <!-- <xsl:call-template name="stage">
                             <xsl:with-param name="root" select="." />
                         </xsl:call-template> -->

@@ -26,9 +26,11 @@
  */
 package com.netbout.hub.hh;
 
+import com.netbout.spi.Identity;
 import com.rexsl.test.XhtmlConverter;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
 
 /**
@@ -45,7 +47,10 @@ public final class StatsFarmTest {
     @Test
     public void testRenderingOfXml() throws Exception {
         final StatsFarm farm = new StatsFarm();
-        final String xml = farm.renderStageXml(1L, "");
+        final Identity identity = Mockito.mock(Identity.class);
+        Mockito.doReturn("some-name").when(identity).name();
+        farm.init(identity);
+        final String xml = farm.renderStageXml(1L, identity.name(), "");
         MatcherAssert.assertThat(
             XhtmlConverter.the(xml),
             XmlMatchers.hasXPath("/data/identities")

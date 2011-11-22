@@ -279,7 +279,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public void promote(final Helper helper) throws HelperException {
-        helper.init(new HubEntry());
+        helper.init(this);
         HelpQueue.register(helper);
         Logger.info(
             this,

@@ -30,13 +30,19 @@ import com.netbout.queue.HelpQueue;
 import com.netbout.queue.ProgressReport;
 import com.netbout.queue.TextProgressReport;
 import com.netbout.rest.StageCoordinates;
+import java.io.StringReader;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 /**
  * Long version of a stage.
@@ -89,7 +95,7 @@ public final class LongStage {
      * Name of identity.
      * @return The number
      */
-    @XmlElement
+    @XmlAttribute
     public String getName() {
         return this.coords.getStage();
     }
@@ -98,7 +104,7 @@ public final class LongStage {
      * The place in it.
      * @return The number
      */
-    @XmlElement
+    @XmlAttribute
     public String getPlace() {
         return this.coords.getPlace();
     }
@@ -107,8 +113,20 @@ public final class LongStage {
      * Get XML of one stage.
      * @return The XML
      */
-    @XmlElement
-    public String getContent() {
+    @XmlAnyElement(lax = true)
+    @XmlMixed
+    public Element getContent() throws Exception {
+        return DocumentBuilderFactory.newInstance()
+            .newDocumentBuilder()
+            .parse(new InputSource(new StringReader(this.xml())))
+            .getDocumentElement();
+    }
+
+    /**
+     * Get XML of one stage.
+     * @return The XML
+     */
+    private String xml() {
         final ProgressReport report = new TextProgressReport();
         String xml = HelpQueue
             .make("render-stage-xml")
