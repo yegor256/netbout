@@ -60,24 +60,12 @@ final class ForwardException extends WebApplicationException {
                     new NewCookie(
                         "netbout-msg",
                         ForwardException.encode(msg),
-                        // path
-                        String.format(
-                            "/%s",
-                            res.httpServletRequest().getContextPath()
-                        ),
-                        // domain
-                        String.format(
-                            ".%s",
-                            res.uriInfo().getBaseUri().getHost()
-                        ),
-                        // version
+                        res.uriInfo().getBaseUri().getPath(),
+                        res.uriInfo().getBaseUri().getHost(),
                         Integer.valueOf(Manifests.read("Netbout-Revision")),
-                        // comment
                         "netbout message",
-                        // maxAge, 1 hour
                         // @checkstyle MagicNumber (1 line)
                         60 * 60,
-                        // secure
                         false
                     ))
                 .build()

@@ -50,7 +50,11 @@ public final class HelpQueue {
         /**
          * Run it as soon as possible.
          */
-        ASAP
+        ASAP,
+        /**
+         * Just normal execution.
+         */
+        NORMAL
     }
 
     /**
@@ -95,7 +99,9 @@ public final class HelpQueue {
             try {
                 if (helper.supports().contains(mnemo)) {
                     result = helper.execute(mnemo, trans.getArgs());
-                    break;
+                    if (result != null) {
+                        break;
+                    }
                 }
             } catch (com.netbout.spi.HelperException ex) {
                 throw new IllegalArgumentException(

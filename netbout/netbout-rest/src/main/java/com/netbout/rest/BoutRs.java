@@ -33,15 +33,18 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
+import com.rexsl.core.Manifests;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -61,12 +64,44 @@ public final class BoutRs extends AbstractRs {
     private transient Long number;
 
     /**
+     * Stage coordinates.
+     */
+    private transient StageCoordinates coords = new StageCoordinates();
+
+    /**
      * Set bout number.
      * @param num The number
      */
     @PathParam("num")
     public void setNumber(final Long num) {
         this.number = num;
+    }
+
+    /**
+     * Set stage, if it's selected.
+     * @param name The name of it
+     */
+    @QueryParam("s")
+    public void setStage(final String name) {
+        this.coords.setStage(name);
+    }
+
+    /**
+     * Set stage place.
+     * @param place The place name
+     */
+    @QueryParam("p")
+    public void setPlace(final String place) {
+        this.coords.setPlace(place);
+    }
+
+    /**
+     * Set stage coordinates.
+     * @param cookie The information from cookie
+     */
+    @CookieParam("netbout-stage")
+    public void setStageCoords(final String cookie) {
+        this.coords = StageCoordinates.valueOf(cookie);
     }
 
     /**
@@ -77,6 +112,7 @@ public final class BoutRs extends AbstractRs {
     public Response front() {
         return this.page()
             .authenticated(this.identity())
+            .cookie(this.stageCookie())
             .build();
     }
 
@@ -107,6 +143,7 @@ public final class BoutRs extends AbstractRs {
         return this.page()
             .append(JaxbGroup.build(invitees, "invitees"))
             .authenticated(this.identity())
+            .cookie(this.stageCookie())
             .build();
     }
 
@@ -260,7 +297,13 @@ public final class BoutRs extends AbstractRs {
             .stylesheet("bout")
             .build(AbstractPage.class)
             .init(this)
-            .append(new LongBout(this.bout()))
+            .append(
+                new LongBout(
+                    this.bout(),
+                    this.coords,
+                    this.uriInfo().getBaseUriBuilder().clone()
+                )
+            )
             .link("leave", this.self("/leave"));
         if (this.participant().confirmed()) {
             page.link("post", this.self("/p"))
@@ -285,6 +328,24 @@ public final class BoutRs extends AbstractRs {
             .path("/{num}")
             .path(path)
             .build(this.bout().number());
+    }
+
+    /**
+     * Create cookie for stage.
+     * @return The cookie
+     */
+    private NewCookie stageCookie() {
+        return new NewCookie(
+            "netbout-stage",
+            this.coords.toString(),
+            this.self("").getPath(),
+            this.uriInfo().getBaseUri().getHost(),
+            Integer.valueOf(Manifests.read("Netbout-Revision")),
+            "Netbout.com stage information",
+            // @checkstyle MagicNumber (1 line)
+            60 * 60 * 24 * 90,
+            false
+        );
     }
 
 }

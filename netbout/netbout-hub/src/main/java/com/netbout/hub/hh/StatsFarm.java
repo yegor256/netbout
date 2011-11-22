@@ -65,28 +65,33 @@ public final class StatsFarm {
     /**
      * Get XML of the stage.
      * @param number Bout where it is happening
-     * @param cookie The cookie since recent request
+     * @param stage Name of stage to render
+     * @param place The place in the stage to render
      * @return The XML document
      * @throws Exception If some problem inside
      */
     @Operation("render-stage-xml")
-    public String renderStageXml(final Long number, final String cookie)
-        throws Exception {
-        final Document doc = DocumentBuilderFactory.newInstance()
-            .newDocumentBuilder().newDocument();
-        final Element root = doc.createElement("data");
-        doc.appendChild(root);
-        final Element identities = doc.createElement("identities");
-        root.appendChild(identities);
-        identities.appendChild(doc.createTextNode(Identities.stats()));
-        final Element storage = doc.createElement("storage");
-        root.appendChild(storage);
-        storage.appendChild(doc.createTextNode(Storage.INSTANCE.stats()));
-        final Transformer transformer = TransformerFactory.newInstance()
-            .newTransformer();
-        final StringWriter writer = new StringWriter();
-        transformer.transform(new DOMSource(doc), new StreamResult(writer));
-        return writer.toString();
+    public String renderStageXml(final Long number, final String stage,
+        final String place) throws Exception {
+        String xml = null;
+        if ("nb:hh".equals(stage)) {
+            final Document doc = DocumentBuilderFactory.newInstance()
+                .newDocumentBuilder().newDocument();
+            final Element root = doc.createElement("data");
+            doc.appendChild(root);
+            final Element identities = doc.createElement("identities");
+            root.appendChild(identities);
+            identities.appendChild(doc.createTextNode(Identities.stats()));
+            final Element storage = doc.createElement("storage");
+            root.appendChild(storage);
+            storage.appendChild(doc.createTextNode(Storage.INSTANCE.stats()));
+            final Transformer transformer = TransformerFactory.newInstance()
+                .newTransformer();
+            final StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+            xml = writer.toString();
+        }
+        return xml;
     }
 
     // /**

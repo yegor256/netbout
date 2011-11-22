@@ -89,6 +89,16 @@ public final class Transaction {
     }
 
     /**
+     * Set progress report.
+     * @param report The report
+     * @return This object
+     */
+    public Transaction progressReport(final ProgressReport report) {
+        // tbd
+        return this;
+    }
+
+    /**
      * Add argument.
      * @param arg The argument
      * @return This object
