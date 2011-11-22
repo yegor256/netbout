@@ -29,16 +29,16 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Entry;
 import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Token;
 import com.ymock.util.Logger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.apache.commons.lang.StringUtils;
 import org.reflections.Reflections;
 
 /**
@@ -63,9 +63,9 @@ public final class CpaHelper implements Helper {
     private final transient String pkg;
 
     /**
-     * The entry we're working with.
+     * Who we are.
      */
-    private transient Entry entry;
+    private transient Identity identity;
 
     /**
      * All discovered operations.
@@ -93,14 +93,14 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public void init(final Entry ent) throws HelperException {
+    public void init(final Identity idnt) throws HelperException {
         final long start = System.currentTimeMillis();
-        this.entry = ent;
+        this.identity = idnt;
         this.ops = this.discover();
         Logger.debug(
             this,
             "#init('%s'): %d targets discovered in %dms",
-            ent.getClass().getName(),
+            this.identity.getClass().getName(),
             this.ops.size(),
             System.currentTimeMillis() - start
         );
@@ -121,22 +121,19 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public String execute(final String mnemo, final String... args)
+    public void execute(final Token token)
         throws HelperException {
-        if (!this.ops.containsKey(mnemo)) {
+        if (!this.ops.containsKey(token.mnemo())) {
             throw new HelperException("Operation not supported");
         }
         final long start = System.currentTimeMillis();
-        final String result = this.ops.get(mnemo).execute(args);
+        this.ops.get(token.mnemo()).execute(token);
         Logger.debug(
             this,
-            "#execute('%s', '%s'): done with '%s' in %dms",
-            mnemo,
-            StringUtils.join(args, "', '"),
-            result,
+            "#execute('%s'): done in %dms",
+            token.mnemo(),
             System.currentTimeMillis() - start
         );
-        return result;
     }
 
     /**
@@ -162,8 +159,8 @@ public final class CpaHelper implements Helper {
             } catch (IllegalAccessException ex) {
                 throw new IllegalArgumentException(ex);
             }
-            if (farm instanceof EntryAwareFarm) {
-                ((EntryAwareFarm) farm).init(this.entry);
+            if (farm instanceof IdentityAware) {
+                ((IdentityAware) farm).init(this.identity);
             }
             targets.putAll(this.inFarm(farm));
         }

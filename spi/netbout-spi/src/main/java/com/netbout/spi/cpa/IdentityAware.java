@@ -29,21 +29,21 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Entry;
+import com.netbout.spi.Identity;
 
 /**
- * Farm should implement this interface if it needs {@link Entry} to
+ * Farm should implement this interface if it needs {@link Identity} to
  * be injected during initialization.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface EntryAwareFarm {
+public interface IdentityAware {
 
     /**
-     * Set entry.
-     * @param entry The entry
+     * Set identity.
+     * @param identity The identity of this helper
      */
-    void init(Entry entry);
+    void init(Identity identity);
 
 }
