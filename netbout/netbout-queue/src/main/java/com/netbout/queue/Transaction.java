@@ -26,6 +26,7 @@
  */
 package com.netbout.queue;
 
+import com.netbout.spi.Token;
 import com.netbout.spi.TypeMapper;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Transaction {
+public final class Transaction implements Token {
 
     /**
      * Mnemo.
@@ -61,11 +62,40 @@ public final class Transaction {
     private final transient List<String> args = new ArrayList<String>();
 
     /**
+     * The result.
+     */
+    private transient String result;
+
+    /**
      * Public ctor.
      * @param text Mnemo-code of the request
      */
     public Transaction(final String text) {
         this.mnemo = text;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String mnemo() {
+        return this.mnemo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String arg(final int pos) {
+        return this.args.get(pos);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void result(final String rslt) {
+        this.result = rslt;
     }
 
     /**
@@ -134,22 +164,23 @@ public final class Transaction {
      */
     public <T> T exec(final Class<T> type) {
         assert this.tpriority != null;
-        final String output = HelpQueue.execute(this);
-        Object result;
-        try {
-            result = TypeMapper.toObject(output, type);
-        } catch (com.netbout.spi.HelperException ex) {
-            throw new IllegalArgumentException(ex);
+        HelpQueue.execute(this);
+        if (this.result == null) {
+            this.result = this.def;
         }
         Logger.debug(
-            Transaction.class,
+            this,
             "#exec(%s, %s): returned '%s' for [%s]",
             this.mnemo,
             type.getName(),
-            output,
+            this.result,
             this.argsAsText()
         );
-        return (T) result;
+        try {
+            return (T) TypeMapper.toObject(this.result, type);
+        } catch (com.netbout.spi.HelperException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**
@@ -165,29 +196,21 @@ public final class Transaction {
         );
     }
 
-    /**
-     * Get arguments as array.
-     * @return The args
-     */
-    protected String[] getArgs() {
-        return this.args.toArray(new String[] {});
-    }
-
-    /**
-     * Get default result value.
-     * @return The value
-     */
-    protected String getDefault() {
-        return this.def;
-    }
-
-    /**
-     * Get mnemo.
-     * @return The mnemo
-     */
-    protected String getMnemo() {
-        return this.mnemo;
-    }
+    // /**
+    //  * Get arguments as array.
+    //  * @return The args
+    //  */
+    // protected String[] getArgs() {
+    //     return this.args.toArray(new String[] {});
+    // }
+    //
+    // /**
+    //  * Get default result value.
+    //  * @return The value
+    //  */
+    // protected String getDefault() {
+    //     return this.def;
+    // }
 
     /**
      * Arguments as text, for logging.

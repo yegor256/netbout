@@ -26,7 +26,7 @@
  */
 package com.netbout.queue;
 
-import com.netbout.spi.Entry;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Helper;
 import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.spi.cpa.Farm;
@@ -52,8 +52,8 @@ public final class HelpQueueTest {
     @Before
     public void register() throws Exception {
         final Helper helper = new CpaHelper(this.getClass());
-        final Entry entry = Mockito.mock(Entry.class);
-        helper.init(entry);
+        final Identity identity = Mockito.mock(Identity.class);
+        helper.init(identity);
         HelpQueue.register(helper);
     }
 

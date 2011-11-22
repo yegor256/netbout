@@ -90,39 +90,23 @@ public final class HelpQueue {
     /**
      * Execute one transaction.
      * @param trans The transaction to execute
-     * @return The result
      */
-    protected static String execute(final Transaction trans) {
-        final String mnemo = trans.getMnemo();
-        String result = null;
+    protected static void execute(final Transaction token) {
         for (Helper helper : HelpQueue.HELPERS) {
             try {
-                if (helper.supports().contains(mnemo)) {
-                    result = helper.execute(mnemo, trans.getArgs());
-                    if (result != null) {
-                        break;
-                    }
+                if (helper.supports().contains(token.mnemo())) {
+                    helper.execute(token);
                 }
             } catch (com.netbout.spi.HelperException ex) {
                 throw new IllegalArgumentException(
                     String.format(
                         "Failed to execute '%s'",
-                        mnemo
+                        token.mnemo()
                     ),
                     ex
                 );
             }
         }
-        if (result == null) {
-            result = trans.getDefault();
-            Logger.debug(
-                HelpQueue.class,
-                "#execute(%s): no helpers found, returning default: '%s'",
-                trans.getMnemo(),
-                result
-            );
-        }
-        return result;
     }
 
 }
