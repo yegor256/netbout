@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Identities {
+public final class Identities {
 
     /**
      * All identities known for us at the moment, and their objects.
@@ -57,6 +57,21 @@ final class Identities {
     }
 
     /**
+     * Statistics in plain text.
+     * @return Stats in plain text
+     */
+    public static String stats() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(
+            String.format(
+                "Total identities: %d",
+                Identities.ALL.size()
+            )
+        );
+        return builder.toString();
+    }
+
+    /**
      * Make new identity or find existing one.
      * @param name The name of identity
      * @param user Name of the user
@@ -64,7 +79,7 @@ final class Identities {
      * @throws DuplicateIdentityException If this identity is taken
      * @checkstyle RedundantThrows (4 lines)
      */
-    public static HubIdentity make(final String name, final User user)
+    protected static HubIdentity make(final String name, final User user)
         throws DuplicateIdentityException {
         final HubIdentity identity = Identities.make(name);
         if (identity.isAssigned() && !identity.belongsTo(user)) {
@@ -85,7 +100,7 @@ final class Identities {
      * @param name The name of identity
      * @return Identity found
      */
-    public static HubIdentity make(final String name) {
+    protected static HubIdentity make(final String name) {
         HubIdentity identity;
         if (Identities.ALL.containsKey(name)) {
             identity = Identities.ALL.get(name);
@@ -111,7 +126,7 @@ final class Identities {
      * @param keyword The keyword to find by
      * @return Identities found
      */
-    public static Set<HubIdentity> findByKeyword(final String keyword) {
+    protected static Set<HubIdentity> findByKeyword(final String keyword) {
         final Set<HubIdentity> found = new HashSet<HubIdentity>();
         for (HubIdentity identity : Identities.ALL.values()) {
             if (identity.matchesKeyword(keyword)) {

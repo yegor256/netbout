@@ -59,6 +59,21 @@ public final class Storage {
     }
 
     /**
+     * Statistics.
+     * @return Stats in plain text
+     */
+    public String stats() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(
+            String.format(
+                "Total bouts: %d",
+                this.bouts.size()
+            )
+        );
+        return builder.toString();
+    }
+
+    /**
      * Create new bout in the storage.
      * @return It's number (unique)
      */
