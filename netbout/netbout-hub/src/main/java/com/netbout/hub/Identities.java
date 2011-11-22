@@ -26,7 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.queue.HelpQueue;
+import com.netbout.queue.HelpQueue;
 import com.netbout.spi.DuplicateIdentityException;
 import com.netbout.spi.User;
 import com.ymock.util.Logger;

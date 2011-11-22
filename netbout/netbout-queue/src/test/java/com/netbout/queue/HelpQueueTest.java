@@ -24,9 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.queue;
+package com.netbout.queue;
 
-import com.netbout.hub.HubEntry;
+import com.netbout.spi.Entry;
 import com.netbout.spi.Helper;
 import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.spi.cpa.Farm;
@@ -36,6 +36,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link HelpQueue}.
@@ -51,7 +52,8 @@ public final class HelpQueueTest {
     @Before
     public void register() throws Exception {
         final Helper helper = new CpaHelper(this.getClass());
-        helper.init(new HubEntry());
+        final Entry entry = Mockito.mock(Entry.class);
+        helper.init(entry);
         HelpQueue.register(helper);
     }
 

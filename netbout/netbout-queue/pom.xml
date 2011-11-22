@@ -38,31 +38,14 @@
         <artifactId>netbout</artifactId>
         <version netbout="yes">2.0-SNAPSHOT</version>
     </parent>
-    <artifactId>netbout-hub</artifactId>
+    <artifactId>netbout-queue</artifactId>
     <packaging>jar</packaging>
-    <name>com.netbout:netbout-hub</name>
+    <name>com.netbout:netbout-queue</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.netbout</groupId>
-            <artifactId>netbout-queue</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.rexsl</groupId>
-            <artifactId>rexsl-test</artifactId>
-            <version since="2 Nov 2011">0.2.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.xmlmatchers</groupId>
-            <artifactId>xml-matchers</artifactId>
-            <version since="26 Jun 2011">0.10</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <!-- Forward all calls to SLF4J to LOG4J. -->
@@ -77,10 +60,6 @@
             <artifactId>log4j</artifactId>
             <version since="19 Sep 2011">1.2.16</version>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -53,8 +53,9 @@
 
     <modules>
         <module>netbout-tk</module>
-        <module>netbout-hub</module>
         <module>netbout-db</module>
+        <module>netbout-queue</module>
+        <module>netbout-hub</module>
         <module>netbout-rest</module>
     </modules>
 

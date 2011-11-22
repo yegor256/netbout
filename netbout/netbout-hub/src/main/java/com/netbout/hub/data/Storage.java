@@ -26,7 +26,7 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.hub.queue.HelpQueue;
+import com.netbout.queue.HelpQueue;
 import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;

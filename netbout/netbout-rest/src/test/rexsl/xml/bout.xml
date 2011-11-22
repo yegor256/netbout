@@ -41,59 +41,50 @@
         <link href="/xml/bout.xml" name="start" />
     </links>
     <identity>
+        <alias>Willy</alias>
         <name>William.Shakespeare</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
     </identity>
     <bout>
         <number>6252</number>
         <title>PHP programming in Netbout project</title>
+        <stage name="Recent Payments" place="abc">
+            <payments>
+                <payment>
+                    <date>23-08-2011</date>
+                    <amount>123</amount>
+                    <currency>USD</currency>
+                    <details>paid to Johnny for Fear and Loathing</details>
+                </payment>
+                <payment>
+                    <date>23-08-2011</date>
+                    <amount>500</amount>
+                    <currency>USD</currency>
+                    <details>paid to Javier for something else</details>
+                </payment>
+            </payments>
+        </stage>
         <stages>
-            <stage name="Recent Payments">
-                <payments>
-                    <payment>
-                        <date>23-08-2011</date>
-                        <amount>123</amount>
-                        <currency>USD</currency>
-                        <details>paid to Johnny for Fear and Loathing</details>
-                    </payment>
-                    <payment>
-                        <date>23-08-2011</date>
-                        <amount>500</amount>
-                        <currency>USD</currency>
-                        <details>paid to Javier for something else</details>
-                    </payment>
-                </payments>
-            </stage>
-            <stage name="Documents" href="/xml/PageBout.xml">
-                <documents>
-                    <doc name="some-name.txt" />
-                </documents>
-            </stage>
+            <stage name="Documents" href="/xml/PageBout.xml" />
+            <stage name="Files" href="/xml/PageBout.xml" />
+            <stage name="Meetings" href="/xml/PageBout.xml" />
         </stages>
         <participants>
             <participant href="/xml/PageBout.xml" confirmed="1">
-                <identity>
-                    <name>depp</name>
-                    <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
-                </identity>
+                <identity>depp</identity>
+                <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
             </participant>
             <participant href="/xml/PageBout.xml" confirmed="1">
-                <identity>
-                    <name>javier@gmail.com</name>
-                    <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
-                </identity>
+                <identity>javier@gmail.com</identity>
+                <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
             </participant>
             <participant href="/xml/PageBout.xml" confirmed="0">
-                <identity>
-                    <name>john.turturro</name>
-                    <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
-                </identity>
+                <identity>john.turturro</identity>
+                <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
             </participant>
             <participant href="/xml/PageBout.xml" confirmed="1">
-                <identity>
-                    <name>2pac</name>
-                    <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>
-                </identity>
+                <identity>2pac</identity>
+                <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>
             </participant>
         </participants>
         <messages>
