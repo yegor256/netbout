@@ -30,6 +30,7 @@
 package com.netbout.spi.cpa;
 
 import com.netbout.spi.HelperException;
+import com.netbout.spi.Token;
 import com.netbout.spi.TypeMapper;
 import java.lang.reflect.Method;
 
@@ -73,45 +74,36 @@ final class HelpTarget {
 
     /**
      * Execute it with arguments.
-     * @param args Arguments
-     * @return The response
+     * @param token The token
      * @throws HelperException If some problem inside
      */
-    public String execute(final String[] args) throws HelperException {
+    public void execute(final Token token) throws HelperException {
         Object result;
         try {
             result = this.method.invoke(
                 this.farm,
-                this.converted(args, this.method.getParameterTypes())
+                this.converted(token, this.method.getParameterTypes())
             );
         } catch (IllegalAccessException ex) {
             throw new IllegalStateException(ex);
         } catch (java.lang.reflect.InvocationTargetException ex) {
             throw new IllegalStateException(ex);
         }
-        return TypeMapper.toText(result);
+        token.result(TypeMapper.toText(result));
     }
 
     /**
      * Convert argument types.
-     * @param args Arguments
+     * @param token The token
      * @param types Expected types for every one of them
      * @return Array of properly types args
      * @throws HelperException If some problem inside
      */
-    public Object[] converted(final String[] args, final Class[] types)
+    public Object[] converted(final Token token, final Class[] types)
         throws HelperException {
-        if (types.length != args.length) {
-            throw new HelperException(
-                "Method %s expects %d args while only %d provided",
-                this.method.toGenericString(),
-                types.length,
-                args.length
-            );
-        }
-        final Object[] converted = new Object[args.length];
-        for (int pos = 0; pos < args.length; pos += 1) {
-            converted[pos] = TypeMapper.toObject(args[pos], types[pos]);
+        final Object[] converted = new Object[types.length];
+        for (int pos = 0; pos < types.length; pos += 1) {
+            converted[pos] = TypeMapper.toObject(token.arg(pos), types[pos]);
         }
         return converted;
     }

@@ -24,10 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.queue;
+package com.netbout.queue;
 
-import com.netbout.hub.HubEntry;
 import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
@@ -36,6 +36,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link HelpQueue}.
@@ -51,7 +52,8 @@ public final class HelpQueueTest {
     @Before
     public void register() throws Exception {
         final Helper helper = new CpaHelper(this.getClass());
-        helper.init(new HubEntry());
+        final Identity identity = Mockito.mock(Identity.class);
+        helper.init(identity);
         HelpQueue.register(helper);
     }
 
@@ -67,6 +69,33 @@ public final class HelpQueueTest {
             .asDefault("doesn't work")
             .exec(String.class);
         MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    }
+
+    /**
+     * Test with NULL response and defaults.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testNullResponseAndDefault() throws Exception {
+        // @checkstyle MultipleStringLiterals (1 line)
+        final Boolean result = HelpQueue.make("null-response")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .asDefault(Boolean.TRUE)
+            .exec(Boolean.class);
+        MatcherAssert.assertThat(result, Matchers.equalTo(Boolean.TRUE));
+    }
+
+    /**
+     * Test with NULL response and without defaults.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testNullResponseAndWithoutDefault() throws Exception {
+        // @checkstyle MultipleStringLiterals (1 line)
+        final Boolean result = HelpQueue.make("null-response")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .exec(Boolean.class);
+        MatcherAssert.assertThat(result, Matchers.nullValue());
     }
 
     /**
@@ -108,6 +137,14 @@ public final class HelpQueueTest {
                 list[pos] = random.nextLong();
             }
             return list;
+        }
+        /**
+         * Null response always.
+         * @return NULL value
+         */
+        @Operation("null-response")
+        public Boolean response() {
+            return null;
         }
     }
 

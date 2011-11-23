@@ -24,10 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.queue;
+package com.netbout.queue;
 
 import com.netbout.spi.Helper;
-import com.ymock.util.Logger;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -50,7 +49,11 @@ public final class HelpQueue {
         /**
          * Run it as soon as possible.
          */
-        ASAP
+        ASAP,
+        /**
+         * Just normal execution.
+         */
+        NORMAL
     }
 
     /**
@@ -85,38 +88,24 @@ public final class HelpQueue {
 
     /**
      * Execute one transaction.
-     * @param trans The transaction to execute
-     * @return The result
+     * @param token The transaction to execute
      */
-    protected static String execute(final Transaction trans) {
-        final String mnemo = trans.getMnemo();
-        String result = null;
+    protected static void execute(final Transaction token) {
         for (Helper helper : HelpQueue.HELPERS) {
             try {
-                if (helper.supports().contains(mnemo)) {
-                    result = helper.execute(mnemo, trans.getArgs());
-                    break;
+                if (helper.supports().contains(token.mnemo())) {
+                    helper.execute(token);
                 }
             } catch (com.netbout.spi.HelperException ex) {
                 throw new IllegalArgumentException(
                     String.format(
                         "Failed to execute '%s'",
-                        mnemo
+                        token.mnemo()
                     ),
                     ex
                 );
             }
         }
-        if (result == null) {
-            result = trans.getDefault();
-            Logger.debug(
-                HelpQueue.class,
-                "#execute(%s): no helpers found, returning default: '%s'",
-                trans.getMnemo(),
-                result
-            );
-        }
-        return result;
     }
 
 }

@@ -24,8 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.queue;
+package com.netbout.queue;
 
+import com.netbout.spi.Token;
 import com.netbout.spi.TypeMapper;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -38,43 +39,73 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Transaction {
+@SuppressWarnings("PMD.TooManyMethods")
+public final class Transaction implements Token {
 
     /**
      * Mnemo.
      */
-    private final transient String mnemo;
+    private final transient String imnemo;
 
     /**
      * Priority.
      */
-    private transient HelpQueue.Priority tpriority;
+    private transient HelpQueue.Priority ipriority;
 
     /**
      * Default value.
      */
-    private transient String def = "NULL";
+    private transient String def = TypeMapper.TEXT_NULL;
 
     /**
      * Arguments.
      */
-    private final transient List<String> args = new ArrayList<String>();
+    private final transient List<String> iargs = new ArrayList<String>();
+
+    /**
+     * The result.
+     */
+    private transient String iresult;
 
     /**
      * Public ctor.
-     * @param text Mnemo-code of the request
+     * @param mnemo Mnemo-code of the request
      */
-    public Transaction(final String text) {
-        this.mnemo = text;
+    public Transaction(final String mnemo) {
+        this.imnemo = mnemo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String mnemo() {
+        return this.imnemo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String arg(final int pos) {
+        return this.iargs.get(pos);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void result(final String result) {
+        this.iresult = result;
     }
 
     /**
      * Set priority.
-     * @param pri Priority
+     * @param priority Priority
      * @return This object
      */
-    public Transaction priority(final HelpQueue.Priority pri) {
-        this.tpriority = pri;
+    public Transaction priority(final HelpQueue.Priority priority) {
+        this.ipriority = priority;
         return this;
     }
 
@@ -89,13 +120,23 @@ public final class Transaction {
     }
 
     /**
+     * Set progress report.
+     * @param report The report
+     * @return This object
+     */
+    public Transaction progressReport(final ProgressReport report) {
+        // tbd
+        return this;
+    }
+
+    /**
      * Add argument.
      * @param arg The argument
      * @return This object
      */
     public Transaction arg(final Object arg) {
         try {
-            this.args.add(TypeMapper.toText(arg));
+            this.iargs.add(TypeMapper.toText(arg));
         } catch (com.netbout.spi.HelperException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -123,23 +164,24 @@ public final class Transaction {
      * @return The result
      */
     public <T> T exec(final Class<T> type) {
-        assert this.tpriority != null;
-        final String output = HelpQueue.execute(this);
-        Object result;
+        assert this.ipriority != null;
+        HelpQueue.execute(this);
+        if (this.iresult == null || TypeMapper.TEXT_NULL.equals(this.iresult)) {
+            this.iresult = this.def;
+        }
+        Logger.debug(
+            this,
+            "#exec(%s, %s): returned '%s' for [%s]",
+            this.mnemo(),
+            type.getName(),
+            this.iresult,
+            this.argsAsText()
+        );
         try {
-            result = TypeMapper.toObject(output, type);
+            return (T) TypeMapper.toObject(this.iresult, type);
         } catch (com.netbout.spi.HelperException ex) {
             throw new IllegalArgumentException(ex);
         }
-        Logger.debug(
-            Transaction.class,
-            "#exec(%s, %s): returned '%s' for [%s]",
-            this.mnemo,
-            type.getName(),
-            output,
-            this.argsAsText()
-        );
-        return (T) result;
     }
 
     /**
@@ -150,33 +192,9 @@ public final class Transaction {
         Logger.debug(
             Transaction.class,
             "#exec(%s): done for [%s]",
-            this.mnemo,
+            this.mnemo(),
             this.argsAsText()
         );
-    }
-
-    /**
-     * Get arguments as array.
-     * @return The args
-     */
-    protected String[] getArgs() {
-        return this.args.toArray(new String[] {});
-    }
-
-    /**
-     * Get default result value.
-     * @return The value
-     */
-    protected String getDefault() {
-        return this.def;
-    }
-
-    /**
-     * Get mnemo.
-     * @return The mnemo
-     */
-    protected String getMnemo() {
-        return this.mnemo;
     }
 
     /**
@@ -186,7 +204,7 @@ public final class Transaction {
     private String argsAsText() {
         return String.format(
             "'%s'",
-            StringUtils.join(this.args, "', '")
+            StringUtils.join(this.iargs, "', '")
         );
     }
 

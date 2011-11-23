@@ -51,11 +51,11 @@
             <participants>
                 <participant>
                     <identity>johnny</identity>
-                    <photo href="http://www.ofcelebrity.net/photos/johnny-depp-6.jpg" />
+                    <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
                 </participant>
                 <participant>
                     <identity>javier</identity>
-                    <photo href="http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg" />
+                    <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
                 </participant>
             </participants>
         </bout>

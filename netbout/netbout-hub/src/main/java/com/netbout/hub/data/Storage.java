@@ -26,7 +26,7 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.hub.queue.HelpQueue;
+import com.netbout.queue.HelpQueue;
 import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,6 +56,21 @@ public final class Storage {
      */
     private Storage() {
         this.bouts.put(0L, new BoutData(0L));
+    }
+
+    /**
+     * Statistics.
+     * @return Stats in plain text
+     */
+    public String stats() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(
+            String.format(
+                "Total bouts: %d",
+                this.bouts.size()
+            )
+        );
+        return builder.toString();
     }
 
     /**

@@ -73,7 +73,11 @@
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@name='suggest']/@href"/>
                 </xsl:attribute>
-                <input name="q" />
+                <input name="q">
+                    <xsl:attribute name="value">
+                        <xsl:value-of select="/page/keyword"/>
+                    </xsl:attribute>
+                </input>
                 <input value="invite" type="submit"/>
             </form>
             <xsl:if test="/page/invitees">
@@ -132,38 +136,39 @@
                 </xsl:otherwise>
             </xsl:choose>
         </p>
-        <div id="holder">
-            <ul id="titles">
-                <xsl:for-each select="/page/bout/stages/stage">
-                    <xsl:choose>
-                        <xsl:when test="not(@href)">
-                            <li>
-                                <xsl:value-of select="@name"/>
-                            </li>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <li>
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:value-of select="@href"/>
-                                    </xsl:attribute>
-                                    <xsl:value-of select="@name"/>
-                                </a>
-                            </li>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:for-each>
-            </ul>
-            <div id="stage">
-                <xsl:for-each select="/page/bout/stages/stage">
-                    <xsl:if test="not(@href)">
+        <xsl:if test="/page/bout/stages">
+            <div id="holder">
+                <ul id="titles">
+                    <xsl:for-each select="/page/bout/stages/stage">
+                        <xsl:choose>
+                            <xsl:when test=". = /page/bout/stage/@name">
+                                <li>
+                                    <xsl:value-of select="."/>
+                                </li>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <li>
+                                    <a>
+                                        <xsl:attribute name="href">
+                                            <xsl:value-of select="@href"/>
+                                        </xsl:attribute>
+                                        <xsl:value-of select="."/>
+                                    </a>
+                                </li>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                </ul>
+                <xsl:if test="/page/bout/stage">
+                    <div id="stage">
+                        <xsl:copy-of select="/page/bout/stage"/>
                         <!-- <xsl:call-template name="stage">
                             <xsl:with-param name="root" select="." />
                         </xsl:call-template> -->
-                    </xsl:if>
-                </xsl:for-each>
+                    </div>
+                </xsl:if>
             </div>
-        </div>
+        </xsl:if>
         <xsl:if test="$participant/@confirmed = 'true'">
             <form id="post" method="post">
                 <xsl:attribute name="action">

@@ -169,30 +169,15 @@ public abstract class AbstractPage implements Page {
             )
             .cookie(
                 new NewCookie(
-                    // name
                     "netbout",
-                    // value
                     new Cryptor(this.home.entry()).encrypt(identity),
-                    // path
-                    // @checkstyle MultipleStringLiterals (1 line)
-                    String.format(
-                        "/%s",
-                        this.home.httpServletRequest().getContextPath()
-                    ),
-                    // domain
-                    String.format(
-                        ".%s",
-                        this.home.uriInfo().getBaseUri().getHost()
-                    ),
-                    // version
+                    this.home.uriInfo().getBaseUri().getPath(),
+                    this.home.uriInfo().getBaseUri().getHost(),
                     // @checkstyle MultipleStringLiterals (1 line)
                     Integer.valueOf(Manifests.read("Netbout-Revision")),
-                    // comment
                     "Netbout.com logged-in user",
-                    // maxAge, 90 days
                     // @checkstyle MagicNumber (1 line)
                     60 * 60 * 24 * 90,
-                    // secure
                     false
                 )
             )

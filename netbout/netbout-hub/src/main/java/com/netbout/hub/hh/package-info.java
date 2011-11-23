@@ -26,9 +26,9 @@
  */
 
 /**
- * Tests of queue.
+ * Hub Helper (HH).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.hub.queue;
+package com.netbout.hub.hh;

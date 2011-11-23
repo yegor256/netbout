@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -44,11 +43,6 @@ public final class Cryptor {
      * Separator between name and hash.
      */
     private static final String SEPARATOR = ".";
-
-    /**
-     * Encoding to be used.
-     */
-    private static final String ENCODING = "UTF-8";
 
     /**
      * Salt for hash generation.
@@ -76,9 +70,9 @@ public final class Cryptor {
     public String encrypt(final Identity identity) {
         final StringBuilder builder = new StringBuilder();
         builder
-            .append(this.toBase(identity.user().name()))
+            .append(TextUtils.toBase(identity.user().name()))
             .append(this.SEPARATOR)
-            .append(this.toBase(identity.name()))
+            .append(TextUtils.toBase(identity.name()))
             .append(this.SEPARATOR)
             .append(this.hash(identity.name()));
         return builder.toString();
@@ -118,8 +112,8 @@ public final class Cryptor {
         if (parts.length != 3) {
             throw new DecryptionException(hash, "Not enough parts");
         }
-        final String uname = this.fromBase(parts[0]);
-        final String iname = this.fromBase(parts[1]);
+        final String uname = TextUtils.fromBase(parts[0]);
+        final String iname = TextUtils.fromBase(parts[1]);
         final String signature = parts[2];
         if (!signature.equals(this.hash(iname))) {
             throw new DecryptionException(
@@ -152,32 +146,6 @@ public final class Cryptor {
      */
     private String hash(final String text) {
         return DigestUtils.md5Hex(text + this.SALT);
-    }
-
-    /**
-     * Encode string into 64-bit string.
-     * @param text The text to encode
-     * @return Encoded text
-     */
-    private String toBase(final String text) {
-        try {
-            return new Base64().encodeToString(text.getBytes(this.ENCODING));
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
-     * Decode string from 64-bit string.
-     * @param text The text to decode
-     * @return Decoded text
-     */
-    private String fromBase(final String text) {
-        try {
-            return new String(new Base64().decode(text), this.ENCODING);
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
     }
 
 }

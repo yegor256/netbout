@@ -29,13 +29,14 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Entry;
 import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
-import com.netbout.spi.TypeMapper;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Token;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -44,48 +45,86 @@ import org.mockito.Mockito;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class CpaHelperTest {
 
     /**
-     * User can be registered and then authenticated.
+     * The helper.
+     */
+    private transient Helper helper;
+
+    /**
+     * Prepare the helper to work with.
+     * @throws Exception If there is some problem inside
+     */
+    @Before
+    public void prepare() throws Exception {
+        this.helper = new CpaHelper(this.getClass().getPackage().getName());
+        final Identity identity = Mockito.mock(Identity.class);
+        this.helper.init(identity);
+    }
+
+    /**
+     * Helper discovers farms and operations in classpatch.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void testDiscoveryOfOperations() throws Exception {
-        final Helper helper = new CpaHelper(
-            this.getClass().getPackage().getName()
-        );
-        final Entry entry = Mockito.mock(Entry.class);
-        helper.init(entry);
         MatcherAssert.assertThat(
-            helper.supports().size(),
+            this.helper.supports().size(),
             Matchers.greaterThan(0)
         );
-        MatcherAssert.assertThat(
-            helper.execute("comparison", TypeMapper.toText("alpha-12"), "6"),
-            Matchers.equalTo("true")
-        );
-        MatcherAssert.assertThat(
-            helper.execute("empty"),
-            Matchers.equalTo("NULL")
-        );
-        final String text = "some text in quotes";
-        MatcherAssert.assertThat(
-            TypeMapper.toObject(
-                helper.execute("echo", TypeMapper.toText(text)),
-                String.class
-            ),
-            Matchers.equalTo(text)
-        );
-        MatcherAssert.assertThat(
-            helper.execute("list", "4"),
-            Matchers.containsString(",")
-        );
-        MatcherAssert.assertThat(
-            TypeMapper.toObject(helper.execute("texts"), String[].class),
-            // @checkstyle MultipleStringLiterals (1 line)
-            Matchers.hasItemInArray("o n e")
-        );
+    }
+
+    /**
+     * Test with different types of params.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testDifferentTypesOfParams() throws Exception {
+        final Token token = Mockito.mock(Token.class);
+        Mockito.doReturn("comparison").when(token).mnemo();
+        Mockito.doReturn("alpha-12").when(token).arg(0);
+        Mockito.doReturn("6").when(token).arg(1);
+        this.helper.execute(token);
+        Mockito.verify(token).result("false");
+    }
+
+    /**
+     * Test with NULL response.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testNullResponse() throws Exception {
+        final Token token = Mockito.mock(Token.class);
+        Mockito.doReturn("empty").when(token).mnemo();
+        this.helper.execute(token);
+        Mockito.verify(token).result("NULL");
+    }
+
+    /**
+     * Test with lists.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testLists() throws Exception {
+        final Token token = Mockito.mock(Token.class);
+        Mockito.doReturn("list").when(token).mnemo();
+        Mockito.doReturn("4").when(token).arg(0);
+        this.helper.execute(token);
+        Mockito.verify(token).result(Mockito.anyString());
+    }
+
+    /**
+     * Test with text lists.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testTextLists() throws Exception {
+        final Token token = Mockito.mock(Token.class);
+        Mockito.doReturn("texts").when(token).mnemo();
+        this.helper.execute(token);
+        Mockito.verify(token).result("byBuIGU=,InR3byI=");
     }
 
     /**
@@ -94,10 +133,7 @@ public final class CpaHelperTest {
      */
     @Test(expected = HelperException.class)
     public void testSupportsWithoutInit() throws Exception {
-        final Helper helper = new CpaHelper(
-            this.getClass().getPackage().getName()
-        );
-        helper.supports();
+        new CpaHelper(this.getClass().getPackage().getName()).supports();
     }
 
     /**
@@ -106,25 +142,22 @@ public final class CpaHelperTest {
      */
     @Test(expected = HelperException.class)
     public void testCallToUnknownOperation() throws Exception {
-        final Helper helper = new CpaHelper(
-            this.getClass().getPackage().getName()
-        );
-        final Entry entry = Mockito.mock(Entry.class);
-        helper.init(entry);
-        helper.execute("unknown-operation");
+        final Token token = Mockito.mock(Token.class);
+        Mockito.doReturn("unknown-operation").when(token).mnemo();
+        this.helper.execute(token);
     }
 
     /**
      * Sample farm.
      */
     @Farm
-    public static final class SampleFarm implements EntryAwareFarm {
+    public static final class SampleFarm implements IdentityAware {
         /**
          * {@inheritDoc}
          */
         @Override
-        public void init(final Entry entry) {
-            MatcherAssert.assertThat(entry, Matchers.notNullValue());
+        public void init(final Identity identity) {
+            MatcherAssert.assertThat(identity, Matchers.notNullValue());
         }
         /**
          * Sample operation.

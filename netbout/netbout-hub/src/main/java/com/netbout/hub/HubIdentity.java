@@ -29,7 +29,7 @@ package com.netbout.hub;
 import com.netbout.hub.data.BoutData;
 import com.netbout.hub.data.ParticipantData;
 import com.netbout.hub.data.Storage;
-import com.netbout.hub.queue.HelpQueue;
+import com.netbout.queue.HelpQueue;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Pattern;
 
 /**
  * Identity.
@@ -278,7 +279,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public void promote(final Helper helper) throws HelperException {
-        helper.init(new HubEntry());
+        helper.init(this);
         HelpQueue.register(helper);
         Logger.info(
             this,
@@ -303,8 +304,12 @@ public final class HubIdentity implements Identity {
      */
     protected boolean matchesKeyword(final String keyword) {
         boolean matches = this.iname.contains(keyword);
+        final Pattern pattern = Pattern.compile(
+            Pattern.quote(keyword),
+            Pattern.CASE_INSENSITIVE
+        );
         for (String alias : this.myAliases()) {
-            matches |= alias.contains(keyword);
+            matches |= pattern.matcher(alias).find();
         }
         return matches;
     }

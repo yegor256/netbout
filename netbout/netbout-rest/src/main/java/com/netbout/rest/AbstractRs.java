@@ -108,6 +108,7 @@ public abstract class AbstractRs implements Resource {
     static {
         Identity persistor;
         try {
+            // @checkstyle MultipleStringLiterals (1 line)
             persistor = new HubEntry().user("netbout").identity("nb:db");
         } catch (com.netbout.spi.DuplicateIdentityException ex) {
             throw new IllegalStateException(ex);
@@ -121,6 +122,32 @@ public abstract class AbstractRs implements Resource {
         try {
             persistor.setPhoto(
                 new java.net.URL("http://img.netbout.com/db.png")
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Initializer.
+     */
+    static {
+        Identity hub;
+        try {
+            // @checkstyle MultipleStringLiterals (1 line)
+            hub = new HubEntry().user("netbout").identity("nb:hh");
+        } catch (com.netbout.spi.DuplicateIdentityException ex) {
+            throw new IllegalStateException(ex);
+        }
+        hub.alias("Netbout Hub");
+        try {
+            hub.promote(new CpaHelper("com.netbout.hub.hh"));
+        } catch (com.netbout.spi.HelperException ex) {
+            throw new IllegalStateException(ex);
+        }
+        try {
+            hub.setPhoto(
+                new java.net.URL("http://img.netbout.com/hh.png")
             );
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);

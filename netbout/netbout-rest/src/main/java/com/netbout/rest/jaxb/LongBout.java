@@ -26,12 +26,15 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.queue.HelpQueue;
+import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -54,6 +57,16 @@ public final class LongBout {
     private transient Bout bout;
 
     /**
+     * Stage coordinates.
+     */
+    private transient StageCoordinates coords;
+
+    /**
+     * The URI builder.
+     */
+    private transient UriBuilder builder;
+
+    /**
      * Public ctor for JAXB.
      */
     public LongBout() {
@@ -63,9 +76,14 @@ public final class LongBout {
     /**
      * Private ctor.
      * @param bot The bout
+     * @param crds The coordinates of the stage to render
+     * @param bldr The builder of URIs
      */
-    public LongBout(final Bout bot) {
+    public LongBout(final Bout bot, final StageCoordinates crds,
+        final UriBuilder bldr) {
         this.bout = bot;
+        this.coords = crds;
+        this.builder = bldr;
     }
 
     /**
@@ -84,6 +102,39 @@ public final class LongBout {
     @XmlElement
     public String getTitle() {
         return this.bout.title();
+    }
+
+    /**
+     * List of stages.
+     * @return The list
+     */
+    @XmlElement(name = "stage")
+    @XmlElementWrapper(name = "stages")
+    public List<ShortStage> getStages() {
+        final List<ShortStage> stages = new ArrayList<ShortStage>();
+        for (String identity : this.stages()) {
+            stages.add(ShortStage.build(identity, this.builder));
+        }
+        return stages;
+    }
+
+    /**
+     * Get XML of one stage.
+     * @return The XML
+     */
+    @XmlElement
+    public LongStage getStage() {
+        if (!this.coords.hasStage()) {
+            for (String identity : this.stages()) {
+                this.coords.setStage(identity);
+                break;
+            }
+        }
+        LongStage stage = null;
+        if (this.coords.hasStage()) {
+            stage = LongStage.build(this.bout.number(), this.coords);
+        }
+        return stage;
     }
 
     /**
@@ -113,6 +164,29 @@ public final class LongBout {
             dudes.add(LongParticipant.build(dude));
         }
         return dudes;
+    }
+
+    /**
+     * List of stages, their names.
+     * @return The list
+     */
+    private Collection<String> stages() {
+        final Collection<String> stages = new ArrayList<String>();
+        for (Participant dude : this.bout.participants()) {
+            final String name = dude.identity().name();
+            final Boolean exists = HelpQueue
+                .make("does-stage-exist")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.bout.number())
+                .arg(name)
+                .scope(this.bout.number())
+                .asDefault(Boolean.FALSE)
+                .exec(Boolean.class);
+            if (exists) {
+                stages.add(name);
+            }
+        }
+        return stages;
     }
 
 }
