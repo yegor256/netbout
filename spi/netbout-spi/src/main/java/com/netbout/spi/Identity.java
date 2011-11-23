@@ -87,7 +87,7 @@ public interface Identity {
      * @return The identity just found
      * @throws IdentityNotFoundException If such a friend is absent
      */
-    Identity identity(String name) throws IdentityNotFoundException;
+    Identity friend(String name) throws IdentityNotFoundException;
 
     /**
      * Get all aliases.

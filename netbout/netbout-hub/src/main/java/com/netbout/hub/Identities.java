@@ -27,8 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.queue.HelpQueue;
-import com.netbout.spi.DuplicateIdentityException;
-import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.util.HashSet;
 import java.util.Set;
@@ -76,17 +74,15 @@ public final class Identities {
      * @param name The name of identity
      * @param user Name of the user
      * @return Identity found
-     * @throws DuplicateIdentityException If this identity is taken
-     * @checkstyle RedundantThrows (4 lines)
      */
-    protected static HubIdentity make(final String name, final User user)
-        throws DuplicateIdentityException {
+    protected static HubIdentity make(final String name, final HubUser user) {
         final HubIdentity identity = Identities.make(name);
         if (identity.isAssigned() && !identity.belongsTo(user)) {
-            throw new DuplicateIdentityException(
-                "Identity '%s' is already taken by '%s'",
-                name,
-                identity.user().name()
+            throw new IllegalArgumentException(
+                String.format(
+                    "Identity '%s' is already taken by someone else",
+                    name
+                )
             );
         }
         if (!identity.isAssigned()) {

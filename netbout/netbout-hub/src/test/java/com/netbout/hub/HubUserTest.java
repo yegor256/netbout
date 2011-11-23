@@ -27,14 +27,13 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.User;
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link HubUser}.
+ * Test case of {@link HubHubUser}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
@@ -45,7 +44,7 @@ public final class HubUserTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPersistenceOfUserName() throws Exception {
+    public void testPersistenceOfHubUserName() throws Exception {
         final String name = "Big Lebowski";
         new HubEntry().user(name);
         MatcherAssert.assertThat(
@@ -61,7 +60,7 @@ public final class HubUserTest {
     @Test
     public void testPersistenceOfIdentities() throws Exception {
         final String name = "John Doe";
-        final User user = new HubEntry().user(name);
+        final HubUser user = new HubEntry().user(name);
         final String label = "Johnny";
         final URL photo = new URL("http://img.netbout.com/logo.png");
         final Identity identity = user.identity(label);
@@ -76,7 +75,7 @@ public final class HubUserTest {
      * Duplicate identities should be prohibited.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = com.netbout.spi.DuplicateIdentityException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testDuplicateIdentityCreation() throws Exception {
         final String name = "Peter Pen";
         new HubEntry().user("peter").identity(name);

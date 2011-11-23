@@ -27,7 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.User;
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -41,26 +40,12 @@ import org.junit.Test;
 public final class HubIdentityTest {
 
     /**
-     * Backlink to user should point into right direction.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testBacklinkToUser() throws Exception {
-        final User user = new HubEntry().user("Chuck Norris");
-        final Identity identity = user.identity("chuck");
-        MatcherAssert.assertThat(
-            identity.user(),
-            Matchers.equalTo(user)
-        );
-    }
-
-    /**
      * Name is persistent.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void testNamePersistence() throws Exception {
-        final User user = new HubEntry().user("Johnny Depp");
+        final HubUser user = new HubEntry().user("Johnny Depp");
         final String name = "depp";
         MatcherAssert.assertThat(
             user.identity(name).name(),
@@ -74,7 +59,7 @@ public final class HubIdentityTest {
      */
     @Test
     public void testPhotoPersistence() throws Exception {
-        final User user = new HubEntry().user("Bruce Willis");
+        final HubUser user = new HubEntry().user("Bruce Willis");
         final String name = "bruce";
         final URL photo = new URL("http://localhost/photo.png");
         user.identity(name).setPhoto(photo);

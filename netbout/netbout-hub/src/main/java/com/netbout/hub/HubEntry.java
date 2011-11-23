@@ -26,9 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
-import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.util.Set;
 
@@ -38,16 +36,17 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntry implements Entry {
+public final class HubEntry {
 
     /**
-     * {@inheritDoc}
+     * Find user by name.
+     * @param name The name of the user to find
+     * @return The user found
      */
-    @Override
-    public User user(final String name) {
-        final User user = new HubUser(name);
+    public static HubUser user(final String name) {
+        final HubUser user = new HubUser(name);
         Logger.debug(
-            this,
+            HubEntry.class,
             "#user('%s'): instantiated",
             name
         );
@@ -55,28 +54,14 @@ public final class HubEntry implements Entry {
     }
 
     /**
-     * {@inheritDoc}
+     * Find identities by name.
+     * @param
      */
-    @Override
-    public Identity identity(final String name) {
-        final Identity identity = Identities.make(name);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            name
-        );
-        return identity;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Identity> find(final String keyword) {
+    public static Set<Identity> find(final String keyword) {
         final Set<Identity> identities =
             (Set) Identities.findByKeyword(keyword);
         Logger.debug(
-            this,
+            HubEntry.class,
             "#find('%s'): found %d identities",
             keyword,
             identities.size()

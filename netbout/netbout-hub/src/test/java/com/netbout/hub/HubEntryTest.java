@@ -26,8 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -44,41 +42,12 @@ public final class HubEntryTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testUserByNameFinding() throws Exception {
+    public void testHubUserByNameFinding() throws Exception {
         final String name = "Chuck Norris";
-        final User user = new HubEntry().user(name);
+        final HubUser user = HubEntry.user(name);
         MatcherAssert.assertThat(
-            new HubEntry().user(name),
+            HubEntry.user(name),
             Matchers.equalTo(user)
-        );
-    }
-
-    /**
-     * Find friend's identity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testFriendFinding() throws Exception {
-        final String name = "Big Lebowski";
-        final Identity identity =
-            new HubEntry().user("Jeff Bridges").identity(name);
-        MatcherAssert.assertThat(
-            new HubEntry().identity(name),
-            Matchers.equalTo(identity)
-        );
-    }
-
-    /**
-     * Find friend's identity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testFindingOfMissingFriend() throws Exception {
-        final Identity identity =
-            new HubEntry().identity("somebody unknown before");
-        MatcherAssert.assertThat(
-            identity.photo(),
-            Matchers.notNullValue()
         );
     }
 
