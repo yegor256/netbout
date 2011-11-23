@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
-import com.netbout.spi.Entry;
-import com.netbout.spi.Identity;
+import com.netbout.hub.HubEntry;
+import com.netbout.hub.HubIdentity;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -50,27 +50,14 @@ public final class Cryptor {
     private static final String SALT = "U*#p}*YQ2@-+==I<,.?//";
 
     /**
-     * The entry to work with.
-     */
-    private final transient Entry entry;
-
-    /**
-     * Public ctor.
-     * @param ent Entry to work with
-     */
-    public Cryptor(final Entry ent) {
-        this.entry = ent;
-    }
-
-    /**
-     * Encrypt identity into text.
+     * Encrypt user+identity into text.
      * @param identity The identity
      * @return Encrypted string
      */
-    public String encrypt(final Identity identity) {
+    public String encrypt(final HubIdentity identity) {
         final StringBuilder builder = new StringBuilder();
         builder
-            .append(TextUtils.toBase(identity.user().name()))
+            .append(TextUtils.toBase(identity.user()))
             .append(this.SEPARATOR)
             .append(TextUtils.toBase(identity.name()))
             .append(this.SEPARATOR)
@@ -102,7 +89,7 @@ public final class Cryptor {
      * @return The name found in it
      * @throws Cryptor.DecryptionException If we can't decrypt it
      */
-    public Identity decrypt(final String hash) throws
+    public HubIdentity decrypt(final String hash) throws
         Cryptor.DecryptionException {
         if (hash == null) {
             throw new DecryptionException(hash, "Hash is NULL");
@@ -124,17 +111,7 @@ public final class Cryptor {
                 iname
             );
         }
-        Identity identity;
-        try {
-            identity = this.entry.user(uname).identity(iname);
-        } catch (com.netbout.spi.DuplicateIdentityException ex) {
-            throw new DecryptionException(
-                hash,
-                "Identity '%s' is duplicated: %s",
-                iname,
-                ex
-            );
-        }
+        final HubIdentity identity = HubEntry.user(uname).identity(iname);
         assert identity != null;
         return identity;
     }

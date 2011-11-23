@@ -35,7 +35,6 @@ import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
-import com.netbout.spi.User;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public final class HubIdentity implements Identity {
     /**
      * Name of the user.
      */
-    private transient User iuser;
+    private transient HubUser iuser;
 
     /**
      * The photo.
@@ -86,9 +85,9 @@ public final class HubIdentity implements Identity {
      * Public ctor.
      * @param name The identity's name
      * @param user The user
-     * @see Identities#make(String,User)
+     * @see Identities#make(String,HubUser)
      */
-    public HubIdentity(final String name, final User user) {
+    public HubIdentity(final String name, final HubUser user) {
         this.iname = name;
         this.iuser = user;
     }
@@ -108,16 +107,33 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public User user() {
-        if (!this.isAssigned()) {
-            throw new IllegalStateException(
-                String.format(
-                    "User is unknown for identity '%s'",
-                    this.iname
-                )
-            );
-        }
-        return this.iuser;
+    public boolean equals(final Object obj) {
+        return (obj instanceof HubIdentity)
+            && this.iname.equals(((HubIdentity) obj).iname);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.iname.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String user() {
+        return this.iuser.name();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return this.iname;
     }
 
     /**
@@ -191,14 +207,6 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public String name() {
-        return this.iname;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public URL photo() {
         if (this.iphoto == null) {
             try {
@@ -229,6 +237,20 @@ public final class HubIdentity implements Identity {
             .arg(this.iname)
             .arg(this.iphoto.toString())
             .exec();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity friend(final String name) {
+        final Identity identity = Identities.make(name);
+        Logger.debug(
+            this,
+            "#friend('%s'): found",
+            name
+        );
+        return identity;
     }
 
     /**
@@ -319,7 +341,7 @@ public final class HubIdentity implements Identity {
      * @param user The user
      * @return Yes or no?
      */
-    protected boolean belongsTo(final User user) {
+    protected boolean belongsTo(final HubUser user) {
         if (!this.isAssigned()) {
             throw new IllegalStateException(
                 String.format(
@@ -343,7 +365,7 @@ public final class HubIdentity implements Identity {
      * Assign the identity to the given user.
      * @param user The user
      */
-    protected void assignTo(final User user) {
+    protected void assignTo(final HubUser user) {
         if (this.isAssigned()) {
             throw new IllegalStateException(
                 String.format(

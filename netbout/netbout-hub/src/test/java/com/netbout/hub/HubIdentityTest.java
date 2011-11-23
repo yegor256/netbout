@@ -27,7 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.User;
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -41,26 +40,12 @@ import org.junit.Test;
 public final class HubIdentityTest {
 
     /**
-     * Backlink to user should point into right direction.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testBacklinkToUser() throws Exception {
-        final User user = new HubEntry().user("Chuck Norris");
-        final Identity identity = user.identity("chuck");
-        MatcherAssert.assertThat(
-            identity.user(),
-            Matchers.equalTo(user)
-        );
-    }
-
-    /**
      * Name is persistent.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void testNamePersistence() throws Exception {
-        final User user = new HubEntry().user("Johnny Depp");
+        final HubUser user = HubEntry.user("Johnny Depp");
         final String name = "depp";
         MatcherAssert.assertThat(
             user.identity(name).name(),
@@ -74,7 +59,7 @@ public final class HubIdentityTest {
      */
     @Test
     public void testPhotoPersistence() throws Exception {
-        final User user = new HubEntry().user("Bruce Willis");
+        final HubUser user = HubEntry.user("Bruce Willis");
         final String name = "bruce";
         final URL photo = new URL("http://localhost/photo.png");
         user.identity(name).setPhoto(photo);
@@ -90,7 +75,7 @@ public final class HubIdentityTest {
      */
     @Test
     public void testBoutsManipulations() throws Exception {
-        final Identity identity = new HubEntry().user("Jeffy").identity("je");
+        final Identity identity = HubEntry.user("Jeffy").identity("je");
         final Long number = identity.start().number();
         identity.bout(number);
         MatcherAssert.assertThat(
@@ -105,7 +90,7 @@ public final class HubIdentityTest {
      */
     @Test
     public void testAliasesManipulations() throws Exception {
-        final Identity identity = new HubEntry().user("Lori").identity("lo");
+        final Identity identity = HubEntry.user("Lori").identity("lo");
         MatcherAssert.assertThat(
             identity.aliases().size(),
             Matchers.equalTo(0)
@@ -129,9 +114,9 @@ public final class HubIdentityTest {
      */
     @Test(expected = com.netbout.spi.BoutNotFoundException.class)
     public void testFindingOfNotMyBout() throws Exception {
-        final Long num = new HubEntry().user("Victor").identity("vic")
+        final Long num = HubEntry.user("Victor").identity("vic")
             .start().number();
-        new HubEntry().user("Michael").identity("mike").bout(num);
+        HubEntry.user("Michael").identity("mike").bout(num);
     }
 
     /**
@@ -141,7 +126,7 @@ public final class HubIdentityTest {
     @Test(expected = com.netbout.spi.BoutNotFoundException.class)
     public void testFindingOfNonExistingBout() throws Exception {
         // @checkstyle MagicNumber (1 line)
-        new HubEntry().user("Sarah").identity("sarah").bout(3456L);
+        HubEntry.user("Sarah").identity("sarah").bout(3456L);
     }
 
 }

@@ -34,11 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Identity.
- *
- * <p>This is the main entry point to all bouts which belong to the user. An
- * instance of this interface can be obtained from
- * {@link User#identity(String)}.
+ * The identity of the person in a bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -46,10 +42,16 @@ import java.util.Set;
 public interface Identity {
 
     /**
-     * User.
-     * @return The user
+     * Get the name of his user.
+     * @return The name of the user
      */
-    User user();
+    String user();
+
+    /**
+     * Get name of the identity, which is unique in the system.
+     * @return The name of the identity
+     */
+    String name();
 
     /**
      * Start new bout.
@@ -74,12 +76,6 @@ public interface Identity {
     Bout bout(Long number) throws BoutNotFoundException;
 
     /**
-     * Get name of the identity, which is unique in the system.
-     * @return The name of the identity
-     */
-    String name();
-
-    /**
      * Get a photo of this identity.
      * @return The URL of the photo
      */
@@ -90,6 +86,14 @@ public interface Identity {
      * @param photo The photo
      */
     void setPhoto(URL photo);
+
+    /**
+     * Find another identity by name.
+     * @param name Unique name of identity
+     * @return The identity just found
+     * @throws IdentityNotFoundException If such a friend is absent
+     */
+    Identity friend(String name) throws IdentityNotFoundException;
 
     /**
      * Get all aliases.

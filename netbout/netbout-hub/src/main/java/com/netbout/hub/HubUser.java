@@ -26,9 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.DuplicateIdentityException;
-import com.netbout.spi.Identity;
-import com.netbout.spi.User;
 import com.ymock.util.Logger;
 
 /**
@@ -37,7 +34,7 @@ import com.ymock.util.Logger;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubUser implements User {
+public final class HubUser {
 
     /**
      * The name of it.
@@ -72,25 +69,24 @@ public final class HubUser implements User {
     }
 
     /**
-     * {@inheritDoc}
+     * Get its name.
+     * @return The name of it
      */
-    @Override
     public String name() {
         return this.uname;
     }
 
     /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
+     * Find identity by name.
+     * @param name The name of it
+     * @return The identity found
      */
-    @Override
-    public Identity identity(final String label)
-        throws DuplicateIdentityException {
-        final Identity identity = Identities.make(label, this);
+    public HubIdentity identity(final String name) {
+        final HubIdentity identity = Identities.make(name, this);
         Logger.debug(
             this,
             "#identity('%s'): found",
-            label
+            name
         );
         return identity;
     }

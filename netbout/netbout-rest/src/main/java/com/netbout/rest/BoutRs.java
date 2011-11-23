@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.hub.HubEntry;
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.rest.jaxb.LongBout;
 import com.netbout.rest.page.JaxbBundle;
@@ -133,7 +134,7 @@ public final class BoutRs extends AbstractRs {
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();
-        for (Identity identity : this.entry().find(keyword)) {
+        for (Identity identity : HubEntry.find(keyword)) {
             invitees.add(
                 Invitee.build(
                     identity,
@@ -217,7 +218,7 @@ public final class BoutRs extends AbstractRs {
                 "Form param 'name' missed"
             );
         }
-        bout.invite(this.entry().identity(name));
+        bout.invite(this.identity().friend(name));
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

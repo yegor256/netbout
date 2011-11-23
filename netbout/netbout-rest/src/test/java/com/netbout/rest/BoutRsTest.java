@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.harness.PageConverter;
 import com.netbout.harness.ResourceBuilder;
+import com.netbout.hub.HubEntry;
 import com.netbout.spi.Bout;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
@@ -48,7 +49,7 @@ public final class BoutRsTest {
     @Test
     public void testBoutRendering() throws Exception {
         final BoutRs rest = new ResourceBuilder().build(BoutRs.class);
-        final Bout bout = rest.entry()
+        final Bout bout = HubEntry
             .user("John Doe")
             .identity("johnny.doe")
             .start();

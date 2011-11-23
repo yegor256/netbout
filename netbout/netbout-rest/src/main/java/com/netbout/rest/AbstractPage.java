@@ -26,9 +26,9 @@
  */
 package com.netbout.rest;
 
+import com.netbout.hub.HubIdentity;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
-import com.netbout.spi.Identity;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import java.net.URI;
@@ -151,7 +151,7 @@ public abstract class AbstractPage implements Page {
      */
     @Override
     public final Response.ResponseBuilder authenticated(
-        final Identity identity) {
+        final HubIdentity identity) {
         this.append(new LongIdentity(identity));
         this.link("logout", "/g/out");
         this.link("start", "/s");
@@ -170,7 +170,7 @@ public abstract class AbstractPage implements Page {
             .cookie(
                 new NewCookie(
                     "netbout",
-                    new Cryptor(this.home.entry()).encrypt(identity),
+                    new Cryptor().encrypt(identity),
                     this.home.uriInfo().getBaseUri().getPath(),
                     this.home.uriInfo().getBaseUri().getHost(),
                     // @checkstyle MultipleStringLiterals (1 line)

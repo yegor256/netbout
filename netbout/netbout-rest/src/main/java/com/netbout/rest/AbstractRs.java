@@ -27,7 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.hub.HubEntry;
-import com.netbout.spi.Entry;
+import com.netbout.hub.HubIdentity;
 import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
@@ -46,11 +46,6 @@ import org.apache.commons.codec.binary.Base64;
  * @version $Id$
  */
 public abstract class AbstractRs implements Resource {
-
-    /**
-     * Entry to work with.
-     */
-    private transient Entry ientry = new HubEntry();
 
     /**
      * List of known JAX-RS providers.
@@ -106,13 +101,8 @@ public abstract class AbstractRs implements Resource {
      * Register basic helper in a hub.
      */
     static {
-        Identity persistor;
-        try {
-            // @checkstyle MultipleStringLiterals (1 line)
-            persistor = new HubEntry().user("netbout").identity("nb:db");
-        } catch (com.netbout.spi.DuplicateIdentityException ex) {
-            throw new IllegalStateException(ex);
-        }
+        // @checkstyle MultipleStringLiterals (1 line)
+        final Identity persistor = HubEntry.user("netbout").identity("nb:db");
         persistor.alias("Netbout Database Manager");
         try {
             persistor.promote(new CpaHelper("com.netbout.db"));
@@ -132,13 +122,8 @@ public abstract class AbstractRs implements Resource {
      * Initializer.
      */
     static {
-        Identity hub;
-        try {
-            // @checkstyle MultipleStringLiterals (1 line)
-            hub = new HubEntry().user("netbout").identity("nb:hh");
-        } catch (com.netbout.spi.DuplicateIdentityException ex) {
-            throw new IllegalStateException(ex);
-        }
+        // @checkstyle MultipleStringLiterals (1 line)
+        final Identity hub = HubEntry.user("netbout").identity("nb:hh");
         hub.alias("Netbout Hub");
         try {
             hub.promote(new CpaHelper("com.netbout.hub.hh"));
@@ -152,22 +137,6 @@ public abstract class AbstractRs implements Resource {
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Entry entry() {
-        if (this.ientry == null) {
-            throw new IllegalStateException(
-                String.format(
-                    "%s#entry was never injected by setEntry()",
-                    this.getClass().getName()
-                )
-            );
-        }
-        return this.ientry;
     }
 
     /**
@@ -266,19 +235,6 @@ public abstract class AbstractRs implements Resource {
     }
 
     /**
-     * Set new entry.
-     * @param ent The entry to work with
-     */
-    public final void setEntry(final Entry ent) {
-        this.ientry = ent;
-        Logger.debug(
-            this,
-            "#setEntry('%s'): injected",
-            this.ientry.getClass().getName()
-        );
-    }
-
-    /**
      * Set cookie. Should be called by JAX-RS implemenation
      * because of <tt>&#64;CookieParam</tt> annotation.
      * @param cookie The cookie to set
@@ -360,9 +316,9 @@ public abstract class AbstractRs implements Resource {
      * no user is logged in at the moment.
      * @return The identity
      */
-    protected final Identity identity() {
+    protected final HubIdentity identity() {
         try {
-            return new Cryptor(this.entry()).decrypt(this.icookie);
+            return new Cryptor().decrypt(this.icookie);
         } catch (Cryptor.DecryptionException ex) {
             Logger.debug(
                 this,
