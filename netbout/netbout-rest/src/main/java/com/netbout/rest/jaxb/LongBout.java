@@ -124,14 +124,14 @@ public final class LongBout {
      */
     @XmlElement
     public LongStage getStage() {
-        if (!this.coords.hasStage()) {
+        if (this.coords.getStage().isEmpty()) {
             for (String identity : this.stages()) {
                 this.coords.setStage(identity);
                 break;
             }
         }
         LongStage stage = null;
-        if (this.coords.hasStage()) {
+        if (!this.coords.getStage().isEmpty()) {
             stage = LongStage.build(this.bout.number(), this.coords);
         }
         return stage;

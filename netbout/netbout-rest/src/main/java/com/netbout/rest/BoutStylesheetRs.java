@@ -26,21 +26,15 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.HubEntry;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Participant;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import javax.ws.rs.CookieParam;
-import javax.ws.rs.FormParam;
+import com.netbout.utils.TextUtils;
+import java.net.URLEncoder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import org.apache.velocity.VelocityContext;
 
 /**
  * Stage-related requests.
@@ -72,7 +66,7 @@ public final class BoutStylesheetRs extends AbstractRs {
 
     /**
      * Set stage name.
-     * @param name The name
+     * @param name Name of the stage
      */
     @QueryParam("stage")
     public void setStage(final String name) {
@@ -86,8 +80,32 @@ public final class BoutStylesheetRs extends AbstractRs {
     @GET
     @Path("/bout.xsl")
     @Produces("text/xsl")
-    public String xsl() {
-        return "test";
+    public String boutXsl() {
+        final VelocityContext context = new VelocityContext();
+        context.put("bout", this.number);
+        try {
+            context.put("stage", URLEncoder.encode(this.stage, "UTF-8"));
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        return TextUtils.format("com/netbout/rest/bout.xsl.vm", context);
+    }
+
+    /**
+     * Get stage XSL.
+     * @return The XSL
+     */
+    @GET
+    @Path("/stage.xsl")
+    @Produces("text/xsl")
+    public String stageXsl() {
+        String xsl;
+        if (this.stage.isEmpty()) {
+            xsl = "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>";
+        } else {
+            xsl = "?";
+        }
+        return xsl;
     }
 
 }

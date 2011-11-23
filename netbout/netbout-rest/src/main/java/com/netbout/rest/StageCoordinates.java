@@ -49,7 +49,7 @@ public final class StageCoordinates {
     /**
      * Name of stage.
      */
-    private transient String stage;
+    private transient String stage = "";
 
     /**
      * Place of stage.
@@ -57,19 +57,10 @@ public final class StageCoordinates {
     private transient String place = "";
 
     /**
-     * Does it have stage?
-     * @return Yes or no?
-     */
-    public boolean hasStage() {
-        return this.stage != null;
-    }
-
-    /**
      * Get stage.
      * @return The name of it
      */
     public String getStage() {
-        assert this.hasStage();
         return this.stage;
     }
 
@@ -86,7 +77,6 @@ public final class StageCoordinates {
      * @return The name of it
      */
     public String getPlace() {
-        assert this.hasStage();
         return this.place;
     }
 
@@ -95,7 +85,6 @@ public final class StageCoordinates {
      * @param plce The place name
      */
     public void setPlace(final String plce) {
-        assert this.hasStage();
         this.place = plce;
     }
 
@@ -129,16 +118,12 @@ public final class StageCoordinates {
      */
     @Override
     public String toString() {
-        String text = "";
-        if (this.hasStage()) {
-            text = String.format(
-                "%s%s%s",
-                TextUtils.toBase(this.stage),
-                this.SEPARATOR,
-                TextUtils.toBase(this.place)
-            );
-        }
-        return text;
+        return String.format(
+            "%s%s%s",
+            TextUtils.toBase(this.stage),
+            this.SEPARATOR,
+            TextUtils.toBase(this.place)
+        );
     }
 
 }
