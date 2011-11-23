@@ -24,45 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
-
-import org.apache.velocity.VelocityContext;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 /**
- * Test case for {@link TextUtils}.
+ * Supplementary utils, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextUtilsTest {
-
-    /**
-     * Base64 conversions.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testBaseConversions() throws Exception {
-        final String text = "\u041F\u0435\u0442\u0440 I";
-        MatcherAssert.assertThat(
-            TextUtils.fromBase(TextUtils.toBase(text)),
-            Matchers.equalTo(text)
-        );
-    }
-
-    /**
-     * Convert text with velocity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testVelocityConversion() throws Exception {
-        final VelocityContext context = new VelocityContext();
-        final String xsl = TextUtils.format(
-            "com/netbout/rest/bout.xsl.vm",
-            context
-        );
-        MatcherAssert.assertThat(xsl, Matchers.containsString("xsl:include"));
-    }
-
-}
+package com.netbout.utils;

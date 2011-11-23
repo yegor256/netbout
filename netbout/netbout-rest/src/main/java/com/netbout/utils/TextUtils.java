@@ -26,7 +26,14 @@
  */
 package com.netbout.utils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 /**
  * Text utils.
@@ -74,6 +81,35 @@ public final class TextUtils {
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(ex);
         }
+    }
+
+    /**
+     * Convert velocity context and template name into text.
+     * @param name Name of template
+     * @param context Velocity context
+     * @return The text
+     */
+    public static String format(final String name,
+        final VelocityContext context) {
+        final VelocityEngine engine = new VelocityEngine();
+        engine.setProperty("resource.loader", "cp");
+        engine.setProperty(
+            "cp.resource.loader.class",
+            ClasspathResourceLoader.class.getName()
+        );
+        engine.setProperty(
+            RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
+            "org.apache.velocity.runtime.log.Log4JLogChute"
+        );
+        engine.setProperty(
+            "runtime.log.logsystem.log4j.logger",
+            "org.apache.velocity"
+        );
+        engine.init();
+        final Template template = engine.getTemplate(name);
+        final StringWriter writer = new StringWriter();
+        template.merge(context, new PrintWriter(writer));
+        return writer.toString();
     }
 
 }
