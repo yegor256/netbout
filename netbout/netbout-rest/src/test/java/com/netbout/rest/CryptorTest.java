@@ -26,19 +26,23 @@
  */
 package com.netbout.rest;
 
-import com.netbout.spi.Entry;
-import com.netbout.spi.Identity;
-import com.netbout.spi.User;
+import com.netbout.hub.HubIdentity;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Test case for {@link Cryptor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(HubIdentity.class)
 public final class CryptorTest {
 
     /**
@@ -49,21 +53,17 @@ public final class CryptorTest {
     public void testEncryptionDecryption() throws Exception {
         final String uname = "Alex Doe";
         final String iname = "\u041F\u0435\u0442\u0440 I";
-        final Identity identity = Mockito.mock(Identity.class);
+        final HubIdentity identity = PowerMockito.mock(HubIdentity.class);
         Mockito.doReturn(iname).when(identity).name();
-        final User user = Mockito.mock(User.class);
-        Mockito.doReturn(user).when(identity).user();
-        Mockito.doReturn(uname).when(user).name();
-        final Entry entry = Mockito.mock(Entry.class);
-        Mockito.doReturn(user).when(entry).user(uname);
-        Mockito.doReturn(identity).when(user).identity(iname);
-        final String hash = new Cryptor(entry).encrypt(identity);
+        Mockito.doReturn(uname).when(identity).user();
+        final String hash = new Cryptor().encrypt(identity);
         MatcherAssert.assertThat(
             hash.matches("[\\w=\\+\\./]+"),
             Matchers.describedAs(hash, Matchers.is(true))
         );
-        final Identity discovered = new Cryptor(entry).decrypt(hash);
-        MatcherAssert.assertThat(discovered, Matchers.equalTo(identity));
+        final HubIdentity discovered = new Cryptor().decrypt(hash);
+        MatcherAssert.assertThat(discovered.name(), Matchers.equalTo(iname));
+        MatcherAssert.assertThat(discovered.user(), Matchers.equalTo(uname));
     }
 
 }

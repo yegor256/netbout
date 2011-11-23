@@ -82,8 +82,8 @@ public final class HubUser {
      * @param name The name of it
      * @return The identity found
      */
-    public Identity identity(final String name) {
-        final Identity identity = Identities.make(name, this);
+    public HubIdentity identity(final String name) {
+        final HubIdentity identity = Identities.make(name, this);
         Logger.debug(
             this,
             "#identity('%s'): found",

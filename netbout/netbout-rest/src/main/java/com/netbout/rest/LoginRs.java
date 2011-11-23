@@ -26,10 +26,12 @@
  */
 package com.netbout.rest;
 
+import com.netbout.hub.HubEntry;
+import com.netbout.hub.HubIdentity;
+import com.netbout.hub.HubUser;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
-import com.netbout.spi.User;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.rexsl.core.Manifests;
@@ -108,7 +110,7 @@ public final class LoginRs extends AbstractRs {
     @Path("/fb")
     @GET
     public Response fbauth(@QueryParam("code") final String code) {
-        Identity identity;
+        HubIdentity identity;
         try {
             identity = this.authenticate(code);
         } catch (IOException ex) {
@@ -129,16 +131,11 @@ public final class LoginRs extends AbstractRs {
      * @return The user found
      * @throws IOException If some problem with FB
      */
-    private Identity authenticate(final String code) throws IOException {
+    private HubIdentity authenticate(final String code) throws IOException {
         final String token = this.token(code);
         final com.restfb.types.User fbuser = this.fbUser(token);
-        final User user = this.entry().user(fbuser.getId());
-        Identity identity;
-        try {
-            identity = user.identity(fbuser.getId());
-        } catch (com.netbout.spi.DuplicateIdentityException ex) {
-            throw new IOException(ex);
-        }
+        final HubUser user = HubEntry.user(fbuser.getId());
+        final HubIdentity identity = user.identity(fbuser.getId());
         identity.alias(fbuser.getName());
         identity.setPhoto(
             UriBuilder

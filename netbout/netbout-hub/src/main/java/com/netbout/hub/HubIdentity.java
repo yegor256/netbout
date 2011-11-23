@@ -107,6 +107,39 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof HubIdentity)
+            && this.iname.equals(((HubIdentity) obj).iname);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.iname.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String user() {
+        return this.iuser.name();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return this.iname;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Bout start() {
         final Long num = Storage.INSTANCE.create();
         BoutData data;
@@ -168,14 +201,6 @@ public final class HubIdentity implements Identity {
             list.size()
         );
         return list;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String name() {
-        return this.iname;
     }
 
     /**

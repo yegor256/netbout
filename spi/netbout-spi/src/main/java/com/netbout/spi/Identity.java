@@ -42,6 +42,18 @@ import java.util.Set;
 public interface Identity {
 
     /**
+     * Get the name of his user.
+     * @return The name of the user
+     */
+    String user();
+
+    /**
+     * Get name of the identity, which is unique in the system.
+     * @return The name of the identity
+     */
+    String name();
+
+    /**
      * Start new bout.
      * @return The bout just created
      */
@@ -62,12 +74,6 @@ public interface Identity {
      * @throws BoutNotFoundException If this bout doesn't exist
      */
     Bout bout(Long number) throws BoutNotFoundException;
-
-    /**
-     * Get name of the identity, which is unique in the system.
-     * @return The name of the identity
-     */
-    String name();
 
     /**
      * Get a photo of this identity.
