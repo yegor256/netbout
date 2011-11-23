@@ -30,39 +30,20 @@
 package com.netbout.spi;
 
 /**
- * Thowable when such identity is already assigned to another user.
+ * Thowable when identity is not found.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see Identity#friend(String)
  */
-public final class DuplicateIdentityException extends Exception {
+public final class IdentityNotFoundException extends Exception {
 
     /**
      * Public ctor.
-     * @param cause Root cause of the exception
+     * @param name The name of identity
      */
-    public DuplicateIdentityException(final Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Public ctor.
-     * @param message Text message of the exception
-     * @param args Arguments for <tt>String.format()</tt>
-     */
-    public DuplicateIdentityException(final String message,
-        final Object... args) {
-        super(String.format(message, args));
-    }
-
-    /**
-     * Public ctor.
-     * @param message Additional message
-     * @param cause Root cause of the exception
-     */
-    public DuplicateIdentityException(final String message,
-        final Throwable cause) {
-        super(message, cause);
+    public IdentityNotFoundException(final String name) {
+        super(String.format("Identity '%s' not found", name));
     }
 
 }
