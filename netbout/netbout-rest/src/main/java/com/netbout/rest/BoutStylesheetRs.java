@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.queue.HelpQueue;
 import com.netbout.utils.TextUtils;
 import java.net.URLEncoder;
 import javax.ws.rs.GET;
@@ -48,7 +49,7 @@ public final class BoutStylesheetRs extends AbstractRs {
     /**
      * Number of the bout.
      */
-    private transient Long number;
+    private transient Long bout;
 
     /**
      * Name of the stage.
@@ -60,8 +61,8 @@ public final class BoutStylesheetRs extends AbstractRs {
      * @param num The number
      */
     @PathParam("num")
-    public void setNumber(final Long num) {
-        this.number = num;
+    public void setBout(final Long num) {
+        this.bout = num;
     }
 
     /**
@@ -82,7 +83,7 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Produces("text/xsl")
     public String boutXsl() {
         final VelocityContext context = new VelocityContext();
-        context.put("bout", this.number);
+        context.put("bout", this.bout);
         try {
             context.put("stage", URLEncoder.encode(this.stage, "UTF-8"));
         } catch (java.io.UnsupportedEncodingException ex) {
@@ -103,7 +104,12 @@ public final class BoutStylesheetRs extends AbstractRs {
         if (this.stage.isEmpty()) {
             xsl = "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>";
         } else {
-            xsl = "?";
+            xsl = HelpQueue
+                .make("render-stage-xsl")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(this.bout)
+                .arg(this.stage)
+                .exec(String.class);
         }
         return xsl;
     }

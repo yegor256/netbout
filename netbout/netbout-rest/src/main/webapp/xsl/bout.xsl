@@ -49,7 +49,7 @@
     <xsl:template name="head">
         <link href="/css/bout.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
-        <!-- <xsl:call-template name="stage-head"/> -->
+        <xsl:apply-templates select="/page"/>
     </xsl:template>
 
     <xsl:template name="content">
@@ -161,10 +161,7 @@
                 </ul>
                 <xsl:if test="/page/bout/stage">
                     <div id="stage">
-                        <xsl:copy-of select="/page/bout/stage"/>
-                        <!-- <xsl:call-template name="stage">
-                            <xsl:with-param name="root" select="." />
-                        </xsl:call-template> -->
+                        <xsl:apply-templates select="/page/bout/stage"/>
                     </div>
                 </xsl:if>
             </div>
