@@ -59,7 +59,7 @@ public final class TypeMapper {
     /**
      * NULL representation in text.
      */
-    private static final String TEXT_NULL = "NULL";
+    public static final String TEXT_NULL = "NULL";
 
     /**
      * NULL representation in object.

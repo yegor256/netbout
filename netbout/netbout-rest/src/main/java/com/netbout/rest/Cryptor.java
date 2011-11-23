@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import com.netbout.spi.Entry;
 import com.netbout.spi.Identity;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 

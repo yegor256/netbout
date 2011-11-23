@@ -31,13 +31,10 @@ import com.netbout.queue.ProgressReport;
 import com.netbout.queue.TextProgressReport;
 import com.netbout.rest.StageCoordinates;
 import java.io.StringReader;
-import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -112,6 +109,7 @@ public final class LongStage {
     /**
      * Get XML of one stage.
      * @return The XML
+     * @throws Exception If some problem with DOM operations
      */
     @XmlAnyElement(lax = true)
     @XmlMixed

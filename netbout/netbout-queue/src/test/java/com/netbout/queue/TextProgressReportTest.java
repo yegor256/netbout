@@ -44,6 +44,7 @@ public final class TextProgressReportTest {
     @Test
     public void testProgressReporting() throws Exception {
         final ProgressReport report = new TextProgressReport();
+        // @checkstyle MagicNumber (1 line)
         report.time(67 * 1000 * 1000, 33 * 1000 * 1000);
         MatcherAssert.assertThat(
             report.toString(),

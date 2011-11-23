@@ -26,8 +26,8 @@
  */
 package com.netbout.queue;
 
-import com.netbout.spi.Identity;
 import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
@@ -77,6 +77,7 @@ public final class HelpQueueTest {
      */
     @Test
     public void testNullResponseAndDefault() throws Exception {
+        // @checkstyle MultipleStringLiterals (1 line)
         final Boolean result = HelpQueue.make("null-response")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
             .asDefault(Boolean.TRUE)
@@ -90,6 +91,7 @@ public final class HelpQueueTest {
      */
     @Test
     public void testNullResponseAndWithoutDefault() throws Exception {
+        // @checkstyle MultipleStringLiterals (1 line)
         final Boolean result = HelpQueue.make("null-response")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)
             .exec(Boolean.class);

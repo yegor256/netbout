@@ -100,6 +100,7 @@ public final class StageCoordinates {
     /**
      * Create stage coordicates from string.
      * @param pair The information from cookie
+     * @return The object just built
      */
     public static StageCoordinates valueOf(final String pair) {
         final StageCoordinates coords = new StageCoordinates();

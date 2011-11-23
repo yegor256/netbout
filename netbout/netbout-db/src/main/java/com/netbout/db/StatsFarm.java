@@ -24,15 +24,18 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.hh;
+package com.netbout.db;
 
-import com.netbout.hub.Identities;
-import com.netbout.hub.data.Storage;
 import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
+import com.ymock.util.Logger;
 import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -62,20 +65,6 @@ public final class StatsFarm implements IdentityAware {
     public void init(final Identity idnt) {
         this.identity = idnt;
     }
-
-    // /**
-    //  * Post new request to the stage, and calculate new cookie.
-    //  * @param number Bout where it is happening
-    //  * @param path URI path of the request
-    //  * @param params HTTP parameters (GET and POST) as pairs,
-    //  *  e.g. "name=John Doe" (already decoded)
-    //  * @return The cookie
-    //  */
-    // @Operation("route-stage-request")
-    // public String routeStageRequest(final Long number, final String path,
-    //     final String params) {
-    //     return "";
-    // }
 
     /**
      * Does this stage exist in the bout?
@@ -109,12 +98,9 @@ public final class StatsFarm implements IdentityAware {
                 .newDocumentBuilder().newDocument();
             final Element root = doc.createElement("data");
             doc.appendChild(root);
-            final Element identities = doc.createElement("identities");
-            root.appendChild(identities);
-            identities.appendChild(doc.createTextNode(Identities.stats()));
-            final Element storage = doc.createElement("storage");
-            root.appendChild(storage);
-            storage.appendChild(doc.createTextNode(Storage.INSTANCE.stats()));
+            final Element summary = doc.createElement("summary");
+            root.appendChild(summary);
+            summary.appendChild(doc.createTextNode(this.summary()));
             final Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer();
             final StringWriter writer = new StringWriter();
@@ -124,13 +110,59 @@ public final class StatsFarm implements IdentityAware {
         return xml;
     }
 
-    // /**
-    //  * Get XSL for the stage.
-    //  * @return The XSL source
-    //  */
-    // @Operation("render-stage-xsl")
-    // public String renderStageXsl() {
-    //     return "";
-    // }
+    /**
+     * Build text summary.
+     * @return The summary
+     * @throws SQLException If some SQL problem inside
+     */
+    private String summary() throws SQLException {
+        final StringBuilder bldr = new StringBuilder();
+        bldr.append(
+            String.format(
+                "%s bouts total%n",
+                this.query("SELECT COUNT(*) FROM bout")
+            )
+        );
+        return bldr.toString();
+    }
+
+    /**
+     * Build text summary.
+     * @param sql SQL query with single expected result
+     * @return The result
+     * @throws SQLException If some SQL problem inside
+     */
+    private String query(final String sql) throws SQLException {
+        final long start = System.currentTimeMillis();
+        final Connection conn = Database.connection();
+        String result;
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(sql);
+            final ResultSet rset = stmt.executeQuery();
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Nothing for %s",
+                            sql
+                        )
+                    );
+                }
+                result = rset.getString(1);
+            } finally {
+                rset.close();
+            }
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#query('%s'): retrieved %s [%dms]",
+            sql,
+            result,
+            System.currentTimeMillis() - start
+        );
+        return result;
+    }
 
 }

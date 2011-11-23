@@ -39,39 +39,40 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class Transaction implements Token {
 
     /**
      * Mnemo.
      */
-    private final transient String mnemo;
+    private final transient String imnemo;
 
     /**
      * Priority.
      */
-    private transient HelpQueue.Priority tpriority;
+    private transient HelpQueue.Priority ipriority;
 
     /**
      * Default value.
      */
-    private transient String def = "NULL";
+    private transient String def = TypeMapper.TEXT_NULL;
 
     /**
      * Arguments.
      */
-    private final transient List<String> args = new ArrayList<String>();
+    private final transient List<String> iargs = new ArrayList<String>();
 
     /**
      * The result.
      */
-    private transient String result;
+    private transient String iresult;
 
     /**
      * Public ctor.
-     * @param text Mnemo-code of the request
+     * @param mnemo Mnemo-code of the request
      */
-    public Transaction(final String text) {
-        this.mnemo = text;
+    public Transaction(final String mnemo) {
+        this.imnemo = mnemo;
     }
 
     /**
@@ -79,7 +80,7 @@ public final class Transaction implements Token {
      */
     @Override
     public String mnemo() {
-        return this.mnemo;
+        return this.imnemo;
     }
 
     /**
@@ -87,24 +88,24 @@ public final class Transaction implements Token {
      */
     @Override
     public String arg(final int pos) {
-        return this.args.get(pos);
+        return this.iargs.get(pos);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void result(final String rslt) {
-        this.result = rslt;
+    public void result(final String result) {
+        this.iresult = result;
     }
 
     /**
      * Set priority.
-     * @param pri Priority
+     * @param priority Priority
      * @return This object
      */
-    public Transaction priority(final HelpQueue.Priority pri) {
-        this.tpriority = pri;
+    public Transaction priority(final HelpQueue.Priority priority) {
+        this.ipriority = priority;
         return this;
     }
 
@@ -135,7 +136,7 @@ public final class Transaction implements Token {
      */
     public Transaction arg(final Object arg) {
         try {
-            this.args.add(TypeMapper.toText(arg));
+            this.iargs.add(TypeMapper.toText(arg));
         } catch (com.netbout.spi.HelperException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -163,21 +164,21 @@ public final class Transaction implements Token {
      * @return The result
      */
     public <T> T exec(final Class<T> type) {
-        assert this.tpriority != null;
+        assert this.ipriority != null;
         HelpQueue.execute(this);
-        if (this.result == null || "NULL".equals(this.result)) {
-            this.result = this.def;
+        if (this.iresult == null || TypeMapper.TEXT_NULL.equals(this.iresult)) {
+            this.iresult = this.def;
         }
         Logger.debug(
             this,
             "#exec(%s, %s): returned '%s' for [%s]",
-            this.mnemo,
+            this.mnemo(),
             type.getName(),
-            this.result,
+            this.iresult,
             this.argsAsText()
         );
         try {
-            return (T) TypeMapper.toObject(this.result, type);
+            return (T) TypeMapper.toObject(this.iresult, type);
         } catch (com.netbout.spi.HelperException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -191,26 +192,10 @@ public final class Transaction implements Token {
         Logger.debug(
             Transaction.class,
             "#exec(%s): done for [%s]",
-            this.mnemo,
+            this.mnemo(),
             this.argsAsText()
         );
     }
-
-    // /**
-    //  * Get arguments as array.
-    //  * @return The args
-    //  */
-    // protected String[] getArgs() {
-    //     return this.args.toArray(new String[] {});
-    // }
-    //
-    // /**
-    //  * Get default result value.
-    //  * @return The value
-    //  */
-    // protected String getDefault() {
-    //     return this.def;
-    // }
 
     /**
      * Arguments as text, for logging.
@@ -219,7 +204,7 @@ public final class Transaction implements Token {
     private String argsAsText() {
         return String.format(
             "'%s'",
-            StringUtils.join(this.args, "', '")
+            StringUtils.join(this.iargs, "', '")
         );
     }
 

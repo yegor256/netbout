@@ -37,8 +37,8 @@ public interface ProgressReport {
     /**
      * Report time situation.
      * @param spent How many nanoseconds we already spent
-     * @param etc How many nanoseconds to complete
+     * @param ttc How many nanoseconds to complete
      */
-    void time(long elapsed, long etc);
+    void time(long spent, long ttc);
 
 }

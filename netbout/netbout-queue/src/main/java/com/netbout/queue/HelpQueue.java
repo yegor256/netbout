@@ -27,7 +27,6 @@
 package com.netbout.queue;
 
 import com.netbout.spi.Helper;
-import com.ymock.util.Logger;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -89,7 +88,7 @@ public final class HelpQueue {
 
     /**
      * Execute one transaction.
-     * @param trans The transaction to execute
+     * @param token The transaction to execute
      */
     protected static void execute(final Transaction token) {
         for (Helper helper : HelpQueue.HELPERS) {

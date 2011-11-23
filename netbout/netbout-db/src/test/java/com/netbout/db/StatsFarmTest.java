@@ -24,11 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.db;
+
+import com.netbout.spi.Identity;
+import com.rexsl.test.XhtmlConverter;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.xmlmatchers.XmlMatchers;
 
 /**
- * Queue of helpers.
- *
+ * Test case of {@link StatsFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.queue;
+public final class StatsFarmTest {
+
+    /**
+     * Farm to work with.
+     */
+    private final transient StatsFarm farm = new StatsFarm();
+
+    /**
+     * Find aliases of some identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testSummaryRendering() throws Exception {
+        final Identity identity = Mockito.mock(Identity.class);
+        Mockito.doReturn("some-name").when(identity).name();
+        this.farm.init(identity);
+        final String xml = this.farm.renderStageXml(1L, identity.name(), "");
+        MatcherAssert.assertThat(
+            XhtmlConverter.the(xml),
+            XmlMatchers.hasXPath("/data/summary")
+        );
+    }
+
+}

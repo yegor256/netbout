@@ -37,7 +37,7 @@ public final class TextProgressReport implements ProgressReport {
     /**
      * The report.
      */
-    private String report = "unknown state";
+    private transient String report = "unknown state";
 
     /**
      * {@inheritDoc}
@@ -51,12 +51,13 @@ public final class TextProgressReport implements ProgressReport {
      * {@inheritDoc}
      */
     @Override
-    public void time(final long spent, final long etc) {
+    public void time(final long spent, final long ttc) {
         this.report = String.format(
             "%.2fms spent, %.2fms to complete: %d%%",
+            // @checkstyle MagicNumber (3 lines)
             (double) spent / (1000L * 1000),
-            (double) etc / (1000L * 1000),
-            100 * spent / (spent + etc)
+            (double) ttc / (1000L * 1000),
+            100 * spent / (spent + ttc)
         );
     }
 
