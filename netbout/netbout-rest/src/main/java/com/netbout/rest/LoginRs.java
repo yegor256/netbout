@@ -31,7 +31,6 @@ import com.netbout.hub.HubIdentity;
 import com.netbout.hub.HubUser;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
-import com.netbout.spi.Identity;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.rexsl.core.Manifests;

@@ -29,7 +29,6 @@ package com.netbout.rest;
 import com.netbout.hub.HubIdentity;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
-import com.netbout.spi.Identity;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import java.net.URI;

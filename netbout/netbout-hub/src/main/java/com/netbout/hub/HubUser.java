@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 
 /**

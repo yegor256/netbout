@@ -108,7 +108,7 @@ public final class ResourceBuilder {
         // @checkstyle IllegalType (1 line)
         final AbstractRs rest = (AbstractRs) type.newInstance();
         // register this user
-        new HubEntry().user("John Doe").identity("johnny.doe")
+        HubEntry.user("John Doe").identity("johnny.doe")
             .setPhoto(new URL("http://localhost/image.png"));
         rest.setUriInfo(this.uriInfo());
         rest.setHttpHeaders(this.httpHeaders());

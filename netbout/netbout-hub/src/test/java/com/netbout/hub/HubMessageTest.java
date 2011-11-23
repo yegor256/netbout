@@ -46,8 +46,7 @@ public final class HubMessageTest {
      */
     @Test
     public void testMessagePosting() throws Exception {
-        final Identity identity = new HubEntry()
-            .user("Mark III").identity("mark");
+        final Identity identity = HubEntry.user("Mark III").identity("mark");
         final Bout bout = identity.start();
         bout.post("hi there!");
         MatcherAssert.assertThat(
@@ -62,8 +61,8 @@ public final class HubMessageTest {
      */
     @Test
     public void testMessageSeenStatus() throws Exception {
-        final Identity writer = new HubEntry().user("Emilio").identity("emi");
-        final Identity reader = new HubEntry().user("Doug").identity("doug");
+        final Identity writer = HubEntry.user("Emilio").identity("emi");
+        final Identity reader = HubEntry.user("Doug").identity("doug");
         final Bout wbout = writer.start();
         final Message wmessage = wbout.post("simple text, why not?");
         MatcherAssert.assertThat(

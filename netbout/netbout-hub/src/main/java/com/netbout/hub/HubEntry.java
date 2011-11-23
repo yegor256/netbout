@@ -39,6 +39,13 @@ import java.util.Set;
 public final class HubEntry {
 
     /**
+     * It's a utility class.
+     */
+    private HubEntry() {
+        // empty
+    }
+
+    /**
      * Find user by name.
      * @param name The name of the user to find
      * @return The user found
@@ -55,7 +62,8 @@ public final class HubEntry {
 
     /**
      * Find identities by name.
-     * @param
+     * @param keyword The keyword
+     * @return Set of identities found
      */
     public static Set<Identity> find(final String keyword) {
         final Set<Identity> identities =

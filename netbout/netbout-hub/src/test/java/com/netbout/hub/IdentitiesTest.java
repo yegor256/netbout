@@ -44,7 +44,7 @@ public final class IdentitiesTest {
      */
     @Test
     public void testAliasesManipulations() throws Exception {
-        final Identity identity = new HubEntry().user("Matt").identity("mati");
+        final Identity identity = HubEntry.user("Matt").identity("mati");
         final String alias = "mat@example.com";
         identity.alias(alias);
         identity.alias("matthew.gilbert@example.com");
