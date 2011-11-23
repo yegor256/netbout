@@ -26,6 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.netbout.utils.TextUtils;
+
 /**
  * Coordinates of a stage.
  *

@@ -68,7 +68,7 @@ public final class LoginRs extends AbstractRs {
             .queryParam("redirect_uri", this.redirectUri())
             .build();
         return new PageBuilder()
-            .stylesheet("login")
+            .stylesheet("/xsl/login.xsl")
             .build(AbstractPage.class)
             .init(this)
             .append(

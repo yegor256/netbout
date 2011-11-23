@@ -67,7 +67,7 @@ public final class InboxRs extends AbstractRs {
             );
         }
         return new PageBuilder()
-            .stylesheet("inbox")
+            .stylesheet("/xsl/inbox.xsl")
             .build(AbstractPage.class)
             .init(this)
             .append(JaxbGroup.build(bouts, "bouts"))

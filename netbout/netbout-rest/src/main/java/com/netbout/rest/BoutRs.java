@@ -297,7 +297,7 @@ public final class BoutRs extends AbstractRs {
      */
     private Page page() {
         final Page page = new PageBuilder()
-            .stylesheet("bout")
+            .stylesheet("/xsl/bout.xsl")
             .build(AbstractPage.class)
             .init(this)
             .append(

@@ -26,63 +26,68 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.PageBuilder;
+import com.netbout.hub.HubEntry;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Participant;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 /**
- * Miscellaneous pages.
+ * Stage-related requests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/m")
-public final class MiscRs extends AbstractRs {
+@Path("/{num : [0-9]+}/xsl")
+public final class BoutStylesheetRs extends AbstractRs {
 
     /**
-     * Get "error" page by code.
-     * @param code Error code
-     * @return The JAX-RS response
-     * @todo #122 Should be implemented nicely,
-     *  see http://stackoverflow.com/questions/8179547
+     * Number of the bout.
      */
-    @GET
-    @Path("/{code : \\d{3}}")
-    public Response notFoundPage(@PathParam("code") final Integer code) {
-        final Response.Status status = Response.Status.fromStatusCode(code);
-        String message = "unknown";
-        if (status != null) {
-            message = status.toString();
-        }
-        return new PageBuilder()
-            .stylesheet("/xsl/error.xsl")
-            .build(AbstractPage.class)
-            .init(this)
-            .append(
-                new JaxbBundle("error")
-                    .add("code", code)
-                    .up()
-                    .add("message", message)
-                    .up()
-            )
-            .anonymous()
-            .status(code)
-            .build();
+    private transient Long number;
+
+    /**
+     * Name of the stage.
+     */
+    private transient String stage;
+
+    /**
+     * Set bout number.
+     * @param num The number
+     */
+    @PathParam("num")
+    public void setNumber(final Long num) {
+        this.number = num;
     }
 
     /**
-     * Get "error" page by code, when with POST.
-     * @param code Error code
-     * @return The JAX-RS response
+     * Set stage name.
+     * @param name The name
      */
-    @POST
-    @Path("/{code : \\d{3}}")
-    public Response notFoundPagePost(@PathParam("code") final Integer code) {
-        return this.notFoundPage(code);
+    @QueryParam("stage")
+    public void setStage(final String name) {
+        this.stage = name;
+    }
+
+    /**
+     * Get bout XSL.
+     * @return The XSL
+     */
+    @GET
+    @Path("/bout.xsl")
+    @Produces("text/xsl")
+    public String xsl() {
+        return "test";
     }
 
 }

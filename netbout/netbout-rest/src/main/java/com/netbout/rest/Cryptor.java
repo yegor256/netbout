@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.hub.HubEntry;
 import com.netbout.hub.HubIdentity;
+import com.netbout.utils.TextUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
