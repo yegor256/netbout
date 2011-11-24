@@ -40,6 +40,12 @@ import javax.ws.rs.ext.Providers;
 public interface Resource {
 
     /**
+     * When this resource was created, in nano seconds.
+     * @return The time
+     */
+    long nano();
+
+    /**
      * Message to show.
      * @return The message
      */
