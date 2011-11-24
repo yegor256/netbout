@@ -130,7 +130,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <rempl.dir>${basedir}</rempl.dir>
     </properties>
 
     <repositories>
@@ -260,13 +259,9 @@
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
                         <version since="21 Nov 2011">0.1.7</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.netbout.spi</groupId>
-                                <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">2.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
+                        <configuration>
+                            <license>file:${basedir}/LICENSE.txt</license>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
@@ -298,23 +293,11 @@
                                 </goals>
                                 <configuration>
                                     <descriptorRefs>
-                                        <!--
-                                        This descriptor is in netbout-tk sub-module, which is in classpath of
-                                        this plugin.
-                                        @see http://maven.apache.org/plugins/maven-assembly-plugin/examples/sharing-descriptors.html
-                                        -->
-                                        <descriptorRef>netbout-sources</descriptorRef>
+                                        <descriptorRef>src</descriptorRef>
                                     </descriptorRefs>
                                 </configuration>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.netbout.spi</groupId>
-                                <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">2.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
@@ -355,30 +338,9 @@
                                     </reports>
                                 </plugin>
                                 <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>taglist-maven-plugin</artifactId>
-                                    <version since="15 Nov 2010">2.4</version>
-                                    <configuration>
-                                        <tagListOptions>
-                                            <tagClasses>
-                                                <tagClass>
-                                                    <displayName>ToDo</displayName>
-                                                    <tags>
-                                                        <tag>
-                                                            <matchString>@todo</matchString>
-                                                            <matchType>exact</matchType>
-                                                        </tag>
-                                                    </tags>
-                                                </tagClass>
-                                            </tagClasses>
-                                        </tagListOptions>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
                                     <artifactId>maven-javadoc-plugin</artifactId>
                                     <version since="5 Jun 2011">2.8</version>
                                     <configuration>
-                                        <stylesheetfile>javadoc/screen.css</stylesheetfile>
                                         <tags>
                                             <tag>
                                                 <name>todo</name>
@@ -394,25 +356,6 @@
                                                 </reports>
                                             </reportSet>
                                         </reportSets>
-                                        <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-                                        <docletArtifact>
-                                            <groupId>org.umlgraph</groupId>
-                                            <artifactId>doclet</artifactId>
-                                            <version>5.1</version>
-                                        </docletArtifact>
-                                        <additionalparam>
-                                            -views
-                                            -all
-                                        </additionalparam>
-                                        <useStandardDocletOptions>true</useStandardDocletOptions>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
-                                    <groupId>com.rempl.plugins</groupId>
-                                    <artifactId>rempl-maven-plugin</artifactId>
-                                    <version since="10 Oct 2011">1.1.3</version>
-                                    <configuration>
-                                        <rom>${basedir}/src/rempl/rom.xml</rom>
                                     </configuration>
                                 </plugin>
                                 <plugin>
@@ -430,13 +373,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.netbout.spi</groupId>
-                                <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">2.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
