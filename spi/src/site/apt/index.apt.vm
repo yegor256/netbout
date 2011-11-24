@@ -38,6 +38,6 @@
 ~~ @version $Id$
 ~~
 
-Introduction
+Service Provider Interface (SPI) for Netbout.com
 
-  ...
+  More details in {{{./apidocs}Javadocs API}}.

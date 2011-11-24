@@ -49,15 +49,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout.spi</groupId>
-    <artifactId>netbout</artifactId>
+    <artifactId>netbout-spi</artifactId>
     <version netbout="yes">2.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>com.netbout.spi:netbout</name>
-
-    <modules>
-        <module>netbout-tk</module>
-        <module>netbout-spi</module>
-    </modules>
+    <packaging>jar</packaging>
+    <name>com.netbout.spi</name>
 
     <description>Service Programming Interface for NetBout.com</description>
     <url>http://spi.netbout.com</url>
@@ -135,7 +130,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <rempl.dir>${basedir}</rempl.dir>
     </properties>
 
     <repositories>
@@ -146,93 +140,107 @@
         <!-- intentionally empty -->
     </pluginRepositories>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!--
-                This library simplifies string operations. This is
-                org.apache.commons.lang.*.
-                -->
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version since="15 Oct 2010">2.5</version>
-            </dependency>
-            <dependency>
-                <!--
-                This library simplifies file-management operations.
-                -->
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-io</artifactId>
-                <version since="9 Oct 2010">1.3.2</version>
-            </dependency>
-            <dependency>
-                <!--
-                Logging facility, on top of SLF4J.
-                -->
-                <groupId>com.ymock</groupId>
-                <artifactId>ymock-util</artifactId>
-                <version since="2 Nov 2011">1.0</version>
-            </dependency>
-            <dependency>
-                <!-- Forward all calls to SLF4J to LOG4J. -->
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version since="19 Sep 2011">1.6.2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <!-- Use LOG4J logging facility for all loggings. -->
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version since="19 Sep 2011">1.2.16</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <!--
-                We are using JUnit framework for unit test organization
-                and management. This framework is the most stable and mature
-                in the market. Other options considered: TestNG.
-                @link http://www.junit.org/
-                -->
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version since="3 July 2011">4.8.2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <!--
-                Assertions and matchers for unit tests.
-                @link http://code.google.com/p/hamcrest/wiki/Tutorial
-                -->
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version since="6 Apr 2011">1.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <!--
-                XML matchers.
-                @link http://code.google.com/p/xml-matchers/
-                -->
-                <groupId>org.xmlmatchers</groupId>
-                <artifactId>xml-matchers</artifactId>
-                <version since="26 June 2011">0.10</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <!--
-                Mockito is used as a mocking library during testing.
-                Other options: jMock.
-                @link http://stackoverflow.com/questions/22697
-                @link http://www.mockito.org/
-                -->
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version since="9 Oct 2010">1.8.5</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <!--
+            This library simplifies string operations. This is
+            org.apache.commons.lang.*.
+            -->
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version since="15 Oct 2010">2.5</version>
+        </dependency>
+        <dependency>
+            <!--
+            This library simplifies file-management operations.
+            -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version since="9 Oct 2010">1.3.2</version>
+        </dependency>
+        <dependency>
+            <!--
+            Logging facility, on top of SLF4J.
+            -->
+            <groupId>com.ymock</groupId>
+            <artifactId>ymock-util</artifactId>
+            <version since="2 Nov 2011">1.0</version>
+        </dependency>
+        <dependency>
+            <!-- Forward all calls to SLF4J to LOG4J. -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version since="19 Sep 2011">1.6.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Use LOG4J logging facility for all loggings. -->
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version since="19 Sep 2011">1.2.16</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!--
+            We are using JUnit framework for unit test organization
+            and management. This framework is the most stable and mature
+            in the market. Other options considered: TestNG.
+            @link http://www.junit.org/
+            -->
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version since="3 July 2011">4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!--
+            Assertions and matchers for unit tests.
+            @link http://code.google.com/p/hamcrest/wiki/Tutorial
+            -->
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version since="6 Apr 2011">1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!--
+            XML matchers.
+            @link http://code.google.com/p/xml-matchers/
+            -->
+            <groupId>org.xmlmatchers</groupId>
+            <artifactId>xml-matchers</artifactId>
+            <version since="26 June 2011">0.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!--
+            Mockito is used as a mocking library during testing.
+            Other options: jMock.
+            @link http://stackoverflow.com/questions/22697
+            @link http://www.mockito.org/
+            -->
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version since="9 Oct 2010">1.8.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version since="1 Nov 2011">0.9.5</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version since="14 Nov 2011">2.0</version>
+        </dependency>
+        <dependency>
+            <!-- Base64 codec -->
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version since="8 Nov 2011">1.5</version>
+        </dependency>
+    </dependencies>
 
     <profiles>
         <profile>
@@ -251,13 +259,9 @@
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
                         <version since="21 Nov 2011">0.1.7</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.netbout.spi</groupId>
-                                <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">2.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
+                        <configuration>
+                            <license>file:${basedir}/LICENSE.txt</license>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
@@ -289,23 +293,11 @@
                                 </goals>
                                 <configuration>
                                     <descriptorRefs>
-                                        <!--
-                                        This descriptor is in netbout-tk sub-module, which is in classpath of
-                                        this plugin.
-                                        @see http://maven.apache.org/plugins/maven-assembly-plugin/examples/sharing-descriptors.html
-                                        -->
-                                        <descriptorRef>netbout-sources</descriptorRef>
+                                        <descriptorRef>src</descriptorRef>
                                     </descriptorRefs>
                                 </configuration>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.netbout.spi</groupId>
-                                <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">2.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
@@ -346,30 +338,9 @@
                                     </reports>
                                 </plugin>
                                 <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>taglist-maven-plugin</artifactId>
-                                    <version since="15 Nov 2010">2.4</version>
-                                    <configuration>
-                                        <tagListOptions>
-                                            <tagClasses>
-                                                <tagClass>
-                                                    <displayName>ToDo</displayName>
-                                                    <tags>
-                                                        <tag>
-                                                            <matchString>@todo</matchString>
-                                                            <matchType>exact</matchType>
-                                                        </tag>
-                                                    </tags>
-                                                </tagClass>
-                                            </tagClasses>
-                                        </tagListOptions>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
                                     <artifactId>maven-javadoc-plugin</artifactId>
                                     <version since="5 Jun 2011">2.8</version>
                                     <configuration>
-                                        <stylesheetfile>javadoc/screen.css</stylesheetfile>
                                         <tags>
                                             <tag>
                                                 <name>todo</name>
@@ -385,25 +356,6 @@
                                                 </reports>
                                             </reportSet>
                                         </reportSets>
-                                        <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-                                        <docletArtifact>
-                                            <groupId>org.umlgraph</groupId>
-                                            <artifactId>doclet</artifactId>
-                                            <version>5.1</version>
-                                        </docletArtifact>
-                                        <additionalparam>
-                                            -views
-                                            -all
-                                        </additionalparam>
-                                        <useStandardDocletOptions>true</useStandardDocletOptions>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
-                                    <groupId>com.rempl.plugins</groupId>
-                                    <artifactId>rempl-maven-plugin</artifactId>
-                                    <version since="10 Oct 2011">1.1.3</version>
-                                    <configuration>
-                                        <rom>${basedir}/src/rempl/rom.xml</rom>
                                     </configuration>
                                 </plugin>
                                 <plugin>
@@ -421,13 +373,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.netbout.spi</groupId>
-                                <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">2.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
