@@ -59,12 +59,10 @@ public final class MiscRs extends AbstractRs {
             message = status.toString();
         }
         return new PageBuilder()
-            // @checkstyle MultipleStringLiterals (1 line)
-            .stylesheet("error")
+            .stylesheet("/xsl/error.xsl")
             .build(AbstractPage.class)
             .init(this)
             .append(
-                // @checkstyle MultipleStringLiterals (1 line)
                 new JaxbBundle("error")
                     .add("code", code)
                     .up()

@@ -95,6 +95,9 @@ public final class HelpQueue {
             try {
                 if (helper.supports().contains(token.mnemo())) {
                     helper.execute(token);
+                    if (token.isCompleted()) {
+                        break;
+                    }
                 }
             } catch (com.netbout.spi.HelperException ex) {
                 throw new IllegalArgumentException(

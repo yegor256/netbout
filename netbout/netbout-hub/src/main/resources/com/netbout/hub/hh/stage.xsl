@@ -10,7 +10,7 @@
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
- * incident to the author by email: privacy@netbout.com.
+ * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -34,11 +34,23 @@
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:include href="/xsl/PageBout.xsl" />
-    <xsl:include href="/${id}/stage.xsl?uri=${xsl}" />
+    <xsl:template match="stage" mode="head">
+        <!-- nothing -->
+    </xsl:template>
 
-    <xsl:template name="stage-head">
-        <link href="/${id}/stage.css?uri=${css}" rel="stylesheet" type="text/css"></link>
+    <xsl:template match="stage">
+        <p>
+            <b>com.netbout.hub.Identities</b>:
+        </p>
+        <p style="white-space: pre-line;">
+            <xsl:value-of select="data/identities"/>
+        </p>
+        <p>
+            <b>com.netbout.hub.data.Storage</b>:
+        </p>
+        <p style="white-space: pre-line;">
+            <xsl:value-of select="data/storage"/>
+        </p>
     </xsl:template>
 
 </xsl:stylesheet>

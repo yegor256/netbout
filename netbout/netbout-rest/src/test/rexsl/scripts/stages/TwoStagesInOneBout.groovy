@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -27,36 +26,47 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
-    version="2.0" exclude-result-prefixes="xs">
+ */
+package com.netbout.rest.rexsl.scripts.stages
 
-    <xsl:output method="xhtml"/>
+import com.rexsl.test.TestClient
+import com.rexsl.test.XhtmlConverter
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
+import org.junit.Assert
+import org.xmlmatchers.XmlMatchers
+import org.hamcrest.Matchers
 
-    <xsl:include href="/xsl/layout.xsl" />
-
-    <xsl:template name="head">
-        <title>
-            <xsl:value-of select="/page/error/code"/>
-            <xsl:text>: error</xsl:text>
-        </title>
-    </xsl:template>
-
-    <xsl:template name="content">
-        <p>
-            <span style="color: red;">
-                <xsl:value-of select="/page/error/code"/>
-                <xsl:text>: </xsl:text>
-                <xsl:value-of select="/page/error/message"/>
-            </span>
-            <xsl:text>.
-                Maybe the page you're requesting is no longer available,
-                try to submit some other request.
-            </xsl:text>
-        </p>
-    </xsl:template>
-
-</xsl:stylesheet>
+// user name: John Doe
+// identity name: johnny.doe
+def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
+def bout = new XmlSlurper()
+    .parseText(
+        new TestClient(rexsl.home)
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .header(HttpHeaders.COOKIE, cookie)
+            .get('/s')
+            .body
+    )
+    .bout
+    .number
+['nb:hh', 'nb:db'].each { helper ->
+    new TestClient(rexsl.home)
+        .header(HttpHeaders.COOKIE, cookie)
+        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .get(
+            UriBuilder.fromPath('/{bout}/i')
+                .queryParam('name', helper)
+                .build(bout)
+                .toString()
+        )
+}
+def page = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header(HttpHeaders.COOKIE, cookie)
+    .get(UriBuilder.fromPath('/{bout}').build(bout).toString())
+Assert.assertThat(
+    XhtmlConverter.the(page.body),
+    XmlMatchers.hasXPath('/page/bout/stages[count(stage) = 2]')
+)

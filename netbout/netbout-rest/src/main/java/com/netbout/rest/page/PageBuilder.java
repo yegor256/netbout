@@ -66,7 +66,7 @@ public final class PageBuilder {
     /**
      * Stylesheet to use.
      */
-    private transient String xsl = "none";
+    private transient String xsl = "/xsl/none.xsl";
 
     /**
      * Configure the stylesheet to be used.

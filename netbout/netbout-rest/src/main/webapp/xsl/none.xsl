@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -23,57 +24,18 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest;
-
-import org.apache.commons.codec.binary.Base64;
-
-/**
- * Text utils.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-public final class TextUtils {
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-    /**
-     * Encoding to be used.
-     */
-    private static final String ENCODING = "UTF-8";
+    <xsl:template match="/">
+        <!-- intentionally empty -->
+    </xsl:template>
 
-    /**
-     * It's utility class.
-     */
-    private TextUtils() {
-        // empty
-    }
-
-    /**
-     * Encode string into 64-bit string.
-     * @param text The text to encode
-     * @return Encoded text
-     */
-    public static String toBase(final String text) {
-        try {
-            return new Base64().encodeToString(
-                text.getBytes(TextUtils.ENCODING)
-            );
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
-     * Decode string from 64-bit string.
-     * @param text The text to decode
-     * @return Decoded text
-     */
-    public static String fromBase(final String text) {
-        try {
-            return new String(new Base64().decode(text), TextUtils.ENCODING);
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-}
+</xsl:stylesheet>

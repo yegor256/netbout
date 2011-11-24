@@ -26,7 +26,6 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.queue.HelpQueue;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
@@ -54,17 +53,17 @@ public final class LongBout {
     /**
      * The bout.
      */
-    private transient Bout bout;
+    private final transient Bout bout;
 
     /**
      * Stage coordinates.
      */
-    private transient StageCoordinates coords;
+    private final transient StageCoordinates coords;
 
     /**
      * The URI builder.
      */
-    private transient UriBuilder builder;
+    private final transient UriBuilder builder;
 
     /**
      * Public ctor for JAXB.
@@ -112,8 +111,8 @@ public final class LongBout {
     @XmlElementWrapper(name = "stages")
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
-        for (String identity : this.stages()) {
-            stages.add(ShortStage.build(identity, this.builder));
+        for (String identity : this.coords.all()) {
+            stages.add(ShortStage.build(identity, this.builder.clone()));
         }
         return stages;
     }
@@ -124,15 +123,9 @@ public final class LongBout {
      */
     @XmlElement
     public LongStage getStage() {
-        if (!this.coords.hasStage()) {
-            for (String identity : this.stages()) {
-                this.coords.setStage(identity);
-                break;
-            }
-        }
         LongStage stage = null;
-        if (this.coords.hasStage()) {
-            stage = LongStage.build(this.bout.number(), this.coords);
+        if (!this.coords.stage().isEmpty()) {
+            stage = LongStage.build(this.bout, this.coords);
         }
         return stage;
     }
@@ -164,29 +157,6 @@ public final class LongBout {
             dudes.add(LongParticipant.build(dude));
         }
         return dudes;
-    }
-
-    /**
-     * List of stages, their names.
-     * @return The list
-     */
-    private Collection<String> stages() {
-        final Collection<String> stages = new ArrayList<String>();
-        for (Participant dude : this.bout.participants()) {
-            final String name = dude.identity().name();
-            final Boolean exists = HelpQueue
-                .make("does-stage-exist")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.bout.number())
-                .arg(name)
-                .scope(this.bout.number())
-                .asDefault(Boolean.FALSE)
-                .exec(Boolean.class);
-            if (exists) {
-                stages.add(name);
-            }
-        }
-        return stages;
     }
 
 }

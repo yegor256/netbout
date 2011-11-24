@@ -39,21 +39,7 @@
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
 
-    <xsl:template name="title">
-        <xsl:text>#</xsl:text>
-        <xsl:value-of select="/page/bout/number"/>
-        <xsl:text>: </xsl:text>
-        <xsl:value-of select="/page/bout/title"/>
-    </xsl:template>
-
-    <xsl:template name="head">
-        <link href="/css/bout.css" rel="stylesheet" type="text/css"></link>
-        <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
-        <!-- <xsl:call-template name="stage-head"/> -->
-    </xsl:template>
-
-    <xsl:template name="content">
-        <xsl:variable name="participant" select="/page/bout/participants/participant[identity=/page/identity/name]"/>
+    <xsl:variable name="title">
         <xsl:text>#</xsl:text>
         <xsl:value-of select="/page/bout/number"/>
         <xsl:text>: </xsl:text>
@@ -65,9 +51,23 @@
                 <xsl:text>untitled</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
-        <xsl:call-template name="dudes">
-            <xsl:with-param name="participants" select="/page/bout/participants" />
-        </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:variable name="participant"
+        select="/page/bout/participants/participant[identity=/page/identity/name]"/>
+
+    <xsl:template name="head">
+        <title><xsl:value-of select="$title"/></title>
+        <link href="/css/bout.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
+        <xsl:if test="/page/bout/stage">
+            <xsl:apply-templates select="/page/bout/stage" mode="head" />
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="content">
+        <xsl:value-of select="$title"/>
+        <xsl:apply-templates select="/page/bout/participants" />
         <xsl:if test="$participant/@confirmed = 'true'">
             <form method="get">
                 <xsl:attribute name="action">
@@ -137,36 +137,31 @@
             </xsl:choose>
         </p>
         <xsl:if test="/page/bout/stages">
-            <div id="holder">
-                <ul id="titles">
-                    <xsl:for-each select="/page/bout/stages/stage">
-                        <xsl:choose>
-                            <xsl:when test=". = /page/bout/stage/@name">
-                                <li>
+            <ul id="titles">
+                <xsl:for-each select="/page/bout/stages/stage">
+                    <xsl:choose>
+                        <xsl:when test=". = /page/bout/stage/@name">
+                            <li active="true">
+                                <xsl:value-of select="."/>
+                            </li>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <li>
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="@href"/>
+                                    </xsl:attribute>
                                     <xsl:value-of select="."/>
-                                </li>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <li>
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="@href"/>
-                                        </xsl:attribute>
-                                        <xsl:value-of select="."/>
-                                    </a>
-                                </li>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:for-each>
-                </ul>
-                <xsl:if test="/page/bout/stage">
-                    <div id="stage">
-                        <xsl:copy-of select="/page/bout/stage"/>
-                        <!-- <xsl:call-template name="stage">
-                            <xsl:with-param name="root" select="." />
-                        </xsl:call-template> -->
-                    </div>
-                </xsl:if>
+                                </a>
+                            </li>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </ul>
+        </xsl:if>
+        <xsl:if test="/page/bout/stage">
+            <div id="stage">
+                <xsl:apply-templates select="/page/bout/stage"/>
             </div>
         </xsl:if>
         <xsl:if test="$participant/@confirmed = 'true'">
@@ -178,30 +173,32 @@
                 <dl><input name="submit" type="submit" /></dl>
             </form>
         </xsl:if>
-        <xsl:for-each select="/page/bout/messages/message">
-            <xsl:variable name="message" select="."/>
-            <div class="message">
-                <div class="header">
-                    <img>
-                        <xsl:attribute name="src">
-                            <xsl:value-of select="/page/bout/participants/participant[$message/author=identity]/photo"/>
-                        </xsl:attribute>
-                    </img>
-                    <xsl:text>by </xsl:text>
-                    <b>
-                    <xsl:value-of select="/page/bout/participants/participant[$message/author=identity]/alias"/>
-                    </b>
-                    <xsl:text> at </xsl:text>
-                    <xsl:value-of select="$message/date"/>
-                    <span style="color: red;">
-                        <xsl:if test="@seen = 'false'">
-                            <xsl:text> new</xsl:text>
-                        </xsl:if>
-                    </span>
-                </div>
-                <xsl:value-of select="text"/>
+        <xsl:apply-templates select="/page/bout/messages/message" />
+    </xsl:template>
+
+    <xsl:template match="message">
+        <xsl:variable name="msg" select="."/>
+        <div class="message">
+            <div class="header">
+                <img>
+                    <xsl:attribute name="src">
+                        <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/photo"/>
+                    </xsl:attribute>
+                </img>
+                <xsl:text>by </xsl:text>
+                <b>
+                <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
+                </b>
+                <xsl:text> at </xsl:text>
+                <xsl:value-of select="date"/>
+                <span style="color: red;">
+                    <xsl:if test="@seen = 'false'">
+                        <xsl:text> new</xsl:text>
+                    </xsl:if>
+                </span>
             </div>
-        </xsl:for-each>
+            <xsl:value-of select="text"/>
+        </div>
     </xsl:template>
 
 </xsl:stylesheet>

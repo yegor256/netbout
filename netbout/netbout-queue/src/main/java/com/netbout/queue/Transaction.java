@@ -26,6 +26,7 @@
  */
 package com.netbout.queue;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Token;
 import com.netbout.spi.TypeMapper;
 import com.ymock.util.Logger;
@@ -111,10 +112,10 @@ public final class Transaction implements Token {
 
     /**
      * Set scope, if necessary.
-     * @param number Number of bout where this transaction is happening
+     * @param bout The bout where this transaction is happening
      * @return This object
      */
-    public Transaction scope(final Long number) {
+    public Transaction inBout(final Bout bout) {
         // tbd
         return this;
     }
@@ -166,7 +167,7 @@ public final class Transaction implements Token {
     public <T> T exec(final Class<T> type) {
         assert this.ipriority != null;
         HelpQueue.execute(this);
-        if (this.iresult == null || TypeMapper.TEXT_NULL.equals(this.iresult)) {
+        if (!this.isCompleted()) {
             this.iresult = this.def;
         }
         Logger.debug(
@@ -195,6 +196,15 @@ public final class Transaction implements Token {
             this.mnemo(),
             this.argsAsText()
         );
+    }
+
+    /**
+     * Is it completed already?
+     * @return Yes or no?
+     */
+    protected boolean isCompleted() {
+        return (this.iresult != null)
+            && !TypeMapper.TEXT_NULL.equals(this.iresult);
     }
 
     /**

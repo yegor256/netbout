@@ -37,48 +37,42 @@
     <xsl:include href="/xsl/templates.xsl" />
 
     <xsl:template match="/">
+        <xsl:apply-templates select="page" />
+    </xsl:template>
+
+    <xsl:template match="page">
         <html>
             <head>
-                <title>
-                    <xsl:call-template name="title" />
-                </title>
-                <xsl:call-template name="head" />
                 <link href="/css/global.css" rel="stylesheet" type="text/css"></link>
                 <link rel="icon" type="image/gif" href="http://img.netbout.com/favicon.ico"/>
+                <xsl:call-template name="head" />
             </head>
             <body>
-                <div id="version">
-                    <xsl:text>r</xsl:text>
-                    <xsl:value-of select="/page/version/revision"/>
-                    <xsl:text> </xsl:text>
-                    <xsl:call-template name="nano">
-                        <xsl:with-param name="nano" select="/page/@nano" />
-                    </xsl:call-template>
-                </div>
+                <xsl:apply-templates select="version" />
                 <div id="bar">
                     <a id="logo">
                         <xsl:attribute name="href">
-                            <xsl:value-of select="/page/links/link[@name='home']/@href"/>
+                            <xsl:value-of select="links/link[@name='home']/@href"/>
                         </xsl:attribute>
                         <img src="http://img.netbout.com/logo.png"/>
                     </a>
                     <div id="crumbs">
                         <xsl:choose>
-                            <xsl:when test="/page/identity">
+                            <xsl:when test="identity">
                                 <span>
                                     <img id="photo">
                                         <xsl:attribute name="src">
-                                            <xsl:value-of select="/page/identity/photo"/>
+                                            <xsl:value-of select="identity/photo"/>
                                         </xsl:attribute>
                                     </img>
                                 </span>
                                 <span>
-                                    <xsl:value-of select="/page/identity/aliases/alias[position() = 1]"/>
+                                    <xsl:value-of select="identity/aliases/alias[position() = 1]"/>
                                 </span>
                                 <span>
                                     <a>
                                         <xsl:attribute name="href">
-                                            <xsl:value-of select="/page/links/link[@name='start']/@href"/>
+                                            <xsl:value-of select="links/link[@name='start']/@href"/>
                                         </xsl:attribute>
                                         <xsl:text>start</xsl:text>
                                     </a>
@@ -86,7 +80,7 @@
                                 <span>
                                     <a>
                                         <xsl:attribute name="href">
-                                            <xsl:value-of select="/page/links/link[@name='logout']/@href"/>
+                                            <xsl:value-of select="links/link[@name='logout']/@href"/>
                                         </xsl:attribute>
                                         <xsl:text>logout</xsl:text>
                                     </a>
@@ -97,15 +91,15 @@
                         </xsl:choose>
                     </div>
                 </div>
-                <xsl:if test="/page/identity">
+                <xsl:if test="identity">
                     <form id="box">
                         <input name="q" />
                         <input value="find" type="submit" />
                     </form>
                 </xsl:if>
-                <xsl:if test="/page/message">
+                <xsl:if test="message">
                     <div id="message">
-                        <xsl:value-of select="/page/message"/>
+                        <xsl:value-of select="message"/>
                     </div>
                 </xsl:if>
                 <div id="content">
@@ -113,6 +107,17 @@
                 </div>
             </body>
         </html>
+    </xsl:template>
+
+    <xsl:template match="version">
+        <div id="version">
+            <xsl:text>r</xsl:text>
+            <xsl:value-of select="revision"/>
+            <xsl:text> </xsl:text>
+            <xsl:call-template name="nano">
+                <xsl:with-param name="nano" select="/page/@nano" />
+            </xsl:call-template>
+        </div>
     </xsl:template>
 
 </xsl:stylesheet>

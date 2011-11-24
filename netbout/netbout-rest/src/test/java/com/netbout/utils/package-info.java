@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,39 +23,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+
+/**
+ * Supplementary utils, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
-    version="2.0" exclude-result-prefixes="xs">
-
-    <xsl:output method="xhtml"/>
-
-    <xsl:include href="/xsl/layout.xsl" />
-
-    <xsl:template name="head">
-        <title>
-            <xsl:value-of select="/page/error/code"/>
-            <xsl:text>: error</xsl:text>
-        </title>
-    </xsl:template>
-
-    <xsl:template name="content">
-        <p>
-            <span style="color: red;">
-                <xsl:value-of select="/page/error/code"/>
-                <xsl:text>: </xsl:text>
-                <xsl:value-of select="/page/error/message"/>
-            </span>
-            <xsl:text>.
-                Maybe the page you're requesting is no longer available,
-                try to submit some other request.
-            </xsl:text>
-        </p>
-    </xsl:template>
-
-</xsl:stylesheet>
+ */
+package com.netbout.utils;

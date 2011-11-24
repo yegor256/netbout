@@ -68,7 +68,13 @@ public final class LoginRs extends AbstractRs {
             .queryParam("redirect_uri", this.redirectUri())
             .build();
         return new PageBuilder()
-            .stylesheet("login")
+            .stylesheet(
+                this.uriInfo().getBaseUriBuilder()
+                    .clone()
+                    .path("/xsl/login.xsl")
+                    .build()
+                    .toString()
+        )
             .build(AbstractPage.class)
             .init(this)
             .append(

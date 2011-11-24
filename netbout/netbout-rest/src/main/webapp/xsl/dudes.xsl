@@ -34,10 +34,9 @@
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:template name="dudes">
-        <xsl:param name="participants" />
+    <xsl:template match="participants">
         <div class="dudes">
-            <xsl:for-each select="$participants/participant">
+            <xsl:for-each select="participant">
                 <div class="dude">
                     <xsl:attribute name="style">
                         <xsl:text>left: </xsl:text>

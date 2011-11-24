@@ -26,9 +26,21 @@
  */
 package com.netbout.rest;
 
+import com.netbout.hub.HubEntry;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Participant;
+import com.netbout.spi.cpa.CpaHelper;
+import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.IdentityAware;
+import com.netbout.spi.cpa.Operation;
+import java.util.ArrayList;
+import java.util.Collection;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case for {@link StageCoordinates}.
@@ -38,25 +50,96 @@ import org.junit.Test;
 public final class StageCoordinatesTest {
 
     /**
+     * The helper.
+     */
+    private static Identity helper;
+
+    /**
+     * Register helper.
+     * @throws Exception If there is some problem inside
+     */
+    @BeforeClass
+    public static void registerHelper() throws Exception {
+        StageCoordinatesTest.helper = HubEntry.user("bar").identity("foo");
+        StageCoordinatesTest.helper.promote(
+            new CpaHelper(StageCoordinatesTest.class)
+        );
+        // persistor.setPhoto(
+        //     new java.net.URL("http://img.netbout.com/db.png")
+        // );
+    }
+
+    /**
      * Text to coordinates and back.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void testTextToCoordinatesAndBack() throws Exception {
-        final String stage = "some stage name :";
         final String place = "/some/place?with&some info";
         final StageCoordinates coords = new StageCoordinates();
-        coords.setStage(stage);
+        coords.setStage(this.helper.name());
         coords.setPlace(place);
+        coords.normalize(this.mockBout(this.helper.name()));
         final String text = coords.toString();
+        final StageCoordinates reverted = StageCoordinates.valueOf(text);
+        reverted.normalize(this.mockBout(this.helper.name(), "somebody else"));
         MatcherAssert.assertThat(
-            StageCoordinates.valueOf(text).getStage(),
-            Matchers.equalTo(stage)
+            reverted.stage(),
+            Matchers.equalTo(this.helper.name())
         );
-        MatcherAssert.assertThat(
-            StageCoordinates.valueOf(text).getPlace(),
-            Matchers.equalTo(place)
-        );
+        MatcherAssert.assertThat(reverted.place(), Matchers.equalTo(place));
+    }
+
+    /**
+     * Prepare bout with these participants.
+     * @param names Names of identities who take participaiton in the bout
+     * @return The bout with participants
+     */
+    private Bout mockBout(final String... names) {
+        final Bout bout = Mockito.mock(Bout.class);
+        Mockito.doReturn(1L).when(bout).number();
+        final Collection<Participant> dudes = new ArrayList<Participant>();
+        Mockito.doReturn(dudes).when(bout).participants();
+        for (String name : names) {
+            final Identity identity = Mockito.mock(Identity.class);
+            Mockito.doReturn(name).when(identity).name();
+            final Participant participant = Mockito.mock(Participant.class);
+            Mockito.doReturn(identity).when(participant).identity();
+            dudes.add(participant);
+        }
+        return bout;
+    }
+
+    /**
+     * Foo farm.
+     */
+    @Farm
+    public static final class FooFarm implements IdentityAware {
+        /**
+         * Me.
+         */
+        private transient Identity identity;
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void init(final Identity idnt) {
+            this.identity = idnt;
+        }
+        /**
+         * Does this stage exist in the bout?
+         * @param number Bout where it is happening
+         * @param stage Name of stage to render
+         * @return Does it?
+         */
+        @Operation("does-stage-exist")
+        public Boolean doesStageExist(final Long number, final String stage) {
+            Boolean exists = null;
+            if (this.identity.name().equals(stage)) {
+                exists = Boolean.TRUE;
+            }
+            return exists;
+        }
     }
 
 }

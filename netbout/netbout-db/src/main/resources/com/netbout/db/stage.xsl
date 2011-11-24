@@ -34,28 +34,13 @@
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:output method="xhtml"/>
-
-    <xsl:include href="/xsl/layout.xsl" />
-
-    <xsl:template name="head">
-        <title>
-            <xsl:value-of select="/page/error/code"/>
-            <xsl:text>: error</xsl:text>
-        </title>
+    <xsl:template match="stage" mode="head">
+        <!-- nothing -->
     </xsl:template>
 
-    <xsl:template name="content">
-        <p>
-            <span style="color: red;">
-                <xsl:value-of select="/page/error/code"/>
-                <xsl:text>: </xsl:text>
-                <xsl:value-of select="/page/error/message"/>
-            </span>
-            <xsl:text>.
-                Maybe the page you're requesting is no longer available,
-                try to submit some other request.
-            </xsl:text>
+    <xsl:template match="stage">
+        <p style="white-space: pre-line;">
+            <xsl:value-of select="data/summary"/>
         </p>
     </xsl:template>
 

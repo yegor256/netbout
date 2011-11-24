@@ -24,58 +24,80 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.hh;
+package com.netbout.rest;
 
-import com.netbout.spi.Identity;
+import com.netbout.harness.ResourceBuilder;
 import com.rexsl.test.XhtmlConverter;
+import java.net.URLEncoder;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
 /**
- * Test case of {@link StatsFarm}.
+ * Test case for {@link BoutStylesheetRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class StatsFarmTest {
+public final class BoutStylesheetRsTest {
 
     /**
-     * Render XML.
+     * XPath context.
+     */
+    private static final SimpleNamespaceContext CONTEXT =
+        new SimpleNamespaceContext().withBinding(
+            "xsl",
+            "http://www.w3.org/1999/XSL/Transform"
+        );
+
+    /**
+     * XSL wrapper is renderable.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testRenderingOfXml() throws Exception {
-        final StatsFarm farm = new StatsFarm();
-        final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn("some-name").when(identity).name();
-        farm.init(identity);
-        final String xml = farm.renderStageXml(1L, identity.name(), "");
+    public void testWrappingXslRendering() throws Exception {
+        final BoutStylesheetRs rest =
+            new ResourceBuilder().build(BoutStylesheetRs.class);
+        final Long bout = new Random().nextLong();
+        final String stage = "some stage name";
+        rest.setBout(bout);
+        rest.setStage(stage);
+        final String xsl = rest.boutXsl();
         MatcherAssert.assertThat(
-            XhtmlConverter.the(xml),
-            XmlMatchers.hasXPath("/data/identities")
+            XhtmlConverter.the(xsl),
+            XmlMatchers.hasXPath(
+                "/xsl:stylesheet/xsl:include[contains(@href,'/xsl/bout.xsl')]",
+                this.CONTEXT
+            )
+        );
+        final String xpath = String.format(
+            "//xsl:include[contains(@href,'/%d/xsl/stage.xsl?stage=%s')]",
+            bout,
+            URLEncoder.encode(stage, "UTF-8")
+        );
+        MatcherAssert.assertThat(
+            XhtmlConverter.the(xsl),
+            XmlMatchers.hasXPath(xpath, this.CONTEXT)
         );
     }
 
     /**
-     * Render XSL.
+     * Stage-related XSL is renderable.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testRenderingOfXslStylesheet() throws Exception {
-        final StatsFarm farm = new StatsFarm();
-        final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn("stage-1").when(identity).name();
-        farm.init(identity);
-        final String xsl = farm.renderStageXsl(1L, identity.name());
+    public void testStageXslRendering() throws Exception {
+        final BoutStylesheetRs rest =
+            new ResourceBuilder().build(BoutStylesheetRs.class);
+        final Long bout = new Random().nextLong();
+        final String stage = "nb:hh";
+        rest.setBout(bout);
+        rest.setStage(stage);
+        final String xsl = rest.stageXsl();
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(
-                "/xsl:stylesheet",
-                new SimpleNamespaceContext()
-                    .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
-            )
+            XmlMatchers.hasXPath("/xsl:stylesheet", this.CONTEXT)
         );
     }
 

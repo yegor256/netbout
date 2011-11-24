@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,39 +23,46 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.utils;
+
+import org.apache.velocity.VelocityContext;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+/**
+ * Test case for {@link TextUtils}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
-    version="2.0" exclude-result-prefixes="xs">
+ */
+public final class TextUtilsTest {
 
-    <xsl:output method="xhtml"/>
+    /**
+     * Base64 conversions.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testBaseConversions() throws Exception {
+        final String text = "\u041F\u0435\u0442\u0440 I";
+        MatcherAssert.assertThat(
+            TextUtils.fromBase(TextUtils.toBase(text)),
+            Matchers.equalTo(text)
+        );
+    }
 
-    <xsl:include href="/xsl/layout.xsl" />
+    /**
+     * Convert text with velocity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testVelocityConversion() throws Exception {
+        final VelocityContext context = new VelocityContext();
+        final String xsl = TextUtils.format(
+            "com/netbout/rest/bout.xsl.vm",
+            context
+        );
+        MatcherAssert.assertThat(xsl, Matchers.containsString("xsl:include"));
+    }
 
-    <xsl:template name="head">
-        <title>
-            <xsl:value-of select="/page/error/code"/>
-            <xsl:text>: error</xsl:text>
-        </title>
-    </xsl:template>
-
-    <xsl:template name="content">
-        <p>
-            <span style="color: red;">
-                <xsl:value-of select="/page/error/code"/>
-                <xsl:text>: </xsl:text>
-                <xsl:value-of select="/page/error/message"/>
-            </span>
-            <xsl:text>.
-                Maybe the page you're requesting is no longer available,
-                try to submit some other request.
-            </xsl:text>
-        </p>
-    </xsl:template>
-
-</xsl:stylesheet>
+}

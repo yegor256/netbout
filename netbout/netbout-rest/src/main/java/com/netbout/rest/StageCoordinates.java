@@ -26,6 +26,13 @@
  */
 package com.netbout.rest;
 
+import com.netbout.queue.HelpQueue;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Participant;
+import com.netbout.utils.TextUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Coordinates of a stage.
  *
@@ -45,30 +52,31 @@ public final class StageCoordinates {
     private static final String ENCODING = "UTF-8";
 
     /**
+     * List of all stages.
+     */
+    private transient Collection<String> stages;
+
+    /**
      * Name of stage.
      */
-    private transient String stage;
+    private transient String istage = "";
 
     /**
      * Place of stage.
      */
-    private transient String place = "";
-
-    /**
-     * Does it have stage?
-     * @return Yes or no?
-     */
-    public boolean hasStage() {
-        return this.stage != null;
-    }
+    private transient String iplace = "";
 
     /**
      * Get stage.
      * @return The name of it
      */
-    public String getStage() {
-        assert this.hasStage();
-        return this.stage;
+    public String stage() {
+        if (this.stages == null) {
+            throw new IllegalStateException(
+                "Call #normalize() before #stage()"
+            );
+        }
+        return this.istage;
     }
 
     /**
@@ -76,25 +84,28 @@ public final class StageCoordinates {
      * @param name The name of it
      */
     public void setStage(final String name) {
-        this.stage = name;
+        this.istage = name;
     }
 
     /**
      * Get place.
      * @return The name of it
      */
-    public String getPlace() {
-        assert this.hasStage();
-        return this.place;
+    public String place() {
+        if (this.stages == null) {
+            throw new IllegalStateException(
+                "Call #normalize() before #place()"
+            );
+        }
+        return this.iplace;
     }
 
     /**
      * Set stage place.
-     * @param plce The place name
+     * @param place The place name
      */
-    public void setPlace(final String plce) {
-        assert this.hasStage();
-        this.place = plce;
+    public void setPlace(final String place) {
+        this.iplace = place;
     }
 
     /**
@@ -127,16 +138,57 @@ public final class StageCoordinates {
      */
     @Override
     public String toString() {
-        String text = "";
-        if (this.hasStage()) {
-            text = String.format(
-                "%s%s%s",
-                TextUtils.toBase(this.stage),
-                this.SEPARATOR,
-                TextUtils.toBase(this.place)
-            );
+        if (this.stages == null) {
+            throw new IllegalStateException("Call #normalize() before");
         }
-        return text;
+        return String.format(
+            "%s%s%s",
+            TextUtils.toBase(this.istage),
+            this.SEPARATOR,
+            TextUtils.toBase(this.iplace)
+        );
+    }
+
+    /**
+     * List of all stages, their names.
+     * @return The list
+     */
+    public Collection<String> all() {
+        if (this.stages == null) {
+            throw new IllegalStateException("Call #normalize() before #all()");
+        }
+        return this.stages;
+    }
+
+    /**
+     * Normalize it according to the bout.
+     * @param bout The bout
+     */
+    public void normalize(final Bout bout) {
+        if (this.stages != null) {
+            throw new IllegalStateException("Duplicate call to #normalize()");
+        }
+        this.stages = new ArrayList<String>();
+        for (Participant dude : bout.participants()) {
+            final String name = dude.identity().name();
+            final Boolean exists = HelpQueue
+                .make("does-stage-exist")
+                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .arg(bout.number())
+                .arg(name)
+                .inBout(bout)
+                .asDefault(Boolean.FALSE)
+                .exec(Boolean.class);
+            if (exists) {
+                this.stages.add(name);
+            }
+        }
+        if (this.istage.isEmpty() && this.stages.size() > 0) {
+            this.istage = this.stages.iterator().next();
+        }
+        if (!this.stages.contains(this.istage)) {
+            this.istage = "";
+        }
     }
 
 }

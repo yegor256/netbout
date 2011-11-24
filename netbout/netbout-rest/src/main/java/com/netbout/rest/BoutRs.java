@@ -71,7 +71,7 @@ public final class BoutRs extends AbstractRs {
     private transient StageCoordinates coords = new StageCoordinates();
 
     /**
-     * Set bout number.
+     * Set number of bout.
      * @param num The number
      */
     @PathParam("num")
@@ -83,18 +83,22 @@ public final class BoutRs extends AbstractRs {
      * Set stage, if it's selected.
      * @param name The name of it
      */
-    @QueryParam("s")
+    @QueryParam("stage")
     public void setStage(final String name) {
-        this.coords.setStage(name);
+        if (name != null) {
+            this.coords.setStage(name);
+        }
     }
 
     /**
      * Set stage place.
      * @param place The place name
      */
-    @QueryParam("p")
+    @QueryParam("place")
     public void setPlace(final String place) {
-        this.coords.setPlace(place);
+        if (place != null) {
+            this.coords.setPlace(place);
+        }
     }
 
     /**
@@ -296,8 +300,14 @@ public final class BoutRs extends AbstractRs {
      * @return The page
      */
     private Page page() {
+        this.coords.normalize(this.bout());
         final Page page = new PageBuilder()
-            .stylesheet("bout")
+            .stylesheet(
+                UriBuilder.fromUri(this.self("/xsl/bout.xsl"))
+                    .queryParam("stage", this.coords.stage())
+                    .build()
+                    .toString()
+        )
             .build(AbstractPage.class)
             .init(this)
             .append(

@@ -37,13 +37,11 @@
     <xsl:output method="xhtml"/>
 
     <xsl:include href="/xsl/layout.xsl" />
-    <xsl:include href="/xsl/dudes.xsl" />
-
-    <xsl:template name="title">
-        <xsl:text>login</xsl:text>
-    </xsl:template>
 
     <xsl:template name="head">
+        <title>
+            <xsl:text>login</xsl:text>
+        </title>
     </xsl:template>
 
     <xsl:template name="content">
