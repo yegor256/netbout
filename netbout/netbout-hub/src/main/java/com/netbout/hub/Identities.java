@@ -102,9 +102,8 @@ public final class Identities {
         if (Identities.ALL.containsKey(name)) {
             identity = Identities.ALL.get(name);
         } else {
-            identity = new HubIdentity(name);
-            if (Notifiers.needsNotifier(identity)
-                && !Notifiers.canNotify(identity)) {
+            if (Identities.needsNotifier(name)
+                && !Identities.canNotify(name)) {
                 throw new IllegalArgumentException(
                     String.format(
                         "Can't reach '%s' identity",
@@ -112,6 +111,7 @@ public final class Identities {
                     )
                 );
             }
+            identity = new HubIdentity(name);
             Identities.ALL.put(name, identity);
             HelpQueue.make("identity-mentioned")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)
@@ -148,6 +148,28 @@ public final class Identities {
             found.add(Identities.make(name));
         }
         return found;
+    }
+
+    /**
+     * This identity needs notifier?
+     * @param identity The identity
+     * @return It needs it?
+     */
+    private static Boolean needsNotifier(final String identity) {
+        return !identity.matches("\\d+");
+    }
+
+    /**
+     * We can notify this identity?
+     * @param identity The identity
+     * @return Can we?
+     */
+    private static Boolean canNotify(final String identity) {
+        return HelpQueue.make("can-notify-identity")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .arg(identity)
+            .asDefault(Boolean.FALSE)
+            .exec(Boolean.class);
     }
 
 }

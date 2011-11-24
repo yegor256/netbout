@@ -44,7 +44,7 @@ public final class IdentitiesTest {
      */
     @Test
     public void testAliasesManipulations() throws Exception {
-        final Identity identity = HubEntry.user("Matt").identity("mati");
+        final Identity identity = HubEntry.user("Matt").identity("9943");
         final String alias = "mat@example.com";
         identity.alias(alias);
         identity.alias("matthew.gilbert@example.com");
@@ -60,7 +60,7 @@ public final class IdentitiesTest {
      */
     @Test
     public void testMakingOfReachableIdentities() throws Exception {
-        final String name = "felix@example.com";
+        final String name = "66632";
         final Identity reachable = Identities.make(name);
         MatcherAssert.assertThat(reachable.name(), Matchers.equalTo(name));
     }

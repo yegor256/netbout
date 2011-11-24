@@ -61,7 +61,7 @@ public final class HubUserTest {
     public void testPersistenceOfIdentities() throws Exception {
         final String name = "John Doe";
         final HubUser user = HubEntry.user(name);
-        final String label = "Johnny";
+        final String label = "8879";
         final URL photo = new URL("http://img.netbout.com/logo.png");
         final Identity identity = user.identity(label);
         identity.setPhoto(photo);
@@ -77,7 +77,7 @@ public final class HubUserTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testDuplicateIdentityCreation() throws Exception {
-        final String name = "Peter Pen";
+        final String name = "882763";
         HubEntry.user("peter").identity(name);
         HubEntry.user("alex").identity(name);
     }

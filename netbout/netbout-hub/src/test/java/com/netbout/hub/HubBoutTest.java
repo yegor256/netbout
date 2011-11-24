@@ -45,7 +45,7 @@ public final class HubBoutTest {
     @Test
     public void testPersistenceOfBoutNumber() throws Exception {
         final Identity identity =
-            HubEntry.user("Robert DeNiro").identity("rob@example.com");
+            HubEntry.user("Robert DeNiro").identity("9932");
         final Long number = identity.start().number();
         MatcherAssert.assertThat(
             identity.bout(number).number(),
@@ -60,7 +60,7 @@ public final class HubBoutTest {
     @Test
     public void testRenameOperation() throws Exception {
         final Identity identity =
-            HubEntry.user("Al Capone").identity("capone@example.com");
+            HubEntry.user("Al Capone").identity("9322");
         final Long number = identity.start().number();
         final String title = "hello, world!";
         identity.bout(number).rename(title);
