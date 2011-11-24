@@ -60,7 +60,7 @@ public final class StageCoordinatesTest {
      */
     @BeforeClass
     public static void registerHelper() throws Exception {
-        StageCoordinatesTest.helper = HubEntry.user("bar").identity("foo");
+        StageCoordinatesTest.helper = HubEntry.user("bar").identity("123");
         StageCoordinatesTest.helper.promote(
             new CpaHelper(StageCoordinatesTest.class)
         );

@@ -38,12 +38,13 @@ div#holder {
             margin-right: 1em;
         }
 
-    div#holder div#stage{
-        border: 1px solid gray;
-        min-height: 3em;
-        padding: 1em;
-        font-size: 0.8em;
-    }
+div#stage{
+    border: 1px solid gray;
+    min-height: 3em;
+    padding: 1em;
+    font-size: 0.8em;
+    background-color: #ddd;
+}
 
 form#post {
     margin-bottom: 2em;

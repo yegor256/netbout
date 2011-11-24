@@ -50,8 +50,8 @@ public final class BoutRsTest {
     public void testBoutRendering() throws Exception {
         final BoutRs rest = new ResourceBuilder().build(BoutRs.class);
         final Bout bout = HubEntry
-            .user("John Doe")
-            .identity("johnny.doe")
+            .user(ResourceBuilder.USER)
+            .identity(ResourceBuilder.IDENTITY)
             .start();
         rest.setNumber(bout.number());
         final Response response = rest.front();

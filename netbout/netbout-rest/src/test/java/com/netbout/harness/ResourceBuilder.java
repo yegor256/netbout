@@ -28,7 +28,9 @@ package com.netbout.harness;
 
 import com.netbout.hub.HubEntry;
 import com.netbout.rest.AbstractRs;
+import com.netbout.rest.Cryptor;
 import com.netbout.rest.Resource;
+import com.netbout.spi.Identity;
 import com.rexsl.core.XslResolver;
 import java.net.URI;
 import java.net.URL;
@@ -47,6 +49,16 @@ import org.mockito.Mockito;
  * @version $Id$
  */
 public final class ResourceBuilder {
+
+    /**
+     * User name.
+     */
+    public static final String USER = "John Turturro";
+
+    /**
+     * Identity name.
+     */
+    public static final String IDENTITY = "73640107";
 
     /**
      * Providers.
@@ -107,14 +119,14 @@ public final class ResourceBuilder {
     public <T> T build(final Class<? extends Resource> type) throws Exception {
         // @checkstyle IllegalType (1 line)
         final AbstractRs rest = (AbstractRs) type.newInstance();
-        // register this user
-        HubEntry.user("John Doe").identity("johnny.doe")
-            .setPhoto(new URL("http://localhost/image.png"));
+        final Identity identity = HubEntry.user(this.USER)
+            .identity(this.IDENTITY);
+        identity.setPhoto(new URL("http://localhost/image.png"));
         rest.setUriInfo(this.uriInfo());
         rest.setHttpHeaders(this.httpHeaders());
         rest.setHttpServletRequest(this.httpServletRequest());
         rest.setProviders(this.providers());
-        rest.setCookie(this.cookie());
+        rest.setCookie(new Cryptor().encrypt(identity));
         return (T) rest;
     }
 
@@ -152,16 +164,6 @@ public final class ResourceBuilder {
      */
     public Providers providers() throws Exception {
         return this.iproviders;
-    }
-
-    /**
-     * Create cookie.
-     * <p>User name: 'John Doe', identity name: 'johnny.doe'.
-     * @return The cookie
-     * @throws Exception If there is some problem inside
-     */
-    public String cookie() throws Exception {
-        return "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
     }
 
 }

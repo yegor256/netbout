@@ -156,7 +156,7 @@ public final class Identities {
      * @return It needs it?
      */
     protected static Boolean needsNotifier(final String identity) {
-        return !identity.matches("\\d+");
+        return !identity.matches("\\d+") && !identity.startsWith("nb:");
     }
 
     /**

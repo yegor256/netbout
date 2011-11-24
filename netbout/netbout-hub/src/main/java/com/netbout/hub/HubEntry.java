@@ -61,6 +61,21 @@ public final class HubEntry {
     }
 
     /**
+     * Find identity by name.
+     * @param name The name of the identity
+     * @return The identity found
+     */
+    public static HubIdentity identity(final String name) {
+        final HubIdentity identity = Identities.make(name);
+        Logger.debug(
+            HubEntry.class,
+            "#identity('%s'): found",
+            name
+        );
+        return identity;
+    }
+
+    /**
      * Find identities by name.
      * @param keyword The keyword
      * @return Set of identities found

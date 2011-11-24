@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.hub.HubEntry;
 import com.netbout.hub.HubIdentity;
+import com.netbout.spi.Identity;
 import com.netbout.utils.TextUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
@@ -55,7 +56,7 @@ public final class Cryptor {
      * @param identity The identity
      * @return Encrypted string
      */
-    public String encrypt(final HubIdentity identity) {
+    public String encrypt(final Identity identity) {
         final StringBuilder builder = new StringBuilder();
         builder
             .append(TextUtils.toBase(identity.user()))

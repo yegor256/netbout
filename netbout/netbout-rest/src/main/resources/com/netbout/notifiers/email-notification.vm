@@ -1,0 +1,14 @@
+${alias},
+
+These messages were posted to "${bout.title()}" since ${since}:
+
+#foreach(${message} in ${recent})
+On ${message.date()} by ${message.author().name()}:
+${message.text()}
+
+#end
+
+Click here to read them: ${href}
+
+Yours,
+Netbout.com

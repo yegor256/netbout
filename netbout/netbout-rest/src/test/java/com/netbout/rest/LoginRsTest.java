@@ -100,7 +100,7 @@ public final class LoginRsTest {
         );
         final com.restfb.types.User fbuser =
             Mockito.mock(com.restfb.types.User.class);
-        Mockito.doReturn("some-facebook-user-id").when(fbuser).getId();
+        Mockito.doReturn("92758366").when(fbuser).getId();
         Mockito.doReturn("John Doe").when(fbuser).getName();
         PowerMockito.doReturn(fbuser).when(spy, "fbUser", "abc|cde");
         final Response response = spy.fbauth(code);

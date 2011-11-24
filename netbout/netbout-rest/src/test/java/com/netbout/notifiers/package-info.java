@@ -24,46 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
-
-import com.netbout.hub.HubIdentity;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * Test case for {@link Cryptor}.
+ * Notifiers, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HubIdentity.class)
-public final class CryptorTest {
-
-    /**
-     * Encryption + decryption.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testEncryptionDecryption() throws Exception {
-        final String uname = "\u041F\u0435\u0442\u0440 I";
-        final String iname = "6357282";
-        final HubIdentity identity = PowerMockito.mock(HubIdentity.class);
-        Mockito.doReturn(iname).when(identity).name();
-        Mockito.doReturn(uname).when(identity).user();
-        final String hash = new Cryptor().encrypt(identity);
-        MatcherAssert.assertThat(
-            hash.matches("[\\w=\\+\\./]+"),
-            Matchers.describedAs(hash, Matchers.is(true))
-        );
-        final HubIdentity discovered = new Cryptor().decrypt(hash);
-        MatcherAssert.assertThat(discovered.name(), Matchers.equalTo(iname));
-        MatcherAssert.assertThat(discovered.user(), Matchers.equalTo(uname));
-    }
-
-}
+package com.netbout.notifiers;

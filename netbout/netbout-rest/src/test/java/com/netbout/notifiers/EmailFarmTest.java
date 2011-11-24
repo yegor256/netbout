@@ -24,46 +24,66 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.notifiers;
 
-import com.netbout.hub.HubIdentity;
+import com.netbout.hub.HubEntry;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * Test case for {@link Cryptor}.
+ * Test case for {@link EmailFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HubIdentity.class)
-public final class CryptorTest {
+public final class EmailFarmTest {
 
     /**
-     * Encryption + decryption.
+     * Check emails validation.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testEncryptionDecryption() throws Exception {
-        final String uname = "\u041F\u0435\u0442\u0440 I";
-        final String iname = "6357282";
-        final HubIdentity identity = PowerMockito.mock(HubIdentity.class);
-        Mockito.doReturn(iname).when(identity).name();
-        Mockito.doReturn(uname).when(identity).user();
-        final String hash = new Cryptor().encrypt(identity);
-        MatcherAssert.assertThat(
-            hash.matches("[\\w=\\+\\./]+"),
-            Matchers.describedAs(hash, Matchers.is(true))
-        );
-        final HubIdentity discovered = new Cryptor().decrypt(hash);
-        MatcherAssert.assertThat(discovered.name(), Matchers.equalTo(iname));
-        MatcherAssert.assertThat(discovered.user(), Matchers.equalTo(uname));
+    public void testValidEmailFormatsCheck() throws Exception {
+        final EmailFarm farm = new EmailFarm();
+        final String[] valid = new String[] {
+            "test.me-now+1@example.com.ua",
+            "test1_88@alpha-beta-gamma.net.kz",
+            "test@example.com",
+        };
+        for (String email : valid) {
+            MatcherAssert.assertThat(
+                farm.canNotifyIdentity(email),
+                Matchers.equalTo(Boolean.TRUE)
+            );
+        }
+        final String[] invalid = new String[] {
+            "tes t@example.com.ua",
+            "7274562",
+            "test-that-doesn't-work",
+        };
+        for (String email : invalid) {
+            MatcherAssert.assertThat(
+                farm.canNotifyIdentity(email),
+                Matchers.nullValue()
+            );
+        }
+    }
+
+    /**
+     * Test email sending.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testEmailSending() throws Exception {
+        final Identity identity = HubEntry.user("temp")
+            .identity("nb:test@example.com");
+        final Bout bout = identity.start();
+        final Message msg = bout.post("Hello, how are you?");
+        final EmailFarm farm = new EmailFarm();
+        farm.notifyBoutParticipant(bout.number(), identity.name(), msg.date());
     }
 
 }
