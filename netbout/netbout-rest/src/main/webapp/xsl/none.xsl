@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -26,26 +27,15 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-package com.netbout.rest.rexsl.xhtml
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+    <xsl:template match="/">
+        <!-- intentionally empty -->
+    </xsl:template>
 
-[
-    '//x:div[@class="message"]',
-    '//x:div[@id="stage"]',
-    '//x:title',
-    '//x:div[@id="version" and contains(.,"r555") and contains(.,"56ms")]',
-].each { xpath ->
-    Assert.assertThat(
-        XhtmlConverter.the(rexsl.document),
-        XmlMatchers.hasXPath(
-            xpath,
-            new SimpleNamespaceContext()
-            .withBinding('x', 'http://www.w3.org/1999/xhtml')
-        )
-    )
-}
+</xsl:stylesheet>

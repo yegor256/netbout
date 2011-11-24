@@ -302,7 +302,9 @@ public final class BoutRs extends AbstractRs {
     private Page page() {
         final Page page = new PageBuilder()
             .stylesheet(
-                UriBuilder.fromPath("/{num}/xsl/bout.xsl")
+                this.uriInfo().getBaseUriBuilder()
+                    .clone()
+                    .path("/{num}/xsl/bout.xsl")
                     .queryParam("stage", this.coords.getStage())
                     .build(this.number)
                     .toString()

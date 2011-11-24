@@ -29,9 +29,9 @@
  */
 package com.netbout.rest.rexsl.xhtml
 
-import static org.xmlmatchers.XmlMatchers.hasXPath
 import com.rexsl.test.XhtmlConverter
 import org.junit.Assert
+import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 
 [
@@ -40,7 +40,7 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext
 ].each { xpath ->
     Assert.assertThat(
         XhtmlConverter.the(rexsl.document),
-        hasXPath(
+        XmlMatchers.hasXPath(
             xpath,
             new SimpleNamespaceContext()
             .withBinding('x', 'http://www.w3.org/1999/xhtml')

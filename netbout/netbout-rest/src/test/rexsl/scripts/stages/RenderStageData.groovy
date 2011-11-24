@@ -27,25 +27,53 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.xhtml
+package com.netbout.rest.rexsl.scripts.stages
 
+import com.rexsl.test.TestClient
 import com.rexsl.test.XhtmlConverter
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
 import org.junit.Assert
 import org.xmlmatchers.XmlMatchers
+import org.hamcrest.Matchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 
+// user name: John Doe
+// identity name: johnny.doe
+def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
+def bout = new XmlSlurper()
+    .parseText(
+        new TestClient(rexsl.home)
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .header(HttpHeaders.COOKIE, cookie)
+            .get('/s')
+            .body
+    )
+    .bout
+    .number
+def helper = 'nb:hh'
+new TestClient(rexsl.home)
+    .header(HttpHeaders.COOKIE, cookie)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get(
+        UriBuilder.fromPath('/{bout}/i')
+            .queryParam('name', helper)
+            .build(bout)
+            .toString()
+    )
+def page = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
+    .header(HttpHeaders.COOKIE, cookie)
+    .get(UriBuilder.fromPath('/{bout}').build(bout).toString())
 [
-    '//x:div[@class="message"]',
-    '//x:div[@id="stage"]',
-    '//x:title',
-    '//x:div[@id="version" and contains(.,"r555") and contains(.,"56ms")]',
+    '//x:div[@id="stage"]/x:p',
 ].each { xpath ->
     Assert.assertThat(
-        XhtmlConverter.the(rexsl.document),
+        XhtmlConverter.the(page.body),
         XmlMatchers.hasXPath(
             xpath,
             new SimpleNamespaceContext()
-            .withBinding('x', 'http://www.w3.org/1999/xhtml')
-        )
+            .withBinding('x', 'http://www.w3.org/1999/xhtml'))
     )
 }

@@ -28,13 +28,13 @@ package com.netbout.rest;
 
 import com.netbout.queue.HelpQueue;
 import com.netbout.utils.TextUtils;
-import java.net.URLEncoder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.velocity.VelocityContext;
 
 /**
@@ -83,12 +83,23 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Produces("text/xsl")
     public String boutXsl() {
         final VelocityContext context = new VelocityContext();
-        context.put("bout", this.bout);
-        try {
-            context.put("stage", URLEncoder.encode(this.stage, "UTF-8"));
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        context.put(
+            "boutXsl",
+            this.uriInfo().getBaseUriBuilder()
+                .clone()
+                .path("/xsl/bout.xsl")
+                .build()
+                .toString()
+        );
+        context.put(
+            "stageXsl",
+            this.uriInfo().getBaseUriBuilder()
+                .clone()
+                .path("/{bout}/xsl/stage.xsl")
+                .queryParam("stage", this.stage)
+                .build(this.bout)
+                .toString()
+        );
         return TextUtils.format("com/netbout/rest/bout.xsl.vm", context);
     }
 
@@ -100,18 +111,15 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
-        String xsl;
-        if (this.stage.isEmpty()) {
-            xsl = "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>";
-        } else {
-            xsl = HelpQueue
-                .make("render-stage-xsl")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                .arg(this.bout)
-                .arg(this.stage)
-                .exec(String.class);
-        }
-        return xsl;
+        return HelpQueue
+            .make("render-stage-xsl")
+            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .arg(this.bout)
+            .arg(this.stage)
+            .asDefault(
+                "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>"
+            )
+            .exec(String.class);
     }
 
 }
