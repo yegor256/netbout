@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.hub.data.MessageData;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import java.util.Date;
@@ -40,9 +41,9 @@ import java.util.Date;
 final class HubMessage implements Message {
 
     /**
-     * The viewer.
+     * The bout where this message is located.
      */
-    private final transient Identity viewer;
+    private final transient HubBout bout;
 
     /**
      * The data.
@@ -51,22 +52,31 @@ final class HubMessage implements Message {
 
     /**
      * Public ctor.
-     * @param vwr The author
+     * @param holder The bout where this message is located
      * @param dat The data
      */
-    private HubMessage(final Identity vwr, final MessageData dat) {
-        this.viewer = vwr;
+    private HubMessage(final HubBout holder, final MessageData dat) {
+        this.bout = holder;
         this.data = dat;
     }
 
     /**
      * Build new object.
-     * @param vwr The author
+     * @param holder The bout where this message is located
      * @param dat The data
      * @return The object just built
      */
-    public static HubMessage build(final Identity vwr, final MessageData dat) {
-        return new HubMessage(vwr, dat);
+    public static HubMessage build(final HubBout holder,
+        final MessageData dat) {
+        return new HubMessage(holder, dat);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout bout() {
+        return this.bout;
     }
 
     /**
@@ -82,7 +92,7 @@ final class HubMessage implements Message {
      */
     @Override
     public String text() {
-        this.data.addSeenBy(this.viewer.name());
+        this.data.addSeenBy(this.bout.getViewer().name());
         return this.data.getText();
     }
 
@@ -99,7 +109,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Boolean seen() {
-        return this.data.isSeenBy(this.viewer.name());
+        return this.data.isSeenBy(this.bout.getViewer().name());
     }
 
 }

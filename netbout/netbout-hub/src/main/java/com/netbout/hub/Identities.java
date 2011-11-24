@@ -70,10 +70,11 @@ public final class Identities {
     }
 
     /**
-     * Make new identity or find existing one.
+     * Make new identity for the specified user, or find existing one and
+     * assign to this user.
      * @param name The name of identity
      * @param user Name of the user
-     * @return Identity found
+     * @return Identity found or created
      */
     protected static HubIdentity make(final String name, final HubUser user) {
         final HubIdentity identity = Identities.make(name);
@@ -102,6 +103,15 @@ public final class Identities {
             identity = Identities.ALL.get(name);
         } else {
             identity = new HubIdentity(name);
+            if (Notifiers.needsNotifier(identity)
+                && !Notifiers.canNotify(identity)) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Can't reach '%s' identity",
+                        name
+                    )
+                );
+            }
             Identities.ALL.put(name, identity);
             HelpQueue.make("identity-mentioned")
                 .priority(HelpQueue.Priority.SYNCHRONOUSLY)

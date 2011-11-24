@@ -54,4 +54,24 @@ public final class IdentitiesTest {
         );
     }
 
+    /**
+     * Make reachable identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testMakingOfReachableIdentities() throws Exception {
+        final String name = "felix@example.com";
+        final Identity reachable = Identities.make(name);
+        MatcherAssert.assertThat(reachable.name(), Matchers.equalTo(name));
+    }
+
+    /**
+     * Make un-reachable identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testMakingOfUnReachableIdentities() throws Exception {
+        Identities.make("john");
+    }
+
 }

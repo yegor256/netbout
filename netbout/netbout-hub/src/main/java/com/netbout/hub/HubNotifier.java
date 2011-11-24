@@ -27,47 +27,29 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
 
 /**
- * Test case of {@link HubBout}.
+ * One notifier.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubBoutTest {
+public interface HubNotifier {
 
     /**
-     * Bout number persistence.
-     * @throws Exception If there is some problem inside
+     * Can this {@link Identity} be notified by this notifier?
+     * @param identity The identity
+     * @return Can it be notified?
      */
-    @Test
-    public void testPersistenceOfBoutNumber() throws Exception {
-        final Identity identity =
-            HubEntry.user("Robert DeNiro").identity("rob@example.com");
-        final Long number = identity.start().number();
-        MatcherAssert.assertThat(
-            identity.bout(number).number(),
-            Matchers.equalTo(number)
-        );
-    }
+    boolean canNotify(final Identity identity);
 
     /**
-     * Rename bout.
-     * @throws Exception If there is some problem inside
+     * Notify {@link Identity} about new {@link Message}.
+     * @param identity The identity who should be notified
+     * @param message The message just posted
      */
-    @Test
-    public void testRenameOperation() throws Exception {
-        final Identity identity =
-            HubEntry.user("Al Capone").identity("capone@example.com");
-        final Long number = identity.start().number();
-        final String title = "hello, world!";
-        identity.bout(number).rename(title);
-        MatcherAssert.assertThat(
-            identity.bout(number).title(),
-            Matchers.equalTo(title)
-        );
-    }
+    void notify(final Identity identity, final Message message);
 
 }

@@ -145,7 +145,7 @@ public final class HubBout implements Bout {
         Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
         for (MessageData msg : datas) {
-            messages.add(HubMessage.build(this.viewer, msg));
+            messages.add(HubMessage.build(this, msg));
         }
         Logger.debug(
             this,
@@ -173,9 +173,17 @@ public final class HubBout implements Bout {
             "#post('%s'): message posted",
             text
         );
-        final Message message = HubMessage.build(this.viewer, msg);
+        final Message message = HubMessage.build(this, msg);
         message.text();
         return message;
+    }
+
+    /**
+     * Who is viewing?
+     * @return The identity
+     */
+    protected HubIdentity getViewer() {
+        return this.viewer;
     }
 
     /**

@@ -27,47 +27,64 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * Test case of {@link HubBout}.
+ * Holder of all notifiers.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubBoutTest {
+final class Notifiers {
 
     /**
-     * Bout number persistence.
-     * @throws Exception If there is some problem inside
+     * All identities known for us at the moment, and their objects.
      */
-    @Test
-    public void testPersistenceOfBoutNumber() throws Exception {
-        final Identity identity =
-            HubEntry.user("Robert DeNiro").identity("rob@example.com");
-        final Long number = identity.start().number();
-        MatcherAssert.assertThat(
-            identity.bout(number).number(),
-            Matchers.equalTo(number)
-        );
+    private static final Set<HubNotifier> ALL =
+        new CopyOnWriteArraySet<HubNotifier>();
+
+    /**
+     * It's a utility class.
+     */
+    private Notifiers() {
+        // intentionally empty
     }
 
     /**
-     * Rename bout.
-     * @throws Exception If there is some problem inside
+     * Add new notifier.
+     * @param notifier The notifier to add
      */
-    @Test
-    public void testRenameOperation() throws Exception {
-        final Identity identity =
-            HubEntry.user("Al Capone").identity("capone@example.com");
-        final Long number = identity.start().number();
-        final String title = "hello, world!";
-        identity.bout(number).rename(title);
-        MatcherAssert.assertThat(
-            identity.bout(number).title(),
-            Matchers.equalTo(title)
-        );
+    public static void register(final HubNotifier notifier) {
+        Notifiers.ALL.add(notifier);
+    }
+
+    /**
+     * This identity needs notifier?
+     * @param identity The identity
+     * @return It needs it?
+     */
+    public static boolean needsNotifier(final Identity identity) {
+        return true;
+    }
+
+    /**
+     * We can notify this identity?
+     * @param identity The identity
+     * @return Can we?
+     */
+    public static boolean canNotify(final Identity identity) {
+        return true;
+    }
+
+    /**
+     * Notify {@link Identity} about new {@link Message}.
+     * @param identity The identity who should be notified
+     * @param message The message just posted
+     */
+    public static void notify(final Identity identity, final Message message) {
     }
 
 }

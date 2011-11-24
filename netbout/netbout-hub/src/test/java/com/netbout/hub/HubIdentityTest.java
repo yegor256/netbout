@@ -46,7 +46,7 @@ public final class HubIdentityTest {
     @Test
     public void testNamePersistence() throws Exception {
         final HubUser user = HubEntry.user("Johnny Depp");
-        final String name = "depp";
+        final String name = "depp@example.com";
         MatcherAssert.assertThat(
             user.identity(name).name(),
             Matchers.equalTo(name)
@@ -60,7 +60,7 @@ public final class HubIdentityTest {
     @Test
     public void testPhotoPersistence() throws Exception {
         final HubUser user = HubEntry.user("Bruce Willis");
-        final String name = "bruce";
+        final String name = "bruce@example.com";
         final URL photo = new URL("http://localhost/photo.png");
         user.identity(name).setPhoto(photo);
         MatcherAssert.assertThat(
@@ -75,7 +75,8 @@ public final class HubIdentityTest {
      */
     @Test
     public void testBoutsManipulations() throws Exception {
-        final Identity identity = HubEntry.user("Jeffy").identity("je");
+        final Identity identity = HubEntry.user("Jeffy")
+            .identity("je@example.com");
         final Long number = identity.start().number();
         identity.bout(number);
         MatcherAssert.assertThat(
@@ -90,7 +91,8 @@ public final class HubIdentityTest {
      */
     @Test
     public void testAliasesManipulations() throws Exception {
-        final Identity identity = HubEntry.user("Lori").identity("lo");
+        final Identity identity = HubEntry.user("Lori")
+            .identity("lo@example.com");
         MatcherAssert.assertThat(
             identity.aliases().size(),
             Matchers.equalTo(0)
@@ -114,9 +116,9 @@ public final class HubIdentityTest {
      */
     @Test(expected = com.netbout.spi.BoutNotFoundException.class)
     public void testFindingOfNotMyBout() throws Exception {
-        final Long num = HubEntry.user("Victor").identity("vic")
+        final Long num = HubEntry.user("Victor").identity("vic@example.com")
             .start().number();
-        HubEntry.user("Michael").identity("mike").bout(num);
+        HubEntry.user("Michael").identity("mike@example.com").bout(num);
     }
 
     /**
@@ -126,7 +128,7 @@ public final class HubIdentityTest {
     @Test(expected = com.netbout.spi.BoutNotFoundException.class)
     public void testFindingOfNonExistingBout() throws Exception {
         // @checkstyle MagicNumber (1 line)
-        HubEntry.user("Sarah").identity("sarah").bout(3456L);
+        HubEntry.user("Sarah").identity("sarah@example.com").bout(3456L);
     }
 
 }

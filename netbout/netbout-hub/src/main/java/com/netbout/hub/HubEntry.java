@@ -77,4 +77,17 @@ public final class HubEntry {
         return identities;
     }
 
+    /**
+     * Register new notifier.
+     * @param notifier The notifier to use
+     */
+    public static void register(final HubNotifier notifier) {
+        Notifiers.register(notifier);
+        Logger.debug(
+            HubEntry.class,
+            "#register('%s'): registered",
+            notifier.getClass().getName()
+        );
+    }
+
 }

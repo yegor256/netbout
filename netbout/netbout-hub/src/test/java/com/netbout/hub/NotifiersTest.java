@@ -27,47 +27,48 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Test case of {@link HubBout}.
+ * Test case of {@link Notifiers}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubBoutTest {
+public final class NotifiersTest {
 
     /**
-     * Bout number persistence.
+     * Validate that identity can be notified.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPersistenceOfBoutNumber() throws Exception {
-        final Identity identity =
-            HubEntry.user("Robert DeNiro").identity("rob@example.com");
-        final Long number = identity.start().number();
+    public void testCanIdentityBeNotified() throws Exception {
+        final HubNotifier notifier = Mockito.mock(HubNotifier.class);
+        final Identity identity = Mockito.mock(Identity.class);
+        Mockito.doReturn(true).when(notifier).canNotify(identity);
+        Notifiers.register(notifier);
         MatcherAssert.assertThat(
-            identity.bout(number).number(),
-            Matchers.equalTo(number)
+            Notifiers.canNotify(identity),
+            Matchers.equalTo(true)
         );
+        Mockito.verify(notifier).canNotify(identity);
     }
 
     /**
-     * Rename bout.
+     * Validate that identity is notified through notifier.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testRenameOperation() throws Exception {
-        final Identity identity =
-            HubEntry.user("Al Capone").identity("capone@example.com");
-        final Long number = identity.start().number();
-        final String title = "hello, world!";
-        identity.bout(number).rename(title);
-        MatcherAssert.assertThat(
-            identity.bout(number).title(),
-            Matchers.equalTo(title)
-        );
+    public void testIdentityNotification() throws Exception {
+        final HubNotifier notifier = Mockito.mock(HubNotifier.class);
+        final Identity identity = Mockito.mock(Identity.class);
+        Notifiers.register(notifier);
+        final Message message = Mockito.mock(Message.class);
+        Notifiers.notify(identity, message);
+        Mockito.verify(notifier).notify(identity, message);
     }
 
 }
