@@ -43,16 +43,15 @@
         <xsl:value-of select="count(/page/bouts/bout[@seen &lt; @messages])"/>
     </xsl:variable>
 
-    <xsl:template name="title">
-        <xsl:text>inbox</xsl:text>
-        <xsl:if test="$unread &gt; 0">
-            <xsl:text> (</xsl:text>
-            <xsl:value-of select="$unread"/>
-            <xsl:text>)</xsl:text>
-        </xsl:if>
-    </xsl:template>
-
     <xsl:template name="head">
+        <title>
+            <xsl:text>inbox</xsl:text>
+            <xsl:if test="$unread &gt; 0">
+                <xsl:text> (</xsl:text>
+                <xsl:value-of select="$unread"/>
+                <xsl:text>)</xsl:text>
+            </xsl:if>
+        </title>
         <link href="/css/inbox.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
     </xsl:template>
@@ -87,9 +86,7 @@
                         <xsl:text> unread)</xsl:text>
                     </xsl:if>
                 </a>
-                <xsl:call-template name="dudes">
-                    <xsl:with-param name="participants" select="participants" />
-                </xsl:call-template>
+                <xsl:apply-templates select="participants" />
             </div>
         </xsl:for-each>
     </xsl:template>

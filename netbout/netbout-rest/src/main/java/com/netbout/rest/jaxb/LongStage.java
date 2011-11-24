@@ -30,6 +30,7 @@ import com.netbout.queue.HelpQueue;
 import com.netbout.queue.ProgressReport;
 import com.netbout.queue.TextProgressReport;
 import com.netbout.rest.StageCoordinates;
+import com.netbout.spi.Bout;
 import java.io.StringReader;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -52,9 +53,9 @@ import org.xml.sax.InputSource;
 public final class LongStage {
 
     /**
-     * The number of the bout.
+     * The bout.
      */
-    private transient Long bout;
+    private transient Bout bout;
 
     /**
      * Coordinates of the stage.
@@ -70,22 +71,22 @@ public final class LongStage {
 
     /**
      * Private ctor.
-     * @param num Bout number
+     * @param bot Bout to work with
      * @param crds The coordinates
      */
-    private LongStage(final Long num, final StageCoordinates crds) {
-        this.bout = num;
+    private LongStage(final Bout bot, final StageCoordinates crds) {
+        this.bout = bot;
         this.coords = crds;
     }
 
     /**
      * Builder.
-     * @param num Bout number
+     * @param bot Bout to work with
      * @param crds The coordinates
      * @return The instance just created
      */
-    public static LongStage build(final Long num, final StageCoordinates crds) {
-        return new LongStage(num, crds);
+    public static LongStage build(final Bout bot, final StageCoordinates crds) {
+        return new LongStage(bot, crds);
     }
 
     /**
@@ -94,7 +95,7 @@ public final class LongStage {
      */
     @XmlAttribute
     public String getName() {
-        return this.coords.getStage();
+        return this.coords.stage();
     }
 
     /**
@@ -103,7 +104,7 @@ public final class LongStage {
      */
     @XmlAttribute
     public String getPlace() {
-        return this.coords.getPlace();
+        return this.coords.place();
     }
 
     /**
@@ -129,10 +130,10 @@ public final class LongStage {
         String xml = HelpQueue
             .make("render-stage-xml")
             .priority(HelpQueue.Priority.NORMAL)
-            .arg(this.bout)
-            .arg(this.coords.getStage())
-            .arg(this.coords.getPlace())
-            .scope(this.bout)
+            .arg(this.bout.number())
+            .arg(this.coords.stage())
+            .arg(this.coords.place())
+            .inBout(this.bout)
             .progressReport(report)
             .exec(String.class);
         if (xml == null) {

@@ -26,6 +26,7 @@
  */
 package com.netbout.queue;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Token;
 import com.netbout.spi.TypeMapper;
 import com.ymock.util.Logger;
@@ -111,10 +112,10 @@ public final class Transaction implements Token {
 
     /**
      * Set scope, if necessary.
-     * @param number Number of bout where this transaction is happening
+     * @param bout The bout where this transaction is happening
      * @return This object
      */
-    public Transaction scope(final Long number) {
+    public Transaction inBout(final Bout bout) {
         // tbd
         return this;
     }

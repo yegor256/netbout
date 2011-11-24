@@ -111,6 +111,7 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
+        System.out.println("ouch");
         return HelpQueue
             .make("render-stage-xsl")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)

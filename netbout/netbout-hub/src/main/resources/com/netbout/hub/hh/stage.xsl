@@ -34,12 +34,23 @@
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:template match="/page">
+    <xsl:template match="stage" mode="head">
         <!-- nothing -->
     </xsl:template>
 
-    <xsl:template match="/page/bout/stage">
-        <b><xsl:value-of select="data/identity"/></b>
+    <xsl:template match="stage">
+        <p>
+            <b>com.netbout.hub.Identities</b>:
+        </p>
+        <p style="white-space: pre-line;">
+            <xsl:value-of select="data/identities"/>
+        </p>
+        <p>
+            <b>com.netbout.hub.data.Storage</b>:
+        </p>
+        <p style="white-space: pre-line;">
+            <xsl:value-of select="data/storage"/>
+        </p>
     </xsl:template>
 
 </xsl:stylesheet>
