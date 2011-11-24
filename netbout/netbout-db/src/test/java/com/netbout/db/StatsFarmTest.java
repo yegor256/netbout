@@ -68,17 +68,16 @@ public final class StatsFarmTest {
      */
     @Test
     public void testRenderingOfXslStylesheet() throws Exception {
-        final StatsFarm farm = new StatsFarm();
         final Identity identity = Mockito.mock(Identity.class);
         Mockito.doReturn("stage-1").when(identity).name();
-        farm.init(identity);
-        final String xsl = farm.renderStageXsl(1L, identity.name());
+        this.farm.init(identity);
+        final String xsl = this.farm.renderStageXsl(1L, identity.name());
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
             XmlMatchers.hasXPath(
                 "/xsl:stylesheet",
                 new SimpleNamespaceContext()
-                .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
+                    .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
             )
         );
     }

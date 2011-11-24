@@ -167,7 +167,7 @@ public final class Transaction implements Token {
     public <T> T exec(final Class<T> type) {
         assert this.ipriority != null;
         HelpQueue.execute(this);
-        if (this.iresult == null || TypeMapper.TEXT_NULL.equals(this.iresult)) {
+        if (!this.isCompleted()) {
             this.iresult = this.def;
         }
         Logger.debug(
@@ -196,6 +196,15 @@ public final class Transaction implements Token {
             this.mnemo(),
             this.argsAsText()
         );
+    }
+
+    /**
+     * Is it completed already?
+     * @return Yes or no?
+     */
+    protected boolean isCompleted() {
+        return (this.iresult != null)
+            && !TypeMapper.TEXT_NULL.equals(this.iresult);
     }
 
     /**

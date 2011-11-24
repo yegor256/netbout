@@ -26,14 +26,11 @@
  */
 package com.netbout.rest;
 
-import com.netbout.harness.PageConverter;
 import com.netbout.harness.ResourceBuilder;
 import com.rexsl.test.XhtmlConverter;
 import java.net.URLEncoder;
 import java.util.Random;
-import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.namespace.SimpleNamespaceContext;
@@ -44,6 +41,15 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext;
  * @version $Id$
  */
 public final class BoutStylesheetRsTest {
+
+    /**
+     * XPath context.
+     */
+    private static final SimpleNamespaceContext CONTEXT =
+        new SimpleNamespaceContext().withBinding(
+            "xsl",
+            "http://www.w3.org/1999/XSL/Transform"
+        );
 
     /**
      * XSL wrapper is renderable.
@@ -62,8 +68,7 @@ public final class BoutStylesheetRsTest {
             XhtmlConverter.the(xsl),
             XmlMatchers.hasXPath(
                 "/xsl:stylesheet/xsl:include[contains(@href,'/xsl/bout.xsl')]",
-                new SimpleNamespaceContext()
-                .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
+                this.CONTEXT
             )
         );
         final String xpath = String.format(
@@ -73,11 +78,7 @@ public final class BoutStylesheetRsTest {
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(
-                xpath,
-                new SimpleNamespaceContext()
-                .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
-            )
+            XmlMatchers.hasXPath(xpath, this.CONTEXT)
         );
     }
 
@@ -96,11 +97,7 @@ public final class BoutStylesheetRsTest {
         final String xsl = rest.stageXsl();
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(
-                "/xsl:stylesheet",
-                new SimpleNamespaceContext()
-                .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
-            )
+            XmlMatchers.hasXPath("/xsl:stylesheet", this.CONTEXT)
         );
     }
 

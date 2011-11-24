@@ -73,7 +73,7 @@ public final class InboxRs extends AbstractRs {
                     .path("/xsl/inbox.xsl")
                     .build()
                     .toString()
-            )
+        )
             .build(AbstractPage.class)
             .init(this)
             .append(JaxbGroup.build(bouts, "bouts"))

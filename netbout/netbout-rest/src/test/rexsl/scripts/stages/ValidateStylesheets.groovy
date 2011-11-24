@@ -53,6 +53,7 @@ def bout = new XmlSlurper()
     .bout
     .number
 def helper = 'nb:hh'
+def param = 'stage'
 def context = new SimpleNamespaceContext().withBinding('xsl', 'http://www.w3.org/1999/XSL/Transform')
 new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
@@ -64,11 +65,10 @@ new TestClient(rexsl.home)
             .toString()
     )
 def global = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, "text/xsl")
     .header(HttpHeaders.COOKIE, cookie)
     .get(
         UriBuilder.fromPath('/{bout}/xsl/bout.xsl')
-            .queryParam('stage', helper)
+            .queryParam(param, helper)
             .build(bout)
             .toString()
     )
@@ -77,11 +77,10 @@ Assert.assertThat(
     XmlMatchers.hasXPath('//xsl:include', context)
 )
 def local = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, "text/xsl")
     .header(HttpHeaders.COOKIE, cookie)
     .get(
         UriBuilder.fromPath('/{bout}/xsl/stage.xsl')
-            .queryParam('stage', helper)
+            .queryParam(param, helper)
             .build(bout)
             .toString()
     )

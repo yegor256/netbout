@@ -135,7 +135,6 @@ public final class StatsFarm implements IdentityAware {
      * Get XML of the stage.
      * @param number Bout where it is happening
      * @param stage Name of stage to render
-     * @param place The place in the stage to render
      * @return The XML document
      * @throws Exception If some problem inside
      */

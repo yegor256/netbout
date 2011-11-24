@@ -74,7 +74,7 @@ public final class StatsFarmTest {
             XmlMatchers.hasXPath(
                 "/xsl:stylesheet",
                 new SimpleNamespaceContext()
-                .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
+                    .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
             )
         );
     }

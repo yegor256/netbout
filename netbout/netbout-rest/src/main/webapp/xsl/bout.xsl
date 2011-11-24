@@ -177,16 +177,17 @@
     </xsl:template>
 
     <xsl:template match="message">
+        <xsl:variable name="msg" select="."/>
         <div class="message">
             <div class="header">
                 <img>
                     <xsl:attribute name="src">
-                        <xsl:value-of select="/page/bout/participants/participant[./author=identity]/photo"/>
+                        <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/photo"/>
                     </xsl:attribute>
                 </img>
                 <xsl:text>by </xsl:text>
                 <b>
-                <xsl:value-of select="/page/bout/participants/participant[./author=identity]/alias"/>
+                <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
                 </b>
                 <xsl:text> at </xsl:text>
                 <xsl:value-of select="date"/>

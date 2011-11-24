@@ -74,7 +74,7 @@ public final class LoginRs extends AbstractRs {
                     .path("/xsl/login.xsl")
                     .build()
                     .toString()
-            )
+        )
             .build(AbstractPage.class)
             .init(this)
             .append(

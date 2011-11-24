@@ -112,7 +112,7 @@ public final class LongBout {
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
         for (String identity : this.coords.all()) {
-            stages.add(ShortStage.build(identity, this.builder));
+            stages.add(ShortStage.build(identity, this.builder.clone()));
         }
         return stages;
     }

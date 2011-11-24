@@ -33,8 +33,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import org.apache.velocity.VelocityContext;
 
 /**
@@ -111,7 +109,6 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
-        System.out.println("ouch");
         return HelpQueue
             .make("render-stage-xsl")
             .priority(HelpQueue.Priority.SYNCHRONOUSLY)

@@ -72,7 +72,9 @@ public final class StageCoordinates {
      */
     public String stage() {
         if (this.stages == null) {
-            throw new IllegalStateException("Call #normalize() before #stage()");
+            throw new IllegalStateException(
+                "Call #normalize() before #stage()"
+            );
         }
         return this.istage;
     }
@@ -91,7 +93,9 @@ public final class StageCoordinates {
      */
     public String place() {
         if (this.stages == null) {
-            throw new IllegalStateException("Call #normalize() before #place()");
+            throw new IllegalStateException(
+                "Call #normalize() before #place()"
+            );
         }
         return this.iplace;
     }

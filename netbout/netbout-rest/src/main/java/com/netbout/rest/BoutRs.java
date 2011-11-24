@@ -307,7 +307,7 @@ public final class BoutRs extends AbstractRs {
                     .queryParam("stage", this.coords.stage())
                     .build()
                     .toString()
-            )
+        )
             .build(AbstractPage.class)
             .init(this)
             .append(
