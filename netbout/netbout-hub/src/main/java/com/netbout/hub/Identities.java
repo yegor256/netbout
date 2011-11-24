@@ -155,7 +155,7 @@ public final class Identities {
      * @param identity The identity
      * @return It needs it?
      */
-    private static Boolean needsNotifier(final String identity) {
+    protected static Boolean needsNotifier(final String identity) {
         return !identity.matches("\\d+");
     }
 

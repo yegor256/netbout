@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.hub.data.BoutData;
 import com.netbout.hub.data.MessageData;
 import com.netbout.hub.data.ParticipantData;
+import com.netbout.queue.HelpQueue;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -175,6 +176,7 @@ public final class HubBout implements Bout {
         );
         final Message message = HubMessage.build(this, msg);
         message.text();
+        this.notify(message);
         return message;
     }
 
@@ -213,6 +215,24 @@ public final class HubBout implements Bout {
             }
         }
         throw new IllegalStateException("Can't find myself in participants");
+    }
+
+    /**
+     * Notify all participants that need notification.
+     * @param message The message
+     */
+    private void notify(final Message message) {
+        for (ParticipantData dude : this.data.getParticipants()) {
+            final String name = dude.getIdentity();
+            if (Identities.needsNotifier(name)) {
+                HelpQueue.make("notify-bout-participant")
+                    .priority(HelpQueue.Priority.NORMAL)
+                    .arg(this.number())
+                    .arg(name)
+                    .arg(message.date())
+                    .exec();
+            }
+        }
     }
 
 }
