@@ -61,12 +61,6 @@ public abstract class AbstractPage implements Page {
     private transient Resource home;
 
     /**
-     * When this page was started to build, in nanoseconds.
-     * @see #getNano()
-     */
-    private final transient long start;
-
-    /**
      * Collection of elements.
      */
     private final transient Collection elements = new ArrayList();
@@ -75,13 +69,6 @@ public abstract class AbstractPage implements Page {
      * Collection of links.
      */
     private final transient JaxbBundle links = new JaxbBundle("links");
-
-    /**
-     * Public ctor.
-     */
-    public AbstractPage() {
-        this.start = System.nanoTime();
-    }
 
     /**
      * Initializer.
@@ -181,7 +168,7 @@ public abstract class AbstractPage implements Page {
                     false
                 )
             )
-            .type(MediaType.APPLICATION_XML);
+            .type(MediaType.TEXT_XML);
     }
 
     /**
@@ -212,7 +199,7 @@ public abstract class AbstractPage implements Page {
      */
     @XmlAttribute
     public final Long getNano() {
-        return System.nanoTime() - this.start;
+        return System.nanoTime() - this.home.nano();
     }
 
     /**

@@ -48,6 +48,11 @@ import org.apache.commons.codec.binary.Base64;
 public abstract class AbstractRs implements Resource {
 
     /**
+     * When this resource was started, in nanoseconds.
+     */
+    private final transient long inano = System.nanoTime();
+
+    /**
      * List of known JAX-RS providers.
      */
     private transient Providers iproviders;
@@ -137,6 +142,14 @@ public abstract class AbstractRs implements Resource {
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final long nano() {
+        return this.inano;
     }
 
     /**
