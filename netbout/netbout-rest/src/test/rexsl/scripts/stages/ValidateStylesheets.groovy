@@ -29,62 +29,42 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
+import com.netbout.harness.CookieBuilder
 import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
-import org.xmlmatchers.namespace.SimpleNamespaceContext
 
-// user name: John Doe
-// identity name: johnny.doe
-def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
-def bout = new XmlSlurper()
-    .parseText(
-        new TestClient(rexsl.home)
-            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .header(HttpHeaders.COOKIE, cookie)
-            .get('/s')
-            .body
-    )
-    .bout
-    .number
+def cookie = CookieBuilder.cookie()
 def helper = 'nb:hh'
 def param = 'stage'
-def context = new SimpleNamespaceContext().withBinding('xsl', 'http://www.w3.org/1999/XSL/Transform')
-new TestClient(rexsl.home)
+
+// start new bout
+def boutURI = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(
-        UriBuilder.fromPath('/{bout}/i')
-            .queryParam('name', helper)
-            .build(bout)
-            .toString()
-    )
-def global = new TestClient(rexsl.home)
+    .get('/s')
+    .assertStatus(HttpURLConnection.HTTP_MOVED_TEMP)
+    .headers
+    .get(HttpHeaders.LOCATION)
+
+// invite helper to the bout
+new TestClient(boutURI)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(
-        UriBuilder.fromPath('/{bout}/xsl/bout.xsl')
-            .queryParam(param, helper)
-            .build(bout)
-            .toString()
-    )
-Assert.assertThat(
-    XhtmlConverter.the(global.body),
-    XmlMatchers.hasXPath('//xsl:include', context)
-)
-def local = new TestClient(rexsl.home)
+    .get(UriBuilder.fromPath('/i').queryParam('name', helper).build())
+    .assertStatus(HttpURLConnection.HTTP_MOVED_PERM)
+
+// validate global bout XSL
+new TestClient(boutURI)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(
-        UriBuilder.fromPath('/{bout}/xsl/stage.xsl')
-            .queryParam(param, helper)
-            .build(bout)
-            .toString()
-    )
-Assert.assertThat(
-    XhtmlConverter.the(local.body),
-    XmlMatchers.hasXPath('//xsl:template', context)
-)
+    .get(UriBuilder.fromPath('/xsl/bout.xsl').queryParam(param, helper).build())
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('//xsl:include')
+
+// validate local stage-related XSL
+new TestClient(rexsl.home)
+    .header(HttpHeaders.COOKIE, cookie)
+    .get(UriBuilder.fromPath('/xsl/stage.xsl').queryParam(param, helper).build())
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('//xsl:template')

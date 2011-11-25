@@ -30,9 +30,11 @@ import com.netbout.hub.HubEntry;
 import com.netbout.hub.HubIdentity;
 import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.CpaHelper;
+import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
@@ -252,7 +254,7 @@ public abstract class AbstractRs implements Resource {
      * because of <tt>&#64;CookieParam</tt> annotation.
      * @param cookie The cookie to set
      */
-    @CookieParam("netbout")
+    @CookieParam(AbstractPage.AUTH_COOKIE)
     public final void setCookie(final String cookie) {
         if (cookie != null) {
             this.icookie = cookie;
@@ -260,6 +262,23 @@ public abstract class AbstractRs implements Resource {
                 this,
                 "#setCookie('%s'): injected",
                 cookie
+            );
+        }
+    }
+
+    /**
+     * Set auth code. Should be called by JAX-RS implemenation
+     * because of <tt>&#64;CookieParam</tt> annotation.
+     * @param auth The auth code to set
+     */
+    @QueryParam("auth")
+    public final void setAuth(final String auth) {
+        if (auth != null) {
+            this.icookie = auth;
+            Logger.debug(
+                this,
+                "#setAuth('%s'): injected",
+                auth
             );
         }
     }
@@ -332,7 +351,7 @@ public abstract class AbstractRs implements Resource {
     protected final HubIdentity identity() {
         try {
             return new Cryptor().decrypt(this.icookie);
-        } catch (Cryptor.DecryptionException ex) {
+        } catch (com.netbout.utils.DecryptionException ex) {
             Logger.debug(
                 this,
                 "Decryption failure from %s calling '%s': %s",

@@ -29,36 +29,27 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.harness.CookieBuilder
 import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
 
-// user name: John Doe
-// identity name: johnny.doe
-def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
+def cookie = CookieBuilder.cookie()
 
+// let's start one bout to have something in the inbox
 new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
-// redirect is happening here, but we don't catch it
-// @see http://trac.fazend.com/rexsl/ticket/53
-// Assert.assertThat(r1.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_TEMP))
+    .assertStatus(HttpURLConnection.HTTP_MOVED_TEMP)
 
-def r2 = new TestClient(rexsl.home)
+// validate content of the inbox
+new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/')
-Assert.assertThat(r2.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-[
-    "/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]",
-    '/page/identity/name[.="johnny.doe"]',
-    '/page/bouts',
-    '/page/bouts/bout/participants/participant',
-].each {
-    Assert.assertThat(XhtmlConverter.the(r2.body), XmlMatchers.hasXPath(it))
-}
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
+    .assertXPath('/page/identity/name[.="johnny.doe"]')
+    .assertXPath('/page/bouts')
+    .assertXPath('/page/bouts/bout/participants/participant')

@@ -33,12 +33,13 @@ import com.netbout.spi.Message;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import com.netbout.utils.AliasBuilder;
+import com.netbout.utils.Cryptor;
 import com.netbout.utils.TextUtils;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.velocity.VelocityContext;
 
 /**
@@ -81,41 +82,36 @@ public final class EmailFarm {
     public void notifyBoutParticipant(final Long number, final String name,
         final Date since) throws com.netbout.spi.BoutNotFoundException {
         if (this.isEmail(name)) {
-            final Identity identity = HubEntry.identity(name);
-            final Bout bout = identity.bout(number);
+            final Identity recepient = HubEntry.identity(name);
+            final Bout bout = recepient.bout(number);
             final List<Message> recent = new ArrayList<Message>();
             for (Message message : bout.messages("")) {
                 if (message.date().before(since)) {
                     continue;
                 }
-                if (!message.author().equals(identity)) {
+                if (!message.author().equals(recepient)) {
                     continue;
                 }
                 recent.add(message);
             }
             final VelocityContext context = new VelocityContext();
             context.put("bout", bout);
-            context.put("receiver", identity);
-            context.put("alias", new AliasBuilder(identity).build());
+            context.put("recepient", recepient);
             context.put("recent", recent);
             context.put("since", since);
-            context.put("href", "http://...");
+            context.put(
+                "href",
+                UriBuilder.fromUri("http://www.netbout.com/")
+                    .path("/{num}")
+                    .queryParam("auth", new Cryptor().encrypt(recepient))
+                    .build(bout.number())
+                    .toString()
+            );
             final String text = TextUtils.format(
                 "com/netbout/notifiers/email-notification.vm",
                 context
             );
-            Logger.info(
-                this,
-                "email: %s",
-                text
-            );
-            Logger.debug(
-                this,
-                "#notifyBoutParticipant(#%d, '%s', '%s'): done",
-                number,
-                name,
-                since
-            );
+            this.deliver(recepient.name(), text);
         }
     }
 
@@ -126,6 +122,20 @@ public final class EmailFarm {
      */
     private Boolean isEmail(final String name) {
         return name.matches("[:\\w\\.\\-\\+]+@[\\w\\.\\-]+");
+    }
+
+    /**
+     * Deliver this email.
+     * @param email The address of recepient
+     * @param The body
+     */
+    private void deliver(final String email, final String body) {
+        Logger.info(
+            this,
+            "#deliver('%s', ..) sent:%n%s",
+            email,
+            body
+        );
     }
 
 }

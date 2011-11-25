@@ -23,15 +23,58 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.harness;
+
+import com.netbout.spi.Identity;
+import com.netbout.utils.Cryptor;
+import java.util.Random;
+import org.mockito.Mockito;
+
+/**
+ * Builds a mocked cookie for test requests.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class CookieBuilder {
 
-import com.rexsl.test.TestClient
+    /**
+     * It's a utility class.
+     */
+    private CookieBuilder() {
+        // empty
+    }
 
-new TestClient(rexsl.home)
-    .get('/exception?text=hello')
-    .assertStatus(HttpURLConnection.HTTP_INTERNAL_ERROR)
-    .assertXPath('//xhtml:title[contains(.,"error")]')
+    /**
+     * Build cookie.
+     * @return The cookie
+     */
+    public static String cookie() {
+        return String.format("netbout=%s", CookieBuilder.auth());
+    }
+
+    /**
+     * Build auth code.
+     * @return The auth code
+     */
+    public static String auth() {
+        return CookieBuilder.auth(
+            String.valueOf(Math.abs(new Random().nextLong()))
+        );
+    }
+
+    /**
+     * Build auth code, for the identity specified.
+     * @param name Identity name
+     * @return The auth code
+     */
+    public static String auth(final String name) {
+        final Identity identity = Mockito.mock(Identity.class);
+        final Random random = new Random();
+        final String number = String.valueOf(Math.abs(random.nextLong()));
+        Mockito.doReturn(name).when(identity).name();
+        Mockito.doReturn(name).when(identity).user();
+        return new Cryptor().encrypt(identity);
+    }
+
+}

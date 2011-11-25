@@ -58,7 +58,7 @@ final class ForwardException extends WebApplicationException {
                 .location(uri)
                 .cookie(
                     new NewCookie(
-                        "netbout-msg",
+                        AbstractPage.MESSAGE_COOKIE,
                         ForwardException.encode(msg),
                         res.uriInfo().getBaseUri().getPath(),
                         res.uriInfo().getBaseUri().getHost(),

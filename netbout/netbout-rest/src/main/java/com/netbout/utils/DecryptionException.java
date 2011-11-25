@@ -23,15 +23,36 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.utils;
+
+/**
+ * When decryption can't build an identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class DecryptionException extends Exception {
 
-import com.rexsl.test.TestClient
+    /**
+     * Public ctor.
+     * @param cause Cause of it
+     */
+    public DecryptionException(final Throwable cause) {
+        super(cause);
+    }
 
-new TestClient(rexsl.home)
-    .get('/exception?text=hello')
-    .assertStatus(HttpURLConnection.HTTP_INTERNAL_ERROR)
-    .assertXPath('//xhtml:title[contains(.,"error")]')
+    /**
+     * Public ctor.
+     * @param hash The source of problem
+     * @param message Error message
+     * @param args Optional arguments
+     */
+    public DecryptionException(final String hash, final String message,
+        final Object... args) {
+        super(
+            String.format("%s [%s]", String.format(message, args), hash)
+        );
+    }
+
+}

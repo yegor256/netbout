@@ -28,9 +28,9 @@ package com.netbout.harness;
 
 import com.netbout.hub.HubEntry;
 import com.netbout.rest.AbstractRs;
-import com.netbout.rest.Cryptor;
 import com.netbout.rest.Resource;
 import com.netbout.spi.Identity;
+import com.netbout.utils.Cryptor;
 import com.rexsl.core.XslResolver;
 import java.net.URI;
 import java.net.URL;

@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.utils;
 
 import com.netbout.hub.HubEntry;
 import com.netbout.hub.HubIdentity;
@@ -68,31 +68,12 @@ public final class Cryptor {
     }
 
     /**
-     * Decryption exception.
-     */
-    public static final class DecryptionException extends Exception {
-        /**
-         * Public ctor.
-         * @param hash The source of problem
-         * @param message Error message
-         * @param args Optional arguments
-         */
-        public DecryptionException(final String hash, final String message,
-            final Object... args) {
-            super(
-                String.format("%s [%s]", String.format(message, args), hash)
-            );
-        }
-    }
-
-    /**
      * Get identity from hash.
      * @param hash The hash to use
      * @return The name found in it
-     * @throws Cryptor.DecryptionException If we can't decrypt it
+     * @throws DecryptionException If we can't decrypt it
      */
-    public HubIdentity decrypt(final String hash) throws
-        Cryptor.DecryptionException {
+    public HubIdentity decrypt(final String hash) throws DecryptionException {
         if (hash == null) {
             throw new DecryptionException(hash, "Hash is NULL");
         }
@@ -113,9 +94,11 @@ public final class Cryptor {
                 iname
             );
         }
-        final HubIdentity identity = HubEntry.user(uname).identity(iname);
-        assert identity != null;
-        return identity;
+        try {
+            return HubEntry.user(uname).identity(iname);
+        } catch (Throwable ex) {
+            throw new DecryptionException(ex);
+        }
     }
 
     /**

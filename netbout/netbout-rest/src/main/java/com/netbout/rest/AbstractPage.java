@@ -29,11 +29,13 @@ package com.netbout.rest;
 import com.netbout.hub.HubIdentity;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
+import com.netbout.utils.Cryptor;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -54,6 +56,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
 public abstract class AbstractPage implements Page {
+
+    /**
+     * Name of the user authentication cookie.
+     */
+    public static final String AUTH_COOKIE = "netbout";
+
+    /**
+     * Name of the message transferring cookie.
+     */
+    public static final String MESSAGE_COOKIE = "netbout-msg";
 
     /**
      * Home resource of this page.
@@ -140,23 +152,16 @@ public abstract class AbstractPage implements Page {
     public final Response.ResponseBuilder authenticated(
         final HubIdentity identity) {
         this.append(new LongIdentity(identity));
+        this.append(new JaxbBundle("auth", new Cryptor().encrypt(identity)));
         this.link("logout", "/g/out");
         this.link("start", "/s");
         this.extend();
         return Response.ok()
             .entity(this)
-            .header(
-                "Set-Cookie",
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "netbout-msg=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
-                    this.home.uriInfo().getBaseUri().getHost(),
-                    this.home.httpServletRequest().getContextPath()
-                )
-            )
+            .header(HttpHeaders.SET_COOKIE, this.nocookie(this.MESSAGE_COOKIE))
             .cookie(
                 new NewCookie(
-                    "netbout",
+                    this.AUTH_COOKIE,
                     new Cryptor().encrypt(identity),
                     this.home.uriInfo().getBaseUri().getPath(),
                     this.home.uriInfo().getBaseUri().getHost(),
@@ -180,7 +185,9 @@ public abstract class AbstractPage implements Page {
         this.extend();
         return Response.ok()
             .entity(this)
-            .type(MediaType.APPLICATION_XML);
+            .header(HttpHeaders.SET_COOKIE, this.nocookie(this.MESSAGE_COOKIE))
+            .header(HttpHeaders.SET_COOKIE, this.nocookie(this.AUTH_COOKIE))
+            .type(MediaType.TEXT_XML);
     }
 
     /**
@@ -218,6 +225,21 @@ public abstract class AbstractPage implements Page {
         );
         this.append(new JaxbBundle("message", this.home.message()));
         this.append(this.links);
+    }
+
+    /**
+     * Create header that cleans cookie with the given name.
+     * @param name Name of the cookie
+     * @return Value of the HTTP header
+     */
+    private String nocookie(final String name) {
+        return String.format(
+            // @checkstyle LineLength (1 line)
+            "%s=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
+            name,
+            this.home.uriInfo().getBaseUri().getHost(),
+            this.home.httpServletRequest().getContextPath()
+        );
     }
 
 }

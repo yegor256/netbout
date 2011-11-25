@@ -82,6 +82,8 @@ public final class EmailFarmTest {
             .identity("nb:test@example.com");
         final Bout bout = identity.start();
         final Message msg = bout.post("Hello, how are you?");
+        bout.post("Should work fine with\nmulti-line messages");
+        bout.post("And this one should work");
         final EmailFarm farm = new EmailFarm();
         farm.notifyBoutParticipant(bout.number(), identity.name(), msg.date());
     }

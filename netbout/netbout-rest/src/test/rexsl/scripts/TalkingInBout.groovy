@@ -29,77 +29,65 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.harness.CookieBuilder
 import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
 
-def start(cookie) {
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .header(HttpHeaders.COOKIE, cookie)
-        .get('/s')
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-    new XmlSlurper().parseText(r.body).bout.number
-}
+def cookie = CookieBuilder.cookie()
+def friend = "7265734"
 
-def rename(cookie, bout, title) {
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .header(HttpHeaders.COOKIE, cookie)
-        .body('title=' + title)
-        .post(UriBuilder.fromPath('/{bout}/r').build(bout).toString())
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
-}
+// start new bout
+def bout = new XmlSlurper()
+    .parseText(
+        new TestClient(rexsl.home)
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .header(HttpHeaders.COOKIE, cookie)
+            .get('/s')
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath('/page/bout/number')
+            .body
+    )
+    .bout
+    .number
 
-def invite(cookie, bout, identity) {
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .header(HttpHeaders.COOKIE, cookie)
-        .get(
-            UriBuilder.fromPath('/{bout}/i')
-                .queryParam('name', identity)
-                .build(bout)
-                .toString()
-        )
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-}
-
-def post(cookie, bout, text) {
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .header(HttpHeaders.COOKIE, cookie)
-        .body('text=' + text)
-        .post(UriBuilder.fromPath('/{bout}/p').build(bout).toString())
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
-}
-
-// user name: John Doe
-// identity name: johnny.doe
-def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
-
-def bout = start(cookie)
-rename(cookie, bout, 'new interesting discussion...')
-post(cookie, bout, 'Hello, friends!')
-invite(cookie, bout, 'j.depp')
-invite(cookie, bout, 'somebody-we-dont-know-yet')
-invite(cookie, bout, 'nb:db')
-
-def r = new TestClient(rexsl.home)
+// invite friend to the bout
+new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/{bout}').build(bout).toString())
-Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-[
-    "/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]",
-    '/page/identity/name[.="johnny.doe"]',
-    '/page/bout/title[.="new interesting discussion..."]',
-    '/page/bout/participants/participant',
-    '/page/bout/messages/message/text[contains(.,"friends")]',
-].each {
-    Assert.assertThat(XhtmlConverter.the(r.body), XmlMatchers.hasXPath(it))
-}
+    .get(
+        UriBuilder.fromPath('/{bout}/i')
+            .queryParam('name', identity)
+            .build(bout)
+            .toString()
+    )
+    .assertStatus(HttpURLConnection.HTTP_MOVED_PERM)
+
+// post new message to this bout, but a friend (using "auth" param)
+new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .body('text=How are you?')
+    .post(
+        UriBuilder.fromPath('/{bout}/p')
+            .queryParam('auth', CookieBuilder.auth(friend))
+            .build(bout)
+            .toString()
+    )
+    .assertStatus(HttpURLConnection.HTTP_MOVED_PERM)
+
+// let's check that it exists there, the message
+new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header(HttpHeaders.COOKIE, cookie)
+    .get(
+        UriBuilder.fromPath('/{bout}')
+            .build(bout)
+            .toString()
+    )
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]")
+    .assertXPath('/page/identity/name[.="${friend}"]')
+    .assertXPath('/page/bout/title[.=""]')
+    .assertXPath('/page/bout/participants/participant')
+    .assertXPath('/page/bout/messages/message/text[.="How are you?"]')
