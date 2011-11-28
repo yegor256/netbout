@@ -42,16 +42,29 @@ def boutURI = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_MOVED_TEMP)
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
     .headers
     .get(HttpHeaders.LOCATION)
 
+// get URI for inviting new participants
+def inviteURI = new XmlSlurper(
+    new TestClient(boutURI)
+        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .header(HttpHeaders.COOKIE, cookie)
+        .get()
+        .assertStatus(HttpURLConnection.HTTP_OK)
+        .body
+    )
+    .page
+    .links
+    .link
+
 // invite helper to this bout and expect a stage to be rendered
-new TestClient(boutURI)
+new TestClient(UriBuilder.fromUri(inviteURI).queryParam('name', 'nb:hh').build())
     .header(HttpHeaders.COOKIE, cookie)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get(UriBuilder.fromPath('/i').queryParam('name', 'nb:hh').build())
-    .assertStatus(HttpURLConnection.HTTP_MOVE_PERM)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
 // validate that the stage is really there, in XHTML
 new TestClient(rexsl.home)

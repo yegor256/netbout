@@ -39,52 +39,33 @@ def cookie = CookieBuilder.cookie()
 def friend = "7265734"
 
 // start new bout
-def bout = new XmlSlurper()
-    .parseText(
-        new TestClient(rexsl.home)
-            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .header(HttpHeaders.COOKIE, cookie)
-            .get('/s')
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath('/page/bout/number')
-            .body
-    )
-    .bout
-    .number
+def boutURI = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header(HttpHeaders.COOKIE, cookie)
+    .get('/s')
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+    .headers
+    .get(HttpHeaders.LOCATION)
 
 // invite friend to the bout
-new TestClient(rexsl.home)
+new TestClient(boutURI)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(
-        UriBuilder.fromPath('/{bout}/i')
-            .queryParam('name', identity)
-            .build(bout)
-            .toString()
-    )
-    .assertStatus(HttpURLConnection.HTTP_MOVED_PERM)
+    .get(UriBuilder.fromPath('/i').queryParam('name', identity).build())
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
 // post new message to this bout, but a friend (using "auth" param)
-new TestClient(rexsl.home)
+new TestClient(boutURI)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .body('text=How are you?')
-    .post(
-        UriBuilder.fromPath('/{bout}/p')
-            .queryParam('auth', CookieBuilder.auth(friend))
-            .build(bout)
-            .toString()
-    )
-    .assertStatus(HttpURLConnection.HTTP_MOVED_PERM)
+    .post(UriBuilder.fromPath('/p').queryParam('auth', CookieBuilder.auth(friend)).build())
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
 // let's check that it exists there, the message
-new TestClient(rexsl.home)
+new TestClient(boutURI)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(
-        UriBuilder.fromPath('/{bout}')
-            .build(bout)
-            .toString()
-    )
+    .get('/')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]")
     .assertXPath('/page/identity/name[.="${friend}"]')

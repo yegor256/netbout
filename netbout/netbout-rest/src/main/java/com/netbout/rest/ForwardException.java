@@ -53,7 +53,7 @@ final class ForwardException extends WebApplicationException {
         final String msg) {
         super(
             Response
-                .status(Response.Status.MOVED_PERMANENTLY)
+                .status(Response.Status.SEE_OTHER)
                 .entity(msg)
                 .location(uri)
                 .cookie(

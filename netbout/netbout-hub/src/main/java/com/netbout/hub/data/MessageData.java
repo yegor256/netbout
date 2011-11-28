@@ -26,7 +26,7 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -106,8 +106,8 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public void setDate(final Date dte) {
         this.date = dte;
-        HelpQueue.make("changed-message-date")
-            .priority(HelpQueue.Priority.ASAP)
+        Bus.make("changed-message-date")
+            .priority(Bus.Priority.ASAP)
             .arg(this.number)
             .arg(this.date)
             .exec();
@@ -124,8 +124,8 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public Date getDate() {
         if (this.date == null) {
-            this.date = HelpQueue.make("get-message-date")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.date = Bus.make("get-message-date")
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .arg(this.number)
                 .exec(Date.class);
             Logger.debug(
@@ -144,8 +144,8 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public void setAuthor(final String idnt) {
         this.author = idnt;
-        HelpQueue.make("changed-message-author")
-            .priority(HelpQueue.Priority.ASAP)
+        Bus.make("changed-message-author")
+            .priority(Bus.Priority.ASAP)
             .arg(this.number)
             .arg(this.author)
             .exec();
@@ -163,8 +163,8 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public String getAuthor() {
         if (this.author == null) {
-            this.author = HelpQueue.make("get-message-author")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.author = Bus.make("get-message-author")
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .arg(this.number)
                 .exec(String.class);
             Logger.debug(
@@ -183,8 +183,8 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public void setText(final String txt) {
         this.text = txt;
-        HelpQueue.make("changed-message-text")
-            .priority(HelpQueue.Priority.ASAP)
+        Bus.make("changed-message-text")
+            .priority(Bus.Priority.ASAP)
             .arg(this.number)
             .arg(this.text)
             .exec();
@@ -202,8 +202,8 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public String getText() {
         if (this.text == null) {
-            this.text = HelpQueue.make("get-message-text")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.text = Bus.make("get-message-text")
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .arg(this.number)
                 .exec(String.class);
             Logger.debug(
@@ -222,8 +222,8 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public void addSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
-            HelpQueue.make("message-was-seen")
-                .priority(HelpQueue.Priority.ASAP)
+            Bus.make("message-was-seen")
+                .priority(Bus.Priority.ASAP)
                 .arg(this.number)
                 .arg(identity)
                 .exec();
@@ -244,8 +244,8 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public Boolean isSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity)) {
-            final Boolean status = HelpQueue.make("was-message-seen")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            final Boolean status = Bus.make("was-message-seen")
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .arg(this.number)
                 .arg(identity)
                 .asDefault(Boolean.FALSE)

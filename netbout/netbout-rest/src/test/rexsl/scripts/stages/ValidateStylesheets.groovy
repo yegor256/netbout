@@ -44,7 +44,7 @@ def boutURI = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_MOVED_TEMP)
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
     .headers
     .get(HttpHeaders.LOCATION)
 
@@ -53,7 +53,7 @@ new TestClient(boutURI)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get(UriBuilder.fromPath('/i').queryParam('name', helper).build())
-    .assertStatus(HttpURLConnection.HTTP_MOVED_PERM)
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
 // validate global bout XSL
 new TestClient(boutURI)
@@ -63,7 +63,7 @@ new TestClient(boutURI)
     .assertXPath('//xsl:include')
 
 // validate local stage-related XSL
-new TestClient(rexsl.home)
+new TestClient(boutURI)
     .header(HttpHeaders.COOKIE, cookie)
     .get(UriBuilder.fromPath('/xsl/stage.xsl').queryParam(param, helper).build())
     .assertStatus(HttpURLConnection.HTTP_OK)

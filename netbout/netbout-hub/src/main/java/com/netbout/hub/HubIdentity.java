@@ -26,10 +26,10 @@
  */
 package com.netbout.hub;
 
+import com.netbout.bus.Bus;
 import com.netbout.hub.data.BoutData;
 import com.netbout.hub.data.ParticipantData;
 import com.netbout.hub.data.Storage;
-import com.netbout.queue.HelpQueue;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
@@ -211,8 +211,8 @@ public final class HubIdentity implements Identity {
         if (this.iphoto == null) {
             try {
                 this.iphoto = new URL(
-                    HelpQueue.make("get-identity-photo")
-                        .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                    Bus.make("get-identity-photo")
+                        .priority(Bus.Priority.SYNCHRONOUSLY)
                         .arg(this.iname)
                         .asDefault("http://img.netbout.com/unknown.png")
                         .exec(String.class)
@@ -232,8 +232,8 @@ public final class HubIdentity implements Identity {
         synchronized (this) {
             this.iphoto = pic;
         }
-        HelpQueue.make("changed-identity-photo")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+        Bus.make("changed-identity-photo")
+            .priority(Bus.Priority.SYNCHRONOUSLY)
             .arg(this.iname)
             .arg(this.iphoto.toString())
             .exec();
@@ -280,8 +280,8 @@ public final class HubIdentity implements Identity {
                 this.iname
             );
         } else {
-            HelpQueue.make("added-identity-alias")
-                .priority(HelpQueue.Priority.ASAP)
+            Bus.make("added-identity-alias")
+                .priority(Bus.Priority.ASAP)
                 .arg(this.iname)
                 .arg(alias)
                 .exec();
@@ -302,7 +302,7 @@ public final class HubIdentity implements Identity {
     @Override
     public void promote(final Helper helper) throws HelperException {
         helper.init(this);
-        HelpQueue.register(helper);
+        Bus.register(helper);
         Logger.info(
             this,
             "#promote(%s): '%s' promoted",
@@ -387,8 +387,8 @@ public final class HubIdentity implements Identity {
             if (this.ibouts == null) {
                 this.ibouts = new CopyOnWriteArraySet<Long>(
                     Arrays.asList(
-                        HelpQueue.make("get-bouts-of-identity")
-                            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                        Bus.make("get-bouts-of-identity")
+                            .priority(Bus.Priority.SYNCHRONOUSLY)
                             .arg(this.iname)
                             .asDefault(new Long[]{})
                             .exec(Long[].class)
@@ -408,8 +408,8 @@ public final class HubIdentity implements Identity {
             if (this.ialiases == null) {
                 this.ialiases = new CopyOnWriteArraySet<String>(
                     Arrays.asList(
-                        HelpQueue.make("get-aliases-of-identity")
-                            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                        Bus.make("get-aliases-of-identity")
+                            .priority(Bus.Priority.SYNCHRONOUSLY)
                             .arg(this.iname)
                             .asDefault(new String[]{})
                             .exec(String[].class)

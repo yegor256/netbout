@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Participant;
 import com.netbout.utils.TextUtils;
@@ -171,9 +171,9 @@ public final class StageCoordinates {
         this.stages = new ArrayList<String>();
         for (Participant dude : bout.participants()) {
             final String name = dude.identity().name();
-            final Boolean exists = HelpQueue
+            final Boolean exists = Bus
                 .make("does-stage-exist")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .arg(bout.number())
                 .arg(name)
                 .inBout(bout)

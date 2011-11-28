@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
 import com.netbout.utils.TextUtils;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -109,9 +109,9 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
-        return HelpQueue
+        return Bus
             .make("render-stage-xsl")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            .priority(Bus.Priority.SYNCHRONOUSLY)
             .arg(this.bout)
             .arg(this.stage)
             .asDefault(

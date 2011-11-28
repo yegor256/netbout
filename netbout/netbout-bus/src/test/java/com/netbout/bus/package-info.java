@@ -24,32 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.queue;
-
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 /**
- * Test case of {@link TextProgressReport}.
+ * Tests of the Bus.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextProgressReportTest {
-
-    /**
-     * Simple progress.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testProgressReporting() throws Exception {
-        final ProgressReport report = new TextProgressReport();
-        // @checkstyle MagicNumber (1 line)
-        report.time(67 * 1000 * 1000, 33 * 1000 * 1000);
-        MatcherAssert.assertThat(
-            report.toString(),
-            Matchers.equalTo("67.00ms spent, 33.00ms to complete: 67%")
-        );
-    }
-
-}
+package com.netbout.bus;

@@ -42,15 +42,15 @@ def boutURI = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_MOVED_TEMP)
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
     .headers
     .get(HttpHeaders.LOCATION)
 
 // call some stage that DOESN'T exist in this bout - it should
 // not be rendered
-new TestClient(boutURI)
+new TestClient(UriBuilder.fromUri(boutURI).queryParam('stage', 'nb:hh').build())
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/').queryParam('stage', 'nb:hh').build())
+    .get('')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('//xhtml:div[@id="stage"]')

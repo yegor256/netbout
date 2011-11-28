@@ -26,7 +26,7 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
 import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.List;
@@ -83,8 +83,8 @@ public final class BoutData {
      */
     public String getTitle() {
         if (this.title == null) {
-            this.title = HelpQueue.make("get-bout-title")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.title = Bus.make("get-bout-title")
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .arg(this.number)
                 .exec(String.class);
             Logger.debug(
@@ -103,8 +103,8 @@ public final class BoutData {
      */
     public void setTitle(final String text) {
         this.title = text;
-        HelpQueue.make("changed-bout-title")
-            .priority(HelpQueue.Priority.ASAP)
+        Bus.make("changed-bout-title")
+            .priority(Bus.Priority.ASAP)
             .arg(this.number)
             .arg(this.title)
             .exec();
@@ -122,8 +122,8 @@ public final class BoutData {
      */
     public void addParticipant(final ParticipantData data) {
         this.getParticipants().add(data);
-        HelpQueue.make("added-bout-participant")
-            .priority(HelpQueue.Priority.ASAP)
+        Bus.make("added-bout-participant")
+            .priority(Bus.Priority.ASAP)
             .arg(this.number)
             .arg(data.getIdentity())
             .exec();
@@ -144,9 +144,9 @@ public final class BoutData {
         synchronized (this) {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantData>();
-                final String[] identities = HelpQueue
+                final String[] identities = Bus
                     .make("get-bout-participants")
-                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                    .priority(Bus.Priority.SYNCHRONOUSLY)
                     .arg(this.number)
                     .asDefault(new String[]{})
                     .exec(String[].class);
@@ -171,8 +171,8 @@ public final class BoutData {
      * @return The data
      */
     public MessageData addMessage() {
-        final Long num = HelpQueue.make("create-bout-message")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+        final Long num = Bus.make("create-bout-message")
+            .priority(Bus.Priority.SYNCHRONOUSLY)
             .arg(this.number)
             .asDefault(new Long(1L))
             .exec(Long.class);
@@ -195,8 +195,8 @@ public final class BoutData {
         synchronized (this) {
             if (this.messages == null) {
                 this.messages = new CopyOnWriteArrayList<MessageData>();
-                final Long[] nums = HelpQueue.make("get-bout-messages")
-                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                final Long[] nums = Bus.make("get-bout-messages")
+                    .priority(Bus.Priority.SYNCHRONOUSLY)
                     .arg(this.number)
                     .asDefault(new Long[]{})
                     .exec(Long[].class);

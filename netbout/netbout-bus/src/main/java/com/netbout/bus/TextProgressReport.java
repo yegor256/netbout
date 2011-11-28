@@ -24,11 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.bus;
 
 /**
- * Queue of helpers.
+ * Report of progress of one transaction, in text.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.queue;
+public final class TextProgressReport implements ProgressReport {
+
+    /**
+     * The report.
+     */
+    private transient String report = "unknown state";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.report;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void time(final long spent, final long ttc) {
+        this.report = String.format(
+            "%.2fms spent, %.2fms to complete: %d%%",
+            // @checkstyle MagicNumber (3 lines)
+            (double) spent / (1000L * 1000),
+            (double) ttc / (1000L * 1000),
+            100 * spent / (spent + ttc)
+        );
+    }
+
+}

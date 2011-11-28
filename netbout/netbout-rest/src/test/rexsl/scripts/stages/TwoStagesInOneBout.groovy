@@ -42,7 +42,7 @@ def boutURI = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_MOVED_TEMP)
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
     .headers
     .get(HttpHeaders.LOCATION)
 
@@ -52,7 +52,7 @@ def boutURI = new TestClient(rexsl.home)
         .header(HttpHeaders.COOKIE, cookie)
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get(UriBuilder.fromPath('/i').queryParam('name', helper).build())
-        .assertStatus(HttpURLConnection.HTTP_MOVE_PERM)
+        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 }
 
 // validate that there are really two stages in the XML

@@ -24,40 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.queue;
+package com.netbout.bus;
+
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Report of progress of one transaction, in text.
- *
+ * Test case of {@link TextProgressReport}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextProgressReport implements ProgressReport {
+public final class TextProgressReportTest {
 
     /**
-     * The report.
+     * Simple progress.
+     * @throws Exception If there is some problem inside
      */
-    private transient String report = "unknown state";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return this.report;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void time(final long spent, final long ttc) {
-        this.report = String.format(
-            "%.2fms spent, %.2fms to complete: %d%%",
-            // @checkstyle MagicNumber (3 lines)
-            (double) spent / (1000L * 1000),
-            (double) ttc / (1000L * 1000),
-            100 * spent / (spent + ttc)
+    @Test
+    public void testProgressReporting() throws Exception {
+        final ProgressReport report = new TextProgressReport();
+        // @checkstyle MagicNumber (1 line)
+        report.time(67 * 1000 * 1000, 33 * 1000 * 1000);
+        MatcherAssert.assertThat(
+            report.toString(),
+            Matchers.equalTo("67.00ms spent, 33.00ms to complete: 67%")
         );
     }
 

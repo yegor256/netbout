@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.queue;
+package com.netbout.bus;
 
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
@@ -39,11 +39,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link HelpQueue}.
+ * Test case of {@link Bus}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HelpQueueTest {
+public final class BusTest {
 
     /**
      * Register new helper.
@@ -54,7 +54,7 @@ public final class HelpQueueTest {
         final Helper helper = new CpaHelper(this.getClass());
         final Identity identity = Mockito.mock(Identity.class);
         helper.init(identity);
-        HelpQueue.register(helper);
+        Bus.register(helper);
     }
 
     /**
@@ -63,8 +63,8 @@ public final class HelpQueueTest {
      */
     @Test
     public void testSynchronousTransaction() throws Exception {
-        final String result = HelpQueue.make("simple-translation")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+        final String result = Bus.make("simple-translation")
+            .priority(Bus.Priority.SYNCHRONOUSLY)
             .arg("test me")
             .asDefault("doesn't work")
             .exec(String.class);
@@ -78,8 +78,8 @@ public final class HelpQueueTest {
     @Test
     public void testNullResponseAndDefault() throws Exception {
         // @checkstyle MultipleStringLiterals (1 line)
-        final Boolean result = HelpQueue.make("null-response")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+        final Boolean result = Bus.make("null-response")
+            .priority(Bus.Priority.SYNCHRONOUSLY)
             .asDefault(Boolean.TRUE)
             .exec(Boolean.class);
         MatcherAssert.assertThat(result, Matchers.equalTo(Boolean.TRUE));
@@ -92,8 +92,8 @@ public final class HelpQueueTest {
     @Test
     public void testNullResponseAndWithoutDefault() throws Exception {
         // @checkstyle MultipleStringLiterals (1 line)
-        final Boolean result = HelpQueue.make("null-response")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+        final Boolean result = Bus.make("null-response")
+            .priority(Bus.Priority.SYNCHRONOUSLY)
             .exec(Boolean.class);
         MatcherAssert.assertThat(result, Matchers.nullValue());
     }
@@ -106,8 +106,8 @@ public final class HelpQueueTest {
     public void testTransactionReturningList() throws Exception {
         // @checkstyle MagicNumber (1 line)
         final Long size = new Long(new Random().nextInt(20));
-        final Long[] list = HelpQueue.make("simple-list")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+        final Long[] list = Bus.make("simple-list")
+            .priority(Bus.Priority.SYNCHRONOUSLY)
             .arg(size)
             .exec(Long[].class);
         MatcherAssert.assertThat(new Long(list.length), Matchers.equalTo(size));

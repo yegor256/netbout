@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.queue;
+package com.netbout.bus;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Token;
@@ -51,7 +51,7 @@ public final class Transaction implements Token {
     /**
      * Priority.
      */
-    private transient HelpQueue.Priority ipriority;
+    private transient Bus.Priority ipriority;
 
     /**
      * Default value.
@@ -105,7 +105,7 @@ public final class Transaction implements Token {
      * @param priority Priority
      * @return This object
      */
-    public Transaction priority(final HelpQueue.Priority priority) {
+    public Transaction priority(final Bus.Priority priority) {
         this.ipriority = priority;
         return this;
     }
@@ -166,7 +166,7 @@ public final class Transaction implements Token {
      */
     public <T> T exec(final Class<T> type) {
         assert this.ipriority != null;
-        HelpQueue.execute(this);
+        Bus.execute(this);
         if (!this.isCompleted()) {
             this.iresult = this.def;
         }
@@ -189,7 +189,7 @@ public final class Transaction implements Token {
      * Execute and return nothing.
      */
     public void exec() {
-        HelpQueue.execute(this);
+        Bus.execute(this);
         Logger.debug(
             Transaction.class,
             "#exec(%s): done for [%s]",

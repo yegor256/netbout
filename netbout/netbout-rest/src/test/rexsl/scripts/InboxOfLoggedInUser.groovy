@@ -41,7 +41,7 @@ new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_MOVED_TEMP)
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
 // validate content of the inbox
 new TestClient(rexsl.home)

@@ -175,7 +175,7 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .status(Response.Status.MOVED_PERMANENTLY)
+            .status(Response.Status.SEE_OTHER)
             .location(this.self(""))
             .build();
     }
@@ -201,7 +201,7 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .status(Response.Status.MOVED_PERMANENTLY)
+            .status(Response.Status.SEE_OTHER)
             .location(this.self(""))
             .build();
     }
@@ -227,7 +227,7 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .status(Response.Status.MOVED_PERMANENTLY)
+            .status(Response.Status.SEE_OTHER)
             .location(this.self(""))
             .build();
     }
@@ -244,7 +244,7 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .status(Response.Status.MOVED_PERMANENTLY)
+            .status(Response.Status.SEE_OTHER)
             .location(this.self(""))
             .build();
     }
@@ -261,7 +261,7 @@ public final class BoutRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .status(Response.Status.MOVED_PERMANENTLY)
+            .status(Response.Status.SEE_OTHER)
             .location(this.self(""))
             .build();
     }

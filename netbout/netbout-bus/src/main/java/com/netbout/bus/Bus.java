@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.queue;
+package com.netbout.bus;
 
 import com.netbout.spi.Helper;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HelpQueue {
+public final class Bus {
 
     /**
      * Priority.
@@ -65,7 +65,7 @@ public final class HelpQueue {
     /**
      * It's a utility class.
      */
-    private HelpQueue() {
+    private Bus() {
         // empty
     }
 
@@ -74,7 +74,7 @@ public final class HelpQueue {
      * @param helper The helper to register
      */
     public static void register(final Helper helper) {
-        HelpQueue.HELPERS.add(helper);
+        Bus.HELPERS.add(helper);
     }
 
     /**
@@ -91,7 +91,7 @@ public final class HelpQueue {
      * @param token The transaction to execute
      */
     protected static void execute(final Transaction token) {
-        for (Helper helper : HelpQueue.HELPERS) {
+        for (Helper helper : Bus.HELPERS) {
             try {
                 if (helper.supports().contains(token.mnemo())) {
                     helper.execute(token);

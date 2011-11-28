@@ -26,7 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
 import com.ymock.util.Logger;
 import java.util.HashSet;
 import java.util.Set;
@@ -113,8 +113,8 @@ public final class Identities {
             }
             identity = new HubIdentity(name);
             Identities.ALL.put(name, identity);
-            HelpQueue.make("identity-mentioned")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            Bus.make("identity-mentioned")
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .arg(name)
                 .exec();
             Logger.debug(
@@ -139,8 +139,8 @@ public final class Identities {
                 found.add(identity);
             }
         }
-        final String[] external = HelpQueue.make("find-identities-by-keyword")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+        final String[] external = Bus.make("find-identities-by-keyword")
+            .priority(Bus.Priority.SYNCHRONOUSLY)
             .arg(keyword)
             .asDefault(new String[]{})
             .exec(String[].class);
@@ -165,8 +165,8 @@ public final class Identities {
      * @return Can we?
      */
     private static Boolean canNotify(final String identity) {
-        return HelpQueue.make("can-notify-identity")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+        return Bus.make("can-notify-identity")
+            .priority(Bus.Priority.SYNCHRONOUSLY)
             .arg(identity)
             .asDefault(Boolean.FALSE)
             .exec(Boolean.class);

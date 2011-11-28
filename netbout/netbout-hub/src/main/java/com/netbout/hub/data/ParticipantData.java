@@ -26,7 +26,7 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
 import com.ymock.util.Logger;
 
 /**
@@ -96,8 +96,8 @@ public final class ParticipantData {
      */
     public void setConfirmed(final Boolean flag) {
         this.confirmed = flag;
-        HelpQueue.make("changed-participant-status")
-            .priority(HelpQueue.Priority.ASAP)
+        Bus.make("changed-participant-status")
+            .priority(Bus.Priority.ASAP)
             .arg(this.bout)
             .arg(this.identity)
             .arg(this.confirmed)
@@ -115,8 +115,8 @@ public final class ParticipantData {
      */
     public Boolean isConfirmed() {
         if (this.confirmed == null) {
-            this.confirmed = HelpQueue.make("get-participant-status")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.confirmed = Bus.make("get-participant-status")
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .arg(this.bout)
                 .arg(this.identity)
                 .exec(Boolean.class);

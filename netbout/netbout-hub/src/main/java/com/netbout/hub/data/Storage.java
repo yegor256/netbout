@@ -26,7 +26,7 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
 import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,16 +80,16 @@ public final class Storage {
     public Long create() {
         BoutData data;
         synchronized (this.bouts) {
-            final Long number = HelpQueue.make("get-next-bout-number")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            final Long number = Bus.make("get-next-bout-number")
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .asDefault(Collections.max(this.bouts.keySet()) + 1)
                 .exec(Long.class);
             data = new BoutData(number);
             this.bouts.put(data.getNumber(), data);
         }
         data.setTitle("");
-        HelpQueue.make("started-new-bout")
-            .priority(HelpQueue.Priority.ASAP)
+        Bus.make("started-new-bout")
+            .priority(Bus.Priority.ASAP)
             .arg(data.getNumber())
             .exec();
         Logger.debug(
@@ -117,8 +117,8 @@ public final class Storage {
                 number
             );
         } else {
-            final Boolean exists = HelpQueue.make("check-bout-existence")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            final Boolean exists = Bus.make("check-bout-existence")
+                .priority(Bus.Priority.SYNCHRONOUSLY)
                 .arg(number)
                 .asDefault(Boolean.FALSE)
                 .exec(Boolean.class);

@@ -24,21 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.queue;
 
 /**
- * Report of progress of one transaction.
+ * Bus with helpers.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface ProgressReport {
-
-    /**
-     * Report time situation.
-     * @param spent How many nanoseconds we already spent
-     * @param ttc How many nanoseconds to complete
-     */
-    void time(long spent, long ttc);
-
-}
+package com.netbout.bus;

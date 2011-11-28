@@ -95,7 +95,7 @@ public final class InboxRs extends AbstractRs {
             .init(this)
             .authenticated(identity)
             .entity(String.format("bout #%d created", bout.number()))
-            .status(Response.Status.MOVED_PERMANENTLY)
+            .status(Response.Status.SEE_OTHER)
             .location(
                 this.uriInfo()
                     .getBaseUriBuilder()

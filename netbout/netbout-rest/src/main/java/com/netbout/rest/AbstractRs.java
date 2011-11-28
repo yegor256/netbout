@@ -79,10 +79,10 @@ public abstract class AbstractRs implements Resource {
     /**
      * Cookie.
      */
-    private transient String icookie;
+    private transient String icookie
     // Uncomment this line if you don't have a cookie saved by your
     // local browser yet.
-    // = "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
+    = new Cryptor().encrypt(HubEntry.user("999").identity("999"));
 
     /**
      * The message to show.
