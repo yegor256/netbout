@@ -31,7 +31,9 @@ package com.netbout.spi.cpa;
 
 import com.netbout.spi.HelperException;
 import com.netbout.spi.Token;
+import com.netbout.spi.TokenInBout;
 import com.netbout.spi.TypeMapper;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
@@ -82,7 +84,11 @@ final class HelpTarget {
         try {
             result = this.method.invoke(
                 this.farm,
-                this.converted(token, this.method.getParameterTypes())
+                this.converted(
+                    token,
+                    this.method.getParameterTypes(),
+                    this.method.getParameterAnnotations()
+                )
             );
         } catch (IllegalAccessException ex) {
             throw new IllegalStateException(ex);
@@ -96,14 +102,38 @@ final class HelpTarget {
      * Convert argument types.
      * @param token The token
      * @param types Expected types for every one of them
+     * @param annotations Parameter annotations
      * @return Array of properly types args
      * @throws HelperException If some problem inside
      */
-    public Object[] converted(final Token token, final Class[] types)
-        throws HelperException {
+    public Object[] converted(final Token token, final Class[] types,
+        final Annotation[][] annotations) throws HelperException {
         final Object[] converted = new Object[types.length];
         for (int pos = 0; pos < types.length; pos += 1) {
-            converted[pos] = TypeMapper.toObject(token.arg(pos), types[pos]);
+            boolean skip = false;
+            for (Annotation annotation : annotations[pos]) {
+                if (annotation instanceof InBout) {
+                    if (!(token instanceof TokenInBout)) {
+                        throw new HelperException(
+                            String.format(
+                                // @checkstyle LineLength (1 line)
+                                "Operation '%s' expects bout as param #%d while mnemo '%s' is global",
+                                this.method.toGenericString(),
+                                pos,
+                                token.mnemo()
+                            )
+                        );
+                    }
+                    converted[pos] = ((TokenInBout) token).bout();
+                    skip = true;
+                    break;
+                }
+            }
+            if (!skip) {
+                converted[pos] = TypeMapper.toObject(
+                    token.arg(pos), types[pos]
+                );
+            }
         }
         return converted;
     }

@@ -29,10 +29,12 @@
  */
 package com.netbout.spi.cpa;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Token;
+import com.netbout.spi.TokenInBout;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -130,6 +132,22 @@ public final class CpaHelperTest {
     }
 
     /**
+     * Test with in-bout token.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testInBoutToken() throws Exception {
+        final Bout bout = Mockito.mock(Bout.class);
+        final Long number = Math.abs(new Random().nextLong());
+        Mockito.doReturn(number).when(bout).number();
+        final TokenInBout token = Mockito.mock(TokenInBout.class);
+        Mockito.doReturn("get-bout-number").when(token).mnemo();
+        Mockito.doReturn(bout).when(token).bout();
+        this.helper.execute(token);
+        Mockito.verify(token).result(number.toString());
+    }
+
+    /**
      * Helper can't execute unknown operation.
      * @throws Exception If there is some problem inside
      */
@@ -138,72 +156,6 @@ public final class CpaHelperTest {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("unknown-operation").when(token).mnemo();
         this.helper.execute(token);
-    }
-
-    /**
-     * Sample farm.
-     */
-    @Farm
-    public static final class SampleFarm implements IdentityAware {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void init(final Identity identity) {
-            MatcherAssert.assertThat(identity, Matchers.notNullValue());
-        }
-        /**
-         * Sample operation.
-         * @param text The text to translate
-         * @param len Length to compare with
-         * @return The translated text
-         */
-        @Operation("comparison")
-        public Boolean longerThan(final String text, final Long len) {
-            return text.length() > len;
-        }
-        /**
-         * Empty operation with no result and no args.
-         */
-        @Operation("empty")
-        public void empty() {
-            // intentionally empty
-        }
-        /**
-         * List as output.
-         * @param size Size of the list to return
-         * @return The list just created
-         */
-        @Operation("list")
-        public Long[] list(final Long size) {
-            final Long[] list = new Long[size.intValue()];
-            final Random random = new Random();
-            for (int pos = 0; pos < size; pos += 1) {
-                list[pos] = random.nextLong();
-            }
-            return list;
-        }
-        /**
-         * List of texts.
-         * @return The list just created
-         */
-        @Operation("texts")
-        public String[] texts() {
-            final String[] list = new String[2];
-            // @checkstyle MultipleStringLiterals (1 line)
-            list[0] = "o n e";
-            list[1] = "\"two\"";
-            return list;
-        }
-        /**
-         * Return back the same message as being sent.
-         * @param msg The message
-         * @return The same message
-         */
-        @Operation("echo")
-        public String echo(final String msg) {
-            return msg;
-        }
     }
 
 }

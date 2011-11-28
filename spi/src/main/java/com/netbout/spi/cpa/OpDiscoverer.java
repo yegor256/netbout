@@ -33,7 +33,6 @@ import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.reflections.Reflections;

@@ -38,10 +38,8 @@ import com.netbout.spi.IdentityNotFoundException;
 import com.netbout.spi.Token;
 import com.ymock.util.Logger;
 import java.net.URL;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -105,10 +103,15 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public void execute(final Token token)
-        throws HelperException {
+    public void execute(final Token token) throws HelperException {
         if (!this.ops.containsKey(token.mnemo())) {
-            throw new HelperException("Operation not supported");
+            throw new HelperException(
+                String.format(
+                    "Operation '%s' not supported by '%s'",
+                    token.mnemo(),
+                    this.name()
+                )
+            );
         }
         final long start = System.currentTimeMillis();
         this.ops.get(token.mnemo()).execute(token);
@@ -196,7 +199,7 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public void alias(String alias) {
+    public void alias(final String alias) {
         this.identity.alias(alias);
     }
 
