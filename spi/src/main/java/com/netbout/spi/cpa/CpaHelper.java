@@ -29,17 +29,20 @@
  */
 package com.netbout.spi.cpa;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityNotFoundException;
 import com.netbout.spi.Token;
 import com.ymock.util.Logger;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.reflections.Reflections;
 
 /**
  * Classpath annotations helper.
@@ -58,12 +61,7 @@ import org.reflections.Reflections;
 public final class CpaHelper implements Helper {
 
     /**
-     * Name of package we're discovering.
-     */
-    private final transient String pkg;
-
-    /**
-     * Who we are.
+     * Who am I.
      */
     private transient Identity identity;
 
@@ -74,33 +72,19 @@ public final class CpaHelper implements Helper {
 
     /**
      * Public ctor.
+     * @param idnt The identity of me
      * @param name Name of the package where to look for annotated methods
      *  and farms
      */
-    public CpaHelper(final String name) {
-        this.pkg = name;
-    }
-
-    /**
-     * Public ctor.
-     * @param type Use it to get name of package
-     */
-    public CpaHelper(final Class type) {
-        this(type.getPackage().getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init(final Identity idnt) throws HelperException {
-        final long start = System.currentTimeMillis();
+    public CpaHelper(final Identity idnt, final String name) {
         this.identity = idnt;
-        this.ops = this.discover();
+        final long start = System.currentTimeMillis();
+        this.ops = new OpDiscoverer().discover(this, name);
         Logger.debug(
             this,
-            "#init('%s'): %d targets discovered in %dms",
-            this.identity.getClass().getName(),
+            "#CpaHelper('%s', '%s'): %d targets discovered in %dms",
+            idnt.name(),
+            name,
             this.ops.size(),
             System.currentTimeMillis() - start
         );
@@ -110,7 +94,7 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public Collection<String> supports() throws HelperException {
+    public Set<String> supports() throws HelperException {
         if (this.ops == null) {
             throw new HelperException("Helper wasn't initialized with init()");
         }
@@ -137,59 +121,83 @@ public final class CpaHelper implements Helper {
     }
 
     /**
-     * Discover all targets and return them.
-     * @return Associative array of discovered targets/operations
+     * {@inheritDoc}
      */
-    private ConcurrentMap<String, HelpTarget> discover() {
-        final ConcurrentMap<String, HelpTarget> targets =
-            new ConcurrentHashMap<String, HelpTarget>();
-        final Reflections reflections = new Reflections(this.pkg);
-        for (Class tfarm : reflections.getTypesAnnotatedWith(Farm.class)) {
-            Logger.info(
-                this,
-                "#discover(%s): @Farm found at '%s'",
-                this.pkg,
-                tfarm.getName()
-            );
-            Object farm;
-            try {
-                farm = tfarm.newInstance();
-            } catch (InstantiationException ex) {
-                throw new IllegalArgumentException(ex);
-            } catch (IllegalAccessException ex) {
-                throw new IllegalArgumentException(ex);
-            }
-            if (farm instanceof IdentityAware) {
-                ((IdentityAware) farm).init(this.identity);
-            }
-            targets.putAll(this.inFarm(farm));
-        }
-        return targets;
+    @Override
+    public String user() {
+        return this.identity.user();
     }
 
     /**
-     * Discover all methods in the provided farm.
-     * @param farm The object annotated with {@link Farm}
-     * @return Associative array of discovered targets/operations
+     * {@inheritDoc}
      */
-    private ConcurrentMap<String, HelpTarget> inFarm(final Object farm) {
-        final ConcurrentMap<String, HelpTarget> targets =
-            new ConcurrentHashMap<String, HelpTarget>();
-        for (Method method : farm.getClass().getDeclaredMethods()) {
-            final Annotation atn = method.getAnnotation(Operation.class);
-            if (atn == null) {
-                continue;
-            }
-            final String mnemo = ((Operation) atn).value();
-            targets.put(mnemo, HelpTarget.build(farm, method));
-            Logger.info(
-                this,
-                "#inFarm(%s): @Operation('%s') found",
-                farm.getClass().getName(),
-                mnemo
-            );
-        }
-        return targets;
+    @Override
+    public String name() {
+        return this.identity.name();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout start() {
+        return this.identity.start();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Bout> inbox(final String query) {
+        return this.identity.inbox(query);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout bout(final Long number) throws BoutNotFoundException {
+        return this.identity.bout(number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL photo() {
+        return this.identity.photo();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPhoto(final URL photo) {
+        this.identity.setPhoto(photo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity friend(final String name) throws IdentityNotFoundException {
+        return this.identity.friend(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> aliases() {
+        return this.identity.aliases();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void alias(String alias) {
+        this.identity.alias(alias);
     }
 
 }

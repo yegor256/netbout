@@ -59,9 +59,11 @@ public final class CpaHelperTest {
      */
     @Before
     public void prepare() throws Exception {
-        this.helper = new CpaHelper(this.getClass().getPackage().getName());
         final Identity identity = Mockito.mock(Identity.class);
-        this.helper.init(identity);
+        this.helper = new CpaHelper(
+            identity,
+            this.getClass().getPackage().getName()
+        );
     }
 
     /**
@@ -125,15 +127,6 @@ public final class CpaHelperTest {
         Mockito.doReturn("texts").when(token).mnemo();
         this.helper.execute(token);
         Mockito.verify(token).result("byBuIGU=,InR3byI=");
-    }
-
-    /**
-     * Helper can't be used without a call to {@link Helper#init()}.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = HelperException.class)
-    public void testSupportsWithoutInit() throws Exception {
-        new CpaHelper(this.getClass().getPackage().getName()).supports();
     }
 
     /**

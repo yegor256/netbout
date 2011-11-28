@@ -107,11 +107,4 @@ public interface Identity {
      */
     void alias(String alias);
 
-    /**
-     * This identity should be promoted to an active helper.
-     * @param helper The helper that can help us to process data
-     * @throws HelperException If there is some problem
-     */
-    void promote(Helper helper) throws HelperException;
-
 }

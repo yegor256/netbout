@@ -27,30 +27,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.cpa;
 
-import java.util.Set;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Helper, implementation of identity.
+ * Method argument annotated with this annotation will receive an instance
+ * of {@link com.netbout.spi.Bout} where we're working in now.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Helper extends Identity {
-
-    /**
-     * Returns full list of supported operations (their mnemos).
-     * @return The list of names
-     * @throws HelperException If helper can't perform this request
-     */
-    Set<String> supports() throws HelperException;
-
-    /**
-     * Send one single token to the helper, in order to get atomic response.
-     * @param token The token to process
-     * @throws HelperException If helper can't perform this request
-     */
-    void execute(Token token) throws HelperException;
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+public @interface InBout {
 }
