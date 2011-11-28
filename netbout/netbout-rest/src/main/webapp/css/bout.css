@@ -25,20 +25,20 @@
  * SUCH DAMAGE.
  */
 
-div#holder {
+#holder {
     margin-top: 2em;
     margin-bottom: 2em;
 }
 
-    div#holder ul#titles{
+    #titles{
     }
 
-        div#holder ul#titles li{
+        #titles li{
             display: inline;
             margin-right: 1em;
         }
 
-div#stage{
+#stage{
     border: 1px solid gray;
     min-height: 3em;
     padding: 1em;
@@ -46,7 +46,7 @@ div#stage{
     background-color: #ddd;
 }
 
-form#post {
+#post {
     margin-bottom: 2em;
 }
 

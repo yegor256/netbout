@@ -25,12 +25,9 @@
  * SUCH DAMAGE.
  */
 
-* {
+img {
     margin: 0;
     padding: 0;
-}
-
-img {
     border: 0;
 }
 
@@ -56,10 +53,11 @@ body {
     position: relative;
     color: #122632;
     padding: 1em;
+    margin: 0;
 }
 
 /* top right label about deployed version */
-div#version {
+#version {
     position: absolute;
     right: 0;
     top: 0;
@@ -69,54 +67,36 @@ div#version {
     color: white;
 }
 
-/* top bar */
-div#bar {
-    position: relative;
-    height: 1em;
-    margin-bottom: 1em;
+#crumbs {
+    display: inline;
 }
 
-    div#bar a#logo {
-        position: absolute;
-        bottom: 0px;
-        left: 0px;
+    #crumbs ul {
+        margin: 0 !important;
+        display: inline;
     }
 
-    div#bar div#crumbs {
-        position: absolute;
-        left: 5em;
-        bottom: 0px;
-    }
-
-        div#bar div#crumbs span {
-            position: relative;
+        #crumbs ul li {
+            list-style: none;
+            display: inline;
             margin-right: 1em;
         }
 
-        div#bar div#crumbs img#photo {
+        #photo {
             height: 24px;
-            position: relative;
         }
 
-/* search box */
-form#box {
-    position: relative;
-    margin-bottom: 1em;
+#search {
+    display: inline;
 }
 
-    form#box input {
-    }
-
-    form#box input[type='submit'] {
-    }
-
 /* message to show */
-div#message {
+#message {
     color: red;
 }
 
 /* everything between header and footer */
-div#content {
+#content {
     position: relative;
 }
 

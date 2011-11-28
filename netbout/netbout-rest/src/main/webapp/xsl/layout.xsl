@@ -49,75 +49,78 @@
             </head>
             <body>
                 <xsl:apply-templates select="version" />
-                <div id="bar">
-                    <a id="logo">
+                <header>
+                    <a>
                         <xsl:attribute name="href">
                             <xsl:value-of select="links/link[@name='home']/@href"/>
                         </xsl:attribute>
                         <img src="http://img.netbout.com/logo.png"/>
                     </a>
-                    <div id="crumbs">
-                        <xsl:choose>
-                            <xsl:when test="identity">
-                                <span>
+                    <xsl:if test="identity">
+                        <nav id="crumbs">
+                            <ul>
+                                <li>
                                     <img id="photo">
                                         <xsl:attribute name="src">
                                             <xsl:value-of select="identity/photo"/>
                                         </xsl:attribute>
                                     </img>
-                                </span>
-                                <span>
-                                    <xsl:value-of select="identity/aliases/alias[position() = 1]"/>
-                                </span>
-                                <span>
+                                </li>
+                                <li>
+                                    <xsl:value-of select="identity/alias"/>
+                                </li>
+                                <li>
                                     <a>
                                         <xsl:attribute name="href">
                                             <xsl:value-of select="links/link[@name='start']/@href"/>
                                         </xsl:attribute>
                                         <xsl:text>start</xsl:text>
                                     </a>
-                                </span>
-                                <span>
+                                </li>
+                                <li>
                                     <a>
                                         <xsl:attribute name="href">
                                             <xsl:value-of select="links/link[@name='logout']/@href"/>
                                         </xsl:attribute>
                                         <xsl:text>logout</xsl:text>
                                     </a>
-                                </span>
-                            </xsl:when>
-                            <xsl:otherwise>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </div>
-                </div>
-                <xsl:if test="identity">
-                    <form id="box">
-                        <input name="q" />
-                        <input value="find" type="submit" />
-                    </form>
-                </xsl:if>
+                                </li>
+                            </ul>
+                        </nav>
+                        <form id="search" method="get">
+                            <xsl:attribute name="action">
+                                <xsl:value-of select="/page/links/link[@name='self']"/>
+                            </xsl:attribute>
+                            <input name="q" autofocus="true" type="search">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="/page/query"/>
+                                </xsl:attribute>
+                            </input>
+                            <input value="find" type="submit" />
+                        </form>
+                    </xsl:if>
+                </header>
                 <xsl:if test="message">
-                    <div id="message">
+                    <aside id="message">
                         <xsl:value-of select="message"/>
-                    </div>
+                    </aside>
                 </xsl:if>
-                <div id="content">
+                <section id="content">
                     <xsl:call-template name="content" />
-                </div>
+                </section>
             </body>
         </html>
     </xsl:template>
 
     <xsl:template match="version">
-        <div id="version">
+        <aside id="version">
             <xsl:text>r</xsl:text>
             <xsl:value-of select="revision"/>
             <xsl:text> </xsl:text>
             <xsl:call-template name="nano">
                 <xsl:with-param name="nano" select="/page/@nano" />
             </xsl:call-template>
-        </div>
+        </aside>
     </xsl:template>
 
 </xsl:stylesheet>
