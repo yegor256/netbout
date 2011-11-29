@@ -34,7 +34,6 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Token;
-import com.netbout.spi.TokenInBout;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -129,22 +128,6 @@ public final class CpaHelperTest {
         Mockito.doReturn("texts").when(token).mnemo();
         this.helper.execute(token);
         Mockito.verify(token).result("byBuIGU=,InR3byI=");
-    }
-
-    /**
-     * Test with in-bout token.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testInBoutToken() throws Exception {
-        final Bout bout = Mockito.mock(Bout.class);
-        final Long number = Math.abs(new Random().nextLong());
-        Mockito.doReturn(number).when(bout).number();
-        final TokenInBout token = Mockito.mock(TokenInBout.class);
-        Mockito.doReturn("get-bout-number").when(token).mnemo();
-        Mockito.doReturn(bout).when(token).bout();
-        this.helper.execute(token);
-        Mockito.verify(token).result(number.toString());
     }
 
     /**

@@ -108,14 +108,4 @@ final class SampleFarm implements IdentityAware {
         return msg;
     }
 
-    /**
-     * Simple in bout operation.
-     * @param bout The bout
-     * @return The number of the bout
-     */
-    @Operation("get-bout-number")
-    public Long getBoutNumber(@InBout final Bout bout) {
-        return bout.number();
-    }
-
 }
