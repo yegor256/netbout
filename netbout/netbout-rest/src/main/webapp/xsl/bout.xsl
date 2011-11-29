@@ -40,9 +40,6 @@
     <xsl:include href="/xsl/dudes.xsl" />
 
     <xsl:variable name="title">
-        <xsl:text>#</xsl:text>
-        <xsl:value-of select="/page/bout/number"/>
-        <xsl:text>: </xsl:text>
         <xsl:choose>
             <xsl:when test="/page/bout/title != ''">
                 <xsl:value-of select="/page/bout/title"/>
@@ -57,7 +54,12 @@
         select="/page/bout/participants/participant[identity=/page/identity/name]"/>
 
     <xsl:template name="head">
-        <title><xsl:value-of select="$title"/></title>
+        <title>
+            <xsl:text>#</xsl:text>
+            <xsl:value-of select="/page/bout/number"/>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of select="$title"/>
+        </title>
         <link href="/css/bout.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
         <xsl:if test="/page/bout/stage">
@@ -68,7 +70,9 @@
     <xsl:template name="content">
         <header>
             <h1>
-                <xsl:value-of select="$title"/>
+                <span contenteditable="true">
+                    <xsl:value-of select="$title"/>
+                </span>
             </h1>
         </header>
         <xsl:apply-templates select="/page/bout/participants" />

@@ -61,6 +61,11 @@ public final class LongBout {
     private final transient StageCoordinates coords;
 
     /**
+     * Search keyword.
+     */
+    private final transient String query;
+
+    /**
      * The URI builder.
      */
     private final transient UriBuilder builder;
@@ -76,12 +81,14 @@ public final class LongBout {
      * Private ctor.
      * @param bot The bout
      * @param crds The coordinates of the stage to render
+     * @param keyword Search keyword
      * @param bldr The builder of URIs
      */
     public LongBout(final Bout bot, final StageCoordinates crds,
-        final UriBuilder bldr) {
+        final String keyword, final UriBuilder bldr) {
         this.bout = bot;
         this.coords = crds;
+        this.query = keyword;
         this.builder = bldr;
     }
 
@@ -138,7 +145,7 @@ public final class LongBout {
     @XmlElementWrapper(name = "messages")
     public List<LongMessage> getMessages() {
         final List<LongMessage> messages = new ArrayList<LongMessage>();
-        for (Message msg : this.bout.messages("")) {
+        for (Message msg : this.bout.messages(this.query)) {
             messages.add(LongMessage.build(msg));
         }
         return messages;

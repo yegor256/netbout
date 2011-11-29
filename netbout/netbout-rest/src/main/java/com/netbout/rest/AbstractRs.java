@@ -111,11 +111,11 @@ public abstract class AbstractRs implements Resource {
         // @checkstyle MultipleStringLiterals (1 line)
         final Identity persistor = HubEntry.user("netbout").identity("nb:db");
         persistor.alias("Netbout Database Manager");
-        try {
-            persistor.promote(new CpaHelper("com.netbout.db"));
-        } catch (com.netbout.spi.HelperException ex) {
-            throw new IllegalStateException(ex);
-        }
+        // try {
+        //     persistor.promote(new CpaHelper(persistor, "com.netbout.db"));
+        // } catch (com.netbout.spi.HelperException ex) {
+        //     throw new IllegalStateException(ex);
+        // }
         try {
             persistor.setPhoto(
                 new java.net.URL("http://img.netbout.com/db.png")
@@ -132,11 +132,11 @@ public abstract class AbstractRs implements Resource {
         // @checkstyle MultipleStringLiterals (1 line)
         final Identity hub = HubEntry.user("netbout").identity("nb:hh");
         hub.alias("Netbout Hub");
-        try {
-            hub.promote(new CpaHelper("com.netbout.hub.hh"));
-        } catch (com.netbout.spi.HelperException ex) {
-            throw new IllegalStateException(ex);
-        }
+        // try {
+        //     hub.promote(new CpaHelper(hub, "com.netbout.hub.hh"));
+        // } catch (com.netbout.spi.HelperException ex) {
+        //     throw new IllegalStateException(ex);
+        // }
         try {
             hub.setPhoto(
                 new java.net.URL("http://img.netbout.com/hh.png")

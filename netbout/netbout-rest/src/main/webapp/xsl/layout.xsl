@@ -41,9 +41,10 @@
     </xsl:template>
 
     <xsl:template match="page">
-        <html>
+        <html lang="en-US">
             <head>
-                <link href="/css/global.css" rel="stylesheet" type="text/css"></link>
+                <link href="/css/global.css" rel="stylesheet" type="text/css"
+                    media="all"></link>
                 <link rel="icon" type="image/gif" href="http://img.netbout.com/favicon.ico"/>
                 <xsl:call-template name="head" />
             </head>
@@ -57,7 +58,7 @@
                         <img src="http://img.netbout.com/logo.png"/>
                     </a>
                     <xsl:if test="identity">
-                        <nav id="crumbs">
+                        <nav id="crumbs" role="navigation">
                             <ul>
                                 <li>
                                     <img id="photo">
@@ -87,11 +88,11 @@
                                 </li>
                             </ul>
                         </nav>
-                        <form id="search" method="get">
+                        <form id="search" method="get" role="search">
                             <xsl:attribute name="action">
                                 <xsl:value-of select="/page/links/link[@name='self']"/>
                             </xsl:attribute>
-                            <input name="q" autofocus="true" type="search">
+                            <input name="q" autofocus="true" type="search" required="true">
                                 <xsl:attribute name="value">
                                     <xsl:value-of select="/page/query"/>
                                 </xsl:attribute>
@@ -100,12 +101,12 @@
                         </form>
                     </xsl:if>
                 </header>
-                <xsl:if test="message">
+                <xsl:if test="message != ''">
                     <aside id="message">
                         <xsl:value-of select="message"/>
                     </aside>
                 </xsl:if>
-                <section id="content">
+                <section id="content" role="main">
                     <xsl:call-template name="content" />
                 </section>
             </body>

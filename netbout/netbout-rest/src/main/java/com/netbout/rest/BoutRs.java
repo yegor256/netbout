@@ -66,6 +66,11 @@ public final class BoutRs extends AbstractRs {
     private transient Long number;
 
     /**
+     * Query to filter messages with.
+     */
+    private transient String query;
+
+    /**
      * Stage coordinates.
      */
     private transient StageCoordinates coords = new StageCoordinates();
@@ -102,6 +107,15 @@ public final class BoutRs extends AbstractRs {
     }
 
     /**
+     * Set filtering keyword.
+     * @param keyword The query
+     */
+    @QueryParam("q")
+    public void setQuery(final String keyword) {
+        this.query = keyword;
+    }
+
+    /**
      * Set stage coordinates.
      * @param cookie The information from cookie
      */
@@ -129,12 +143,12 @@ public final class BoutRs extends AbstractRs {
      */
     @GET
     @Path("/s")
-    public Response suggest(@QueryParam("q") final String keyword) {
+    public Response suggest(@QueryParam("k") final String keyword) {
         if (keyword == null) {
             throw new ForwardException(
                 this,
                 this.self(""),
-                "Query param 'q' missed"
+                "Query param 'k' missed"
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();
@@ -314,9 +328,11 @@ public final class BoutRs extends AbstractRs {
                 new LongBout(
                     this.bout(),
                     this.coords,
+                    this.query,
                     UriBuilder.fromUri(this.self(""))
                 )
             )
+            .append(new JaxbBundle("query", this.query))
             .link("leave", this.self("/leave"));
         if (this.participant().confirmed()) {
             page.link("post", this.self("/p"))

@@ -30,6 +30,7 @@ import com.netbout.hub.HubEntry;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -49,7 +50,25 @@ import org.apache.velocity.VelocityContext;
  * @version $Id$
  */
 @Farm
-public final class EmailFarm {
+public final class EmailFarm implements IdentityAware {
+
+    /**
+     * Me.
+     */
+    private transient Identity identity;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(final Identity idnt) {
+        this.identity = idnt;
+        Logger.debug(
+            this,
+            "#init('%s'): injected",
+            this.identity.name()
+        );
+    }
 
     /**
      * Can notify identity?
@@ -73,17 +92,17 @@ public final class EmailFarm {
 
     /**
      * Notify bout participant.
-     * @param number Number of bout
+     * @param number Bout where it's happening
      * @param name The name of identity
      * @param since Latest date after which notification should be sent
-     * @throws com.netbout.spi.BoutNotFoundException If bout number is invalid
+     * @throws com.netbout.spi.BoutNotFoundException If not found
      */
     @Operation("notify-bout-participant")
     public void notifyBoutParticipant(final Long number, final String name,
         final Date since) throws com.netbout.spi.BoutNotFoundException {
         if (this.isEmail(name)) {
-            final Identity recepient = HubEntry.identity(name);
-            final Bout bout = recepient.bout(number);
+            final Bout bout = this.identity.bout(number);
+            final Identity recepient = this.identityByName(bout, name);
             final List<Message> recent = new ArrayList<Message>();
             for (Message message : bout.messages("")) {
                 if (message.date().before(since)) {
@@ -113,6 +132,21 @@ public final class EmailFarm {
             );
             this.deliver(recepient.name(), text);
         }
+    }
+
+    /**
+     * Find identity by name from the bout.
+     * @param bout The bout where to look for
+     * @param name The name of identity
+     * @return Found identity
+     */
+    private Identity identityByName(final Bout bout, final String name) {
+        for (Participant participant : bout.participants()) {
+            if (participant.identity().name().equals(name)) {
+                return participant.identity();
+            }
+        }
+        throw new IllegalArgumentException("Participant not found");
     }
 
     /**

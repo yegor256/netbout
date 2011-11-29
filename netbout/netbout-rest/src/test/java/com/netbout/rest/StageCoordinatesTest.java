@@ -61,9 +61,9 @@ public final class StageCoordinatesTest {
     @BeforeClass
     public static void registerHelper() throws Exception {
         StageCoordinatesTest.helper = HubEntry.user("bar").identity("123");
-        StageCoordinatesTest.helper.promote(
-            new CpaHelper(StageCoordinatesTest.class)
-        );
+        // StageCoordinatesTest.helper.promote(
+        //     new CpaHelper(StageCoordinatesTest.class)
+        // );
         // persistor.setPhoto(
         //     new java.net.URL("http://img.netbout.com/db.png")
         // );

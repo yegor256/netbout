@@ -84,6 +84,10 @@ body {
 
         #photo {
             height: 24px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 1px gray;
+            -o-box-shadow: 1px 1px 1px gray;
+            box-shadow: 1px 1px 1px gray;
         }
 
 #search {
