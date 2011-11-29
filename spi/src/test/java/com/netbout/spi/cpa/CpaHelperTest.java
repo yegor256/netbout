@@ -32,7 +32,13 @@ package com.netbout.spi.cpa;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Plain;
 import com.netbout.spi.Token;
+import com.netbout.spi.plain.PlainBoolean;
+import com.netbout.spi.plain.PlainList;
+import com.netbout.spi.plain.PlainLong;
+import com.netbout.spi.plain.PlainString;
+import com.netbout.spi.plain.PlainVoid;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -86,10 +92,10 @@ public final class CpaHelperTest {
     public void testDifferentTypesOfParams() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("comparison").when(token).mnemo();
-        Mockito.doReturn("alpha-12").when(token).arg(0);
-        Mockito.doReturn("6").when(token).arg(1);
+        Mockito.doReturn(new PlainString("alpha-12")).when(token).arg(0);
+        Mockito.doReturn(new PlainLong(1L)).when(token).arg(1);
         this.helper.execute(token);
-        Mockito.verify(token).result("false");
+        Mockito.verify(token).result(new PlainBoolean(true));
     }
 
     /**
@@ -101,7 +107,7 @@ public final class CpaHelperTest {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("empty").when(token).mnemo();
         this.helper.execute(token);
-        Mockito.verify(token).result("NULL");
+        Mockito.verify(token).result(new PlainVoid());
     }
 
     /**
@@ -112,9 +118,9 @@ public final class CpaHelperTest {
     public void testLists() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("list").when(token).mnemo();
-        Mockito.doReturn("4").when(token).arg(0);
+        Mockito.doReturn(new PlainLong(4L)).when(token).arg(0);
         this.helper.execute(token);
-        Mockito.verify(token).result(Mockito.anyString());
+        Mockito.verify(token).result(Mockito.any(Plain.class));
     }
 
     /**
@@ -126,7 +132,7 @@ public final class CpaHelperTest {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("texts").when(token).mnemo();
         this.helper.execute(token);
-        Mockito.verify(token).result("byBuIGU=,InR3byI=");
+        Mockito.verify(token).result(Mockito.any(PlainList.class));
     }
 
     /**

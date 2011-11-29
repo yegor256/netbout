@@ -29,8 +29,10 @@
  */
 package com.netbout.spi.cpa;
 
+import com.netbout.spi.Plain;
+import com.netbout.spi.PlainBuilder;
 import com.netbout.spi.Token;
-import com.netbout.spi.TypeMapper;
+import com.netbout.spi.plain.PlainVoid;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
@@ -91,20 +93,23 @@ final class HelpTarget {
         } catch (java.lang.reflect.InvocationTargetException ex) {
             throw new IllegalStateException(ex);
         }
-        token.result(TypeMapper.toText(result));
+        if (this.method.getReturnType().equals(Void.TYPE)) {
+            token.result(new PlainVoid());
+        } else {
+            token.result(PlainBuilder.fromObject(result));
+        }
     }
 
     /**
      * Convert argument types.
      * @param token The token
      * @param types Expected types for every one of them
-     * @param annotations Parameter annotations
-     * @return Array of properly types args
+     * @return Array of properly typed args
      */
     public Object[] converted(final Token token, final Class[] types) {
         final Object[] converted = new Object[types.length];
         for (int pos = 0; pos < types.length; pos += 1) {
-            converted[pos] = TypeMapper.toObject(token.arg(pos), types[pos]);
+            converted[pos] = token.arg(pos).value();
         }
         return converted;
     }

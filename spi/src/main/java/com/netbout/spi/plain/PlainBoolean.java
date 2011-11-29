@@ -27,33 +27,79 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.plain;
+
+import com.netbout.spi.Plain;
 
 /**
- * One token to process by helper.
+ * Plain Boolean.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Token {
+public final class PlainBoolean implements Plain<Boolean> {
 
     /**
-     * Get token mnemo.
-     * @return The mnemo
+     * The value.
      */
-    String mnemo();
+    private final transient Boolean data;
 
     /**
-     * Get argument by position.
-     * @param pos Position of it
-     * @return The argument
+     * Public ctor.
+     * @param text The text presentation
      */
-    Plain<?> arg(int pos);
+    public PlainBoolean(final String text) {
+        this.data = Boolean.valueOf(text);
+    }
 
     /**
-     * Save response.
-     * @param value The result
+     * Public ctor.
+     * @param val The value
      */
-    void result(Plain<?> value);
+    public PlainBoolean(final Boolean val) {
+        this.data = val;
+    }
+
+    /**
+     * Is it of our type?
+     * @param text The text
+     * @return Is it or not?
+     */
+    public static boolean isIt(final String text) {
+        return text.matches("TRUE|FALSE");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.data.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof PlainBoolean)
+            && (this.hashCode() == obj.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean value() {
+        return this.data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("%B", this.data);
+    }
 
 }

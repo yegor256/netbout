@@ -30,30 +30,18 @@
 package com.netbout.spi;
 
 /**
- * One token to process by helper.
+ * Plain type used in {@link Token}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @param <T> The type of encapsulated value
  */
-public interface Token {
+public interface Plain<T> {
 
     /**
-     * Get token mnemo.
-     * @return The mnemo
+     * Get its atomic value.
+     * @return The data
      */
-    String mnemo();
-
-    /**
-     * Get argument by position.
-     * @param pos Position of it
-     * @return The argument
-     */
-    Plain<?> arg(int pos);
-
-    /**
-     * Save response.
-     * @param value The result
-     */
-    void result(Plain<?> value);
+    T value();
 
 }

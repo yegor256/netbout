@@ -27,33 +27,79 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.plain;
+
+import com.netbout.spi.Plain;
 
 /**
- * One token to process by helper.
+ * Plain Long.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Token {
+public final class PlainLong implements Plain<Long> {
 
     /**
-     * Get token mnemo.
-     * @return The mnemo
+     * The value.
      */
-    String mnemo();
+    private final transient Long number;
 
     /**
-     * Get argument by position.
-     * @param pos Position of it
-     * @return The argument
+     * Public ctor.
+     * @param text The text presentation
      */
-    Plain<?> arg(int pos);
+    public PlainLong(final String text) {
+        this.number = Long.valueOf(text);
+    }
 
     /**
-     * Save response.
-     * @param value The result
+     * Public ctor.
+     * @param num The number
      */
-    void result(Plain<?> value);
+    public PlainLong(final Long num) {
+        this.number = num;
+    }
+
+    /**
+     * Is it of our type?
+     * @param text The text
+     * @return Is it or not?
+     */
+    public static boolean isIt(final String text) {
+        return text.matches("\\-?\\d+");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.number.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof PlainLong)
+            && (this.hashCode() == obj.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long value() {
+        return this.number;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.number.toString();
+    }
 
 }

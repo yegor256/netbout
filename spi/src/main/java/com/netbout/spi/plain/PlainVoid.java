@@ -27,87 +27,62 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi.cpa;
+package com.netbout.spi.plain;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
+import com.netbout.spi.Plain;
 
 /**
- * Sample farm.
+ * Plain void.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Farm
-final class SampleFarm implements IdentityAware {
+public final class PlainVoid implements Plain<Void> {
+
+    /**
+     * Encoding to be used.
+     */
+    private static final String MNEMO = "VOID";
+
+    /**
+     * Is it of our type?
+     * @param text The text
+     * @return Is it or not?
+     */
+    public static boolean isIt(final String text) {
+        return PlainVoid.MNEMO.equals(text);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void init(final Identity identity) {
-        MatcherAssert.assertThat(identity, Matchers.notNullValue());
+    public int hashCode() {
+        return this.MNEMO.hashCode();
     }
 
     /**
-     * Sample operation.
-     * @param text The text to translate
-     * @param len Length to compare with
-     * @return The translated text
+     * {@inheritDoc}
      */
-    @Operation("comparison")
-    public Boolean longerThan(final String text, final Long len) {
-        return text.length() > len;
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof PlainVoid);
     }
 
     /**
-     * Empty operation with no result and no args.
+     * {@inheritDoc}
      */
-    @Operation("empty")
-    public void empty() {
-        // intentionally empty
+    @Override
+    public Void value() {
+        throw new IllegalStateException("VOID object can't have value");
     }
 
     /**
-     * List as output.
-     * @param size Size of the list to return
-     * @return The list just created
+     * {@inheritDoc}
      */
-    @Operation("list")
-    public List<Long> list(final Long size) {
-        final List<Long> list = new ArrayList<Long>();
-        final Random random = new Random();
-        for (int pos = 0; pos < size; pos += 1) {
-            list.add(random.nextLong());
-        }
-        return list;
-    }
-
-    /**
-     * List of texts.
-     * @return The list just created
-     */
-    @Operation("texts")
-    public List<String> texts() {
-        final List<String> list = new ArrayList<String>();
-        // @checkstyle MultipleStringLiterals (1 line)
-        list.add("o n e");
-        list.add("\"two\"");
-        return list;
-    }
-
-    /**
-     * Return back the same message as being sent.
-     * @param msg The message
-     * @return The same message
-     */
-    @Operation("echo")
-    public String echo(final String msg) {
-        return msg;
+    @Override
+    public String toString() {
+        return this.MNEMO.toString();
     }
 
 }

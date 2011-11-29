@@ -27,33 +27,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
 
 /**
- * One token to process by helper.
+ * Plain value types.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Token {
-
-    /**
-     * Get token mnemo.
-     * @return The mnemo
-     */
-    String mnemo();
-
-    /**
-     * Get argument by position.
-     * @param pos Position of it
-     * @return The argument
-     */
-    Plain<?> arg(int pos);
-
-    /**
-     * Save response.
-     * @param value The result
-     */
-    void result(Plain<?> value);
-
-}
+package com.netbout.spi.plain;
