@@ -32,7 +32,6 @@ package com.netbout.spi.cpa;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
-import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityNotFoundException;
 import com.netbout.spi.Token;
@@ -92,10 +91,7 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public Set<String> supports() throws HelperException {
-        if (this.ops == null) {
-            throw new HelperException("Helper wasn't initialized with init()");
-        }
+    public Set<String> supports() {
         return this.ops.keySet();
     }
 
@@ -103,9 +99,9 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public void execute(final Token token) throws HelperException {
+    public void execute(final Token token) {
         if (!this.ops.containsKey(token.mnemo())) {
-            throw new HelperException(
+            throw new IllegalArgumentException(
                 String.format(
                     "Operation '%s' not supported by '%s'",
                     token.mnemo(),

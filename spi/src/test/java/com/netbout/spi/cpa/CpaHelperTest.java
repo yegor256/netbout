@@ -31,7 +31,6 @@ package com.netbout.spi.cpa;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
-import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Token;
 import java.util.Random;
@@ -134,7 +133,7 @@ public final class CpaHelperTest {
      * Helper can't execute unknown operation.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = HelperException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testCallToUnknownOperation() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("unknown-operation").when(token).mnemo();

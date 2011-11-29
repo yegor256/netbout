@@ -87,9 +87,8 @@ public final class TypeMapper {
      * Convert from given type to string.
      * @param data Data to convert
      * @return The response as explained above
-     * @throws HelperException If there is some problem inside
      */
-    public static String toText(final Object data) throws HelperException {
+    public static String toText(final Object data) {
         String result;
         if (data == TypeMapper.OBJECT_NULL) {
             result = TypeMapper.TEXT_NULL;
@@ -112,10 +111,12 @@ public final class TypeMapper {
                 }
                 result = TypeMapper.join(quoted);
             } else {
-                throw new HelperException(
-                    "Can't convert '%s' (%s) to String",
-                    data.toString(),
-                    type.getName()
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Can't convert '%s' (%s) to String",
+                        data.toString(),
+                        type.getName()
+                    )
                 );
             }
         }
@@ -128,12 +129,10 @@ public final class TypeMapper {
      * @param type Destination type
      * @param <T> The type of response
      * @return The data
-     * @throws HelperException If there is some problem inside
      * @checkstyle CyclomaticComplexity (40 lines)
      */
     @SuppressWarnings("PMD.CyclomaticComplexity")
-    public static <T> T toObject(final String text, final Class<T> type)
-        throws HelperException {
+    public static <T> T toObject(final String text, final Class<T> type) {
         Object result;
         if (text == TypeMapper.TEXT_NULL) {
             result = TypeMapper.OBJECT_NULL;
@@ -162,10 +161,12 @@ public final class TypeMapper {
                 }
             }
         } else {
-            throw new HelperException(
-                "Can't convert '%s' to unsupported type %s",
-                text,
-                type.getName()
+            throw new IllegalArgumentException(
+                String.format(
+                    "Can't convert '%s' to unsupported type %s",
+                    text,
+                    type.getName()
+                )
             );
         }
         return (T) result;

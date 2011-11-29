@@ -99,9 +99,8 @@ public final class TypeMapperTest {
         }
         /**
          * Validate this triple.
-         * @throws HelperException If some problem inside
          */
-        public void validate() throws HelperException {
+        public void validate() {
             MatcherAssert.assertThat(
                 TypeMapper.toText(this.object),
                 Matchers.equalTo(this.text)

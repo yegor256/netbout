@@ -42,15 +42,13 @@ public interface Helper extends Identity {
     /**
      * Returns full list of supported operations (their mnemos).
      * @return The list of names
-     * @throws HelperException If helper can't perform this request
      */
-    Set<String> supports() throws HelperException;
+    Set<String> supports();
 
     /**
      * Send one single token to the helper, in order to get atomic response.
      * @param token The token to process
-     * @throws HelperException If helper can't perform this request
      */
-    void execute(Token token) throws HelperException;
+    void execute(Token token);
 
 }

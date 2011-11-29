@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.HelperException;
 import com.netbout.spi.Token;
 import com.netbout.spi.TypeMapper;
 import java.lang.annotation.Annotation;
@@ -76,9 +75,8 @@ final class HelpTarget {
     /**
      * Execute it with arguments.
      * @param token The token
-     * @throws HelperException If some problem inside
      */
-    public void execute(final Token token) throws HelperException {
+    public void execute(final Token token) {
         Object result;
         try {
             result = this.method.invoke(
@@ -102,10 +100,8 @@ final class HelpTarget {
      * @param types Expected types for every one of them
      * @param annotations Parameter annotations
      * @return Array of properly types args
-     * @throws HelperException If some problem inside
      */
-    public Object[] converted(final Token token, final Class[] types)
-        throws HelperException {
+    public Object[] converted(final Token token, final Class[] types) {
         final Object[] converted = new Object[types.length];
         for (int pos = 0; pos < types.length; pos += 1) {
             converted[pos] = TypeMapper.toObject(token.arg(pos), types[pos]);
