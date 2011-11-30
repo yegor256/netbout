@@ -33,25 +33,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Storage of data, it's a singleton.
+ * Manager of all bouts.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Storage {
+public final class BoutMgr {
 
     /**
      * All bouts existing in the system.
      */
     private final transient ConcurrentMap<Long, BoutData> bouts =
         new ConcurrentHashMap<Long, BoutData>();
-
-    /**
-     * It's a singleton.
-     */
-    private Storage() {
-        this.bouts.put(0L, new BoutData(0L));
-    }
 
     /**
      * Statistics.
@@ -69,7 +62,7 @@ public final class Storage {
     }
 
     /**
-     * Create new bout in the storage.
+     * Create new bout.
      * @return It's number (unique)
      */
     public Long create() {
@@ -89,7 +82,7 @@ public final class Storage {
             .asDefault(true)
             .exec();
         Logger.debug(
-            Storage.class,
+            this,
             "#create(): bout #%d created",
             data.getNumber()
         );
@@ -108,7 +101,7 @@ public final class Storage {
         if (this.bouts.containsKey(number)) {
             data = this.bouts.get(number);
             Logger.debug(
-                Storage.class,
+                this,
                 "#find(#%d): bout data found",
                 number
             );
@@ -124,7 +117,7 @@ public final class Storage {
             data = new BoutData(number);
             this.bouts.put(number, data);
             Logger.debug(
-                Storage.class,
+                this,
                 "#find(#%d): bout data restored",
                 number
             );

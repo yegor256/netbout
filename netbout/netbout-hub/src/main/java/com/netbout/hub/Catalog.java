@@ -36,12 +36,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Holder of all identities.
+ * Catalog of all known identities.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Identities {
+final class Catalog {
 
     /**
      * All identities known for us at the moment, and their objects.
@@ -71,7 +71,7 @@ public final class Identities {
      * @param user Name of the user
      * @return Identity found or created
      */
-    protected HubIdentity make(final String name, final HubUser user) {
+    public HubIdentity make(final String name, final HubUser user) {
         final HubIdentity identity = Identities.make(name);
         if (identity.isAssigned() && !identity.belongsTo(user)) {
             throw new IllegalArgumentException(
@@ -92,7 +92,7 @@ public final class Identities {
      * @param name The name of identity
      * @return Identity found
      */
-    protected HubIdentity make(final String name) {
+    public HubIdentity make(final String name) {
         HubIdentity identity;
         if (this.all.containsKey(name)) {
             identity = this.all.get(name);
@@ -128,7 +128,7 @@ public final class Identities {
      * @param keyword The keyword to find by
      * @return Identities found
      */
-    protected Set<HubIdentity> findByKeyword(final String keyword) {
+    public Set<HubIdentity> findByKeyword(final String keyword) {
         final Set<HubIdentity> found = new HashSet<HubIdentity>();
         for (HubIdentity identity : this.all.values()) {
             if (identity.matchesKeyword(keyword)) {
@@ -151,7 +151,7 @@ public final class Identities {
      * @param identity The identity
      * @return It needs it?
      */
-    protected Boolean needsNotifier(final String identity) {
+    public Boolean needsNotifier(final String identity) {
         return !identity.matches("\\d+") && !identity.startsWith("nb:");
     }
 

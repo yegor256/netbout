@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.hub.data.BoutMgr;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.util.Set;
@@ -37,6 +38,16 @@ import java.util.Set;
  * @version $Id$
  */
 public final class DefaultHub implements Hub {
+
+    /**
+     * Catalog of identities.
+     */
+    private final Catalog catalog = new Catalog();
+
+    /**
+     * Manager of bouts.
+     */
+    private final BoutMgr manager = new BoutMgr();
 
     /**
      * {@inheritDoc}
@@ -57,7 +68,7 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public HubIdentity identity(final String name) {
-        final HubIdentity identity = this.idnts.make(name);
+        final HubIdentity identity = this.catalog.make(name);
         Logger.debug(
             this,
             "#identity('%s'): found",
@@ -72,7 +83,7 @@ public final class DefaultHub implements Hub {
     @Override
     public Set<Identity> find(final String keyword) {
         final Set<Identity> identities =
-            (Set) this.idnts.findByKeyword(keyword);
+            (Set) this.catalog.findByKeyword(keyword);
         Logger.debug(
             this,
             "#find('%s'): found %d identities",
@@ -80,15 +91,6 @@ public final class DefaultHub implements Hub {
             identities.size()
         );
         return identities;
-    }
-
-    /**
-     * Find identities by name.
-     * @param keyword The keyword
-     * @return Set of identities found
-     */
-    protected Identities identities() {
-        return this.idnts;
     }
 
 }

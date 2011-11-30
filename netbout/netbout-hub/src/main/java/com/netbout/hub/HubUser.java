@@ -45,9 +45,9 @@ public final class HubUser {
     /**
      * Public ctor.
      * @param name The name of it
-     * @see InMemoryEntry#user(String)
+     * @see DefaultHub#user(String)
      */
-    public HubUser(final String name) {
+    protected HubUser(final String name) {
         this.uname = name;
     }
 
@@ -82,7 +82,7 @@ public final class HubUser {
      * @return The identity found
      */
     public HubIdentity identity(final String name) {
-        final HubIdentity identity = Identities.make(name, this);
+        final HubIdentity identity = this.catalog.make(name, this);
         Logger.debug(
             this,
             "#identity('%s'): found",
