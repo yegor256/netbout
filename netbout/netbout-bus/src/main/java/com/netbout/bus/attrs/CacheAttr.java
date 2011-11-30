@@ -27,6 +27,7 @@
 package com.netbout.bus.attrs;
 
 import com.netbout.bus.TxAttribute;
+import com.netbout.bus.TxWithCache;
 import java.util.regex.Pattern;
 
 /**
@@ -35,7 +36,7 @@ import java.util.regex.Pattern;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CacheAttr implements TxAttribute {
+public final class CacheAttr implements TxAttribute, TxWithCache {
 
     /**
      * Cache enabled.
@@ -67,25 +68,25 @@ public final class CacheAttr implements TxAttribute {
     }
 
     /**
-     * Is it to be cached?
-     * @return Yes or no
+     * {@inheritDoc}
      */
+    @Override
     public boolean isCacheEnabled() {
         return this.enabled;
     }
 
     /**
-     * Should this transaction "expire" others after its execution?
-     * @return Yes or no
+     * {@inheritDoc}
      */
+    @Override
     public boolean hasToExpireOthers() {
         return this.expire != null;
     }
 
     /**
-     * Get pattern for expire.
-     * @return The pattern
+     * {@inheritDoc}
      */
+    @Override
     public Pattern getExpirePattern() {
         if (!this.hasToExpireOthers()) {
             throw new IllegalStateException(

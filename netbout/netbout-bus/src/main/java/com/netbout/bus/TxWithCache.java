@@ -24,52 +24,34 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus.attrs;
+package com.netbout.bus;
 
-import com.netbout.bus.TxAttribute;
-import com.netbout.bus.TxWithBout;
-import com.netbout.spi.Bout;
+import java.util.regex.Pattern;
 
 /**
- * InBout attribute.
+ * One transaction with cache.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class InBoutAttr implements TxAttribute, TxWithBout {
+public interface TxWithCache {
 
     /**
-     * The bout.
+     * Should we cache its results?
+     * @return Yes or no
      */
-    private transient Bout bout;
+    boolean isCacheEnabled();
+
+        /**
+     * Should this transaction "expire" others after its execution?
+     * @return Yes or no
+     */
+    boolean hasToExpireOthers();
 
     /**
-     * With this value.
-     * @param bot The bout
-     * @return This object
+     * Get pattern for expire.
+     * @return The pattern
      */
-    public InBoutAttr withBout(final Bout bot) {
-        this.bout = bot;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isInsideBout() {
-        return this.bout != null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout getBout() {
-        if (!this.isInsideBout()) {
-            throw new IllegalStateException("Transaction is global");
-        }
-        return this.bout;
-    }
+    Pattern getExpirePattern();
 
 }

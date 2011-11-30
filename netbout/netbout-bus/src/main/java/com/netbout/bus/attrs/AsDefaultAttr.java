@@ -27,6 +27,7 @@
 package com.netbout.bus.attrs;
 
 import com.netbout.bus.TxAttribute;
+import com.netbout.bus.TxWithDefault;
 import com.netbout.spi.Plain;
 import com.netbout.spi.plain.PlainVoid;
 
@@ -36,7 +37,7 @@ import com.netbout.spi.plain.PlainVoid;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AsDefaultAttr implements TxAttribute {
+public final class AsDefaultAttr implements TxAttribute, TxWithDefault {
 
     /**
      * The value.
@@ -54,10 +55,10 @@ public final class AsDefaultAttr implements TxAttribute {
     }
 
     /**
-     * Get value.
-     * @return The value
+     * {@inheritDoc}
      */
-    public Plain<?> getValue() {
+    @Override
+    public Plain<?> getDefaultValue() {
         return this.value;
     }
 

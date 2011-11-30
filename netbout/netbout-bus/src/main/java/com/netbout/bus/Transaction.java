@@ -26,58 +26,18 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Plain;
-import java.util.regex.Pattern;
-
 /**
  * One transaction.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Transaction {
+interface Transaction extends TxWithDefault, TxWithBout, TxWithCache {
 
     /**
      * Make a token out of it.
      * @return The token
      */
     TxToken makeToken();
-
-    /**
-     * Get default result to return.
-     * @return The result
-     */
-    Plain<?> getDefaultResult();
-
-    /**
-     * Is it inside bout?
-     * @return Yes or no
-     */
-    boolean isInsideBout();
-
-    /**
-     * Get bout where it should be executed (or exception if it's global).
-     * @return Bout
-     */
-    Bout getBout();
-
-    /**
-     * Should we cache its results?
-     * @return Yes or no
-     */
-    boolean isCacheEnabled();
-
-        /**
-     * Should this transaction "expire" others after its execution?
-     * @return Yes or no
-     */
-    boolean hasToExpireOthers();
-
-    /**
-     * Get pattern for expire.
-     * @return The pattern
-     */
-    Pattern getExpirePattern();
 
 }

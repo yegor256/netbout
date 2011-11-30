@@ -24,52 +24,28 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus.attrs;
+package com.netbout.bus;
 
-import com.netbout.bus.TxAttribute;
-import com.netbout.bus.TxWithBout;
 import com.netbout.spi.Bout;
 
 /**
- * InBout attribute.
+ * One transaction with bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class InBoutAttr implements TxAttribute, TxWithBout {
+public interface TxWithBout {
 
     /**
-     * The bout.
+     * Is it inside bout?
+     * @return Yes or no
      */
-    private transient Bout bout;
+    boolean isInsideBout();
 
     /**
-     * With this value.
-     * @param bot The bout
-     * @return This object
+     * Get bout where it should be executed (or exception if it's global).
+     * @return Bout
      */
-    public InBoutAttr withBout(final Bout bot) {
-        this.bout = bot;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isInsideBout() {
-        return this.bout != null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout getBout() {
-        if (!this.isInsideBout()) {
-            throw new IllegalStateException("Transaction is global");
-        }
-        return this.bout;
-    }
+    Bout getBout();
 
 }

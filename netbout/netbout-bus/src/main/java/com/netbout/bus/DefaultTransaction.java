@@ -84,8 +84,8 @@ final class DefaultTransaction implements Transaction {
      * {@inheritDoc}
      */
     @Override
-    public Plain<?> getDefaultResult() {
-        return this.attributes.get(AsDefaultAttr.class).getValue();
+    public Plain<?> getDefaultValue() {
+        return this.attributes.get(AsDefaultAttr.class).getDefaultValue();
     }
 
     /**

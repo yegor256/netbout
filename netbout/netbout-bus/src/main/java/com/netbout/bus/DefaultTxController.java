@@ -106,7 +106,7 @@ final class DefaultTxController implements TxController {
         if (token.isCompleted()) {
             result = token.getResult();
         } else {
-            result = trans.getDefaultResult();
+            result = trans.getDefaultValue();
         }
         return result;
     }
