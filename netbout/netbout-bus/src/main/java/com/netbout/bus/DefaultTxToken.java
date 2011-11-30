@@ -29,6 +29,7 @@ package com.netbout.bus;
 import com.netbout.spi.Plain;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Default token.
@@ -63,6 +64,26 @@ final class DefaultTxToken implements TxToken {
     public DefaultTxToken(final String mnemo, final List<Plain<?>> arguments) {
         this.imnemo = mnemo;
         this.args.addAll(arguments);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format(
+            "%s[(%s)]",
+            this.mnemo(),
+            StringUtils.join(this.args, ")(")
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
     }
 
     /**

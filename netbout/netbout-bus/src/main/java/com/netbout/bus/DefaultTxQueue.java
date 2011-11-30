@@ -26,6 +26,7 @@
  */
 package com.netbout.bus;
 
+import com.ymock.util.Logger;
 import java.util.Queue;
 import java.util.concurrent.SynchronousQueue;
 
@@ -49,6 +50,12 @@ final class DefaultTxQueue implements TxQueue {
     @Override
     public void push(Transaction trans) {
         this.queue.add(trans);
+        Logger.debug(
+            this,
+            "#push(%s): added to queue (%d position)",
+            trans,
+            this.queue.size()
+        );
     }
 
     /**
@@ -56,7 +63,14 @@ final class DefaultTxQueue implements TxQueue {
      */
     @Override
     public Transaction pop() {
-        return this.queue.remove();
+        final Transaction trans = this.queue.remove();
+        Logger.debug(
+            this,
+            "#pop(): %s returned from queue (%d still there)",
+            trans,
+            this.queue.size()
+        );
+        return trans;
     }
 
 }

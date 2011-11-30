@@ -28,6 +28,7 @@ package com.netbout.bus;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Plain;
+import java.util.regex.Pattern;
 
 /**
  * One transaction.
@@ -60,5 +61,23 @@ interface Transaction {
      * @return Bout
      */
     Bout getBout();
+
+    /**
+     * Should we cache its results?
+     * @return Yes or no
+     */
+    boolean isCacheEnabled();
+
+        /**
+     * Should this transaction "expire" others after its execution?
+     * @return Yes or no
+     */
+    boolean hasToExpireOthers();
+
+    /**
+     * Get pattern for expire.
+     * @return The pattern
+     */
+    Pattern getExpirePattern();
 
 }

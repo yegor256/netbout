@@ -30,6 +30,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
+import com.ymock.util.Logger;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -53,6 +54,12 @@ final class DefaultTokenExecutor implements TokenExecutor {
     @Override
     public void register(final Helper helper) {
         this.helpers.add(helper);
+        Logger.debug(
+            this,
+            "#register(%s): registered (%d total now)",
+            helper,
+            this.helpers.size()
+        );
     }
 
     /**
@@ -84,6 +91,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
      * @param targets The helpers to use
      */
     private void run(final TxToken token, final Set<Helper> targets) {
+        final long start = System.currentTimeMillis();
         for (Helper helper : targets) {
             if (helper.supports().contains(token.mnemo())) {
                 helper.execute(token);
@@ -92,6 +100,13 @@ final class DefaultTokenExecutor implements TokenExecutor {
                 }
             }
         }
+        Logger.debug(
+            this,
+            "#run(%s, %d helpers): executed in %dms",
+            token,
+            targets.size(),
+            System.currentTimeMillis() - start
+        );
     }
 
 }

@@ -76,18 +76,50 @@ final class DefaultTxController implements TxController {
     @Override
     public Plain<?> exec(final Transaction trans) {
         final TxToken token = trans.makeToken();
+        this.cache.resolve(token);
+        Plain<?> result;
+        if (token.isCompleted()) {
+            result = token.getResult();
+        } else {
+            result = this.retrieve(trans, token);
+            if (trans.isCacheEnabled()) {
+                this.cache.save(token, result);
+            }
+        }
+        this.clearCache(trans, token);
+        return result;
+    }
+
+    /**
+     * Retrieves result of the token through executor.
+     * @param trans The transaction
+     * @param token The token
+     * @return The result
+     */
+    private Plain<?> retrieve(final Transaction trans, final TxToken token) {
+        Plain<?> result;
         if (trans.isInsideBout()) {
             this.executor.exec(token, trans.getBout());
         } else {
             this.executor.exec(token);
         }
-        Plain<?> result;
         if (token.isCompleted()) {
             result = token.getResult();
         } else {
             result = trans.getDefaultResult();
         }
         return result;
+    }
+
+    /**
+     * Clear cache after execution, if necessary.
+     * @param trans The transaction
+     * @param token The token
+     */
+    private void clearCache(final Transaction trans, final TxToken token) {
+        if (trans.hasToExpireOthers()) {
+            this.cache.delete(trans.getExpirePattern());
+        }
     }
 
 }

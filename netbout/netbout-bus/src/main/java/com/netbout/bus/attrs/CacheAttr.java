@@ -66,4 +66,33 @@ public final class CacheAttr implements TxAttribute {
         return this;
     }
 
+    /**
+     * Is it to be cached?
+     * @return Yes or no
+     */
+    public boolean isCacheEnabled() {
+        return this.enabled;
+    }
+
+    /**
+     * Should this transaction "expire" others after its execution?
+     * @return Yes or no
+     */
+    public boolean hasToExpireOthers() {
+        return this.expire != null;
+    }
+
+    /**
+     * Get pattern for expire.
+     * @return The pattern
+     */
+    public Pattern getExpirePattern() {
+        if (!this.hasToExpireOthers()) {
+            throw new IllegalStateException(
+                "Transaction doesn't expire others"
+            );
+        }
+        return this.expire;
+    }
+
 }

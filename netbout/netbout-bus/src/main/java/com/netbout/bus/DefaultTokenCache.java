@@ -28,6 +28,9 @@ package com.netbout.bus;
 
 import com.netbout.spi.Plain;
 import com.netbout.spi.Token;
+import com.ymock.util.Logger;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
 /**
@@ -39,10 +42,33 @@ import java.util.regex.Pattern;
 final class DefaultTokenCache implements TokenCache {
 
     /**
+     * Cached values.
+     */
+    private final transient ConcurrentMap<Token, Plain<?>> cache =
+         new ConcurrentHashMap<Token, Plain<?>>();
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void resolve(final Token token) {
+        if (this.cache.containsKey(token)) {
+            final Plain<?> data = this.cache.get(token);
+            token.result(data);
+            Logger.debug(
+                this,
+                "#resolve(%s): resolved as %s",
+                token,
+                data
+            );
+        } else {
+            Logger.debug(
+                this,
+                "#resolve(%s): nothing found in cache (among %d records)",
+                token,
+                this.cache.size()
+            );
+        }
     }
 
     /**
@@ -50,6 +76,14 @@ final class DefaultTokenCache implements TokenCache {
      */
     @Override
     public void save(final Token token, final Plain<?> data) {
+        this.cache.put(token, data);
+        Logger.debug(
+            this,
+            "#save(%s, %s): saved (%d total records now)",
+            token,
+            data,
+            this.cache.size()
+        );
     }
 
     /**
@@ -57,6 +91,17 @@ final class DefaultTokenCache implements TokenCache {
      */
     @Override
     public void delete(final Pattern pattern) {
+        for (Token token : this.cache.keySet()) {
+            if (pattern.matcher(token.mnemo()).matches()) {
+                this.cache.remove(token);
+                Logger.debug(
+                    this,
+                    "#delete(%s): token %s removed",
+                    pattern,
+                    token
+                );
+            }
+        }
     }
 
 }

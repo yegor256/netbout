@@ -27,11 +27,13 @@
 package com.netbout.bus;
 
 import com.netbout.bus.attrs.AsDefaultAttr;
+import com.netbout.bus.attrs.CacheAttr;
 import com.netbout.bus.attrs.InBoutAttr;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Plain;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Pattern;
 
 /**
  * One transaction, default implementation.
@@ -100,6 +102,30 @@ final class DefaultTransaction implements Transaction {
     @Override
     public Bout getBout() {
         return this.attributes.get(InBoutAttr.class).getBout();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isCacheEnabled() {
+        return this.attributes.get(CacheAttr.class).isCacheEnabled();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasToExpireOthers() {
+        return this.attributes.get(CacheAttr.class).hasToExpireOthers();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Pattern getExpirePattern() {
+        return this.attributes.get(CacheAttr.class).getExpirePattern();
     }
 
 }

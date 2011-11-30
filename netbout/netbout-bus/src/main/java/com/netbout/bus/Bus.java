@@ -27,6 +27,7 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Helper;
+import com.ymock.util.Logger;
 
 /**
  * Queue of transactions processed by helpers.
@@ -69,7 +70,10 @@ public final class Bus {
      * It's a singleton.
      */
     private Bus() {
-        // empty
+        Logger.info(
+            this,
+            "#Bus(): instantiated"
+        );
     }
 
     /**
