@@ -46,6 +46,13 @@ import java.util.List;
 public final class PlainBuilder {
 
     /**
+     * It's a utility class.
+     */
+    private PlainBuilder() {
+        // empty
+    }
+
+    /**
      * Convert an object to a {@link Plain} value type.
      * @param data Object to convert
      * @return The plain object

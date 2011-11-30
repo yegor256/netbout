@@ -29,11 +29,9 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Plain;
 import com.netbout.spi.PlainBuilder;
 import com.netbout.spi.Token;
 import com.netbout.spi.plain.PlainVoid;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
@@ -96,6 +94,14 @@ final class HelpTarget {
         if (this.method.getReturnType().equals(Void.TYPE)) {
             token.result(new PlainVoid());
         } else {
+            if (result == null) {
+                throw new IllegalStateException(
+                    String.format(
+                        "%s can't return NULL",
+                        this.method.toGenericString()
+                    )
+                );
+            }
             token.result(PlainBuilder.fromObject(result));
         }
     }

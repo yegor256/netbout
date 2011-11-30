@@ -71,7 +71,7 @@ public final class PlainList<T> implements Plain<List<T>> {
     }
 
     /**
-     *
+     * Retrive value from text.
      * @param text The text
      * @return Is it or not?
      */

@@ -46,7 +46,7 @@ public final class PlainDate implements Plain<Date> {
     /**
      * Formatter.
      */
-    private final static DateTimeFormatter FORMATTER =
+    private static final DateTimeFormatter FORMATTER =
         ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
     /**
