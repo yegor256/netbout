@@ -107,7 +107,7 @@ public final class MessageData implements Comparable<MessageData> {
     public void setDate(final Date dte) {
         this.date = dte;
         Bus.make("changed-message-date")
-            .priority(Bus.Priority.ASAP)
+            .asap()
             .arg(this.number)
             .arg(this.date)
             .exec();
@@ -125,9 +125,9 @@ public final class MessageData implements Comparable<MessageData> {
     public Date getDate() {
         if (this.date == null) {
             this.date = Bus.make("get-message-date")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+                .synchronously()
                 .arg(this.number)
-                .exec(Date.class);
+                .exec();
             Logger.debug(
                 this,
                 "#getDate(): date '%s' loaded for msg #%d",
@@ -145,7 +145,7 @@ public final class MessageData implements Comparable<MessageData> {
     public void setAuthor(final String idnt) {
         this.author = idnt;
         Bus.make("changed-message-author")
-            .priority(Bus.Priority.ASAP)
+            .asap()
             .arg(this.number)
             .arg(this.author)
             .exec();
@@ -164,9 +164,9 @@ public final class MessageData implements Comparable<MessageData> {
     public String getAuthor() {
         if (this.author == null) {
             this.author = Bus.make("get-message-author")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+                .synchronously()
                 .arg(this.number)
-                .exec(String.class);
+                .exec();
             Logger.debug(
                 this,
                 "#getAuthor(): author '%s' loaded for msg #%d",
@@ -184,7 +184,7 @@ public final class MessageData implements Comparable<MessageData> {
     public void setText(final String txt) {
         this.text = txt;
         Bus.make("changed-message-text")
-            .priority(Bus.Priority.ASAP)
+            .asap()
             .arg(this.number)
             .arg(this.text)
             .exec();
@@ -203,9 +203,9 @@ public final class MessageData implements Comparable<MessageData> {
     public String getText() {
         if (this.text == null) {
             this.text = Bus.make("get-message-text")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+                .synchronously()
                 .arg(this.number)
-                .exec(String.class);
+                .exec();
             Logger.debug(
                 this,
                 "#getText(): text '%s' loaded for msg #%d",
@@ -223,7 +223,7 @@ public final class MessageData implements Comparable<MessageData> {
     public void addSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
             Bus.make("message-was-seen")
-                .priority(Bus.Priority.ASAP)
+                .asap()
                 .arg(this.number)
                 .arg(identity)
                 .exec();
@@ -245,11 +245,11 @@ public final class MessageData implements Comparable<MessageData> {
     public Boolean isSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity)) {
             final Boolean status = Bus.make("was-message-seen")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+                .synchronously()
                 .arg(this.number)
                 .arg(identity)
-                .asDefault(Boolean.FALSE)
-                .exec(Boolean.class);
+                .asDefault(false)
+                .exec();
             this.seenBy.put(identity, status);
             Logger.debug(
                 this,

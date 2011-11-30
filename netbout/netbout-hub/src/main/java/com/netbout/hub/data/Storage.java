@@ -81,15 +81,15 @@ public final class Storage {
         BoutData data;
         synchronized (this.bouts) {
             final Long number = Bus.make("get-next-bout-number")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+                .synchronously()
                 .asDefault(Collections.max(this.bouts.keySet()) + 1)
-                .exec(Long.class);
+                .exec();
             data = new BoutData(number);
             this.bouts.put(data.getNumber(), data);
         }
         data.setTitle("");
         Bus.make("started-new-bout")
-            .priority(Bus.Priority.ASAP)
+            .asap()
             .arg(data.getNumber())
             .exec();
         Logger.debug(
@@ -118,10 +118,10 @@ public final class Storage {
             );
         } else {
             final Boolean exists = Bus.make("check-bout-existence")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+                .synchronously()
                 .arg(number)
-                .asDefault(Boolean.FALSE)
-                .exec(Boolean.class);
+                .asDefault(false)
+                .exec();
             if (!exists) {
                 throw new BoutMissedException(number);
             }

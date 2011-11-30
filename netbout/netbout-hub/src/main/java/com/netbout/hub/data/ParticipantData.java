@@ -97,7 +97,7 @@ public final class ParticipantData {
     public void setConfirmed(final Boolean flag) {
         this.confirmed = flag;
         Bus.make("changed-participant-status")
-            .priority(Bus.Priority.ASAP)
+            .asap()
             .arg(this.bout)
             .arg(this.identity)
             .arg(this.confirmed)
@@ -116,10 +116,10 @@ public final class ParticipantData {
     public Boolean isConfirmed() {
         if (this.confirmed == null) {
             this.confirmed = Bus.make("get-participant-status")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+                .synchronously()
                 .arg(this.bout)
                 .arg(this.identity)
-                .exec(Boolean.class);
+                .exec();
             Logger.debug(
                 this,
                 "#isConfirmed(): status loaded as %b for dude '%s' in bout #%d",

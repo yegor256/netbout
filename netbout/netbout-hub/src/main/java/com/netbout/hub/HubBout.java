@@ -226,7 +226,6 @@ public final class HubBout implements Bout {
             final String name = dude.getIdentity();
             if (Identities.needsNotifier(name)) {
                 Bus.make("notify-bout-participant")
-                    .priority(Bus.Priority.NORMAL)
                     .arg(this.number())
                     .arg(name)
                     .arg(message.date())

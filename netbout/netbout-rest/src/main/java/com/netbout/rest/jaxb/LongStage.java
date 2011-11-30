@@ -27,8 +27,6 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.bus.Bus;
-import com.netbout.bus.ProgressReport;
-import com.netbout.bus.TextProgressReport;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
 import java.io.StringReader;
@@ -126,20 +124,14 @@ public final class LongStage {
      * @return The XML
      */
     private String xml() {
-        final ProgressReport report = new TextProgressReport();
-        String xml = Bus
-            .make("render-stage-xml")
-            .priority(Bus.Priority.NORMAL)
+        return Bus.make("render-stage-xml")
             .arg(this.bout.number())
             .arg(this.coords.stage())
             .arg(this.coords.place())
             .inBout(this.bout)
-            .progressReport(report)
-            .exec(String.class);
-        if (xml == null) {
-            xml = report.toString();
-        }
-        return xml;
+            // .progress(report)
+            .asDefault("<no-data/>")
+            .exec();
     }
 
 }

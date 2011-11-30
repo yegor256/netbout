@@ -74,7 +74,7 @@ public final class PlainVoid implements Plain<Void> {
      */
     @Override
     public Void value() {
-        throw new IllegalStateException("VOID object can't have value");
+        return null;
     }
 
     /**

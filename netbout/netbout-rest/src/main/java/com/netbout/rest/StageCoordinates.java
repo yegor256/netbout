@@ -171,14 +171,13 @@ public final class StageCoordinates {
         this.stages = new ArrayList<String>();
         for (Participant dude : bout.participants()) {
             final String name = dude.identity().name();
-            final Boolean exists = Bus
-                .make("does-stage-exist")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+            final Boolean exists = Bus.make("does-stage-exist")
+                .synchronously()
                 .arg(bout.number())
                 .arg(name)
                 .inBout(bout)
-                .asDefault(Boolean.FALSE)
-                .exec(Boolean.class);
+                .asDefault(false)
+                .exec();
             if (exists) {
                 this.stages.add(name);
             }

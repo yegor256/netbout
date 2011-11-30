@@ -33,7 +33,6 @@ import com.netbout.hub.data.Storage;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
-import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.net.URL;
@@ -211,11 +210,11 @@ public final class HubIdentity implements Identity {
         if (this.iphoto == null) {
             try {
                 this.iphoto = new URL(
-                    Bus.make("get-identity-photo")
-                        .priority(Bus.Priority.SYNCHRONOUSLY)
+                    (String) Bus.make("get-identity-photo")
+                        .synchronously()
                         .arg(this.iname)
                         .asDefault("http://img.netbout.com/unknown.png")
-                        .exec(String.class)
+                        .exec()
                 );
             } catch (java.net.MalformedURLException ex) {
                 throw new IllegalStateException(ex);
@@ -233,7 +232,7 @@ public final class HubIdentity implements Identity {
             this.iphoto = pic;
         }
         Bus.make("changed-identity-photo")
-            .priority(Bus.Priority.SYNCHRONOUSLY)
+            .synchronously()
             .arg(this.iname)
             .arg(this.iphoto.toString())
             .exec();
@@ -281,7 +280,7 @@ public final class HubIdentity implements Identity {
             );
         } else {
             Bus.make("added-identity-alias")
-                .priority(Bus.Priority.ASAP)
+                .asap()
                 .arg(this.iname)
                 .arg(alias)
                 .exec();
@@ -293,22 +292,6 @@ public final class HubIdentity implements Identity {
             );
             this.myAliases().add(alias);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (3 lines)
-     */
-    @Override
-    public void promote(final Helper helper) throws HelperException {
-        helper.init(this);
-        Bus.register(helper);
-        Logger.info(
-            this,
-            "#promote(%s): '%s' promoted",
-            helper.getClass().getName(),
-            this.name()
-        );
     }
 
     /**
@@ -386,13 +369,11 @@ public final class HubIdentity implements Identity {
         synchronized (this) {
             if (this.ibouts == null) {
                 this.ibouts = new CopyOnWriteArraySet<Long>(
-                    Arrays.asList(
-                        Bus.make("get-bouts-of-identity")
-                            .priority(Bus.Priority.SYNCHRONOUSLY)
-                            .arg(this.iname)
-                            .asDefault(new Long[]{})
-                            .exec(Long[].class)
-                    )
+                    (List<Long>) Bus.make("get-bouts-of-identity")
+                        .synchronously()
+                        .arg(this.iname)
+                        .asDefault(new ArrayList<Long>())
+                        .exec()
                 );
             }
         }
@@ -407,13 +388,11 @@ public final class HubIdentity implements Identity {
         synchronized (this) {
             if (this.ialiases == null) {
                 this.ialiases = new CopyOnWriteArraySet<String>(
-                    Arrays.asList(
-                        Bus.make("get-aliases-of-identity")
-                            .priority(Bus.Priority.SYNCHRONOUSLY)
-                            .arg(this.iname)
-                            .asDefault(new String[]{})
-                            .exec(String[].class)
-                    )
+                    (List<String>) Bus.make("get-aliases-of-identity")
+                        .synchronously()
+                        .arg(this.iname)
+                        .asDefault(new ArrayList<String>())
+                        .exec()
                 );
             }
         }

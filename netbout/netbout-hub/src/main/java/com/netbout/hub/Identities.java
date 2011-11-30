@@ -28,7 +28,9 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -114,7 +116,7 @@ public final class Identities {
             identity = new HubIdentity(name);
             Identities.ALL.put(name, identity);
             Bus.make("identity-mentioned")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+                .synchronously()
                 .arg(name)
                 .exec();
             Logger.debug(
@@ -139,11 +141,11 @@ public final class Identities {
                 found.add(identity);
             }
         }
-        final String[] external = Bus.make("find-identities-by-keyword")
-            .priority(Bus.Priority.SYNCHRONOUSLY)
+        final List<String> external = Bus.make("find-identities-by-keyword")
+            .synchronously()
             .arg(keyword)
-            .asDefault(new String[]{})
-            .exec(String[].class);
+            .asDefault(new ArrayList<String>())
+            .exec();
         for (String name : external) {
             found.add(Identities.make(name));
         }
@@ -166,10 +168,10 @@ public final class Identities {
      */
     private static Boolean canNotify(final String identity) {
         return Bus.make("can-notify-identity")
-            .priority(Bus.Priority.SYNCHRONOUSLY)
+            .synchronously()
             .arg(identity)
-            .asDefault(Boolean.FALSE)
-            .exec(Boolean.class);
+            .asDefault(false)
+            .exec();
     }
 
 }

@@ -109,15 +109,14 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
-        return Bus
-            .make("render-stage-xsl")
-            .priority(Bus.Priority.SYNCHRONOUSLY)
+        return Bus.make("render-stage-xsl")
+            .synchronously()
             .arg(this.bout)
             .arg(this.stage)
             .asDefault(
                 "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>"
             )
-            .exec(String.class);
+            .exec();
     }
 
 }

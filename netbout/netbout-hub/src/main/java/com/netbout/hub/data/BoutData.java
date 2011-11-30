@@ -28,6 +28,7 @@ package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
 import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -84,9 +85,9 @@ public final class BoutData {
     public String getTitle() {
         if (this.title == null) {
             this.title = Bus.make("get-bout-title")
-                .priority(Bus.Priority.SYNCHRONOUSLY)
+                .synchronously()
                 .arg(this.number)
-                .exec(String.class);
+                .exec();
             Logger.debug(
                 this,
                 "#getTitle(): title '%s' loaded for bout #%d",
@@ -104,7 +105,7 @@ public final class BoutData {
     public void setTitle(final String text) {
         this.title = text;
         Bus.make("changed-bout-title")
-            .priority(Bus.Priority.ASAP)
+            .asap()
             .arg(this.number)
             .arg(this.title)
             .exec();
@@ -123,7 +124,7 @@ public final class BoutData {
     public void addParticipant(final ParticipantData data) {
         this.getParticipants().add(data);
         Bus.make("added-bout-participant")
-            .priority(Bus.Priority.ASAP)
+            .asap()
             .arg(this.number)
             .arg(data.getIdentity())
             .exec();
@@ -144,12 +145,12 @@ public final class BoutData {
         synchronized (this) {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantData>();
-                final String[] identities = Bus
+                final List<String> identities = Bus
                     .make("get-bout-participants")
-                    .priority(Bus.Priority.SYNCHRONOUSLY)
+                    .synchronously()
                     .arg(this.number)
-                    .asDefault(new String[]{})
-                    .exec(String[].class);
+                    .asDefault(new ArrayList<String>())
+                    .exec();
                 for (String identity : identities) {
                     this.participants.add(
                         ParticipantData.build(this.number, identity)
@@ -172,10 +173,10 @@ public final class BoutData {
      */
     public MessageData addMessage() {
         final Long num = Bus.make("create-bout-message")
-            .priority(Bus.Priority.SYNCHRONOUSLY)
+            .synchronously()
             .arg(this.number)
-            .asDefault(new Long(1L))
-            .exec(Long.class);
+            .asDefault(1L)
+            .exec();
         final MessageData data = MessageData.build(num);
         this.getMessages().add(data);
         Logger.debug(
@@ -195,11 +196,11 @@ public final class BoutData {
         synchronized (this) {
             if (this.messages == null) {
                 this.messages = new CopyOnWriteArrayList<MessageData>();
-                final Long[] nums = Bus.make("get-bout-messages")
-                    .priority(Bus.Priority.SYNCHRONOUSLY)
+                final List<Long> nums = Bus.make("get-bout-messages")
+                    .synchronously()
                     .arg(this.number)
-                    .asDefault(new Long[]{})
-                    .exec(Long[].class);
+                    .asDefault(new ArrayList<Long>())
+                    .exec();
                 for (Long num : nums) {
                     this.messages.add(MessageData.build(num));
                 }
