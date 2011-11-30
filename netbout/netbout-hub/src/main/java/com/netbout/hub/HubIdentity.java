@@ -235,6 +235,7 @@ public final class HubIdentity implements Identity {
             .synchronously()
             .arg(this.iname)
             .arg(this.iphoto.toString())
+            .asDefault(true)
             .exec();
     }
 
@@ -283,6 +284,7 @@ public final class HubIdentity implements Identity {
                 .asap()
                 .arg(this.iname)
                 .arg(alias)
+                .asDefault(true)
                 .exec();
             Logger.debug(
                 this,

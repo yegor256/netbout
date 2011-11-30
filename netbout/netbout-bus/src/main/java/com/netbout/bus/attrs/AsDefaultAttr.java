@@ -42,7 +42,7 @@ public final class AsDefaultAttr implements TxAttribute, TxWithDefault {
     /**
      * The value.
      */
-    private transient Plain<?> value = new PlainVoid();
+    private transient Plain<?> value;
 
     /**
      * With this value.
@@ -59,6 +59,9 @@ public final class AsDefaultAttr implements TxAttribute, TxWithDefault {
      */
     @Override
     public Plain<?> getDefaultValue() {
+        if (this.value == null) {
+            throw new IllegalStateException("Default value is not set");
+        }
         return this.value;
     }
 

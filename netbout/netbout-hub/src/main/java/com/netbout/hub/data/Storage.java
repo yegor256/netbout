@@ -41,11 +41,6 @@ import java.util.concurrent.ConcurrentMap;
 public final class Storage {
 
     /**
-     * The singleton.
-     */
-    public static final Storage INSTANCE = new Storage();
-
-    /**
      * All bouts existing in the system.
      */
     private final transient ConcurrentMap<Long, BoutData> bouts =
@@ -91,6 +86,7 @@ public final class Storage {
         Bus.make("started-new-bout")
             .asap()
             .arg(data.getNumber())
+            .asDefault(true)
             .exec();
         Logger.debug(
             Storage.class,

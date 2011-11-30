@@ -108,6 +108,7 @@ public final class BoutData {
             .asap()
             .arg(this.number)
             .arg(this.title)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -127,6 +128,7 @@ public final class BoutData {
             .asap()
             .arg(this.number)
             .arg(data.getIdentity())
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,

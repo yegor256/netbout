@@ -110,6 +110,7 @@ public final class MessageData implements Comparable<MessageData> {
             .asap()
             .arg(this.number)
             .arg(this.date)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -148,6 +149,7 @@ public final class MessageData implements Comparable<MessageData> {
             .asap()
             .arg(this.number)
             .arg(this.author)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -187,6 +189,7 @@ public final class MessageData implements Comparable<MessageData> {
             .asap()
             .arg(this.number)
             .arg(this.text)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -226,6 +229,7 @@ public final class MessageData implements Comparable<MessageData> {
                 .asap()
                 .arg(this.number)
                 .arg(identity)
+                .asDefault(true)
                 .exec();
             Logger.debug(
                 this,

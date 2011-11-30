@@ -24,46 +24,71 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
+package com.netbout.hub;
 
-import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
+import java.util.Set;
 
 /**
- * Common bus of all transactions processed by helpers.
- *
- * <p>To execute a transaction you do something like this:
- *
- * <pre>
- * final String[] names = bus.make("get-user-names")
- *   .inBout(bout)
- *   .arg("Some text argument")
- *   .arg(123L)
- *   .arg(new Date())
- *   .asap()
- *   .expire(".*(user|name).*")
- *   .reportProgress(reporter)
- *   .asPreliminary(null)
- *   .noCache()
- *   .asDefault(new String[] {})
- *   .exec(String[].class)
- * </pre>
+ * Entry point to Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bus {
+public final class DefaultHub implements Hub {
 
     /**
-     * A convenient static method to create a new transaction builder.
-     * @param mnemo Mnemo-code of the transation
-     * @return The transaction builder
+     * {@inheritDoc}
      */
-    TxBuilder make(String mnemo);
+    @Override
+    public HubUser user(final String name) {
+        final HubUser user = new HubUser(name);
+        Logger.debug(
+            this,
+            "#user('%s'): instantiated",
+            name
+        );
+        return user;
+    }
 
     /**
-     * A convenient static method to register new helper.
-     * @param helper The helper to register
+     * {@inheritDoc}
      */
-    void register(Helper helper);
+    @Override
+    public HubIdentity identity(final String name) {
+        final HubIdentity identity = this.idnts.make(name);
+        Logger.debug(
+            this,
+            "#identity('%s'): found",
+            name
+        );
+        return identity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Identity> find(final String keyword) {
+        final Set<Identity> identities =
+            (Set) this.idnts.findByKeyword(keyword);
+        Logger.debug(
+            this,
+            "#find('%s'): found %d identities",
+            keyword,
+            identities.size()
+        );
+        return identities;
+    }
+
+    /**
+     * Find identities by name.
+     * @param keyword The keyword
+     * @return Set of identities found
+     */
+    protected Identities identities() {
+        return this.idnts;
+    }
 
 }

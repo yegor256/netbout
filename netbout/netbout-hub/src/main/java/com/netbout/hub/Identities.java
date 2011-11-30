@@ -46,26 +46,19 @@ public final class Identities {
     /**
      * All identities known for us at the moment, and their objects.
      */
-    private static final ConcurrentMap<String, HubIdentity> ALL =
+    private final ConcurrentMap<String, HubIdentity> all =
         new ConcurrentHashMap<String, HubIdentity>();
-
-    /**
-     * It's a utility class.
-     */
-    private Identities() {
-        // intentionally empty
-    }
 
     /**
      * Statistics in plain text.
      * @return Stats in plain text
      */
-    public static String stats() {
+    public String stats() {
         final StringBuilder builder = new StringBuilder();
         builder.append(
             String.format(
                 "Total identities: %d",
-                Identities.ALL.size()
+                this.all.size()
             )
         );
         return builder.toString();
@@ -78,7 +71,7 @@ public final class Identities {
      * @param user Name of the user
      * @return Identity found or created
      */
-    protected static HubIdentity make(final String name, final HubUser user) {
+    protected HubIdentity make(final String name, final HubUser user) {
         final HubIdentity identity = Identities.make(name);
         if (identity.isAssigned() && !identity.belongsTo(user)) {
             throw new IllegalArgumentException(
@@ -99,10 +92,10 @@ public final class Identities {
      * @param name The name of identity
      * @return Identity found
      */
-    protected static HubIdentity make(final String name) {
+    protected HubIdentity make(final String name) {
         HubIdentity identity;
-        if (Identities.ALL.containsKey(name)) {
-            identity = Identities.ALL.get(name);
+        if (this.all.containsKey(name)) {
+            identity = this.all.get(name);
         } else {
             if (Identities.needsNotifier(name)
                 && !Identities.canNotify(name)) {
@@ -114,16 +107,17 @@ public final class Identities {
                 );
             }
             identity = new HubIdentity(name);
-            Identities.ALL.put(name, identity);
+            this.all.put(name, identity);
             Bus.make("identity-mentioned")
                 .synchronously()
                 .arg(name)
+                .asDefault(true)
                 .exec();
             Logger.debug(
                 Identities.class,
                 "#make('%s'): created just by name (%d total)",
                 name,
-                Identities.ALL.size()
+                this.all.size()
             );
         }
         return identity;
@@ -134,9 +128,9 @@ public final class Identities {
      * @param keyword The keyword to find by
      * @return Identities found
      */
-    protected static Set<HubIdentity> findByKeyword(final String keyword) {
+    protected Set<HubIdentity> findByKeyword(final String keyword) {
         final Set<HubIdentity> found = new HashSet<HubIdentity>();
-        for (HubIdentity identity : Identities.ALL.values()) {
+        for (HubIdentity identity : this.all.values()) {
             if (identity.matchesKeyword(keyword)) {
                 found.add(identity);
             }
@@ -157,7 +151,7 @@ public final class Identities {
      * @param identity The identity
      * @return It needs it?
      */
-    protected static Boolean needsNotifier(final String identity) {
+    protected Boolean needsNotifier(final String identity) {
         return !identity.matches("\\d+") && !identity.startsWith("nb:");
     }
 
@@ -166,7 +160,7 @@ public final class Identities {
      * @param identity The identity
      * @return Can we?
      */
-    private static Boolean canNotify(final String identity) {
+    private Boolean canNotify(final String identity) {
         return Bus.make("can-notify-identity")
             .synchronously()
             .arg(identity)

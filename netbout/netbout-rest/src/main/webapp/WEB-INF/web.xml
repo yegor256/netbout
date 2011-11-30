@@ -55,6 +55,10 @@
         <url-pattern>/xsl/*</url-pattern>
     </servlet-mapping>
 
+    <listener>
+        <listener-class>com.netbout.servlets.Starter</listenerclass>
+    </listener>
+
     <servlet>
         <servlet-name>ExceptionTrap</servlet-name>
         <servlet-class>com.netbout.servlets.ExceptionTrap</servlet-class>

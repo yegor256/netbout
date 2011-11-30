@@ -101,6 +101,7 @@ public final class ParticipantData {
             .arg(this.bout)
             .arg(this.identity)
             .arg(this.confirmed)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,

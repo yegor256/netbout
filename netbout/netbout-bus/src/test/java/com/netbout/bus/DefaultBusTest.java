@@ -36,28 +36,28 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link Bus}.
+ * Test case of {@link DefaultBus}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+public final class DefaultBusTest {
 
     /**
-     * The helper.
+     * The bus.
      */
-    private Helper helper;
+    private final Bus bus = new DefaultBus();
 
     /**
      * Register new helper.
      * @throws Exception If there is some problem inside
      */
     @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
+    public void prepare() throws Exception {
+        final Helper helper = new CpaHelper(
             Mockito.mock(Identity.class),
             this.getClass().getPackage().getName()
         );
-        Bus.register(this.helper);
+        this.bus.register(helper);
     }
 
     /**
@@ -66,7 +66,7 @@ public final class BusTest {
      */
     @Test
     public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
+        final String result = this.bus.make("simple-translation")
             .synchronously()
             .arg("test me")
             .asDefault("doesn't work")
