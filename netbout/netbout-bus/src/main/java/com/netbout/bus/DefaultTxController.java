@@ -76,7 +76,11 @@ final class DefaultTxController implements TxController {
     @Override
     public Plain<?> exec(final Transaction trans) {
         final TxToken token = trans.makeToken();
-        this.executor.exec(token);
+        if (trans.isInsideBout()) {
+            this.executor.exec(token, trans.getBout());
+        } else {
+            this.executor.exec(token);
+        }
         Plain<?> result;
         if (token.isCompleted()) {
             result = token.getResult();

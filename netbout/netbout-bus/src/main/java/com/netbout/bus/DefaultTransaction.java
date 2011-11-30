@@ -27,6 +27,8 @@
 package com.netbout.bus;
 
 import com.netbout.bus.attrs.AsDefaultAttr;
+import com.netbout.bus.attrs.InBoutAttr;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Plain;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -82,6 +84,22 @@ final class DefaultTransaction implements Transaction {
     @Override
     public Plain<?> getDefaultResult() {
         return this.attributes.get(AsDefaultAttr.class).getValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isInsideBout() {
+        return this.attributes.get(InBoutAttr.class).isInsideBout();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout getBout() {
+        return this.attributes.get(InBoutAttr.class).getBout();
     }
 
 }

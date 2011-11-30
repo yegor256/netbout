@@ -24,41 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
-
-import com.netbout.spi.Bout;
-import com.netbout.spi.Plain;
 
 /**
- * One transaction.
+ * Transaction attributes.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Transaction {
-
-    /**
-     * Make a token out of it.
-     * @return The token
-     */
-    TxToken makeToken();
-
-    /**
-     * Get default result to return.
-     * @return The result
-     */
-    Plain<?> getDefaultResult();
-
-    /**
-     * Is it inside bout?
-     * @return Yes or no
-     */
-    boolean isInsideBout();
-
-    /**
-     * Get bout where it should be executed (or exception if it's global).
-     * @return Bout
-     */
-    Bout getBout();
-
-}
+package com.netbout.bus.attrs;

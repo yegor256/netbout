@@ -108,7 +108,7 @@ final class DefaultTxBuilder implements TxBuilder {
     public TxBuilder inBout(final Bout bout) {
         this.attributes
             .get(InBoutAttr.class)
-            .withBout(bout.number());
+            .withBout(bout);
         return this;
     }
 

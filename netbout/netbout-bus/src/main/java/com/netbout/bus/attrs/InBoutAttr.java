@@ -27,6 +27,7 @@
 package com.netbout.bus.attrs;
 
 import com.netbout.bus.TxAttribute;
+import com.netbout.spi.Bout;
 
 /**
  * InBout attribute.
@@ -37,18 +38,37 @@ import com.netbout.bus.TxAttribute;
 public final class InBoutAttr implements TxAttribute {
 
     /**
-     * The number of the bout.
+     * The bout.
      */
-    private transient Long number;
+    private transient Bout bout;
 
     /**
      * With this value.
-     * @param bout The ID of the bout
+     * @param bot The bout
      * @return This object
      */
-    public InBoutAttr withBout(final Long bout) {
-        this.number = bout;
+    public InBoutAttr withBout(final Bout bot) {
+        this.bout = bot;
         return this;
+    }
+
+    /**
+     * Are we inside a bout?
+     * @return Yes or no?
+     */
+    public boolean isInsideBout() {
+        return this.bout != null;
+    }
+
+    /**
+     * Get bout.
+     * @return The bout
+     */
+    public Bout getBout() {
+        if (!this.isInsideBout()) {
+            throw new IllegalStateException("Transaction is global");
+        }
+        return this.bout;
     }
 
 }
