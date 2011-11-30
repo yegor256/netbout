@@ -26,52 +26,32 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import java.util.List;
 
 /**
- * Test case of {@link Bus}.
+ * Report of progress of one transaction.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+public interface TxProgress {
 
     /**
-     * The helper.
+     * When transaction was created.
+     * @param date The date, in nanoseconds
      */
-    private Helper helper;
+    void started(long date);
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * When it's estimated to be completed.
+     * @param date The date, in nanoseconds
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
-    }
+    void estimated(long date);
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * All existing up to date log lines from this transaction.
+     * @param lines All text lines
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
-    }
+    void log(List<String> lines);
 
 }

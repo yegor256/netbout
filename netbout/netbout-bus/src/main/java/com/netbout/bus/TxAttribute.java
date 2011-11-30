@@ -26,52 +26,12 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 /**
- * Test case of {@link Bus}.
+ * Transaction attribute.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
-
-    /**
-     * The helper.
-     */
-    private Helper helper;
-
-    /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
-    }
-
-    /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
-    }
+public interface TxAttribute {
 
 }

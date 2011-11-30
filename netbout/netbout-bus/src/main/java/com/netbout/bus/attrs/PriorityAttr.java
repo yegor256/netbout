@@ -24,41 +24,40 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
+package com.netbout.bus.attrs;
+
+import com.netbout.bus.TxAttribute;
 
 /**
- * Report of progress of one transaction, in text.
+ * Priority attribute.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextProgressReport implements ProgressReport {
+public final class PriorityAttr implements TxAttribute {
 
     /**
-     * The report.
+     * Priorities.
      */
-    private transient String report = "unknown state";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return this.report;
+    public static enum Priority {
+        SYNC,
+        ASAP,
+        NORMAL,
     }
 
     /**
-     * {@inheritDoc}
+     * The priority.
      */
-    @Override
-    public void time(final long spent, final long ttc) {
-        this.report = String.format(
-            "%.2fms spent, %.2fms to complete: %d%%",
-            // @checkstyle MagicNumber (3 lines)
-            (double) spent / (1000L * 1000),
-            (double) ttc / (1000L * 1000),
-            100 * spent / (spent + ttc)
-        );
+    private transient Priority priority = Priority.NORMAL;
+
+    /**
+     * Set priority.
+     * @param pri The priority
+     * @return This object
+     */
+    public PriorityAttr withPriority(final Priority pri) {
+        this.priority = pri;
+        return this;
     }
 
 }

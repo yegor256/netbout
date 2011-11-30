@@ -26,52 +26,38 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * Test case of {@link Bus}.
+ * Transaction attributes.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+final class TxAttributes {
 
     /**
-     * The helper.
+     * List of attributes.
      */
-    private Helper helper;
+    private final transient ConcurrentMap<Class<? extends TxAttribute>, TxAttribute> attrs =
+        new ConcurrentHashMap<Class<? extends TxAttribute>, TxAttribute>();
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * Get one attribute.
+     * @param type The type of attribute to get
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
-    }
-
-    /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    public <T extends TxAttribute> T get(Class<T> type) {
+        if (!this.attrs.containsKey(type)) {
+            try {
+                this.attrs.put(type, type.newInstance());
+            } catch (InstantiationException ex) {
+                throw new IllegalArgumentException(ex);
+            } catch (IllegalAccessException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+        }
+        return (T) this.attrs.get(type);
     }
 
 }

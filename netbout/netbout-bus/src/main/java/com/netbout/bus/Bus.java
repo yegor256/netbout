@@ -27,11 +27,26 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Helper;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Queue of transactions processed by helpers.
+ *
+ * <p>To execute a transaction you do something like this:
+ *
+ * <pre>
+ * final String[] names = Bus.make("get-user-names")
+ *   .inBout(bout)
+ *   .arg("Some text argument")
+ *   .arg(123L)
+ *   .arg(new Date())
+ *   .asap()
+ *   .expire(".*(user|name).*")
+ *   .reportProgress(reporter)
+ *   .asPreliminary(null)
+ *   .noCache()
+ *   .asDefault(new String[] {})
+ *   .exec(String[].class)
+ * </pre>
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -39,76 +54,39 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class Bus {
 
     /**
-     * Priority.
+     * Singleton.
      */
-    public enum Priority {
-        /**
-         * Run it immediately.
-         */
-        SYNCHRONOUSLY,
-        /**
-         * Run it as soon as possible.
-         */
-        ASAP,
-        /**
-         * Just normal execution.
-         */
-        NORMAL
-    }
+    private static final Bus SINGLETON = new Bus();
 
     /**
-     * List of registered helpers.
+     * Transaction controller.
      */
-    private static final List<Helper> HELPERS =
-        new CopyOnWriteArrayList<Helper>();
+    private final TxController controller = new DefaultTxController(
+        new DefaultTxQueue(), new DefaultTokenCache()
+    );
 
     /**
-     * It's a utility class.
+     * It's a singleton.
      */
     private Bus() {
         // empty
     }
 
     /**
-     * Register new helper.
+     * A convenient static method to create a new transaction builder.
+     * @param mnemo Mnemo-code of the transation
+     * @return The transaction builder
+     */
+    public static TxBuilder make(final String mnemo) {
+        return new DefaultTxBuilder(Bus.SINGLETON.controller, mnemo);
+    }
+
+    /**
+     * A convenient static method to register new helper.
      * @param helper The helper to register
      */
     public static void register(final Helper helper) {
-        Bus.HELPERS.add(helper);
-    }
-
-    /**
-     * Create one transaction.
-     * @param mnemo Mnemo-code of the request
-     * @return The transaction
-     */
-    public static Transaction make(final String mnemo) {
-        return new Transaction(mnemo);
-    }
-
-    /**
-     * Execute one transaction.
-     * @param token The transaction to execute
-     */
-    protected static void execute(final Transaction token) {
-        for (Helper helper : Bus.HELPERS) {
-            try {
-                if (helper.supports().contains(token.mnemo())) {
-                    helper.execute(token);
-                    if (token.isCompleted()) {
-                        break;
-                    }
-                }
-            } catch (com.netbout.spi.HelperException ex) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "Failed to execute '%s'",
-                        token.mnemo()
-                    ),
-                    ex
-                );
-            }
-        }
+        Bus.SINGLETON.controller.register(helper);
     }
 
 }

@@ -24,54 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
+package com.netbout.bus.attrs;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.bus.TxAttribute;
+import com.netbout.spi.Plain;
 
 /**
- * Test case of {@link Bus}.
+ * As-preliminary attribute.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+public final class AsPreliminaryAttr implements TxAttribute {
 
     /**
-     * The helper.
+     * The value.
      */
-    private Helper helper;
+    private transient Plain<?> value;
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * With this value.
+     * @param val The value
+     * @return This object
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
-    }
-
-    /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    public AsPreliminaryAttr withValue(final Plain<?> val) {
+        this.value = val;
+        return this;
     }
 
 }

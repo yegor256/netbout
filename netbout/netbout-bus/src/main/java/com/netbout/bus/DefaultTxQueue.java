@@ -26,52 +26,37 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import java.util.Queue;
+import java.util.concurrent.SynchronousQueue;
 
 /**
- * Test case of {@link Bus}.
+ * Default queue.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+final class DefaultTxQueue implements TxQueue {
 
     /**
-     * The helper.
+     * The queue.
      */
-    private Helper helper;
+    private final transient Queue<Transaction> queue =
+        new SynchronousQueue<Transaction>();
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
+    @Override
+    public void push(Transaction trans) {
+        this.queue.add(trans);
     }
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    @Override
+    public Transaction pop() {
+        return this.queue.remove();
     }
 
 }

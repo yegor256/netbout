@@ -24,54 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
+package com.netbout.bus.attrs;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.bus.TxAttribute;
+import com.netbout.bus.TxProgress;
 
 /**
- * Test case of {@link Bus}.
+ * Progress attribute.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+public final class ProgressAttr implements TxAttribute {
 
     /**
-     * The helper.
+     * The progress bar.
      */
-    private Helper helper;
+    private transient TxProgress progress;
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * With this value.
+     * @param prgs The progress bar
+     * @return This object
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
-    }
-
-    /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    public ProgressAttr withProgress(final TxProgress prgs) {
+        this.progress = prgs;
+        return this;
     }
 
 }

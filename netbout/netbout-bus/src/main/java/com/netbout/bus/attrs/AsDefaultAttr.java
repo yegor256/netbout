@@ -24,21 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
+package com.netbout.bus.attrs;
+
+import com.netbout.bus.TxAttribute;
+import com.netbout.spi.Plain;
+import com.netbout.spi.plain.PlainVoid;
 
 /**
- * Report of progress of one transaction.
+ * As-default attribute.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface ProgressReport {
+public final class AsDefaultAttr implements TxAttribute {
 
     /**
-     * Report time situation.
-     * @param spent How many nanoseconds we already spent
-     * @param ttc How many nanoseconds to complete
+     * The value.
      */
-    void time(long spent, long ttc);
+    private transient Plain<?> value = new PlainVoid();
+
+    /**
+     * With this value.
+     * @param val The value
+     * @return This object
+     */
+    public AsDefaultAttr withValue(final Plain<?> val) {
+        this.value = val;
+        return this;
+    }
+
+    /**
+     * Get value.
+     * @return The value
+     */
+    public Plain<?> getValue() {
+        return this.value;
+    }
 
 }

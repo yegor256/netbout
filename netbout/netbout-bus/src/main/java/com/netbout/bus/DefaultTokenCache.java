@@ -26,52 +26,37 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.Plain;
+import com.netbout.spi.Token;
+import java.util.regex.Pattern;
 
 /**
- * Test case of {@link Bus}.
+ * Default implementation of cache of tokens results.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+final class DefaultTokenCache implements TokenCache {
 
     /**
-     * The helper.
+     * {@inheritDoc}
      */
-    private Helper helper;
-
-    /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
+    @Override
+    public void resolve(final Token token) {
     }
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    @Override
+    public void save(final Token token, final Plain<?> data) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(final Pattern pattern) {
     }
 
 }

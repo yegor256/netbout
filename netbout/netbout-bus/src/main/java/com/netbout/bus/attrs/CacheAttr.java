@@ -24,32 +24,46 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
+package com.netbout.bus.attrs;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.bus.TxAttribute;
+import java.util.regex.Pattern;
 
 /**
- * Test case of {@link TextProgressReport}.
+ * Cache attribute.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextProgressReportTest {
+public final class CacheAttr implements TxAttribute {
 
     /**
-     * Simple progress.
-     * @throws Exception If there is some problem inside
+     * Cache enabled.
      */
-    @Test
-    public void testProgressReporting() throws Exception {
-        final ProgressReport report = new TextProgressReport();
-        // @checkstyle MagicNumber (1 line)
-        report.time(67 * 1000 * 1000, 33 * 1000 * 1000);
-        MatcherAssert.assertThat(
-            report.toString(),
-            Matchers.equalTo("67.00ms spent, 33.00ms to complete: 67%")
-        );
+    private transient boolean enabled = true;
+
+    /**
+     * Expire other tokens by this pattern.
+     */
+    private transient Pattern expire;
+
+    /**
+     * Disable cache at all.
+     * @return This object
+     */
+    public CacheAttr disableCache() {
+        this.enabled = false;
+        return this;
+    }
+
+    /**
+     * Exprire by pattern.
+     * @param pattern The pattern
+     * @return This object
+     */
+    public CacheAttr expireByPattern(final Pattern pattern) {
+        this.expire = pattern;
+        return this;
     }
 
 }

@@ -26,52 +26,62 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.bus.attrs.AsDefaultAttr;
+import com.netbout.spi.Plain;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Test case of {@link Bus}.
+ * One transaction, default implementation.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+final class DefaultTransaction implements Transaction {
 
     /**
-     * The helper.
+     * Transaction mnemo.
      */
-    private Helper helper;
+    private final transient String imnemo;
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * List of arguments.
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
+    private final transient List<Plain<?>> args =
+        new CopyOnWriteArrayList<Plain<?>>();
+
+    /**
+     * Attributes.
+     */
+    private final transient TxAttributes attributes;
+
+    /**
+     * Public ctor.
+     * @param mnemo Mnemo-code of the request
+     * @param arguments The arguments
+     * @param config List of attributes
+     */
+    public DefaultTransaction(final String mnemo,
+        final List<Plain<?>> arguments, final TxAttributes attrs) {
+        this.imnemo = mnemo;
+        this.args.addAll(arguments);
+        this.attributes = attrs;
     }
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    @Override
+    public TxToken makeToken() {
+        return new DefaultTxToken(this.imnemo, this.args);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Plain<?> getDefaultResult() {
+        return this.attributes.get(AsDefaultAttr.class).getValue();
     }
 
 }

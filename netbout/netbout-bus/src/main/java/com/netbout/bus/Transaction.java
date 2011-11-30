@@ -26,13 +26,7 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Token;
-import com.netbout.spi.TypeMapper;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import com.netbout.spi.Plain;
 
 /**
  * One transaction.
@@ -40,182 +34,18 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public final class Transaction implements Token {
+interface Transaction {
 
     /**
-     * Mnemo.
+     * Make a token out of it.
+     * @return The token
      */
-    private final transient String imnemo;
+    TxToken makeToken();
 
     /**
-     * Priority.
-     */
-    private transient Bus.Priority ipriority;
-
-    /**
-     * Default value.
-     */
-    private transient String def = TypeMapper.TEXT_NULL;
-
-    /**
-     * Arguments.
-     */
-    private final transient List<String> iargs = new ArrayList<String>();
-
-    /**
-     * The result.
-     */
-    private transient String iresult;
-
-    /**
-     * Public ctor.
-     * @param mnemo Mnemo-code of the request
-     */
-    public Transaction(final String mnemo) {
-        this.imnemo = mnemo;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String mnemo() {
-        return this.imnemo;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String arg(final int pos) {
-        return this.iargs.get(pos);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void result(final String result) {
-        this.iresult = result;
-    }
-
-    /**
-     * Set priority.
-     * @param priority Priority
-     * @return This object
-     */
-    public Transaction priority(final Bus.Priority priority) {
-        this.ipriority = priority;
-        return this;
-    }
-
-    /**
-     * Set scope, if necessary.
-     * @param bout The bout where this transaction is happening
-     * @return This object
-     */
-    public Transaction inBout(final Bout bout) {
-        // tbd
-        return this;
-    }
-
-    /**
-     * Set progress report.
-     * @param report The report
-     * @return This object
-     */
-    public Transaction progressReport(final ProgressReport report) {
-        // tbd
-        return this;
-    }
-
-    /**
-     * Add argument.
-     * @param arg The argument
-     * @return This object
-     */
-    public Transaction arg(final Object arg) {
-        try {
-            this.iargs.add(TypeMapper.toText(arg));
-        } catch (com.netbout.spi.HelperException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        return this;
-    }
-
-    /**
-     * Set default value to return.
-     * @param val The value
-     * @return This object
-     */
-    public Transaction asDefault(final Object val) {
-        try {
-            this.def = TypeMapper.toText(val);
-        } catch (com.netbout.spi.HelperException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        return this;
-    }
-
-    /**
-     * Execute it and return value.
-     * @param type Type of resposne
-     * @param <T> Type of response
+     * Get default result to return.
      * @return The result
      */
-    public <T> T exec(final Class<T> type) {
-        assert this.ipriority != null;
-        Bus.execute(this);
-        if (!this.isCompleted()) {
-            this.iresult = this.def;
-        }
-        Logger.debug(
-            this,
-            "#exec(%s, %s): returned '%s' for [%s]",
-            this.mnemo(),
-            type.getName(),
-            this.iresult,
-            this.argsAsText()
-        );
-        try {
-            return (T) TypeMapper.toObject(this.iresult, type);
-        } catch (com.netbout.spi.HelperException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
-     * Execute and return nothing.
-     */
-    public void exec() {
-        Bus.execute(this);
-        Logger.debug(
-            Transaction.class,
-            "#exec(%s): done for [%s]",
-            this.mnemo(),
-            this.argsAsText()
-        );
-    }
-
-    /**
-     * Is it completed already?
-     * @return Yes or no?
-     */
-    protected boolean isCompleted() {
-        return (this.iresult != null)
-            && !TypeMapper.TEXT_NULL.equals(this.iresult);
-    }
-
-    /**
-     * Arguments as text, for logging.
-     * @return The text
-     */
-    private String argsAsText() {
-        return String.format(
-            "'%s'",
-            StringUtils.join(this.iargs, "', '")
-        );
-    }
+    Plain<?> getDefaultResult();
 
 }

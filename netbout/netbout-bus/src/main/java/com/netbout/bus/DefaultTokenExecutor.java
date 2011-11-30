@@ -26,52 +26,72 @@
  */
 package com.netbout.bus;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.Participant;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * Test case of {@link Bus}.
+ * Default executor of a token.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+final class DefaultTokenExecutor implements TokenExecutor {
 
     /**
-     * The helper.
+     * List of registered helpers.
      */
-    private Helper helper;
+    private final Set<Helper> helpers = new CopyOnWriteArraySet<Helper>();
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
+    @Override
+    public void register(final Helper helper) {
+        this.helpers.add(helper);
     }
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    @Override
+    public void exec(final TxToken token) {
+        this.run(token, this.helpers);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void exec(final TxToken token, final Bout bout) {
+        final Set<Helper> active = new HashSet<Helper>();
+        for (Participant participant : bout.participants()) {
+            final Identity identity = participant.identity();
+            if (this.helpers.contains(identity)) {
+                active.add((Helper) identity);
+            }
+        }
+        this.run(token, active);
+    }
+
+    /**
+     * Execute given token with a given set of helpers.
+     * @param token The token to execute
+     * @param targets The helpers to use
+     */
+    private void run(final TxToken token, final Set<Helper> targets) {
+        for (Helper helper : targets) {
+            if (helper.supports().contains(token.mnemo())) {
+                helper.execute(token);
+                if (token.isCompleted()) {
+                    break;
+                }
+            }
+        }
     }
 
 }

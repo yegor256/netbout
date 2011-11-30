@@ -26,52 +26,36 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.Plain;
+import com.netbout.spi.Token;
+import java.util.regex.Pattern;
 
 /**
- * Test case of {@link Bus}.
+ * Cache of tokens results.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+interface TokenCache {
 
     /**
-     * The helper.
+     * Find result for the token, if it exists in cache, and fill with
+     * {@link Token#result}.
+     * @param token The token to resolve
      */
-    private Helper helper;
+    void resolve(Token token);
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * Save result of the token.
+     * @param token The token
+     * @param data The result
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
-    }
+    void save(Token token, Plain<?> data);
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * Delete all tokens which mnemos match this pattern.
+     * @param pattern Regular expression
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
-    }
+    void delete(Pattern pattern);
 
 }

@@ -27,51 +27,27 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.Plain;
 
 /**
- * Test case of {@link Bus}.
+ * Transaction controller.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+interface TxController {
 
     /**
-     * The helper.
+     * Register a new helper in this controller.
+     * @param helper The helper to register
      */
-    private Helper helper;
+    void register(Helper helper);
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * Execute transaction and return response value.
+     * @param trans The transaction to execute
+     * @return The result
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
-    }
-
-    /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
-    }
+    Plain<?> exec(Transaction trans);
 
 }

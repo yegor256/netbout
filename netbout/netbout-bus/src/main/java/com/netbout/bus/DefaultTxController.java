@@ -27,51 +27,63 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.Plain;
 
 /**
- * Test case of {@link Bus}.
+ * Transaction controller, default implementation.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+final class DefaultTxController implements TxController {
 
     /**
-     * The helper.
+     * Token executor.
      */
-    private Helper helper;
+    private final TokenExecutor executor = new DefaultTokenExecutor();
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * Transaction queue.
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
+    private final TxQueue queue;
+
+    /**
+     * Token cache.
+     */
+    private final TokenCache cache;
+
+    /**
+     * Public ctor.
+     * @param que The queue
+     * @param cac The cache
+     */
+    public DefaultTxController(final TxQueue que, final TokenCache cac) {
+        this.queue = que;
+        this.cache = cac;
     }
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    @Override
+    public void register(final Helper helper) {
+        this.executor.register(helper);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Plain<?> exec(final Transaction trans) {
+        final TxToken token = trans.makeToken();
+        this.executor.exec(token);
+        Plain<?> result;
+        if (token.isCompleted()) {
+            result = token.getResult();
+        } else {
+            result = trans.getDefaultResult();
+        }
+        return result;
     }
 
 }

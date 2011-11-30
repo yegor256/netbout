@@ -26,52 +26,43 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.Operation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
- * Test case of {@link Bus}.
+ * Simple helper.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+@Farm
+public final class SimpleHelper {
 
     /**
-     * The helper.
+     * Translate text.
+     * @param text The message to translate
+     * @return New text to show
      */
-    private Helper helper;
-
-    /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
+    @Operation("simple-translation")
+    public String translate(final String text) {
+        return text.replaceAll("[a-z]", "X");
     }
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * Return list.
+     * @param size Size of list to return
+     * @return The list
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    @Operation("simple-list")
+    public List<Long> list(final Long size) {
+        final List<Long> list = new ArrayList<Long>();
+        final Random random = new Random();
+        for (int pos = 0; pos < size; pos += 1) {
+            list.add(random.nextLong());
+        }
+        return list;
     }
 
 }

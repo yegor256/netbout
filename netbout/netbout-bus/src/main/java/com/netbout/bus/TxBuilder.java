@@ -26,52 +26,82 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.Bout;
 
 /**
- * Test case of {@link Bus}.
+ * Transaction builder.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+public interface TxBuilder {
 
     /**
-     * The helper.
+     * Execute it as soon as possible.
+     * @return This object
      */
-    private Helper helper;
+    TxBuilder asap();
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * Execute it immediately.
+     * @return This object
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
-    }
+    TxBuilder synchronously();
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * Set scope, if necessary.
+     * @param bout The bout where this transaction is happening
+     * @return This object
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
-    }
+    TxBuilder inBout(Bout bout);
+
+    /**
+     * Set progress reporter.
+     * @param progress Progress reporter
+     * @return This object
+     */
+    TxBuilder progress(TxProgress progress);
+
+    /**
+     * Add argument.
+     * @param arg The argument
+     * @return This object
+     */
+    TxBuilder arg(Object arg);
+
+    /**
+     * Set default value to return.
+     * @param value The value
+     * @return This object
+     */
+    TxBuilder asDefault(Object value);
+
+    /**
+     * Set preliminary value to return (when transaction is not completed yet).
+     * @param val The value
+     * @return This object
+     */
+    TxBuilder asPreliminary(Object value);
+
+    /**
+     * Once it's done all other transactions with these mnemos should be
+     * removed from cache.
+     * @param regex Regular expression to find mnemos of other transactions
+     * @return This object
+     */
+    TxBuilder expire(String regex);
+
+    /**
+     * Don't cache the result of execution.
+     * @return This object
+     */
+    TxBuilder noCache();
+
+    /**
+     * Execute it and return value.
+     * @param <T> Type of response
+     * @return The result
+     */
+    <T> T exec();
 
 }

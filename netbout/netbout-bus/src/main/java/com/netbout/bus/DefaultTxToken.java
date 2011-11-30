@@ -26,52 +26,83 @@
  */
 package com.netbout.bus;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.Plain;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Test case of {@link Bus}.
+ * Default token.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusTest {
+final class DefaultTxToken implements TxToken {
 
     /**
-     * The helper.
+     * Transaction mnemo.
      */
-    private Helper helper;
+    private final transient String imnemo;
 
     /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
+     * List of arguments.
      */
-    @Before
-    public void register() throws Exception {
-        this.helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        Bus.register(this.helper);
+    private final transient List<Plain<?>> args =
+        new CopyOnWriteArrayList<Plain<?>>();
+
+    /**
+     * Result.
+     */
+    private transient Plain<?> done;
+
+    /**
+     * Public ctor.
+     * @param mnemo Mnemo-code of the request
+     * @param arguments The arguments
+     * @param config List of attributes
+     */
+    public DefaultTxToken(final String mnemo, final List<Plain<?>> arguments) {
+        this.imnemo = mnemo;
+        this.args.addAll(arguments);
     }
 
     /**
-     * Simple synch transaction with a helper.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void testSynchronousTransaction() throws Exception {
-        final String result = Bus.make("simple-translation")
-            .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
-            .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+    @Override
+    public String mnemo() {
+        return this.imnemo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Plain<?> arg(final int pos) {
+        return this.args.get(pos);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void result(final Plain<?> res) {
+        this.done = res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isCompleted() {
+        return this.done != null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Plain<?> getResult() {
+        return this.done;
     }
 
 }
