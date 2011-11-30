@@ -52,7 +52,8 @@ public final class ParticipantFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-bout-participants")
-    public String[] getBoutParticipants(final Long bout) throws SQLException {
+    public List<String> getBoutParticipants(final Long bout)
+        throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         final List<String> names = new ArrayList<String>();
@@ -80,7 +81,7 @@ public final class ParticipantFarm {
             names.size(),
             System.currentTimeMillis() - start
         );
-        return names.toArray(new String[]{});
+        return names;
     }
 
     /**

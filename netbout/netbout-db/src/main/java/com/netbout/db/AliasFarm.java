@@ -82,7 +82,7 @@ public final class AliasFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-aliases-of-identity")
-    public String[] getAliasesOfIdentity(final String name)
+    public List<String> getAliasesOfIdentity(final String name)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -110,7 +110,7 @@ public final class AliasFarm {
             aliases.size(),
             System.currentTimeMillis() - start
         );
-        return aliases.toArray(new String[]{});
+        return aliases;
     }
 
 }

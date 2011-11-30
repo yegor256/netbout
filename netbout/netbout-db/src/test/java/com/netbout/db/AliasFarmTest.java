@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -52,8 +53,8 @@ public final class AliasFarmTest {
         final String alias = "willy@example.com";
         new IdentityFarm().identityMentioned(identity);
         this.farm.addedIdentityAlias(identity, alias);
-        final String[] aliases = this.farm.getAliasesOfIdentity(identity);
-        MatcherAssert.assertThat(aliases, Matchers.hasItemInArray(alias));
+        final List<String> aliases = this.farm.getAliasesOfIdentity(identity);
+        MatcherAssert.assertThat(aliases, Matchers.hasItem(alias));
     }
 
     /**
@@ -69,11 +70,11 @@ public final class AliasFarmTest {
         this.farm.addedIdentityAlias(identity, alias);
         MatcherAssert.assertThat(
             ifarm.findIdentitiesByKeyword("FOWLER"),
-            Matchers.hasItemInArray(identity)
+            Matchers.hasItem(identity)
         );
         MatcherAssert.assertThat(
             ifarm.findIdentitiesByKeyword("MARTIN"),
-            Matchers.hasItemInArray(identity)
+            Matchers.hasItem(identity)
         );
     }
 

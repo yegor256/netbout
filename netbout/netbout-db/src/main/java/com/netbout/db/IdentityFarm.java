@@ -53,7 +53,7 @@ public final class IdentityFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("find-identities-by-keyword")
-    public String[] findIdentitiesByKeyword(final String keyword)
+    public List<String> findIdentitiesByKeyword(final String keyword)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -87,7 +87,7 @@ public final class IdentityFarm {
             names.size(),
             System.currentTimeMillis() - start
         );
-        return names.toArray(new String[]{});
+        return names;
     }
 
     /**
@@ -97,7 +97,8 @@ public final class IdentityFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-bouts-of-identity")
-    public Long[] getBoutsOfIdentity(final String name) throws SQLException {
+    public List<Long> getBoutsOfIdentity(final String name)
+        throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         final List<Long> numbers = new ArrayList<Long>();
@@ -125,7 +126,7 @@ public final class IdentityFarm {
             numbers.size(),
             System.currentTimeMillis() - start
         );
-        return numbers.toArray(new Long[]{});
+        return numbers;
     }
 
     /**

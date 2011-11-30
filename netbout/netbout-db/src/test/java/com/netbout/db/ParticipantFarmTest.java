@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -88,10 +89,10 @@ public final class ParticipantFarmTest {
         final String identity = "Bill Gates";
         new IdentityFarm().changedIdentityPhoto(identity, "");
         this.farm.addedBoutParticipant(this.bout, identity);
-        final String[] names = this.farm.getBoutParticipants(this.bout);
+        final List<String> names = this.farm.getBoutParticipants(this.bout);
         MatcherAssert.assertThat(
             names,
-            Matchers.hasItemInArray(identity)
+            Matchers.hasItem(identity)
         );
     }
 

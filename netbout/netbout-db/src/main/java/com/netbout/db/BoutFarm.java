@@ -141,7 +141,7 @@ public final class BoutFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-bout-messages")
-    public Long[] getBoutMessages(final Long bout) throws SQLException {
+    public List<Long> getBoutMessages(final Long bout) throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         final List<Long> numbers = new ArrayList<Long>();
@@ -169,7 +169,7 @@ public final class BoutFarm {
             numbers.size(),
             System.currentTimeMillis() - start
         );
-        return numbers.toArray(new Long[]{});
+        return numbers;
     }
 
     /**
