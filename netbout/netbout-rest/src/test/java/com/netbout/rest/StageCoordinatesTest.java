@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.bus.Bus;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
@@ -60,7 +61,7 @@ public final class StageCoordinatesTest {
      */
     @BeforeClass
     public static void registerHelper() throws Exception {
-        StageCoordinatesTest.helper = HubEntry.user("bar").identity("123");
+        // StageCoordinatesTest.helper = HubEntry.user("bar").identity("123");
         // StageCoordinatesTest.helper.promote(
         //     new CpaHelper(StageCoordinatesTest.class)
         // );
@@ -79,10 +80,11 @@ public final class StageCoordinatesTest {
         final StageCoordinates coords = new StageCoordinates();
         coords.setStage(this.helper.name());
         coords.setPlace(place);
-        coords.normalize(this.mockBout(this.helper.name()));
+        final Bus bus = Mockito.mock(Bus.class);
+        coords.normalize(bus, this.mockBout(this.helper.name()));
         final String text = coords.toString();
         final StageCoordinates reverted = StageCoordinates.valueOf(text);
-        reverted.normalize(this.mockBout(this.helper.name(), "somebody else"));
+        reverted.normalize(bus, this.mockBout(this.helper.name(), "somebody else"));
         MatcherAssert.assertThat(
             reverted.stage(),
             Matchers.equalTo(this.helper.name())

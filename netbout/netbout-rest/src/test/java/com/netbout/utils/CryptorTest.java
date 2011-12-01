@@ -57,7 +57,7 @@ public final class CryptorTest {
             Matchers.describedAs(hash, Matchers.is(true))
         );
         final Hub hub = Mockito.mock(Hub.class);
-        final HubIdentity discovered = new Cryptor().decrypt(hub, hash);
+        final Identity discovered = new Cryptor().decrypt(hub, hash);
         MatcherAssert.assertThat(discovered.name(), Matchers.equalTo(iname));
         MatcherAssert.assertThat(discovered.user(), Matchers.equalTo(uname));
     }

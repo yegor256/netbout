@@ -86,7 +86,7 @@ public final class BoutMgr {
             final Long number = this.bus
                 .make("get-next-bout-number")
                 .synchronously()
-                .asDefault(Collections.max(this.bouts.keySet()) + 1)
+                .asDefault(this.defaultNextBoutNumber())
                 .exec();
             data = new BoutData(this.bus, number);
             this.bouts.put(data.getNumber(), data);
@@ -140,6 +140,20 @@ public final class BoutMgr {
             );
         }
         return data;
+    }
+
+    /**
+     * Get next bout number, which is by default.
+     * @return The number
+     */
+    private Long defaultNextBoutNumber() {
+        Long number;
+        if (this.bouts.isEmpty()) {
+            number = 1L;
+        } else {
+            number = Collections.max(this.bouts.keySet()) + 1;
+        }
+        return number;
     }
 
 }

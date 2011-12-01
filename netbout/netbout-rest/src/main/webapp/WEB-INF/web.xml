@@ -56,7 +56,7 @@
     </servlet-mapping>
 
     <listener>
-        <listener-class>com.netbout.servlets.Starter</listenerclass>
+        <listener-class>com.netbout.servlets.Starter</listener-class>
     </listener>
 
     <servlet>

@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import com.netbout.harness.PageConverter;
 import com.netbout.harness.ResourceBuilder;
-import com.netbout.hub.HubEntry;
 import com.netbout.spi.Bout;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;

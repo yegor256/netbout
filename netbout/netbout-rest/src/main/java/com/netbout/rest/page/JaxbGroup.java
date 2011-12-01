@@ -90,15 +90,17 @@ public final class JaxbGroup {
      */
     public static Object build(final Collection grp, final String name) {
         synchronized (JaxbGroup.READY) {
-            if (!JaxbGroup.READY.containsKey(name)) {
-                JaxbGroup.READY.put(
-                    name,
-                    JaxbGroup.construct(JaxbGroup.types(grp), name)
-                );
+            Class type;
+            if (JaxbGroup.READY.containsKey(name)) {
+                type = JaxbGroup.READY.get(name);
+            } else {
+                type = JaxbGroup.construct(JaxbGroup.types(grp), name);
+                if (grp.size() > 0) {
+                    JaxbGroup.READY.put(name, type);
+                }
             }
             try {
-                return JaxbGroup.READY.get(name)
-                    .getDeclaredConstructor(Collection.class)
+                return type.getDeclaredConstructor(Collection.class)
                     .newInstance(grp);
             } catch (NoSuchMethodException ex) {
                 throw new IllegalStateException(ex);
@@ -132,9 +134,15 @@ public final class JaxbGroup {
         final String name) {
         final ClassPool pool = ClassPool.getDefault();
         try {
+            final String modified = String.format(
+                "%s$%s%B",
+                JaxbGroup.class.getName(),
+                name,
+                types.isEmpty()
+            );
             final CtClass ctc = pool.getAndRename(
                 JaxbGroup.class.getName(),
-                String.format("%s$%s", JaxbGroup.class.getName(), name)
+                modified
             );
             final ClassFile file = ctc.getClassFile();
             final AnnotationsAttribute attribute =
@@ -142,8 +150,11 @@ public final class JaxbGroup {
                     AnnotationsAttribute.visibleTag
                 );
             attribute.addAnnotation(JaxbGroup.xmlRootElement(file, name));
-            attribute.addAnnotation(JaxbGroup.xmlSeeAlso(file, types));
+            if (types.size() > 0) {
+                attribute.addAnnotation(JaxbGroup.xmlSeeAlso(file, types));
+            }
             final Class cls = ctc.toClass();
+            ctc.defrost();
             Logger.debug(
                 JaxbGroup.class,
                 "#construct('%s'): class %s created",
