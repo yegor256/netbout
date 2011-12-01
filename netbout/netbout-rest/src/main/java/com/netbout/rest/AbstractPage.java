@@ -26,9 +26,9 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.HubIdentity;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
+import com.netbout.spi.Identity;
 import com.netbout.utils.Cryptor;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
@@ -150,7 +150,7 @@ public abstract class AbstractPage implements Page {
      */
     @Override
     public final Response.ResponseBuilder authenticated(
-        final HubIdentity identity) {
+        final Identity identity) {
         this.append(new LongIdentity(identity));
         this.append(new JaxbBundle("auth", new Cryptor().encrypt(identity)));
         this.link("logout", "/g/out");

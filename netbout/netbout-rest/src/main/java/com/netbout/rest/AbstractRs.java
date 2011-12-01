@@ -26,12 +26,13 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.HubEntry;
-import com.netbout.hub.HubIdentity;
+import com.netbout.bus.Bus;
+import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.QueryParam;
@@ -55,6 +56,16 @@ public abstract class AbstractRs implements Resource {
     private final transient long inano = System.nanoTime();
 
     /**
+     * Hub to work with.
+     */
+    private transient Hub hub;
+
+    /**
+     * Bus to work with.
+     */
+    private transient Bus bus;
+
+    /**
      * List of known JAX-RS providers.
      */
     private transient Providers iproviders;
@@ -67,22 +78,17 @@ public abstract class AbstractRs implements Resource {
     /**
      * Http headers.
      */
-    @Context
     private transient HttpHeaders ihttpHeaders;
 
     /**
      * HTTP servlet request.
      */
-    @Context
     private transient HttpServletRequest ihttpRequest;
 
     /**
      * Cookie.
      */
-    private transient String icookie
-    // Uncomment this line if you don't have a cookie saved by your
-    // local browser yet.
-    = new Cryptor().encrypt(HubEntry.user("999").identity("999"));
+    private transient String icookie;
 
     /**
      * The message to show.
@@ -287,13 +293,29 @@ public abstract class AbstractRs implements Resource {
     }
 
     /**
+     * Inject servlet context. Should be called by JAX-RS implemenation
+     * because of <tt>&#64;Context</tt> annotation.
+     * @param context The context
+     */
+    @Context
+    public final void setServletContext(final ServletContext context) {
+        this.hub = (Hub) context.getAttribute("com.netbout.rest.HUB");
+        this.bus = (Bus) context.getAttribute("com.netbout.rest.BUS");
+        Logger.debug(
+            this,
+            "#setServletContext(%s): injected",
+            context.getClass().getName()
+        );
+    }
+
+    /**
      * Get current user identity, or throws {@link LoginRequiredException} if
      * no user is logged in at the moment.
      * @return The identity
      */
-    protected final HubIdentity identity() {
+    protected final Identity identity() {
         try {
-            return new Cryptor().decrypt(this.icookie);
+            return new Cryptor().decrypt(this.hub, this.icookie);
         } catch (com.netbout.utils.DecryptionException ex) {
             Logger.debug(
                 this,
@@ -304,6 +326,22 @@ public abstract class AbstractRs implements Resource {
             );
             throw new ForwardException(this, "/g", ex);
         }
+    }
+
+    /**
+     * Get bus.
+     * @return The bus
+     */
+    protected final Bus bus() {
+        return this.bus;
+    }
+
+    /**
+     * Get hub.
+     * @return The hub
+     */
+    protected final Hub hub() {
+        return this.hub;
     }
 
 }

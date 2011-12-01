@@ -51,6 +51,11 @@ import org.xml.sax.InputSource;
 public final class LongStage {
 
     /**
+     * The bus to work with.
+     */
+    private transient Bus bus;
+
+    /**
      * The bout.
      */
     private transient Bout bout;
@@ -69,22 +74,27 @@ public final class LongStage {
 
     /**
      * Private ctor.
+     * @param ibus The bus
      * @param bot Bout to work with
      * @param crds The coordinates
      */
-    private LongStage(final Bout bot, final StageCoordinates crds) {
+    private LongStage(final Bus ibus, final Bout bot,
+        final StageCoordinates crds) {
+        this.bus = ibus;
         this.bout = bot;
         this.coords = crds;
     }
 
     /**
      * Builder.
+     * @param ibus The bus
      * @param bot Bout to work with
      * @param crds The coordinates
      * @return The instance just created
      */
-    public static LongStage build(final Bout bot, final StageCoordinates crds) {
-        return new LongStage(bot, crds);
+    public static LongStage build(final Bus ibus, final Bout bot,
+        final StageCoordinates crds) {
+        return new LongStage(ibus, bot, crds);
     }
 
     /**
@@ -124,7 +134,7 @@ public final class LongStage {
      * @return The XML
      */
     private String xml() {
-        return Bus.make("render-stage-xml")
+        return this.bus.make("render-stage-xml")
             .arg(this.bout.number())
             .arg(this.coords.stage())
             .arg(this.coords.place())

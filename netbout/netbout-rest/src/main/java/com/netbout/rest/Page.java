@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.HubIdentity;
 import com.netbout.rest.page.JaxbBundle;
+import com.netbout.spi.Identity;
 import java.net.URI;
 import javax.ws.rs.core.Response;
 
@@ -90,7 +90,7 @@ public interface Page {
      * @param identity The identity
      * @return The response builder
      */
-    Response.ResponseBuilder authenticated(HubIdentity identity);
+    Response.ResponseBuilder authenticated(Identity identity);
 
     /**
      * Create and return a JAX-RS response for anonymous user.

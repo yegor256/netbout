@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.HubEntry;
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.rest.jaxb.LongBout;
 import com.netbout.rest.page.JaxbBundle;
@@ -152,7 +151,7 @@ public final class BoutRs extends AbstractRs {
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();
-        for (Identity identity : HubEntry.find(keyword)) {
+        for (Identity identity : this.identity().friends(keyword)) {
             invitees.add(
                 Invitee.build(
                     identity,
@@ -236,7 +235,11 @@ public final class BoutRs extends AbstractRs {
                 "Form param 'name' missed"
             );
         }
-        bout.invite(this.identity().friend(name));
+        try {
+            bout.invite(this.identity().friend(name));
+        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            throw new ForwardException(this, this.self(""), ex);
+        }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
@@ -314,7 +317,7 @@ public final class BoutRs extends AbstractRs {
      * @return The page
      */
     private Page page() {
-        this.coords.normalize(this.bout());
+        this.coords.normalize(this.bus(), this.bout());
         final Page page = new PageBuilder()
             .stylesheet(
                 UriBuilder.fromUri(this.self("/xsl/bout.xsl"))
@@ -326,6 +329,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .append(
                 new LongBout(
+                    this.bus(),
                     this.bout(),
                     this.coords,
                     this.query,

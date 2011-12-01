@@ -26,8 +26,7 @@
  */
 package com.netbout.utils;
 
-import com.netbout.hub.HubEntry;
-import com.netbout.hub.HubIdentity;
+import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.utils.TextUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -69,11 +68,13 @@ public final class Cryptor {
 
     /**
      * Get identity from hash.
+     * @param hub Hub where to get identities
      * @param hash The hash to use
      * @return The name found in it
      * @throws DecryptionException If we can't decrypt it
      */
-    public HubIdentity decrypt(final String hash) throws DecryptionException {
+    public Identity decrypt(final Hub hub, final String hash)
+        throws DecryptionException {
         if (hash == null) {
             throw new DecryptionException(hash, "Hash is NULL");
         }
@@ -95,7 +96,7 @@ public final class Cryptor {
             );
         }
         try {
-            return HubEntry.user(uname).identity(iname);
+            return hub.user(uname).identity(iname);
         } catch (Throwable ex) {
             throw new DecryptionException(ex);
         }

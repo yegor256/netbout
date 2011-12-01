@@ -162,16 +162,17 @@ public final class StageCoordinates {
 
     /**
      * Normalize it according to the bout.
+     * @param bus The bus
      * @param bout The bout
      */
-    public void normalize(final Bout bout) {
+    public void normalize(final Bus bus, final Bout bout) {
         if (this.stages != null) {
             throw new IllegalStateException("Duplicate call to #normalize()");
         }
         this.stages = new ArrayList<String>();
         for (Participant dude : bout.participants()) {
             final String name = dude.identity().name();
-            final Boolean exists = Bus.make("does-stage-exist")
+            final Boolean exists = bus.make("does-stage-exist")
                 .synchronously()
                 .arg(bout.number())
                 .arg(name)

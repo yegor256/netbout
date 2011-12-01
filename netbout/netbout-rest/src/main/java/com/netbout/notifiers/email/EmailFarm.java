@@ -24,9 +24,8 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.notifiers;
+package com.netbout.notifiers.email;
 
-import com.netbout.hub.HubEntry;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -91,62 +90,21 @@ public final class EmailFarm implements IdentityAware {
     }
 
     /**
-     * Notify bout participant.
-     * @param number Bout where it's happening
-     * @param name The name of identity
-     * @param since Latest date after which notification should be sent
-     * @throws com.netbout.spi.BoutNotFoundException If not found
+     * Notify bout participants.
+     * @param bnum Bout where it's happening
+     * @param mnum Message number to notify about
+     * @throws Exception If some problem inside
      */
-    @Operation("notify-bout-participant")
-    public void notifyBoutParticipant(final Long number, final String name,
-        final Date since) throws com.netbout.spi.BoutNotFoundException {
-        if (this.isEmail(name)) {
-            final Bout bout = this.identity.bout(number);
-            final Identity recepient = this.identityByName(bout, name);
-            final List<Message> recent = new ArrayList<Message>();
-            for (Message message : bout.messages("")) {
-                if (message.date().before(since)) {
-                    continue;
-                }
-                if (!message.author().equals(recepient)) {
-                    continue;
-                }
-                recent.add(message);
-            }
-            final VelocityContext context = new VelocityContext();
-            context.put("bout", bout);
-            context.put("recepient", recepient);
-            context.put("recent", recent);
-            context.put("since", since);
-            context.put(
-                "href",
-                UriBuilder.fromUri("http://www.netbout.com/")
-                    .path("/{num}")
-                    .queryParam("auth", new Cryptor().encrypt(recepient))
-                    .build(bout.number())
-                    .toString()
-            );
-            final String text = TextUtils.format(
-                "com/netbout/notifiers/email-notification.vm",
-                context
-            );
-            this.deliver(recepient.name(), text);
-        }
-    }
-
-    /**
-     * Find identity by name from the bout.
-     * @param bout The bout where to look for
-     * @param name The name of identity
-     * @return Found identity
-     */
-    private Identity identityByName(final Bout bout, final String name) {
+    @Operation("notify-bout-participants")
+    public void notifyBoutParticipants(final Long bnum, final Long mnum)
+        throws Exception {
+        final Bout bout = this.identity.bout(bnum);
+        final Message message = bout.message(mnum);
         for (Participant participant : bout.participants()) {
-            if (participant.identity().name().equals(name)) {
-                return participant.identity();
+            if (this.isEmail(participant.identity().name())) {
+                this.send(participant, message);
             }
         }
-        throw new IllegalArgumentException("Participant not found");
     }
 
     /**
@@ -158,6 +116,30 @@ public final class EmailFarm implements IdentityAware {
         return name.matches("[:\\w\\.\\-\\+]+@[\\w\\.\\-]+");
     }
 
+    /**
+     * Notify this identity.
+     * @param recepient The recepient
+     * @param message The message
+     */
+    private void send(final Participant dude, final Message message) {
+        final VelocityContext context = new VelocityContext();
+        context.put("bout", dude.bout());
+        context.put("recepient", dude.identity());
+        context.put("message", message);
+        context.put(
+            "href",
+            UriBuilder.fromUri("http://www.netbout.com/")
+                .path("/{num}")
+                .queryParam("auth", new Cryptor().encrypt(dude.identity()))
+                .build(dude.bout().number())
+                .toString()
+        );
+        final String text = TextUtils.format(
+            "com/netbout/notifiers/email-notification.vm",
+            context
+        );
+        this.deliver(dude.identity().name(), text);
+    }
     /**
      * Deliver this email.
      * @param email The address of recepient

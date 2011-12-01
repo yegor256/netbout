@@ -26,9 +26,9 @@
  */
 
 /**
- * Notifiers.
+ * Notifier by email.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.notifiers;
+package com.netbout.notifiers.email;

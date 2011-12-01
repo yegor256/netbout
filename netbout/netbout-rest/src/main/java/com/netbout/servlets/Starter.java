@@ -26,6 +26,10 @@
  */
 package com.netbout.servlets;
 
+import com.netbout.bus.Bus;
+import com.netbout.bus.DefaultBus;
+import com.netbout.hub.DefaultHub;
+import com.netbout.hub.Hub;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -42,8 +46,10 @@ public final class Starter implements ServletContextListener {
      */
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        this.julToSlf();
-        Bus.register();
+        final Bus bus = new DefaultBus();
+        final Hub hub = new DefaultHub(bus);
+        event.getServletContext().setAttribute("com.netbout.rest.HUB", hub);
+        event.getServletContext().setAttribute("com.netbout.rest.BUS", bus);
     }
 
     /**
@@ -54,60 +60,46 @@ public final class Starter implements ServletContextListener {
         // ignored
     }
 
-    /**
-     * Send all JUL logging to SLF4J.
-     */
-    private void julToSlf() {
-        final java.util.logging.Logger rootLogger =
-            java.util.logging.LogManager.getLogManager().getLogger("");
-        final java.util.logging.Handler[] handlers =
-            rootLogger.getHandlers();
-        for (int idx = 0; idx < handlers.length; idx += 1) {
-            rootLogger.removeHandler(handlers[idx]);
-        }
-        org.slf4j.bridge.SLF4JBridgeHandler.install();
-    }
-
-    /**
-     * Register basic helper in a hub.
-     */
-    static {
-        // @checkstyle MultipleStringLiterals (1 line)
-        final Identity persistor = HubEntry.user("netbout").identity("nb:db");
-        persistor.alias("Netbout Database Manager");
-        // try {
-        //     persistor.promote(new CpaHelper(persistor, "com.netbout.db"));
-        // } catch (com.netbout.spi.HelperException ex) {
-        //     throw new IllegalStateException(ex);
-        // }
-        try {
-            persistor.setPhoto(
-                new java.net.URL("http://img.netbout.com/db.png")
-            );
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Initializer.
-     */
-    static {
-        // @checkstyle MultipleStringLiterals (1 line)
-        final Identity hub = HubEntry.user("netbout").identity("nb:hh");
-        hub.alias("Netbout Hub");
-        // try {
-        //     hub.promote(new CpaHelper(hub, "com.netbout.hub.hh"));
-        // } catch (com.netbout.spi.HelperException ex) {
-        //     throw new IllegalStateException(ex);
-        // }
-        try {
-            hub.setPhoto(
-                new java.net.URL("http://img.netbout.com/hh.png")
-            );
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
+    // /**
+    //  * Register basic helper in a hub.
+    //  */
+    // static {
+    //     // @checkstyle MultipleStringLiterals (1 line)
+    //     final Identity persistor = HubEntry.user("netbout").identity("nb:db");
+    //     persistor.alias("Netbout Database Manager");
+    //     // try {
+    //     //     persistor.promote(new CpaHelper(persistor, "com.netbout.db"));
+    //     // } catch (com.netbout.spi.HelperException ex) {
+    //     //     throw new IllegalStateException(ex);
+    //     // }
+    //     try {
+    //         persistor.setPhoto(
+    //             new java.net.URL("http://img.netbout.com/db.png")
+    //         );
+    //     } catch (java.net.MalformedURLException ex) {
+    //         throw new IllegalStateException(ex);
+    //     }
+    // }
+    //
+    // /**
+    //  * Initializer.
+    //  */
+    // static {
+    //     // @checkstyle MultipleStringLiterals (1 line)
+    //     final Identity hub = HubEntry.user("netbout").identity("nb:hh");
+    //     hub.alias("Netbout Hub");
+    //     // try {
+    //     //     hub.promote(new CpaHelper(hub, "com.netbout.hub.hh"));
+    //     // } catch (com.netbout.spi.HelperException ex) {
+    //     //     throw new IllegalStateException(ex);
+    //     // }
+    //     try {
+    //         hub.setPhoto(
+    //             new java.net.URL("http://img.netbout.com/hh.png")
+    //         );
+    //     } catch (java.net.MalformedURLException ex) {
+    //         throw new IllegalStateException(ex);
+    //     }
+    // }
 
 }

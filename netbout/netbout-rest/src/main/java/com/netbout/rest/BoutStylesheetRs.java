@@ -109,7 +109,7 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
-        return Bus.make("render-stage-xsl")
+        return this.bus().make("render-stage-xsl")
             .synchronously()
             .arg(this.bout)
             .arg(this.stage)

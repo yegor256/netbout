@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.bus.Bus;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
@@ -49,6 +50,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "bout")
 @XmlAccessorType(XmlAccessType.NONE)
 public final class LongBout {
+
+    /**
+     * The bus.
+     */
+    private final transient Bus bus;
 
     /**
      * The bout.
@@ -84,8 +90,9 @@ public final class LongBout {
      * @param keyword Search keyword
      * @param bldr The builder of URIs
      */
-    public LongBout(final Bout bot, final StageCoordinates crds,
+    public LongBout(final Bus ibus, final Bout bot, final StageCoordinates crds,
         final String keyword, final UriBuilder bldr) {
+        this.bus = ibus;
         this.bout = bot;
         this.coords = crds;
         this.query = keyword;
@@ -132,7 +139,7 @@ public final class LongBout {
     public LongStage getStage() {
         LongStage stage = null;
         if (!this.coords.stage().isEmpty()) {
-            stage = LongStage.build(this.bout, this.coords);
+            stage = LongStage.build(this.bus, this.bout, this.coords);
         }
         return stage;
     }
