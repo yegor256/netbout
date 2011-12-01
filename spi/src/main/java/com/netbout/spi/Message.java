@@ -46,6 +46,12 @@ public interface Message {
     Bout bout();
 
     /**
+     * Unique number of the message, in the entire system.
+     * @return The number
+     */
+    Long number();
+
+    /**
      * Author of this message, his identity.
      * @return The author
      */
