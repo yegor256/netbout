@@ -33,8 +33,8 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityNotFoundException;
 import com.netbout.spi.Token;
+import com.netbout.spi.UnreachableIdentityException;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.List;
@@ -179,8 +179,17 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final String name) throws IdentityNotFoundException {
+    public Identity friend(final String name)
+        throws UnreachableIdentityException {
         return this.identity.friend(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Identity> friends(final String keyword) {
+        return this.identity.friends(keyword);
     }
 
     /**
@@ -197,6 +206,14 @@ public final class CpaHelper implements Helper {
     @Override
     public void alias(final String alias) {
         this.identity.alias(alias);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void invited(final Bout bout) {
+        this.identity.invited(bout);
     }
 
 }

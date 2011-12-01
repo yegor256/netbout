@@ -30,20 +30,19 @@
 package com.netbout.spi;
 
 /**
- * Thowable when identity is not found.
+ * Thowable when identity can't be reached by the system anyhow.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see Identity#friend(String)
  */
-public final class IdentityNotFoundException extends Exception {
+public final class UnreachableIdentityException extends Exception {
 
     /**
      * Public ctor.
      * @param name The name of identity
      */
-    public IdentityNotFoundException(final String name) {
-        super(String.format("Identity '%s' not found", name));
+    public UnreachableIdentityException(final String name) {
+        super(String.format("Identity '%s' can't be reached", name));
     }
 
 }

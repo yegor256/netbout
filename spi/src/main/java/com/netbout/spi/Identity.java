@@ -93,7 +93,14 @@ public interface Identity {
      * @return The identity just found
      * @throws IdentityNotFoundException If such a friend is absent
      */
-    Identity friend(String name) throws IdentityNotFoundException;
+    Identity friend(String name) throws UnreachableIdentityException;
+
+    /**
+     * Find friends by keyword.
+     * @param keyword The keyword
+     * @return The list of identities found
+     */
+    Set<Identity> friends(String keyword);
 
     /**
      * Get all aliases.
@@ -106,5 +113,11 @@ public interface Identity {
      * @param alias The alias
      */
     void alias(String alias);
+
+    /**
+     * You receive this message when you're being invited to this bout.
+     * @param bout The bout
+     */
+    void invited(Bout bout);
 
 }
