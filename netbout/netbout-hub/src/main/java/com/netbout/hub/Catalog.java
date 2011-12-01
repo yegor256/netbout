@@ -88,9 +88,13 @@ final class Catalog {
      */
     public Element stats(final Document doc) {
         final Element root = doc.createElement("catalog");
-        final Element total = doc.createElement("total");
-        total.appendChild(doc.createTextNode(String.valueOf(this.all.size())));
-        root.appendChild(total);
+        final Element identities = doc.createElement("identities");
+        root.appendChild(identities);
+        for (String name : this.all.keySet()) {
+            final Element identity = doc.createElement("identity");
+            identities.appendChild(identity);
+            identity.appendChild(doc.createTextNode(name));
+        }
         root.appendChild(this.manager.stats(doc));
         return root;
     }
