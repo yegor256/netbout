@@ -40,16 +40,11 @@
 
     <xsl:template match="stage">
         <p>
-            <b>com.netbout.hub.Identities</b>:
-        </p>
-        <p style="white-space: pre-line;">
-            <xsl:value-of select="data/identities"/>
-        </p>
-        <p>
-            <b>com.netbout.hub.data.Storage</b>:
-        </p>
-        <p style="white-space: pre-line;">
-            <xsl:value-of select="data/storage"/>
+            <xsl:text>total identities: </xsl:text>
+            <xsl:value-of select="catalog/total"/>
+            <br/>
+            <xsl:text>total bouts: </xsl:text>
+            <xsl:value-of select="catalog/manager/total"/>
         </p>
     </xsl:template>
 

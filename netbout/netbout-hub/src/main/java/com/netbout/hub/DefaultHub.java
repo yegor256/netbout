@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.hub.data.BoutMgr;
+import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.util.Set;
@@ -43,16 +44,22 @@ import org.w3c.dom.Element;
 public final class DefaultHub implements Hub {
 
     /**
+     * The bus.
+     */
+    private final Bus bus;
+
+    /**
      * Catalog of identities.
      */
     private final Catalog catalog;
 
     /**
      * Public ctor.
-     * @param bus The bus
+     * @param ibus The bus
      */
-    public DefaultHub(final Bus bus) {
-        this.catalog = new Catalog(bus);
+    public DefaultHub(final Bus ibus) {
+        this.bus = ibus;
+        this.catalog = new Catalog(this.bus);
     }
 
     /**
@@ -70,42 +77,21 @@ public final class DefaultHub implements Hub {
     }
 
     /**
-     * Create statistics in the given XML document and return their element.
-     * @param doc The document to work in
-     * @return The element just created
+     * {@inheritDoc}
      */
+    @Override
     public Element stats(final Document doc) {
         return this.catalog.stats(doc);
     }
 
-    // /**
-    //  * {@inheritDoc}
-    //  */
-    // @Override
-    // public Identity identity(final String name) {
-    //     final Identity identity = this.catalog.make(name);
-    //     Logger.debug(
-    //         this,
-    //         "#identity('%s'): found",
-    //         name
-    //     );
-    //     return identity;
-    // }
-    //
-    // /**
-    //  * {@inheritDoc}
-    //  */
-    // @Override
-    // public Set<Identity> find(final String keyword) {
-    //     final Set<Identity> identities =
-    //         (Set) this.catalog.findByKeyword(keyword);
-    //     Logger.debug(
-    //         this,
-    //         "#find('%s'): found %d identities",
-    //         keyword,
-    //         identities.size()
-    //     );
-    //     return identities;
-    // }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void promote(final Identity identity, final Helper helper) {
+        assert identity.equals(helper);
+        this.bus.register(helper);
+        this.catalog.promote(identity, helper);
+    }
 
 }

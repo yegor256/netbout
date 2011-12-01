@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.rest.jaxb.ShortBout;
+import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
@@ -49,16 +50,29 @@ import javax.ws.rs.core.Response;
 public final class InboxRs extends AbstractRs {
 
     /**
+     * Query to filter messages with.
+     */
+    private transient String query;
+
+    /**
+     * Set filtering keyword.
+     * @param keyword The query
+     */
+    @QueryParam("q")
+    public void setQuery(final String keyword) {
+        this.query = keyword;
+    }
+
+    /**
      * Get inbox.
      * @param query Search query, if provided
      * @return The JAX-RS response
      */
     @GET
-    public Response inbox(
-        @QueryParam("q") @DefaultValue("") final String query) {
+    public Response inbox() {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
-        for (Bout bout : identity.inbox(query)) {
+        for (Bout bout : identity.inbox(this.query)) {
             bouts.add(
                 ShortBout.build(
                     bout,
@@ -76,6 +90,7 @@ public final class InboxRs extends AbstractRs {
         )
             .build(AbstractPage.class)
             .init(this)
+            .append(new JaxbBundle("query", this.query))
             .append(JaxbGroup.build(bouts, "bouts"))
             .authenticated(identity)
             .build();

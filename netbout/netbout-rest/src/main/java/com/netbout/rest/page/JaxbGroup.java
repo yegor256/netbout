@@ -90,17 +90,16 @@ public final class JaxbGroup {
      */
     public static Object build(final Collection grp, final String name) {
         synchronized (JaxbGroup.READY) {
-            Class type;
-            if (JaxbGroup.READY.containsKey(name)) {
-                type = JaxbGroup.READY.get(name);
-            } else {
-                type = JaxbGroup.construct(JaxbGroup.types(grp), name);
-                if (grp.size() > 0) {
-                    JaxbGroup.READY.put(name, type);
-                }
+            final String mnemo = JaxbGroup.mnemo(grp.isEmpty(), name);
+            if (!JaxbGroup.READY.containsKey(mnemo)) {
+                JaxbGroup.READY.put(
+                    mnemo,
+                    JaxbGroup.construct(JaxbGroup.types(grp), name)
+                );
             }
             try {
-                return type.getDeclaredConstructor(Collection.class)
+                return JaxbGroup.READY.get(mnemo)
+                    .getDeclaredConstructor(Collection.class)
                     .newInstance(grp);
             } catch (NoSuchMethodException ex) {
                 throw new IllegalStateException(ex);
@@ -125,6 +124,21 @@ public final class JaxbGroup {
     }
 
     /**
+     * Create NEW class name.
+     * @param empty Is it an empty group?
+     * @param name Name of root element
+     * @return The name
+     */
+    private static String mnemo(final boolean empty, final String name) {
+        return String.format(
+            "%s$%s%B",
+            JaxbGroup.class.getName(),
+            name,
+            !empty
+        );
+    }
+
+    /**
      * Construct new class.
      * @param types Types used in the collection
      * @param name Name of root element
@@ -134,15 +148,9 @@ public final class JaxbGroup {
         final String name) {
         final ClassPool pool = ClassPool.getDefault();
         try {
-            final String modified = String.format(
-                "%s$%s%B",
-                JaxbGroup.class.getName(),
-                name,
-                types.isEmpty()
-            );
             final CtClass ctc = pool.getAndRename(
                 JaxbGroup.class.getName(),
-                modified
+                JaxbGroup.mnemo(types.isEmpty(), name)
             );
             final ClassFile file = ctc.getClassFile();
             final AnnotationsAttribute attribute =

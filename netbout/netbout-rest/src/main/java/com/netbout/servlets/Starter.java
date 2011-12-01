@@ -30,6 +30,10 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
+import com.netbout.spi.Identity;
+import com.netbout.spi.cpa.CpaHelper;
+import com.ymock.util.Logger;
+import java.net.URL;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -50,6 +54,25 @@ public final class Starter implements ServletContextListener {
         final Hub hub = new DefaultHub(bus);
         event.getServletContext().setAttribute("com.netbout.rest.HUB", hub);
         event.getServletContext().setAttribute("com.netbout.rest.BUS", bus);
+        try {
+            final Identity idb = hub.user("netbout").identity("nb:db");
+            hub.promote(idb, new CpaHelper(idb, "com.netbout.db"));
+            idb.setPhoto(new URL("http://img.netbout.com/db.png"));
+            final Identity ihh = hub.user("netbout").identity("nb:hh");
+            ihh.setPhoto(new URL("http://img.netbout.com/hh.png"));
+            CpaHelper hhelper = new CpaHelper(ihh, "com.netbout.hub.hh");
+            hhelper.contextualize(hub);
+            hub.promote(ihh, hhelper);
+        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            throw new IllegalStateException(ex);
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(
+            this,
+            "#contextInitialized(%s): done",
+            event.getClass().getName()
+        );
     }
 
     /**
@@ -57,49 +80,11 @@ public final class Starter implements ServletContextListener {
      */
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
-        // ignored
+        Logger.info(
+            this,
+            "#contextDestroyed(%s): done",
+            event.getClass().getName()
+        );
     }
-
-    // /**
-    //  * Register basic helper in a hub.
-    //  */
-    // static {
-    //     // @checkstyle MultipleStringLiterals (1 line)
-    //     final Identity persistor = HubEntry.user("netbout").identity("nb:db");
-    //     persistor.alias("Netbout Database Manager");
-    //     // try {
-    //     //     persistor.promote(new CpaHelper(persistor, "com.netbout.db"));
-    //     // } catch (com.netbout.spi.HelperException ex) {
-    //     //     throw new IllegalStateException(ex);
-    //     // }
-    //     try {
-    //         persistor.setPhoto(
-    //             new java.net.URL("http://img.netbout.com/db.png")
-    //         );
-    //     } catch (java.net.MalformedURLException ex) {
-    //         throw new IllegalStateException(ex);
-    //     }
-    // }
-    //
-    // /**
-    //  * Initializer.
-    //  */
-    // static {
-    //     // @checkstyle MultipleStringLiterals (1 line)
-    //     final Identity hub = HubEntry.user("netbout").identity("nb:hh");
-    //     hub.alias("Netbout Hub");
-    //     // try {
-    //     //     hub.promote(new CpaHelper(hub, "com.netbout.hub.hh"));
-    //     // } catch (com.netbout.spi.HelperException ex) {
-    //     //     throw new IllegalStateException(ex);
-    //     // }
-    //     try {
-    //         hub.setPhoto(
-    //             new java.net.URL("http://img.netbout.com/hh.png")
-    //         );
-    //     } catch (java.net.MalformedURLException ex) {
-    //         throw new IllegalStateException(ex);
-    //     }
-    // }
 
 }

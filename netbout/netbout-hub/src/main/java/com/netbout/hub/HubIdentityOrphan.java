@@ -243,6 +243,11 @@ public class HubIdentityOrphan implements Identity {
         synchronized (this) {
             this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
         }
+        this.bus.make("identity-mentioned")
+            .synchronously()
+            .arg(this.name())
+            .asDefault(true)
+            .exec();
         this.bus.make("changed-identity-photo")
             .synchronously()
             .arg(this.name())

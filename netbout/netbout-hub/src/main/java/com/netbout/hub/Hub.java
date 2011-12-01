@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import java.util.Set;
 import org.w3c.dom.Document;
@@ -53,18 +54,11 @@ public interface Hub {
      */
     Element stats(Document doc);
 
-    // /**
-    //  * Find identity by name.
-    //  * @param name The name of the identity
-    //  * @return The identity found
-    //  */
-    // HubIdentity identity(String name);
-
-    // /**
-    //  * Find identities by name.
-    //  * @param keyword The keyword
-    //  * @return Set of identities found
-    //  */
-    // Set<Identity> find(String keyword);
+    /**
+     * Promote existing identity to the helper.
+     * @param identity The identity to promote
+     * @param helper The helper to use
+     */
+    void promote(Identity identity, Helper helper);
 
 }

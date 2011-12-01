@@ -121,7 +121,7 @@ public final class StatsFarm implements IdentityAware, ContextAware {
     @Operation("render-stage-xml")
     public String renderStageXml(final Long number, final String stage,
         final String place) throws Exception {
-        String xml = "";
+        String xml = null;
         if (this.identity.name().equals(stage)) {
             final Document doc = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder().newDocument();

@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.hub.data.BoutMgr;
+import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableIdentityException;
 import com.ymock.util.Logger;
@@ -149,6 +150,15 @@ final class Catalog {
             );
         }
         return identity;
+    }
+
+    /**
+     * Promote existing identity to the helper.
+     * @param identity The identity to promote
+     * @param helper The helper to use
+     */
+    public void promote(final Identity identity, final Helper helper) {
+        this.all.put(identity.name(), helper);
     }
 
     /**
