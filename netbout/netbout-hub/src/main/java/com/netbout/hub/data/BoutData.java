@@ -27,6 +27,7 @@
 package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
+import com.netbout.spi.MessageNotFoundException;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -223,6 +224,22 @@ public final class BoutData {
             }
             return this.messages;
         }
+    }
+
+    /**
+     * Find message by number.
+     * @param num The number of it
+     * @return Message
+     * @throws MessageNotFoundException If not found
+     */
+    public MessageData findMessage(final Long num)
+        throws MessageNotFoundException {
+        for (MessageData msg : this.getMessages()) {
+            if (msg.getNumber().equals(num)) {
+                return msg;
+            }
+        }
+        throw new MessageNotFoundException(num);
     }
 
 }

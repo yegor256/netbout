@@ -33,6 +33,7 @@ import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -130,7 +131,7 @@ public final class HubBout implements Bout {
             friend
         );
         friend.invited(this);
-        return HubParticipant.build(this.catalog, dude);
+        return HubParticipant.build(this.catalog, this, dude);
     }
 
     /**
@@ -141,7 +142,7 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantData dude : this.data.getParticipants()) {
-            participants.add(HubParticipant.build(this.catalog, dude));
+            participants.add(HubParticipant.build(this.catalog, this, dude));
         }
         Logger.debug(
             this,
@@ -170,6 +171,24 @@ public final class HubBout implements Bout {
             messages.size()
         );
         return messages;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Message message(final Long num) throws MessageNotFoundException {
+        final Message message = HubMessage.build(
+            this.catalog,
+            this,
+            this.data.findMessage(num)
+        );
+        Logger.debug(
+            this,
+            "#message(#%d): found",
+            num
+        );
+        return message;
     }
 
     /**
