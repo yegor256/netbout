@@ -26,23 +26,18 @@
  */
 package com.netbout.utils;
 
-import com.netbout.hub.HubIdentity;
+import com.netbout.hub.Hub;
+import com.netbout.spi.Identity;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Test case for {@link Cryptor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HubIdentity.class)
 public final class CryptorTest {
 
     /**
@@ -53,7 +48,7 @@ public final class CryptorTest {
     public void testEncryptionDecryption() throws Exception {
         final String uname = "\u041F\u0435\u0442\u0440 I";
         final String iname = "6357282";
-        final HubIdentity identity = PowerMockito.mock(HubIdentity.class);
+        final Identity identity = Mockito.mock(Identity.class);
         Mockito.doReturn(iname).when(identity).name();
         Mockito.doReturn(uname).when(identity).user();
         final String hash = new Cryptor().encrypt(identity);
@@ -61,7 +56,8 @@ public final class CryptorTest {
             hash.matches("[\\w=\\+\\./]+"),
             Matchers.describedAs(hash, Matchers.is(true))
         );
-        final HubIdentity discovered = new Cryptor().decrypt(hash);
+        final Hub hub = Mockito.mock(Hub.class);
+        final HubIdentity discovered = new Cryptor().decrypt(hub, hash);
         MatcherAssert.assertThat(discovered.name(), Matchers.equalTo(iname));
         MatcherAssert.assertThat(discovered.user(), Matchers.equalTo(uname));
     }

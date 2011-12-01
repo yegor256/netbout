@@ -42,23 +42,23 @@ import org.xmlmatchers.XmlMatchers;
  */
 public final class BoutRsTest {
 
-    /**
-     * Bout resource should be renderable into JAXB-annotated object.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testBoutRendering() throws Exception {
-        final BoutRs rest = new ResourceBuilder().build(BoutRs.class);
-        final Bout bout = HubEntry
-            .user(ResourceBuilder.USER)
-            .identity(ResourceBuilder.IDENTITY)
-            .start();
-        rest.setNumber(bout.number());
-        final Response response = rest.front();
-        MatcherAssert.assertThat(
-            PageConverter.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/bout/participants/participant/identity")
-        );
-    }
+    // /**
+    //  * Bout resource should be renderable into JAXB-annotated object.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testBoutRendering() throws Exception {
+    //     final BoutRs rest = new ResourceBuilder().build(BoutRs.class);
+    //     final Bout bout = HubEntry
+    //         .user(ResourceBuilder.USER)
+    //         .identity(ResourceBuilder.IDENTITY)
+    //         .start();
+    //     rest.setNumber(bout.number());
+    //     final Response response = rest.front();
+    //     MatcherAssert.assertThat(
+    //         PageConverter.the((Page) response.getEntity(), rest),
+    //         XmlMatchers.hasXPath("/page/bout/participants/participant/identity")
+    //     );
+    // }
 
 }

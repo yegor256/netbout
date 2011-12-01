@@ -26,7 +26,7 @@
  */
 package com.netbout.harness;
 
-import com.netbout.hub.HubEntry;
+import com.netbout.hub.Hub;
 import com.netbout.rest.AbstractRs;
 import com.netbout.rest.Resource;
 import com.netbout.spi.Identity;
@@ -119,8 +119,7 @@ public final class ResourceBuilder {
     public <T> T build(final Class<? extends Resource> type) throws Exception {
         // @checkstyle IllegalType (1 line)
         final AbstractRs rest = (AbstractRs) type.newInstance();
-        final Identity identity = HubEntry.user(this.USER)
-            .identity(this.IDENTITY);
+        final Identity identity = Mockito.mock(Identity.class);
         identity.setPhoto(new URL("http://localhost/image.png"));
         rest.setUriInfo(this.uriInfo());
         rest.setHttpHeaders(this.httpHeaders());
