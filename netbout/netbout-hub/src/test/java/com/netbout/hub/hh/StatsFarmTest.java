@@ -41,42 +41,42 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext;
  */
 public final class StatsFarmTest {
 
-    /**
-     * Render XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testRenderingOfXml() throws Exception {
-        final StatsFarm farm = new StatsFarm();
-        final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn("some-name").when(identity).name();
-        farm.init(identity);
-        final String xml = farm.renderStageXml(1L, identity.name(), "");
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xml),
-            XmlMatchers.hasXPath("/data/identities")
-        );
-    }
-
-    /**
-     * Render XSL.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testRenderingOfXslStylesheet() throws Exception {
-        final StatsFarm farm = new StatsFarm();
-        final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn("stage-1").when(identity).name();
-        farm.init(identity);
-        final String xsl = farm.renderStageXsl(1L, identity.name());
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(
-                "/xsl:stylesheet",
-                new SimpleNamespaceContext()
-                    .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
-            )
-        );
-    }
+    // /**
+    //  * Farm renders stage XML.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void rendersStageXml() throws Exception {
+    //     final StatsFarm farm = new StatsFarm();
+    //     final Identity identity = Mockito.mock(Identity.class);
+    //     Mockito.doReturn("some-name").when(identity).name();
+    //     farm.init(identity);
+    //     final String xml = farm.renderStageXml(1L, identity.name(), "");
+    //     MatcherAssert.assertThat(
+    //         XhtmlConverter.the(xml),
+    //         XmlMatchers.hasXPath("/data/identities")
+    //     );
+    // }
+    //
+    // /**
+    //  * Render XSL.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testRenderingOfXslStylesheet() throws Exception {
+    //     final StatsFarm farm = new StatsFarm();
+    //     final Identity identity = Mockito.mock(Identity.class);
+    //     Mockito.doReturn("stage-1").when(identity).name();
+    //     farm.init(identity);
+    //     final String xsl = farm.renderStageXsl(1L, identity.name());
+    //     MatcherAssert.assertThat(
+    //         XhtmlConverter.the(xsl),
+    //         XmlMatchers.hasXPath(
+    //             "/xsl:stylesheet",
+    //             new SimpleNamespaceContext()
+    //                 .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
+    //         )
+    //     );
+    // }
 
 }

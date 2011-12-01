@@ -26,10 +26,13 @@
  */
 package com.netbout.hub;
 
+import com.netbout.bus.Bus;
 import com.netbout.hub.data.BoutMgr;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.util.Set;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Entry point to Hub.
@@ -42,19 +45,22 @@ public final class DefaultHub implements Hub {
     /**
      * Catalog of identities.
      */
-    private final Catalog catalog = new Catalog();
+    private final Catalog catalog;
 
     /**
-     * Manager of bouts.
+     * Public ctor.
+     * @param bus The bus
      */
-    private final BoutMgr manager = new BoutMgr();
+    public DefaultHub(final Bus bus) {
+        this.catalog = new Catalog(bus);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public HubUser user(final String name) {
-        final HubUser user = new HubUser(name);
+    public User user(final String name) {
+        final User user = new User(this.catalog, name);
         Logger.debug(
             this,
             "#user('%s'): instantiated",
@@ -64,33 +70,42 @@ public final class DefaultHub implements Hub {
     }
 
     /**
-     * {@inheritDoc}
+     * Create statistics in the given XML document and return their element.
+     * @param doc The document to work in
+     * @return The element just created
      */
-    @Override
-    public HubIdentity identity(final String name) {
-        final HubIdentity identity = this.catalog.make(name);
-        Logger.debug(
-            this,
-            "#identity('%s'): found",
-            name
-        );
-        return identity;
+    public Element stats(final Document doc) {
+        return this.catalog.stats(doc);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Identity> find(final String keyword) {
-        final Set<Identity> identities =
-            (Set) this.catalog.findByKeyword(keyword);
-        Logger.debug(
-            this,
-            "#find('%s'): found %d identities",
-            keyword,
-            identities.size()
-        );
-        return identities;
-    }
+    // /**
+    //  * {@inheritDoc}
+    //  */
+    // @Override
+    // public Identity identity(final String name) {
+    //     final Identity identity = this.catalog.make(name);
+    //     Logger.debug(
+    //         this,
+    //         "#identity('%s'): found",
+    //         name
+    //     );
+    //     return identity;
+    // }
+    //
+    // /**
+    //  * {@inheritDoc}
+    //  */
+    // @Override
+    // public Set<Identity> find(final String keyword) {
+    //     final Set<Identity> identities =
+    //         (Set) this.catalog.findByKeyword(keyword);
+    //     Logger.debug(
+    //         this,
+    //         "#find('%s'): found %d identities",
+    //         keyword,
+    //         identities.size()
+    //     );
+    //     return identities;
+    // }
 
 }

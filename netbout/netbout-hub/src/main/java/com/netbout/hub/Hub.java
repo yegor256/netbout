@@ -28,6 +28,8 @@ package com.netbout.hub;
 
 import com.netbout.spi.Identity;
 import java.util.Set;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Hub.
@@ -42,20 +44,27 @@ public interface Hub {
      * @param name The name of the user to find
      * @return The user found
      */
-    HubUser user(String name);
+    User user(String name);
 
     /**
-     * Find identity by name.
-     * @param name The name of the identity
-     * @return The identity found
+     * Create statistics in the given XML document and return their element.
+     * @param doc The document to work in
+     * @return The element just created
      */
-    HubIdentity identity(String name);
+    Element stats(Document doc);
 
-    /**
-     * Find identities by name.
-     * @param keyword The keyword
-     * @return Set of identities found
-     */
-    Set<Identity> find(String keyword);
+    // /**
+    //  * Find identity by name.
+    //  * @param name The name of the identity
+    //  * @return The identity found
+    //  */
+    // HubIdentity identity(String name);
+
+    // /**
+    //  * Find identities by name.
+    //  * @param keyword The keyword
+    //  * @return Set of identities found
+    //  */
+    // Set<Identity> find(String keyword);
 
 }

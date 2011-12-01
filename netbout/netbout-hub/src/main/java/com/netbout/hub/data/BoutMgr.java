@@ -31,6 +31,8 @@ import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Manager of all bouts.
@@ -47,18 +49,31 @@ public final class BoutMgr {
         new ConcurrentHashMap<Long, BoutData>();
 
     /**
-     * Statistics.
-     * @return Stats in plain text
+     * Bus to work with.
      */
-    public String stats() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(
-            String.format(
-                "Total bouts: %d",
-                this.bouts.size()
-            )
+    private final transient Bus bus;
+
+    /**
+     * Public ctor.
+     * @param ibus The bus
+     */
+    public BoutMgr(final Bus ibus) {
+        this.bus = ibus;
+    }
+
+    /**
+     * Create statistics in the given XML document and return their element.
+     * @param doc The document to work in
+     * @return The element just created
+     */
+    public Element stats(final Document doc) {
+        final Element root = doc.createElement("manager");
+        final Element total = doc.createElement("total");
+        total.appendChild(
+            doc.createTextNode(String.valueOf(this.bouts.size()))
         );
-        return builder.toString();
+        root.appendChild(total);
+        return root;
     }
 
     /**
@@ -68,15 +83,16 @@ public final class BoutMgr {
     public Long create() {
         BoutData data;
         synchronized (this.bouts) {
-            final Long number = Bus.make("get-next-bout-number")
+            final Long number = this.bus
+                .make("get-next-bout-number")
                 .synchronously()
                 .asDefault(Collections.max(this.bouts.keySet()) + 1)
                 .exec();
-            data = new BoutData(number);
+            data = new BoutData(this.bus, number);
             this.bouts.put(data.getNumber(), data);
         }
         data.setTitle("");
-        Bus.make("started-new-bout")
+        this.bus.make("started-new-bout")
             .asap()
             .arg(data.getNumber())
             .asDefault(true)
@@ -106,7 +122,8 @@ public final class BoutMgr {
                 number
             );
         } else {
-            final Boolean exists = Bus.make("check-bout-existence")
+            final Boolean exists = this.bus
+                .make("check-bout-existence")
                 .synchronously()
                 .arg(number)
                 .asDefault(false)
@@ -114,7 +131,7 @@ public final class BoutMgr {
             if (!exists) {
                 throw new BoutMissedException(number);
             }
-            data = new BoutData(number);
+            data = new BoutData(this.bus, number);
             this.bouts.put(number, data);
             Logger.debug(
                 this,

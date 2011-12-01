@@ -38,36 +38,36 @@ import org.junit.Test;
  */
 public final class HubBoutTest {
 
-    /**
-     * Bout number persistence.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testPersistenceOfBoutNumber() throws Exception {
-        final Identity identity =
-            HubEntry.user("Robert DeNiro").identity("9932");
-        final Long number = identity.start().number();
-        MatcherAssert.assertThat(
-            identity.bout(number).number(),
-            Matchers.equalTo(number)
-        );
-    }
-
-    /**
-     * Rename bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testRenameOperation() throws Exception {
-        final Identity identity =
-            HubEntry.user("Al Capone").identity("9322");
-        final Long number = identity.start().number();
-        final String title = "hello, world!";
-        identity.bout(number).rename(title);
-        MatcherAssert.assertThat(
-            identity.bout(number).title(),
-            Matchers.equalTo(title)
-        );
-    }
+    // /**
+    //  * Bout number persistence.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testPersistenceOfBoutNumber() throws Exception {
+    //     final Identity identity =
+    //         HubEntry.user("Robert DeNiro").identity("9932");
+    //     final Long number = identity.start().number();
+    //     MatcherAssert.assertThat(
+    //         identity.bout(number).number(),
+    //         Matchers.equalTo(number)
+    //     );
+    // }
+    //
+    // /**
+    //  * Rename bout.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testRenameOperation() throws Exception {
+    //     final Identity identity =
+    //         HubEntry.user("Al Capone").identity("9322");
+    //     final Long number = identity.start().number();
+    //     final String title = "hello, world!";
+    //     identity.bout(number).rename(title);
+    //     MatcherAssert.assertThat(
+    //         identity.bout(number).title(),
+    //         Matchers.equalTo(title)
+    //     );
+    // }
 
 }

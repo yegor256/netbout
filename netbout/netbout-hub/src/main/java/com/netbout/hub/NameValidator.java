@@ -26,74 +26,50 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.data.ParticipantData;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Participant;
+import com.netbout.bus.Bus;
+import com.netbout.spi.UnreachableIdentityException;
 
 /**
- * Identity.
+ * Validates identity name for correctness.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubParticipant implements Participant {
+final class NameValidator {
 
     /**
-     * The catalog.
+     * The bus.
      */
-    private final transient Catalog catalog;
-
-    /**
-     * The data.
-     */
-    private final transient ParticipantData data;
+    private final transient Bus bus;
 
     /**
      * Public ctor.
-     * @param ctlg The catalog
-     * @param dat The data
+     * @param ibus The bus
      */
-    private HubParticipant(final Catalog ctlg, final ParticipantData dat) {
-        this.catalog = ctlg;
-        this.data = dat;
+    public NameValidator(final Bus ibus) {
+        this.bus = ibus;
     }
 
     /**
-     * Build new object.
-     * @param dat The data
-     * @return The object just built
+     * Validate this identity and return back if valid.
+     * @param identity The identity
+     * @return The same name
+     * @throws UnreachableIdentityException If it's not valid
      */
-    public static HubParticipant build(final Catalog ctlg,
-        final ParticipantData dat) {
-        return new HubParticipant(ctlg, dat);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity() {
-        try {
-            return this.catalog.make(this.data.getIdentity());
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new IllegalStateException(ex);
+    public String ifValid(final String identity)
+        throws UnreachableIdentityException {
+        if (!identity.matches("\\d+") && !identity.startsWith("nb:")) {
+            final Boolean reachable = this.bus
+                .make("can-notify-identity")
+                .synchronously()
+                .arg(identity)
+                .asDefault(false)
+                .exec();
+            if (!reachable) {
+                throw new UnreachableIdentityException(identity);
+            }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean confirmed() {
-        return this.data.isConfirmed();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void confirm(final boolean aye) {
-        this.data.setConfirmed(aye);
+        return identity;
     }
 
 }

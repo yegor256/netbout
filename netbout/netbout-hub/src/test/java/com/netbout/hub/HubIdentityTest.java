@@ -39,94 +39,94 @@ import org.junit.Test;
  */
 public final class HubIdentityTest {
 
-    /**
-     * Name is persistent.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testNamePersistence() throws Exception {
-        final HubUser user = HubEntry.user("Johnny Depp");
-        final String name = "1345";
-        MatcherAssert.assertThat(
-            user.identity(name).name(),
-            Matchers.equalTo(name)
-        );
-    }
-
-    /**
-     * Photo is persistent.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testPhotoPersistence() throws Exception {
-        final HubUser user = HubEntry.user("Bruce Willis");
-        final String name = "9865";
-        final URL photo = new URL("http://localhost/photo.png");
-        user.identity(name).setPhoto(photo);
-        MatcherAssert.assertThat(
-            user.identity(name).photo(),
-            Matchers.equalTo(photo)
-        );
-    }
-
-    /**
-     * Manipulate with bouts.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testBoutsManipulations() throws Exception {
-        final Identity identity = HubEntry.user("Jeffy").identity("73267");
-        final Long number = identity.start().number();
-        identity.bout(number);
-        MatcherAssert.assertThat(
-            identity.inbox("").size(),
-            Matchers.equalTo(1)
-        );
-    }
-
-    /**
-     * Manipulate with aliases.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testAliasesManipulations() throws Exception {
-        final Identity identity = HubEntry.user("Lori").identity("7244");
-        MatcherAssert.assertThat(
-            identity.aliases().size(),
-            Matchers.equalTo(0)
-        );
-        final String alias = "lori@example.com";
-        identity.alias(alias);
-        identity.alias("lorisa.townsend@example.com");
-        MatcherAssert.assertThat(
-            identity.aliases().size(),
-            Matchers.equalTo(2)
-        );
-        MatcherAssert.assertThat(
-            identity.aliases(),
-            Matchers.hasItem(alias)
-        );
-    }
-
-    /**
-     * Find bout that belongs to someone else.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = com.netbout.spi.BoutNotFoundException.class)
-    public void testFindingOfNotMyBout() throws Exception {
-        final Long num = HubEntry.user("Victor").identity("66212")
-            .start().number();
-        HubEntry.user("Michael").identity("9980").bout(num);
-    }
-
-    /**
-     * Find non-existing bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = com.netbout.spi.BoutNotFoundException.class)
-    public void testFindingOfNonExistingBout() throws Exception {
-        // @checkstyle MagicNumber (1 line)
-        HubEntry.user("Sarah").identity("3324").bout(3456L);
-    }
+    // /**
+    //  * Name is persistent.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testNamePersistence() throws Exception {
+    //     final HubUser user = HubEntry.user("Johnny Depp");
+    //     final String name = "1345";
+    //     MatcherAssert.assertThat(
+    //         user.identity(name).name(),
+    //         Matchers.equalTo(name)
+    //     );
+    // }
+    //
+    // /**
+    //  * Photo is persistent.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testPhotoPersistence() throws Exception {
+    //     final HubUser user = HubEntry.user("Bruce Willis");
+    //     final String name = "9865";
+    //     final URL photo = new URL("http://localhost/photo.png");
+    //     user.identity(name).setPhoto(photo);
+    //     MatcherAssert.assertThat(
+    //         user.identity(name).photo(),
+    //         Matchers.equalTo(photo)
+    //     );
+    // }
+    //
+    // /**
+    //  * Manipulate with bouts.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testBoutsManipulations() throws Exception {
+    //     final Identity identity = HubEntry.user("Jeffy").identity("73267");
+    //     final Long number = identity.start().number();
+    //     identity.bout(number);
+    //     MatcherAssert.assertThat(
+    //         identity.inbox("").size(),
+    //         Matchers.equalTo(1)
+    //     );
+    // }
+    //
+    // /**
+    //  * Manipulate with aliases.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testAliasesManipulations() throws Exception {
+    //     final Identity identity = HubEntry.user("Lori").identity("7244");
+    //     MatcherAssert.assertThat(
+    //         identity.aliases().size(),
+    //         Matchers.equalTo(0)
+    //     );
+    //     final String alias = "lori@example.com";
+    //     identity.alias(alias);
+    //     identity.alias("lorisa.townsend@example.com");
+    //     MatcherAssert.assertThat(
+    //         identity.aliases().size(),
+    //         Matchers.equalTo(2)
+    //     );
+    //     MatcherAssert.assertThat(
+    //         identity.aliases(),
+    //         Matchers.hasItem(alias)
+    //     );
+    // }
+    //
+    // /**
+    //  * Find bout that belongs to someone else.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test(expected = com.netbout.spi.BoutNotFoundException.class)
+    // public void testFindingOfNotMyBout() throws Exception {
+    //     final Long num = HubEntry.user("Victor").identity("66212")
+    //         .start().number();
+    //     HubEntry.user("Michael").identity("9980").bout(num);
+    // }
+    //
+    // /**
+    //  * Find non-existing bout.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test(expected = com.netbout.spi.BoutNotFoundException.class)
+    // public void testFindingOfNonExistingBout() throws Exception {
+    //     // @checkstyle MagicNumber (1 line)
+    //     HubEntry.user("Sarah").identity("3324").bout(3456L);
+    // }
 
 }

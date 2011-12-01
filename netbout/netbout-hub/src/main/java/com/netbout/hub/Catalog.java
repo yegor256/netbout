@@ -27,6 +27,9 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.hub.data.BoutMgr;
+import com.netbout.spi.Identity;
+import com.netbout.spi.UnreachableIdentityException;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,6 +37,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Pattern;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Catalog of all known identities.
@@ -46,22 +52,46 @@ final class Catalog {
     /**
      * All identities known for us at the moment, and their objects.
      */
-    private final ConcurrentMap<String, HubIdentity> all =
-        new ConcurrentHashMap<String, HubIdentity>();
+    private final transient ConcurrentMap<String, Identity> all =
+        new ConcurrentHashMap<String, Identity>();
 
     /**
-     * Statistics in plain text.
-     * @return Stats in plain text
+     * Bus to work with.
      */
-    public String stats() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(
-            String.format(
-                "Total identities: %d",
-                this.all.size()
-            )
-        );
-        return builder.toString();
+    private final transient Bus bus;
+
+    /**
+     * Manager of bouts.
+     */
+    private final transient BoutMgr manager;
+
+    /**
+     * Name validator.
+     */
+    private final transient NameValidator validator;
+
+    /**
+     * Public ctor.
+     * @param ibus The bus
+     */
+    public Catalog(final Bus ibus) {
+        this.bus = ibus;
+        this.manager = new BoutMgr(this.bus);
+        this.validator = new NameValidator(this.bus);
+    }
+
+    /**
+     * Create statistics in the given XML document and return their element.
+     * @param doc The document to work in
+     * @return The element just created
+     */
+    public Element stats(final Document doc) {
+        final Element root = doc.createElement("catalog");
+        final Element total = doc.createElement("total");
+        total.appendChild(doc.createTextNode(String.valueOf(this.all.size())));
+        root.appendChild(total);
+        root.appendChild(this.manager.stats(doc));
+        return root;
     }
 
     /**
@@ -70,19 +100,28 @@ final class Catalog {
      * @param name The name of identity
      * @param user Name of the user
      * @return Identity found or created
+     * @throws UnreachableIdentityException If can't reach it by name
      */
-    public HubIdentity make(final String name, final HubUser user) {
-        final HubIdentity identity = Identities.make(name);
-        if (identity.isAssigned() && !identity.belongsTo(user)) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Identity '%s' is already taken by someone else",
-                    name
-                )
-            );
-        }
-        if (!identity.isAssigned()) {
-            identity.assignTo(user);
+    public Identity make(final String name, final User user)
+        throws UnreachableIdentityException {
+        Identity identity;
+        if (this.all.containsKey(name)) {
+            identity = this.all.get(name);
+            if (identity instanceof HubIdentityOrphan) {
+                identity = new HubIdentity(identity, user);
+                this.save(name, identity);
+            } else if (!((HubIdentity) identity).belongsTo(user)) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Identity '%s' is already taken by '%s'",
+                        name,
+                        identity.user()
+                    )
+                );
+            }
+        } else {
+            identity = new HubIdentity(this.make(name), user);
+            this.save(name, identity);
         }
         return identity;
     }
@@ -91,30 +130,19 @@ final class Catalog {
      * Make new identity or find existing one.
      * @param name The name of identity
      * @return Identity found
+     * @throws UnreachableIdentityException If can't reach it by name
      */
-    public HubIdentity make(final String name) {
-        HubIdentity identity;
+    public Identity make(final String name)
+        throws UnreachableIdentityException {
+        Identity identity;
         if (this.all.containsKey(name)) {
             identity = this.all.get(name);
         } else {
-            if (Identities.needsNotifier(name)
-                && !Identities.canNotify(name)) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "Can't reach '%s' identity",
-                        name
-                    )
-                );
-            }
-            identity = new HubIdentity(name);
-            this.all.put(name, identity);
-            Bus.make("identity-mentioned")
-                .synchronously()
-                .arg(name)
-                .asDefault(true)
-                .exec();
+            identity =
+                new HubIdentityOrphan(this.bus, this, this.manager, name);
+            this.save(name, identity);
             Logger.debug(
-                Identities.class,
+                this,
                 "#make('%s'): created just by name (%d total)",
                 name,
                 this.all.size()
@@ -128,44 +156,68 @@ final class Catalog {
      * @param keyword The keyword to find by
      * @return Identities found
      */
-    public Set<HubIdentity> findByKeyword(final String keyword) {
-        final Set<HubIdentity> found = new HashSet<HubIdentity>();
-        for (HubIdentity identity : this.all.values()) {
-            if (identity.matchesKeyword(keyword)) {
+    public Set<Identity> findByKeyword(final String keyword) {
+        final Set<Identity> found = new HashSet<Identity>();
+        for (Identity identity : this.all.values()) {
+            if (this.matches(keyword, identity)) {
                 found.add(identity);
             }
         }
-        final List<String> external = Bus.make("find-identities-by-keyword")
+        final List<String> external = this.bus
+            .make("find-identities-by-keyword")
             .synchronously()
             .arg(keyword)
             .asDefault(new ArrayList<String>())
             .exec();
         for (String name : external) {
-            found.add(Identities.make(name));
+            try {
+                found.add(this.make(name));
+            } catch (com.netbout.spi.UnreachableIdentityException ex) {
+                Logger.warn(
+                    this,
+                    // @checkstyle LineLength (1 line)
+                    "#findByKeyword('%s'): some helper returned '%s' identity that is not reachable",
+                    keyword,
+                    name
+                );
+            }
         }
         return found;
     }
 
     /**
-     * This identity needs notifier?
+     * Save identity to storage.
+     * @param name The name
      * @param identity The identity
-     * @return It needs it?
+     * @throws UnreachableIdentityException If can't reach it by name
      */
-    public Boolean needsNotifier(final String identity) {
-        return !identity.matches("\\d+") && !identity.startsWith("nb:");
+    private void save(final String name, final Identity identity)
+        throws UnreachableIdentityException {
+        this.all.put(this.validator.ifValid(name), identity);
+        this.bus.make("identity-mentioned")
+            .synchronously()
+            .arg(name)
+            .asDefault(true)
+            .exec();
     }
 
     /**
-     * We can notify this identity?
+     * Does this identity matches a keyword?
+     * @param keyword The keyword
      * @param identity The identity
-     * @return Can we?
+     * @return Yes or no?
      */
-    private Boolean canNotify(final String identity) {
-        return Bus.make("can-notify-identity")
-            .synchronously()
-            .arg(identity)
-            .asDefault(false)
-            .exec();
+    private boolean matches(final String keyword,
+        final Identity identity) {
+        boolean matches = identity.name().contains(keyword);
+        final Pattern pattern = Pattern.compile(
+            Pattern.quote(keyword),
+            Pattern.CASE_INSENSITIVE
+        );
+        for (String alias : identity.aliases()) {
+            matches |= pattern.matcher(alias).find();
+        }
+        return matches;
     }
 
 }

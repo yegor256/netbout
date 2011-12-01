@@ -26,16 +26,34 @@
  */
 package com.netbout.hub;
 
+import com.netbout.bus.Bus;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Test case of {@link HubEntry}.
+ * Test case of {@link DefaultHub}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubEntryTest {
+public final class DefaultHubTest {
+
+    /**
+     * The hub.
+     */
+    private Hub hub;
+
+    /**
+     * Prepare hub.
+     * @throws Exception If there is some problem inside
+     */
+    @Before
+    public void prepare() throws Exception {
+        final Bus bus = Mockito.mock(Bus.class);
+        this.hub = new DefaultHub(bus);
+    }
 
     /**
      * Find user by name and avoid duplicates.
@@ -44,9 +62,9 @@ public final class HubEntryTest {
     @Test
     public void testHubUserByNameFinding() throws Exception {
         final String name = "Chuck Norris";
-        final HubUser user = HubEntry.user(name);
+        final User user = this.hub.user(name);
         MatcherAssert.assertThat(
-            HubEntry.user(name),
+            this.hub.user(name),
             Matchers.equalTo(user)
         );
     }

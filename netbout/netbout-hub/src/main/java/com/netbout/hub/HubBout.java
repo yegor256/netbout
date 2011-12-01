@@ -50,9 +50,19 @@ import java.util.List;
 public final class HubBout implements Bout {
 
     /**
+     * The bus.
+     */
+    private final transient Bus bus;
+
+    /**
+     * The catalog.
+     */
+    private final transient Catalog catalog;
+
+    /**
      * The viewer.
      */
-    private final transient HubIdentity viewer;
+    private final transient Identity viewer;
 
     /**
      * The data.
@@ -61,10 +71,15 @@ public final class HubBout implements Bout {
 
     /**
      * Public ctor.
+     * @param ctlg The catalog
+     * @param ibus The bus
      * @param idnt The viewer
      * @param dat The data
      */
-    public HubBout(final HubIdentity idnt, final BoutData dat) {
+    public HubBout(final Catalog ctlg, final Bus ibus, final Identity idnt,
+        final BoutData dat) {
+        this.catalog = ctlg;
+        this.bus = ibus;
         this.viewer = idnt;
         this.data = dat;
     }
@@ -106,7 +121,7 @@ public final class HubBout implements Bout {
             throw new IllegalStateException("You can't invite until you join");
         }
         final ParticipantData dude =
-            ParticipantData.build(this.number(), friend.name());
+            ParticipantData.build(this.bus, this.number(), friend.name());
         this.data.addParticipant(dude);
         dude.setConfirmed(false);
         Logger.debug(
@@ -114,8 +129,8 @@ public final class HubBout implements Bout {
             "#invite('%s'): success",
             friend
         );
-        ((HubIdentity) friend).invited(this);
-        return HubParticipant.build(dude);
+        friend.invited(this);
+        return HubParticipant.build(this.catalog, dude);
     }
 
     /**
@@ -126,7 +141,7 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantData dude : this.data.getParticipants()) {
-            participants.add(HubParticipant.build(dude));
+            participants.add(HubParticipant.build(this.catalog, dude));
         }
         Logger.debug(
             this,
@@ -146,7 +161,7 @@ public final class HubBout implements Bout {
         Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
         for (MessageData msg : datas) {
-            messages.add(HubMessage.build(this, msg));
+            messages.add(HubMessage.build(this.catalog, this, msg));
         }
         Logger.debug(
             this,
@@ -174,9 +189,13 @@ public final class HubBout implements Bout {
             "#post('%s'): message posted",
             text
         );
-        final Message message = HubMessage.build(this, msg);
+        final Message message = HubMessage.build(this.catalog, this, msg);
         message.text();
-        this.notify(message);
+        this.bus.make("notify-bout-participants")
+            .inBout(this)
+            .arg(this.number())
+            .arg(message.number())
+            .exec();
         return message;
     }
 
@@ -184,7 +203,7 @@ public final class HubBout implements Bout {
      * Who is viewing?
      * @return The identity
      */
-    protected HubIdentity getViewer() {
+    protected Identity getViewer() {
         return this.viewer;
     }
 
@@ -215,23 +234,6 @@ public final class HubBout implements Bout {
             }
         }
         throw new IllegalStateException("Can't find myself in participants");
-    }
-
-    /**
-     * Notify all participants that need notification.
-     * @param message The message
-     */
-    private void notify(final Message message) {
-        for (ParticipantData dude : this.data.getParticipants()) {
-            final String name = dude.getIdentity();
-            if (Identities.needsNotifier(name)) {
-                Bus.make("notify-bout-participant")
-                    .arg(this.number())
-                    .arg(name)
-                    .arg(message.date())
-                    .exec();
-            }
-        }
     }
 
 }

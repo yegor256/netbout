@@ -42,6 +42,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class BoutData {
 
     /**
+     * Bus to work with.
+     */
+    private final transient Bus bus;
+
+    /**
      * The number.
      */
     private final transient Long number;
@@ -63,9 +68,11 @@ public final class BoutData {
 
     /**
      * Public ctor.
+     * @param ibus The bus
      * @param num The number
      */
-    public BoutData(final Long num) {
+    public BoutData(final Bus ibus, final Long num) {
+        this.bus = ibus;
         assert num != null;
         this.number = num;
     }
@@ -84,7 +91,7 @@ public final class BoutData {
      */
     public String getTitle() {
         if (this.title == null) {
-            this.title = Bus.make("get-bout-title")
+            this.title = this.bus.make("get-bout-title")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -104,7 +111,7 @@ public final class BoutData {
      */
     public void setTitle(final String text) {
         this.title = text;
-        Bus.make("changed-bout-title")
+        this.bus.make("changed-bout-title")
             .asap()
             .arg(this.number)
             .arg(this.title)
@@ -124,7 +131,7 @@ public final class BoutData {
      */
     public void addParticipant(final ParticipantData data) {
         this.getParticipants().add(data);
-        Bus.make("added-bout-participant")
+        this.bus.make("added-bout-participant")
             .asap()
             .arg(this.number)
             .arg(data.getIdentity())
@@ -147,7 +154,7 @@ public final class BoutData {
         synchronized (this) {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantData>();
-                final List<String> identities = Bus
+                final List<String> identities = this.bus
                     .make("get-bout-participants")
                     .synchronously()
                     .arg(this.number)
@@ -155,7 +162,7 @@ public final class BoutData {
                     .exec();
                 for (String identity : identities) {
                     this.participants.add(
-                        ParticipantData.build(this.number, identity)
+                        ParticipantData.build(this.bus, this.number, identity)
                     );
                 }
                 Logger.debug(
@@ -174,12 +181,12 @@ public final class BoutData {
      * @return The data
      */
     public MessageData addMessage() {
-        final Long num = Bus.make("create-bout-message")
+        final Long num = this.bus.make("create-bout-message")
             .synchronously()
             .arg(this.number)
             .asDefault(1L)
             .exec();
-        final MessageData data = MessageData.build(num);
+        final MessageData data = MessageData.build(this.bus, num);
         this.getMessages().add(data);
         Logger.debug(
             this,
@@ -198,13 +205,14 @@ public final class BoutData {
         synchronized (this) {
             if (this.messages == null) {
                 this.messages = new CopyOnWriteArrayList<MessageData>();
-                final List<Long> nums = Bus.make("get-bout-messages")
+                final List<Long> nums = this.bus
+                    .make("get-bout-messages")
                     .synchronously()
                     .arg(this.number)
                     .asDefault(new ArrayList<Long>())
                     .exec();
                 for (Long num : nums) {
-                    this.messages.add(MessageData.build(num));
+                    this.messages.add(MessageData.build(this.bus, num));
                 }
                 Logger.debug(
                     this,

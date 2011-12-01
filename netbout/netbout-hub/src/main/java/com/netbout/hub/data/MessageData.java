@@ -41,6 +41,11 @@ import java.util.concurrent.ConcurrentMap;
 public final class MessageData implements Comparable<MessageData> {
 
     /**
+     * Bus to work with.
+     */
+    private final transient Bus bus;
+
+    /**
      * Number of the message.
      */
     private final transient Long number;
@@ -68,9 +73,11 @@ public final class MessageData implements Comparable<MessageData> {
 
     /**
      * Public ctor.
+     * @param ibus The bus
      * @param num The number of this message
      */
-    private MessageData(final Long num) {
+    private MessageData(final Bus ibus, final Long num) {
+        this.bus = ibus;
         assert num != null;
         this.number = num;
     }
@@ -80,8 +87,8 @@ public final class MessageData implements Comparable<MessageData> {
      * @param num The number of this message
      * @return The object
      */
-    protected static MessageData build(final Long num) {
-        return new MessageData(num);
+    protected static MessageData build(final Bus ibus, final Long num) {
+        return new MessageData(ibus, num);
     }
 
     /**
@@ -106,7 +113,7 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public void setDate(final Date dte) {
         this.date = dte;
-        Bus.make("changed-message-date")
+        this.bus.make("changed-message-date")
             .asap()
             .arg(this.number)
             .arg(this.date)
@@ -125,7 +132,7 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public Date getDate() {
         if (this.date == null) {
-            this.date = Bus.make("get-message-date")
+            this.date = this.bus.make("get-message-date")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -145,7 +152,7 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public void setAuthor(final String idnt) {
         this.author = idnt;
-        Bus.make("changed-message-author")
+        this.bus.make("changed-message-author")
             .asap()
             .arg(this.number)
             .arg(this.author)
@@ -165,7 +172,7 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public String getAuthor() {
         if (this.author == null) {
-            this.author = Bus.make("get-message-author")
+            this.author = this.bus.make("get-message-author")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -185,7 +192,7 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public void setText(final String txt) {
         this.text = txt;
-        Bus.make("changed-message-text")
+        this.bus.make("changed-message-text")
             .asap()
             .arg(this.number)
             .arg(this.text)
@@ -205,7 +212,7 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public String getText() {
         if (this.text == null) {
-            this.text = Bus.make("get-message-text")
+            this.text = this.bus.make("get-message-text")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -225,7 +232,7 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public void addSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
-            Bus.make("message-was-seen")
+            this.bus.make("message-was-seen")
                 .asap()
                 .arg(this.number)
                 .arg(identity)
@@ -248,7 +255,7 @@ public final class MessageData implements Comparable<MessageData> {
      */
     public Boolean isSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity)) {
-            final Boolean status = Bus.make("was-message-seen")
+            final Boolean status = this.bus.make("was-message-seen")
                 .synchronously()
                 .arg(this.number)
                 .arg(identity)

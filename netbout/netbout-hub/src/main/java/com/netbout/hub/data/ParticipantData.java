@@ -38,6 +38,11 @@ import com.ymock.util.Logger;
 public final class ParticipantData {
 
     /**
+     * Bus to work with.
+     */
+    private final transient Bus bus;
+
+    /**
      * Number of bout.
      */
     private final transient Long bout;
@@ -54,10 +59,12 @@ public final class ParticipantData {
 
     /**
      * Public ctor.
+     * @param ibus The bus
      * @param num The number
      * @param idnt The identity
      */
-    private ParticipantData(final Long num, final String idnt) {
+    private ParticipantData(final Bus ibus, final Long num, final String idnt) {
+        this.bus = ibus;
         assert num != null;
         this.bout = num;
         assert idnt != null;
@@ -66,12 +73,14 @@ public final class ParticipantData {
 
     /**
      * Build new object.
+     * @param ibus The bus
      * @param num The number
      * @param idnt The identity
      * @return The object
      */
-    public static ParticipantData build(final Long num, final String idnt) {
-        return new ParticipantData(num, idnt);
+    public static ParticipantData build(final Bus ibus, final Long num,
+        final String idnt) {
+        return new ParticipantData(ibus, num, idnt);
     }
 
     /**
@@ -96,7 +105,7 @@ public final class ParticipantData {
      */
     public void setConfirmed(final Boolean flag) {
         this.confirmed = flag;
-        Bus.make("changed-participant-status")
+        this.bus.make("changed-participant-status")
             .asap()
             .arg(this.bout)
             .arg(this.identity)
@@ -116,7 +125,7 @@ public final class ParticipantData {
      */
     public Boolean isConfirmed() {
         if (this.confirmed == null) {
-            this.confirmed = Bus.make("get-participant-status")
+            this.confirmed = this.bus.make("get-participant-status")
                 .synchronously()
                 .arg(this.bout)
                 .arg(this.identity)

@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 
 /**
@@ -34,20 +35,26 @@ import com.ymock.util.Logger;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubUser {
+public final class User {
+
+    /**
+     * Catalog.
+     */
+    private final transient Catalog catalog;
 
     /**
      * The name of it.
-     * @see #HubUser(String)
      */
     private final transient String uname;
 
     /**
      * Public ctor.
+     * @param ctlr The catalog with identities
      * @param name The name of it
      * @see DefaultHub#user(String)
      */
-    protected HubUser(final String name) {
+    protected User(final Catalog ctlg, final String name) {
+        this.catalog = ctlg;
         this.uname = name;
     }
 
@@ -56,8 +63,8 @@ public final class HubUser {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof HubUser)
-            && this.uname.equals(((HubUser) obj).uname);
+        return (obj instanceof User)
+            && this.name().equals(((User) obj).name());
     }
 
     /**
@@ -80,9 +87,11 @@ public final class HubUser {
      * Find identity by name.
      * @param name The name of it
      * @return The identity found
+     * @throws com.netbout.spi.UnreachableIdentityException If can't..
      */
-    public HubIdentity identity(final String name) {
-        final HubIdentity identity = this.catalog.make(name, this);
+    public Identity identity(final String name)
+        throws com.netbout.spi.UnreachableIdentityException {
+        final Identity identity = this.catalog.make(name, this);
         Logger.debug(
             this,
             "#identity('%s'): found",

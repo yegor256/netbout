@@ -40,47 +40,47 @@ import org.junit.Test;
  */
 public final class HubMessageTest {
 
-    /**
-     * Talking in bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testMessagePosting() throws Exception {
-        final Identity identity = HubEntry.user("Mark III").identity("44");
-        final Bout bout = identity.start();
-        bout.post("hi there!");
-        MatcherAssert.assertThat(
-            bout.messages("").size(),
-            Matchers.equalTo(1)
-        );
-    }
-
-    /**
-     * Message should change its "SEEN" status automatically.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testMessageSeenStatus() throws Exception {
-        final Identity writer = HubEntry.user("Emilio").identity("55");
-        final Identity reader = HubEntry.user("Doug").identity("66");
-        final Bout wbout = writer.start();
-        final Message wmessage = wbout.post("simple text, why not?");
-        MatcherAssert.assertThat(
-            wmessage.seen(),
-            Matchers.equalTo(Boolean.TRUE)
-        );
-        wbout.invite(reader);
-        final Bout rbout = reader.bout(wbout.number());
-        final Message rmessage = rbout.messages("").get(0);
-        MatcherAssert.assertThat(
-            rmessage.seen(),
-            Matchers.equalTo(Boolean.FALSE)
-        );
-        rmessage.text();
-        MatcherAssert.assertThat(
-            rmessage.seen(),
-            Matchers.equalTo(Boolean.TRUE)
-        );
-    }
+    // /**
+    //  * Talking in bout.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testMessagePosting() throws Exception {
+    //     final Identity identity = HubEntry.user("Mark III").identity("44");
+    //     final Bout bout = identity.start();
+    //     bout.post("hi there!");
+    //     MatcherAssert.assertThat(
+    //         bout.messages("").size(),
+    //         Matchers.equalTo(1)
+    //     );
+    // }
+    //
+    // /**
+    //  * Message should change its "SEEN" status automatically.
+    //  * @throws Exception If there is some problem inside
+    //  */
+    // @Test
+    // public void testMessageSeenStatus() throws Exception {
+    //     final Identity writer = HubEntry.user("Emilio").identity("55");
+    //     final Identity reader = HubEntry.user("Doug").identity("66");
+    //     final Bout wbout = writer.start();
+    //     final Message wmessage = wbout.post("simple text, why not?");
+    //     MatcherAssert.assertThat(
+    //         wmessage.seen(),
+    //         Matchers.equalTo(Boolean.TRUE)
+    //     );
+    //     wbout.invite(reader);
+    //     final Bout rbout = reader.bout(wbout.number());
+    //     final Message rmessage = rbout.messages("").get(0);
+    //     MatcherAssert.assertThat(
+    //         rmessage.seen(),
+    //         Matchers.equalTo(Boolean.FALSE)
+    //     );
+    //     rmessage.text();
+    //     MatcherAssert.assertThat(
+    //         rmessage.seen(),
+    //         Matchers.equalTo(Boolean.TRUE)
+    //     );
+    // }
 
 }

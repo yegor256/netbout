@@ -41,6 +41,11 @@ import java.util.Date;
 final class HubMessage implements Message {
 
     /**
+     * The catalog.
+     */
+    private final transient Catalog catalog;
+
+    /**
      * The bout where this message is located.
      */
     private final transient HubBout bout;
@@ -52,23 +57,27 @@ final class HubMessage implements Message {
 
     /**
      * Public ctor.
+     * @param ctlg The catalog
      * @param holder The bout where this message is located
      * @param dat The data
      */
-    private HubMessage(final HubBout holder, final MessageData dat) {
+    private HubMessage(final Catalog ctlg, final HubBout holder,
+        final MessageData dat) {
+        this.catalog = ctlg;
         this.bout = holder;
         this.data = dat;
     }
 
     /**
      * Build new object.
+     * @param ctlg The catalog
      * @param holder The bout where this message is located
      * @param dat The data
      * @return The object just built
      */
-    public static HubMessage build(final HubBout holder,
+    public static HubMessage build(final Catalog ctlg, final HubBout holder,
         final MessageData dat) {
-        return new HubMessage(holder, dat);
+        return new HubMessage(ctlg, holder, dat);
     }
 
     /**
@@ -83,8 +92,20 @@ final class HubMessage implements Message {
      * {@inheritDoc}
      */
     @Override
+    public Long number() {
+        return this.data.getNumber();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Identity author() {
-        return Identities.make(this.data.getAuthor());
+        try {
+            return this.catalog.make(this.data.getAuthor());
+        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**

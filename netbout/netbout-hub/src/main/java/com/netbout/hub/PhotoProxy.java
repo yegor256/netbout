@@ -26,74 +26,56 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.data.ParticipantData;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Participant;
+import com.ymock.util.Logger;
+import java.net.URL;
 
 /**
- * Identity.
+ * Converts URL to proper photo location.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubParticipant implements Participant {
+final class PhotoProxy {
 
     /**
-     * The catalog.
+     * URL for unknown identities.
      */
-    private final transient Catalog catalog;
-
-    /**
-     * The data.
-     */
-    private final transient ParticipantData data;
+    private final transient URL unknown;
 
     /**
      * Public ctor.
-     * @param ctlg The catalog
-     * @param dat The data
+     * @param def Default URL to use
      */
-    private HubParticipant(final Catalog ctlg, final ParticipantData dat) {
-        this.catalog = ctlg;
-        this.data = dat;
-    }
-
-    /**
-     * Build new object.
-     * @param dat The data
-     * @return The object just built
-     */
-    public static HubParticipant build(final Catalog ctlg,
-        final ParticipantData dat) {
-        return new HubParticipant(ctlg, dat);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity() {
+    public PhotoProxy(final String def) {
         try {
-            return this.catalog.make(this.data.getIdentity());
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new IllegalStateException(ex);
+            this.unknown = new URL(def);
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
         }
     }
 
     /**
-     * {@inheritDoc}
+     * Validate URL and return back its correct form.
+     * @param photo Preliminary URL
+     * @return The correct URL
      */
-    @Override
-    public boolean confirmed() {
-        return this.data.isConfirmed();
+    public URL normalize(final URL url) {
+        return url;
     }
 
     /**
-     * {@inheritDoc}
+     * Validate URL and return back its correct form.
+     * @param photo Preliminary URL
+     * @return The correct URL
      */
-    @Override
-    public void confirm(final boolean aye) {
-        this.data.setConfirmed(aye);
+    public URL normalize(final String photo) {
+        URL url;
+        try {
+            url = new URL(photo);
+        } catch (java.net.MalformedURLException ex) {
+            url = this.unknown;
+        }
+        return url;
     }
 
 }
