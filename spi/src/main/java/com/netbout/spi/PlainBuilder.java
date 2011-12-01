@@ -56,6 +56,7 @@ public final class PlainBuilder {
      * Convert an object to a {@link Plain} value type.
      * @param data Object to convert
      * @return The plain object
+     * @param <T> Type to return
      */
     public static <T> Plain<T> fromObject(final Object data) {
         if (data == null) {
@@ -88,6 +89,7 @@ public final class PlainBuilder {
      * Convert a text to a {@link Plain} value type.
      * @param text Text to parse
      * @return The plain object
+     * @param <T> Type to return
      */
     public static <T> Plain<T> fromText(final String text) {
         if (text == null) {

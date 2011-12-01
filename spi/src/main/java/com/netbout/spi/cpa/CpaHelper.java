@@ -55,17 +55,18 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class CpaHelper implements Helper {
 
     /**
      * Who am I.
      */
-    private transient Identity identity;
+    private final transient Identity identity;
 
     /**
      * All discovered operations.
      */
-    private transient ConcurrentMap<String, HelpTarget> ops;
+    private final transient ConcurrentMap<String, HelpTarget> ops;
 
     /**
      * Public ctor.

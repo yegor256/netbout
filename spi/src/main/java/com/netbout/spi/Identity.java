@@ -39,6 +39,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public interface Identity {
 
     /**
@@ -91,7 +92,7 @@ public interface Identity {
      * Find another identity by name.
      * @param name Unique name of identity
      * @return The identity just found
-     * @throws IdentityNotFoundException If such a friend is absent
+     * @throws UnreachableIdentityException If such a friend can't be reached
      */
     Identity friend(String name) throws UnreachableIdentityException;
 

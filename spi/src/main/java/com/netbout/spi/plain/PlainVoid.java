@@ -66,7 +66,7 @@ public final class PlainVoid implements Plain<Void> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof PlainVoid);
+        return obj instanceof PlainVoid;
     }
 
     /**
@@ -82,7 +82,7 @@ public final class PlainVoid implements Plain<Void> {
      */
     @Override
     public String toString() {
-        return this.MNEMO.toString();
+        return this.MNEMO;
     }
 
 }

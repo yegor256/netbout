@@ -29,7 +29,6 @@
  */
 package com.netbout.spi;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -51,39 +50,7 @@ public final class PlainBuilderTest {
     /**
      * The data to test against.
      */
-    private final Object data;
-
-    /**
-     * Incoming params.
-     * @return The collection of them
-     */
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        final Random random = new Random();
-        return Arrays.asList(
-            new Object[][] {
-                new Object[] { random.nextLong() },
-                new Object[] { "" },
-                new Object[] { "a" },
-                new Object[] { "some text: 8(&^%$,:;,\"/\\+ " },
-                new Object[] { new Date() },
-                new Object[] { new Date(8927563737L) },
-                new Object[] { true },
-                new Object[] { Boolean.FALSE },
-                new Object[] {
-                    Arrays.asList(
-                        new Long[]{ random.nextLong(), random.nextLong() }
-                    )
-                },
-                new Object[]{ Arrays.asList(new Boolean[]{ true, false }) },
-                new Object[] {
-                    Arrays.asList(
-                        new String[]{ "some text", "another text;;;" }
-                    )
-                },
-            }
-        );
-    }
+    private final transient Object data;
 
     /**
      * Public ctor.
@@ -91,6 +58,38 @@ public final class PlainBuilderTest {
      */
     public PlainBuilderTest(final Object obj) {
         this.data = obj;
+    }
+
+    /**
+     * Incoming params.
+     * @return The collection of them
+     */
+    @Parameterized.Parameters
+    public static Collection<Object[]> parameters() {
+        final Random random = new Random();
+        return Arrays.asList(
+            new Object[][] {
+                new Object[] {random.nextLong()},
+                new Object[] {""},
+                new Object[] {"a"},
+                new Object[] {"some text: 8(&^%$,:;,\"/\\+ "},
+                new Object[] {new Date()},
+                new Object[] {new Date(Math.abs(random.nextLong()))},
+                new Object[] {true},
+                new Object[] {Boolean.FALSE},
+                new Object[] {
+                    Arrays.asList(
+                        new Long[]{random.nextLong(), random.nextLong(), }
+                    ),
+                },
+                new Object[]{Arrays.asList(new Boolean[]{true, false}), },
+                new Object[] {
+                    Arrays.asList(
+                        new String[]{"some text", "another text;;;", }
+                    ),
+                },
+            }
+        );
     }
 
     /**

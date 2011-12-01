@@ -74,6 +74,7 @@ public final class PlainList<T> implements Plain<List<T>> {
      * Retrive value from text.
      * @param text The text
      * @return Is it or not?
+     * @param <T> Type to return
      */
     public static <T> PlainList<T> valueOf(final String text) {
         final List<T> parts = new ArrayList<T>();

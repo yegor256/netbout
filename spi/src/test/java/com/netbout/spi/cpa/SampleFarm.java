@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,14 +73,13 @@ final class SampleFarm implements IdentityAware {
 
     /**
      * List as output.
-     * @param size Size of the list to return
      * @return The list just created
      */
     @Operation("list")
-    public List<Long> list(final Long size) {
+    public List<Long> list() {
         final List<Long> list = new ArrayList<Long>();
         final Random random = new Random();
-        for (int pos = 0; pos < size; pos += 1) {
+        for (int pos = 0; pos < 2; pos += 1) {
             list.add(random.nextLong());
         }
         return list;

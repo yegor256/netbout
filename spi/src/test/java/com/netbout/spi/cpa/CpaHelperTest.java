@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Plain;
@@ -39,7 +38,6 @@ import com.netbout.spi.plain.PlainList;
 import com.netbout.spi.plain.PlainLong;
 import com.netbout.spi.plain.PlainString;
 import com.netbout.spi.plain.PlainVoid;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -118,7 +116,6 @@ public final class CpaHelperTest {
     public void testLists() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("list").when(token).mnemo();
-        Mockito.doReturn(new PlainLong(4L)).when(token).arg(0);
         this.helper.execute(token);
         Mockito.verify(token).result(Mockito.any(Plain.class));
     }
