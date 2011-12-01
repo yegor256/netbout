@@ -103,15 +103,7 @@ final class HelpTarget {
         }
         if (this.method.getReturnType().equals(Void.TYPE)) {
             token.result(new PlainVoid());
-        } else {
-            if (result == null) {
-                throw new IllegalStateException(
-                    String.format(
-                        "%s can't return NULL",
-                        this.method.toGenericString()
-                    )
-                );
-            }
+        } else if (result != null) {
             token.result(PlainBuilder.fromObject(result));
         }
     }
