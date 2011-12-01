@@ -88,6 +88,16 @@ public final class CpaHelper implements Helper {
     }
 
     /**
+     * Inject context into every {@link ContextAware} farm.
+     * @param context The context to inject (any object you like)
+     */
+    public void contextualize(final Object context) {
+        for (HelpTarget target : this.ops.values()) {
+            target.contextualize(context);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
