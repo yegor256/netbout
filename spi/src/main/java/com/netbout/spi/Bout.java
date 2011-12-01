@@ -79,6 +79,13 @@ public interface Bout {
     List<Message> messages(String query);
 
     /**
+     * Find message by ID.
+     * @param number Number of the message to get
+     * @return The message
+     */
+    Message message(Long number);
+
+    /**
      * Post a new message.
      * @param text The text of the new message
      * @return The message just posted
