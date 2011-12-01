@@ -26,40 +26,69 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.mockito.Mockito;
+import java.util.Date;
 
 /**
- * Test case of {@link HubMessage}.
+ * Message data type.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubMessageTest {
+public interface MessageDt extends Comparable<MessageDt> {
 
     /**
-     * {@link HubMessage} class should "wrap" {@link MessageData} class.
-     * @throws Exception If there is some problem inside
+     * Get message number.
+     * @return The number of it
      */
-    @Test
-    public void wrapsDataProperties() throws Exception {
-        final Catalog catalog = Mockito.mock(Catalog.class);
-        final Identity viewer = Mockito.mock(Identity.class);
-        final Bout bout = Mockito.mock(Bout.class);
-        final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(catalog, viewer, bout, data);
-        msg.number();
-        Mockito.verify(data).getNumber();
-        msg.author();
-        Mockito.verify(data).getAuthor();
-        msg.text();
-        Mockito.verify(data).getText();
-        msg.date();
-        Mockito.verify(data).getDate();
-    }
+    Long getNumber();
+
+    /**
+     * Set date of the message.
+     * @param date The date of the message
+     */
+    void setDate(Date date);
+
+    /**
+     * Get date of the message.
+     * @return The date
+     */
+    Date getDate();
+
+    /**
+     * Set identity.
+     * @param idnt The identity
+     */
+    void setAuthor(String idnt);
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    String getAuthor();
+
+    /**
+     * Set text.
+     * @param txt The text
+     */
+    void setText(final String txt);
+
+    /**
+     * Get text.
+     * @return The text
+     */
+    String getText();
+
+    /**
+     * Add indentity, who has seen the message.
+     * @param identity The identity
+     */
+    void addSeenBy(String identity);
+
+    /**
+     * Was it seen by this identity?
+     * @param identity The identity
+     * @return Was it seen?
+     */
+    Boolean isSeenBy(String identity);
 
 }

@@ -26,40 +26,66 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.MessageNotFoundException;
+import java.util.Collection;
+import java.util.List;
 
 /**
- * Test case of {@link HubMessage}.
+ * Bout data type.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubMessageTest {
+public interface BoutDt {
 
     /**
-     * {@link HubMessage} class should "wrap" {@link MessageData} class.
-     * @throws Exception If there is some problem inside
+     * Get its number.
+     * @return The number
      */
-    @Test
-    public void wrapsDataProperties() throws Exception {
-        final Catalog catalog = Mockito.mock(Catalog.class);
-        final Identity viewer = Mockito.mock(Identity.class);
-        final Bout bout = Mockito.mock(Bout.class);
-        final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(catalog, viewer, bout, data);
-        msg.number();
-        Mockito.verify(data).getNumber();
-        msg.author();
-        Mockito.verify(data).getAuthor();
-        msg.text();
-        Mockito.verify(data).getText();
-        msg.date();
-        Mockito.verify(data).getDate();
-    }
+    Long getNumber();
+
+    /**
+     * Get title.
+     * @return The title
+     */
+    String getTitle();
+
+    /**
+     * Set title.
+     * @param text The title
+     */
+    void setTitle(final String text);
+
+    /**
+     * Add new participant.
+     * @param name The name of participant
+     */
+    ParticipantDt addParticipant(String name);
+
+    /**
+     * Get list of participants.
+     * @return The list
+     */
+    Collection<ParticipantDt> getParticipants();
+
+    /**
+     * Post new message.
+     * @return The data
+     */
+    MessageDt addMessage();
+
+    /**
+     * Get full list of messages.
+     * @return Messages
+     */
+    List<MessageDt> getMessages();
+
+    /**
+     * Find message by number.
+     * @param num The number of it
+     * @return Message
+     * @throws MessageNotFoundException If not found
+     */
+    MessageDt findMessage(Long num) throws MessageNotFoundException;
 
 }

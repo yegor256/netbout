@@ -26,40 +26,37 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.BoutNotFoundException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
- * Test case of {@link HubMessage}.
+ * Manager of all bouts.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubMessageTest {
+public interface BoutMgr {
 
     /**
-     * {@link HubMessage} class should "wrap" {@link MessageData} class.
-     * @throws Exception If there is some problem inside
+     * Create statistics in the given XML document and return their element.
+     * @param doc The document to work in
+     * @return The element just created
      */
-    @Test
-    public void wrapsDataProperties() throws Exception {
-        final Catalog catalog = Mockito.mock(Catalog.class);
-        final Identity viewer = Mockito.mock(Identity.class);
-        final Bout bout = Mockito.mock(Bout.class);
-        final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(catalog, viewer, bout, data);
-        msg.number();
-        Mockito.verify(data).getNumber();
-        msg.author();
-        Mockito.verify(data).getAuthor();
-        msg.text();
-        Mockito.verify(data).getText();
-        msg.date();
-        Mockito.verify(data).getDate();
-    }
+    Element stats(Document doc);
+
+    /**
+     * Create new bout.
+     * @return It's number (unique)
+     */
+    Long create();
+
+    /**
+     * Find and return bout from collection.
+     * @param number Number of the bout
+     * @return The bout found or restored
+     * @throws BoutMissedException If this bout is not found
+     */
+    BoutDt find(Long number) throws BoutNotFoundException;
 
 }

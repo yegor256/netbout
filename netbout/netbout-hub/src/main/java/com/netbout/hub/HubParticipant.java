@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
@@ -52,7 +51,7 @@ public final class HubParticipant implements Participant {
     /**
      * The data.
      */
-    private final transient ParticipantData data;
+    private final transient ParticipantDt data;
 
     /**
      * Public ctor.
@@ -61,7 +60,7 @@ public final class HubParticipant implements Participant {
      * @param dat The data
      */
     private HubParticipant(final Catalog ctlg, final Bout bot,
-        final ParticipantData dat) {
+        final ParticipantDt dat) {
         this.catalog = ctlg;
         this.bout = bot;
         this.data = dat;
@@ -75,7 +74,7 @@ public final class HubParticipant implements Participant {
      * @return The object just built
      */
     public static HubParticipant build(final Catalog ctlg, final Bout bot,
-        final ParticipantData dat) {
+        final ParticipantDt dat) {
         return new HubParticipant(ctlg, bot, dat);
     }
 

@@ -27,6 +27,7 @@
 package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
+import com.netbout.hub.MessageDt;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +39,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MessageData implements Comparable<MessageData> {
+final class MessageData implements MessageDt {
 
     /**
      * Bus to work with.
@@ -76,41 +77,32 @@ public final class MessageData implements Comparable<MessageData> {
      * @param ibus The bus
      * @param num The number of this message
      */
-    private MessageData(final Bus ibus, final Long num) {
+    public MessageData(final Bus ibus, final Long num) {
         this.bus = ibus;
         assert num != null;
         this.number = num;
     }
 
     /**
-     * Build new object.
-     * @param num The number of this message
-     * @return The object
+     * {@inheritDoc}
      */
-    protected static MessageData build(final Bus ibus, final Long num) {
-        return new MessageData(ibus, num);
+    @Override
+    public int compareTo(final MessageDt data) {
+        return this.getDate().compareTo(data.getDate());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final MessageData data) {
-        return this.getDate().compareTo(data.getDate());
-    }
-
-    /**
-     * Get message number.
-     * @return The number of it
-     */
     public Long getNumber() {
         return this.number;
     }
 
     /**
-     * Set date of the message.
-     * @param dte The identity
+     * {@inheritDoc}
      */
+    @Override
     public void setDate(final Date dte) {
         this.date = dte;
         this.bus.make("changed-message-date")
@@ -127,9 +119,9 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Get date of the message.
-     * @return The date
+     * {@inheritDoc}
      */
+    @Override
     public Date getDate() {
         if (this.date == null) {
             this.date = this.bus.make("get-message-date")
@@ -147,9 +139,9 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Set identity.
-     * @param idnt The identity
+     * {@inheritDoc}
      */
+    @Override
     public void setAuthor(final String idnt) {
         this.author = idnt;
         this.bus.make("changed-message-author")
@@ -167,9 +159,9 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Get identity.
-     * @return The identity
+     * {@inheritDoc}
      */
+    @Override
     public String getAuthor() {
         if (this.author == null) {
             this.author = this.bus.make("get-message-author")
@@ -187,9 +179,9 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Set text.
-     * @param txt The text
+     * {@inheritDoc}
      */
+    @Override
     public void setText(final String txt) {
         this.text = txt;
         this.bus.make("changed-message-text")
@@ -207,9 +199,9 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Get text.
-     * @return The text
+     * {@inheritDoc}
      */
+    @Override
     public String getText() {
         if (this.text == null) {
             this.text = this.bus.make("get-message-text")
@@ -227,9 +219,9 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Add indentity, who has seen the message.
-     * @param identity The identity
+     * {@inheritDoc}
      */
+    @Override
     public void addSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
             this.bus.make("message-was-seen")
@@ -249,10 +241,9 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Was it seen by this identity?
-     * @param identity The identity
-     * @return Was it seen?
+     * {@inheritDoc}
      */
+    @Override
     public Boolean isSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity)) {
             final Boolean status = this.bus.make("was-message-seen")

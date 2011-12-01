@@ -27,6 +27,9 @@
 package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
+import com.netbout.hub.BoutDt;
+import com.netbout.hub.MessageDt;
+import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.MessageNotFoundException;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -40,7 +43,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutData {
+final class BoutData implements BoutDt {
 
     /**
      * Bus to work with.
@@ -60,12 +63,12 @@ public final class BoutData {
     /**
      * Collection of participants.
      */
-    private transient Collection<ParticipantData> participants;
+    private transient Collection<ParticipantDt> participants;
 
     /**
      * Ordered list of messages.
      */
-    private transient List<MessageData> messages;
+    private transient List<MessageDt> messages;
 
     /**
      * Public ctor.
@@ -79,17 +82,17 @@ public final class BoutData {
     }
 
     /**
-     * Get its number.
-     * @return The number
+     * {@inheritDoc}
      */
+    @Override
     public Long getNumber() {
         return this.number;
     }
 
     /**
-     * Get title.
-     * @return The title
+     * {@inheritDoc}
      */
+    @Override
     public String getTitle() {
         if (this.title == null) {
             this.title = this.bus.make("get-bout-title")
@@ -107,9 +110,9 @@ public final class BoutData {
     }
 
     /**
-     * Set title.
-     * @param text The title
+     * {@inheritDoc}
      */
+    @Override
     public void setTitle(final String text) {
         this.title = text;
         this.bus.make("changed-bout-title")
@@ -127,10 +130,12 @@ public final class BoutData {
     }
 
     /**
-     * Add new participant.
-     * @param data The participant
+     * {@inheritDoc}
      */
-    public void addParticipant(final ParticipantData data) {
+    @Override
+    public ParticipantDt addParticipant(final String name) {
+        final ParticipantDt data =
+            new ParticipantData(this.bus, this.number, name);
         this.getParticipants().add(data);
         this.bus.make("added-bout-participant")
             .asap()
@@ -145,16 +150,17 @@ public final class BoutData {
             this.number,
             this.getParticipants().size()
         );
+        return data;
     }
 
     /**
-     * Get list of participants.
-     * @return The list
+     * {@inheritDoc}
      */
-    public Collection<ParticipantData> getParticipants() {
+    @Override
+    public Collection<ParticipantDt> getParticipants() {
         synchronized (this) {
             if (this.participants == null) {
-                this.participants = new CopyOnWriteArrayList<ParticipantData>();
+                this.participants = new CopyOnWriteArrayList<ParticipantDt>();
                 final List<String> identities = this.bus
                     .make("get-bout-participants")
                     .synchronously()
@@ -163,7 +169,7 @@ public final class BoutData {
                     .exec();
                 for (String identity : identities) {
                     this.participants.add(
-                        ParticipantData.build(this.bus, this.number, identity)
+                        new ParticipantData(this.bus, this.number, identity)
                     );
                 }
                 Logger.debug(
@@ -178,16 +184,16 @@ public final class BoutData {
     }
 
     /**
-     * Post new message.
-     * @return The data
+     * {@inheritDoc}
      */
-    public MessageData addMessage() {
+    @Override
+    public MessageDt addMessage() {
         final Long num = this.bus.make("create-bout-message")
             .synchronously()
             .arg(this.number)
             .asDefault(1L)
             .exec();
-        final MessageData data = MessageData.build(this.bus, num);
+        final MessageDt data = new MessageData(this.bus, num);
         this.getMessages().add(data);
         Logger.debug(
             this,
@@ -199,13 +205,13 @@ public final class BoutData {
     }
 
     /**
-     * Get full list of messages.
-     * @return Messages
+     * {@inheritDoc}
      */
-    public List<MessageData> getMessages() {
+    @Override
+    public List<MessageDt> getMessages() {
         synchronized (this) {
             if (this.messages == null) {
-                this.messages = new CopyOnWriteArrayList<MessageData>();
+                this.messages = new CopyOnWriteArrayList<MessageDt>();
                 final List<Long> nums = this.bus
                     .make("get-bout-messages")
                     .synchronously()
@@ -213,7 +219,7 @@ public final class BoutData {
                     .asDefault(new ArrayList<Long>())
                     .exec();
                 for (Long num : nums) {
-                    this.messages.add(MessageData.build(this.bus, num));
+                    this.messages.add(new MessageData(this.bus, num));
                 }
                 Logger.debug(
                     this,
@@ -227,14 +233,12 @@ public final class BoutData {
     }
 
     /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
+     * {@inheritDoc}
      */
-    public MessageData findMessage(final Long num)
+    @Override
+    public MessageDt findMessage(final Long num)
         throws MessageNotFoundException {
-        for (MessageData msg : this.getMessages()) {
+        for (MessageDt msg : this.getMessages()) {
             if (msg.getNumber().equals(num)) {
                 return msg;
             }

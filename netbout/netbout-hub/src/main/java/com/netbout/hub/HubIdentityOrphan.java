@@ -27,9 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
-import com.netbout.hub.data.BoutData;
-import com.netbout.hub.data.BoutMgr;
-import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
@@ -151,15 +148,13 @@ public class HubIdentityOrphan implements Identity {
     @Override
     public Bout start() {
         final Long num = this.manager.create();
-        BoutData data;
+        BoutDt data;
         try {
             data = this.manager.find(num);
-        } catch (com.netbout.hub.data.BoutMissedException ex) {
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        final ParticipantData dude =
-            ParticipantData.build(this.bus, num, this.name());
-        data.addParticipant(dude);
+        final ParticipantDt dude = data.addParticipant(this.name());
         dude.setConfirmed(true);
         Logger.debug(
             this,
@@ -177,23 +172,12 @@ public class HubIdentityOrphan implements Identity {
     @Override
     public Bout bout(final Long number) throws BoutNotFoundException {
         final HubBout bout;
-        try {
-            bout = new HubBout(
-                this.catalog,
-                this.bus,
-                this,
-                this.manager.find(number)
-            );
-        } catch (com.netbout.hub.data.BoutMissedException ex) {
-            throw new BoutNotFoundException(ex);
-        }
-        if (!bout.isParticipant(this)) {
-            throw new BoutNotFoundException(
-                "'%s' is not a participant in bout #%d",
-                this.name(),
-                bout.number()
-            );
-        }
+        bout = new HubBout(
+            this.catalog,
+            this.bus,
+            this,
+            this.manager.find(number)
+        );
         return bout;
     }
 

@@ -24,22 +24,38 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.data;
+package com.netbout.hub;
 
 /**
- * Bout is not found in storage.
+ * Participant data type.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutMissedException extends Exception {
+public interface ParticipantDt {
 
     /**
-     * Public ctor.
-     * @param number Number of the bout being missed
+     * Get bout number.
+     * @return The identity
      */
-    public BoutMissedException(final Long number) {
-        super(String.format("Bout #%d not found", number));
-    }
+    Long getBout();
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    String getIdentity();
+
+    /**
+     * Set status.
+     * @param flag The flag
+     */
+    void setConfirmed(Boolean flag);
+
+    /**
+     * Is it confirmed?
+     * @return The flag
+     */
+    Boolean isConfirmed();
 
 }

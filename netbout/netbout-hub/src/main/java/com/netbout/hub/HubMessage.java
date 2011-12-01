@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.data.MessageData;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -46,38 +45,33 @@ final class HubMessage implements Message {
     private final transient Catalog catalog;
 
     /**
+     * The viewer.
+     */
+    private final transient Identity viewer;
+
+    /**
      * The bout where this message is located.
      */
-    private final transient HubBout bout;
+    private final transient Bout bout;
 
     /**
      * The data.
      */
-    private final transient MessageData data;
+    private final transient MessageDt data;
 
     /**
      * Public ctor.
      * @param ctlg The catalog
+     * @param vwr Viewer
      * @param holder The bout where this message is located
      * @param dat The data
      */
-    private HubMessage(final Catalog ctlg, final HubBout holder,
-        final MessageData dat) {
+    public HubMessage(final Catalog ctlg, final Identity vwr,
+        final Bout holder, final MessageDt dat) {
         this.catalog = ctlg;
+        this.viewer = vwr;
         this.bout = holder;
         this.data = dat;
-    }
-
-    /**
-     * Build new object.
-     * @param ctlg The catalog
-     * @param holder The bout where this message is located
-     * @param dat The data
-     * @return The object just built
-     */
-    public static HubMessage build(final Catalog ctlg, final HubBout holder,
-        final MessageData dat) {
-        return new HubMessage(ctlg, holder, dat);
     }
 
     /**
@@ -113,7 +107,7 @@ final class HubMessage implements Message {
      */
     @Override
     public String text() {
-        this.data.addSeenBy(this.bout.getViewer().name());
+        this.data.addSeenBy(this.viewer.name());
         return this.data.getText();
     }
 
@@ -130,7 +124,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Boolean seen() {
-        return this.data.isSeenBy(this.bout.getViewer().name());
+        return this.data.isSeenBy(this.viewer.name());
     }
 
 }

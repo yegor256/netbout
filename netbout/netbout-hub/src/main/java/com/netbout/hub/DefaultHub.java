@@ -27,7 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
-import com.netbout.hub.data.BoutMgr;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
@@ -59,7 +58,7 @@ public final class DefaultHub implements Hub {
      */
     public DefaultHub(final Bus ibus) {
         this.bus = ibus;
-        this.catalog = new Catalog(this.bus);
+        this.catalog = new DefaultCatalog(this.bus);
     }
 
     /**

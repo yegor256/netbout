@@ -27,6 +27,7 @@
 package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
+import com.netbout.hub.ParticipantDt;
 import com.ymock.util.Logger;
 
 /**
@@ -35,7 +36,7 @@ import com.ymock.util.Logger;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ParticipantData {
+final class ParticipantData implements ParticipantDt {
 
     /**
      * Bus to work with.
@@ -63,7 +64,7 @@ public final class ParticipantData {
      * @param num The number
      * @param idnt The identity
      */
-    private ParticipantData(final Bus ibus, final Long num, final String idnt) {
+    public ParticipantData(final Bus ibus, final Long num, final String idnt) {
         this.bus = ibus;
         assert num != null;
         this.bout = num;
@@ -72,37 +73,25 @@ public final class ParticipantData {
     }
 
     /**
-     * Build new object.
-     * @param ibus The bus
-     * @param num The number
-     * @param idnt The identity
-     * @return The object
+     * {@inheritDoc}
      */
-    public static ParticipantData build(final Bus ibus, final Long num,
-        final String idnt) {
-        return new ParticipantData(ibus, num, idnt);
-    }
-
-    /**
-     * Get bout number.
-     * @return The identity
-     */
+    @Override
     public Long getBout() {
         return this.bout;
     }
 
     /**
-     * Get identity.
-     * @return The identity
+     * {@inheritDoc}
      */
+    @Override
     public String getIdentity() {
         return this.identity;
     }
 
     /**
-     * Set status.
-     * @param flag The flag
+     * {@inheritDoc}
      */
+    @Override
     public void setConfirmed(final Boolean flag) {
         this.confirmed = flag;
         this.bus.make("changed-participant-status")
@@ -120,9 +109,9 @@ public final class ParticipantData {
     }
 
     /**
-     * Is it confirmed?
-     * @return The flag
+     * {@inheritDoc}
      */
+    @Override
     public Boolean isConfirmed() {
         if (this.confirmed == null) {
             this.confirmed = this.bus.make("get-participant-status")

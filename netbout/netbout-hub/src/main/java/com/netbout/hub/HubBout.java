@@ -27,9 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
-import com.netbout.hub.data.BoutData;
-import com.netbout.hub.data.MessageData;
-import com.netbout.hub.data.ParticipantData;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -68,7 +65,7 @@ public final class HubBout implements Bout {
     /**
      * The data.
      */
-    private final transient BoutData data;
+    private final transient BoutDt data;
 
     /**
      * Public ctor.
@@ -78,7 +75,7 @@ public final class HubBout implements Bout {
      * @param dat The data
      */
     public HubBout(final Catalog ctlg, final Bus ibus, final Identity idnt,
-        final BoutData dat) {
+        final BoutDt dat) {
         this.catalog = ctlg;
         this.bus = ibus;
         this.viewer = idnt;
@@ -121,9 +118,7 @@ public final class HubBout implements Bout {
         if (!this.confirmed()) {
             throw new IllegalStateException("You can't invite until you join");
         }
-        final ParticipantData dude =
-            ParticipantData.build(this.bus, this.number(), friend.name());
-        this.data.addParticipant(dude);
+        final ParticipantDt dude = this.data.addParticipant(friend.name());
         dude.setConfirmed(false);
         Logger.debug(
             this,
@@ -141,7 +136,7 @@ public final class HubBout implements Bout {
     public Collection<Participant> participants() {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
-        for (ParticipantData dude : this.data.getParticipants()) {
+        for (ParticipantDt dude : this.data.getParticipants()) {
             participants.add(HubParticipant.build(this.catalog, this, dude));
         }
         Logger.debug(
@@ -157,12 +152,12 @@ public final class HubBout implements Bout {
      */
     @Override
     public List<Message> messages(final String query) {
-        final List<MessageData> datas =
-            new ArrayList<MessageData>(this.data.getMessages());
+        final List<MessageDt> datas =
+            new ArrayList<MessageDt>(this.data.getMessages());
         Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
-        for (MessageData msg : datas) {
-            messages.add(HubMessage.build(this.catalog, this, msg));
+        for (MessageDt msg : datas) {
+            messages.add(new HubMessage(this.catalog, this.viewer, this, msg));
         }
         Logger.debug(
             this,
@@ -178,8 +173,9 @@ public final class HubBout implements Bout {
      */
     @Override
     public Message message(final Long num) throws MessageNotFoundException {
-        final Message message = HubMessage.build(
+        final Message message = new HubMessage(
             this.catalog,
+            this.viewer,
             this,
             this.data.findMessage(num)
         );
@@ -199,7 +195,7 @@ public final class HubBout implements Bout {
         if (!this.confirmed()) {
             throw new IllegalStateException("You can't post until you join");
         }
-        final MessageData msg = this.data.addMessage();
+        final MessageDt msg = this.data.addMessage();
         msg.setDate(new Date());
         msg.setAuthor(this.viewer.name());
         msg.setText(text);
@@ -208,7 +204,12 @@ public final class HubBout implements Bout {
             "#post('%s'): message posted",
             text
         );
-        final Message message = HubMessage.build(this.catalog, this, msg);
+        final Message message = new HubMessage(
+            this.catalog,
+            this.viewer,
+            this,
+            msg
+        );
         message.text();
         this.bus.make("notify-bout-participants")
             .inBout(this)
@@ -233,7 +234,7 @@ public final class HubBout implements Bout {
      */
     protected boolean isParticipant(final Identity identity) {
         boolean found = false;
-        for (ParticipantData dude : this.data.getParticipants()) {
+        for (ParticipantDt dude : this.data.getParticipants()) {
             if (dude.getIdentity().equals(identity.name())) {
                 found = true;
                 break;

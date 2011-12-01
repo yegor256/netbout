@@ -27,6 +27,8 @@
 package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
+import com.netbout.hub.BoutMgr;
+import com.netbout.spi.BoutNotFoundException;
 import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +42,7 @@ import org.w3c.dom.Element;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutMgr {
+public final class DefaultBoutMgr implements BoutMgr {
 
     /**
      * All bouts existing in the system.
@@ -57,15 +59,14 @@ public final class BoutMgr {
      * Public ctor.
      * @param ibus The bus
      */
-    public BoutMgr(final Bus ibus) {
+    public DefaultBoutMgr(final Bus ibus) {
         this.bus = ibus;
     }
 
     /**
-     * Create statistics in the given XML document and return their element.
-     * @param doc The document to work in
-     * @return The element just created
+     * {@inheritDoc}
      */
+    @Override
     public Element stats(final Document doc) {
         final Element root = doc.createElement("manager");
         final Element total = doc.createElement("total");
@@ -77,9 +78,9 @@ public final class BoutMgr {
     }
 
     /**
-     * Create new bout.
-     * @return It's number (unique)
+     * {@inheritDoc}
      */
+    @Override
     public Long create() {
         BoutData data;
         synchronized (this.bouts) {
@@ -106,12 +107,10 @@ public final class BoutMgr {
     }
 
     /**
-     * Find and return bout from collection.
-     * @param number Number of the bout
-     * @return The bout found or restored
-     * @throws BoutMissedException If this bout is not found
+     * {@inheritDoc}
      */
-    public BoutData find(final Long number) throws BoutMissedException {
+    @Override
+    public BoutData find(final Long number) throws BoutNotFoundException {
         assert number != null;
         BoutData data;
         if (this.bouts.containsKey(number)) {
@@ -129,7 +128,7 @@ public final class BoutMgr {
                 .asDefault(false)
                 .exec();
             if (!exists) {
-                throw new BoutMissedException(number);
+                throw new BoutNotFoundException(number);
             }
             data = new BoutData(this.bus, number);
             this.bouts.put(number, data);
