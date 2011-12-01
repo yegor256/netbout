@@ -29,68 +29,21 @@
  */
 package com.netbout.spi;
 
-import java.util.Collection;
-import java.util.List;
-
 /**
- * Bout, a conversation room.
+ * Thowable when message is not found.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see Bout#message(Long)
  */
-public interface Bout {
+public final class MessageNotFoundException extends Exception {
 
     /**
-     * Get its unique number.
-     * @return The number of the bout
+     * Public ctor.
+     * @param num Number of it
      */
-    Long number();
-
-    /**
-     * Get its title.
-     * @return The title of the bout
-     */
-    String title();
-
-    /**
-     * Set its title.
-     * @param text The title of the bout
-     */
-    void rename(String text);
-
-    /**
-     * Get all its participants.
-     * @return The list of them
-     */
-    Collection<Participant> participants();
-
-    /**
-     * Invite new participant.
-     * @param identity Identity of the participant
-     * @return This new participant
-     */
-    Participant invite(Identity identity);
-
-    /**
-     * Get ordered list of all messages of the bout.
-     * @param query Search query, if necessary
-     * @return The list of them
-     */
-    List<Message> messages(String query);
-
-    /**
-     * Find message by ID.
-     * @param number Number of the message to get
-     * @return The message
-     * @throws MessageNotFoundException If not found
-     */
-    Message message(Long number) throws MessageNotFoundException;
-
-    /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @return The message just posted
-     */
-    Message post(String text);
+    public MessageNotFoundException(final Long num) {
+        super(String.format("Message #%d not found", num));
+    }
 
 }
