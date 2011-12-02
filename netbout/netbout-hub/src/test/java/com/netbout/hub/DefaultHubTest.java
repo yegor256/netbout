@@ -27,11 +27,19 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
+import java.util.Random;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xmlmatchers.XmlMatchers;
+import org.xmlmatchers.transform.XmlConverters;
 
 /**
  * Test case of {@link DefaultHub}.
@@ -41,31 +49,54 @@ import org.mockito.Mockito;
 public final class DefaultHubTest {
 
     /**
-     * The hub.
-     */
-    private Hub hub;
-
-    /**
-     * Prepare hub.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void prepare() throws Exception {
-        final Bus bus = Mockito.mock(Bus.class);
-        this.hub = new DefaultHub(bus);
-    }
-
-    /**
-     * Find user by name and avoid duplicates.
+     * DefaultHub can create a user by name.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testHubUserByNameFinding() throws Exception {
+    public void createsUserByName() throws Exception {
         final String name = "Chuck Norris";
-        final User user = this.hub.user(name);
+        final Bus bus = new BusMocker().mock();
+        final Hub hub = new DefaultHub(bus);
+        final User user = hub.user(name);
+        MatcherAssert.assertThat(user.name(), Matchers.equalTo(name));
+    }
+
+    /**
+     * DefaultHub produces its statistics as XML element.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void producesStatisticsAsXmlElement() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Hub hub = new DefaultHub(bus);
+        final Document doc = DocumentBuilderFactory
+            .newInstance()
+            .newDocumentBuilder()
+            .newDocument();
+        doc.appendChild(hub.stats(doc));
         MatcherAssert.assertThat(
-            this.hub.user(name),
-            Matchers.equalTo(user)
+            XmlConverters.the(doc),
+            XmlMatchers.hasXPath("/catalog")
+        );
+    }
+
+    /**
+     * DefaultHub can promote identity to helper.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void promotesIdentityToHelper() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Hub hub = new DefaultHub(bus);
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        final User user = hub.user("Billy Bonce");
+        final Identity identity = user.identity(name);
+        final Helper helper = Mockito.mock(Helper.class);
+        Mockito.doReturn(name).when(helper).name();
+        hub.promote(identity, helper);
+        MatcherAssert.assertThat(
+            user.identity(name),
+            Matchers.equalTo((Identity) helper)
         );
     }
 

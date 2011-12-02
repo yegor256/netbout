@@ -108,8 +108,12 @@ final class DefaultCatalog implements Catalog {
         if (this.all.containsKey(name)) {
             identity = this.all.get(name);
         } else {
-            identity =
-                new HubIdentityOrphan(this.bus, this, this.manager, name);
+            identity = new HubIdentityOrphan(
+                this.bus,
+                this,
+                this.manager,
+                name
+            );
             this.save(name, identity);
             Logger.debug(
                 this,
@@ -133,18 +137,41 @@ final class DefaultCatalog implements Catalog {
             if (identity instanceof HubIdentityOrphan) {
                 identity = new HubIdentity(identity, user);
                 this.save(name, identity);
-            } else if (!((HubIdentity) identity).belongsTo(user)) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "Identity '%s' is already taken by '%s'",
-                        name,
-                        identity.user()
-                    )
+                Logger.debug(
+                    this,
+                    "#make('%s', '%s'): orphan found his home",
+                    name,
+                    user.name()
+                );
+            } else if (identity instanceof HubIdentity) {
+                if (!((HubIdentity) identity).belongsTo(user)) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Identity '%s' is already taken by '%s'",
+                            name,
+                            identity.user()
+                        )
+                    );
+                }
+            } else {
+                identity = new HubIdentity(identity, user);
+                this.save(name, identity);
+                Logger.debug(
+                    this,
+                    "#make('%s', '%s'): stranger was addopted",
+                    name,
+                    user.name()
                 );
             }
         } else {
             identity = new HubIdentity(this.make(name), user);
             this.save(name, identity);
+            Logger.debug(
+                this,
+                "#make('%s', '%s'): new child was born",
+                name,
+                user.name()
+            );
         }
         return identity;
     }
