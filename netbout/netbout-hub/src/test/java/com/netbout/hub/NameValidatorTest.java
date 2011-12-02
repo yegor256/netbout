@@ -47,9 +47,8 @@ public final class NameValidatorTest {
     @Test
     public void asksBusAboutPossibilityToNotifyIdentity() throws Exception {
         final Bus bus = new BusMocker()
-            .expecting("can-notify-identity")
-            .returning(true)
-            .build();
+            .doReturn(true, "can-notify-identity")
+            .mock();
         final NameValidator validator = new NameValidator(bus);
         final String name = "test@example.com";
         MatcherAssert.assertThat(
@@ -67,9 +66,8 @@ public final class NameValidatorTest {
     @Test(expected = com.netbout.spi.UnreachableIdentityException.class)
     public void asksBusAboutPossibilityAndThrowsException() throws Exception {
         final Bus bus = new BusMocker()
-            .expecting("can-notify-identity")
-            .returning(false)
-            .build();
+            .doReturn(false, "can-notify-identity")
+            .mock();
         final NameValidator validator = new NameValidator(bus);
         final String name = "some-strange-identity-name";
         validator.ifValid(name);

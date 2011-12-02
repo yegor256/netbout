@@ -54,7 +54,7 @@ public interface BoutDt {
      * Set title.
      * @param text The title
      */
-    void setTitle(final String text);
+    void setTitle(String text);
 
     /**
      * Add new participant.

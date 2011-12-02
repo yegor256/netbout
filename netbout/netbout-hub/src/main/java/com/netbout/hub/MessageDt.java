@@ -70,7 +70,7 @@ public interface MessageDt extends Comparable<MessageDt> {
      * Set text.
      * @param txt The text
      */
-    void setText(final String txt);
+    void setText(String txt);
 
     /**
      * Get text.

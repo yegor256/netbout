@@ -26,33 +26,46 @@
  */
 package com.netbout.hub;
 
+import com.netbout.bus.Bus;
 import com.netbout.spi.Identity;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xmlmatchers.XmlMatchers;
+import org.xmlmatchers.transform.XmlConverters;
 
 /**
- * Test case of {@link Catalog}.
+ * Test case of {@link DefaultCatalog}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CatalogTest {
+public final class DefaultCatalogTest {
 
-    // /**
-    //  * Manipulate with aliases.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void testAliasesManipulations() throws Exception {
-    //     final Identity identity = HubEntry.user("Matt").identity("9943");
-    //     final String alias = "mat@example.com";
-    //     identity.alias(alias);
-    //     identity.alias("matthew.gilbert@example.com");
-    //     MatcherAssert.assertThat(
-    //         Identities.findByKeyword("mat").size(),
-    //         Matchers.greaterThan(0)
-    //     );
-    // }
+    /**
+     * Catalog produces its statistics as XML element.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void producesStatisticsAsXmlElement() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        final Document doc = DocumentBuilderFactory
+            .newInstance()
+            .newDocumentBuilder()
+            .newDocument();
+        doc.appendChild(catalog.stats(doc));
+        MatcherAssert.assertThat(
+            XmlConverters.the(doc),
+            XmlMatchers.hasXPath("/catalog/identities")
+        );
+    }
 
     // /**
     //  * Make reachable identity.

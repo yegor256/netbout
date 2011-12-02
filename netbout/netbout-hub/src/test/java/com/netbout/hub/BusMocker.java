@@ -28,6 +28,8 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.TxBuilder;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
 
 /**
@@ -40,28 +42,15 @@ public final class BusMocker {
     /**
      * Mnemo of TxBuilder.
      */
-    private transient String mnemo;
-
-    /**
-     * Returning value.
-     */
-    private transient Object value;
+    private transient ConcurrentMap<String, Object> matchers =
+        new ConcurrentHashMap<String, Object>();
 
     /**
      * Expecting this mnemo.
      * @param name The mnemo name
      */
-    public BusMocker expecting(final String name) {
-        this.mnemo = name;
-        return this;
-    }
-
-    /**
-     * Returning value.
-     * @param val The value
-     */
-    public BusMocker returning(final Object val) {
-        this.value = val;
+    public BusMocker doReturn(final Object val, final String mnemo) {
+        this.matchers.put(mnemo, val);
         return this;
     }
 
@@ -69,15 +58,19 @@ public final class BusMocker {
      * Build it.
      * @return The bus
      */
-    public Bus build() {
-        final TxBuilder builder = Mockito.mock(TxBuilder.class);
-        Mockito.doReturn(builder).when(builder).synchronously();
-        Mockito.doReturn(builder).when(builder).asap();
-        Mockito.doReturn(builder).when(builder).arg(Mockito.anyObject());
-        Mockito.doReturn(builder).when(builder).asDefault(Mockito.anyObject());
-        Mockito.doReturn(this.value).when(builder).exec();
+    public Bus mock() {
         final Bus bus = Mockito.mock(Bus.class);
-        Mockito.doReturn(builder).when(bus).make(this.mnemo);
+        for (ConcurrentMap.Entry<String, Object> entry
+            : this.matchers.entrySet()) {
+            final TxBuilder builder = Mockito.mock(TxBuilder.class);
+            Mockito.doReturn(builder).when(builder).synchronously();
+            Mockito.doReturn(builder).when(builder).asap();
+            Mockito.doReturn(builder).when(builder).arg(Mockito.anyObject());
+            Mockito.doReturn(builder).when(builder)
+                .asDefault(Mockito.anyObject());
+            Mockito.doReturn(entry.getValue()).when(builder).exec();
+            Mockito.doReturn(builder).when(bus).make(entry.getKey());
+        }
         return bus;
     }
 
