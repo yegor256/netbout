@@ -26,11 +26,17 @@
  */
 package com.netbout.hub.hh;
 
+import com.netbout.hub.DefaultHub;
+import com.netbout.hub.Hub;
+import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
 import com.netbout.spi.Identity;
 import com.rexsl.test.XhtmlConverter;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.w3c.dom.Document;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
@@ -41,42 +47,44 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext;
  */
 public final class StatsFarmTest {
 
-    // /**
-    //  * Farm renders stage XML.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void rendersStageXml() throws Exception {
-    //     final StatsFarm farm = new StatsFarm();
-    //     final Identity identity = Mockito.mock(Identity.class);
-    //     Mockito.doReturn("some-name").when(identity).name();
-    //     farm.init(identity);
-    //     final String xml = farm.renderStageXml(1L, identity.name(), "");
-    //     MatcherAssert.assertThat(
-    //         XhtmlConverter.the(xml),
-    //         XmlMatchers.hasXPath("/data/identities")
-    //     );
-    // }
-    //
-    // /**
-    //  * Render XSL.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void testRenderingOfXslStylesheet() throws Exception {
-    //     final StatsFarm farm = new StatsFarm();
-    //     final Identity identity = Mockito.mock(Identity.class);
-    //     Mockito.doReturn("stage-1").when(identity).name();
-    //     farm.init(identity);
-    //     final String xsl = farm.renderStageXsl(1L, identity.name());
-    //     MatcherAssert.assertThat(
-    //         XhtmlConverter.the(xsl),
-    //         XmlMatchers.hasXPath(
-    //             "/xsl:stylesheet",
-    //             new SimpleNamespaceContext()
-    //                 .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
-    //         )
-    //     );
-    // }
+    /**
+     * Farm renders stage XML.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void rendersStageXml() throws Exception {
+        final StatsFarm farm = new StatsFarm();
+        final Bus bus = new BusMocker().mock();
+        farm.context(new DefaultHub(bus));
+        final Identity identity = Mockito.mock(Identity.class);
+        Mockito.doReturn("some-name").when(identity).name();
+        farm.init(identity);
+        final String xml = farm.renderStageXml(1L, identity.name(), "");
+        MatcherAssert.assertThat(
+            XhtmlConverter.the(xml),
+            XmlMatchers.hasXPath("/catalog/identities")
+        );
+    }
+
+    /**
+     * Render XSL.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testRenderingOfXslStylesheet() throws Exception {
+        final StatsFarm farm = new StatsFarm();
+        final Identity identity = Mockito.mock(Identity.class);
+        Mockito.doReturn("stage-1").when(identity).name();
+        farm.init(identity);
+        final String xsl = farm.renderStageXsl(1L, identity.name());
+        MatcherAssert.assertThat(
+            XhtmlConverter.the(xsl),
+            XmlMatchers.hasXPath(
+                "/xsl:stylesheet",
+                new SimpleNamespaceContext()
+                    .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
+            )
+        );
+    }
 
 }
