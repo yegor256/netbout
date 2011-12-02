@@ -78,7 +78,7 @@ public interface TxBuilder {
 
     /**
      * Set preliminary value to return (when transaction is not completed yet).
-     * @param val The value
+     * @param value The value
      * @return This object
      */
     TxBuilder asPreliminary(Object value);

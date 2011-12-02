@@ -29,7 +29,6 @@ package com.netbout.bus.attrs;
 import com.netbout.bus.TxAttribute;
 import com.netbout.bus.TxWithDefault;
 import com.netbout.spi.Plain;
-import com.netbout.spi.plain.PlainVoid;
 
 /**
  * As-default attribute.

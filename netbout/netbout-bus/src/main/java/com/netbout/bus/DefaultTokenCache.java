@@ -45,7 +45,7 @@ final class DefaultTokenCache implements TokenCache {
      * Cached values.
      */
     private final transient ConcurrentMap<Token, Plain<?>> cache =
-         new ConcurrentHashMap<Token, Plain<?>>();
+        new ConcurrentHashMap<Token, Plain<?>>();
 
     /**
      * {@inheritDoc}

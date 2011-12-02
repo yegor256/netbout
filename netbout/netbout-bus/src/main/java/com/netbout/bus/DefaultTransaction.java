@@ -63,7 +63,7 @@ final class DefaultTransaction implements Transaction {
      * Public ctor.
      * @param mnemo Mnemo-code of the request
      * @param arguments The arguments
-     * @param config List of attributes
+     * @param attrs List of attributes
      */
     public DefaultTransaction(final String mnemo,
         final List<Plain<?>> arguments, final TxAttributes attrs) {

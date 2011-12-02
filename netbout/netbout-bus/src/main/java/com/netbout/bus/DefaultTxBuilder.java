@@ -158,7 +158,7 @@ final class DefaultTxBuilder implements TxBuilder {
      * {@inheritDoc}
      */
     @Override
-    public TxBuilder expire(String regex) {
+    public TxBuilder expire(final String regex) {
         this.attributes
             .get(CacheAttr.class)
             .expireByPattern(Pattern.compile(regex));

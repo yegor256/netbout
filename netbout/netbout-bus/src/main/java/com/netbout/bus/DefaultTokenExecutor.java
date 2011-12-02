@@ -46,7 +46,8 @@ final class DefaultTokenExecutor implements TokenExecutor {
     /**
      * List of registered helpers.
      */
-    private final Set<Helper> helpers = new CopyOnWriteArraySet<Helper>();
+    private final transient Set<Helper> helpers =
+        new CopyOnWriteArraySet<Helper>();
 
     /**
      * {@inheritDoc}

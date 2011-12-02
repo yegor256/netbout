@@ -40,15 +40,25 @@ public final class PriorityAttr implements TxAttribute {
      * Priorities.
      */
     public static enum Priority {
+        /**
+         * Synchronously.
+         */
         SYNC,
+        /**
+         * As soon as possible.
+         */
         ASAP,
+        /**
+         * Some time later.
+         */
         NORMAL,
     }
 
     /**
      * The priority.
      */
-    private transient Priority priority = Priority.NORMAL;
+    private transient PriorityAttr.Priority priority =
+        PriorityAttr.Priority.NORMAL;
 
     /**
      * Set priority.

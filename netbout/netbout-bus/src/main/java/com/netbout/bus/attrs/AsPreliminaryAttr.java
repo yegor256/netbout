@@ -27,6 +27,7 @@
 package com.netbout.bus.attrs;
 
 import com.netbout.bus.TxAttribute;
+import com.netbout.bus.TxWithPreliminary;
 import com.netbout.spi.Plain;
 
 /**
@@ -35,7 +36,7 @@ import com.netbout.spi.Plain;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AsPreliminaryAttr implements TxAttribute {
+public final class AsPreliminaryAttr implements TxAttribute, TxWithPreliminary {
 
     /**
      * The value.
@@ -50,6 +51,17 @@ public final class AsPreliminaryAttr implements TxAttribute {
     public AsPreliminaryAttr withValue(final Plain<?> val) {
         this.value = val;
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Plain<?> getPreliminaryValue() {
+        if (this.value == null) {
+            throw new IllegalStateException("Preliminary value is not set");
+        }
+        return this.value;
     }
 
 }

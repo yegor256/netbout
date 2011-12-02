@@ -28,6 +28,7 @@ package com.netbout.bus.attrs;
 
 import com.netbout.bus.TxAttribute;
 import com.netbout.bus.TxProgress;
+import com.netbout.bus.TxWithProgress;
 
 /**
  * Progress attribute.
@@ -35,7 +36,7 @@ import com.netbout.bus.TxProgress;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ProgressAttr implements TxAttribute {
+public final class ProgressAttr implements TxAttribute, TxWithProgress {
 
     /**
      * The progress bar.
@@ -50,6 +51,14 @@ public final class ProgressAttr implements TxAttribute {
     public ProgressAttr withProgress(final TxProgress prgs) {
         this.progress = prgs;
         return this;
+    }
+
+    /**
+     * Get progress tracker.
+     * @return The progress.
+     */
+    public TxProgress getProgress() {
+        return this.progress;
     }
 
 }

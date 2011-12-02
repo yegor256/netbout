@@ -26,51 +26,20 @@
  */
 package com.netbout.bus;
 
-import com.ymock.util.Logger;
-import java.util.Queue;
-import java.util.concurrent.SynchronousQueue;
+import com.netbout.spi.Plain;
 
 /**
- * Default queue.
+ * Transaction that has preliminary value.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class DefaultTxQueue implements TxQueue {
+public interface TxWithPreliminary {
 
     /**
-     * The queue.
+     * Get default result to return.
+     * @return The result
      */
-    private final transient Queue<Transaction> queue =
-        new SynchronousQueue<Transaction>();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void push(final Transaction trans) {
-        this.queue.add(trans);
-        Logger.debug(
-            this,
-            "#push(%s): added to queue (%d position)",
-            trans,
-            this.queue.size()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Transaction pop() {
-        final Transaction trans = this.queue.remove();
-        Logger.debug(
-            this,
-            "#pop(): %s returned from queue (%d still there)",
-            trans,
-            this.queue.size()
-        );
-        return trans;
-    }
+    Plain<?> getPreliminaryValue();
 
 }

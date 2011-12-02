@@ -28,7 +28,6 @@ package com.netbout.bus;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
-import com.netbout.spi.Token;
 
 /**
  * Executor of a token.

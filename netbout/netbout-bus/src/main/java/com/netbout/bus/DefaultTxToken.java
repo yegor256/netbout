@@ -59,7 +59,6 @@ final class DefaultTxToken implements TxToken {
      * Public ctor.
      * @param mnemo Mnemo-code of the request
      * @param arguments The arguments
-     * @param config List of attributes
      */
     public DefaultTxToken(final String mnemo, final List<Plain<?>> arguments) {
         this.imnemo = mnemo;
@@ -76,6 +75,15 @@ final class DefaultTxToken implements TxToken {
             this.mnemo(),
             StringUtils.join(this.args, ")(")
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof TxToken)
+            && this.hashCode() == obj.hashCode();
     }
 
     /**

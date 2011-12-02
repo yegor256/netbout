@@ -40,14 +40,17 @@ final class TxAttributes {
     /**
      * List of attributes.
      */
-    private final transient ConcurrentMap<Class<? extends TxAttribute>, TxAttribute> attrs =
+    private final transient
+    ConcurrentMap<Class<? extends TxAttribute>, TxAttribute> attrs =
         new ConcurrentHashMap<Class<? extends TxAttribute>, TxAttribute>();
 
     /**
      * Get one attribute.
      * @param type The type of attribute to get
+     * @param <T> Type of return
+     * @return The attribute just found
      */
-    public <T extends TxAttribute> T get(Class<T> type) {
+    public <T extends TxAttribute> T get(final Class<T> type) {
         if (!this.attrs.containsKey(type)) {
             try {
                 this.attrs.put(type, type.newInstance());

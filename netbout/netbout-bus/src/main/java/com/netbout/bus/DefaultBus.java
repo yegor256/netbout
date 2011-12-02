@@ -39,7 +39,7 @@ public final class DefaultBus implements Bus {
     /**
      * Transaction controller.
      */
-    private final TxController controller = new DefaultTxController(
+    private final transient TxController controller = new DefaultTxController(
         new DefaultTxQueue(),
         new DefaultTokenCache()
     );

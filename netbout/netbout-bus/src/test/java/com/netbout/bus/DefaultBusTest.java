@@ -45,7 +45,7 @@ public final class DefaultBusTest {
     /**
      * The bus.
      */
-    private final Bus bus = new DefaultBus();
+    private final transient Bus bus = new DefaultBus();
 
     /**
      * Register new helper.

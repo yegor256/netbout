@@ -40,17 +40,18 @@ final class DefaultTxController implements TxController {
     /**
      * Token executor.
      */
-    private final TokenExecutor executor = new DefaultTokenExecutor();
+    private final transient TokenExecutor executor = new DefaultTokenExecutor();
 
     /**
      * Transaction queue.
      */
-    private final TxQueue queue;
+    @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
+    private final transient TxQueue queue;
 
     /**
      * Token cache.
      */
-    private final TokenCache cache;
+    private final transient TokenCache cache;
 
     /**
      * Public ctor.
@@ -86,7 +87,7 @@ final class DefaultTxController implements TxController {
                 this.cache.save(token, result);
             }
         }
-        this.clearCache(trans, token);
+        this.clearCacheAfter(trans);
         return result;
     }
 
@@ -114,9 +115,8 @@ final class DefaultTxController implements TxController {
     /**
      * Clear cache after execution, if necessary.
      * @param trans The transaction
-     * @param token The token
      */
-    private void clearCache(final Transaction trans, final TxToken token) {
+    private void clearCacheAfter(final Transaction trans) {
         if (trans.hasToExpireOthers()) {
             this.cache.delete(trans.getExpirePattern());
         }
