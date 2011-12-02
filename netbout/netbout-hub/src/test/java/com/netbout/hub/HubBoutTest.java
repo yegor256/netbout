@@ -26,10 +26,14 @@
  */
 package com.netbout.hub;
 
+import com.netbout.bus.Bus;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link HubBout}.
@@ -38,36 +42,47 @@ import org.junit.Test;
  */
 public final class HubBoutTest {
 
-    // /**
-    //  * Bout number persistence.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void testPersistenceOfBoutNumber() throws Exception {
-    //     final Identity identity =
-    //         HubEntry.user("Robert DeNiro").identity("9932");
-    //     final Long number = identity.start().number();
-    //     MatcherAssert.assertThat(
-    //         identity.bout(number).number(),
-    //         Matchers.equalTo(number)
-    //     );
-    // }
-    //
-    // /**
-    //  * Rename bout.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void testRenameOperation() throws Exception {
-    //     final Identity identity =
-    //         HubEntry.user("Al Capone").identity("9322");
-    //     final Long number = identity.start().number();
-    //     final String title = "hello, world!";
-    //     identity.bout(number).rename(title);
-    //     MatcherAssert.assertThat(
-    //         identity.bout(number).title(),
-    //         Matchers.equalTo(title)
-    //     );
-    // }
+    /**
+     * HubBout can "wrap" BoutDt class.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void wrapsBoutDtDataProperties() throws Exception {
+        final Catalog catalog = Mockito.mock(Catalog.class);
+        final Bus bus = new BusMocker().mock();
+        final Identity viewer = Mockito.mock(Identity.class);
+        final BoutDt data = new BoutDtMocker().mock();
+        final Bout bout = new HubBout(catalog, bus, viewer, data);
+        bout.number();
+        Mockito.verify(data).getNumber();
+        bout.title();
+        Mockito.verify(data).getTitle();
+    }
+
+    /**
+     * HubBout can "wrap" BoutDt renaminng mechanism.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void wrapsBoutRenamingMechanism() throws Exception {
+        final Catalog catalog = Mockito.mock(Catalog.class);
+        final Bus bus = new BusMocker().mock();
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        final Identity viewer = Mockito.mock(Identity.class);
+        Mockito.doReturn(name).when(viewer).name();
+        Mockito.doReturn(viewer).when(catalog).make(name);
+        final BoutDt data = new BoutDtMocker()
+            .withParticipant(
+                new ParticipantDtMocker()
+                    .withIdentity(viewer.name())
+                    .confirmed()
+                    .mock()
+            )
+            .mock();
+        final Bout bout = new HubBout(catalog, bus, viewer, data);
+        final String title = "some title, no matter which one..";
+        bout.rename(title);
+        Mockito.verify(data).setTitle(title);
+    }
 
 }

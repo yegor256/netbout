@@ -26,40 +26,59 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.bus.Bus;
+import com.netbout.bus.TxBuilder;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link HubMessage}.
+ * Mocker of {@link ParticipantDt}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubMessageTest {
+public final class ParticipantDtMocker {
 
     /**
-     * HubMessage can "wrap" MessageDt class.
-     * @throws Exception If there is some problem inside
+     * The object.
      */
-    @Test
-    public void wrapsMessageDtDataProperties() throws Exception {
-        final Catalog catalog = Mockito.mock(Catalog.class);
-        final Identity viewer = Mockito.mock(Identity.class);
-        final Bout bout = Mockito.mock(Bout.class);
-        final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(catalog, viewer, bout, data);
-        msg.number();
-        Mockito.verify(data).getNumber();
-        msg.author();
-        Mockito.verify(data).getAuthor();
-        msg.text();
-        Mockito.verify(data).getText();
-        msg.date();
-        Mockito.verify(data).getDate();
+    private final ParticipantDt participant = Mockito.mock(ParticipantDt.class);
+
+    /**
+     * With this number of bout.
+     * @param bout The bout number
+     * @return This object
+     */
+    public ParticipantDtMocker withBout(final Long bout) {
+        Mockito.doReturn(bout).when(this.participant).getBout();
+        return this;
+    }
+
+    /**
+     * With this identity name.
+     * @param identity The name
+     * @return This object
+     */
+    public ParticipantDtMocker withIdentity(final String identity) {
+        Mockito.doReturn(identity).when(this.participant).getIdentity();
+        return this;
+    }
+
+    /**
+     * Should be confirmed.
+     * @return This object
+     */
+    public ParticipantDtMocker confirmed() {
+        Mockito.doReturn(true).when(this.participant).isConfirmed();
+        return this;
+    }
+
+    /**
+     * Build it.
+     * @return The participant data type
+     */
+    public ParticipantDt mock() {
+        return this.participant;
     }
 
 }

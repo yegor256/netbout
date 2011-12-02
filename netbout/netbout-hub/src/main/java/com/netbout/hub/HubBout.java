@@ -126,7 +126,7 @@ public final class HubBout implements Bout {
             friend
         );
         friend.invited(this);
-        return HubParticipant.build(this.catalog, this, dude);
+        return new HubParticipant(this.catalog, this, dude);
     }
 
     /**
@@ -137,12 +137,13 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantDt dude : this.data.getParticipants()) {
-            participants.add(HubParticipant.build(this.catalog, this, dude));
+            participants.add(new HubParticipant(this.catalog, this, dude));
         }
         Logger.debug(
             this,
-            "#participants(): %d participants found",
-            participants.size()
+            "#participants(): %d participant(s) found in bout #%d",
+            participants.size(),
+            this.number()
         );
         return participants;
     }
@@ -161,7 +162,7 @@ public final class HubBout implements Bout {
         }
         Logger.debug(
             this,
-            "#messages('%s'): %d messages found",
+            "#messages('%s'): %d message(s) found",
             query,
             messages.size()
         );
@@ -217,30 +218,6 @@ public final class HubBout implements Bout {
             .arg(message.number())
             .exec();
         return message;
-    }
-
-    /**
-     * Who is viewing?
-     * @return The identity
-     */
-    protected Identity getViewer() {
-        return this.viewer;
-    }
-
-    /**
-     * This identity is a participant here?
-     * @param identity The identity
-     * @return Is it?
-     */
-    protected boolean isParticipant(final Identity identity) {
-        boolean found = false;
-        for (ParticipantDt dude : this.data.getParticipants()) {
-            if (dude.getIdentity().equals(identity.name())) {
-                found = true;
-                break;
-            }
-        }
-        return found;
     }
 
     /**

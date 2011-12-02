@@ -26,40 +26,47 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.bus.Bus;
+import com.netbout.bus.TxBuilder;
+import java.util.Collection;
+import java.util.ArrayList;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link HubMessage}.
+ * Mocker of {@link BoutDt}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubMessageTest {
+public final class BoutDtMocker {
 
     /**
-     * HubMessage can "wrap" MessageDt class.
-     * @throws Exception If there is some problem inside
+     * The object.
      */
-    @Test
-    public void wrapsMessageDtDataProperties() throws Exception {
-        final Catalog catalog = Mockito.mock(Catalog.class);
-        final Identity viewer = Mockito.mock(Identity.class);
-        final Bout bout = Mockito.mock(Bout.class);
-        final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(catalog, viewer, bout, data);
-        msg.number();
-        Mockito.verify(data).getNumber();
-        msg.author();
-        Mockito.verify(data).getAuthor();
-        msg.text();
-        Mockito.verify(data).getText();
-        msg.date();
-        Mockito.verify(data).getDate();
+    private final transient BoutDt bout = Mockito.mock(BoutDt.class);
+
+    /**
+     * Participants.
+     */
+    private final transient Collection<ParticipantDt> participants =
+        new ArrayList<ParticipantDt>();
+
+    /**
+     * With this participant on board.
+     * @param identity The participant
+     * @return This object
+     */
+    public BoutDtMocker withParticipant(final ParticipantDt participant) {
+        this.participants.add(participant);
+        return this;
+    }
+
+    /**
+     * Build it.
+     * @return The bout
+     */
+    public BoutDt mock() {
+        Mockito.doReturn(this.participants).when(this.bout).getParticipants();
+        return this.bout;
     }
 
 }

@@ -59,23 +59,11 @@ public final class HubParticipant implements Participant {
      * @param bot The bout
      * @param dat The data
      */
-    private HubParticipant(final Catalog ctlg, final Bout bot,
+    public HubParticipant(final Catalog ctlg, final Bout bot,
         final ParticipantDt dat) {
         this.catalog = ctlg;
         this.bout = bot;
         this.data = dat;
-    }
-
-    /**
-     * Build new object.
-     * @param ctlg The catalog
-     * @param bot The bout
-     * @param dat The data
-     * @return The object just built
-     */
-    public static HubParticipant build(final Catalog ctlg, final Bout bot,
-        final ParticipantDt dat) {
-        return new HubParticipant(ctlg, bot, dat);
     }
 
     /**
