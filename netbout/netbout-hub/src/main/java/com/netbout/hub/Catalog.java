@@ -49,6 +49,14 @@ interface Catalog {
     Element stats(final Document doc);
 
     /**
+     * Make new identity or find existing one.
+     * @param name The name of identity
+     * @return Identity found
+     * @throws UnreachableIdentityException If can't reach it by name
+     */
+    Identity make(String name) throws UnreachableIdentityException;
+
+    /**
      * Make new identity for the specified user, or find existing one and
      * assign to this user.
      * @param name The name of identity
@@ -57,14 +65,6 @@ interface Catalog {
      * @throws UnreachableIdentityException If can't reach it by name
      */
     Identity make(String name, User user) throws UnreachableIdentityException;
-
-    /**
-     * Make new identity or find existing one.
-     * @param name The name of identity
-     * @return Identity found
-     * @throws UnreachableIdentityException If can't reach it by name
-     */
-    Identity make(String name) throws UnreachableIdentityException;
 
     /**
      * Promote existing identity to the helper.

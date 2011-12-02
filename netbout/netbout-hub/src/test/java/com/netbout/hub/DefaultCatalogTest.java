@@ -28,6 +28,9 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.spi.Identity;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -36,6 +39,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xmlmatchers.XmlMatchers;
@@ -56,6 +60,8 @@ public final class DefaultCatalogTest {
     public void producesStatisticsAsXmlElement() throws Exception {
         final Bus bus = new BusMocker().mock();
         final Catalog catalog = new DefaultCatalog(bus);
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        catalog.make(name);
         final Document doc = DocumentBuilderFactory
             .newInstance()
             .newDocumentBuilder()
@@ -63,28 +69,146 @@ public final class DefaultCatalogTest {
         doc.appendChild(catalog.stats(doc));
         MatcherAssert.assertThat(
             XmlConverters.the(doc),
-            XmlMatchers.hasXPath("/catalog/identities")
+            XmlMatchers.hasXPath(
+                String.format("/catalog/identities/identity[.='%s']", name)
+            )
         );
     }
 
-    // /**
-    //  * Make reachable identity.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void makesReachableIdentity() throws Exception {
-    //     final String name = "66632";
-    //     final Identity reachable = catalog.make(name);
-    //     MatcherAssert.assertThat(reachable.name(), Matchers.equalTo(name));
-    // }
-    //
-    // /**
-    //  * Make un-reachable identities.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test(expected = IllegalArgumentException.class)
-    // public void testMakingOfUnReachableIdentities() throws Exception {
-    //     Identities.make("john");
-    // }
+    /**
+     * Catalog can make an identity just by name.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void makesIdentityWithoutAnyUser() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        final Identity identity = catalog.make(name);
+        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    }
+
+    /**
+     * Catalog can convert anonymous identity to the proper one on demand.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsAnonymousIdentityToProperOne() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        final Identity anonymous = catalog.make(name);
+        final User user = new User(catalog, "Billy Bonce");
+        final Identity proper = catalog.make(name, user);
+        MatcherAssert.assertThat(anonymous, Matchers.equalTo(proper));
+    }
+
+    /**
+     * Catalog protects itself from duplicate assignment of the same identity
+     * to two different users.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void avoidsDuplicateAssignmentOfIdentityToUsers() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        final User first = new User(catalog, "Jack Sparrow");
+        final User second = new User(catalog, "John Silver");
+        catalog.make(name, first);
+        catalog.make(name, second);
+    }
+
+    /**
+     * Catalog returns the same identity on similar requests.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void doesntDuplicateIdentities() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        final Identity first = catalog.make(name);
+        MatcherAssert.assertThat(catalog.make(name), Matchers.equalTo(first));
+    }
+
+    /**
+     * Catalog informs bus on every identity being mentioned, just once.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void informsBusAboutIdentityBeingMentioned() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        catalog.make(name);
+        catalog.make(name);
+        Mockito.verify(bus, Mockito.times(1)).make("identity-mentioned");
+    }
+
+    /**
+     * Catalog checks identity name and throws exception if it's unreachable.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = com.netbout.spi.UnreachableIdentityException.class)
+    public void doesntAllowUnreachableIdentities() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        final String name = "Bill Gates";
+        catalog.make(name);
+    }
+
+    /**
+     * Catalog checks identity name and throws exception if it's unreachable.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void canBeExtendedByHelpersForReachabilityCheck() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(true, "can-notify-identity")
+            .mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        final String name = "funny-name-that-is-reachable";
+        catalog.make(name);
+    }
+
+    /**
+     * Catalog can find identities in pool when they are there.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsIdentitiesByNameWhenTheyExist() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "find-identities-by-keyword")
+            .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
+            .mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        final Identity identity = catalog.make(name);
+        MatcherAssert.assertThat(
+            catalog.findByKeyword(name),
+            Matchers.hasItem(identity)
+        );
+    }
+
+    /**
+     * Catalog can find identities even if they are not in memory, but
+     * provided by helper.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsIdentitiesThroughHelper() throws Exception {
+        final List<String> names = new ArrayList<String>();
+        final String name = String.valueOf(Math.abs(new Random().nextLong()));
+        names.add(name);
+        final Bus bus = new BusMocker()
+            .doReturn(names, "find-identities-by-keyword")
+            .mock();
+        final Catalog catalog = new DefaultCatalog(bus);
+        MatcherAssert.assertThat(
+            catalog.findByKeyword(name).iterator().next().name(),
+            Matchers.equalTo(name)
+        );
+    }
 
 }

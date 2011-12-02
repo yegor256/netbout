@@ -102,6 +102,29 @@ final class DefaultCatalog implements Catalog {
      * {@inheritDoc}
      */
     @Override
+    public Identity make(final String name)
+        throws UnreachableIdentityException {
+        Identity identity;
+        if (this.all.containsKey(name)) {
+            identity = this.all.get(name);
+        } else {
+            identity =
+                new HubIdentityOrphan(this.bus, this, this.manager, name);
+            this.save(name, identity);
+            Logger.debug(
+                this,
+                "#make('%s'): created just by name (%d total)",
+                name,
+                this.all.size()
+            );
+        }
+        return identity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Identity make(final String name, final User user)
         throws UnreachableIdentityException {
         Identity identity;
@@ -122,29 +145,6 @@ final class DefaultCatalog implements Catalog {
         } else {
             identity = new HubIdentity(this.make(name), user);
             this.save(name, identity);
-        }
-        return identity;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity make(final String name)
-        throws UnreachableIdentityException {
-        Identity identity;
-        if (this.all.containsKey(name)) {
-            identity = this.all.get(name);
-        } else {
-            identity =
-                new HubIdentityOrphan(this.bus, this, this.manager, name);
-            this.save(name, identity);
-            Logger.debug(
-                this,
-                "#make('%s'): created just by name (%d total)",
-                name,
-                this.all.size()
-            );
         }
         return identity;
     }

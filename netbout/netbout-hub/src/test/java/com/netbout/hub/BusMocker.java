@@ -60,18 +60,29 @@ public final class BusMocker {
      */
     public Bus mock() {
         final Bus bus = Mockito.mock(Bus.class);
+        final TxBuilder generic = this.builder();
+        Mockito.doReturn(false).when(generic).exec();
+        Mockito.doReturn(generic).when(bus).make(Mockito.anyString());
         for (ConcurrentMap.Entry<String, Object> entry
             : this.matchers.entrySet()) {
-            final TxBuilder builder = Mockito.mock(TxBuilder.class);
-            Mockito.doReturn(builder).when(builder).synchronously();
-            Mockito.doReturn(builder).when(builder).asap();
-            Mockito.doReturn(builder).when(builder).arg(Mockito.anyObject());
-            Mockito.doReturn(builder).when(builder)
-                .asDefault(Mockito.anyObject());
+            final TxBuilder builder = this.builder();
             Mockito.doReturn(entry.getValue()).when(builder).exec();
             Mockito.doReturn(builder).when(bus).make(entry.getKey());
         }
         return bus;
+    }
+
+    /**
+     * Create TxBuilder.
+     * @return The builder
+     */
+    private TxBuilder builder() {
+        final TxBuilder builder = Mockito.mock(TxBuilder.class);
+        Mockito.doReturn(builder).when(builder).synchronously();
+        Mockito.doReturn(builder).when(builder).asap();
+        Mockito.doReturn(builder).when(builder).arg(Mockito.anyObject());
+        Mockito.doReturn(builder).when(builder).asDefault(Mockito.anyObject());
+        return builder;
     }
 
 }

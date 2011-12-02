@@ -51,6 +51,11 @@ public final class UserTest {
         final User userA = new User(catalog, name);
         final User userB = new User(catalog, name);
         MatcherAssert.assertThat(userA, Matchers.equalTo(userB));
+        MatcherAssert.assertThat(userA.equals(name), Matchers.is(false));
+        MatcherAssert.assertThat(
+            userA.hashCode(),
+            Matchers.equalTo(userB.hashCode())
+        );
     }
 
     /**

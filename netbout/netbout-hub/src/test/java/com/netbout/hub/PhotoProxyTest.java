@@ -48,7 +48,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public final class PhotoProxyTest {
 
     /**
-     * URL is broken and provided as a URL, the proxy normalizes it.
+     * PhotoProxy can normalize broken URL provided as a string.
      * @throws Exception If there is some problem inside
      */
     @Test
