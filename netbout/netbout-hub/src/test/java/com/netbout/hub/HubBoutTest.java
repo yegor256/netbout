@@ -32,6 +32,7 @@ import com.netbout.spi.Identity;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -43,16 +44,51 @@ import org.mockito.Mockito;
 public final class HubBoutTest {
 
     /**
+     * Name of viewer.
+     */
+    private final String name =
+        String.valueOf(Math.abs(new Random().nextLong()));
+
+    /**
+     * The viewer.
+     */
+    private final Identity viewer = Mockito.mock(Identity.class);
+
+    /**
+     * The bout data type to work with.
+     */
+    private final BoutDtMocker boutDtMocker = new BoutDtMocker();
+
+    /**
+     * The catalog.
+     */
+    private final Catalog catalog = Mockito.mock(Catalog.class);
+
+    /**
+     * Prepare all mocks.
+     * @throws Exception If there is some problem inside
+     */
+    @Before
+    public void prepare() throws Exception {
+        Mockito.doReturn(this.name).when(this.viewer).name();
+        Mockito.doReturn(this.viewer).when(this.catalog).make(this.name);
+        this.boutDtMocker.withParticipant(
+            new ParticipantDtMocker()
+                .withIdentity(this.name)
+                .confirmed()
+                .mock()
+        );
+    }
+
+    /**
      * HubBout can "wrap" BoutDt class.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void wrapsBoutDtDataProperties() throws Exception {
-        final Catalog catalog = Mockito.mock(Catalog.class);
         final Bus bus = new BusMocker().mock();
-        final Identity viewer = Mockito.mock(Identity.class);
-        final BoutDt data = new BoutDtMocker().mock();
-        final Bout bout = new HubBout(catalog, bus, viewer, data);
+        final BoutDt data = this.boutDtMocker.mock();
+        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
         bout.number();
         Mockito.verify(data).getNumber();
         bout.title();
@@ -65,24 +101,28 @@ public final class HubBoutTest {
      */
     @Test
     public void wrapsBoutRenamingMechanism() throws Exception {
-        final Catalog catalog = Mockito.mock(Catalog.class);
         final Bus bus = new BusMocker().mock();
-        final String name = String.valueOf(Math.abs(new Random().nextLong()));
-        final Identity viewer = Mockito.mock(Identity.class);
-        Mockito.doReturn(name).when(viewer).name();
-        Mockito.doReturn(viewer).when(catalog).make(name);
-        final BoutDt data = new BoutDtMocker()
-            .withParticipant(
-                new ParticipantDtMocker()
-                    .withIdentity(viewer.name())
-                    .confirmed()
-                    .mock()
-            )
-            .mock();
-        final Bout bout = new HubBout(catalog, bus, viewer, data);
+        final BoutDt data = this.boutDtMocker.mock();
+        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
         final String title = "some title, no matter which one..";
         bout.rename(title);
         Mockito.verify(data).setTitle(title);
+    }
+
+    /**
+     * HubBout can accept invitation requests and add participants to the bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void acceptsInvitationRequestsAndPassesThemToDt() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final BoutDt data = this.boutDtMocker.mock();
+        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
+        final Identity friend = Mockito.mock(Identity.class);
+        final String fname = String.valueOf(Math.abs(new Random().nextLong()));
+        Mockito.doReturn(fname).when(friend).name();
+        bout.invite(friend);
+        Mockito.verify(data).addParticipant(fname);
     }
 
 }

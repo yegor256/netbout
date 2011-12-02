@@ -66,6 +66,8 @@ public final class BoutDtMocker {
      */
     public BoutDt mock() {
         Mockito.doReturn(this.participants).when(this.bout).getParticipants();
+        Mockito.doReturn(new ParticipantDtMocker().mock()).when(this.bout)
+            .addParticipant(Mockito.anyString());
         return this.bout;
     }
 
