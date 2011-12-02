@@ -144,7 +144,7 @@ final class DefaultCatalog implements Catalog {
                     user.name()
                 );
             } else if (identity instanceof HubIdentity) {
-                if (!((HubIdentity) identity).belongsTo(user)) {
+                if (!((HubIdentity) identity).user().equals(user)) {
                     throw new IllegalArgumentException(
                         String.format(
                             "Identity '%s' is already taken by '%s'",

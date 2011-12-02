@@ -180,13 +180,4 @@ final class HubIdentity implements Identity {
         this.orphan.invited(bout);
     }
 
-    /**
-     * Does this identity belongs to the specified user?
-     * @param user The user
-     * @return Yes or no?
-     */
-    protected boolean belongsTo(final User user) {
-        return this.iuser.equals(user);
-    }
-
 }

@@ -26,11 +26,13 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link HubIdentity}.
@@ -39,94 +41,35 @@ import org.junit.Test;
  */
 public final class HubIdentityTest {
 
-    // /**
-    //  * Name is persistent.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void testNamePersistence() throws Exception {
-    //     final HubUser user = HubEntry.user("Johnny Depp");
-    //     final String name = "1345";
-    //     MatcherAssert.assertThat(
-    //         user.identity(name).name(),
-    //         Matchers.equalTo(name)
-    //     );
-    // }
-    //
-    // /**
-    //  * Photo is persistent.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void testPhotoPersistence() throws Exception {
-    //     final HubUser user = HubEntry.user("Bruce Willis");
-    //     final String name = "9865";
-    //     final URL photo = new URL("http://localhost/photo.png");
-    //     user.identity(name).setPhoto(photo);
-    //     MatcherAssert.assertThat(
-    //         user.identity(name).photo(),
-    //         Matchers.equalTo(photo)
-    //     );
-    // }
-    //
-    // /**
-    //  * Manipulate with bouts.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void testBoutsManipulations() throws Exception {
-    //     final Identity identity = HubEntry.user("Jeffy").identity("73267");
-    //     final Long number = identity.start().number();
-    //     identity.bout(number);
-    //     MatcherAssert.assertThat(
-    //         identity.inbox("").size(),
-    //         Matchers.equalTo(1)
-    //     );
-    // }
-    //
-    // /**
-    //  * Manipulate with aliases.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void testAliasesManipulations() throws Exception {
-    //     final Identity identity = HubEntry.user("Lori").identity("7244");
-    //     MatcherAssert.assertThat(
-    //         identity.aliases().size(),
-    //         Matchers.equalTo(0)
-    //     );
-    //     final String alias = "lori@example.com";
-    //     identity.alias(alias);
-    //     identity.alias("lorisa.townsend@example.com");
-    //     MatcherAssert.assertThat(
-    //         identity.aliases().size(),
-    //         Matchers.equalTo(2)
-    //     );
-    //     MatcherAssert.assertThat(
-    //         identity.aliases(),
-    //         Matchers.hasItem(alias)
-    //     );
-    // }
-    //
-    // /**
-    //  * Find bout that belongs to someone else.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test(expected = com.netbout.spi.BoutNotFoundException.class)
-    // public void testFindingOfNotMyBout() throws Exception {
-    //     final Long num = HubEntry.user("Victor").identity("66212")
-    //         .start().number();
-    //     HubEntry.user("Michael").identity("9980").bout(num);
-    // }
-    //
-    // /**
-    //  * Find non-existing bout.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test(expected = com.netbout.spi.BoutNotFoundException.class)
-    // public void testFindingOfNonExistingBout() throws Exception {
-    //     // @checkstyle MagicNumber (1 line)
-    //     HubEntry.user("Sarah").identity("3324").bout(3456L);
-    // }
+    /**
+     * HubIdentity can "wrap" another Identity and add User property to it.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void wrapsAnotherIdentityAndAddsUserProperty() throws Exception {
+        final Identity original = Mockito.mock(Identity.class);
+        final User user = new User(Mockito.mock(Catalog.class), "Jeff");
+        final Identity wrapper = new HubIdentity(original, user);
+        wrapper.name();
+        Mockito.verify(original).name();
+        wrapper.start();
+        Mockito.verify(original).start();
+        wrapper.bout(1L);
+        Mockito.verify(original).bout(1L);
+        wrapper.inbox("");
+        Mockito.verify(original).inbox("");
+        wrapper.photo();
+        Mockito.verify(original).photo();
+        wrapper.setPhoto(new URL("http://localhost/photo.png"));
+        Mockito.verify(original).setPhoto(Mockito.any(URL.class));
+        wrapper.friend("");
+        Mockito.verify(original).friend("");
+        wrapper.friends("");
+        Mockito.verify(original).friends("");
+        wrapper.aliases();
+        Mockito.verify(original).aliases();
+        wrapper.invited(Mockito.mock(Bout.class));
+        Mockito.verify(original).invited(Mockito.any(Bout.class));
+    }
 
 }
