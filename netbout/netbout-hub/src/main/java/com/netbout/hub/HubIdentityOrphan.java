@@ -29,18 +29,15 @@ package com.netbout.hub;
 import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableIdentityException;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.regex.Pattern;
 
 /**
  * Identity.
@@ -48,7 +45,8 @@ import java.util.regex.Pattern;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public class HubIdentityOrphan implements Identity {
+@SuppressWarnings("PMD.TooManyMethods")
+public final class HubIdentityOrphan implements Identity {
 
     /**
      * Default photo of identity.
@@ -93,8 +91,11 @@ public class HubIdentityOrphan implements Identity {
 
     /**
      * Public ctor.
+     * @param ibus The bus
+     * @param ctlg The catalog
      * @param mgr Manager of bouts
      * @param name The identity's name
+     * @checkstyle ParameterNumber (3 lines)
      */
     public HubIdentityOrphan(final Bus ibus, final Catalog ctlg,
         final BoutMgr mgr, final String name) {
@@ -159,7 +160,7 @@ public class HubIdentityOrphan implements Identity {
         Logger.debug(
             this,
             "#start(): bout #%d started",
-             num
+            num
         );
         this.myBouts().add(num);
         return new HubBout(this.catalog, this.bus, this, data);
@@ -209,7 +210,7 @@ public class HubIdentityOrphan implements Identity {
     @Override
     public URL photo() {
         if (this.iphoto == null) {
-            String url = this.bus.make("get-identity-photo")
+            final String url = this.bus.make("get-identity-photo")
                 .synchronously()
                 .arg(this.name())
                 .asDefault(this.DEFAULT_PHOTO)
@@ -242,6 +243,7 @@ public class HubIdentityOrphan implements Identity {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Identity friend(final String name)

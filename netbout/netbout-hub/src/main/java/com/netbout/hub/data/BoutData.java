@@ -157,6 +157,7 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<ParticipantDt> getParticipants() {
         synchronized (this) {
             if (this.participants == null) {
@@ -208,6 +209,7 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<MessageDt> getMessages() {
         synchronized (this) {
             if (this.messages == null) {
@@ -234,6 +236,7 @@ final class BoutData implements BoutDt {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public MessageDt findMessage(final Long num)

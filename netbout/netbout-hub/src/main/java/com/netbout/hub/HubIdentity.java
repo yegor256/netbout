@@ -28,15 +28,11 @@ package com.netbout.hub;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableIdentityException;
-import com.ymock.util.Logger;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Identity.
@@ -44,6 +40,7 @@ import java.util.regex.Pattern;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class HubIdentity implements Identity {
 
     /**
@@ -141,6 +138,7 @@ final class HubIdentity implements Identity {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Identity friend(final String name)

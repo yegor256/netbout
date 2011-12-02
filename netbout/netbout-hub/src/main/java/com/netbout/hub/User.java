@@ -49,7 +49,7 @@ public final class User {
 
     /**
      * Public ctor.
-     * @param ctlr The catalog with identities
+     * @param ctlg The catalog with identities
      * @param name The name of it
      * @see DefaultHub#user(String)
      */
@@ -88,6 +88,7 @@ public final class User {
      * @param name The name of it
      * @return The identity found
      * @throws com.netbout.spi.UnreachableIdentityException If can't..
+     * @checkstyle RedundantThrows (3 lines)
      */
     public Identity identity(final String name)
         throws com.netbout.spi.UnreachableIdentityException {

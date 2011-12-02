@@ -73,6 +73,7 @@ public final class HubBout implements Bout {
      * @param ibus The bus
      * @param idnt The viewer
      * @param dat The data
+     * @checkstyle ParameterNumber (3 lines)
      */
     public HubBout(final Catalog ctlg, final Bus ibus, final Identity idnt,
         final BoutDt dat) {
@@ -133,6 +134,7 @@ public final class HubBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
@@ -152,6 +154,7 @@ public final class HubBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
         final List<MessageDt> datas =
             new ArrayList<MessageDt>(this.data.getMessages());
@@ -171,6 +174,7 @@ public final class HubBout implements Bout {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Message message(final Long num) throws MessageNotFoundException {

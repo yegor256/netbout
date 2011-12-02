@@ -108,6 +108,7 @@ public final class DefaultBoutMgr implements BoutMgr {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (3 lines)
      */
     @Override
     public BoutData find(final Long number) throws BoutNotFoundException {

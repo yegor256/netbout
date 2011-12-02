@@ -53,6 +53,7 @@ interface Catalog {
      * @param name The name of identity
      * @return Identity found
      * @throws UnreachableIdentityException If can't reach it by name
+     * @checkstyle RedundantThrows (4 lines)
      */
     Identity make(String name) throws UnreachableIdentityException;
 
@@ -63,6 +64,7 @@ interface Catalog {
      * @param user Name of the user
      * @return Identity found or created
      * @throws UnreachableIdentityException If can't reach it by name
+     * @checkstyle RedundantThrows (4 lines)
      */
     Identity make(String name, User user) throws UnreachableIdentityException;
 

@@ -100,6 +100,7 @@ final class DefaultCatalog implements Catalog {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Identity make(final String name)
@@ -127,6 +128,7 @@ final class DefaultCatalog implements Catalog {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Identity make(final String name, final User user)
@@ -144,15 +146,7 @@ final class DefaultCatalog implements Catalog {
                     user.name()
                 );
             } else if (identity instanceof HubIdentity) {
-                if (!((HubIdentity) identity).user().equals(user)) {
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "Identity '%s' is already taken by '%s'",
-                            name,
-                            identity.user()
-                        )
-                    );
-                }
+                this.assignedTo(identity, user);
             } else {
                 identity = new HubIdentity(identity, user);
                 this.save(name, identity);
@@ -222,6 +216,7 @@ final class DefaultCatalog implements Catalog {
      * @param name The name
      * @param identity The identity
      * @throws UnreachableIdentityException If can't reach it by name
+     * @checkstyle RedundantThrows (4 lines)
      */
     private void save(final String name, final Identity identity)
         throws UnreachableIdentityException {
@@ -231,6 +226,24 @@ final class DefaultCatalog implements Catalog {
             .arg(name)
             .asDefault(true)
             .exec();
+    }
+
+    /**
+     * Validate that this identity is assigned to the given user and
+     * throw exception if it's not true.
+     * @param identity The identity
+     * @param user The user
+     */
+    private void assignedTo(final Identity identity, final User user) {
+        if (!((HubIdentity) identity).user().equals(user)) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Identity '%s' is already taken by '%s'",
+                    identity.name(),
+                    identity.user()
+                )
+            );
+        }
     }
 
     /**

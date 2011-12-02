@@ -30,8 +30,6 @@ import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import java.util.Random;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -46,23 +44,23 @@ public final class HubBoutTest {
     /**
      * Name of viewer.
      */
-    private final String name =
+    private final transient String name =
         String.valueOf(Math.abs(new Random().nextLong()));
 
     /**
      * The viewer.
      */
-    private final Identity viewer = Mockito.mock(Identity.class);
+    private final transient Identity viewer = Mockito.mock(Identity.class);
 
     /**
      * The bout data type to work with.
      */
-    private final BoutDtMocker boutDtMocker = new BoutDtMocker();
+    private final transient BoutDtMocker boutDtMocker = new BoutDtMocker();
 
     /**
      * The catalog.
      */
-    private final Catalog catalog = Mockito.mock(Catalog.class);
+    private final transient Catalog catalog = Mockito.mock(Catalog.class);
 
     /**
      * Prepare all mocks.

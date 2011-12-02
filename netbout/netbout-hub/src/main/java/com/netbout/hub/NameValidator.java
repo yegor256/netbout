@@ -55,6 +55,7 @@ final class NameValidator {
      * @param identity The identity
      * @return The same name
      * @throws UnreachableIdentityException If it's not valid
+     * @checkstyle RedundantThrows (3 lines)
      */
     public String ifValid(final String identity)
         throws UnreachableIdentityException {

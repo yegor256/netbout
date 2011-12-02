@@ -26,17 +26,14 @@
  */
 package com.netbout.hub.hh;
 
-import com.netbout.hub.DefaultHub;
-import com.netbout.hub.Hub;
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
+import com.netbout.hub.DefaultHub;
 import com.netbout.spi.Identity;
 import com.rexsl.test.XhtmlConverter;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.w3c.dom.Document;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.namespace.SimpleNamespaceContext;
 

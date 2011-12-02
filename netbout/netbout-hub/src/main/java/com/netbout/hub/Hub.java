@@ -28,7 +28,6 @@ package com.netbout.hub;
 
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -41,7 +41,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Stats.
@@ -125,7 +124,6 @@ public final class StatsFarm implements IdentityAware, ContextAware {
         if (this.identity.name().equals(stage)) {
             final Document doc = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder().newDocument();
-            final Element root = doc.createElement("data");
             doc.appendChild(this.hub.stats(doc));
             final Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer();

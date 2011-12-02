@@ -52,7 +52,7 @@ final class HubMessage implements Message {
     /**
      * The bout where this message is located.
      */
-    private final transient Bout bout;
+    private final transient Bout ibout;
 
     /**
      * The data.
@@ -63,14 +63,15 @@ final class HubMessage implements Message {
      * Public ctor.
      * @param ctlg The catalog
      * @param vwr Viewer
-     * @param holder The bout where this message is located
+     * @param bout The bout where this message is located
      * @param dat The data
+     * @checkstyle ParameterNumber (3 lines)
      */
     public HubMessage(final Catalog ctlg, final Identity vwr,
-        final Bout holder, final MessageDt dat) {
+        final Bout bout, final MessageDt dat) {
         this.catalog = ctlg;
         this.viewer = vwr;
-        this.bout = holder;
+        this.ibout = bout;
         this.data = dat;
     }
 
@@ -79,7 +80,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Bout bout() {
-        return this.bout;
+        return this.ibout;
     }
 
     /**

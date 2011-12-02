@@ -30,7 +30,6 @@ import com.netbout.bus.Bus;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
-import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -45,12 +44,12 @@ public final class DefaultHub implements Hub {
     /**
      * The bus.
      */
-    private final Bus bus;
+    private final transient Bus bus;
 
     /**
      * Catalog of identities.
      */
-    private final Catalog catalog;
+    private final transient Catalog catalog;
 
     /**
      * Public ctor.

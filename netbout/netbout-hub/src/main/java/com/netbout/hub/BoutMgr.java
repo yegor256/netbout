@@ -55,7 +55,8 @@ public interface BoutMgr {
      * Find and return bout from collection.
      * @param number Number of the bout
      * @return The bout found or restored
-     * @throws BoutMissedException If this bout is not found
+     * @throws BoutNotFoundException If this bout is not found
+     * @checkstyle RedundantThrows (4 lines)
      */
     BoutDt find(Long number) throws BoutNotFoundException;
 

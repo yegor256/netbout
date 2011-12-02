@@ -59,6 +59,7 @@ public interface BoutDt {
     /**
      * Add new participant.
      * @param name The name of participant
+     * @return The participant just created/added
      */
     ParticipantDt addParticipant(String name);
 
@@ -85,6 +86,7 @@ public interface BoutDt {
      * @param num The number of it
      * @return Message
      * @throws MessageNotFoundException If not found
+     * @checkstyle RedundantThrows (4 lines)
      */
     MessageDt findMessage(Long num) throws MessageNotFoundException;
 

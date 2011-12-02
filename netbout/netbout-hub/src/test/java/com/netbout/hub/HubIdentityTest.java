@@ -29,8 +29,6 @@ package com.netbout.hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import java.net.URL;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -44,6 +42,7 @@ public final class HubIdentityTest {
     /**
      * HubIdentity can "wrap" another Identity and add User property to it.
      * @throws Exception If there is some problem inside
+     * @checkstyle ExecutableStatementCount (30 lines)
      */
     @Test
     public void wrapsAnotherIdentityAndAddsUserProperty() throws Exception {

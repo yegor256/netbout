@@ -47,6 +47,7 @@ public final class NameValidatorTest {
     @Test
     public void asksBusAboutPossibilityToNotifyIdentity() throws Exception {
         final Bus bus = new BusMocker()
+            // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(true, "can-notify-identity")
             .mock();
         final NameValidator validator = new NameValidator(bus);
@@ -55,6 +56,7 @@ public final class NameValidatorTest {
             validator.ifValid(name),
             Matchers.equalTo(name)
         );
+        // @checkstyle MultipleStringLiterals (1 line)
         Mockito.verify(bus).make("can-notify-identity");
     }
 
@@ -66,6 +68,7 @@ public final class NameValidatorTest {
     @Test(expected = com.netbout.spi.UnreachableIdentityException.class)
     public void asksBusAboutPossibilityAndThrowsException() throws Exception {
         final Bus bus = new BusMocker()
+            // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(false, "can-notify-identity")
             .mock();
         final NameValidator validator = new NameValidator(bus);

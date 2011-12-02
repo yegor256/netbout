@@ -27,7 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -48,13 +47,13 @@ public final class UserTest {
     public void matchesWithOtherUsersByNameSimilarityOnly() throws Exception {
         final String name = "Big Lebowski";
         final Catalog catalog = Mockito.mock(Catalog.class);
-        final User userA = new User(catalog, name);
-        final User userB = new User(catalog, name);
-        MatcherAssert.assertThat(userA, Matchers.equalTo(userB));
-        MatcherAssert.assertThat(userA.equals(name), Matchers.is(false));
+        final User first = new User(catalog, name);
+        final User second = new User(catalog, name);
+        MatcherAssert.assertThat(first, Matchers.equalTo(second));
+        MatcherAssert.assertThat(first.equals(name), Matchers.is(false));
         MatcherAssert.assertThat(
-            userA.hashCode(),
-            Matchers.equalTo(userB.hashCode())
+            first.hashCode(),
+            Matchers.equalTo(second.hashCode())
         );
     }
 

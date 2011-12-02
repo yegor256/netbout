@@ -46,7 +46,7 @@ public final class HubParticipant implements Participant {
     /**
      * The bout I'm in.
      */
-    private final transient Bout bout;
+    private final transient Bout ibout;
 
     /**
      * The data.
@@ -56,13 +56,13 @@ public final class HubParticipant implements Participant {
     /**
      * Public ctor.
      * @param ctlg The catalog
-     * @param bot The bout
+     * @param bout The bout
      * @param dat The data
      */
-    public HubParticipant(final Catalog ctlg, final Bout bot,
+    public HubParticipant(final Catalog ctlg, final Bout bout,
         final ParticipantDt dat) {
         this.catalog = ctlg;
-        this.bout = bot;
+        this.ibout = bout;
         this.data = dat;
     }
 
@@ -71,7 +71,7 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public Bout bout() {
-        return this.bout;
+        return this.ibout;
     }
 
     /**

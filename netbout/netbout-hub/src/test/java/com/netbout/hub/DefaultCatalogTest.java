@@ -37,7 +37,6 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.transform.XmlConverters;
 
@@ -175,6 +174,7 @@ public final class DefaultCatalogTest {
     @Test
     public void findsIdentitiesByNameWhenTheyExist() throws Exception {
         final Bus bus = new BusMocker()
+            // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(new ArrayList<String>(), "find-identities-by-keyword")
             .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
             .mock();
@@ -198,6 +198,7 @@ public final class DefaultCatalogTest {
         final String name = String.valueOf(Math.abs(new Random().nextLong()));
         names.add(name);
         final Bus bus = new BusMocker()
+            // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(names, "find-identities-by-keyword")
             .mock();
         final Catalog catalog = new DefaultCatalog(bus);

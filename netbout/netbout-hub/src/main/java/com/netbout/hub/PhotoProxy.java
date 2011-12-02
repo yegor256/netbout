@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.ymock.util.Logger;
 import java.net.URL;
 
 /**
@@ -56,7 +55,7 @@ final class PhotoProxy {
 
     /**
      * Validate URL and return back its correct form.
-     * @param photo Preliminary URL
+     * @param url Preliminary URL
      * @return The correct URL
      */
     public URL normalize(final URL url) {
