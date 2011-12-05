@@ -29,51 +29,70 @@
  */
 package com.netbout.spi;
 
-import java.net.URL;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
- * Mocker of {@link Identity}.
+ * Mocker of {@link Helper}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class IdentityMocker {
+public final class HelperMocker implements Answer {
 
     /**
-     * Mocked identity.
+     * Mocked helper.
      */
-    private final Identity identity = Mockito.mock(Identity.class);
+    private final Helper helper = Mockito.mock(Helper.class);
 
     /**
-     * This is the name of identity.
-     * @param The name of it
-     * @return This object
+     * Map of requests and responses.
      */
-    public IdentityMocker namedAs(final String name) {
-        Mockito.doReturn(name).when(this.identity).name();
-        return this;
+    private final ConcurrentMap<String, Object> ops =
+        new ConcurrentHashMap<String, Object>();
+
+    /**
+     * Public ctor.
+     */
+    public HelperMocker() {
+        Mockito.doAnswer(this).when(this.helper)
+            .execute(Mockito.any(Token.class));
     }
 
     /**
-     * This is the user of identity, which it belongs to.
-     * @param The name of user
+     * {@inheritDoc}
+     */
+    @Override
+    public Object answer(final InvocationOnMock invocation) {
+        final Token token = (Token) invocation.getArguments()[0];
+        final String mnemo = token.mnemo();
+        if (this.ops.containsKey(mnemo)) {
+            token.result(PlainBuilder.fromObject(this.ops.get(mnemo)));
+        }
+        return true;
+    }
+
+    /**
+     * Return this value on this request.
+     * @param value The value to return
+     * @param mnemo The mnemo of operation
      * @return This object
      */
-    public IdentityMocker belongsTo(final String name) {
-        Mockito.doReturn(name).when(this.identity).user();
+    public HelperMocker doReturn(final Object value, final String mnemo) {
+        this.ops.put(mnemo, value);
         return this;
     }
 
     /**
      * Mock it.
-     * @return Mocked identity
-     * @throws Exception If some problem inside
+     * @return This object
      */
-    public Identity mock() throws Exception {
-        Mockito.doReturn(new URL("http://localhost/unknown.png"))
-            .when(this.identity).photo();
-        return this.identity;
+    public Helper mock() {
+        Mockito.doReturn(this.ops.keySet()).when(this.helper).supports();
+        return this.helper;
     }
 
 }

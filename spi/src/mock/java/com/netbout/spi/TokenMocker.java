@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, NetBout.com
  * All rights reserved.
  *
@@ -27,31 +26,40 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.netbout.spi;
+
+import org.mockito.Mockito;
+
+/**
+ * Mocker of {@link Token}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0
-    http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-    <id>mock</id>
-    <formats>
-        <format>jar</format>
-    </formats>
-    <includeBaseDirectory>false</includeBaseDirectory>
-    <fileSets>
-        <fileSet>
-            <directory>${project.build.directory}/mock</directory>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.build.testOutputDirectory}</directory>
-            <outputDirectory>/</outputDirectory>
-            <includes>
-                <include>**/*Mocker.class</include>
-            </includes>
-            <useDefaultExcludes>true</useDefaultExcludes>
-        </fileSet>
-    </fileSets>
-</assembly>
+ */
+public final class TokenMocker {
+
+    /**
+     * Mocked token.
+     */
+    private final Token token = Mockito.mock(Token.class);
+
+    /**
+     * Use this mnemo.
+     * @param mnemo The mnemo of operation
+     * @return This object
+     */
+    public TokenMocker withMnemo(final String mnemo) {
+        Mockito.doReturn(mnemo).when(this.token).mnemo();
+        return this;
+    }
+
+    /**
+     * Mock it.
+     * @return This object
+     */
+    public Token mock() {
+        return this.token;
+    }
+
+}

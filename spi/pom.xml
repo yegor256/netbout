@@ -487,6 +487,24 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version since="5 Dec 2011">1.7</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy file="${basedir}/pom.xml"
+                                    tofile="${project.build.directory}/mock/META-INF/maven/${project.groupId}/${project.artifactId}/pom.xml"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
@@ -502,6 +520,34 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version since="5 Dec 2011">1.5</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>*:*</include>
+                                </includes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <includes>
+                                        <include>**/*Mocker.class</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>mock</shadedClassifierName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>

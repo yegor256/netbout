@@ -51,4 +51,15 @@ public final class IdentityTest {
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
     }
 
+    /**
+     * IdentityTest can assign user to identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void canBelongToSomeMockedUser() throws Exception {
+        final String uname = "user-name";
+        final Identity identity = new IdentityMocker().belongsTo(uname).mock();
+        MatcherAssert.assertThat(identity.user(), Matchers.equalTo(uname));
+    }
+
 }

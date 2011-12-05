@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, NetBout.com
  * All rights reserved.
  *
@@ -27,31 +26,52 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ */
+package com.netbout.spi;
+
+import com.netbout.spi.plain.PlainLong;
+import java.util.Random;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+/**
+ * Test case for {@link Helper} and {@link HelperMocker}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0
-    http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-    <id>mock</id>
-    <formats>
-        <format>jar</format>
-    </formats>
-    <includeBaseDirectory>false</includeBaseDirectory>
-    <fileSets>
-        <fileSet>
-            <directory>${project.build.directory}/mock</directory>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.build.testOutputDirectory}</directory>
-            <outputDirectory>/</outputDirectory>
-            <includes>
-                <include>**/*Mocker.class</include>
-            </includes>
-            <useDefaultExcludes>true</useDefaultExcludes>
-        </fileSet>
-    </fileSets>
-</assembly>
+ */
+public final class HelperTest {
+
+    /**
+     * HelperTest can support operation by mocked name.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void supportsOperationByName() throws Exception {
+        final String mnemo = "mnemo-of-token";
+        final Helper helper = new HelperMocker()
+            .doReturn(true, mnemo)
+            .mock();
+        MatcherAssert.assertThat(helper.supports(), Matchers.hasItem(mnemo));
+    }
+
+    /**
+     * HelperTest can respond to token, mocked by mnemo.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void respondsToTokenByMnemo() throws Exception {
+        final String mnemo = "some-mnemo-of-token";
+        final Long value = new Random().nextLong();
+        final Helper helper = new HelperMocker()
+            .doReturn(value, mnemo)
+            .mock();
+        final Token token = new TokenMocker()
+            .withMnemo(mnemo)
+            .mock();
+        helper.execute(token);
+        Mockito.verify(token).result(new PlainLong(value));
+    }
+
+}
