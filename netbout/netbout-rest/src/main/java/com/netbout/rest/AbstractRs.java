@@ -29,7 +29,6 @@ package com.netbout.rest;
 import com.netbout.bus.Bus;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContext;
@@ -58,12 +57,12 @@ public abstract class AbstractRs implements Resource {
     /**
      * Hub to work with.
      */
-    private transient Hub hub;
+    private transient Hub ihub;
 
     /**
      * Bus to work with.
      */
-    private transient Bus bus;
+    private transient Bus ibus;
 
     /**
      * List of known JAX-RS providers.
@@ -301,8 +300,8 @@ public abstract class AbstractRs implements Resource {
      */
     @Context
     public final void setServletContext(final ServletContext context) {
-        this.hub = (Hub) context.getAttribute("com.netbout.rest.HUB");
-        this.bus = (Bus) context.getAttribute("com.netbout.rest.BUS");
+        this.ihub = (Hub) context.getAttribute("com.netbout.rest.HUB");
+        this.ibus = (Bus) context.getAttribute("com.netbout.rest.BUS");
         Logger.debug(
             this,
             "#setServletContext(%s): injected",
@@ -317,7 +316,7 @@ public abstract class AbstractRs implements Resource {
      */
     protected final Identity identity() {
         try {
-            return new Cryptor().decrypt(this.hub, this.icookie);
+            return new Cryptor().decrypt(this.ihub, this.icookie);
         } catch (com.netbout.utils.DecryptionException ex) {
             Logger.debug(
                 this,
@@ -335,7 +334,7 @@ public abstract class AbstractRs implements Resource {
      * @return The bus
      */
     protected final Bus bus() {
-        if (this.bus == null) {
+        if (this.ibus == null) {
             throw new IllegalStateException(
                 String.format(
                     "%s#bus was never injected by container",
@@ -343,7 +342,7 @@ public abstract class AbstractRs implements Resource {
                 )
             );
         }
-        return this.bus;
+        return this.ibus;
     }
 
     /**
@@ -351,7 +350,7 @@ public abstract class AbstractRs implements Resource {
      * @return The hub
      */
     protected final Hub hub() {
-        if (this.bus == null) {
+        if (this.ibus == null) {
             throw new IllegalStateException(
                 String.format(
                     "%s#hub was never injected by container",
@@ -359,7 +358,7 @@ public abstract class AbstractRs implements Resource {
                 )
             );
         }
-        return this.hub;
+        return this.ihub;
     }
 
 }

@@ -50,7 +50,6 @@ public final class BoutRsTest {
     @Test
     public void rendersBoutFrontPage() throws Exception {
         final Identity identity = new IdentityMocker().mock();
-        final String iname = identity.name();
         final Bout bout = new BoutMocker()
             .withParticipant(identity)
             .mock();

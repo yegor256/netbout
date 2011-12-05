@@ -85,10 +85,12 @@ public final class LongBout {
 
     /**
      * Private ctor.
+     * @param ibus The bus
      * @param bot The bout
      * @param crds The coordinates of the stage to render
      * @param keyword Search keyword
      * @param bldr The builder of URIs
+     * @checkstyle ParameterNumber (3 lines)
      */
     public LongBout(final Bus ibus, final Bout bot, final StageCoordinates crds,
         final String keyword, final UriBuilder bldr) {

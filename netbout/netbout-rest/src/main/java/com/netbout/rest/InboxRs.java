@@ -34,7 +34,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -65,7 +64,6 @@ public final class InboxRs extends AbstractRs {
 
     /**
      * Get inbox.
-     * @param query Search query, if provided
      * @return The JAX-RS response
      */
     @GET

@@ -54,15 +54,22 @@ public final class Starter implements ServletContextListener {
         final Hub hub = new DefaultHub(bus);
         event.getServletContext().setAttribute("com.netbout.rest.HUB", hub);
         event.getServletContext().setAttribute("com.netbout.rest.BUS", bus);
+        final String uname = "netbout";
         try {
-            final Identity idb = hub.user("netbout").identity("nb:db");
+            final Identity idb = hub.user(uname).identity("nb:db");
             hub.promote(idb, new CpaHelper(idb, "com.netbout.db"));
             idb.setPhoto(new URL("http://img.netbout.com/db.png"));
-            final Identity ihh = hub.user("netbout").identity("nb:hh");
+            final Identity ihh = hub.user(uname).identity("nb:hh");
             ihh.setPhoto(new URL("http://img.netbout.com/hh.png"));
-            CpaHelper hhelper = new CpaHelper(ihh, "com.netbout.hub.hh");
+            final CpaHelper hhelper = new CpaHelper(ihh, "com.netbout.hub.hh");
             hhelper.contextualize(hub);
             hub.promote(ihh, hhelper);
+            final Identity iemail = hub.user(uname).identity("nb:email");
+            iemail.setPhoto(new URL("http://img.netbout.com/email.png"));
+            hub.promote(
+                iemail,
+                new CpaHelper(iemail, "com.netbout.notifiers.email")
+            );
         } catch (com.netbout.spi.UnreachableIdentityException ex) {
             throw new IllegalStateException(ex);
         } catch (java.net.MalformedURLException ex) {

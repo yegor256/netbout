@@ -32,7 +32,6 @@ package com.netbout.rest.rexsl.scripts.stages
 import com.netbout.rest.CookieMocker
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
 def cookie = new CookieMocker().cookie()
@@ -41,7 +40,6 @@ def param = 'stage'
 
 // start new bout and save its XML
 def boutURI = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
@@ -50,7 +48,6 @@ def boutURI = new TestClient(rexsl.home)
 
 // invite helper to the bout
 new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', helper).build())
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get()
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)

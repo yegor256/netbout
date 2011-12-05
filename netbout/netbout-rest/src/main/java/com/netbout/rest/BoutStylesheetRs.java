@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
 import com.netbout.utils.TextUtils;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -113,9 +112,8 @@ public final class BoutStylesheetRs extends AbstractRs {
             .synchronously()
             .arg(this.bout)
             .arg(this.stage)
-            .asDefault(
-                "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>"
-            )
+            // @checkstyle LineLength (1 line)
+            .asDefault("<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>")
             .exec();
     }
 

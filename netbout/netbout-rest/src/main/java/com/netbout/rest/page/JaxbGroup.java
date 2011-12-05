@@ -158,7 +158,7 @@ public final class JaxbGroup {
                     AnnotationsAttribute.visibleTag
                 );
             attribute.addAnnotation(JaxbGroup.xmlRootElement(file, name));
-            if (types.size() > 0) {
+            if (!types.isEmpty()) {
                 attribute.addAnnotation(JaxbGroup.xmlSeeAlso(file, types));
             }
             final Class cls = ctc.toClass();

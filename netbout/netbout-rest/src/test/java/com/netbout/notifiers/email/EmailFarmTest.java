@@ -26,7 +26,6 @@
  */
 package com.netbout.notifiers.email;
 
-import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
@@ -86,6 +85,7 @@ public final class EmailFarmTest {
             .mock();
         final Bout bout = new BoutMocker()
             .withParticipant(receiver)
+            .titledAs("some bout title")
             .mock();
         Mockito.doReturn(bout).when(identity).bout(Mockito.anyLong());
         final EmailFarm farm = new EmailFarm();

@@ -39,7 +39,6 @@ def cookie = new CookieMocker().cookie()
 
 // start new bout and get its XML
 def boutURI = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
@@ -47,9 +46,8 @@ def boutURI = new TestClient(rexsl.home)
     .get(HttpHeaders.LOCATION)
 
 // invite helper to this bout and expect a stage to be rendered
-def boutHome = new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', 'nb:hh').build())
+new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', 'nb:hh').build())
     .header(HttpHeaders.COOKIE, cookie)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get()
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 

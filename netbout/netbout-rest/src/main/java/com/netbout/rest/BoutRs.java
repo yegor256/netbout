@@ -140,14 +140,14 @@ public final class BoutRs extends AbstractRs {
      * @param keyword The keyword to use
      * @return The JAX-RS response
      */
-    @POST
+    @GET
     @Path("/s")
-    public Response suggest(@FormParam("keyword") final String keyword) {
+    public Response suggest(@QueryParam("k") final String keyword) {
         if (keyword == null) {
             throw new ForwardException(
                 this,
                 this.self(""),
-                "Form param 'keyword' missed"
+                "Query param 'k' missed"
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();

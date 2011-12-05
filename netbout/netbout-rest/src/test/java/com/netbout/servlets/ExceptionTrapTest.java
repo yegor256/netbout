@@ -36,6 +36,7 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
+import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
 /**
  * Test case for {@link ExceptionTrap}.
@@ -65,7 +66,13 @@ public final class ExceptionTrapTest {
         servlet.service(request, response);
         MatcherAssert.assertThat(
             XhtmlConverter.the(writer.toString()),
-            XmlMatchers.hasXPath("//p[contains(.,'code: a')]")
+            XmlMatchers.hasXPath(
+                "//xhtml:p[contains(.,'code: a')]",
+                new SimpleNamespaceContext().withBinding(
+                    "xhtml",
+                    "http://www.w3.org/1999/xhtml"
+                )
+            )
         );
     }
 

@@ -27,7 +27,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts.stages
+package com.netbout.rest.rexsl.scripts
 
 import com.netbout.rest.CookieMocker
 import com.rexsl.test.TestClient
@@ -36,28 +36,24 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
 def cookie = new CookieMocker().cookie()
+def email = 'test@example.com'
 
-// start new bout and save its XML
-def boutURI = new TestClient(rexsl.home)
+// start new bout
+def suggestURI = new TestClient(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
+    .followRedirects(true)
     .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-    .headers
-    .get(HttpHeaders.LOCATION)
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .gpath
+    .links.link.find { it.@rel == 'suggest' }.@href.toURI()
 
-// invite two helpers there
-['nb:hh', 'nb:db'].each { helper ->
-    new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', helper).build())
-        .header(HttpHeaders.COOKIE, cookie)
-        .get()
-        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-}
-
-// validate that there are really two stages in the XML
-new TestClient(boutURI)
+// get suggestions about who we can invite
+new TestClient(UriBuilder.fromUri(suggestURI).queryParam('k', email).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page/bout/stages[count(stage) = 2]')
-    .assertXPath('/page/bout/stage[@name]')
+    .assertXPath("/page/keyword[.='${email}']")
+    .assertXPath("/page/invitees/invitee[name='${email}']")
+

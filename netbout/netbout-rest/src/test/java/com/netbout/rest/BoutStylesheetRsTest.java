@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.rexsl.test.XhtmlConverter;
 import java.net.URLEncoder;

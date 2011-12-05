@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
@@ -79,7 +78,7 @@ public final class LoginRsTest {
     public void authenticatesUserThroughFacebook() throws Exception {
         // @checkstyle LineLength (1 line)
         final String code = "AQCJ9EpLpqvj9cbag0mU8z6cHqyk-2CN5cigCzwB1aykqqqpiFNzAjsnNbRRY7x4n4h2ZEmrRVHhHSHzcFTtXobWM8LJSCHSB1_cjvsJS2vy2DsqRA3qGRAjUY8pKk0tO2zYpX-kFpnn2V6Z1xxvb7uyP-qrV_mQNWSYHKfPWKL0yTxo-NpFAGT4mDYNXl_cCMs";
-        final URI baseUri = new URI("http://localhost/test/me");
+        final URI base = new URI("http://localhost/test/me");
         final String uname = "338105383";
         final User user = new UserMocker()
             .namedAs(uname)
@@ -88,13 +87,13 @@ public final class LoginRsTest {
         final Hub hub = new HubMocker()
             .withUser(uname, user)
             .mock();
-        final UriInfo uriInfo = new UriInfoMocker()
-            .withRequestUri(baseUri)
+        final UriInfo info = new UriInfoMocker()
+            .withRequestUri(base)
             .mock();
-        final URI redirect = UriBuilder.fromUri(baseUri).path("/g/fb").build();
+        final URI redirect = UriBuilder.fromUri(base).path("/g/fb").build();
         final LoginRs rest = new ResourceMocker()
             .withDeps(new BusMocker().mock(), hub)
-            .withUriInfo(uriInfo)
+            .withUriInfo(info)
             .mock(LoginRs.class);
         final LoginRs spy = PowerMockito.spy(rest);
         PowerMockito.doReturn("access_token=abc|cde&expires=5108").when(

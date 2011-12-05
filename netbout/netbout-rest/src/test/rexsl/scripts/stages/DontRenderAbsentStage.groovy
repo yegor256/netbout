@@ -39,7 +39,6 @@ def cookie = new CookieMocker().cookie()
 
 // start new bout
 def boutURI = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get('/s')
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)

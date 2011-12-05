@@ -51,24 +51,34 @@ final class NameValidator {
     }
 
     /**
+     * Validate this identity and return TRUE if valid.
+     * @param identity The identity
+     * @return Is it valid?
+     */
+    public Boolean isValid(final String identity) {
+        Boolean reachable = true;
+        if (!identity.matches("\\d+") && !identity.startsWith("nb:")) {
+            reachable = this.bus
+                .make("can-notify-identity")
+                .synchronously()
+                .arg(identity)
+                .asDefault(false)
+                .exec();
+        }
+        return reachable;
+    }
+
+    /**
      * Validate this identity and return back if valid.
      * @param identity The identity
      * @return The same name
      * @throws UnreachableIdentityException If it's not valid
      * @checkstyle RedundantThrows (3 lines)
      */
-    public String ifValid(final String identity)
+    public String validate(final String identity)
         throws UnreachableIdentityException {
-        if (!identity.matches("\\d+") && !identity.startsWith("nb:")) {
-            final Boolean reachable = this.bus
-                .make("can-notify-identity")
-                .synchronously()
-                .arg(identity)
-                .asDefault(false)
-                .exec();
-            if (!reachable) {
-                throw new UnreachableIdentityException(identity);
-            }
+        if (!this.isValid(identity)) {
+            throw new UnreachableIdentityException(identity);
         }
         return identity;
     }

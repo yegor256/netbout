@@ -54,7 +54,7 @@ public final class NameValidatorTest {
         final NameValidator validator = new NameValidator(bus);
         final String name = "test@example.com";
         MatcherAssert.assertThat(
-            validator.ifValid(name),
+            validator.validate(name),
             Matchers.equalTo(name)
         );
         // @checkstyle MultipleStringLiterals (1 line)
@@ -74,7 +74,7 @@ public final class NameValidatorTest {
             .mock();
         final NameValidator validator = new NameValidator(bus);
         final String name = "some-strange-identity-name";
-        validator.ifValid(name);
+        validator.validate(name);
     }
 
     /**
@@ -87,7 +87,7 @@ public final class NameValidatorTest {
         final NameValidator validator = new NameValidator(bus);
         final String name = String.valueOf(Math.abs(new Random().nextLong()));
         MatcherAssert.assertThat(
-            validator.ifValid(name),
+            validator.validate(name),
             Matchers.equalTo(name)
         );
     }
@@ -102,7 +102,7 @@ public final class NameValidatorTest {
         final NameValidator validator = new NameValidator(bus);
         final String name = "nb:some-name-no-matter-what";
         MatcherAssert.assertThat(
-            validator.ifValid(name),
+            validator.validate(name),
             Matchers.equalTo(name)
         );
     }

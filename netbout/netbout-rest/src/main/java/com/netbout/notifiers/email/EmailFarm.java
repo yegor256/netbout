@@ -36,9 +36,6 @@ import com.netbout.spi.cpa.Operation;
 import com.netbout.utils.Cryptor;
 import com.netbout.utils.TextUtils;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.velocity.VelocityContext;
 
@@ -118,7 +115,7 @@ public final class EmailFarm implements IdentityAware {
 
     /**
      * Notify this identity.
-     * @param recepient The recepient
+     * @param dude The recepient
      * @param message The message
      */
     private void send(final Participant dude, final Message message) {
@@ -144,7 +141,7 @@ public final class EmailFarm implements IdentityAware {
     /**
      * Deliver this email.
      * @param email The address of recepient
-     * @param The body
+     * @param body The body
      */
     private void deliver(final String email, final String body) {
         Logger.info(

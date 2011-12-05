@@ -195,6 +195,9 @@ final class DefaultCatalog implements Catalog {
             .arg(keyword)
             .asDefault(new ArrayList<String>())
             .exec();
+        if (this.validator.isValid(keyword)) {
+            external.add(keyword);
+        }
         for (String name : external) {
             try {
                 found.add(this.make(name));
@@ -220,7 +223,7 @@ final class DefaultCatalog implements Catalog {
      */
     private void save(final String name, final Identity identity)
         throws UnreachableIdentityException {
-        this.all.put(this.validator.ifValid(name), identity);
+        this.all.put(this.validator.validate(name), identity);
         this.bus.make("identity-mentioned")
             .synchronously()
             .arg(name)

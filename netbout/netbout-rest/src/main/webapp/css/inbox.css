@@ -26,7 +26,8 @@
  */
 
 ul.bouts {
-    margin-left: 0;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
 }
 
     ul.bouts li{

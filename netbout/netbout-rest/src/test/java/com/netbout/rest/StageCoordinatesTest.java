@@ -28,20 +28,10 @@ package com.netbout.rest;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Participant;
-import com.netbout.spi.cpa.CpaHelper;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.IdentityAware;
-import com.netbout.spi.cpa.Operation;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 

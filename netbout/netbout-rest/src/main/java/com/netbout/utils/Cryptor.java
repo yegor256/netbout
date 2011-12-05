@@ -28,7 +28,6 @@ package com.netbout.utils;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
-import com.netbout.utils.TextUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -97,7 +96,7 @@ public final class Cryptor {
         }
         try {
             return hub.user(uname).identity(iname);
-        } catch (Throwable ex) {
+        } catch (com.netbout.spi.UnreachableIdentityException ex) {
             throw new DecryptionException(ex);
         }
     }
