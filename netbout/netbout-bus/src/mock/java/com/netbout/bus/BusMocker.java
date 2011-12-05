@@ -79,6 +79,7 @@ public final class BusMocker {
         final TxBuilder builder = Mockito.mock(TxBuilder.class);
         Mockito.doReturn(builder).when(builder).synchronously();
         Mockito.doReturn(builder).when(builder).asap();
+        Mockito.doReturn(builder).when(builder).expire(Mockito.anyString());
         Mockito.doReturn(builder).when(builder).arg(Mockito.anyObject());
         Mockito.doReturn(builder).when(builder).asDefault(Mockito.anyObject());
         Mockito.doReturn(builder).when(builder).inBout(Mockito.any(Bout.class));

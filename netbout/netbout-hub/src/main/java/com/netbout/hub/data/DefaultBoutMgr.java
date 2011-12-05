@@ -96,6 +96,7 @@ public final class DefaultBoutMgr implements BoutMgr {
         this.bus.make("started-new-bout")
             .asap()
             .arg(data.getNumber())
+            .expire("get-next-bout-number")
             .asDefault(true)
             .exec();
         Logger.debug(
