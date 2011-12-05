@@ -45,11 +45,11 @@ import org.xmlmatchers.XmlMatchers;
 public final class ExceptionTrapTest {
 
     /**
-     * Render servlet page.
+     * ExceptionTrap can render page with exception.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPageRendering() throws Exception {
+    public void rendersExceptionIntoHtmlPage() throws Exception {
         final HttpServlet servlet = new ExceptionTrap();
         final HttpServletRequest request =
             Mockito.mock(HttpServletRequest.class);
@@ -70,11 +70,11 @@ public final class ExceptionTrapTest {
     }
 
     /**
-     * Render servlet page with all nulls.
+     * ExceptionTrap can render page even if most of values are NULL.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPageRenderingWithNULLs() throws Exception {
+    public void rendersHtmlPageWithNullAttributes() throws Exception {
         final HttpServlet servlet = new ExceptionTrap();
         final HttpServletRequest request =
             Mockito.mock(HttpServletRequest.class);

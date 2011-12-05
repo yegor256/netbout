@@ -27,29 +27,50 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableIdentityException;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * User.
- *
+ * Test case of {@link HubUser}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface User {
+public final class HubUserTest {
 
     /**
-     * Get its name.
-     * @return The name of it
+     * Two objects of class User should match each other by name only.
+     * @throws Exception If there is some problem inside
      */
-    String name();
+    @Test
+    public void matchesWithOtherUsersByNameSimilarityOnly() throws Exception {
+        final String name = "Big Lebowski";
+        final Catalog catalog = Mockito.mock(Catalog.class);
+        final User first = new HubUser(catalog, name);
+        final User second = new HubUser(catalog, name);
+        MatcherAssert.assertThat(first, Matchers.equalTo(second));
+        MatcherAssert.assertThat(first.equals(name), Matchers.is(false));
+        MatcherAssert.assertThat(
+            first.hashCode(),
+            Matchers.equalTo(second.hashCode())
+        );
+    }
 
     /**
-     * Find identity by name.
-     * @param name The name of it
-     * @return The identity found
-     * @throws UnreachableIdentityException If can't reach this guy
-     * @checkstyle RedundantThrows (3 lines)
+     * Identity can be found in a user by its name, and it will be retrieved
+     * from a catalog.
+     * @throws Exception If there is some problem inside
      */
-    Identity identity(String name) throws UnreachableIdentityException;
+    @Test
+    public void findsIdentitiesByNameInCatalog() throws Exception {
+        final String name = "Jeff Bridges";
+        final Identity identity = Mockito.mock(Identity.class);
+        final Catalog catalog = Mockito.mock(Catalog.class);
+        final User user = new HubUser(catalog, "jeff");
+        Mockito.doReturn(identity).when(catalog).make(name, user);
+        final Identity found = user.identity(name);
+        MatcherAssert.assertThat(found, Matchers.equalTo(identity));
+    }
 
 }

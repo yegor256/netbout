@@ -26,11 +26,11 @@
  */
 package com.netbout.rest.page;
 
-import com.netbout.harness.ResourceBuilder;
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.BoutRs;
 import com.netbout.rest.Page;
 import com.netbout.rest.Resource;
+import com.netbout.rest.ResourceMocker;
 import com.rexsl.test.JaxbConverter;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -86,7 +86,7 @@ public final class JaxbBundleTest {
         final Page page = new PageBuilder()
             .stylesheet("test")
             .build(AbstractPage.class)
-            .init((Resource) new ResourceBuilder().build(BoutRs.class))
+            .init((Resource) new ResourceMocker().mock(BoutRs.class))
             .append(bundle.element())
             .append("Test me");
         MatcherAssert.assertThat(

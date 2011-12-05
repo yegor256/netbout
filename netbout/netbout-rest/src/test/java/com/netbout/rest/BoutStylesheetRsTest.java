@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.harness.ResourceBuilder;
 import com.rexsl.test.XhtmlConverter;
 import java.net.URLEncoder;
 import java.util.Random;
@@ -57,8 +56,8 @@ public final class BoutStylesheetRsTest {
      */
     @Test
     public void testWrappingXslRendering() throws Exception {
-        final BoutStylesheetRs rest =
-            new ResourceBuilder().build(BoutStylesheetRs.class);
+        final BoutStylesheetRs rest = new ResourceMocker()
+            .mock(BoutStylesheetRs.class);
         final Long bout = new Random().nextLong();
         final String stage = "some stage name";
         rest.setBout(bout);
@@ -88,8 +87,8 @@ public final class BoutStylesheetRsTest {
      */
     @Test
     public void testStageXslRendering() throws Exception {
-        final BoutStylesheetRs rest =
-            new ResourceBuilder().build(BoutStylesheetRs.class);
+        final BoutStylesheetRs rest = new ResourceMocker()
+            .mock(BoutStylesheetRs.class);
         final Long bout = new Random().nextLong();
         final String stage = "nb:hh";
         rest.setBout(bout);

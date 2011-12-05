@@ -24,57 +24,49 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.harness;
+package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import com.netbout.utils.Cryptor;
-import java.util.Random;
 import org.mockito.Mockito;
 
 /**
- * Builds a mocked cookie for test requests.
+ * Mocker of {@link User}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CookieBuilder {
+public final class UserMocker {
 
     /**
-     * It's a utility class.
+     * The object.
      */
-    private CookieBuilder() {
-        // empty
+    private final transient User user = Mockito.mock(User.class);
+
+    /**
+     * With this name.
+     * @param name The name of it
+     * @return This object
+     */
+    public UserMocker namedAs(final String name) {
+        Mockito.doReturn(name).when(this.user).name();
+        return this;
     }
 
     /**
-     * Build cookie.
-     * @return The cookie
+     * With this identity on board.
+     * @param identity The identity
+     * @return This object
      */
-    public static String cookie() {
-        return String.format("netbout=%s", CookieBuilder.auth());
+    public UserMocker withIdentity(final Identity identity) {
+        Mockito.doReturn(identity).when(this.user).identity(identity.name());
+        return this;
     }
 
     /**
-     * Build auth code.
-     * @return The auth code
+     * Build it.
+     * @return The bout
      */
-    public static String auth() {
-        return CookieBuilder.auth(
-            String.valueOf(Math.abs(new Random().nextLong()))
-        );
-    }
-
-    /**
-     * Build auth code, for the identity specified.
-     * @param name Identity name
-     * @return The auth code
-     */
-    public static String auth(final String name) {
-        final Identity identity = Mockito.mock(Identity.class);
-        final Random random = new Random();
-        final String number = String.valueOf(Math.abs(random.nextLong()));
-        Mockito.doReturn(name).when(identity).name();
-        Mockito.doReturn(name).when(identity).user();
-        return new Cryptor().encrypt(identity);
+    public User mock() {
+        return this.user;
     }
 
 }

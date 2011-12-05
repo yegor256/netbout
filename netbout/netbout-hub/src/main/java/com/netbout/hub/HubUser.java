@@ -24,11 +24,79 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.hub;
+
+import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
 
 /**
- * Test harness.
+ * User, implementation in Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.harness;
+final class HubUser implements User {
+
+    /**
+     * Catalog.
+     */
+    private final transient Catalog catalog;
+
+    /**
+     * The name of it.
+     */
+    private final transient String uname;
+
+    /**
+     * Public ctor.
+     * @param ctlg The catalog with identities
+     * @param name The name of it
+     * @see DefaultHub#user(String)
+     */
+    protected HubUser(final Catalog ctlg, final String name) {
+        this.catalog = ctlg;
+        this.uname = name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof User)
+            && this.name().equals(((User) obj).name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.uname.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return this.uname;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    @Override
+    public Identity identity(final String name)
+        throws com.netbout.spi.UnreachableIdentityException {
+        final Identity identity = this.catalog.make(name, this);
+        Logger.debug(
+            this,
+            "#identity('%s'): found",
+            name
+        );
+        return identity;
+    }
+
+}

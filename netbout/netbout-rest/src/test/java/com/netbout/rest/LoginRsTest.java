@@ -26,12 +26,11 @@
  */
 package com.netbout.rest;
 
-import com.netbout.harness.PageConverter;
-import com.netbout.harness.ResourceBuilder;
 import com.rexsl.core.Manifests;
 import java.net.URI;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -52,35 +51,36 @@ import org.xmlmatchers.XmlMatchers;
 public final class LoginRsTest {
 
     /**
-     * Login page should be renderable.
+     * LoginRs renders login page.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testLoginPageRendering() throws Exception {
-        final LoginRs rest = new ResourceBuilder().build(LoginRs.class);
+    public void rendersLoginPage() throws Exception {
+        final LoginRs rest = new ResourceMocker().mock(LoginRs.class);
         final Response response = rest.login();
         MatcherAssert.assertThat(
-            PageConverter.the((Page) response.getEntity(), rest),
+            ResourceMocker.the((Page) response.getEntity(), rest),
             XmlMatchers.hasXPath("/page/facebook[@href]")
         );
     }
 
     /**
-     * Facebook callback should produce a cookie.
+     * LoginRs can authenticate user through Facebook.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testAuthenticationFromFacebook() throws Exception {
+    public void authenticatesUserThroughFacebook() throws Exception {
         // @checkstyle LineLength (1 line)
         final String code = "AQCJ9EpLpqvj9cbag0mU8z6cHqyk-2CN5cigCzwB1aykqqqpiFNzAjsnNbRRY7x4n4h2ZEmrRVHhHSHzcFTtXobWM8LJSCHSB1_cjvsJS2vy2DsqRA3qGRAjUY8pKk0tO2zYpX-kFpnn2V6Z1xxvb7uyP-qrV_mQNWSYHKfPWKL0yTxo-NpFAGT4mDYNXl_cCMs";
-        final ResourceBuilder builder = new ResourceBuilder();
-        final LoginRs rest = builder.build(LoginRs.class);
+        final URI baseUri = new URI("http://localhost/test/me");
+        final UriInfo uriInfo = new UriInfoMocker()
+            .withRequestUri(baseUri)
+            .mock();
+        final URI redirect = UriBuilder.fromUri(baseUri).path("/g/fb").build();
+        final LoginRs rest = new ResourceMocker()
+            .withUriInfo(uriInfo)
+            .mock(LoginRs.class);
         final LoginRs spy = PowerMockito.spy(rest);
-        final URI redirect = builder.uriInfo()
-            .getBaseUriBuilder()
-            .clone()
-            .path("/g/fb")
-            .build();
         PowerMockito.doReturn("access_token=abc|cde&expires=5108").when(
             spy,
             // @checkstyle MultipleStringLiterals (1 line)
@@ -106,7 +106,7 @@ public final class LoginRsTest {
         final Response response = spy.fbauth(code);
         MatcherAssert.assertThat(
             response.getStatus(),
-            Matchers.equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
+            Matchers.equalTo(Response.Status.SEE_OTHER.getStatusCode())
         );
     }
 

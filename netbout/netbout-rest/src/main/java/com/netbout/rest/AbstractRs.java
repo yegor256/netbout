@@ -294,7 +294,9 @@ public abstract class AbstractRs implements Resource {
 
     /**
      * Inject servlet context. Should be called by JAX-RS implemenation
-     * because of <tt>&#64;Context</tt> annotation.
+     * because of <tt>&#64;Context</tt> annotation. Servlet attributes are
+     * injected into context by {@link com.netbout.servlets.Starter} servlet
+     * listener.
      * @param context The context
      */
     @Context
@@ -333,6 +335,14 @@ public abstract class AbstractRs implements Resource {
      * @return The bus
      */
     protected final Bus bus() {
+        if (this.bus == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#bus was never injected by container",
+                    this.getClass().getName()
+                )
+            );
+        }
         return this.bus;
     }
 
@@ -341,6 +351,14 @@ public abstract class AbstractRs implements Resource {
      * @return The hub
      */
     protected final Hub hub() {
+        if (this.bus == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#hub was never injected by container",
+                    this.getClass().getName()
+                )
+            );
+        }
         return this.hub;
     }
 

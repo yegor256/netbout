@@ -47,7 +47,7 @@ public final class HubIdentityTest {
     @Test
     public void wrapsAnotherIdentityAndAddsUserProperty() throws Exception {
         final Identity original = Mockito.mock(Identity.class);
-        final User user = new User(Mockito.mock(Catalog.class), "Jeff");
+        final User user = Mockito.mock(User.class);
         final Identity wrapper = new HubIdentity(original, user);
         wrapper.name();
         Mockito.verify(original).name();

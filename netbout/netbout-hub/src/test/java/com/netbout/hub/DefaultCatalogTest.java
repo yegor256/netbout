@@ -93,7 +93,7 @@ public final class DefaultCatalogTest {
         final Catalog catalog = new DefaultCatalog(bus);
         final String name = String.valueOf(Math.abs(new Random().nextLong()));
         final Identity anonymous = catalog.make(name);
-        final User user = new User(catalog, "Billy Bonce");
+        final User user = Mockito.mock(User.class);
         final Identity proper = catalog.make(name, user);
         MatcherAssert.assertThat(anonymous, Matchers.equalTo(proper));
     }
@@ -108,8 +108,8 @@ public final class DefaultCatalogTest {
         final Bus bus = new BusMocker().mock();
         final Catalog catalog = new DefaultCatalog(bus);
         final String name = String.valueOf(Math.abs(new Random().nextLong()));
-        final User first = new User(catalog, "Jack Sparrow");
-        final User second = new User(catalog, "John Silver");
+        final User first = Mockito.mock(User.class);
+        final User second = Mockito.mock(User.class);
         catalog.make(name, first);
         catalog.make(name, second);
     }

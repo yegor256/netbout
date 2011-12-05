@@ -65,7 +65,7 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public User user(final String name) {
-        final User user = new User(this.catalog, name);
+        final User user = new HubUser(this.catalog, name);
         Logger.debug(
             this,
             "#user('%s'): instantiated",

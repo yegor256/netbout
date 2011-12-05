@@ -26,8 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.harness.PageConverter;
-import com.netbout.harness.ResourceBuilder;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -42,30 +40,30 @@ import org.xmlmatchers.XmlMatchers;
 public final class InboxRsTest {
 
     /**
-     * Inbox page should be renderable.
+     * InboxRs can render front page of the inbox.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testInboxPageRendering() throws Exception {
-        final InboxRs rest = new ResourceBuilder().build(InboxRs.class);
-        final Response response = rest.inbox("");
+    public void rendersInboxFrontPage() throws Exception {
+        final InboxRs rest = new ResourceMocker().mock(InboxRs.class);
+        final Response response = rest.inbox();
         MatcherAssert.assertThat(
-            PageConverter.the((Page) response.getEntity(), rest),
+            ResourceMocker.the((Page) response.getEntity(), rest),
             XmlMatchers.hasXPath("/page/bouts")
         );
     }
 
     /**
-     * Inbox page should be renderable.
+     * InboxRs can start new bout.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testStartNewBout() throws Exception {
-        final InboxRs rest = new ResourceBuilder().build(InboxRs.class);
+    public void startsNewBout() throws Exception {
+        final InboxRs rest = new ResourceMocker().mock(InboxRs.class);
         final Response response = rest.start();
         MatcherAssert.assertThat(
             response.getStatus(),
-            Matchers.equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
+            Matchers.equalTo(Response.Status.SEE_OTHER.getStatusCode())
         );
     }
 

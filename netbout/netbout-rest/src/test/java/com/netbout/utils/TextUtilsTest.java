@@ -39,11 +39,11 @@ import org.junit.Test;
 public final class TextUtilsTest {
 
     /**
-     * Base64 conversions.
+     * TextUtils can convert text to Base64 and backward.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBaseConversions() throws Exception {
+    public void convertsBaseToTextAndBack() throws Exception {
         final String text = "\u041F\u0435\u0442\u0440 I";
         MatcherAssert.assertThat(
             TextUtils.fromBase(TextUtils.toBase(text)),
@@ -52,11 +52,11 @@ public final class TextUtilsTest {
     }
 
     /**
-     * Convert text with velocity.
+     * TextUtils can format Velocity template.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testVelocityConversion() throws Exception {
+    public void formatsVelocityTemplate() throws Exception {
         final VelocityContext context = new VelocityContext();
         final String xsl = TextUtils.format(
             "com/netbout/rest/bout.xsl.vm",

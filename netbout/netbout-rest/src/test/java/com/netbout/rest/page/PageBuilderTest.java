@@ -26,11 +26,11 @@
  */
 package com.netbout.rest.page;
 
-import com.netbout.harness.ResourceBuilder;
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.BoutRs;
 import com.netbout.rest.Page;
 import com.netbout.rest.Resource;
+import com.netbout.rest.ResourceMocker;
 import com.rexsl.core.Stylesheet;
 import com.rexsl.test.JaxbConverter;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -59,7 +59,7 @@ public final class PageBuilderTest {
         final Page page = new PageBuilder()
             .stylesheet(stylesheet)
             .build(AbstractPage.class)
-            .init((Resource) new ResourceBuilder().build(BoutRs.class));
+            .init((Resource) new ResourceMocker().mock(BoutRs.class));
         new PageBuilder().stylesheet(stylesheet).build(AbstractPage.class);
         MatcherAssert.assertThat(
             page.getClass().getAnnotation(Stylesheet.class),

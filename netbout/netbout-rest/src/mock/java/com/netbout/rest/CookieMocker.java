@@ -24,32 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.harness;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableIdentityException;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.utils.Cryptor;
+import java.util.Random;
+import org.mockito.Mockito;
 
 /**
- * User.
- *
+ * Builds a mocked cookie for test requests.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface User {
+public final class CookieMocker {
 
     /**
-     * Get its name.
-     * @return The name of it
+     * Build cookie.
+     * @return The cookie
      */
-    String name();
+    public String cookie() {
+        return String.format("netbout=%s", this.auth());
+    }
 
     /**
-     * Find identity by name.
-     * @param name The name of it
-     * @return The identity found
-     * @throws UnreachableIdentityException If can't reach this guy
-     * @checkstyle RedundantThrows (3 lines)
+     * Build auth code.
+     * @return The auth code
      */
-    Identity identity(String name) throws UnreachableIdentityException;
+    public String auth() {
+        return this.auth(
+            String.valueOf(Math.abs(new Random().nextLong()))
+        );
+    }
+
+    /**
+     * Build auth code, for the identity specified.
+     * @param name Identity name
+     * @return The auth code
+     */
+    public String auth(final String name) {
+        final Identity identity = new IdentityMocker()
+            .namedAs(name)
+            .belongsTo(name)
+            .mock();
+        return new Cryptor().encrypt(identity);
+    }
 
 }

@@ -33,44 +33,21 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link User}.
+ * Test case of {@link User} and {@link UserMocker}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 public final class UserTest {
 
     /**
-     * Two objects of class User should match each other by name only.
+     * UserMocker can assign a name to the mock.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void matchesWithOtherUsersByNameSimilarityOnly() throws Exception {
+    public void canUserMockedName() throws Exception {
         final String name = "Big Lebowski";
-        final Catalog catalog = Mockito.mock(Catalog.class);
-        final User first = new User(catalog, name);
-        final User second = new User(catalog, name);
-        MatcherAssert.assertThat(first, Matchers.equalTo(second));
-        MatcherAssert.assertThat(first.equals(name), Matchers.is(false));
-        MatcherAssert.assertThat(
-            first.hashCode(),
-            Matchers.equalTo(second.hashCode())
-        );
-    }
-
-    /**
-     * Identity can be found in a user by its name, and it will be retrieved
-     * from a catalog.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void findsIdentitiesByNameInCatalog() throws Exception {
-        final String name = "Jeff Bridges";
-        final Identity identity = Mockito.mock(Identity.class);
-        final Catalog catalog = Mockito.mock(Catalog.class);
-        final User user = new User(catalog, "jeff");
-        Mockito.doReturn(identity).when(catalog).make(name, user);
-        final Identity found = user.identity(name);
-        MatcherAssert.assertThat(found, Matchers.equalTo(identity));
+        final User user = new UserMocker().namedAs(name).mock();
+        MatcherAssert.assertThat(user.name(), Matchers.equalTo(name));
     }
 
 }

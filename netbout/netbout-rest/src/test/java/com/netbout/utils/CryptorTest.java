@@ -27,7 +27,11 @@
 package com.netbout.utils;
 
 import com.netbout.hub.Hub;
+import com.netbout.hub.User;
+import com.netbout.hub.UserMocker;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -47,19 +51,39 @@ public final class CryptorTest {
     @Test
     public void testEncryptionDecryption() throws Exception {
         final String uname = "\u041F\u0435\u0442\u0440 I";
-        final String iname = "6357282";
-        final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn(iname).when(identity).name();
-        Mockito.doReturn(uname).when(identity).user();
+        final String iname = String.valueOf(Math.abs(new Random().nextLong()));
+        final Identity identity = new IdentityMocker()
+            .namedAs(iname)
+            .belongsTo(uname)
+            .mock();
+        final User user = new UserMocker()
+            .namedAs(uname)
+            .withIdentity(identity)
+            .mock();
+        final String hash = new Cryptor().encrypt(identity);
+        final Hub hub = Mockito.mock(Hub.class);
+        Mockito.doReturn(user).when(hub).user(uname);
+        final Identity discovered = new Cryptor().decrypt(hub, hash);
+        MatcherAssert.assertThat(discovered, Matchers.equalTo(identity));
+        Mockito.verify(hub).user(uname);
+        Mockito.verify(user).identity(iname);
+    }
+
+    /**
+     * Cryptor produces HASH with only alphabetic chars inside.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void hashDoestHaveIllegalCharacters() throws Exception {
+        final Identity identity = new IdentityMocker()
+            .namedAs("hello@example.com")
+            .belongsTo("\u041F\u0435\u0442\u0440 IV")
+            .mock();
         final String hash = new Cryptor().encrypt(identity);
         MatcherAssert.assertThat(
-            hash.matches("[\\w=\\+\\./]+"),
+            hash.matches("^[\\w=\\+\\./]+$"),
             Matchers.describedAs(hash, Matchers.is(true))
         );
-        final Hub hub = Mockito.mock(Hub.class);
-        final Identity discovered = new Cryptor().decrypt(hub, hash);
-        MatcherAssert.assertThat(discovered.name(), Matchers.equalTo(iname));
-        MatcherAssert.assertThat(discovered.user(), Matchers.equalTo(uname));
     }
 
 }

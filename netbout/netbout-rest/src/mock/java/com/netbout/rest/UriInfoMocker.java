@@ -24,57 +24,68 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.harness;
+package com.netbout.rest;
 
-import com.netbout.rest.Page;
-import com.netbout.rest.Resource;
+import com.netbout.hub.Hub;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.utils.Cryptor;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.XhtmlConverter;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URL;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.Providers;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.Source;
 import org.hamcrest.MatcherAssert;
+import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
 
 /**
- * Converts response to XML.
+ * Builds an instance of {@link UriInfo}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PageConverter {
+public final class UriInfoMocker {
 
     /**
-     * It's utility class.
+     * Request URI.
      */
-    private PageConverter() {
-        // empty
+    private transient URI uri;
+
+    /**
+     * Public ctor.
+     * @throws Exception If something is wrong
+     */
+    public UriInfoMocker() throws Exception {
+        this.uri = new URI("http://localhost:99/local");
     }
 
     /**
-     * Convert response to XML.
-     * @param page The page
-     * @param resource The resource, where this response came from
-     * @return The XML
-     * @throws Exception If there is some problem inside
+     * With this request URI.
+     * @param ruri The URI
+     * @return This object
      */
-    public static Source the(final Page page, final Resource resource)
-        throws Exception {
-        final XslResolver resolver = (XslResolver) resource.providers()
-            .getContextResolver(
-                Marshaller.class,
-                MediaType.APPLICATION_XML_TYPE
-            );
-        final Marshaller mrsh = resolver.getContext(page.getClass());
-        mrsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        final StringWriter writer = new StringWriter();
-        mrsh.marshal(page, writer);
-        final Source source = XhtmlConverter.the(writer.toString());
-        MatcherAssert.assertThat(
-            source,
-            XmlMatchers.hasXPath("/page[@nano]")
-        );
-        return source;
+    public UriInfoMocker withRequestUri(final URI ruri) {
+        this.uri = ruri;
+        return this;
+    }
+
+    /**
+     * Build an instance of provided class.
+     * @return The resource just created
+     * @throws Exception If something is wrong
+     */
+    public UriInfo mock() throws Exception {
+        final UriInfo info = Mockito.mock(UriInfo.class);
+        Mockito.doReturn(this.uri).when(info).getRequestUri();
+        return info;
     }
 
 }

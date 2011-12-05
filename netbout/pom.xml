@@ -416,6 +416,87 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <!--
+            Package MOCK artifact.
+            -->
+            <id>mock</id>
+            <activation>
+                <file><exists>${basedir}/src/mock</exists></file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version since="5 Dec 2011">2.3.2</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classesDirectory>${project.build.testOutputDirectory}</classesDirectory>
+                                    <archive>
+                                        <index>true</index>
+                                        <manifest>
+                                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                        </manifest>
+                                    </archive>
+                                    <classifier>mock</classifier>
+                                    <includes>
+                                        <include>**/*Mocker.class</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version since="19 Oct 2011">2.2.1</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.netbout</groupId>
+                                <artifactId>netbout-tk</artifactId>
+                                <version netbout="yes">2.0-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptorRefs>
+                                        <descriptorRef>netbout-mock</descriptorRef>
+                                    </descriptorRefs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin> -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <id>add-test-sources</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>add-test-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${basedir}/src/mock/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
@@ -501,51 +582,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version since="19 Oct 2011">2.2.1</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.netbout</groupId>
-                        <artifactId>netbout-tk</artifactId>
-                        <version netbout="yes">2.0-SNAPSHOT</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>netbout-mock</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version since="2 Dec 2011">1.7</version>
-                <executions>
-                    <execution>
-                        <id>add-test-sources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/src/mock/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 
 </project>

@@ -109,7 +109,7 @@ public final class StageCoordinates {
     }
 
     /**
-     * Create stage coordicates from string.
+     * Create stage coordinates from string.
      * @param pair The information from cookie
      * @return The object just built
      */
