@@ -140,14 +140,14 @@ public final class BoutRs extends AbstractRs {
      * @param keyword The keyword to use
      * @return The JAX-RS response
      */
-    @GET
+    @POST
     @Path("/s")
-    public Response suggest(@QueryParam("k") final String keyword) {
+    public Response suggest(@FormParam("keyword") final String keyword) {
         if (keyword == null) {
             throw new ForwardException(
                 this,
                 this.self(""),
-                "Query param 'k' missed"
+                "Form param 'keyword' missed"
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();
@@ -232,7 +232,7 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(
                 this,
                 this.self(""),
-                "Form param 'name' missed"
+                "Query param 'name' missed"
             );
         }
         try {
@@ -340,7 +340,6 @@ public final class BoutRs extends AbstractRs {
             .link("leave", this.self("/leave"));
         if (this.participant().confirmed()) {
             page.link("post", this.self("/p"))
-                .link("invite", this.self("/i"))
                 .link("suggest", this.self("/s"))
                 .link("rename", this.self("/r"));
         } else {

@@ -29,13 +29,13 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.harness.CookieBuilder
+import com.netbout.rest.CookieMocker
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def cookie = CookieBuilder.cookie()
+def cookie = new CookieMocker().cookie()
 
 // start new bout
 def boutURI = new TestClient(rexsl.home)
@@ -51,6 +51,6 @@ def boutURI = new TestClient(rexsl.home)
 new TestClient(UriBuilder.fromUri(boutURI).queryParam('stage', 'nb:hh').build())
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get('')
+    .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('//xhtml:div[@id="stage"]')
+    .assertXPath('/xhtml:html[count(//xhtml:section[@id="stage"]) = 0]')

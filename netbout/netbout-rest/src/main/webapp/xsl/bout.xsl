@@ -77,11 +77,11 @@
         </header>
         <xsl:apply-templates select="/page/bout/participants" />
         <xsl:if test="$participant/@confirmed = 'true'">
-            <form method="get">
+            <form method="post">
                 <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@name='suggest']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='suggest']/@href"/>
                 </xsl:attribute>
-                <input name="k">
+                <input name="keyword">
                     <xsl:attribute name="value">
                         <xsl:value-of select="/page/keyword"/>
                     </xsl:attribute>
@@ -106,7 +106,7 @@
         <xsl:if test="$participant/@confirmed = 'true'">
             <form method="post">
                 <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@name='rename']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
                 </xsl:attribute>
                 <input name="title" size="50">
                     <xsl:attribute name="value">
@@ -126,7 +126,7 @@
                 <xsl:when test="$participant/@confirmed = 'true'">
                     <a>
                         <xsl:attribute name="href">
-                            <xsl:value-of select="/page/links/link[@name='leave']/@href"/>
+                            <xsl:value-of select="/page/links/link[@rel='leave']/@href"/>
                         </xsl:attribute>
                         <xsl:text>I want to leave this bout</xsl:text>
                     </a>
@@ -135,14 +135,14 @@
                     <xsl:text>Do you agree to join this bout: </xsl:text>
                     <a>
                         <xsl:attribute name="href">
-                            <xsl:value-of select="/page/links/link[@name='join']/@href"/>
+                            <xsl:value-of select="/page/links/link[@rel='join']/@href"/>
                         </xsl:attribute>
                         <xsl:text>yes, of course</xsl:text>
                     </a>
                     <xsl:text> or </xsl:text>
                     <a>
                         <xsl:attribute name="href">
-                            <xsl:value-of select="/page/links/link[@name='leave']/@href"/>
+                            <xsl:value-of select="/page/links/link[@rel='leave']/@href"/>
                         </xsl:attribute>
                         <xsl:text>no, I refuse</xsl:text>
                     </a>
@@ -182,7 +182,7 @@
         <xsl:if test="$participant/@confirmed = 'true'">
             <form id="post" method="post">
                 <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@name='post']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
                 </xsl:attribute>
                 <dl><textarea name="text" cols="80" rows="5"></textarea></dl>
                 <dl><input name="submit" type="submit" /></dl>

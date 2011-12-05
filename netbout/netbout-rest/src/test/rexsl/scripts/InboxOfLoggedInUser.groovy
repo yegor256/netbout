@@ -29,12 +29,12 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.harness.CookieBuilder
+import com.netbout.rest.CookieMocker
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 
-def cookie = CookieBuilder.cookie()
+def cookie = new CookieMocker().cookie()
 
 // let's start one bout to have something in the inbox
 new TestClient(rexsl.home)
@@ -47,9 +47,9 @@ new TestClient(rexsl.home)
 new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get('/')
+    .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
-    .assertXPath('/page/identity/name[.="johnny.doe"]')
+    .assertXPath('/page/identity/name')
     .assertXPath('/page/bouts')
     .assertXPath('/page/bouts/bout/participants/participant')

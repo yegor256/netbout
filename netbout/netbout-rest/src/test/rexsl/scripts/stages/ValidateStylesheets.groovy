@@ -29,17 +29,17 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.harness.CookieBuilder
+import com.netbout.rest.CookieMocker
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def cookie = CookieBuilder.cookie()
+def cookie = new CookieMocker().cookie()
 def helper = 'nb:hh'
 def param = 'stage'
 
-// start new bout
+// start new bout and save its XML
 def boutURI = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
@@ -49,22 +49,22 @@ def boutURI = new TestClient(rexsl.home)
     .get(HttpHeaders.LOCATION)
 
 // invite helper to the bout
-new TestClient(boutURI)
+new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', helper).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/i').queryParam('name', helper).build())
+    .get()
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
 // validate global bout XSL
-new TestClient(boutURI)
+new TestClient(UriBuilder.fromUri(boutURI).path('/xsl/bout.xsl').queryParam(param, helper).build())
     .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/xsl/bout.xsl').queryParam(param, helper).build())
+    .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('//xsl:include')
 
 // validate local stage-related XSL
-new TestClient(boutURI)
+new TestClient(UriBuilder.fromUri(boutURI).path('/xsl/stage.xsl').queryParam(param, helper).build())
     .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/xsl/stage.xsl').queryParam(param, helper).build())
+    .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('//xsl:template')

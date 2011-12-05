@@ -35,17 +35,17 @@ import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 
 [
-    '//x:div[@class="message"]',
-    '//x:div[@id="stage"]',
-    '//x:title',
-    '//x:div[@id="version" and contains(.,"r555") and contains(.,"56ms")]',
+    '//xhtml:article[@class="message"]',
+    '//xhtml:section[@id="stage"]',
+    '//xhtml:title',
+    '//xhtml:aside[@id="version" and contains(.,"r555") and contains(.,"56ms")]',
 ].each { xpath ->
     Assert.assertThat(
         XhtmlConverter.the(rexsl.document),
         XmlMatchers.hasXPath(
             xpath,
             new SimpleNamespaceContext()
-            .withBinding('x', 'http://www.w3.org/1999/xhtml')
+            .withBinding('xhtml', 'http://www.w3.org/1999/xhtml')
         )
     )
 }

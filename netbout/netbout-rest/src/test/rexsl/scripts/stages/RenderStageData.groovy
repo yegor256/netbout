@@ -29,15 +29,15 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.harness.CookieBuilder
+import com.netbout.rest.CookieMocker
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def cookie = CookieBuilder.cookie()
+def cookie = new CookieMocker().cookie()
 
-// start new bout and get its number
+// start new bout and get its XML
 def boutURI = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
@@ -46,30 +46,17 @@ def boutURI = new TestClient(rexsl.home)
     .headers
     .get(HttpHeaders.LOCATION)
 
-// get URI for inviting new participants
-def inviteURI = new XmlSlurper(
-    new TestClient(boutURI)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .header(HttpHeaders.COOKIE, cookie)
-        .get()
-        .assertStatus(HttpURLConnection.HTTP_OK)
-        .body
-    )
-    .page
-    .links
-    .link
-
 // invite helper to this bout and expect a stage to be rendered
-new TestClient(UriBuilder.fromUri(inviteURI).queryParam('name', 'nb:hh').build())
+def boutHome = new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', 'nb:hh').build())
     .header(HttpHeaders.COOKIE, cookie)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get()
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
 // validate that the stage is really there, in XHTML
-new TestClient(rexsl.home)
+new TestClient(boutURI)
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/{bout}').build(bout).toString())
+    .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('//xhtml:div[@id="stage"]/xhtml:p')
+    .assertXPath('//xhtml:section[@id="stage"]//xhtml:p')

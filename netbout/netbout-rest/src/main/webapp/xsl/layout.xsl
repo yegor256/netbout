@@ -53,7 +53,7 @@
                 <header>
                     <a>
                         <xsl:attribute name="href">
-                            <xsl:value-of select="links/link[@name='home']/@href"/>
+                            <xsl:value-of select="links/link[@rel='home']/@href"/>
                         </xsl:attribute>
                         <img src="http://img.netbout.com/logo.png"/>
                     </a>
@@ -73,7 +73,7 @@
                                 <li>
                                     <a>
                                         <xsl:attribute name="href">
-                                            <xsl:value-of select="links/link[@name='start']/@href"/>
+                                            <xsl:value-of select="links/link[@rel='start']/@href"/>
                                         </xsl:attribute>
                                         <xsl:text>start</xsl:text>
                                     </a>
@@ -81,7 +81,7 @@
                                 <li>
                                     <a>
                                         <xsl:attribute name="href">
-                                            <xsl:value-of select="links/link[@name='logout']/@href"/>
+                                            <xsl:value-of select="links/link[@rel='logout']/@href"/>
                                         </xsl:attribute>
                                         <xsl:text>logout</xsl:text>
                                     </a>
@@ -90,7 +90,7 @@
                         </nav>
                         <form id="search" method="get" role="search">
                             <xsl:attribute name="action">
-                                <xsl:value-of select="/page/links/link[@name='self']"/>
+                                <xsl:value-of select="/page/links/link[@rel='self']"/>
                             </xsl:attribute>
                             <input name="q" autofocus="true" type="search" required="true">
                                 <xsl:attribute name="value">

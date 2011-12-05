@@ -29,15 +29,15 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.harness.CookieBuilder
+import com.netbout.rest.CookieMocker
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def cookie = CookieBuilder.cookie()
+def cookie = new CookieMocker().cookie()
 
-// start new bout
+// start new bout and save its XML
 def boutURI = new TestClient(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
@@ -48,10 +48,10 @@ def boutURI = new TestClient(rexsl.home)
 
 // invite two helpers there
 ['nb:hh', 'nb:db'].each { helper ->
-    new TestClient(boutURI)
+    new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', helper).build())
         .header(HttpHeaders.COOKIE, cookie)
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get(UriBuilder.fromPath('/i').queryParam('name', helper).build())
+        .get()
         .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 }
 
@@ -59,7 +59,7 @@ def boutURI = new TestClient(rexsl.home)
 new TestClient(boutURI)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get('/')
+    .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('/page/bout/stages[count(stage) = 2]')
     .assertXPath('/page/bout/stage[@name]')

@@ -39,11 +39,11 @@ import javax.ws.rs.core.MediaType
 
 [
     '/some-strange-name',
-    '//-some-thing-else'
+    '/-some-thing-else'
 ].each { url ->
     new TestClient(rexsl.home)
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get(url)
         .assertStatus(HttpURLConnection.HTTP_NOT_FOUND)
-        .assertXPath("/page/links/link[@name='self']")
+        .assertXPath("/page/links/link[@rel='self']")
 }

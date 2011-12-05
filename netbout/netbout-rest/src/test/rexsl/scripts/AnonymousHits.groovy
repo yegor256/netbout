@@ -39,13 +39,9 @@ import javax.ws.rs.core.MediaType
 [
     '/',
     '/123',
-    '/g'
 ].each { url ->
     new TestClient(rexsl.home)
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get(url)
-        .assertStatus(HttpURLConnection.HTTP_OK)
-        .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/login.xsl')]")
-        .assertXPath('/page/facebook[@href]')
-        .assertXPath("/page/links/link[@name='self']")
+        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 }

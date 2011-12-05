@@ -47,7 +47,7 @@ public interface Page {
     /**
      * Name attribute.
      */
-    String HATEOAS_NAME = "name";
+    String HATEOAS_NAME = "rel";
 
     /**
      * HREF attribute.

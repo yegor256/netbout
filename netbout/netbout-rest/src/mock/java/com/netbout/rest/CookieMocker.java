@@ -24,10 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.harness;
+package com.netbout.rest;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
+// import com.netbout.spi.IdentityMocker;
 import com.netbout.utils.Cryptor;
 import java.util.Random;
 import org.mockito.Mockito;
@@ -66,10 +66,13 @@ public final class CookieMocker {
      * @throws Exception If some problem inside
      */
     public String auth(final String name) throws Exception {
-        final Identity identity = new IdentityMocker()
-            .namedAs(name)
-            .belongsTo(name)
-            .mock();
+        // final Identity identity = new IdentityMocker()
+        //     .namedAs(name)
+        //     .belongsTo(name)
+        //     .mock();
+        final Identity identity = Mockito.mock(Identity.class);
+        Mockito.doReturn(name).when(identity).name();
+        Mockito.doReturn(name).when(identity).user();
         return new Cryptor().encrypt(identity);
     }
 

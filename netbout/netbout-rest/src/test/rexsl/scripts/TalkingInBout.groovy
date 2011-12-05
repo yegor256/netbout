@@ -29,13 +29,13 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.harness.CookieBuilder
+import com.netbout.rest.CookieMocker
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def cookie = CookieBuilder.cookie()
+def cookie = new CookieMocker().cookie()
 def friend = "7265734"
 
 // start new bout
@@ -48,27 +48,45 @@ def boutURI = new TestClient(rexsl.home)
     .get(HttpHeaders.LOCATION)
 
 // invite friend to the bout
-new TestClient(boutURI)
+new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', friend).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/i').queryParam('name', identity).build())
+    .get()
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
+// open bout as a friend and get its XML
+def auth = new CookieMocker().auth(friend)
+def boutXML = new TestClient(UriBuilder.fromUri(boutURI).queryParam('auth', auth).build())
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header(HttpHeaders.COOKIE, cookie)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .gpath
+
+// join bout
+def postURI = new TestClient(UriBuilder.fromUri(boutXML.links.link.find { it.@rel == 'join' }.@href.toURI()).queryParam('auth', auth).build())
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .followRedirects(true)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .gpath
+    .links.link.find { it.@rel == 'post' }.@href.toURI()
+
 // post new message to this bout, but a friend (using "auth" param)
-new TestClient(boutURI)
+new TestClient(UriBuilder.fromUri(postURI).queryParam('auth', auth).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .body('text=How are you?')
-    .post(UriBuilder.fromPath('/p').queryParam('auth', CookieBuilder.auth(friend)).build())
+    .post()
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
 // let's check that it exists there, the message
-new TestClient(boutURI)
+new TestClient(UriBuilder.fromUri(boutURI).queryParam('auth', auth).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
-    .get('/')
+    .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]")
-    .assertXPath('/page/identity/name[.="${friend}"]')
+    .assertXPath("/page/identity/name[.='${friend}']")
     .assertXPath('/page/bout/title[.=""]')
     .assertXPath('/page/bout/participants/participant')
     .assertXPath('/page/bout/messages/message/text[.="How are you?"]')

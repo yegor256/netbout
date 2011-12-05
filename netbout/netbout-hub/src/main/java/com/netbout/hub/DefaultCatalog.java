@@ -237,12 +237,14 @@ final class DefaultCatalog implements Catalog {
     private void assignedTo(final HubIdentity identity, final User user) {
         assert identity != null;
         assert user != null;
-        if (!identity.user().equals(user)) {
+        if (!identity.user().equals(user.name())) {
             throw new IllegalArgumentException(
                 String.format(
-                    "Identity '%s' is already taken by '%s'",
+                    // @checkstyle LineLength (1 line)
+                    "Identity '%s' is already taken by '%s' and can't be re-assigned to '%s'",
                     identity.name(),
-                    identity.user()
+                    identity.user(),
+                    user.name()
                 )
             );
         }

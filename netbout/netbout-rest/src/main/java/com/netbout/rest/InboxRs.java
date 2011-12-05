@@ -52,7 +52,7 @@ public final class InboxRs extends AbstractRs {
     /**
      * Query to filter messages with.
      */
-    private transient String query;
+    private transient String query = "";
 
     /**
      * Set filtering keyword.
