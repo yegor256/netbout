@@ -50,4 +50,22 @@ public final class UserTest {
         MatcherAssert.assertThat(user.name(), Matchers.equalTo(name));
     }
 
+    /**
+     * UserMocker can assign different identities to the user.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void returnsIdentitiesOfUser() throws Exception {
+        final String first = "Jeff Lebowski";
+        final Identity second = Mockito.mock(Identity.class);
+        final User user = new UserMocker()
+            .withIdentity(first)
+            .withIdentity("Walter Sobchack", second)
+            .mock();
+        MatcherAssert.assertThat(
+            user.identity(first).name(),
+            Matchers.equalTo(first)
+        );
+    }
+
 }

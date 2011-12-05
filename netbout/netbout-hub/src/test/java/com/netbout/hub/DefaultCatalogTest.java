@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
 import com.netbout.spi.Identity;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,8 +109,8 @@ public final class DefaultCatalogTest {
         final Bus bus = new BusMocker().mock();
         final Catalog catalog = new DefaultCatalog(bus);
         final String name = String.valueOf(Math.abs(new Random().nextLong()));
-        final User first = Mockito.mock(User.class);
-        final User second = Mockito.mock(User.class);
+        final User first = new UserMocker().mock();
+        final User second = new UserMocker().mock();
         catalog.make(name, first);
         catalog.make(name, second);
     }

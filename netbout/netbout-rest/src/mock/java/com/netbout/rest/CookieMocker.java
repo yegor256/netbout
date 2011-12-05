@@ -42,16 +42,18 @@ public final class CookieMocker {
     /**
      * Build cookie.
      * @return The cookie
+     * @throws Exception If some problem inside
      */
-    public String cookie() {
+    public String cookie() throws Exception {
         return String.format("netbout=%s", this.auth());
     }
 
     /**
      * Build auth code.
      * @return The auth code
+     * @throws Exception If some problem inside
      */
-    public String auth() {
+    public String auth() throws Exception {
         return this.auth(
             String.valueOf(Math.abs(new Random().nextLong()))
         );
@@ -61,8 +63,9 @@ public final class CookieMocker {
      * Build auth code, for the identity specified.
      * @param name Identity name
      * @return The auth code
+     * @throws Exception If some problem inside
      */
-    public String auth(final String name) {
+    public String auth(final String name) throws Exception {
         final Identity identity = new IdentityMocker()
             .namedAs(name)
             .belongsTo(name)

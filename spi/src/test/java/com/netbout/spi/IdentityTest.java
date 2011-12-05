@@ -62,4 +62,15 @@ public final class IdentityTest {
         MatcherAssert.assertThat(identity.user(), Matchers.equalTo(uname));
     }
 
+    /**
+     * IdentityMocker can set properties by default.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void setsAllIdentityPropertiesByDefault() throws Exception {
+        final Identity identity = new IdentityMocker().mock();
+        MatcherAssert.assertThat(identity.name(), Matchers.notNullValue());
+        MatcherAssert.assertThat(identity.user(), Matchers.notNullValue());
+    }
+
 }

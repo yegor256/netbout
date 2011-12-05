@@ -27,6 +27,8 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import java.util.Random;
 import org.mockito.Mockito;
 
 /**
@@ -42,6 +44,17 @@ public final class UserMocker {
     private final transient User user = Mockito.mock(User.class);
 
     /**
+     * Public ctor.
+     */
+    public UserMocker() {
+        final String name = String.format(
+            "Mark no.%d",
+            Math.abs(new Random().nextInt())
+        );
+        Mockito.doReturn(name).when(this.user).name();
+    }
+
+    /**
      * With this name.
      * @param name The name of it
      * @return This object
@@ -53,11 +66,26 @@ public final class UserMocker {
 
     /**
      * With this identity on board.
+     * @param name Name of identity
      * @param identity The identity
      * @return This object
+     * @throws Exception If any problem
      */
-    public UserMocker withIdentity(final Identity identity) {
-        Mockito.doReturn(identity).when(this.user).identity(identity.name());
+    public UserMocker withIdentity(final String name, final Identity identity)
+        throws Exception {
+        Mockito.doReturn(identity).when(this.user).identity(name);
+        return this;
+    }
+
+    /**
+     * With this identity on board.
+     * @param name The name of it
+     * @return This object
+     * @throws Exception If any problem
+     */
+    public UserMocker withIdentity(final String name) throws Exception {
+        final Identity identity = new IdentityMocker().namedAs(name).mock();
+        Mockito.doReturn(identity).when(this.user).identity(name);
         return this;
     }
 

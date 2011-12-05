@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import java.util.Random;

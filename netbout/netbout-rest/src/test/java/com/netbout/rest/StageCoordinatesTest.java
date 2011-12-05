@@ -79,7 +79,7 @@ public final class StageCoordinatesTest {
         final StageCoordinates coords = new StageCoordinates();
         coords.setStage(stage);
         coords.setPlace(place);
-        coords.normalize(Mockito.mock(Bus.class), Mockito.mock(Bout.class));
+        coords.normalize(new BusMocker().mock(), Mockito.mock(Bout.class));
         MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(""));
         MatcherAssert.assertThat(coords.place(), Matchers.equalTo(""));
     }

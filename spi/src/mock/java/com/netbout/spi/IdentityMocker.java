@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import java.net.URL;
+import java.util.Random;
 import org.mockito.Mockito;
 
 /**
@@ -44,6 +45,15 @@ public final class IdentityMocker {
      * Mocked identity.
      */
     private final Identity identity = Mockito.mock(Identity.class);
+
+    /**
+     * Public ctor.
+     */
+    public IdentityMocker() {
+        final String name = String.valueOf(Math.abs(new Random().nextInt()));
+        Mockito.doReturn(name).when(this.identity).name();
+        Mockito.doReturn(name).when(this.identity).user();
+    }
 
     /**
      * This is the name of identity.

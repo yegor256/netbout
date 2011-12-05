@@ -58,7 +58,7 @@ public final class CryptorTest {
             .mock();
         final User user = new UserMocker()
             .namedAs(uname)
-            .withIdentity(identity)
+            .withIdentity(iname, identity)
             .mock();
         final String hash = new Cryptor().encrypt(identity);
         final Hub hub = Mockito.mock(Hub.class);

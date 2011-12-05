@@ -146,7 +146,7 @@ final class DefaultCatalog implements Catalog {
                     user.name()
                 );
             } else if (identity instanceof HubIdentity) {
-                this.assignedTo(identity, user);
+                this.assignedTo((HubIdentity) identity, user);
             } else {
                 identity = new HubIdentity(identity, user);
                 this.save(name, identity);
@@ -234,8 +234,10 @@ final class DefaultCatalog implements Catalog {
      * @param identity The identity
      * @param user The user
      */
-    private void assignedTo(final Identity identity, final User user) {
-        if (!((HubIdentity) identity).user().equals(user)) {
+    private void assignedTo(final HubIdentity identity, final User user) {
+        assert identity != null;
+        assert user != null;
+        if (!identity.user().equals(user)) {
             throw new IllegalArgumentException(
                 String.format(
                     "Identity '%s' is already taken by '%s'",

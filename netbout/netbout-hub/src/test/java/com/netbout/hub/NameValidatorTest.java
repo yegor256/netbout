@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
