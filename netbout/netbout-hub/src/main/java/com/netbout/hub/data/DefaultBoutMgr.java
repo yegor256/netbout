@@ -85,6 +85,7 @@ public final class DefaultBoutMgr implements BoutMgr {
         BoutData data;
         synchronized (this.bouts) {
             final Long number = this.bus
+                // @checkstyle MultipleStringLiterals (1 lines)
                 .make("get-next-bout-number")
                 .synchronously()
                 .asDefault(this.defaultNextBoutNumber())
@@ -96,6 +97,7 @@ public final class DefaultBoutMgr implements BoutMgr {
         this.bus.make("started-new-bout")
             .asap()
             .arg(data.getNumber())
+            // @checkstyle MultipleStringLiterals (1 lines)
             .expire("get-next-bout-number")
             .asDefault(true)
             .exec();
