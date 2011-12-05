@@ -55,8 +55,18 @@ public final class ParticipantMocker {
     }
 
     /**
+     * In bout.
+     * @param The bout
+     * @return This object
+     */
+    public ParticipantMocker inBout(final Bout bout) {
+        Mockito.doReturn(bout).when(this.participant).bout();
+        return this;
+    }
+
+    /**
      * Mock it.
-     * @return Mocked bout
+     * @return Mocked participant
      */
     public Participant mock() {
         return this.participant;

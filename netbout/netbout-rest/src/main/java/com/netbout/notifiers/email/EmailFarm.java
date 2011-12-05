@@ -122,6 +122,7 @@ public final class EmailFarm implements IdentityAware {
      * @param message The message
      */
     private void send(final Participant dude, final Message message) {
+        assert dude != null;
         final VelocityContext context = new VelocityContext();
         context.put("bout", dude.bout());
         context.put("recepient", dude.identity());
@@ -135,7 +136,7 @@ public final class EmailFarm implements IdentityAware {
                 .toString()
         );
         final String text = TextUtils.format(
-            "com/netbout/notifiers/email-notification.vm",
+            "com/netbout/notifiers/email/email-notification.vm",
             context
         );
         this.deliver(dude.identity().name(), text);

@@ -31,6 +31,7 @@ package com.netbout.spi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import org.mockito.Mockito;
 
@@ -54,6 +55,11 @@ public final class BoutMocker {
         new ArrayList<Participant>();
 
     /**
+     * List of messages.
+     */
+    private List<Message> messages;
+
+    /**
      * This is the title of bout.
      * @param The title of it
      * @return This object
@@ -72,6 +78,7 @@ public final class BoutMocker {
     public BoutMocker withParticipant(final String name) throws Exception {
         this.participants.add(
             new ParticipantMocker()
+                .inBout(this.bout)
                 .withIdentity(new IdentityMocker().namedAs(name).mock())
                 .mock()
         );
@@ -79,13 +86,35 @@ public final class BoutMocker {
     }
 
     /**
+     * With this participant.
+     * @param The identity
+     * @return This object
+     * @throws Exception If some problem inside
+     */
+    public BoutMocker withParticipant(final Identity part) throws Exception {
+        this.participants.add(
+            new ParticipantMocker().inBout(this.bout).withIdentity(part).mock()
+        );
+        return this;
+    }
+
+    /**
      * Mock it.
      * @return Mocked bout
+     * @throws Exception If some problem inside
      */
-    public Bout mock() {
+    public Bout mock() throws Exception {
+        if (this.messages == null) {
+            this.messages = new ArrayList<Message>();
+            this.messages.add(new MessageMocker().inBout(this.bout).mock());
+        }
+        Mockito.doReturn(this.messages).when(this.bout)
+            .messages(Mockito.anyString());
+        Mockito.doReturn(this.messages.get(0)).when(this.bout)
+            .message(Mockito.anyLong());
         Mockito.doReturn(this.participants).when(this.bout).participants();
-        Mockito.doReturn(Math.abs(new Random().nextLong()))
-            .when(this.bout).number();
+        final Long number = Math.abs(new Random().nextLong());
+        Mockito.doReturn(number).when(this.bout).number();
         return this.bout;
     }
 

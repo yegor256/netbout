@@ -62,18 +62,34 @@ public final class BoutTest {
     }
 
     /**
+     * BoutMocker can add messages to bout by default.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void addsBoutMessageByDefault() throws Exception {
+        final Bout bout = new BoutMocker().mock();
+        MatcherAssert.assertThat(
+            bout.messages("").size(),
+            Matchers.greaterThan(0)
+        );
+        MatcherAssert.assertThat(bout.message(1L), Matchers.notNullValue());
+    }
+
+    /**
      * BoutMocker can assign collection of participants.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void canAssignParticipantsToBout() throws Exception {
         final String name = "some-identity-name";
+        final Identity identity = new IdentityMocker().mock();
         final Bout bout = new BoutMocker()
             .withParticipant(name)
+            .withParticipant(identity)
             .mock();
         MatcherAssert.assertThat(
             bout.participants().size(),
-            Matchers.equalTo(1)
+            Matchers.equalTo(2)
         );
     }
 

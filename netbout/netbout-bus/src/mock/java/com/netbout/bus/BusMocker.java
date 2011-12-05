@@ -26,6 +26,7 @@
  */
 package com.netbout.bus;
 
+import com.netbout.spi.Bout;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
@@ -80,6 +81,7 @@ public final class BusMocker {
         Mockito.doReturn(builder).when(builder).asap();
         Mockito.doReturn(builder).when(builder).arg(Mockito.anyObject());
         Mockito.doReturn(builder).when(builder).asDefault(Mockito.anyObject());
+        Mockito.doReturn(builder).when(builder).inBout(Mockito.any(Bout.class));
         return builder;
     }
 

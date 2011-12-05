@@ -28,11 +28,13 @@ package com.netbout.notifiers.email;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
+import com.netbout.spi.IdentityMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case for {@link EmailFarm}.
@@ -42,11 +44,11 @@ import org.junit.Test;
 public final class EmailFarmTest {
 
     /**
-     * Check emails validation.
+     * EmailFarm can validate incoming name as email.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testValidEmailFormatsCheck() throws Exception {
+    public void validatesEmailFormat() throws Exception {
         final EmailFarm farm = new EmailFarm();
         final String[] valid = new String[] {
             "test.me-now+1@example.com.ua",
@@ -56,7 +58,7 @@ public final class EmailFarmTest {
         for (String email : valid) {
             MatcherAssert.assertThat(
                 farm.canNotifyIdentity(email),
-                Matchers.equalTo(Boolean.TRUE)
+                Matchers.is(true)
             );
         }
         final String[] invalid = new String[] {
@@ -72,20 +74,23 @@ public final class EmailFarmTest {
         }
     }
 
-    // /**
-    //  * Test email sending.
-    //  * @throws Exception If there is some problem inside
-    //  */
-    // @Test
-    // public void testEmailSending() throws Exception {
-    //     final Identity identity = HubEntry.user("temp")
-    //         .identity("nb:test@example.com");
-    //     final Bout bout = identity.start();
-    //     final Message msg = bout.post("Hello, how are you?");
-    //     bout.post("Should work fine with\nmulti-line messages");
-    //     bout.post("And this one should work");
-    //     final EmailFarm farm = new EmailFarm();
-    //     farm.notifyBoutParticipants(bout.number(), identity.name(), msg.date());
-    // }
+    /**
+     * EmailFarm can send notify bout participants.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void notfiesBoutParticipants() throws Exception {
+        final Identity identity = new IdentityMocker().mock();
+        final Identity receiver = new IdentityMocker()
+            .namedAs("john@example.com")
+            .mock();
+        final Bout bout = new BoutMocker()
+            .withParticipant(receiver)
+            .mock();
+        Mockito.doReturn(bout).when(identity).bout(Mockito.anyLong());
+        final EmailFarm farm = new EmailFarm();
+        farm.init(identity);
+        farm.notifyBoutParticipants(bout.number(), 1L);
+    }
 
 }

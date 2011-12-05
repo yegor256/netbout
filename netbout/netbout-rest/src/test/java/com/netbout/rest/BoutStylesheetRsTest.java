@@ -26,10 +26,15 @@
  */
 package com.netbout.rest;
 
+import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
 import com.rexsl.test.XhtmlConverter;
 import java.net.URLEncoder;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.namespace.SimpleNamespaceContext;
@@ -87,17 +92,19 @@ public final class BoutStylesheetRsTest {
      */
     @Test
     public void testStageXslRendering() throws Exception {
+        final String text = "some text in XSL format";
+        final Bus bus = new BusMocker()
+            .doReturn(text, "render-stage-xsl")
+            .mock();
         final BoutStylesheetRs rest = new ResourceMocker()
+            .withDeps(bus, new HubMocker().mock())
             .mock(BoutStylesheetRs.class);
         final Long bout = new Random().nextLong();
         final String stage = "nb:hh";
         rest.setBout(bout);
         rest.setStage(stage);
         final String xsl = rest.stageXsl();
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath("/xsl:stylesheet", this.CONTEXT)
-        );
+        MatcherAssert.assertThat(xsl, Matchers.equalTo(text));
     }
 
 }

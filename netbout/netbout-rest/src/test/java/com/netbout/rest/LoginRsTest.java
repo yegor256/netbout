@@ -26,6 +26,13 @@
  */
 package com.netbout.rest;
 
+import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
+import com.netbout.hub.User;
+import com.netbout.hub.UserMocker;
+import com.netbout.spi.IdentityMocker;
 import com.rexsl.core.Manifests;
 import java.net.URI;
 import javax.ws.rs.core.Response;
@@ -73,11 +80,20 @@ public final class LoginRsTest {
         // @checkstyle LineLength (1 line)
         final String code = "AQCJ9EpLpqvj9cbag0mU8z6cHqyk-2CN5cigCzwB1aykqqqpiFNzAjsnNbRRY7x4n4h2ZEmrRVHhHSHzcFTtXobWM8LJSCHSB1_cjvsJS2vy2DsqRA3qGRAjUY8pKk0tO2zYpX-kFpnn2V6Z1xxvb7uyP-qrV_mQNWSYHKfPWKL0yTxo-NpFAGT4mDYNXl_cCMs";
         final URI baseUri = new URI("http://localhost/test/me");
+        final String uname = "338105383";
+        final User user = new UserMocker()
+            .namedAs(uname)
+            .withIdentity(uname, new IdentityMocker().namedAs(uname).mock())
+            .mock();
+        final Hub hub = new HubMocker()
+            .withUser(uname, user)
+            .mock();
         final UriInfo uriInfo = new UriInfoMocker()
             .withRequestUri(baseUri)
             .mock();
         final URI redirect = UriBuilder.fromUri(baseUri).path("/g/fb").build();
         final LoginRs rest = new ResourceMocker()
+            .withDeps(new BusMocker().mock(), hub)
             .withUriInfo(uriInfo)
             .mock(LoginRs.class);
         final LoginRs spy = PowerMockito.spy(rest);
@@ -100,7 +116,7 @@ public final class LoginRsTest {
         );
         final com.restfb.types.User fbuser =
             Mockito.mock(com.restfb.types.User.class);
-        Mockito.doReturn("92758366").when(fbuser).getId();
+        Mockito.doReturn(uname).when(fbuser).getId();
         Mockito.doReturn("John Doe").when(fbuser).getName();
         PowerMockito.doReturn(fbuser).when(spy, "fbUser", "abc|cde");
         final Response response = spy.fbauth(code);

@@ -24,47 +24,39 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.hub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import javax.ws.rs.core.Response;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
 import org.mockito.Mockito;
-import org.xmlmatchers.XmlMatchers;
 
 /**
- * Test case for {@link BoutRs}.
+ * Mocker of {@link Hub}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutRsTest {
+public final class HubMocker {
 
     /**
-     * BoutRs can render front page of a bout.
-     * @throws Exception If there is some problem inside
+     * The object.
      */
-    @Test
-    public void rendersBoutFrontPage() throws Exception {
-        final Identity identity = new IdentityMocker().mock();
-        final String iname = identity.name();
-        final Bout bout = new BoutMocker()
-            .withParticipant(identity)
-            .mock();
-        Mockito.doReturn(bout).when(identity).start();
-        Mockito.doReturn(bout).when(identity).bout(Mockito.any(Long.class));
-        final BoutRs rest = new ResourceMocker()
-            .withIdentity(identity)
-            .mock(BoutRs.class);
-        rest.setNumber(bout.number());
-        final Response response = rest.front();
-        MatcherAssert.assertThat(
-            ResourceMocker.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/bout/participants/participant/identity")
-        );
+    private final transient Hub hub = Mockito.mock(Hub.class);
+
+    /**
+     * With this user.
+     * @param name The name of it
+     * @param user The user
+     * @return This object
+     */
+    public HubMocker withUser(final String name, final User user) {
+        Mockito.doReturn(user).when(this.hub).user(name);
+        return this;
+    }
+
+    /**
+     * Build it.
+     * @return The bout
+     */
+    public Hub mock() {
+        return this.hub;
     }
 
 }

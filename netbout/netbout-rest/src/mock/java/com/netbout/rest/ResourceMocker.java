@@ -29,6 +29,9 @@ package com.netbout.rest;
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
+import com.netbout.hub.User;
+import com.netbout.hub.UserMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.utils.Cryptor;
@@ -65,7 +68,7 @@ public final class ResourceMocker {
     /**
      * Hub.
      */
-    private transient Hub hub = Mockito.mock(Hub.class);
+    private transient Hub hub;
 
     /**
      * Message.
@@ -107,12 +110,9 @@ public final class ResourceMocker {
      */
     public ResourceMocker() throws Exception {
         final URI home = new URI("http://localhost:99/local");
-        Mockito.doReturn(UriBuilder.fromUri(home))
-            .when(this.uriInfo).getBaseUriBuilder();
-        Mockito.doReturn(home)
-            .when(this.uriInfo).getAbsolutePath();
-        Mockito.doReturn(home)
-            .when(this.uriInfo).getBaseUri();
+        this.uriInfo = new UriInfoMocker()
+            .withRequestUri(home)
+            .mock();
         Mockito.doReturn(home.getHost()).when(this.httpRequest)
             .getRemoteAddr();
         Mockito.doReturn(home.getPath()).when(this.httpRequest)
@@ -176,6 +176,17 @@ public final class ResourceMocker {
      * @throws Exception If something is wrong
      */
     public <T> T mock(final Class<? extends Resource> type) throws Exception {
+        if (this.hub == null) {
+            final String uname = this.identity.user();
+            final String iname = this.identity.name();
+            final User user = new UserMocker()
+                .namedAs(uname)
+                .withIdentity(iname, this.identity)
+                .mock();
+            this.hub = new HubMocker()
+                .withUser(uname, user)
+                .mock();
+        }
         // @checkstyle IllegalType (1 line)
         final AbstractRs rest = (AbstractRs) type.newInstance();
         rest.setMessage(this.message);
@@ -189,6 +200,7 @@ public final class ResourceMocker {
             .getAttribute("com.netbout.rest.HUB");
         Mockito.doReturn(this.bus).when(context)
             .getAttribute("com.netbout.rest.BUS");
+        rest.setServletContext(context);
         return (T) rest;
     }
 

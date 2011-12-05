@@ -124,7 +124,7 @@ public final class LoginRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .authenticated(identity)
-            .status(Response.Status.TEMPORARY_REDIRECT)
+            .status(Response.Status.SEE_OTHER)
             .location(this.uriInfo().getBaseUri())
             .build();
     }
@@ -138,6 +138,7 @@ public final class LoginRs extends AbstractRs {
     private Identity authenticate(final String code) throws IOException {
         final String token = this.token(code);
         final com.restfb.types.User fbuser = this.fbUser(token);
+        assert fbuser != null;
         final User user = this.hub().user(fbuser.getId());
         Identity identity;
         try {

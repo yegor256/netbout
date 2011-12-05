@@ -73,4 +73,16 @@ public final class IdentityTest {
         MatcherAssert.assertThat(identity.user(), Matchers.notNullValue());
     }
 
+    /**
+     * IdentityMocker can start new bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void startsBoutByDefault() throws Exception {
+        final Identity identity = new IdentityMocker().mock();
+        final Bout bout = identity.start();
+        MatcherAssert.assertThat(bout, Matchers.notNullValue());
+        MatcherAssert.assertThat(identity.bout(1L), Matchers.notNullValue());
+    }
+
 }

@@ -487,24 +487,6 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version since="5 Dec 2011">1.7</version>
-                <executions>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <copy file="${basedir}/pom.xml"
-                                    tofile="${project.build.directory}/mock/META-INF/maven/${project.groupId}/${project.artifactId}/pom.xml"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version since="5 Dec 2011">2.3.2</version>
                 <executions>

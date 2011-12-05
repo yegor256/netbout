@@ -53,19 +53,17 @@ import org.mockito.Mockito;
 public final class StageCoordinatesTest {
 
     /**
-     * StageCoordinates can accept changes by setters and return them with
-     * getters.
+     * StageCoordinates can throw exception if no normalization happens.
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void setsValuesThroughSettersAndReturnsByGetters() throws Exception {
+    @Test(expected = IllegalStateException.class)
+    public void doesntAllowToWorkWithoutNormalization() throws Exception {
         final String stage = "some-stage-name";
         final String place = "/some/place?with&some info";
         final StageCoordinates coords = new StageCoordinates();
         coords.setStage(stage);
         coords.setPlace(place);
-        MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(stage));
-        MatcherAssert.assertThat(coords.place(), Matchers.equalTo(place));
+        coords.stage();
     }
 
     /**
@@ -81,7 +79,6 @@ public final class StageCoordinatesTest {
         coords.setPlace(place);
         coords.normalize(new BusMocker().mock(), Mockito.mock(Bout.class));
         MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(""));
-        MatcherAssert.assertThat(coords.place(), Matchers.equalTo(""));
     }
 
     /**
@@ -104,6 +101,7 @@ public final class StageCoordinatesTest {
         coords.normalize(bus, bout);
         final String text = coords.toString();
         final StageCoordinates reverted = StageCoordinates.valueOf(text);
+        reverted.normalize(bus, bout);
         MatcherAssert.assertThat(reverted.stage(), Matchers.equalTo(stage));
         MatcherAssert.assertThat(reverted.place(), Matchers.equalTo(place));
     }

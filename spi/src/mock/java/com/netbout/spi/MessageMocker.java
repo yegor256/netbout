@@ -29,65 +29,47 @@
  */
 package com.netbout.spi;
 
-import java.net.URL;
+import java.util.Date;
 import java.util.Random;
 import org.mockito.Mockito;
 
 /**
- * Mocker of {@link Identity}.
+ * Mocker of {@link Message}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class IdentityMocker {
+public final class MessageMocker {
 
     /**
-     * Mocked identity.
+     * Mocked message.
      */
-    private final Identity identity = Mockito.mock(Identity.class);
+    private final Message message = Mockito.mock(Message.class);
 
     /**
-     * Public ctor.
-     * @throws Exception If some problem inside
-     */
-    public IdentityMocker() throws Exception {
-        final String name = String.valueOf(Math.abs(new Random().nextInt()));
-        Mockito.doReturn(name).when(this.identity).name();
-        Mockito.doReturn(name).when(this.identity).user();
-        Mockito.doReturn(new BoutMocker().mock()).when(this.identity).start();
-        Mockito.doReturn(new BoutMocker().mock()).when(this.identity)
-            .bout(Mockito.any(Long.class));
-    }
-
-    /**
-     * This is the name of identity.
-     * @param The name of it
+     * In this bout.
+     * @param The bout
      * @return This object
      */
-    public IdentityMocker namedAs(final String name) {
-        Mockito.doReturn(name).when(this.identity).name();
-        return this;
-    }
-
-    /**
-     * This is the user of identity, which it belongs to.
-     * @param The name of user
-     * @return This object
-     */
-    public IdentityMocker belongsTo(final String name) {
-        Mockito.doReturn(name).when(this.identity).user();
+    public MessageMocker inBout(final Bout bout) {
+        Mockito.doReturn(bout).when(this.message).bout();
         return this;
     }
 
     /**
      * Mock it.
-     * @return Mocked identity
+     * @return Mocked message
      * @throws Exception If some problem inside
      */
-    public Identity mock() throws Exception {
-        Mockito.doReturn(new URL("http://localhost/unknown.png"))
-            .when(this.identity).photo();
-        return this.identity;
+    public Message mock() throws Exception {
+        final Long number = Math.abs(new Random().nextLong());
+        Mockito.doReturn(number).when(this.message).number();
+        final Identity author = Mockito.mock(Identity.class);
+        Mockito.doReturn("Author").when(author).name();
+        Mockito.doReturn(author).when(this.message).author();
+        Mockito.doReturn("some text").when(this.message).text();
+        Mockito.doReturn(new Date()).when(this.message).date();
+        return this.message;
     }
 
 }

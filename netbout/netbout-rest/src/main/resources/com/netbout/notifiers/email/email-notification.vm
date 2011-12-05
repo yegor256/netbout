@@ -1,11 +1,8 @@
 ${recepient.name()},
 
-These messages were posted to "${bout.title()}" since ${since}:
-#foreach(${message} in ${recent})
+This message was just posted to "${bout.title()}" by ${message.author().name()}:
 
-On ${message.date()} by ${message.author().name()}:
 ${message.text()}
-#end
 
 Click to reply: ${href}
 

@@ -29,65 +29,41 @@
  */
 package com.netbout.spi;
 
-import java.net.URL;
-import java.util.Random;
-import org.mockito.Mockito;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Mocker of {@link Identity}.
- *
+ * Test case for {@link Message} and {@link MessageMocker}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class IdentityMocker {
+public final class MessageTest {
 
     /**
-     * Mocked identity.
+     * MessageMocker sets bout on demand.
+     * @throws Exception If there is some problem inside
      */
-    private final Identity identity = Mockito.mock(Identity.class);
-
-    /**
-     * Public ctor.
-     * @throws Exception If some problem inside
-     */
-    public IdentityMocker() throws Exception {
-        final String name = String.valueOf(Math.abs(new Random().nextInt()));
-        Mockito.doReturn(name).when(this.identity).name();
-        Mockito.doReturn(name).when(this.identity).user();
-        Mockito.doReturn(new BoutMocker().mock()).when(this.identity).start();
-        Mockito.doReturn(new BoutMocker().mock()).when(this.identity)
-            .bout(Mockito.any(Long.class));
+    @Test
+    public void setsBoutOnDemand() throws Exception {
+        final Bout bout = new BoutMocker().mock();
+        final Message message = new MessageMocker()
+            .inBout(bout)
+            .mock();
+        MatcherAssert.assertThat(message.bout(), Matchers.equalTo(bout));
     }
 
     /**
-     * This is the name of identity.
-     * @param The name of it
-     * @return This object
+     * MessageMocker can set properties by default.
+     * @throws Exception If there is some problem inside
      */
-    public IdentityMocker namedAs(final String name) {
-        Mockito.doReturn(name).when(this.identity).name();
-        return this;
-    }
-
-    /**
-     * This is the user of identity, which it belongs to.
-     * @param The name of user
-     * @return This object
-     */
-    public IdentityMocker belongsTo(final String name) {
-        Mockito.doReturn(name).when(this.identity).user();
-        return this;
-    }
-
-    /**
-     * Mock it.
-     * @return Mocked identity
-     * @throws Exception If some problem inside
-     */
-    public Identity mock() throws Exception {
-        Mockito.doReturn(new URL("http://localhost/unknown.png"))
-            .when(this.identity).photo();
-        return this.identity;
+    @Test
+    public void setsAllMessagePropertiesByDefault() throws Exception {
+        final Message message = new MessageMocker().mock();
+        MatcherAssert.assertThat(message.number(), Matchers.notNullValue());
+        MatcherAssert.assertThat(message.author(), Matchers.notNullValue());
+        MatcherAssert.assertThat(message.text(), Matchers.notNullValue());
+        MatcherAssert.assertThat(message.date(), Matchers.notNullValue());
     }
 
 }

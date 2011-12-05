@@ -85,6 +85,10 @@ public final class UriInfoMocker {
     public UriInfo mock() throws Exception {
         final UriInfo info = Mockito.mock(UriInfo.class);
         Mockito.doReturn(this.uri).when(info).getRequestUri();
+        Mockito.doReturn(UriBuilder.fromUri(this.uri))
+            .when(info).getBaseUriBuilder();
+        Mockito.doReturn(this.uri).when(info).getAbsolutePath();
+        Mockito.doReturn(this.uri).when(info).getBaseUri();
         return info;
     }
 
