@@ -29,37 +29,37 @@
  */
 package com.netbout.spi;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Test case for {@link Identity} and {@link IdentityMocker}.
+ * Mocker of {@link Participant}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class IdentityTest {
+public final class ParticipantMocker {
 
     /**
-     * IdentityMocker can assign name to identity.
-     * @throws Exception If there is some problem inside
+     * Mocked participant.
      */
-    @Test
-    public void canHaveANameMocked() throws Exception {
-        final String name = "some-name-of-identity";
-        final Identity identity = new IdentityMocker().namedAs(name).mock();
-        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    private final Participant participant = Mockito.mock(Participant.class);
+
+    /**
+     * This is the participant.
+     * @param The identity
+     * @return This object
+     */
+    public ParticipantMocker withIdentity(final Identity identity) {
+        Mockito.doReturn(identity).when(this.participant).identity();
+        return this;
     }
 
     /**
-     * IdentityMocker can assign user to identity.
-     * @throws Exception If there is some problem inside
+     * Mock it.
+     * @return Mocked bout
      */
-    @Test
-    public void canBelongToSomeMockedUser() throws Exception {
-        final String uname = "user-name";
-        final Identity identity = new IdentityMocker().belongsTo(uname).mock();
-        MatcherAssert.assertThat(identity.user(), Matchers.equalTo(uname));
+    public Participant mock() {
+        return this.participant;
     }
 
 }

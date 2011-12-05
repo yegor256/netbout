@@ -29,37 +29,64 @@
  */
 package com.netbout.spi;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
+import org.mockito.Mockito;
 
 /**
- * Test case for {@link Identity} and {@link IdentityMocker}.
+ * Mocker of {@link Bout}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class IdentityTest {
+public final class BoutMocker {
 
     /**
-     * IdentityMocker can assign name to identity.
-     * @throws Exception If there is some problem inside
+     * Mocked bout.
      */
-    @Test
-    public void canHaveANameMocked() throws Exception {
-        final String name = "some-name-of-identity";
-        final Identity identity = new IdentityMocker().namedAs(name).mock();
-        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    private final Bout bout = Mockito.mock(Bout.class);
+
+    /**
+     * List of participants.
+     */
+    private final Collection<Participant> participants =
+        new ArrayList<Participant>();
+
+    /**
+     * This is the title of bout.
+     * @param The title of it
+     * @return This object
+     */
+    public BoutMocker titledAs(final String title) {
+        Mockito.doReturn(title).when(this.bout).title();
+        return this;
     }
 
     /**
-     * IdentityMocker can assign user to identity.
-     * @throws Exception If there is some problem inside
+     * With this participant, by its name.
+     * @param The name of it
+     * @return This object
+     * @throws Exception If some problem inside
      */
-    @Test
-    public void canBelongToSomeMockedUser() throws Exception {
-        final String uname = "user-name";
-        final Identity identity = new IdentityMocker().belongsTo(uname).mock();
-        MatcherAssert.assertThat(identity.user(), Matchers.equalTo(uname));
+    public BoutMocker withParticipant(final String name) throws Exception {
+        this.participants.add(
+            new ParticipantMocker()
+                .withIdentity(new IdentityMocker().namedAs(name).mock())
+                .mock()
+        );
+        return this;
+    }
+
+    /**
+     * Mock it.
+     * @return Mocked bout
+     */
+    public Bout mock() {
+        Mockito.doReturn(this.participants).when(this.bout).participants();
+        Mockito.doReturn(Math.abs(new Random().nextLong()))
+            .when(this.bout).number();
+        return this.bout;
     }
 
 }

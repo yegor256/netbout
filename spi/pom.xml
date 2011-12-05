@@ -504,7 +504,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
@@ -516,6 +516,31 @@
                             <descriptors>
                                 <descriptor>${basedir}/src/test/assembly/mock.xml</descriptor>
                             </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version since="5 Dec 2011">2.3.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classesDirectory>${project.build.testOutputDirectory}</classesDirectory>
+                            <archive>
+                                <index>true</index>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
+                            <classifier>mock</classifier>
+                            <includes>
+                                <include>**/*Mocker.class</include>
+                            </includes>
                         </configuration>
                     </execution>
                 </executions>

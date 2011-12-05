@@ -34,32 +34,47 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link Identity} and {@link IdentityMocker}.
+ * Test case for {@link Bout} and {@link BoutMocker}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class IdentityTest {
+public final class BoutTest {
 
     /**
-     * IdentityMocker can assign name to identity.
+     * BoutMocker can assign title to the bout.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void canHaveANameMocked() throws Exception {
-        final String name = "some-name-of-identity";
-        final Identity identity = new IdentityMocker().namedAs(name).mock();
-        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    public void canHaveATitleMocked() throws Exception {
+        final String title = "some title";
+        final Bout bout = new BoutMocker().titledAs(title).mock();
+        MatcherAssert.assertThat(bout.title(), Matchers.equalTo(title));
     }
 
     /**
-     * IdentityMocker can assign user to identity.
+     * BoutMocker sets bout number automatically.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void canBelongToSomeMockedUser() throws Exception {
-        final String uname = "user-name";
-        final Identity identity = new IdentityMocker().belongsTo(uname).mock();
-        MatcherAssert.assertThat(identity.user(), Matchers.equalTo(uname));
+    public void setsBoutNumberByDefault() throws Exception {
+        final Bout bout = new BoutMocker().mock();
+        MatcherAssert.assertThat(bout.number(), Matchers.greaterThan(0L));
+    }
+
+    /**
+     * BoutMocker can assign collection of participants.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void canAssignParticipantsToBout() throws Exception {
+        final String name = "some-identity-name";
+        final Bout bout = new BoutMocker()
+            .withParticipant(name)
+            .mock();
+        MatcherAssert.assertThat(
+            bout.participants().size(),
+            Matchers.equalTo(1)
+        );
     }
 
 }
