@@ -27,6 +27,7 @@
 package com.netbout.rest.page;
 
 import com.rexsl.core.Stylesheet;
+import com.rexsl.core.XmlSchema;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,12 +70,27 @@ public final class PageBuilder {
     private transient String xsl = "/xsl/none.xsl";
 
     /**
+     * Schema to use.
+     */
+    private transient String schema = "";
+
+    /**
      * Configure the stylesheet to be used.
      * @param name Name of stylesheet
      * @return This object
      */
     public PageBuilder stylesheet(final String name) {
         this.xsl = name;
+        return this;
+    }
+
+    /**
+     * Configure the schema to be used.
+     * @param name Name of schema
+     * @return This object
+     */
+    public PageBuilder schema(final String name) {
+        this.schema = name;
         return this;
     }
 
@@ -151,15 +167,24 @@ public final class PageBuilder {
                 file.getConstPool(),
                 AnnotationsAttribute.visibleTag
             );
-            final Annotation annotation = new Annotation(
+            final Annotation xslAnnotation = new Annotation(
                 Stylesheet.class.getName(),
                 file.getConstPool()
             );
-            annotation.addMemberValue(
+            xslAnnotation.addMemberValue(
                 "value",
                 new StringMemberValue(this.xsl, file.getConstPool())
             );
-            attribute.addAnnotation(annotation);
+            attribute.addAnnotation(xslAnnotation);
+            final Annotation xsdAnnotation = new Annotation(
+                XmlSchema.class.getName(),
+                file.getConstPool()
+            );
+            xsdAnnotation.addMemberValue(
+                "value",
+                new StringMemberValue(this.schema, file.getConstPool())
+            );
+            attribute.addAnnotation(xsdAnnotation);
             for (Annotation existing : this.annotations(ctc, parent)) {
                 attribute.addAnnotation(existing);
             }

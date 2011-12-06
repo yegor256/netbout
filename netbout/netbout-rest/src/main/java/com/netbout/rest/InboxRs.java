@@ -79,6 +79,7 @@ public final class InboxRs extends AbstractRs {
             );
         }
         return new PageBuilder()
+            .schema("inbox.xsd")
             .stylesheet(
                 this.uriInfo().getBaseUriBuilder()
                     .clone()

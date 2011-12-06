@@ -217,7 +217,6 @@ public final class HubBout implements Bout {
         );
         message.text();
         this.bus.make("notify-bout-participants")
-            .inBout(this)
             .arg(this.number())
             .arg(message.number())
             .asDefault(false)

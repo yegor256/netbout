@@ -49,11 +49,30 @@ def suggestURI = new TestClient(rexsl.home)
     .links.link.find { it.@rel == 'suggest' }.@href.toURI()
 
 // get suggestions about who we can invite
-new TestClient(UriBuilder.fromUri(suggestURI).queryParam('k', email).build())
+def inviteURI = new TestClient(UriBuilder.fromUri(suggestURI).queryParam('k', email).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .header(HttpHeaders.COOKIE, cookie)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath("/page/keyword[.='${email}']")
     .assertXPath("/page/invitees/invitee[name='${email}']")
+    .gpath
+    .invitees.invitee.find { it.name == email }.@href.toURI()
 
+// invite this email and get URI to post a message
+def postURI = new TestClient(inviteURI)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .header(HttpHeaders.COOKIE, cookie)
+    .followRedirects(true)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath("/page/bout/participants/participant[identity='${email}']")
+    .gpath
+    .links.link.find { it.@rel == 'post' }.@href.toURI()
+
+// post new message to this bout
+new TestClient(postURI)
+    .header(HttpHeaders.COOKIE, cookie)
+    .body('text=How are you?')
+    .post()
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)

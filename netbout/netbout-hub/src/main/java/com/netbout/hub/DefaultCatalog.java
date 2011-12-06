@@ -195,9 +195,6 @@ final class DefaultCatalog implements Catalog {
             .arg(keyword)
             .asDefault(new ArrayList<String>())
             .exec();
-        if (this.validator.isValid(keyword)) {
-            external.add(keyword);
-        }
         for (String name : external) {
             try {
                 found.add(this.make(name));
@@ -208,6 +205,17 @@ final class DefaultCatalog implements Catalog {
                     "#findByKeyword('%s'): some helper returned '%s' identity that is not reachable",
                     keyword,
                     name
+                );
+            }
+        }
+        if (this.validator.isValid(keyword)) {
+            try {
+                found.add(this.make(keyword, new HubUser(this, keyword)));
+            } catch (com.netbout.spi.UnreachableIdentityException ex) {
+                Logger.warn(
+                    this,
+                    "#findByKeyword('%s'): strange, but it's unreachable",
+                    keyword
                 );
             }
         }

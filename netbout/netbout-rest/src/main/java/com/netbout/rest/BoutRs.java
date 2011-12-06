@@ -319,6 +319,7 @@ public final class BoutRs extends AbstractRs {
     private Page page() {
         this.coords.normalize(this.bus(), this.bout());
         final Page page = new PageBuilder()
+            .schema("bout.xsd")
             .stylesheet(
                 UriBuilder.fromUri(this.self("/xsl/bout.xsl"))
                     .queryParam("stage", this.coords.stage())

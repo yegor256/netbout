@@ -50,6 +50,7 @@ public final class Starter implements ServletContextListener {
      */
     @Override
     public void contextInitialized(final ServletContextEvent event) {
+        final long start = System.currentTimeMillis();
         final Bus bus = new DefaultBus();
         final Hub hub = new DefaultHub(bus);
         event.getServletContext().setAttribute("com.netbout.rest.HUB", hub);
@@ -77,8 +78,9 @@ public final class Starter implements ServletContextListener {
         }
         Logger.info(
             this,
-            "#contextInitialized(%s): done",
-            event.getClass().getName()
+            "#contextInitialized(%s): done in %dms",
+            event.getClass().getName(),
+            System.currentTimeMillis() - start
         );
     }
 

@@ -45,11 +45,6 @@ public final class Cryptor {
     private static final String SEPARATOR = ".";
 
     /**
-     * Salt for hash generation.
-     */
-    private static final String SALT = "U*#p}*YQ2@-+==I<,.?//";
-
-    /**
      * Encrypt user+identity into text.
      * @param identity The identity
      * @return Encrypted string
@@ -59,10 +54,8 @@ public final class Cryptor {
         builder
             .append(TextUtils.toBase(identity.user()))
             .append(this.SEPARATOR)
-            .append(TextUtils.toBase(identity.name()))
-            .append(this.SEPARATOR)
-            .append(this.hash(identity.name()));
-        return builder.toString();
+            .append(TextUtils.toBase(identity.name()));
+        return TextUtils.toBase(this.pack(builder.toString()));
     }
 
     /**
@@ -77,23 +70,15 @@ public final class Cryptor {
         if (hash == null) {
             throw new DecryptionException(hash, "Hash is NULL");
         }
-        final String[] parts = StringUtils.split(hash, this.SEPARATOR);
-        // @checkstyle MagicNumber (1 line)
-        if (parts.length != 3) {
+        final String[] parts = StringUtils.split(
+            TextUtils.fromBase(this.unpack(hash)),
+            this.SEPARATOR
+        );
+        if (parts.length != 2) {
             throw new DecryptionException(hash, "Not enough parts");
         }
         final String uname = TextUtils.fromBase(parts[0]);
         final String iname = TextUtils.fromBase(parts[1]);
-        final String signature = parts[2];
-        if (!signature.equals(this.hash(iname))) {
-            throw new DecryptionException(
-                hash,
-                "Signature ('%s') mismatch, while '%s' expected for '%s'",
-                signature,
-                this.hash(iname),
-                iname
-            );
-        }
         try {
             return hub.user(uname).identity(iname);
         } catch (com.netbout.spi.UnreachableIdentityException ex) {
@@ -102,12 +87,21 @@ public final class Cryptor {
     }
 
     /**
-     * Create hash from a string.
+     * Pack with encryption.
      * @param text The text to work with
-     * @return The hash
+     * @return The packed string
      */
-    private String hash(final String text) {
-        return DigestUtils.md5Hex(text + this.SALT);
+    private String pack(final String text) {
+        return text;
+    }
+
+    /**
+     * Decrypt and unpack.
+     * @param hash Packed text
+     * @return The original string
+     */
+    private String unpack(final String hash) {
+        return hash;
     }
 
 }
