@@ -27,76 +27,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.client;
 
-import java.util.Collection;
-import java.util.List;
+import org.mockito.Mockito;
 
 /**
- * Bout, a conversation room.
- *
+ * Mocker of {@link RestClient}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bout {
+public final class RestClientMocker {
 
     /**
-     * Get its unique number.
-     * @return The number of the bout
+     * Mocked token.
      */
-    Long number();
+    private final RestClient client = Mockito.mock(RestClient.class);
 
     /**
-     * Get its title.
-     * @return The title of the bout
+     * Return this value on XPath.
+     * @param xpath The xpath
+     * @param text What to return
+     * @return This object
      */
-    String title();
+    public RestClientMocker onXPath(final String xpath, final String text) {
+        return this;
+    }
 
     /**
-     * Set its title.
-     * @param text The title of the bout
+     * Mock it.
+     * @return Mocked client
      */
-    void rename(String text);
-
-    /**
-     * Get all its participants.
-     * @return The list of them
-     */
-    Collection<Participant> participants();
-
-    /**
-     * Confirm participantion in this bout (or reject).
-     * @param confirm To confirm or reject?
-     */
-    void confirm(boolean confirm);
-
-    /**
-     * Invite new participant.
-     * @param identity Identity of the participant
-     * @return This new participant
-     */
-    Participant invite(Identity identity);
-
-    /**
-     * Get ordered list of all messages of the bout.
-     * @param query Search query, if necessary
-     * @return The list of them
-     */
-    List<Message> messages(String query);
-
-    /**
-     * Find message by ID.
-     * @param number Number of the message to get
-     * @return The message
-     * @throws MessageNotFoundException If not found
-     */
-    Message message(Long number) throws MessageNotFoundException;
-
-    /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @return The message just posted
-     */
-    Message post(String text);
+    public RestClient mock() {
+        return this.client;
+    }
 
 }

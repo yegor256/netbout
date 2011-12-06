@@ -93,11 +93,11 @@ public final class PlainBuilderTest {
     }
 
     /**
-     * Let's test object to text convertions.
+     * PlainBuilder can convert objects to texts and back.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBothWaysConversion() throws Exception {
+    public void convertsInBothWays() throws Exception {
         final Plain<?> plain = PlainBuilder.fromObject(this.data);
         final String text = plain.toString();
         MatcherAssert.assertThat(

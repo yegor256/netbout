@@ -27,76 +27,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.client;
 
-import java.util.Collection;
-import java.util.List;
+import com.netbout.spi.Identity;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Bout, a conversation room.
- *
+ * Test case for {@link RestIdentity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bout {
+public final class RestIdentityTest {
 
     /**
-     * Get its unique number.
-     * @return The number of the bout
+     * RestIdentity can fetch a name of identity through REST API.
+     * @throws Exception If there is some problem inside
      */
-    Long number();
-
-    /**
-     * Get its title.
-     * @return The title of the bout
-     */
-    String title();
-
-    /**
-     * Set its title.
-     * @param text The title of the bout
-     */
-    void rename(String text);
-
-    /**
-     * Get all its participants.
-     * @return The list of them
-     */
-    Collection<Participant> participants();
-
-    /**
-     * Confirm participantion in this bout (or reject).
-     * @param confirm To confirm or reject?
-     */
-    void confirm(boolean confirm);
-
-    /**
-     * Invite new participant.
-     * @param identity Identity of the participant
-     * @return This new participant
-     */
-    Participant invite(Identity identity);
-
-    /**
-     * Get ordered list of all messages of the bout.
-     * @param query Search query, if necessary
-     * @return The list of them
-     */
-    List<Message> messages(String query);
-
-    /**
-     * Find message by ID.
-     * @param number Number of the message to get
-     * @return The message
-     * @throws MessageNotFoundException If not found
-     */
-    Message message(Long number) throws MessageNotFoundException;
-
-    /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @return The message just posted
-     */
-    Message post(String text);
+    @Test
+    public void fetchesNameOfIdentity() throws Exception {
+        final String name = "Jeff Lebowski";
+        final RestClient client = new RestClientMocker()
+            .onXPath("/page/identity/name", name)
+            .mock();
+        final Identity identity = new RestIdentity(client);
+        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    }
 
 }

@@ -27,76 +27,89 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.client;
 
-import java.util.Collection;
-import java.util.List;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import java.net.HttpURLConnection;
 
 /**
- * Bout, a conversation room.
+ * The participant.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bout {
+final class RestParticipant implements Participant {
 
     /**
-     * Get its unique number.
-     * @return The number of the bout
+     * Rest client.
      */
-    Long number();
+    private final transient RestClient client;
 
     /**
-     * Get its title.
-     * @return The title of the bout
+     * Number of this guy.
      */
-    String title();
+    private final transient String name;
 
     /**
-     * Set its title.
-     * @param text The title of the bout
+     * Public ctor.
+     * @param clnt Rest client
+     * @parma name Name of participant
      */
-    void rename(String text);
+    public RestParticipant(final RestClient clnt, final String nam) {
+        this.client = clnt;
+        this.name = nam;
+    }
 
     /**
-     * Get all its participants.
-     * @return The list of them
+     * {@inheritDoc}
      */
-    Collection<Participant> participants();
+    @Override
+    public Bout bout() {
+        return new RestBout(this.client.clone());
+    }
 
     /**
-     * Confirm participantion in this bout (or reject).
-     * @param confirm To confirm or reject?
+     * {@inheritDoc}
      */
-    void confirm(boolean confirm);
+    @Override
+    public Identity identity() {
+        return new Friend(this.name);
+    }
 
     /**
-     * Invite new participant.
-     * @param identity Identity of the participant
-     * @return This new participant
+     * {@inheritDoc}
      */
-    Participant invite(Identity identity);
+    @Override
+    public boolean confirmed() {
+        return Boolean.valueOf(this.bySuffix("/@confirmed"));
+    }
 
     /**
-     * Get ordered list of all messages of the bout.
-     * @param query Search query, if necessary
-     * @return The list of them
+     * Fetch by XPath suffix.
+     * @param suffix The suffix of XPath
+     * @return The value found
      */
-    List<Message> messages(String query);
-
-    /**
-     * Find message by ID.
-     * @param number Number of the message to get
-     * @return The message
-     * @throws MessageNotFoundException If not found
-     */
-    Message message(Long number) throws MessageNotFoundException;
-
-    /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @return The message just posted
-     */
-    Message post(String text);
+    public String bySuffix(final String suffix) {
+        return this.client
+            .fetch(RestClient.GET)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath(
+                String.format(
+                    "/page/bout/participants/participant[@identity='%s']",
+                    this.name
+                )
+            )
+            .xpath(
+                String.format(
+                    "/page/bout/participants/participant[@identity='%s']%s",
+                    this.name,
+                    suffix
+                )
+            )
+            .get(0);
+    }
 
 }

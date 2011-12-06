@@ -55,10 +55,4 @@ public interface Participant {
      */
     boolean confirmed();
 
-    /**
-     * Confirm it (or reject).
-     * @param confirm To confirm or reject?
-     */
-    void confirm(boolean confirm);
-
 }

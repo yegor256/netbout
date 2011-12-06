@@ -27,76 +27,73 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.client;
 
-import java.util.Collection;
+import java.net.URI;
 import java.util.List;
 
 /**
- * Bout, a conversation room.
+ * Client that loads XML through HTTP, using JDK.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bout {
+final class JdkRestClient implements RestClient {
 
     /**
-     * Get its unique number.
-     * @return The number of the bout
+     * Pubic ctor.
+     * @param uri Entry point URI
+     * @param auth Authentication token
      */
-    Long number();
+    public JdkRestClient(final URI uri, final String auth) {
+    }
 
     /**
-     * Get its title.
-     * @return The title of the bout
+     * {@inheritDoc}
      */
-    String title();
+    @Override
+    public RestClient queryParam(final String name, final String value) {
+        return this;
+    }
 
     /**
-     * Set its title.
-     * @param text The title of the bout
+     * {@inheritDoc}
      */
-    void rename(String text);
+    @Override
+    public RestClient formParam(final String name, final String value) {
+        return this;
+    }
 
     /**
-     * Get all its participants.
-     * @return The list of them
+     * {@inheritDoc}
      */
-    Collection<Participant> participants();
+    @Override
+    public RestResponse fetch(final String method) {
+        return new DefaultRestResponse();
+    }
 
     /**
-     * Confirm participantion in this bout (or reject).
-     * @param confirm To confirm or reject?
+     * {@inheritDoc}
      */
-    void confirm(boolean confirm);
+    @Override
+    public RestClient clone() {
+        return this;
+    }
 
     /**
-     * Invite new participant.
-     * @param identity Identity of the participant
-     * @return This new participant
+     * {@inheritDoc}
      */
-    Participant invite(Identity identity);
+    @Override
+    public RestClient clone(final URI uri) {
+        return this;
+    }
 
     /**
-     * Get ordered list of all messages of the bout.
-     * @param query Search query, if necessary
-     * @return The list of them
+     * {@inheritDoc}
      */
-    List<Message> messages(String query);
-
-    /**
-     * Find message by ID.
-     * @param number Number of the message to get
-     * @return The message
-     * @throws MessageNotFoundException If not found
-     */
-    Message message(Long number) throws MessageNotFoundException;
-
-    /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @return The message just posted
-     */
-    Message post(String text);
+    @Override
+    public RestClient clone(final String uri) {
+        return this;
+    }
 
 }

@@ -27,76 +27,69 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.client;
 
-import java.util.Collection;
-import java.util.List;
+import java.net.URI;
 
 /**
- * Bout, a conversation room.
+ * Client that loads XML through HTTP.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bout {
+interface RestClient {
 
     /**
-     * Get its unique number.
-     * @return The number of the bout
+     * GET method.
      */
-    Long number();
+    public static final String GET = "GET";
 
     /**
-     * Get its title.
-     * @return The title of the bout
+     * POST method.
      */
-    String title();
+    public static final String POST = "POST";
 
     /**
-     * Set its title.
-     * @param text The title of the bout
+     * Provide query param.
+     * @param name Name of the parameter
+     * @param value The value of it
+     * @return This object
      */
-    void rename(String text);
+    RestClient queryParam(String name, String value);
 
     /**
-     * Get all its participants.
-     * @return The list of them
+     * Provide form param.
+     * @param name Name of the parameter
+     * @param value The value of it
+     * @return This object
      */
-    Collection<Participant> participants();
+    RestClient formParam(String name, String value);
 
     /**
-     * Confirm participantion in this bout (or reject).
-     * @param confirm To confirm or reject?
+     * Fetch HTTP response.
+     * @param method The method to use (e.g. "POST", "GET", etc.)
+     * @return This object
      */
-    void confirm(boolean confirm);
+    RestResponse fetch(String method);
 
     /**
-     * Invite new participant.
-     * @param identity Identity of the participant
-     * @return This new participant
+     * Just clone this client.
+     * @return New client
      */
-    Participant invite(Identity identity);
+    RestClient clone();
 
     /**
-     * Get ordered list of all messages of the bout.
-     * @param query Search query, if necessary
-     * @return The list of them
+     * Clone this client with a new URI.
+     * @param uri New entry point
+     * @return New client
      */
-    List<Message> messages(String query);
+    RestClient clone(URI uri);
 
     /**
-     * Find message by ID.
-     * @param number Number of the message to get
-     * @return The message
-     * @throws MessageNotFoundException If not found
+     * Clone this client with a new URI.
+     * @param uri New entry point
+     * @return New client
      */
-    Message message(Long number) throws MessageNotFoundException;
-
-    /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @return The message just posted
-     */
-    Message post(String text);
+    RestClient clone(String uri);
 
 }
