@@ -29,8 +29,17 @@
  */
 package com.netbout.spi.client;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * Restful session.
@@ -46,6 +55,11 @@ public final class RestSession {
     private final transient URI home;
 
     /**
+     * Home URI.
+     */
+    private final transient Client client = Client.create();
+
+    /**
      * Public ctor.
      * @param uri Home URI
      */
@@ -55,12 +69,41 @@ public final class RestSession {
 
     /**
      * Get identity in the session.
-     * @param user Name of the user
+     * @param user The user to authenticate
      * @param identity Name of the identity
+     * @param secret The secret word to use
      * @return The identity to work with
      */
-    public Identity authenticate(final String user, final String identity) {
-        return new RestIdentity(new JdkRestClient(this.home, ""));
+    public Identity authenticate(final URI user, final String iname,
+        final String secret) {
+        final WebResource resource = this.client.resource(this.home);
+        resource.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
+        resource.addHeader(
+            HttpHeaders.SET_COOKIE,
+            String.format(
+                "netbout=%s", this.fetch(user, iname, secret)
+            )
+        );
+        return new RestIdentity(new JerseyRestClient(resource));
+    }
+
+    /**
+     * Fetch auth code.
+     * @param user The user to authenticate
+     * @param identity Name of the identity
+     * @param secret The secret word to use
+     * @return The URL
+     */
+    public String fetch(final URI user, final String identity,
+        final String secret) {
+        return this.client(this.home)
+            .path("/auth")
+            .queryParam("user", user.toString())
+            .queryParam("identity", identity)
+            .queryParam("secret", secret)
+            .get(ClientResponse.class)
+            .getHeaders()
+            .get("Netbout-auth");
     }
 
 }

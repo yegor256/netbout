@@ -29,6 +29,8 @@
  */
 package com.netbout.spi.client;
 
+import com.netbout.spi.Identity;
+import java.net.URI;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -46,7 +48,14 @@ public final class RestSessionTest {
      */
     @Test
     public void performsAuthentication() throws Exception {
-        // tbd
+        final RestSession session = new RestSession(
+            new URI("http://www.netbout.com/some-context")
+        );
+        // final Identity identity = session.authenticate(
+        //     new URI("http://www.netbout.com/anonymous"),
+        //     "foo",
+        //     "bar"
+        // );
     }
 
 }

@@ -29,6 +29,10 @@
  */
 package com.netbout.spi.client;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
 
 /**
@@ -39,9 +43,10 @@ import org.mockito.Mockito;
 public final class RestClientMocker {
 
     /**
-     * Mocked token.
+     * Paths.
      */
-    private final RestClient client = Mockito.mock(RestClient.class);
+    private final transient ConcurrentMap<String, List<String>> paths =
+        new ConcurrentHashMap<String, List<String>>();
 
     /**
      * Return this value on XPath.
@@ -50,6 +55,9 @@ public final class RestClientMocker {
      * @return This object
      */
     public RestClientMocker onXPath(final String xpath, final String text) {
+        final List<String> list = new ArrayList<String>();
+        list.add(text);
+        this.paths.put(xpath, list);
         return this;
     }
 
@@ -58,7 +66,19 @@ public final class RestClientMocker {
      * @return Mocked client
      */
     public RestClient mock() {
-        return this.client;
+        final RestResponse response = Mockito.mock(RestResponse.class);
+        Mockito.doReturn(response).when(response)
+            .assertXPath(Mockito.anyString());
+        Mockito.doReturn(response).when(response)
+            .assertStatus(Mockito.anyInt());
+        for (ConcurrentMap.Entry<String, List<String>> entry
+            : this.paths.entrySet()) {
+            Mockito.doReturn(entry.getValue()).when(response)
+                .xpath(entry.getKey());
+        }
+        final RestClient client = Mockito.mock(RestClient.class);
+        Mockito.doReturn(response).when(client).fetch(Mockito.anyString());
+        return client;
     }
 
 }

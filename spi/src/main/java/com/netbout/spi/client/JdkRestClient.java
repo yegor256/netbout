@@ -29,8 +29,10 @@
  */
 package com.netbout.spi.client;
 
+import com.sun.jersey.api.client.WebResource;
 import java.net.URI;
 import java.util.List;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * Client that loads XML through HTTP, using JDK.
@@ -41,11 +43,24 @@ import java.util.List;
 final class JdkRestClient implements RestClient {
 
     /**
+     * Jersey web resource.
+     */
+    private final transient WebResource;
+
+    /**
+     * Auth token.
+     */
+    private final transient String token;
+
+    /**
      * Pubic ctor.
      * @param uri Entry point URI
      * @param auth Authentication token
      */
     public JdkRestClient(final URI uri, final String auth) {
+        this.home = uri;
+        this.token = auth;
+        this.client = (HttpURLConnection) uri.toURL().openConnection();
     }
 
     /**
@@ -69,6 +84,38 @@ final class JdkRestClient implements RestClient {
      */
     @Override
     public RestResponse fetch(final String method) {
+        final long start = System.currentTimeMillis();
+        HttpURLConnection conn;
+        int code;
+        try {
+            conn =
+            code = conn.getResponseCode();
+            conn.disconnect();
+        } catch (java.io.IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        if (code != HttpURLConnection.HTTP_OK) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "HTTP response code at '%s' is %d",
+                    url,
+                    code
+                )
+            );
+        }
+        final String auth = conn.getHeaderField("Netbout-auth");
+        if (auth == null) {
+            throw new IllegalArgumentException(
+                "Netbout-auth header not found in response"
+            );
+        }
+        Logger.debug(
+            this,
+            "#fetch('%s'): done in %dms",
+            url,
+            System.currentTimeMillis() - start
+        );
+        return auth;
         return new DefaultRestResponse();
     }
 
@@ -77,7 +124,7 @@ final class JdkRestClient implements RestClient {
      */
     @Override
     public RestClient clone() {
-        return this;
+        return new JdkRestClient(this.home, this.token);
     }
 
     /**
@@ -85,7 +132,7 @@ final class JdkRestClient implements RestClient {
      */
     @Override
     public RestClient clone(final URI uri) {
-        return this;
+        return new JdkRestClient(uri, this.token);
     }
 
     /**
@@ -93,7 +140,7 @@ final class JdkRestClient implements RestClient {
      */
     @Override
     public RestClient clone(final String uri) {
-        return this;
+        return new JdkRestClient(UriBuilder.fromUri(uri).build(), this.token);
     }
 
 }
