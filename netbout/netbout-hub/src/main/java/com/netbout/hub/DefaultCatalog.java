@@ -32,13 +32,9 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableIdentityException;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.regex.Pattern;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -72,6 +68,11 @@ final class DefaultCatalog implements Catalog {
     private final transient NameValidator validator;
 
     /**
+     * Identity finder.
+     */
+    private final transient IdentityFinder finder;
+
+    /**
      * Public ctor.
      * @param ibus The bus
      */
@@ -79,6 +80,9 @@ final class DefaultCatalog implements Catalog {
         this.bus = ibus;
         this.manager = new DefaultBoutMgr(this.bus);
         this.validator = new NameValidator(this.bus);
+        this.finder = new IdentityFinder(
+            this, this.bus, this.all, this.validator
+        );
     }
 
     /**
@@ -183,43 +187,7 @@ final class DefaultCatalog implements Catalog {
      */
     @Override
     public Set<Identity> findByKeyword(final String keyword) {
-        final Set<Identity> found = new HashSet<Identity>();
-        for (Identity identity : this.all.values()) {
-            if (this.matches(keyword, identity)) {
-                found.add(identity);
-            }
-        }
-        final List<String> external = this.bus
-            .make("find-identities-by-keyword")
-            .synchronously()
-            .arg(keyword)
-            .asDefault(new ArrayList<String>())
-            .exec();
-        for (String name : external) {
-            try {
-                found.add(this.make(name));
-            } catch (com.netbout.spi.UnreachableIdentityException ex) {
-                Logger.warn(
-                    this,
-                    // @checkstyle LineLength (1 line)
-                    "#findByKeyword('%s'): some helper returned '%s' identity that is not reachable",
-                    keyword,
-                    name
-                );
-            }
-        }
-        if (this.validator.isValid(keyword)) {
-            try {
-                found.add(this.make(keyword, new HubUser(this, keyword)));
-            } catch (com.netbout.spi.UnreachableIdentityException ex) {
-                Logger.warn(
-                    this,
-                    "#findByKeyword('%s'): strange, but it's unreachable",
-                    keyword
-                );
-            }
-        }
-        return found;
+        return this.finder.find(keyword);
     }
 
     /**
@@ -259,25 +227,6 @@ final class DefaultCatalog implements Catalog {
                 )
             );
         }
-    }
-
-    /**
-     * Does this identity matches a keyword?
-     * @param keyword The keyword
-     * @param identity The identity
-     * @return Yes or no?
-     */
-    private boolean matches(final String keyword,
-        final Identity identity) {
-        boolean matches = identity.name().contains(keyword);
-        final Pattern pattern = Pattern.compile(
-            Pattern.quote(keyword),
-            Pattern.CASE_INSENSITIVE
-        );
-        for (String alias : identity.aliases()) {
-            matches |= pattern.matcher(alias).find();
-        }
-        return matches;
     }
 
 }

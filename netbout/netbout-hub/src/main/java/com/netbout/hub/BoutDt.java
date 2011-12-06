@@ -57,6 +57,13 @@ public interface BoutDt {
     void setTitle(String text);
 
     /**
+     * Confirm participation.
+     * @param identity Who confirms?
+     * @param aye To confirm?
+     */
+    void confirm(String identity, Boolean aye);
+
+    /**
      * Add new participant.
      * @param name The name of participant
      * @return The participant just created/added

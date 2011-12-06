@@ -93,6 +93,18 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
+    public void confirm(final String identity, final Boolean aye) {
+        for (ParticipantDt dude : this.getParticipants()) {
+            if (dude.getIdentity().equals(identity)) {
+                dude.setConfirmed(aye);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getTitle() {
         if (this.title == null) {
             this.title = this.bus.make("get-bout-title")

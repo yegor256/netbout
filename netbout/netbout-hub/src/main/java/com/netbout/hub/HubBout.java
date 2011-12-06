@@ -103,6 +103,14 @@ public final class HubBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public void confirm(final boolean aye) {
+        this.data.confirm(this.viewer.name(), aye);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void rename(final String text) {
         if (!this.confirmed()) {
             throw new IllegalStateException("You can't rename until you join");

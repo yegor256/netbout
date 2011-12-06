@@ -94,12 +94,4 @@ public final class HubParticipant implements Participant {
         return this.data.isConfirmed();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void confirm(final boolean aye) {
-        this.data.setConfirmed(aye);
-    }
-
 }
