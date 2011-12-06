@@ -45,73 +45,66 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
 
 /**
- * RESTful front of login functions.
+ * REST authentication page.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/g")
-public final class LoginRs extends AbstractRs {
+@Path("/auth")
+public final class AuthRs extends AbstractRs {
 
     /**
-     * Login page.
+     * Authentication page.
+     * @param uname User name
+     * @param iname Identity name
+     * @param secret Secret word
      * @return The JAX-RS response
-     * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
-    public Response login() {
-        final URI fburi = UriBuilder
-            .fromPath("https://www.facebook.com/dialog/oauth")
-            // @checkstyle MultipleStringLiterals (3 lines)
-            .queryParam("client_id", Manifests.read("Netbout-FbId"))
-            .queryParam(
-                "redirect_uri",
-                this.uriInfo()
-                    .getBaseUriBuilder()
-                    .clone()
-                    .path(FacebookRs.class, "fbauth")
-                    .build()
-                    .toString()
-            )
-            .build();
+    public Response auth(@QueryParam("user") final String uname,
+        @QueryParam("identity") final String iname,
+        @QueryParam("secret") final String secret) {
+        Identity identity;
+        try {
+            identity = this.authenticate(uname, iname, secret);
+        } catch (IOException ex) {
+            throw new ForwardException(this, "/g", ex);
+        }
         return new PageBuilder()
-            .stylesheet(
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path("/xsl/login.xsl")
-                    .build()
-                    .toString()
-        )
             .build(AbstractPage.class)
             .init(this)
-            .append(
-                new JaxbBundle("facebook").attr(Page.HATEOAS_HREF, fburi)
-            )
-            .anonymous()
+            .authenticated(identity)
+            .status(Response.Status.SEE_OTHER)
+            .location(this.uriInfo().getBaseUri())
             .build();
     }
 
     /**
-     * Logout page.
-     * @return The JAX-RS response
-     * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
+     * Authenticate the user through facebook.
+     * @param uname User name
+     * @param iname Identity name
+     * @param secret Secret word
+     * @return The identity found
+     * @throws IOException If some problem with FB
      */
-    @Path("/out")
-    @GET
-    public Response logout() {
-        return Response
-            .status(Response.Status.TEMPORARY_REDIRECT)
-            .location(this.uriInfo().getBaseUri())
-            .header(
-                "Set-Cookie",
+    private Identity authenticate(final String uname, final String iname,
+        final String secret) throws IOException {
+        final User user = this.hub().user(uname);
+        Identity identity;
+        try {
+            identity = user.identity(iname);
+        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            throw new IllegalStateException(
                 String.format(
-                    // @checkstyle LineLength (1 line)
-                    "netbout=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
-                    this.uriInfo().getBaseUri().getHost(),
-                    this.httpServletRequest().getContextPath()
+                    "Identity '%s' is not reachable: %s",
+                    iname,
+                    ex
                 )
-            )
-            .build();
+            );
+        }
+        // identity.alias("?");
+        // identity.setPhoto(UriBuilder.fromUri("?").build().toURL());
+        return identity;
     }
 
 }

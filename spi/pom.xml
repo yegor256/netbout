@@ -172,6 +172,12 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <!-- JAX-RS implementation, core library -->
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version since="26 Oct 2011">1.9.1</version>
+        </dependency>
+        <dependency>
             <!--
             Logging facility, on top of SLF4J.
             -->

@@ -26,25 +26,10 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.BusMocker;
-import com.netbout.hub.Hub;
-import com.netbout.hub.HubMocker;
-import com.netbout.hub.User;
-import com.netbout.hub.UserMocker;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.core.Manifests;
-import java.net.URI;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlmatchers.XmlMatchers;
 
 /**
@@ -52,8 +37,6 @@ import org.xmlmatchers.XmlMatchers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(LoginRs.class)
 public final class LoginRsTest {
 
     /**
@@ -67,61 +50,6 @@ public final class LoginRsTest {
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
             XmlMatchers.hasXPath("/page/facebook[@href]")
-        );
-    }
-
-    /**
-     * LoginRs can authenticate user through Facebook.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void authenticatesUserThroughFacebook() throws Exception {
-        // @checkstyle LineLength (1 line)
-        final String code = "AQCJ9EpLpqvj9cbag0mU8z6cHqyk-2CN5cigCzwB1aykqqqpiFNzAjsnNbRRY7x4n4h2ZEmrRVHhHSHzcFTtXobWM8LJSCHSB1_cjvsJS2vy2DsqRA3qGRAjUY8pKk0tO2zYpX-kFpnn2V6Z1xxvb7uyP-qrV_mQNWSYHKfPWKL0yTxo-NpFAGT4mDYNXl_cCMs";
-        final URI base = new URI("http://localhost/test/me");
-        final String uname = "338105383";
-        final User user = new UserMocker()
-            .namedAs(uname)
-            .withIdentity(uname, new IdentityMocker().namedAs(uname).mock())
-            .mock();
-        final Hub hub = new HubMocker()
-            .withUser(uname, user)
-            .mock();
-        final UriInfo info = new UriInfoMocker()
-            .withRequestUri(base)
-            .mock();
-        final URI redirect = UriBuilder.fromUri(base).path("/g/fb").build();
-        final LoginRs rest = new ResourceMocker()
-            .withDeps(new BusMocker().mock(), hub)
-            .withUriInfo(info)
-            .mock(LoginRs.class);
-        final LoginRs spy = PowerMockito.spy(rest);
-        PowerMockito.doReturn("access_token=abc|cde&expires=5108").when(
-            spy,
-            // @checkstyle MultipleStringLiterals (1 line)
-            "retrieve",
-            Mockito.eq(
-                UriBuilder
-                    .fromPath("https://graph.facebook.com/oauth/access_token")
-                    .queryParam("client_id", Manifests.read("Netbout-FbId"))
-                    .queryParam("redirect_uri", redirect)
-                    .queryParam(
-                        "client_secret",
-                        Manifests.read("Netbout-FbSecret")
-                    )
-                    .queryParam("code", code)
-                    .build()
-            )
-        );
-        final com.restfb.types.User fbuser =
-            Mockito.mock(com.restfb.types.User.class);
-        Mockito.doReturn(uname).when(fbuser).getId();
-        Mockito.doReturn("John Doe").when(fbuser).getName();
-        PowerMockito.doReturn(fbuser).when(spy, "fbUser", "abc|cde");
-        final Response response = spy.fbauth(code);
-        MatcherAssert.assertThat(
-            response.getStatus(),
-            Matchers.equalTo(Response.Status.SEE_OTHER.getStatusCode())
         );
     }
 

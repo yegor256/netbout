@@ -62,6 +62,14 @@ final class RestIdentity implements Identity {
     }
 
     /**
+     * Get its URI.
+     * @return The URI
+     */
+    public URI uri() {
+        return this.client.uri();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -77,7 +85,7 @@ final class RestIdentity implements Identity {
     @Override
     public String name() {
         return this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity")
             .xpath("/page/identity/name")
@@ -90,7 +98,7 @@ final class RestIdentity implements Identity {
     @Override
     public Bout start() {
         final URI uri = this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .location();
         return new RestBout(this.client.clone(uri));
@@ -103,7 +111,7 @@ final class RestIdentity implements Identity {
     public List<Bout> inbox(final String query) {
         final List<String> hrefs = this.client
             .queryParam("q", query)
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bouts")
             .xpath("/page/bouts/bout/@href");
@@ -121,7 +129,7 @@ final class RestIdentity implements Identity {
     public Bout bout(final Long num) {
         final String href = this.client
             .queryParam("q", String.format("bout:%s", num))
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))
             .xpath(String.format("/page/bouts/bout[number='%d']/@href", num))
@@ -135,7 +143,7 @@ final class RestIdentity implements Identity {
     @Override
     public URL photo() {
         final String href = this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity/photo[.!='']")
             .xpath("/page/identity/photo")
@@ -179,7 +187,7 @@ final class RestIdentity implements Identity {
     @Override
     public Set<String> aliases() {
         final List<String> names = this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity/aliases")
             .xpath("/page/identity/aliases/alias");

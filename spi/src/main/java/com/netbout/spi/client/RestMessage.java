@@ -120,7 +120,7 @@ final class RestMessage implements Message {
     public String bySuffix(final String suffix) {
         return this.client
             .queryParam("q", String.format("message:%d", this.num))
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(
                 String.format(

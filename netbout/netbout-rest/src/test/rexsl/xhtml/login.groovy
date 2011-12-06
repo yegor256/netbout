@@ -30,7 +30,7 @@
 package com.netbout.rest.rexsl.xhtml
 
 import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
+import org.hamcrest.MatcherAssert
 import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 
@@ -38,7 +38,7 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext
     '//xhtml:html',
     '//xhtml:aside[@id="version" and contains(.,"r9988") and contains(.,"0.3ms")]',
 ].each { xpath ->
-    Assert.assertThat(
+    MatcherAssert.assertThat(
         XhtmlConverter.the(rexsl.document),
         XmlMatchers.hasXPath(
             xpath,

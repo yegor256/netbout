@@ -34,6 +34,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,12 +61,20 @@ final class RestBout implements Bout {
     }
 
     /**
+     * Get its URI.
+     * @return The URI
+     */
+    public URI uri() {
+        return this.client.uri();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public Long number() {
         final String num = this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout")
             .xpath("/page/bout/number")
@@ -79,7 +88,7 @@ final class RestBout implements Bout {
     @Override
     public String title() {
         return this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .xpath("/page/bout/title")
             .get(0);
@@ -91,12 +100,11 @@ final class RestBout implements Bout {
     @Override
     public void rename(final String text) {
         this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='rename']")
             .rel("rename")
-            .queryParam("title", text)
-            .fetch(RestClient.POST)
+            .post("title", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
@@ -106,7 +114,7 @@ final class RestBout implements Bout {
     @Override
     public Collection<Participant> participants() {
         final List<String> names = this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/participants")
             .xpath("/page/bout/participants/participant/identity");
@@ -123,12 +131,12 @@ final class RestBout implements Bout {
     @Override
     public Participant invite(final Identity identity) {
         final String name = this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='invite']")
             .rel("invite")
             .queryParam("name", identity.name())
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("participant-name");
         return new RestParticipant(this.client.clone(), name);
@@ -140,7 +148,7 @@ final class RestBout implements Bout {
     @Override
     public List<Message> messages(final String query) {
         final List<String> nums = this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/messages")
             .xpath("/page/bout/messages/message/@number");
@@ -166,19 +174,19 @@ final class RestBout implements Bout {
     public void confirm(final boolean status) {
         if (status) {
             this.client
-                .fetch(RestClient.GET)
+                .get()
                 .assertStatus(HttpURLConnection.HTTP_OK)
                 .assertXPath("/page/links/link[@rel='join']")
                 .rel("join")
-                .fetch(RestClient.GET)
+                .get()
                 .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
         } else {
             this.client
-                .fetch(RestClient.GET)
+                .get()
                 .assertStatus(HttpURLConnection.HTTP_OK)
                 .assertXPath("/page/links/link[@rel='leave']")
                 .rel("leave")
-                .fetch(RestClient.GET)
+                .get()
                 .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
         }
     }
@@ -189,12 +197,11 @@ final class RestBout implements Bout {
     @Override
     public Message post(final String text) {
         final String num = this.client
-            .fetch(RestClient.GET)
+            .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='post']")
             .rel("post")
-            .formParam("text", text)
-            .fetch(RestClient.POST)
+            .post("text", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("message-id");
         return new RestMessage(this.client.clone(), Long.valueOf(num));

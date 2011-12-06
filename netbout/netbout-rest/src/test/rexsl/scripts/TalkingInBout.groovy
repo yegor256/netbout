@@ -29,60 +29,20 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.rest.CookieMocker
-import com.rexsl.test.TestClient
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
+import com.netbout.spi.client.RestSession
 import javax.ws.rs.core.UriBuilder
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 
-def cookie = new CookieMocker().cookie()
-def friend = '7265734'
-final AUTH = 'auth'
+def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def walter = new RestSession(rexsl.home).authenticate(auth, 'nb:walter', '')
 
-// start new bout
-def boutURI = new TestClient(rexsl.home)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-    .headers
-    .get(HttpHeaders.LOCATION)
+def bout = jeff.start()
+def number = bout.number()
+bout.invite(walter)
+walter.bout(number).confirm(true)
+def text = 'How are you?'
+def msg = walter.bout(number).post(text).number()
+MatcherAssert.assertThat(bout.message(msg).text(), Matchers.equalTo(text))
 
-// invite friend to the bout
-new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', friend).build())
-    .header(HttpHeaders.COOKIE, cookie)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-
-// open bout as a friend and get its XML
-def auth = new CookieMocker().auth(friend)
-def boutXML = new TestClient(UriBuilder.fromUri(boutURI).queryParam(AUTH, auth).build())
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .gpath
-
-// join bout
-def joinURI = boutXML.links.link.find { it.@rel == 'join' }.@href.toURI()
-def postURI = new TestClient(UriBuilder.fromUri(joinURI).queryParam(AUTH, auth).build())
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .followRedirects(true)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .gpath
-    .links.link.find { it.@rel == 'post' }.@href.toURI()
-
-// post new message to this bout, but a friend (using "auth" param)
-new TestClient(UriBuilder.fromUri(postURI).queryParam(AUTH, auth).build())
-    .body('text=How are you?')
-    .post()
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-
-// let's check that it exists there, the message
-new TestClient(UriBuilder.fromUri(boutURI).queryParam(AUTH, auth).build())
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath("/page/identity/name[.='${friend}']")
-    .assertXPath('/page/bout/messages/message[text="How are you?"]')

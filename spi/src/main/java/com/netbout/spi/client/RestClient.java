@@ -58,19 +58,17 @@ interface RestClient {
     RestClient queryParam(String name, String value);
 
     /**
-     * Provide form param.
-     * @param name Name of the parameter
-     * @param value The value of it
+     * Fetch HTTP GET response.
      * @return This object
      */
-    RestClient formParam(String name, String value);
+    RestResponse get();
 
     /**
-     * Fetch HTTP response.
-     * @param method The method to use (e.g. "POST", "GET", etc.)
+     * Fetch HTTP POST response.
+     * @param params Form names and params
      * @return This object
      */
-    RestResponse fetch(String method);
+    RestResponse post(String... params);
 
     /**
      * Just clone this client.
@@ -91,5 +89,11 @@ interface RestClient {
      * @return New client
      */
     RestClient clone(String uri);
+
+    /**
+     * Get URI of this client.
+     * @return The URI
+     */
+    URI uri();
 
 }

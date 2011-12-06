@@ -256,7 +256,7 @@ public final class BoutRs extends AbstractRs {
     @Path("/join")
     @GET
     public Response join() {
-        this.participant().confirm(true);
+        this.bout().confirm(true);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
@@ -273,7 +273,7 @@ public final class BoutRs extends AbstractRs {
     @Path("/leave")
     @GET
     public Response leave() {
-        this.participant().confirm(false);
+        this.bout().confirm(false);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
@@ -325,7 +325,7 @@ public final class BoutRs extends AbstractRs {
                     .queryParam("stage", this.coords.stage())
                     .build()
                     .toString()
-        )
+            )
             .build(AbstractPage.class)
             .init(this)
             .append(

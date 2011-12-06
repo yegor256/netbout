@@ -32,11 +32,14 @@ package com.netbout.spi.client;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
@@ -57,7 +60,7 @@ public final class RestSession {
     /**
      * Home URI.
      */
-    private final transient Client client = Client.create();
+    private final transient Client client;
 
     /**
      * Public ctor.
@@ -65,6 +68,10 @@ public final class RestSession {
      */
     public RestSession(final URI uri) {
         this.home = uri;
+        final ClientConfig config = new DefaultClientConfig();
+        config.getProperties()
+            .put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
+        this.client = Client.create(config);
     }
 
     /**
@@ -77,13 +84,8 @@ public final class RestSession {
     public Identity authenticate(final URI user, final String iname,
         final String secret) {
         final WebResource resource = this.client.resource(this.home);
-        resource.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
-        resource.addHeader(
-            HttpHeaders.SET_COOKIE,
-            String.format(
-                "netbout=%s", this.fetch(user, iname, secret)
-            )
-        );
+        resource.type(MediaType.APPLICATION_XML);
+        resource.cookie(new Cookie("netbout", this.fetch(user, iname, secret)));
         return new RestIdentity(new JerseyRestClient(resource));
     }
 
@@ -96,14 +98,14 @@ public final class RestSession {
      */
     public String fetch(final URI user, final String identity,
         final String secret) {
-        return this.client(this.home)
+        return this.client.resource(this.home)
             .path("/auth")
             .queryParam("user", user.toString())
             .queryParam("identity", identity)
             .queryParam("secret", secret)
             .get(ClientResponse.class)
             .getHeaders()
-            .get("Netbout-auth");
+            .getFirst("Netbout-auth");
     }
 
 }

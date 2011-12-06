@@ -49,7 +49,19 @@ public final class CryptorTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testEncryptionDecryption() throws Exception {
+    public void testIt() throws Exception {
+        // for (Object obj : java.security.Security.getAlgorithms("Cipher")) {
+        //     System.out.println((String) obj);
+        // }
+        // javax.crypto.SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+    }
+
+    /**
+     * Cryptor can encrypt identity and decrypt.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void encryptsAndDecryptsIdentity() throws Exception {
         final String uname = "\u041F\u0435\u0442\u0440 I";
         final String iname = String.valueOf(Math.abs(new Random().nextLong()));
         final Identity identity = new IdentityMocker()

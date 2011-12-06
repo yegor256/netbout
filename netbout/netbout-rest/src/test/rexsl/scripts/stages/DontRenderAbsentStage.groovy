@@ -29,27 +29,21 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.rest.CookieMocker
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def cookie = new CookieMocker().cookie()
-
-// start new bout
-def boutURI = new TestClient(rexsl.home)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-    .headers
-    .get(HttpHeaders.LOCATION)
+def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def bout = jeff.start()
 
 // call some stage that DOESN'T exist in this bout - it should
 // not be rendered
-new TestClient(UriBuilder.fromUri(boutURI).queryParam('stage', 'nb:hh').build())
+new TestClient(RestUriBuilder.from(bout).queryParam('stage', 'nb:hh').build())
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
-    .header(HttpHeaders.COOKIE, cookie)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('/xhtml:html[count(//xhtml:section[@id="stage"]) = 0]')

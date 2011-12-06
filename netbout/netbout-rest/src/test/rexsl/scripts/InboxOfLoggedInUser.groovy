@@ -29,24 +29,20 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.rest.CookieMocker
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
 
-def cookie = new CookieMocker().cookie()
-
-// let's start one bout to have something in the inbox
-new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def bout = jeff.start()
 
 // validate content of the inbox
-new TestClient(rexsl.home)
+new TestClient(RestUriBuilder.from(bout).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")

@@ -29,50 +29,18 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.rest.CookieMocker
+import com.netbout.spi.client.RestSession
 import com.rexsl.test.TestClient
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 
-def cookie = new CookieMocker().cookie()
+def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 def email = 'test@example.com'
 
-// start new bout
-def suggestURI = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
-    .followRedirects(true)
-    .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .gpath
-    .links.link.find { it.@rel == 'suggest' }.@href.toURI()
-
-// get suggestions about who we can invite
-def inviteURI = new TestClient(UriBuilder.fromUri(suggestURI).queryParam('k', email).build())
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath("/page/keyword[.='${email}']")
-    .assertXPath("/page/invitees/invitee[name='${email}']")
-    .gpath
-    .invitees.invitee.find { it.name == email }.@href.toURI()
-
-// invite this email and get URI to post a message
-def postURI = new TestClient(inviteURI)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
-    .followRedirects(true)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath("/page/bout/participants/participant[identity='${email}']")
-    .gpath
-    .links.link.find { it.@rel == 'post' }.@href.toURI()
-
-// post new message to this bout
-new TestClient(postURI)
-    .header(HttpHeaders.COOKIE, cookie)
-    .body('text=How are you?')
-    .post()
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+def bout = jeff.start()
+def friends = jeff.friends(email)
+MatcherAssert.assertThat(friends.size(), Matchers.equalTo(1))
+bout.invite(friends.get(0))
+bout.post('How are you doing?')

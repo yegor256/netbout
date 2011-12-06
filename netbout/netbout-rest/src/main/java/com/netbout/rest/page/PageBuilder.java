@@ -72,7 +72,7 @@ public final class PageBuilder {
     /**
      * Schema to use.
      */
-    private transient String schema = "";
+    private transient String xsd = "";
 
     /**
      * Configure the stylesheet to be used.
@@ -90,7 +90,7 @@ public final class PageBuilder {
      * @return This object
      */
     public PageBuilder schema(final String name) {
-        this.schema = name;
+        this.xsd = name;
         return this;
     }
 
@@ -167,24 +167,12 @@ public final class PageBuilder {
                 file.getConstPool(),
                 AnnotationsAttribute.visibleTag
             );
-            final Annotation xslAnnotation = new Annotation(
-                Stylesheet.class.getName(),
-                file.getConstPool()
+            attribute.addAnnotation(
+                this.make(Stylesheet.class, this.xsl, file)
             );
-            xslAnnotation.addMemberValue(
-                "value",
-                new StringMemberValue(this.xsl, file.getConstPool())
+            attribute.addAnnotation(
+                this.make(XmlSchema.class, this.xsd, file)
             );
-            attribute.addAnnotation(xslAnnotation);
-            final Annotation xsdAnnotation = new Annotation(
-                XmlSchema.class.getName(),
-                file.getConstPool()
-            );
-            xsdAnnotation.addMemberValue(
-                "value",
-                new StringMemberValue(this.schema, file.getConstPool())
-            );
-            attribute.addAnnotation(xsdAnnotation);
             for (Annotation existing : this.annotations(ctc, parent)) {
                 attribute.addAnnotation(existing);
             }
@@ -236,6 +224,26 @@ public final class PageBuilder {
             StringUtils.join(names, ", ")
         );
         return result;
+    }
+
+    /**
+     * Construct a new annotation.
+     * @param type Type of annotation
+     * @param value The value to set
+     * @param file Class file
+     * @return The annotation
+     */
+    private Annotation make(final Class type, final String value,
+        final ClassFile file) {
+        final Annotation annotation = new Annotation(
+            type.getName(),
+            file.getConstPool()
+        );
+        annotation.addMemberValue(
+            "value",
+            new StringMemberValue(value, file.getConstPool())
+        );
+        return annotation;
     }
 
 }

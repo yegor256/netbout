@@ -28,9 +28,10 @@ package com.netbout.utils;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
+// import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
+// import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 /**
  * Encrypts and decrypts.
  *
@@ -43,6 +44,26 @@ public final class Cryptor {
      * Separator between name and hash.
      */
     private static final String SEPARATOR = ".";
+
+    // /**
+    //  * Password to use in encryption.
+    //  */
+    // private static final String PASSWORD = "j&^%hgfRR43$#&==_ )(00(0}{-~";
+    //
+    // /**
+    //  * Encryptor.
+    //  */
+    // private final StandardPBEStringEncryptor encryptor =
+    //     new StandardPBEStringEncryptor();
+
+    // /**
+    //  * Public ctor.
+    //  */
+    // public Cryptor() {
+    //     this.encryptor.setPassword(this.PASSWORD);
+    //     this.encryptor
+    //        .setAlgorithm(StandardPBEByteEncryptor.DEFAULT_ALGORITHM);
+    // }
 
     /**
      * Encrypt user+identity into text.
@@ -93,6 +114,7 @@ public final class Cryptor {
      */
     private String pack(final String text) {
         return text;
+        // return this.encryptor.encrypt(text);
     }
 
     /**
@@ -102,6 +124,7 @@ public final class Cryptor {
      */
     private String unpack(final String hash) {
         return hash;
+        // return this.encryptor.decrypt(hash);
     }
 
 }

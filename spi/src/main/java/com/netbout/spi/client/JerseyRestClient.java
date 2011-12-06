@@ -29,38 +29,34 @@
  */
 package com.netbout.spi.client;
 
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.ymock.util.Logger;
 import java.net.URI;
 import java.util.List;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
 /**
- * Client that loads XML through HTTP, using JDK.
+ * Client that loads XML through HTTP, using Jersey JAX-RS client.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class JdkRestClient implements RestClient {
+final class JerseyRestClient implements RestClient {
 
     /**
      * Jersey web resource.
      */
-    private final transient WebResource;
-
-    /**
-     * Auth token.
-     */
-    private final transient String token;
+    private final transient WebResource resource;
 
     /**
      * Pubic ctor.
-     * @param uri Entry point URI
-     * @param auth Authentication token
+     * @param res The resource to work with
      */
-    public JdkRestClient(final URI uri, final String auth) {
-        this.home = uri;
-        this.token = auth;
-        this.client = (HttpURLConnection) uri.toURL().openConnection();
+    public JerseyRestClient(final WebResource res) {
+        this.resource = res;
     }
 
     /**
@@ -68,55 +64,49 @@ final class JdkRestClient implements RestClient {
      */
     @Override
     public RestClient queryParam(final String name, final String value) {
-        return this;
+        return new JerseyRestClient(this.resource.queryParam(name, value));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RestClient formParam(final String name, final String value) {
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RestResponse fetch(final String method) {
+    public RestResponse get() {
         final long start = System.currentTimeMillis();
-        HttpURLConnection conn;
-        int code;
-        try {
-            conn =
-            code = conn.getResponseCode();
-            conn.disconnect();
-        } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        if (code != HttpURLConnection.HTTP_OK) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "HTTP response code at '%s' is %d",
-                    url,
-                    code
-                )
-            );
-        }
-        final String auth = conn.getHeaderField("Netbout-auth");
-        if (auth == null) {
-            throw new IllegalArgumentException(
-                "Netbout-auth header not found in response"
-            );
-        }
-        Logger.debug(
+        final ClientResponse response = this.resource.get(ClientResponse.class);
+        Logger.info(
             this,
-            "#fetch('%s'): done in %dms",
-            url,
+            "#GET(%s): [%d %s] in %dms",
+            this.resource.getURI(),
+            response.getStatus(),
+            response.getClientResponseStatus().getReasonPhrase(),
             System.currentTimeMillis() - start
         );
-        return auth;
-        return new DefaultRestResponse();
+        return new JerseyRestResponse(response);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RestResponse post(final String... params) {
+        final MultivaluedMap data = new MultivaluedMapImpl();
+        for (int pos = 0; pos < params.length; pos += 1) {
+            data.add(params[pos], params[pos + 1]);
+            pos += 1;
+        }
+        final long start = System.currentTimeMillis();
+        final ClientResponse response =
+            this.resource.post(ClientResponse.class, data);
+        Logger.info(
+            this,
+            "#POST(%s): [%d %s] in %dms",
+            this.resource.getURI(),
+            response.getStatus(),
+            response.getClientResponseStatus().getReasonPhrase(),
+            System.currentTimeMillis() - start
+        );
+        return new JerseyRestResponse(response);
     }
 
     /**
@@ -124,7 +114,7 @@ final class JdkRestClient implements RestClient {
      */
     @Override
     public RestClient clone() {
-        return new JdkRestClient(this.home, this.token);
+        return new JerseyRestClient(this.resource);
     }
 
     /**
@@ -132,7 +122,7 @@ final class JdkRestClient implements RestClient {
      */
     @Override
     public RestClient clone(final URI uri) {
-        return new JdkRestClient(uri, this.token);
+        return new JerseyRestClient(this.resource.uri(uri));
     }
 
     /**
@@ -140,7 +130,17 @@ final class JdkRestClient implements RestClient {
      */
     @Override
     public RestClient clone(final String uri) {
-        return new JdkRestClient(UriBuilder.fromUri(uri).build(), this.token);
+        return new JerseyRestClient(
+            this.resource.uri(UriBuilder.fromUri(uri).build())
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URI uri() {
+        return this.resource.getURI();
     }
 
 }

@@ -30,7 +30,7 @@
 package com.netbout.rest.rexsl.xhtml
 
 import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
+import org.hamcrest.MatcherAssert
 import org.xmlmatchers.XmlMatchers
 import org.xmlmatchers.namespace.SimpleNamespaceContext
 
@@ -40,7 +40,7 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext
     '//xhtml:title',
     '//xhtml:aside[@id="version" and contains(.,"r555") and contains(.,"56ms")]',
 ].each { xpath ->
-    Assert.assertThat(
+    MatcherAssert.assertThat(
         XhtmlConverter.the(rexsl.document),
         XmlMatchers.hasXPath(
             xpath,

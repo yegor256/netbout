@@ -29,34 +29,23 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.rest.CookieMocker
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def cookie = new CookieMocker().cookie()
-
-// start new bout and save its XML
-def boutURI = new TestClient(rexsl.home)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get('/s')
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-    .headers
-    .get(HttpHeaders.LOCATION)
+def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def bout = jeff.start()
 
 // invite two helpers there
-['nb:hh', 'nb:db'].each { helper ->
-    new TestClient(UriBuilder.fromUri(boutURI).path('/i').queryParam('name', helper).build())
-        .header(HttpHeaders.COOKIE, cookie)
-        .get()
-        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-}
+['nb:hh', 'nb:db'].each { bout.invite(jeff.friend(it)) }
 
 // validate that there are really two stages in the XML
-new TestClient(boutURI)
+new TestClient(RestUriBuilder.from(bout).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('/page/bout/stages[count(stage) = 2]')

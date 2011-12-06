@@ -65,7 +65,7 @@ public final class TextUtils {
         try {
             return new Base64().encodeToString(
                 text.getBytes(TextUtils.ENCODING)
-            );
+            ).replaceAll("[\t\n\r]+", "");
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(ex);
         }

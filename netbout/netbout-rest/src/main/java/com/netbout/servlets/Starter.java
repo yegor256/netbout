@@ -47,6 +47,7 @@ public final class Starter implements ServletContextListener {
 
     /**
      * {@inheritDoc}
+     * @checkstyle ExecutableStatementCount (35 lines)
      */
     @Override
     public void contextInitialized(final ServletContextEvent event) {

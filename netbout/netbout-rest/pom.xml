@@ -90,6 +90,11 @@
             <version since="3 Nov 2011">3.12.1.GA</version>
         </dependency>
         <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+            <version since="5 Dec 2011">1.8</version>
+        </dependency>
+        <dependency>
             <!-- Text formatting tool -->
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>

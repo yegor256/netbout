@@ -31,85 +31,32 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
-import java.net.HttpURLConnection;
+import javax.ws.rs.core.UriBuilder;
 
 /**
- * The participant.
+ * Builder of URI from REST resources.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class RestParticipant implements Participant {
+public final class RestUriBuilder {
 
     /**
-     * Rest client.
+     * Builds UriBuilder form provided bout.
+     * @param bout The bout
+     * @return The builder
      */
-    private final transient RestClient client;
-
-    /**
-     * Number of this guy.
-     */
-    private final transient String name;
-
-    /**
-     * Public ctor.
-     * @param clnt Rest client
-     * @parma name Name of participant
-     */
-    public RestParticipant(final RestClient clnt, final String nam) {
-        this.client = clnt;
-        this.name = nam;
+    public static UriBuilder from(final Bout bout) {
+        return UriBuilder.fromUri(((RestBout) bout).uri());
     }
 
     /**
-     * {@inheritDoc}
+     * Builds UriBuilder form provided identity.
+     * @param identity The identity
+     * @return The builder
      */
-    @Override
-    public Bout bout() {
-        return new RestBout(this.client.clone());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity() {
-        return new Friend(this.name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean confirmed() {
-        return Boolean.valueOf(this.bySuffix("/@confirmed"));
-    }
-
-    /**
-     * Fetch by XPath suffix.
-     * @param suffix The suffix of XPath
-     * @return The value found
-     */
-    public String bySuffix(final String suffix) {
-        return this.client
-            .get()
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath(
-                String.format(
-                    "/page/bout/participants/participant[@identity='%s']",
-                    this.name
-                )
-            )
-            .xpath(
-                String.format(
-                    "/page/bout/participants/participant[@identity='%s']%s",
-                    this.name,
-                    suffix
-                )
-            )
-            .get(0);
+    public static UriBuilder from(final Identity identity) {
+        return UriBuilder.fromUri(((RestIdentity) identity).uri());
     }
 
 }
