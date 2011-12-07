@@ -36,6 +36,7 @@ import com.netbout.spi.cpa.Operation;
 import com.netbout.utils.Cryptor;
 import com.netbout.utils.TextUtils;
 import com.ymock.util.Logger;
+import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.velocity.VelocityContext;
@@ -144,13 +145,21 @@ public final class EmailFarm implements IdentityAware {
         );
         final javax.mail.Message email = this.sender.newMessage();
         try {
-            email.setFrom(new InternetAddress("no-reply@netbout.com"));
+            final Address reply = new InternetAddress("no-reply@netbout.com");
+            email.addFrom(new Address[] {reply});
+            email.setReplyTo(new Address[] {reply});
             email.addRecipient(
                 javax.mail.Message.RecipientType.TO,
                 new InternetAddress(dude.identity().name())
             );
             email.setText(text);
-            email.setSubject(dude.bout().title());
+            email.setSubject(
+                String.format(
+                    "#%d: %s",
+                    dude.bout().number(),
+                    dude.bout().title()
+                )
+            );
             this.sender.send(email);
         } catch (javax.mail.internet.AddressException ex) {
             throw new IllegalArgumentException(ex);

@@ -1,2 +1,2 @@
-protocol=smtp; type=transport; class=com.sun.mail.smtp.SMTPTransport;
-protocol=rsmtp; type=transport; class=com.netbout.notifiers.email.DummyTransport;
+protocol=rsmtp; type=transport; class=com.sun.mail.smtp.SMTPTransport;
+protocol=smtp; type=transport; class=com.netbout.notifiers.email.DummyTransport;

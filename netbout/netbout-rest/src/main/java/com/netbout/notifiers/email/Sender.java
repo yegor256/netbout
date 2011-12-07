@@ -45,7 +45,7 @@ final class Sender {
     /**
      * Mail sending session.
      */
-    private final Session session;
+    private final transient Session session;
 
     /**
      * Public ctor.
@@ -85,6 +85,10 @@ final class Sender {
         } catch (javax.mail.MessagingException ex) {
             throw new IllegalArgumentException(ex);
         }
+        Logger.info(
+            this,
+            "#send(..): email delivered"
+        );
     }
 
 }
