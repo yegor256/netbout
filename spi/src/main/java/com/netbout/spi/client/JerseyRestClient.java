@@ -54,11 +54,18 @@ final class JerseyRestClient implements RestClient {
     private final transient WebResource resource;
 
     /**
+     * Auth token.
+     */
+    private final transient String token;
+
+    /**
      * Pubic ctor.
      * @param res The resource to work with
+     * @param tkn Auth token
      */
-    public JerseyRestClient(final WebResource res) {
+    public JerseyRestClient(final WebResource res, final String tkn) {
         this.resource = res;
+        this.token = tkn;
     }
 
     /**
@@ -66,7 +73,10 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestClient queryParam(final String name, final String value) {
-        return new JerseyRestClient(this.resource.queryParam(name, value));
+        return new JerseyRestClient(
+            this.resource.queryParam(name, value),
+            this.token
+        );
     }
 
     /**
@@ -77,15 +87,17 @@ final class JerseyRestClient implements RestClient {
         final long start = System.currentTimeMillis();
         final ClientResponse response = this.resource
             .accept(MediaType.APPLICATION_XML)
+            .cookie(this.cookie())
             .get(ClientResponse.class);
         Logger.info(
             this,
-            "#GET(%s): \"%s\" [%d %s] in %dms",
+            "#GET(%s): \"%s\" [%d %s] in %dms (%s)",
             this.resource.getURI().getPath(),
             message,
             response.getStatus(),
             response.getClientResponseStatus().getReasonPhrase(),
-            System.currentTimeMillis() - start
+            System.currentTimeMillis() - start,
+            this.resource.getURI()
         );
         return new JerseyRestResponse(this, response);
     }
@@ -102,15 +114,17 @@ final class JerseyRestClient implements RestClient {
         }
         final long start = System.currentTimeMillis();
         final ClientResponse response = this.resource
+            .cookie(this.cookie())
             .post(ClientResponse.class, data);
         Logger.info(
             this,
-            "#POST(%s): \"%s\" [%d %s] in %dms",
+            "#POST(%s): \"%s\" [%d %s] in %dms (%s)",
             this.resource.getURI().getPath(),
             message,
             response.getStatus(),
             response.getClientResponseStatus().getReasonPhrase(),
-            System.currentTimeMillis() - start
+            System.currentTimeMillis() - start,
+            this.resource.getURI()
         );
         return new JerseyRestResponse(this, response);
     }
@@ -120,7 +134,7 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestClient copy() {
-        return new JerseyRestClient(this.resource);
+        return new JerseyRestClient(this.resource, this.token);
     }
 
     /**
@@ -128,7 +142,7 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestClient copy(final URI uri) {
-        return new JerseyRestClient(this.resource.uri(uri));
+        return new JerseyRestClient(this.resource.uri(uri), this.token);
     }
 
     /**
@@ -137,7 +151,8 @@ final class JerseyRestClient implements RestClient {
     @Override
     public RestClient copy(final String uri) {
         return new JerseyRestClient(
-            this.resource.uri(UriBuilder.fromUri(uri).build())
+            this.resource.uri(UriBuilder.fromUri(uri).build()),
+            this.token
         );
     }
 
@@ -147,6 +162,14 @@ final class JerseyRestClient implements RestClient {
     @Override
     public URI uri() {
         return this.resource.getURI();
+    }
+
+    /**
+     * Make cookie.
+     * @return The cookie
+     */
+    private Cookie cookie() {
+        return new Cookie("netbout", this.token);
     }
 
 }

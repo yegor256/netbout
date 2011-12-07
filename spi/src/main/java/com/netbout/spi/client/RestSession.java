@@ -89,10 +89,12 @@ public final class RestSession {
      */
     public Identity authenticate(final URI user, final String iname,
         final String secret) {
-        final WebResource resource = this.client
-            .resource(this.home)
-            .queryParam("auth", this.fetch(user, iname, secret));
-        return new RestIdentity(new JerseyRestClient(resource));
+        return new RestIdentity(
+            new JerseyRestClient(
+                this.client.resource(this.home),
+                this.fetch(user, iname, secret)
+            )
+        );
     }
 
     /**
