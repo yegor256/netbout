@@ -31,6 +31,8 @@ import com.netbout.bus.BusMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -52,17 +54,14 @@ public final class DefaultIdentityFinderTest {
      */
     @Test
     public void findsIdentityAmongExistingCollection() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(new ArrayList<String>(), "find-identities-by-keyword")
-            .mock();
-        final Catalog catalog = new DefaultCatalog(bus);
+        final Catalog catalog = new DefaultCatalog(this.bus());
         final NameValidator validator = Mockito.mock(NameValidator.class);
         final ConcurrentMap<String, Identity> existing =
             new ConcurrentHashMap<String, Identity>();
         final String name = "foo";
         existing.put(name, new IdentityMocker().namedAs(name).mock());
         final IdentityFinder finder = new DefaultIdentityFinder(
-            catalog, bus, existing, validator
+            catalog, this.bus(), existing, validator
         );
         final Set<Identity> found = finder.find(name);
         MatcherAssert.assertThat(
@@ -73,16 +72,12 @@ public final class DefaultIdentityFinderTest {
     }
 
     /**
-     * IdentityFinder can find identity that already exists in collection.
+     * IdentityFinder can find identity that is already assigned to a user.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void findsIdentityAlreadyAssignedToSomeUser() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(new ArrayList<String>(), "find-identities-by-keyword")
-            .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
-            .mock();
-        final Catalog catalog = new DefaultCatalog(bus);
+        final Catalog catalog = new DefaultCatalog(this.bus());
         final NameValidator validator = Mockito.mock(NameValidator.class);
         Mockito.doReturn(true).when(validator).isValid(Mockito.anyString());
         final ConcurrentMap<String, Identity> existing =
@@ -91,7 +86,7 @@ public final class DefaultIdentityFinderTest {
         final User user = new UserMocker().mock();
         existing.put(name, catalog.make(name, user));
         final IdentityFinder finder = new DefaultIdentityFinder(
-            catalog, bus, existing, validator
+            catalog, this.bus(), existing, validator
         );
         final Set<Identity> found = finder.find(name);
         MatcherAssert.assertThat(
@@ -99,6 +94,43 @@ public final class DefaultIdentityFinderTest {
             found.size(),
             Matchers.equalTo(1)
         );
+    }
+
+    /**
+     * IdentityFinder can find in existing map first, before going to helper.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsInExistingMapFirst() throws Exception {
+        final String name = "736547383";
+        final Catalog catalog = new DefaultCatalog(this.bus(name));
+        final ConcurrentMap<String, Identity> existing =
+            new ConcurrentHashMap<String, Identity>();
+        final String uname = "Jeff";
+        final User user = new UserMocker().namedAs(uname).mock();
+        existing.put(name, catalog.make(name, user));
+        final NameValidator validator = Mockito.mock(NameValidator.class);
+        final IdentityFinder finder = new DefaultIdentityFinder(
+            catalog, this.bus(name), existing, validator
+        );
+        final Set<Identity> found = finder.find(name);
+        MatcherAssert.assertThat(
+            "We found exactly one identity, from the Map",
+            found.iterator().next().user(),
+            Matchers.equalTo(uname)
+        );
+    }
+
+    /**
+     * Create bus.
+     * @param names Names of identities
+     * @throws Exception If there is some problem inside
+     */
+    private Bus bus(final String... names) throws Exception {
+        final BusMocker mocker = new BusMocker();
+        mocker.doReturn(Arrays.asList(names), "find-identities-by-keyword");
+        mocker.doReturn(new ArrayList<String>(), "get-aliases-of-identity");
+        return mocker.mock();
     }
 
 }
