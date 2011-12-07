@@ -98,6 +98,10 @@ final class RestIdentity implements Identity {
     @Override
     public Bout start() {
         final URI uri = this.client
+            .get("reading 'start' rel link")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/links/link[@rel='start']")
+            .rel("start")
             .get("starting new bout")
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .location();
@@ -111,7 +115,7 @@ final class RestIdentity implements Identity {
     public List<Bout> inbox(final String query) {
         final List<String> hrefs = this.client
             .queryParam("q", query)
-            .get("reading hrefs of bouts in the inbox")
+            .get(String.format("reading bouts in the inbox '%s'", query))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bouts")
             .xpath("/page/bouts/bout/@href");
@@ -129,7 +133,7 @@ final class RestIdentity implements Identity {
     public Bout bout(final Long num) {
         final String href = this.client
             .queryParam("q", String.format("bout:%s", num))
-            .get("reading href of a bout by number")
+            .get(String.format("reading href of bout #%d", num))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))
             .xpath(String.format("/page/bouts/bout[number='%d']/@href", num))
@@ -170,7 +174,7 @@ final class RestIdentity implements Identity {
      */
     @Override
     public Identity friend(final String name) {
-        return null;
+        return new Friend(name);
     }
 
     /**
@@ -178,7 +182,9 @@ final class RestIdentity implements Identity {
      */
     @Override
     public Set<Identity> friends(final String keyword) {
-        return null;
+        throw new UnsupportedOperationException(
+            "Identity#friends() is not implemented yet"
+        );
     }
 
     /**

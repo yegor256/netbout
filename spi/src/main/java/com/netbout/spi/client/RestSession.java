@@ -65,7 +65,15 @@ public final class RestSession {
      * @param uri Home URI
      */
     public RestSession(final URI uri) {
-        this.home = uri;
+        if (!uri.isAbsolute()) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "URI '%s' has to be absolute",
+                    uri
+                )
+            );
+        }
+        this.home = UriBuilder.fromUri(uri).path("/").build();
         final ClientConfig config = new DefaultClientConfig();
         config.getProperties()
             .put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
@@ -81,10 +89,10 @@ public final class RestSession {
      */
     public Identity authenticate(final URI user, final String iname,
         final String secret) {
-        final WebResource resource = this.client.resource(this.home);
-        return new RestIdentity(
-            new JerseyRestClient(resource, this.fetch(user, iname, secret))
-        );
+        final WebResource resource = this.client
+            .resource(this.home)
+            .queryParam("auth", this.fetch(user, iname, secret));
+        return new RestIdentity(new JerseyRestClient(resource));
     }
 
     /**
@@ -120,7 +128,7 @@ public final class RestSession {
                 )
             );
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#fetch('%s', '%s', '%s'): '%s' authenticated us as '%s'",
             user,

@@ -104,7 +104,7 @@ final class RestBout implements Bout {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='rename']")
             .rel("rename")
-            .post("renaming bout", "title", text)
+            .post(String.format("renaming bout to '%s'", text), "title", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
@@ -130,16 +130,37 @@ final class RestBout implements Bout {
      */
     @Override
     public Participant invite(final Identity identity) {
-        final String name = this.client
-            .get("reading 'invite' rel link")
+        final String name = identity.name();
+        final List<String> hrefs = this.client
+            .get("reading 'suggest' rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/links/link[@rel='invite']")
-            .rel("invite")
-            .queryParam("name", identity.name())
-            .get("inviting participant to the bout")
+            .assertXPath("/page/links/link[@rel='suggest']")
+            .rel("suggest")
+            .queryParam("k", name)
+            .get(String.format("reading suggestions for '%s'", name))
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/invitees")
+            .xpath(
+                String.format(
+                    "/page/invitees/invitee[name='%s']/@href",
+                    name
+                )
+            );
+        if (hrefs.isEmpty()) {
+            throw new IllegalStateException(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "Can't invite '%s' to the bout because Netbout doesn't suggest his/her identity",
+                    name
+                )
+            );
+        }
+        final String participant = this.client
+            .copy(hrefs.get(0))
+            .get(String.format("inviting '%s' to the bout", name))
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("participant-name");
-        return new RestParticipant(this.client.copy(), name);
+        return new RestParticipant(this.client.copy(), participant);
     }
 
     /**
