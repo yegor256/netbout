@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface TokenCache {
+public interface TokenCache {
 
     /**
      * Find result for the token, if it exists in cache, and fill with

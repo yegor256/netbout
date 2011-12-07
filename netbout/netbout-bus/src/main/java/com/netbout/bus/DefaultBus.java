@@ -26,6 +26,7 @@
  */
 package com.netbout.bus;
 
+import com.netbout.bus.cache.EmptyTokenCache;
 import com.netbout.spi.Helper;
 
 /**
@@ -41,7 +42,7 @@ public final class DefaultBus implements Bus {
      */
     private final transient TxController controller = new DefaultTxController(
         new DefaultTxQueue(),
-        new DefaultTokenCache()
+        new EmptyTokenCache()
     );
 
     /**
