@@ -161,7 +161,9 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public URI uri() {
-        return this.resource.getURI();
+        return UriBuilder.fromUri(this.resource.getURI())
+            .queryParam("auth", this.token)
+            .build();
     }
 
     /**

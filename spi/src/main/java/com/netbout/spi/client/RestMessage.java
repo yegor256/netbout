@@ -124,13 +124,13 @@ final class RestMessage implements Message {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(
                 String.format(
-                    "/page/bout/messages/message[@number='%d']",
+                    "/page/bout/messages/message[number='%d']",
                     this.num
                 )
             )
             .xpath(
                 String.format(
-                    "/page/bout/messages/message[@number='%d']%s",
+                    "/page/bout/messages/message[number='%d']%s",
                     this.num,
                     suffix
                 )
