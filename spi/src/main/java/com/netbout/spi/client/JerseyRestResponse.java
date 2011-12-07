@@ -102,6 +102,15 @@ final class JerseyRestResponse implements RestResponse {
         final ClientResponse resp) {
         this.client = clnt;
         this.response = resp;
+        final String error = resp.getHeaders().getFirst("Netbout-error");
+        if (error != null) {
+            throw new AssertionError(
+                String.format(
+                    "Error header detected: '%s'",
+                    error
+                )
+            );
+        }
     }
 
     /**

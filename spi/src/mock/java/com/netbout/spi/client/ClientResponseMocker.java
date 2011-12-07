@@ -30,6 +30,7 @@
 package com.netbout.spi.client;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.mockito.Mockito;
 
 /**
@@ -71,6 +72,8 @@ public final class ClientResponseMocker {
      * @return Mocked class
      */
     public ClientResponse mock() {
+        Mockito.doReturn(new MultivaluedMapImpl())
+            .when(this.response).getHeaders();
         return this.response;
     }
 
