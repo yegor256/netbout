@@ -31,8 +31,6 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
@@ -120,7 +118,7 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void setPhoto(URL photo) {
+    public void setPhoto(final URL photo) {
         throw new UnsupportedOperationException(
             "#setPhoto() can't be called on a friend"
         );

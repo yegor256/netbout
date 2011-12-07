@@ -32,7 +32,6 @@ package com.netbout.spi.client;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -57,7 +56,7 @@ final class RestMessage implements Message {
     /**
      * Public ctor.
      * @param clnt Rest client
-     * @parma number Number of the message
+     * @param number Number of the message
      */
     public RestMessage(final RestClient clnt, final Long number) {
         this.client = clnt;

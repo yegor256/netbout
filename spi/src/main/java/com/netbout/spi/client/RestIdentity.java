@@ -163,7 +163,7 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void setPhoto(URL photo) {
+    public void setPhoto(final URL photo) {
         throw new UnsupportedOperationException(
             "Identity#setPhoto() is not implemented yet"
         );

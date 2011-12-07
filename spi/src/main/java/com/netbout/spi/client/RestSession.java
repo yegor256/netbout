@@ -29,17 +29,15 @@
  */
 package com.netbout.spi.client;
 
+import com.netbout.spi.Identity;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 /**
@@ -83,7 +81,7 @@ public final class RestSession {
     /**
      * Get identity in the session through Netbout authentication mechanism.
      * @param user The user to authenticate
-     * @param identity Name of the identity
+     * @param iname Name of the identity
      * @param secret The secret word to use
      * @return The identity to work with
      */

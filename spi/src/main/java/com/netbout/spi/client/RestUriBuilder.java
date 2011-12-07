@@ -42,6 +42,13 @@ import javax.ws.rs.core.UriBuilder;
 public final class RestUriBuilder {
 
     /**
+     * It's a utility class.
+     */
+    private RestUriBuilder() {
+        // empty
+    }
+
+    /**
      * Builds UriBuilder form provided bout.
      * @param bout The bout
      * @return The builder

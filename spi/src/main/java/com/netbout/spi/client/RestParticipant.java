@@ -31,7 +31,6 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.net.HttpURLConnection;
 
@@ -56,7 +55,7 @@ final class RestParticipant implements Participant {
     /**
      * Public ctor.
      * @param clnt Rest client
-     * @parma name Name of participant
+     * @param nam Name of participant
      */
     public RestParticipant(final RestClient clnt, final String nam) {
         this.client = clnt;

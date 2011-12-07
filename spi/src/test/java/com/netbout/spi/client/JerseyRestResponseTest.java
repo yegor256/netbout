@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.client;
 
-import com.sun.jersey.api.client.WebResource;
 import java.net.HttpURLConnection;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

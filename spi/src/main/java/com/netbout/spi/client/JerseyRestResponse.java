@@ -30,14 +30,12 @@
 package com.netbout.spi.client;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -79,7 +77,7 @@ final class JerseyRestResponse implements RestResponse {
         TransformerFactory.newInstance();
 
     /**
-     * Original resource where this response
+     * Original resource where this response.
      */
     private final transient RestClient client;
 

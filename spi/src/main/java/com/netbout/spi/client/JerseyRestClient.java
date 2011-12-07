@@ -34,7 +34,6 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.ymock.util.Logger;
 import java.net.URI;
-import java.util.List;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -108,9 +107,8 @@ final class JerseyRestClient implements RestClient {
     @Override
     public RestResponse post(final String message, final String... params) {
         final MultivaluedMap data = new MultivaluedMapImpl();
-        for (int pos = 0; pos < params.length; pos += 1) {
+        for (int pos = 0; pos < params.length; pos += 2) {
             data.add(params[pos], params[pos + 1]);
-            pos += 1;
         }
         final long start = System.currentTimeMillis();
         final ClientResponse response = this.resource

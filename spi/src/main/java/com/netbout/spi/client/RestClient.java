@@ -42,12 +42,12 @@ interface RestClient {
     /**
      * GET method.
      */
-    public static final String GET = "GET";
+    String GET = "GET";
 
     /**
      * POST method.
      */
-    public static final String POST = "POST";
+    String POST = "POST";
 
     /**
      * Provide query param.

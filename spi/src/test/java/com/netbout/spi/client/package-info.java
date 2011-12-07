@@ -27,32 +27,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi.client;
-
-import java.net.URI;
-import org.junit.Test;
 
 /**
- * Test case for {@link RestSession}.
+ * RESTful client, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class RestSessionTest {
-
-    /**
-     * RestSession can perform authentication and obtain auth token.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void performsAuthentication() throws Exception {
-        final RestSession session = new RestSession(
-            new URI("http://www.netbout.com/some-context")
-        );
-        // final Identity identity = session.authenticate(
-        //     new URI("http://www.netbout.com/anonymous"),
-        //     "foo",
-        //     "bar"
-        // );
-    }
-
-}
+package com.netbout.spi.client;
