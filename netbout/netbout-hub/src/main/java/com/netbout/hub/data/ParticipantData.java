@@ -26,7 +26,8 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
+import com.netbout.hub.ParticipantDt;
 import com.ymock.util.Logger;
 
 /**
@@ -35,7 +36,12 @@ import com.ymock.util.Logger;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ParticipantData {
+final class ParticipantData implements ParticipantDt {
+
+    /**
+     * Bus to work with.
+     */
+    private final transient Bus bus;
 
     /**
      * Number of bout.
@@ -54,10 +60,12 @@ public final class ParticipantData {
 
     /**
      * Public ctor.
+     * @param ibus The bus
      * @param num The number
      * @param idnt The identity
      */
-    private ParticipantData(final Long num, final String idnt) {
+    public ParticipantData(final Bus ibus, final Long num, final String idnt) {
+        this.bus = ibus;
         assert num != null;
         this.bout = num;
         assert idnt != null;
@@ -65,42 +73,33 @@ public final class ParticipantData {
     }
 
     /**
-     * Build new object.
-     * @param num The number
-     * @param idnt The identity
-     * @return The object
+     * {@inheritDoc}
      */
-    public static ParticipantData build(final Long num, final String idnt) {
-        return new ParticipantData(num, idnt);
-    }
-
-    /**
-     * Get bout number.
-     * @return The identity
-     */
+    @Override
     public Long getBout() {
         return this.bout;
     }
 
     /**
-     * Get identity.
-     * @return The identity
+     * {@inheritDoc}
      */
+    @Override
     public String getIdentity() {
         return this.identity;
     }
 
     /**
-     * Set status.
-     * @param flag The flag
+     * {@inheritDoc}
      */
+    @Override
     public void setConfirmed(final Boolean flag) {
         this.confirmed = flag;
-        HelpQueue.make("changed-participant-status")
-            .priority(HelpQueue.Priority.ASAP)
+        this.bus.make("changed-participant-status")
+            .asap()
             .arg(this.bout)
             .arg(this.identity)
             .arg(this.confirmed)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -110,16 +109,16 @@ public final class ParticipantData {
     }
 
     /**
-     * Is it confirmed?
-     * @return The flag
+     * {@inheritDoc}
      */
+    @Override
     public Boolean isConfirmed() {
         if (this.confirmed == null) {
-            this.confirmed = HelpQueue.make("get-participant-status")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.confirmed = this.bus.make("get-participant-status")
+                .synchronously()
                 .arg(this.bout)
                 .arg(this.identity)
-                .exec(Boolean.class);
+                .exec();
             Logger.debug(
                 this,
                 "#isConfirmed(): status loaded as %b for dude '%s' in bout #%d",

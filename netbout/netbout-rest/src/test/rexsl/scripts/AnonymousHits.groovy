@@ -30,12 +30,9 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
+import javax.ws.rs.core.Response
 
 // In this script we are trying to make different hits to the site
 // from anonymous user. All of our hits should lead to /login page.
@@ -43,22 +40,9 @@ import org.hamcrest.Matchers
 [
     '/',
     '/123',
-    '/g'
 ].each { url ->
-    def r = new TestClient(rexsl.home)
+    new TestClient(rexsl.home)
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get(url)
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-    Assert.assertThat(
-        XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath("/processing-instruction('xml-stylesheet')[contains(.,'/login.xsl')]")
-    )
-    Assert.assertThat(
-        XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath('/page/facebook[@href]')
-    )
-    Assert.assertThat(
-        XhtmlConverter.the(r.body),
-        XmlMatchers.hasXPath("/page/links/link[@name='self']")
-    )
+        .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
 }

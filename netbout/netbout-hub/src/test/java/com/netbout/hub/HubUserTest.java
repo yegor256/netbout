@@ -27,59 +27,50 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Test case of {@link HubHubUser}.
+ * Test case of {@link HubUser}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 public final class HubUserTest {
 
     /**
-     * Name persistence.
+     * Two objects of class User should match each other by name only.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPersistenceOfHubUserName() throws Exception {
+    public void matchesWithOtherUsersByNameSimilarityOnly() throws Exception {
         final String name = "Big Lebowski";
-        HubEntry.user(name);
+        final Catalog catalog = Mockito.mock(Catalog.class);
+        final User first = new HubUser(catalog, name);
+        final User second = new HubUser(catalog, name);
+        MatcherAssert.assertThat(first, Matchers.equalTo(second));
+        MatcherAssert.assertThat(first.equals(name), Matchers.is(false));
         MatcherAssert.assertThat(
-            HubEntry.user(name).name(),
-            Matchers.equalTo(name)
+            first.hashCode(),
+            Matchers.equalTo(second.hashCode())
         );
     }
 
     /**
-     * Identities should be persistent for a given user.
+     * Identity can be found in a user by its name, and it will be retrieved
+     * from a catalog.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPersistenceOfIdentities() throws Exception {
-        final String name = "John Doe";
-        final HubUser user = HubEntry.user(name);
-        final String label = "Johnny";
-        final URL photo = new URL("http://img.netbout.com/logo.png");
-        final Identity identity = user.identity(label);
-        identity.setPhoto(photo);
-        MatcherAssert.assertThat(
-            HubEntry.user(name).identity(label).photo(),
-            Matchers.equalTo(photo)
-        );
-    }
-
-    /**
-     * Duplicate identities should be prohibited.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testDuplicateIdentityCreation() throws Exception {
-        final String name = "Peter Pen";
-        HubEntry.user("peter").identity(name);
-        HubEntry.user("alex").identity(name);
+    public void findsIdentitiesByNameInCatalog() throws Exception {
+        final String name = "Jeff Bridges";
+        final Identity identity = Mockito.mock(Identity.class);
+        final Catalog catalog = Mockito.mock(Catalog.class);
+        final User user = new HubUser(catalog, "jeff");
+        Mockito.doReturn(identity).when(catalog).make(name, user);
+        final Identity found = user.identity(name);
+        MatcherAssert.assertThat(found, Matchers.equalTo(identity));
     }
 
 }

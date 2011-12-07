@@ -26,81 +26,41 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.data.BoutData;
-import com.netbout.hub.data.ParticipantData;
-import com.netbout.hub.data.Storage;
-import com.netbout.queue.HelpQueue;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.Helper;
-import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
-import com.ymock.util.Logger;
+import com.netbout.spi.UnreachableIdentityException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.regex.Pattern;
 
 /**
  * Identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @todo #123 This class needs refactoring. We should get rid of NULL in iuser
- *  and should break it into smaller classes - it's too big now.
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class HubIdentity implements Identity {
+final class HubIdentity implements Identity {
 
     /**
-     * The name.
+     * Orphan identity.
      */
-    private final transient String iname;
+    private final transient Identity orphan;
 
     /**
-     * Name of the user.
+     * User of this identity.
      */
-    private transient HubUser iuser;
-
-    /**
-     * The photo.
-     */
-    private transient URL iphoto;
-
-    /**
-     * List of bouts where I'm a participant.
-     */
-    private transient Set<Long> ibouts;
-
-    /**
-     * List of aliases.
-     */
-    private transient Set<String> ialiases;
+    private final transient User iuser;
 
     /**
      * Public ctor.
-     * @param name The identity's name
+     * @param orph Parent object
      * @param user The user
-     * @see Identities#make(String,HubUser)
      */
-    public HubIdentity(final String name, final HubUser user) {
-        this.iname = name;
+    public HubIdentity(final Identity orph, final User user) {
+        this.orphan = orph;
         this.iuser = user;
-    }
-
-    /**
-     * Public ctor, when user is not known.
-     * @param name The identity's name
-     * @see Identities#make(String)
-     */
-    @SuppressWarnings("PMD.NullAssignment")
-    public HubIdentity(final String name) {
-        this.iname = name;
-        this.iuser = null;
     }
 
     /**
@@ -108,8 +68,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof HubIdentity)
-            && this.iname.equals(((HubIdentity) obj).iname);
+        return this.orphan.equals(obj);
     }
 
     /**
@@ -117,7 +76,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public int hashCode() {
-        return this.iname.hashCode();
+        return this.orphan.hashCode();
     }
 
     /**
@@ -133,7 +92,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public String name() {
-        return this.iname;
+        return this.orphan.name();
     }
 
     /**
@@ -141,22 +100,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Bout start() {
-        final Long num = Storage.INSTANCE.create();
-        BoutData data;
-        try {
-            data = Storage.INSTANCE.find(num);
-        } catch (com.netbout.hub.data.BoutMissedException ex) {
-            throw new IllegalStateException(ex);
-        }
-        final ParticipantData dude = ParticipantData.build(num, this.name());
-        data.addParticipant(dude);
-        dude.setConfirmed(true);
-        Logger.debug(
-            this,
-            "#start(): bout started"
-        );
-        this.myBouts().add(num);
-        return new HubBout(this, data);
+        return this.orphan.start();
     }
 
     /**
@@ -165,20 +109,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Bout bout(final Long number) throws BoutNotFoundException {
-        final HubBout bout;
-        try {
-            bout = new HubBout(this, Storage.INSTANCE.find(number));
-        } catch (com.netbout.hub.data.BoutMissedException ex) {
-            throw new BoutNotFoundException(ex);
-        }
-        if (!bout.isParticipant(this)) {
-            throw new BoutNotFoundException(
-                "'%s' is not a participant in bout #%d",
-                this.name(),
-                bout.number()
-            );
-        }
-        return bout;
+        return this.orphan.bout(number);
     }
 
     /**
@@ -186,21 +117,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public List<Bout> inbox(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
-        for (Long num : this.myBouts()) {
-            try {
-                list.add(this.bout(num));
-            } catch (com.netbout.spi.BoutNotFoundException ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
-        Logger.debug(
-            this,
-            "#inbox('%s'): %d bouts found",
-            query,
-            list.size()
-        );
-        return list;
+        return this.orphan.inbox(query);
     }
 
     /**
@@ -208,20 +125,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public URL photo() {
-        if (this.iphoto == null) {
-            try {
-                this.iphoto = new URL(
-                    HelpQueue.make("get-identity-photo")
-                        .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                        .arg(this.iname)
-                        .asDefault("http://img.netbout.com/unknown.png")
-                        .exec(String.class)
-                );
-            } catch (java.net.MalformedURLException ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
-        return this.iphoto;
+        return this.orphan.photo();
     }
 
     /**
@@ -229,28 +133,25 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public void setPhoto(final URL pic) {
-        synchronized (this) {
-            this.iphoto = pic;
-        }
-        HelpQueue.make("changed-identity-photo")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-            .arg(this.iname)
-            .arg(this.iphoto.toString())
-            .exec();
+        this.orphan.setPhoto(pic);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    @Override
+    public Identity friend(final String name)
+        throws UnreachableIdentityException {
+        return this.orphan.friend(name);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final String name) {
-        final Identity identity = Identities.make(name);
-        Logger.debug(
-            this,
-            "#friend('%s'): found",
-            name
-        );
-        return identity;
+    public Set<Identity> friends(final String keyword) {
+        return this.orphan.friends(keyword);
     }
 
     /**
@@ -258,13 +159,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Set<String> aliases() {
-        final Set<String> list = new HashSet<String>(this.myAliases());
-        Logger.debug(
-            this,
-            "#aliases(): %d returned",
-            list.size()
-        );
-        return list;
+        return this.orphan.aliases();
     }
 
     /**
@@ -272,152 +167,15 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public void alias(final String alias) {
-        if (this.myAliases().contains(alias)) {
-            Logger.debug(
-                this,
-                "#alias('%s'): it's already set for '%s'",
-                alias,
-                this.iname
-            );
-        } else {
-            HelpQueue.make("added-identity-alias")
-                .priority(HelpQueue.Priority.ASAP)
-                .arg(this.iname)
-                .arg(alias)
-                .exec();
-            Logger.debug(
-                this,
-                "#alias('%s'): added for '%s'",
-                alias,
-                this.iname
-            );
-            this.myAliases().add(alias);
-        }
+        this.orphan.alias(alias);
     }
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (3 lines)
      */
     @Override
-    public void promote(final Helper helper) throws HelperException {
-        helper.init(this);
-        HelpQueue.register(helper);
-        Logger.info(
-            this,
-            "#promote(%s): '%s' promoted",
-            helper.getClass().getName(),
-            this.name()
-        );
-    }
-
-    /**
-     * Notification that I've been invited to the bout.
-     * @param bout The bout
-     */
-    protected void invited(final Bout bout) {
-        this.myBouts().add(bout.number());
-    }
-
-    /**
-     * Does this identity matches a keyword?
-     * @param keyword The keyword
-     * @return Yes or no?
-     */
-    protected boolean matchesKeyword(final String keyword) {
-        boolean matches = this.iname.contains(keyword);
-        final Pattern pattern = Pattern.compile(
-            Pattern.quote(keyword),
-            Pattern.CASE_INSENSITIVE
-        );
-        for (String alias : this.myAliases()) {
-            matches |= pattern.matcher(alias).find();
-        }
-        return matches;
-    }
-
-    /**
-     * Does this identity belongs to the specified user?
-     * @param user The user
-     * @return Yes or no?
-     */
-    protected boolean belongsTo(final HubUser user) {
-        if (!this.isAssigned()) {
-            throw new IllegalStateException(
-                String.format(
-                    "Identity '%s' is not assigned to any user yet",
-                    this.iname
-                )
-            );
-        }
-        return this.iuser.equals(user);
-    }
-
-    /**
-     * Does this identity belongs to some user already?
-     * @return Yes or no?
-     */
-    protected boolean isAssigned() {
-        return this.iuser != null;
-    }
-
-    /**
-     * Assign the identity to the given user.
-     * @param user The user
-     */
-    protected void assignTo(final HubUser user) {
-        if (this.isAssigned()) {
-            throw new IllegalStateException(
-                String.format(
-                    "Identity '%s' already belongs to '%s'",
-                    this.iname,
-                    this.iuser.name()
-                )
-            );
-        }
-        this.iuser = user;
-    }
-
-    /**
-     * Return a link to my list of bouts.
-     * @return The list of them
-     */
-    private Set<Long> myBouts() {
-        synchronized (this) {
-            if (this.ibouts == null) {
-                this.ibouts = new CopyOnWriteArraySet<Long>(
-                    Arrays.asList(
-                        HelpQueue.make("get-bouts-of-identity")
-                            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                            .arg(this.iname)
-                            .asDefault(new Long[]{})
-                            .exec(Long[].class)
-                    )
-                );
-            }
-        }
-        return this.ibouts;
-    }
-
-    /**
-     * Returns a link to the list of aliases.
-     * @return The link to the list of them
-     */
-    private Set<String> myAliases() {
-        synchronized (this) {
-            if (this.ialiases == null) {
-                this.ialiases = new CopyOnWriteArraySet<String>(
-                    Arrays.asList(
-                        HelpQueue.make("get-aliases-of-identity")
-                            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
-                            .arg(this.iname)
-                            .asDefault(new String[]{})
-                            .exec(String[].class)
-                    )
-                );
-            }
-        }
-        return this.ialiases;
+    public void invited(final Bout bout) {
+        this.orphan.invited(bout);
     }
 
 }

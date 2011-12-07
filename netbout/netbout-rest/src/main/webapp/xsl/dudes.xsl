@@ -35,9 +35,9 @@
     version="2.0" exclude-result-prefixes="xs">
 
     <xsl:template match="participants">
-        <div class="dudes">
+        <nav class="dudes">
             <xsl:for-each select="participant">
-                <div class="dude">
+                <article class="dude">
                     <xsl:attribute name="style">
                         <xsl:text>left: </xsl:text>
                         <xsl:value-of select="(position()-1) * 70"/>
@@ -63,9 +63,9 @@
                             <xsl:value-of select="$name"/>
                         </xsl:otherwise>
                     </xsl:choose>
-                </div>
+                </article>
             </xsl:for-each>
-        </div>
+        </nav>
     </xsl:template>
 
 </xsl:stylesheet>

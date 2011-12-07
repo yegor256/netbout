@@ -30,19 +30,9 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+import javax.ws.rs.core.UriBuilder
 
-def r = new TestClient(rexsl.home).get('/exception?text=hello')
-Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_INTERNAL_ERROR))
-Assert.assertThat(
-   XhtmlConverter.the(r.body),
-   XmlMatchers.hasXPath(
-       '//title[contains(.,"error")]',
-       new SimpleNamespaceContext()
-       .withBinding('x', 'http://www.w3.org/1999/xhtml')
-   )
-)
+new TestClient(rexsl.home)
+    .get(UriBuilder.fromPath('/exception').queryParam('text', 'hello').build())
+    .assertStatus(HttpURLConnection.HTTP_INTERNAL_ERROR)
+    .assertXPath('//xhtml:title[contains(.,"error")]')

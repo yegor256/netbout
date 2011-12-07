@@ -30,10 +30,14 @@
 package com.netbout.spi.cpa;
 
 import com.netbout.spi.Helper;
-import com.netbout.spi.HelperException;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Plain;
 import com.netbout.spi.Token;
-import java.util.Random;
+import com.netbout.spi.plain.PlainBoolean;
+import com.netbout.spi.plain.PlainList;
+import com.netbout.spi.plain.PlainLong;
+import com.netbout.spi.plain.PlainString;
+import com.netbout.spi.plain.PlainVoid;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -59,9 +63,11 @@ public final class CpaHelperTest {
      */
     @Before
     public void prepare() throws Exception {
-        this.helper = new CpaHelper(this.getClass().getPackage().getName());
         final Identity identity = Mockito.mock(Identity.class);
-        this.helper.init(identity);
+        this.helper = new CpaHelper(
+            identity,
+            this.getClass().getPackage().getName()
+        );
     }
 
     /**
@@ -84,10 +90,10 @@ public final class CpaHelperTest {
     public void testDifferentTypesOfParams() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("comparison").when(token).mnemo();
-        Mockito.doReturn("alpha-12").when(token).arg(0);
-        Mockito.doReturn("6").when(token).arg(1);
+        Mockito.doReturn(new PlainString("alpha-12")).when(token).arg(0);
+        Mockito.doReturn(new PlainLong(1L)).when(token).arg(1);
         this.helper.execute(token);
-        Mockito.verify(token).result("false");
+        Mockito.verify(token).result(new PlainBoolean(true));
     }
 
     /**
@@ -99,7 +105,7 @@ public final class CpaHelperTest {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("empty").when(token).mnemo();
         this.helper.execute(token);
-        Mockito.verify(token).result("NULL");
+        Mockito.verify(token).result(new PlainVoid());
     }
 
     /**
@@ -110,9 +116,8 @@ public final class CpaHelperTest {
     public void testLists() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("list").when(token).mnemo();
-        Mockito.doReturn("4").when(token).arg(0);
         this.helper.execute(token);
-        Mockito.verify(token).result(Mockito.anyString());
+        Mockito.verify(token).result(Mockito.any(Plain.class));
     }
 
     /**
@@ -124,93 +129,18 @@ public final class CpaHelperTest {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("texts").when(token).mnemo();
         this.helper.execute(token);
-        Mockito.verify(token).result("byBuIGU=,InR3byI=");
-    }
-
-    /**
-     * Helper can't be used without a call to {@link Helper#init()}.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = HelperException.class)
-    public void testSupportsWithoutInit() throws Exception {
-        new CpaHelper(this.getClass().getPackage().getName()).supports();
+        Mockito.verify(token).result(Mockito.any(PlainList.class));
     }
 
     /**
      * Helper can't execute unknown operation.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = HelperException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testCallToUnknownOperation() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("unknown-operation").when(token).mnemo();
         this.helper.execute(token);
-    }
-
-    /**
-     * Sample farm.
-     */
-    @Farm
-    public static final class SampleFarm implements IdentityAware {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void init(final Identity identity) {
-            MatcherAssert.assertThat(identity, Matchers.notNullValue());
-        }
-        /**
-         * Sample operation.
-         * @param text The text to translate
-         * @param len Length to compare with
-         * @return The translated text
-         */
-        @Operation("comparison")
-        public Boolean longerThan(final String text, final Long len) {
-            return text.length() > len;
-        }
-        /**
-         * Empty operation with no result and no args.
-         */
-        @Operation("empty")
-        public void empty() {
-            // intentionally empty
-        }
-        /**
-         * List as output.
-         * @param size Size of the list to return
-         * @return The list just created
-         */
-        @Operation("list")
-        public Long[] list(final Long size) {
-            final Long[] list = new Long[size.intValue()];
-            final Random random = new Random();
-            for (int pos = 0; pos < size; pos += 1) {
-                list[pos] = random.nextLong();
-            }
-            return list;
-        }
-        /**
-         * List of texts.
-         * @return The list just created
-         */
-        @Operation("texts")
-        public String[] texts() {
-            final String[] list = new String[2];
-            // @checkstyle MultipleStringLiterals (1 line)
-            list[0] = "o n e";
-            list[1] = "\"two\"";
-            return list;
-        }
-        /**
-         * Return back the same message as being sent.
-         * @param msg The message
-         * @return The same message
-         */
-        @Operation("echo")
-        public String echo(final String msg) {
-            return msg;
-        }
     }
 
 }

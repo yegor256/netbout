@@ -40,28 +40,10 @@ public final class BoutNotFoundException extends Exception {
 
     /**
      * Public ctor.
-     * @param cause Root cause of the exception
+     * @param num The number of bout not found
      */
-    public BoutNotFoundException(final Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Public ctor.
-     * @param message Root cause of the exception
-     * @param args Arguments for <tt>String.format()</tt>
-     */
-    public BoutNotFoundException(final String message, final Object... args) {
-        super(String.format(message, args));
-    }
-
-    /**
-     * Public ctor.
-     * @param message Additional message
-     * @param cause Root cause of the exception
-     */
-    public BoutNotFoundException(final String message, final Throwable cause) {
-        super(message, cause);
+    public BoutNotFoundException(final Long num) {
+        super(String.format("Bout #%d not found", num));
     }
 
 }

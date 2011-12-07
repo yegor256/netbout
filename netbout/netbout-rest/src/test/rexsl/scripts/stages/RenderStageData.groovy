@@ -29,51 +29,21 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
-import org.xmlmatchers.namespace.SimpleNamespaceContext
 
-// user name: John Doe
-// identity name: johnny.doe
-def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
-def bout = new XmlSlurper()
-    .parseText(
-        new TestClient(rexsl.home)
-            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .header(HttpHeaders.COOKIE, cookie)
-            .get('/s')
-            .body
-    )
-    .bout
-    .number
-def helper = 'nb:hh'
-new TestClient(rexsl.home)
-    .header(HttpHeaders.COOKIE, cookie)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get(
-        UriBuilder.fromPath('/{bout}/i')
-            .queryParam('name', helper)
-            .build(bout)
-            .toString()
-    )
-def page = new TestClient(rexsl.home)
+def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def bout = jeff.start()
+bout.invite(jeff.friend('nb:hh'))
+
+// validate that the stage is really there, in XHTML
+new TestClient(RestUriBuilder.from(bout).build())
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/{bout}').build(bout).toString())
-[
-    '//x:div[@id="stage"]/x:p',
-].each { xpath ->
-    Assert.assertThat(
-        XhtmlConverter.the(page.body),
-        XmlMatchers.hasXPath(
-            xpath,
-            new SimpleNamespaceContext()
-            .withBinding('x', 'http://www.w3.org/1999/xhtml'))
-    )
-}
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('//xhtml:section[@id="stage"]//xhtml:p')

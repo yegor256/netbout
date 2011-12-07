@@ -39,6 +39,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public interface Identity {
 
     /**
@@ -91,9 +92,16 @@ public interface Identity {
      * Find another identity by name.
      * @param name Unique name of identity
      * @return The identity just found
-     * @throws IdentityNotFoundException If such a friend is absent
+     * @throws UnreachableIdentityException If such a friend can't be reached
      */
-    Identity friend(String name) throws IdentityNotFoundException;
+    Identity friend(String name) throws UnreachableIdentityException;
+
+    /**
+     * Find friends by keyword.
+     * @param keyword The keyword
+     * @return The list of identities found
+     */
+    Set<Identity> friends(String keyword);
 
     /**
      * Get all aliases.
@@ -108,10 +116,9 @@ public interface Identity {
     void alias(String alias);
 
     /**
-     * This identity should be promoted to an active helper.
-     * @param helper The helper that can help us to process data
-     * @throws HelperException If there is some problem
+     * You receive this message when you're being invited to this bout.
+     * @param bout The bout
      */
-    void promote(Helper helper) throws HelperException;
+    void invited(Bout bout);
 
 }

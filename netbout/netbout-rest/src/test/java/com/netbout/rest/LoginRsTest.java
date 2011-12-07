@@ -26,20 +26,9 @@
  */
 package com.netbout.rest;
 
-import com.netbout.harness.PageConverter;
-import com.netbout.harness.ResourceBuilder;
-import com.rexsl.core.Manifests;
-import java.net.URI;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlmatchers.XmlMatchers;
 
 /**
@@ -47,66 +36,19 @@ import org.xmlmatchers.XmlMatchers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(LoginRs.class)
 public final class LoginRsTest {
 
     /**
-     * Login page should be renderable.
+     * LoginRs renders login page.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testLoginPageRendering() throws Exception {
-        final LoginRs rest = new ResourceBuilder().build(LoginRs.class);
+    public void rendersLoginPage() throws Exception {
+        final LoginRs rest = new ResourceMocker().mock(LoginRs.class);
         final Response response = rest.login();
         MatcherAssert.assertThat(
-            PageConverter.the((Page) response.getEntity(), rest),
+            ResourceMocker.the((Page) response.getEntity(), rest),
             XmlMatchers.hasXPath("/page/facebook[@href]")
-        );
-    }
-
-    /**
-     * Facebook callback should produce a cookie.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testAuthenticationFromFacebook() throws Exception {
-        // @checkstyle LineLength (1 line)
-        final String code = "AQCJ9EpLpqvj9cbag0mU8z6cHqyk-2CN5cigCzwB1aykqqqpiFNzAjsnNbRRY7x4n4h2ZEmrRVHhHSHzcFTtXobWM8LJSCHSB1_cjvsJS2vy2DsqRA3qGRAjUY8pKk0tO2zYpX-kFpnn2V6Z1xxvb7uyP-qrV_mQNWSYHKfPWKL0yTxo-NpFAGT4mDYNXl_cCMs";
-        final ResourceBuilder builder = new ResourceBuilder();
-        final LoginRs rest = builder.build(LoginRs.class);
-        final LoginRs spy = PowerMockito.spy(rest);
-        final URI redirect = builder.uriInfo()
-            .getBaseUriBuilder()
-            .clone()
-            .path("/g/fb")
-            .build();
-        PowerMockito.doReturn("access_token=abc|cde&expires=5108").when(
-            spy,
-            // @checkstyle MultipleStringLiterals (1 line)
-            "retrieve",
-            Mockito.eq(
-                UriBuilder
-                    .fromPath("https://graph.facebook.com/oauth/access_token")
-                    .queryParam("client_id", Manifests.read("Netbout-FbId"))
-                    .queryParam("redirect_uri", redirect)
-                    .queryParam(
-                        "client_secret",
-                        Manifests.read("Netbout-FbSecret")
-                    )
-                    .queryParam("code", code)
-                    .build()
-            )
-        );
-        final com.restfb.types.User fbuser =
-            Mockito.mock(com.restfb.types.User.class);
-        Mockito.doReturn("some-facebook-user-id").when(fbuser).getId();
-        Mockito.doReturn("John Doe").when(fbuser).getName();
-        PowerMockito.doReturn(fbuser).when(spy, "fbUser", "abc|cde");
-        final Response response = spy.fbauth(code);
-        MatcherAssert.assertThat(
-            response.getStatus(),
-            Matchers.equalTo(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
         );
     }
 

@@ -30,12 +30,8 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
 
 // In this script we are trying to make different hits to the
 // pages that definitely don't exist in the system. All of them
@@ -43,13 +39,11 @@ import org.hamcrest.Matchers
 
 [
     '/some-strange-name',
+    '/-some-thing-else'
 ].each { url ->
-    def r = new TestClient(rexsl.home)
+    new TestClient(rexsl.home)
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get(url)
-   Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_NOT_FOUND))
-   Assert.assertThat(
-       XhtmlConverter.the(r.body),
-       XmlMatchers.hasXPath("/page/links/link[@name='self']")
-   )
+        .assertStatus(HttpURLConnection.HTTP_NOT_FOUND)
+        .assertXPath("/page/links/link[@rel='self']")
 }

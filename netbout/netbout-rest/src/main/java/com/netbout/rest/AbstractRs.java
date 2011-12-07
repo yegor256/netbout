@@ -26,13 +26,15 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.HubEntry;
-import com.netbout.hub.HubIdentity;
+import com.netbout.bus.Bus;
+import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
+import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
@@ -53,6 +55,16 @@ public abstract class AbstractRs implements Resource {
     private final transient long inano = System.nanoTime();
 
     /**
+     * Hub to work with.
+     */
+    private transient Hub ihub;
+
+    /**
+     * Bus to work with.
+     */
+    private transient Bus ibus;
+
+    /**
      * List of known JAX-RS providers.
      */
     private transient Providers iproviders;
@@ -65,84 +77,22 @@ public abstract class AbstractRs implements Resource {
     /**
      * Http headers.
      */
-    @Context
     private transient HttpHeaders ihttpHeaders;
 
     /**
      * HTTP servlet request.
      */
-    @Context
     private transient HttpServletRequest ihttpRequest;
 
     /**
      * Cookie.
      */
     private transient String icookie;
-    // Uncomment this line if you don't have a cookie saved by your
-    // local browser yet.
-    // = "Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd";
 
     /**
      * The message to show.
      */
     private transient String imessage = "";
-
-    /**
-     * Send all JUL logging to SLF4J. Some libraries may use JUL for some
-     * reason and we should configure it properly.
-     */
-    static {
-        final java.util.logging.Logger rootLogger =
-            java.util.logging.LogManager.getLogManager().getLogger("");
-        final java.util.logging.Handler[] handlers =
-            rootLogger.getHandlers();
-        for (int idx = 0; idx < handlers.length; idx += 1) {
-            rootLogger.removeHandler(handlers[idx]);
-        }
-        org.slf4j.bridge.SLF4JBridgeHandler.install();
-    }
-
-    /**
-     * Register basic helper in a hub.
-     */
-    static {
-        // @checkstyle MultipleStringLiterals (1 line)
-        final Identity persistor = HubEntry.user("netbout").identity("nb:db");
-        persistor.alias("Netbout Database Manager");
-        try {
-            persistor.promote(new CpaHelper("com.netbout.db"));
-        } catch (com.netbout.spi.HelperException ex) {
-            throw new IllegalStateException(ex);
-        }
-        try {
-            persistor.setPhoto(
-                new java.net.URL("http://img.netbout.com/db.png")
-            );
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Initializer.
-     */
-    static {
-        // @checkstyle MultipleStringLiterals (1 line)
-        final Identity hub = HubEntry.user("netbout").identity("nb:hh");
-        hub.alias("Netbout Hub");
-        try {
-            hub.promote(new CpaHelper("com.netbout.hub.hh"));
-        } catch (com.netbout.spi.HelperException ex) {
-            throw new IllegalStateException(ex);
-        }
-        try {
-            hub.setPhoto(
-                new java.net.URL("http://img.netbout.com/hh.png")
-            );
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -252,7 +202,7 @@ public abstract class AbstractRs implements Resource {
      * because of <tt>&#64;CookieParam</tt> annotation.
      * @param cookie The cookie to set
      */
-    @CookieParam("netbout")
+    @CookieParam(AbstractPage.AUTH_COOKIE)
     public final void setCookie(final String cookie) {
         if (cookie != null) {
             this.icookie = cookie;
@@ -260,6 +210,23 @@ public abstract class AbstractRs implements Resource {
                 this,
                 "#setCookie('%s'): injected",
                 cookie
+            );
+        }
+    }
+
+    /**
+     * Set auth code. Should be called by JAX-RS implemenation
+     * because of <tt>&#64;CookieParam</tt> annotation.
+     * @param auth The auth code to set
+     */
+    @QueryParam("auth")
+    public final void setAuth(final String auth) {
+        if (auth != null) {
+            this.icookie = auth;
+            Logger.debug(
+                this,
+                "#setAuth('%s'): injected",
+                auth
             );
         }
     }
@@ -325,14 +292,32 @@ public abstract class AbstractRs implements Resource {
     }
 
     /**
+     * Inject servlet context. Should be called by JAX-RS implemenation
+     * because of <tt>&#64;Context</tt> annotation. Servlet attributes are
+     * injected into context by {@link com.netbout.servlets.Starter} servlet
+     * listener.
+     * @param context The context
+     */
+    @Context
+    public final void setServletContext(final ServletContext context) {
+        this.ihub = (Hub) context.getAttribute("com.netbout.rest.HUB");
+        this.ibus = (Bus) context.getAttribute("com.netbout.rest.BUS");
+        Logger.debug(
+            this,
+            "#setServletContext(%s): injected",
+            context.getClass().getName()
+        );
+    }
+
+    /**
      * Get current user identity, or throws {@link LoginRequiredException} if
      * no user is logged in at the moment.
      * @return The identity
      */
-    protected final HubIdentity identity() {
+    protected final Identity identity() {
         try {
-            return new Cryptor().decrypt(this.icookie);
-        } catch (Cryptor.DecryptionException ex) {
+            return new Cryptor().decrypt(this.ihub, this.icookie);
+        } catch (com.netbout.utils.DecryptionException ex) {
             Logger.debug(
                 this,
                 "Decryption failure from %s calling '%s': %s",
@@ -342,6 +327,38 @@ public abstract class AbstractRs implements Resource {
             );
             throw new ForwardException(this, "/g", ex);
         }
+    }
+
+    /**
+     * Get bus.
+     * @return The bus
+     */
+    protected final Bus bus() {
+        if (this.ibus == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#bus was never injected by container",
+                    this.getClass().getName()
+                )
+            );
+        }
+        return this.ibus;
+    }
+
+    /**
+     * Get hub.
+     * @return The hub
+     */
+    protected final Hub hub() {
+        if (this.ibus == null) {
+            throw new IllegalStateException(
+                String.format(
+                    "%s#hub was never injected by container",
+                    this.getClass().getName()
+                )
+            );
+        }
+        return this.ihub;
     }
 
 }

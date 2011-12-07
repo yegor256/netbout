@@ -26,28 +26,35 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 
 /**
- * User.
+ * User, implementation in Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubUser {
+final class HubUser implements User {
+
+    /**
+     * Catalog.
+     */
+    private final transient Catalog catalog;
 
     /**
      * The name of it.
-     * @see #HubUser(String)
      */
     private final transient String uname;
 
     /**
      * Public ctor.
+     * @param ctlg The catalog with identities
      * @param name The name of it
-     * @see InMemoryEntry#user(String)
+     * @see DefaultHub#user(String)
      */
-    public HubUser(final String name) {
+    protected HubUser(final Catalog ctlg, final String name) {
+        this.catalog = ctlg;
         this.uname = name;
     }
 
@@ -56,8 +63,8 @@ public final class HubUser {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof HubUser)
-            && this.uname.equals(((HubUser) obj).uname);
+        return (obj instanceof User)
+            && this.name().equals(((User) obj).name());
     }
 
     /**
@@ -69,20 +76,21 @@ public final class HubUser {
     }
 
     /**
-     * Get its name.
-     * @return The name of it
+     * {@inheritDoc}
      */
+    @Override
     public String name() {
         return this.uname;
     }
 
     /**
-     * Find identity by name.
-     * @param name The name of it
-     * @return The identity found
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
-    public HubIdentity identity(final String name) {
-        final HubIdentity identity = Identities.make(name, this);
+    @Override
+    public Identity identity(final String name)
+        throws com.netbout.spi.UnreachableIdentityException {
+        final Identity identity = this.catalog.make(name, this);
         Logger.debug(
             this,
             "#identity('%s'): found",

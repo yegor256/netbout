@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Participant;
 import com.netbout.utils.TextUtils;
@@ -109,7 +109,7 @@ public final class StageCoordinates {
     }
 
     /**
-     * Create stage coordicates from string.
+     * Create stage coordinates from string.
      * @param pair The information from cookie
      * @return The object just built
      */
@@ -162,23 +162,23 @@ public final class StageCoordinates {
 
     /**
      * Normalize it according to the bout.
+     * @param bus The bus
      * @param bout The bout
      */
-    public void normalize(final Bout bout) {
+    public void normalize(final Bus bus, final Bout bout) {
         if (this.stages != null) {
             throw new IllegalStateException("Duplicate call to #normalize()");
         }
         this.stages = new ArrayList<String>();
         for (Participant dude : bout.participants()) {
             final String name = dude.identity().name();
-            final Boolean exists = HelpQueue
-                .make("does-stage-exist")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            final Boolean exists = bus.make("does-stage-exist")
+                .synchronously()
                 .arg(bout.number())
                 .arg(name)
                 .inBout(bout)
-                .asDefault(Boolean.FALSE)
-                .exec(Boolean.class);
+                .asDefault(false)
+                .exec();
             if (exists) {
                 this.stages.add(name);
             }

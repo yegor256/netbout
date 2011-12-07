@@ -26,22 +26,26 @@
  */
 
 /* row of photos and names */
-div.dudes{
+.dudes {
     position: relative;
     height: 75px;
 }
 
-    div.dudes div.dude{
+    .dudes .dude {
         position: absolute;
         font-size: 0.8em;
     }
 
-        div.dudes div.dude img{
+        .dudes .dude img {
             height: 50px;
             display: block;
+            -moz-box-shadow: 2px 2px 2px gray;
+            -webkit-box-shadow: 2px 2px 2px gray;
+            -o-box-shadow: 2px 2px 2px gray;
+            box-shadow: 2px 2px 2px gray;
         }
 
-        div.dudes div.dude img.pending{
+        .dudes .dude img.pending {
             opacity : 0.4;
         }
 

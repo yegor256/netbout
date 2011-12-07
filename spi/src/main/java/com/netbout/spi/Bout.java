@@ -65,6 +65,12 @@ public interface Bout {
     Collection<Participant> participants();
 
     /**
+     * Confirm participantion in this bout (or reject).
+     * @param confirm To confirm or reject?
+     */
+    void confirm(boolean confirm);
+
+    /**
      * Invite new participant.
      * @param identity Identity of the participant
      * @return This new participant
@@ -77,6 +83,14 @@ public interface Bout {
      * @return The list of them
      */
     List<Message> messages(String query);
+
+    /**
+     * Find message by ID.
+     * @param number Number of the message to get
+     * @return The message
+     * @throws MessageNotFoundException If not found
+     */
+    Message message(Long number) throws MessageNotFoundException;
 
     /**
      * Post a new message.

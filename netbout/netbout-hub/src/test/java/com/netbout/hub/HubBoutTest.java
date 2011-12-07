@@ -26,10 +26,14 @@
  */
 package com.netbout.hub;
 
+import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
+import java.util.Random;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link HubBout}.
@@ -39,35 +43,85 @@ import org.junit.Test;
 public final class HubBoutTest {
 
     /**
-     * Bout number persistence.
+     * Name of viewer.
+     */
+    private final transient String name =
+        String.valueOf(Math.abs(new Random().nextLong()));
+
+    /**
+     * The viewer.
+     */
+    private final transient Identity viewer = Mockito.mock(Identity.class);
+
+    /**
+     * The bout data type to work with.
+     */
+    private final transient BoutDtMocker boutDtMocker = new BoutDtMocker();
+
+    /**
+     * The catalog.
+     */
+    private final transient Catalog catalog = Mockito.mock(Catalog.class);
+
+    /**
+     * Prepare all mocks.
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void testPersistenceOfBoutNumber() throws Exception {
-        final Identity identity =
-            HubEntry.user("Robert DeNiro").identity("rob");
-        final Long number = identity.start().number();
-        MatcherAssert.assertThat(
-            identity.bout(number).number(),
-            Matchers.equalTo(number)
+    @Before
+    public void prepare() throws Exception {
+        Mockito.doReturn(this.name).when(this.viewer).name();
+        Mockito.doReturn(this.viewer).when(this.catalog).make(this.name);
+        this.boutDtMocker.withParticipant(
+            new ParticipantDtMocker()
+                .withIdentity(this.name)
+                .confirmed()
+                .mock()
         );
     }
 
     /**
-     * Rename bout.
+     * HubBout can "wrap" BoutDt class.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testRenameOperation() throws Exception {
-        final Identity identity =
-            HubEntry.user("Al Capone").identity("capone");
-        final Long number = identity.start().number();
-        final String title = "hello, world!";
-        identity.bout(number).rename(title);
-        MatcherAssert.assertThat(
-            identity.bout(number).title(),
-            Matchers.equalTo(title)
-        );
+    public void wrapsBoutDtDataProperties() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final BoutDt data = this.boutDtMocker.mock();
+        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
+        bout.number();
+        Mockito.verify(data).getNumber();
+        bout.title();
+        Mockito.verify(data).getTitle();
+    }
+
+    /**
+     * HubBout can "wrap" BoutDt renaminng mechanism.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void wrapsBoutRenamingMechanism() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final BoutDt data = this.boutDtMocker.mock();
+        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
+        final String title = "some title, no matter which one..";
+        bout.rename(title);
+        Mockito.verify(data).setTitle(title);
+    }
+
+    /**
+     * HubBout can accept invitation requests and add participants to the bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void acceptsInvitationRequestsAndPassesThemToDt() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final BoutDt data = this.boutDtMocker.mock();
+        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
+        final Identity friend = Mockito.mock(Identity.class);
+        final String fname = String.valueOf(Math.abs(new Random().nextLong()));
+        Mockito.doReturn(fname).when(friend).name();
+        bout.invite(friend);
+        Mockito.verify(data).addParticipant(fname);
     }
 
 }

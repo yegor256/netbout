@@ -36,9 +36,9 @@
         <date>2011-09-23</date>
     </version>
     <links>
-        <link href="/xml/inbox.xml" name="home" />
-        <link href="/" name="logout" />
-        <link href="/xml/bout.xml" name="start" />
+        <link href="/xml/inbox.xml" rel="home" />
+        <link href="/" rel="logout" />
+        <link href="/xml/bout.xml" rel="start" />
     </links>
     <facebook href="http://fb.com/..." />
 </page>

@@ -61,10 +61,11 @@ public final class TextUtils {
      * @return Encoded text
      */
     public static String toBase(final String text) {
+        assert text != null;
         try {
             return new Base64().encodeToString(
                 text.getBytes(TextUtils.ENCODING)
-            );
+            ).replaceAll("[\t\n\r]+", "");
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -76,6 +77,7 @@ public final class TextUtils {
      * @return Decoded text
      */
     public static String fromBase(final String text) {
+        assert text != null;
         try {
             return new String(new Base64().decode(text), TextUtils.ENCODING);
         } catch (java.io.UnsupportedEncodingException ex) {
@@ -91,6 +93,8 @@ public final class TextUtils {
      */
     public static String format(final String name,
         final VelocityContext context) {
+        assert name != null;
+        assert context != null;
         final VelocityEngine engine = new VelocityEngine();
         engine.setProperty("resource.loader", "cp");
         engine.setProperty(

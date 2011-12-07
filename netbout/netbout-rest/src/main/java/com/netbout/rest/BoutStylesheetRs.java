@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.queue.HelpQueue;
 import com.netbout.utils.TextUtils;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -109,15 +108,13 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
-        return HelpQueue
-            .make("render-stage-xsl")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+        return this.bus().make("render-stage-xsl")
+            .synchronously()
             .arg(this.bout)
             .arg(this.stage)
-            .asDefault(
-                "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>"
-            )
-            .exec(String.class);
+            // @checkstyle LineLength (1 line)
+            .asDefault("<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>")
+            .exec();
     }
 
 }

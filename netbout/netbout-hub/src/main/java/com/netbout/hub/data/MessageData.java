@@ -26,7 +26,8 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
+import com.netbout.hub.MessageDt;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +39,12 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MessageData implements Comparable<MessageData> {
+final class MessageData implements MessageDt {
+
+    /**
+     * Bus to work with.
+     */
+    private final transient Bus bus;
 
     /**
      * Number of the message.
@@ -68,48 +74,42 @@ public final class MessageData implements Comparable<MessageData> {
 
     /**
      * Public ctor.
+     * @param ibus The bus
      * @param num The number of this message
      */
-    private MessageData(final Long num) {
+    public MessageData(final Bus ibus, final Long num) {
+        this.bus = ibus;
         assert num != null;
         this.number = num;
-    }
-
-    /**
-     * Build new object.
-     * @param num The number of this message
-     * @return The object
-     */
-    protected static MessageData build(final Long num) {
-        return new MessageData(num);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final MessageData data) {
+    public int compareTo(final MessageDt data) {
         return this.getDate().compareTo(data.getDate());
     }
 
     /**
-     * Get message number.
-     * @return The number of it
+     * {@inheritDoc}
      */
+    @Override
     public Long getNumber() {
         return this.number;
     }
 
     /**
-     * Set date of the message.
-     * @param dte The identity
+     * {@inheritDoc}
      */
+    @Override
     public void setDate(final Date dte) {
         this.date = dte;
-        HelpQueue.make("changed-message-date")
-            .priority(HelpQueue.Priority.ASAP)
+        this.bus.make("changed-message-date")
+            .asap()
             .arg(this.number)
             .arg(this.date)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -119,15 +119,15 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Get date of the message.
-     * @return The date
+     * {@inheritDoc}
      */
+    @Override
     public Date getDate() {
         if (this.date == null) {
-            this.date = HelpQueue.make("get-message-date")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.date = this.bus.make("get-message-date")
+                .synchronously()
                 .arg(this.number)
-                .exec(Date.class);
+                .exec();
             Logger.debug(
                 this,
                 "#getDate(): date '%s' loaded for msg #%d",
@@ -139,15 +139,16 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Set identity.
-     * @param idnt The identity
+     * {@inheritDoc}
      */
+    @Override
     public void setAuthor(final String idnt) {
         this.author = idnt;
-        HelpQueue.make("changed-message-author")
-            .priority(HelpQueue.Priority.ASAP)
+        this.bus.make("changed-message-author")
+            .asap()
             .arg(this.number)
             .arg(this.author)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -158,15 +159,15 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Get identity.
-     * @return The identity
+     * {@inheritDoc}
      */
+    @Override
     public String getAuthor() {
         if (this.author == null) {
-            this.author = HelpQueue.make("get-message-author")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.author = this.bus.make("get-message-author")
+                .synchronously()
                 .arg(this.number)
-                .exec(String.class);
+                .exec();
             Logger.debug(
                 this,
                 "#getAuthor(): author '%s' loaded for msg #%d",
@@ -178,15 +179,16 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Set text.
-     * @param txt The text
+     * {@inheritDoc}
      */
+    @Override
     public void setText(final String txt) {
         this.text = txt;
-        HelpQueue.make("changed-message-text")
-            .priority(HelpQueue.Priority.ASAP)
+        this.bus.make("changed-message-text")
+            .asap()
             .arg(this.number)
             .arg(this.text)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -197,15 +199,15 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Get text.
-     * @return The text
+     * {@inheritDoc}
      */
+    @Override
     public String getText() {
         if (this.text == null) {
-            this.text = HelpQueue.make("get-message-text")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.text = this.bus.make("get-message-text")
+                .synchronously()
                 .arg(this.number)
-                .exec(String.class);
+                .exec();
             Logger.debug(
                 this,
                 "#getText(): text '%s' loaded for msg #%d",
@@ -217,15 +219,16 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Add indentity, who has seen the message.
-     * @param identity The identity
+     * {@inheritDoc}
      */
+    @Override
     public void addSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
-            HelpQueue.make("message-was-seen")
-                .priority(HelpQueue.Priority.ASAP)
+            this.bus.make("message-was-seen")
+                .asap()
                 .arg(this.number)
                 .arg(identity)
+                .asDefault(true)
                 .exec();
             Logger.debug(
                 this,
@@ -238,18 +241,17 @@ public final class MessageData implements Comparable<MessageData> {
     }
 
     /**
-     * Was it seen by this identity?
-     * @param identity The identity
-     * @return Was it seen?
+     * {@inheritDoc}
      */
+    @Override
     public Boolean isSeenBy(final String identity) {
         if (!this.seenBy.containsKey(identity)) {
-            final Boolean status = HelpQueue.make("was-message-seen")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            final Boolean status = this.bus.make("was-message-seen")
+                .synchronously()
                 .arg(this.number)
                 .arg(identity)
-                .asDefault(Boolean.FALSE)
-                .exec(Boolean.class);
+                .asDefault(false)
+                .exec();
             this.seenBy.put(identity, status);
             Logger.debug(
                 this,

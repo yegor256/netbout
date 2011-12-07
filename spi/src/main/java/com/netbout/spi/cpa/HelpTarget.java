@@ -29,9 +29,9 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.HelperException;
+import com.netbout.spi.PlainBuilder;
 import com.netbout.spi.Token;
-import com.netbout.spi.TypeMapper;
+import com.netbout.spi.plain.PlainVoid;
 import java.lang.reflect.Method;
 
 /**
@@ -73,37 +73,51 @@ final class HelpTarget {
     }
 
     /**
+     * Inject context into every {@link ContextAware} farm.
+     * @param context The context to inject (any object you like)
+     */
+    public void contextualize(final Object context) {
+        if (this.farm instanceof ContextAware) {
+            ((ContextAware) this.farm).context(context);
+        }
+    }
+
+    /**
      * Execute it with arguments.
      * @param token The token
-     * @throws HelperException If some problem inside
      */
-    public void execute(final Token token) throws HelperException {
+    public void execute(final Token token) {
         Object result;
         try {
             result = this.method.invoke(
                 this.farm,
-                this.converted(token, this.method.getParameterTypes())
+                this.converted(
+                    token,
+                    this.method.getParameterTypes()
+                )
             );
         } catch (IllegalAccessException ex) {
             throw new IllegalStateException(ex);
         } catch (java.lang.reflect.InvocationTargetException ex) {
             throw new IllegalStateException(ex);
         }
-        token.result(TypeMapper.toText(result));
+        if (this.method.getReturnType().equals(Void.TYPE)) {
+            token.result(new PlainVoid());
+        } else if (result != null) {
+            token.result(PlainBuilder.fromObject(result));
+        }
     }
 
     /**
      * Convert argument types.
      * @param token The token
      * @param types Expected types for every one of them
-     * @return Array of properly types args
-     * @throws HelperException If some problem inside
+     * @return Array of properly typed args
      */
-    public Object[] converted(final Token token, final Class[] types)
-        throws HelperException {
+    public Object[] converted(final Token token, final Class[] types) {
         final Object[] converted = new Object[types.length];
         for (int pos = 0; pos < types.length; pos += 1) {
-            converted[pos] = TypeMapper.toObject(token.arg(pos), types[pos]);
+            converted[pos] = token.arg(pos).value();
         }
         return converted;
     }

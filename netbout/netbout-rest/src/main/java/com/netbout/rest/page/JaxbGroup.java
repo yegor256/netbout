@@ -90,14 +90,15 @@ public final class JaxbGroup {
      */
     public static Object build(final Collection grp, final String name) {
         synchronized (JaxbGroup.READY) {
-            if (!JaxbGroup.READY.containsKey(name)) {
+            final String mnemo = JaxbGroup.mnemo(grp.isEmpty(), name);
+            if (!JaxbGroup.READY.containsKey(mnemo)) {
                 JaxbGroup.READY.put(
-                    name,
+                    mnemo,
                     JaxbGroup.construct(JaxbGroup.types(grp), name)
                 );
             }
             try {
-                return JaxbGroup.READY.get(name)
+                return JaxbGroup.READY.get(mnemo)
                     .getDeclaredConstructor(Collection.class)
                     .newInstance(grp);
             } catch (NoSuchMethodException ex) {
@@ -123,6 +124,21 @@ public final class JaxbGroup {
     }
 
     /**
+     * Create NEW class name.
+     * @param empty Is it an empty group?
+     * @param name Name of root element
+     * @return The name
+     */
+    private static String mnemo(final boolean empty, final String name) {
+        return String.format(
+            "%s$%s%B",
+            JaxbGroup.class.getName(),
+            name,
+            !empty
+        );
+    }
+
+    /**
      * Construct new class.
      * @param types Types used in the collection
      * @param name Name of root element
@@ -134,7 +150,7 @@ public final class JaxbGroup {
         try {
             final CtClass ctc = pool.getAndRename(
                 JaxbGroup.class.getName(),
-                String.format("%s$%s", JaxbGroup.class.getName(), name)
+                JaxbGroup.mnemo(types.isEmpty(), name)
             );
             final ClassFile file = ctc.getClassFile();
             final AnnotationsAttribute attribute =
@@ -142,8 +158,11 @@ public final class JaxbGroup {
                     AnnotationsAttribute.visibleTag
                 );
             attribute.addAnnotation(JaxbGroup.xmlRootElement(file, name));
-            attribute.addAnnotation(JaxbGroup.xmlSeeAlso(file, types));
+            if (!types.isEmpty()) {
+                attribute.addAnnotation(JaxbGroup.xmlSeeAlso(file, types));
+            }
             final Class cls = ctc.toClass();
+            ctc.defrost();
             Logger.debug(
                 JaxbGroup.class,
                 "#construct('%s'): class %s created",

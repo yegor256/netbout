@@ -26,12 +26,11 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.data.BoutData;
-import com.netbout.hub.data.MessageData;
-import com.netbout.hub.data.ParticipantData;
+import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -49,21 +48,37 @@ import java.util.List;
 public final class HubBout implements Bout {
 
     /**
+     * The bus.
+     */
+    private final transient Bus bus;
+
+    /**
+     * The catalog.
+     */
+    private final transient Catalog catalog;
+
+    /**
      * The viewer.
      */
-    private final transient HubIdentity viewer;
+    private final transient Identity viewer;
 
     /**
      * The data.
      */
-    private final transient BoutData data;
+    private final transient BoutDt data;
 
     /**
      * Public ctor.
+     * @param ctlg The catalog
+     * @param ibus The bus
      * @param idnt The viewer
      * @param dat The data
+     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubBout(final HubIdentity idnt, final BoutData dat) {
+    public HubBout(final Catalog ctlg, final Bus ibus, final Identity idnt,
+        final BoutDt dat) {
+        this.catalog = ctlg;
+        this.bus = ibus;
         this.viewer = idnt;
         this.data = dat;
     }
@@ -88,6 +103,14 @@ public final class HubBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public void confirm(final boolean aye) {
+        this.data.confirm(this.viewer.name(), aye);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void rename(final String text) {
         if (!this.confirmed()) {
             throw new IllegalStateException("You can't rename until you join");
@@ -104,33 +127,33 @@ public final class HubBout implements Bout {
         if (!this.confirmed()) {
             throw new IllegalStateException("You can't invite until you join");
         }
-        final ParticipantData dude =
-            ParticipantData.build(this.number(), friend.name());
-        this.data.addParticipant(dude);
+        final ParticipantDt dude = this.data.addParticipant(friend.name());
         dude.setConfirmed(false);
         Logger.debug(
             this,
             "#invite('%s'): success",
             friend
         );
-        ((HubIdentity) friend).invited(this);
-        return HubParticipant.build(dude);
+        friend.invited(this);
+        return new HubParticipant(this.catalog, this, dude);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
-        for (ParticipantData dude : this.data.getParticipants()) {
-            participants.add(HubParticipant.build(dude));
+        for (ParticipantDt dude : this.data.getParticipants()) {
+            participants.add(new HubParticipant(this.catalog, this, dude));
         }
         Logger.debug(
             this,
-            "#participants(): %d participants found",
-            participants.size()
+            "#participants(): %d participant(s) found in bout #%d",
+            participants.size(),
+            this.number()
         );
         return participants;
     }
@@ -139,21 +162,42 @@ public final class HubBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
-        final List<MessageData> datas =
-            new ArrayList<MessageData>(this.data.getMessages());
+        final List<MessageDt> datas =
+            new ArrayList<MessageDt>(this.data.getMessages());
         Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
-        for (MessageData msg : datas) {
-            messages.add(HubMessage.build(this.viewer, msg));
+        for (MessageDt msg : datas) {
+            messages.add(new HubMessage(this.catalog, this.viewer, this, msg));
         }
         Logger.debug(
             this,
-            "#messages('%s'): %d messages found",
+            "#messages('%s'): %d message(s) found",
             query,
             messages.size()
         );
         return messages;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    @Override
+    public Message message(final Long num) throws MessageNotFoundException {
+        final Message message = new HubMessage(
+            this.catalog,
+            this.viewer,
+            this,
+            this.data.findMessage(num)
+        );
+        Logger.debug(
+            this,
+            "#message(#%d): found",
+            num
+        );
+        return message;
     }
 
     /**
@@ -164,7 +208,7 @@ public final class HubBout implements Bout {
         if (!this.confirmed()) {
             throw new IllegalStateException("You can't post until you join");
         }
-        final MessageData msg = this.data.addMessage();
+        final MessageDt msg = this.data.addMessage();
         msg.setDate(new Date());
         msg.setAuthor(this.viewer.name());
         msg.setText(text);
@@ -173,25 +217,19 @@ public final class HubBout implements Bout {
             "#post('%s'): message posted",
             text
         );
-        final Message message = HubMessage.build(this.viewer, msg);
+        final Message message = new HubMessage(
+            this.catalog,
+            this.viewer,
+            this,
+            msg
+        );
         message.text();
+        this.bus.make("notify-bout-participants")
+            .arg(this.number())
+            .arg(message.number())
+            .asDefault(false)
+            .exec();
         return message;
-    }
-
-    /**
-     * This identity is a participant here?
-     * @param identity The identity
-     * @return Is it?
-     */
-    protected boolean isParticipant(final Identity identity) {
-        boolean found = false;
-        for (ParticipantData dude : this.data.getParticipants()) {
-            if (dude.getIdentity().equals(identity.name())) {
-                found = true;
-                break;
-            }
-        }
-        return found;
     }
 
     /**

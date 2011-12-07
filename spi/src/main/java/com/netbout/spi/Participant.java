@@ -38,6 +38,12 @@ package com.netbout.spi;
 public interface Participant {
 
     /**
+     * Which bout it is in?
+     * @return The bout
+     */
+    Bout bout();
+
+    /**
      * Who is a participant.
      * @return The identity of the participant
      */
@@ -48,11 +54,5 @@ public interface Participant {
      * @return Yes or no?
      */
     boolean confirmed();
-
-    /**
-     * Confirm it (or reject).
-     * @param confirm To confirm or reject?
-     */
-    void confirm(boolean confirm);
 
 }

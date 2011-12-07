@@ -52,13 +52,13 @@ final class ForwardException extends WebApplicationException {
     public ForwardException(final Resource res, final URI uri,
         final String msg) {
         super(
-            Response
-                .status(Response.Status.MOVED_PERMANENTLY)
+            Response.status(Response.Status.TEMPORARY_REDIRECT)
+                .header("Netbout-error", msg)
                 .entity(msg)
                 .location(uri)
                 .cookie(
                     new NewCookie(
-                        "netbout-msg",
+                        AbstractPage.MESSAGE_COOKIE,
                         ForwardException.encode(msg),
                         res.uriInfo().getBaseUri().getPath(),
                         res.uriInfo().getBaseUri().getHost(),

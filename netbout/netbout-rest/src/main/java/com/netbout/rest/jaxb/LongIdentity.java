@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
+import com.netbout.utils.AliasBuilder;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -71,6 +72,15 @@ public final class LongIdentity {
     @XmlElement
     public String getName() {
         return this.identity.name();
+    }
+
+    /**
+     * Get user name.
+     * @return The name
+     */
+    @XmlElement
+    public String getUser() {
+        return this.identity.user();
     }
 
     /**

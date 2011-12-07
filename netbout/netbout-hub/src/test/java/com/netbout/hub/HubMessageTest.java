@@ -29,9 +29,8 @@ package com.netbout.hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link HubMessage}.
@@ -41,46 +40,24 @@ import org.junit.Test;
 public final class HubMessageTest {
 
     /**
-     * Talking in bout.
+     * HubMessage can "wrap" MessageDt class.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testMessagePosting() throws Exception {
-        final Identity identity = HubEntry.user("Mark III").identity("mark");
-        final Bout bout = identity.start();
-        bout.post("hi there!");
-        MatcherAssert.assertThat(
-            bout.messages("").size(),
-            Matchers.equalTo(1)
-        );
-    }
-
-    /**
-     * Message should change its "SEEN" status automatically.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testMessageSeenStatus() throws Exception {
-        final Identity writer = HubEntry.user("Emilio").identity("emi");
-        final Identity reader = HubEntry.user("Doug").identity("doug");
-        final Bout wbout = writer.start();
-        final Message wmessage = wbout.post("simple text, why not?");
-        MatcherAssert.assertThat(
-            wmessage.seen(),
-            Matchers.equalTo(Boolean.TRUE)
-        );
-        wbout.invite(reader);
-        final Bout rbout = reader.bout(wbout.number());
-        final Message rmessage = rbout.messages("").get(0);
-        MatcherAssert.assertThat(
-            rmessage.seen(),
-            Matchers.equalTo(Boolean.FALSE)
-        );
-        rmessage.text();
-        MatcherAssert.assertThat(
-            rmessage.seen(),
-            Matchers.equalTo(Boolean.TRUE)
-        );
+    public void wrapsMessageDtDataProperties() throws Exception {
+        final Catalog catalog = Mockito.mock(Catalog.class);
+        final Identity viewer = Mockito.mock(Identity.class);
+        final Bout bout = Mockito.mock(Bout.class);
+        final MessageDt data = Mockito.mock(MessageDt.class);
+        final Message msg = new HubMessage(catalog, viewer, bout, data);
+        msg.number();
+        Mockito.verify(data).getNumber();
+        msg.author();
+        Mockito.verify(data).getAuthor();
+        msg.text();
+        Mockito.verify(data).getText();
+        msg.date();
+        Mockito.verify(data).getDate();
     }
 
 }

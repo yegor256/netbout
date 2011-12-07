@@ -27,6 +27,7 @@
 package com.netbout.db;
 
 import java.util.Date;
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -73,10 +74,10 @@ public final class MessageFarmTest {
             this.farm.getMessageDate(number),
             Matchers.equalTo(date)
         );
-        final Long[] nums = this.farm.getBoutMessages(this.bout);
+        final List<Long> nums = this.farm.getBoutMessages(this.bout);
         MatcherAssert.assertThat(
             nums,
-            Matchers.hasItemInArray(number)
+            Matchers.hasItem(number)
         );
     }
 

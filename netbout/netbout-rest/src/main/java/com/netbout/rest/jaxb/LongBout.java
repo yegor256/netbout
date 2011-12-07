@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.bus.Bus;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
@@ -51,6 +52,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 public final class LongBout {
 
     /**
+     * The bus.
+     */
+    private final transient Bus bus;
+
+    /**
      * The bout.
      */
     private final transient Bout bout;
@@ -59,6 +65,11 @@ public final class LongBout {
      * Stage coordinates.
      */
     private final transient StageCoordinates coords;
+
+    /**
+     * Search keyword.
+     */
+    private final transient String query;
 
     /**
      * The URI builder.
@@ -74,14 +85,19 @@ public final class LongBout {
 
     /**
      * Private ctor.
+     * @param ibus The bus
      * @param bot The bout
      * @param crds The coordinates of the stage to render
+     * @param keyword Search keyword
      * @param bldr The builder of URIs
+     * @checkstyle ParameterNumber (3 lines)
      */
-    public LongBout(final Bout bot, final StageCoordinates crds,
-        final UriBuilder bldr) {
+    public LongBout(final Bus ibus, final Bout bot, final StageCoordinates crds,
+        final String keyword, final UriBuilder bldr) {
+        this.bus = ibus;
         this.bout = bot;
         this.coords = crds;
+        this.query = keyword;
         this.builder = bldr;
     }
 
@@ -125,7 +141,7 @@ public final class LongBout {
     public LongStage getStage() {
         LongStage stage = null;
         if (!this.coords.stage().isEmpty()) {
-            stage = LongStage.build(this.bout, this.coords);
+            stage = LongStage.build(this.bus, this.bout, this.coords);
         }
         return stage;
     }
@@ -138,7 +154,7 @@ public final class LongBout {
     @XmlElementWrapper(name = "messages")
     public List<LongMessage> getMessages() {
         final List<LongMessage> messages = new ArrayList<LongMessage>();
-        for (Message msg : this.bout.messages("")) {
+        for (Message msg : this.bout.messages(this.query)) {
             messages.add(LongMessage.build(msg));
         }
         return messages;

@@ -48,12 +48,12 @@ public interface Token {
      * @param pos Position of it
      * @return The argument
      */
-    String arg(int pos);
+    Plain<?> arg(int pos);
 
     /**
      * Save response.
      * @param value The result
      */
-    void result(String value);
+    void result(Plain<?> value);
 
 }

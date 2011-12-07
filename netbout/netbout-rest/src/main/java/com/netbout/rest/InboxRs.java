@@ -26,14 +26,14 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.HubIdentity;
 import com.netbout.rest.jaxb.ShortBout;
+import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -49,16 +49,28 @@ import javax.ws.rs.core.Response;
 public final class InboxRs extends AbstractRs {
 
     /**
+     * Query to filter messages with.
+     */
+    private transient String query = "";
+
+    /**
+     * Set filtering keyword.
+     * @param keyword The query
+     */
+    @QueryParam("q")
+    public void setQuery(final String keyword) {
+        this.query = keyword;
+    }
+
+    /**
      * Get inbox.
-     * @param query Search query, if provided
      * @return The JAX-RS response
      */
     @GET
-    public Response inbox(
-        @QueryParam("q") @DefaultValue("") final String query) {
-        final HubIdentity identity = this.identity();
+    public Response inbox() {
+        final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
-        for (Bout bout : identity.inbox(query)) {
+        for (Bout bout : identity.inbox(this.query)) {
             bouts.add(
                 ShortBout.build(
                     bout,
@@ -67,16 +79,25 @@ public final class InboxRs extends AbstractRs {
             );
         }
         return new PageBuilder()
+            .schema("")
             .stylesheet(
                 this.uriInfo().getBaseUriBuilder()
                     .clone()
                     .path("/xsl/inbox.xsl")
                     .build()
                     .toString()
-        )
+            )
             .build(AbstractPage.class)
             .init(this)
+            .append(new JaxbBundle("query", this.query))
             .append(JaxbGroup.build(bouts, "bouts"))
+            .link(
+                "friends",
+                this.uriInfo().getBaseUriBuilder()
+                    .clone()
+                    .path("/f")
+                    .build()
+            )
             .authenticated(identity)
             .build();
     }
@@ -88,14 +109,14 @@ public final class InboxRs extends AbstractRs {
     @Path("/s")
     @GET
     public Response start() {
-        final HubIdentity identity = this.identity();
+        final Identity identity = this.identity();
         final Bout bout = identity.start();
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(identity)
             .entity(String.format("bout #%d created", bout.number()))
-            .status(Response.Status.TEMPORARY_REDIRECT)
+            .status(Response.Status.SEE_OTHER)
             .location(
                 this.uriInfo()
                     .getBaseUriBuilder()
@@ -103,6 +124,7 @@ public final class InboxRs extends AbstractRs {
                     .path("/{num}")
                     .build(bout.number())
             )
+            .header("Bout-number", bout.number())
             .build();
     }
 

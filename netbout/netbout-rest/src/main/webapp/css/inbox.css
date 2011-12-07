@@ -25,16 +25,22 @@
  * SUCH DAMAGE.
  */
 
-div.bout{
-    clear: both;
-    margin-bottom: 1em;
+ul.bouts {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
 }
 
-    div.bout a.title{
-        font-size: 1.2em;
+    ul.bouts li{
+        clear: both;
+        margin-bottom: 1em;
+        list-style: none;
     }
 
-        div.bout a.unread{
+        ul.bouts li a.title{
+            font-size: 1.2em;
+        }
+
+        ul.bouts li a.unread{
             font-weight: bold;
         }
 

@@ -26,8 +26,13 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.queue.HelpQueue;
+import com.netbout.bus.Bus;
+import com.netbout.hub.BoutDt;
+import com.netbout.hub.MessageDt;
+import com.netbout.hub.ParticipantDt;
+import com.netbout.spi.MessageNotFoundException;
 import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,7 +43,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BoutData {
+final class BoutData implements BoutDt {
+
+    /**
+     * Bus to work with.
+     */
+    private final transient Bus bus;
 
     /**
      * The number.
@@ -53,40 +63,54 @@ public final class BoutData {
     /**
      * Collection of participants.
      */
-    private transient Collection<ParticipantData> participants;
+    private transient Collection<ParticipantDt> participants;
 
     /**
      * Ordered list of messages.
      */
-    private transient List<MessageData> messages;
+    private transient List<MessageDt> messages;
 
     /**
      * Public ctor.
+     * @param ibus The bus
      * @param num The number
      */
-    public BoutData(final Long num) {
+    public BoutData(final Bus ibus, final Long num) {
+        this.bus = ibus;
         assert num != null;
         this.number = num;
     }
 
     /**
-     * Get its number.
-     * @return The number
+     * {@inheritDoc}
      */
+    @Override
     public Long getNumber() {
         return this.number;
     }
 
     /**
-     * Get title.
-     * @return The title
+     * {@inheritDoc}
      */
+    @Override
+    public void confirm(final String identity, final Boolean aye) {
+        for (ParticipantDt dude : this.getParticipants()) {
+            if (dude.getIdentity().equals(identity)) {
+                dude.setConfirmed(aye);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getTitle() {
         if (this.title == null) {
-            this.title = HelpQueue.make("get-bout-title")
-                .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+            this.title = this.bus.make("get-bout-title")
+                .synchronously()
                 .arg(this.number)
-                .exec(String.class);
+                .exec();
             Logger.debug(
                 this,
                 "#getTitle(): title '%s' loaded for bout #%d",
@@ -98,15 +122,16 @@ public final class BoutData {
     }
 
     /**
-     * Set title.
-     * @param text The title
+     * {@inheritDoc}
      */
+    @Override
     public void setTitle(final String text) {
         this.title = text;
-        HelpQueue.make("changed-bout-title")
-            .priority(HelpQueue.Priority.ASAP)
+        this.bus.make("changed-bout-title")
+            .asap()
             .arg(this.number)
             .arg(this.title)
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -117,15 +142,18 @@ public final class BoutData {
     }
 
     /**
-     * Add new participant.
-     * @param data The participant
+     * {@inheritDoc}
      */
-    public void addParticipant(final ParticipantData data) {
+    @Override
+    public ParticipantDt addParticipant(final String name) {
+        final ParticipantDt data =
+            new ParticipantData(this.bus, this.number, name);
         this.getParticipants().add(data);
-        HelpQueue.make("added-bout-participant")
-            .priority(HelpQueue.Priority.ASAP)
+        this.bus.make("added-bout-participant")
+            .asap()
             .arg(this.number)
             .arg(data.getIdentity())
+            .asDefault(true)
             .exec();
         Logger.debug(
             this,
@@ -134,25 +162,27 @@ public final class BoutData {
             this.number,
             this.getParticipants().size()
         );
+        return data;
     }
 
     /**
-     * Get list of participants.
-     * @return The list
+     * {@inheritDoc}
      */
-    public Collection<ParticipantData> getParticipants() {
+    @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public Collection<ParticipantDt> getParticipants() {
         synchronized (this) {
             if (this.participants == null) {
-                this.participants = new CopyOnWriteArrayList<ParticipantData>();
-                final String[] identities = HelpQueue
+                this.participants = new CopyOnWriteArrayList<ParticipantDt>();
+                final List<String> identities = this.bus
                     .make("get-bout-participants")
-                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                    .synchronously()
                     .arg(this.number)
-                    .asDefault(new String[]{})
-                    .exec(String[].class);
+                    .asDefault(new ArrayList<String>())
+                    .exec();
                 for (String identity : identities) {
                     this.participants.add(
-                        ParticipantData.build(this.number, identity)
+                        new ParticipantData(this.bus, this.number, identity)
                     );
                 }
                 Logger.debug(
@@ -167,16 +197,16 @@ public final class BoutData {
     }
 
     /**
-     * Post new message.
-     * @return The data
+     * {@inheritDoc}
      */
-    public MessageData addMessage() {
-        final Long num = HelpQueue.make("create-bout-message")
-            .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+    @Override
+    public MessageDt addMessage() {
+        final Long num = this.bus.make("create-bout-message")
+            .synchronously()
             .arg(this.number)
-            .asDefault(new Long(1L))
-            .exec(Long.class);
-        final MessageData data = MessageData.build(num);
+            .asDefault(1L)
+            .exec();
+        final MessageDt data = new MessageData(this.bus, num);
         this.getMessages().add(data);
         Logger.debug(
             this,
@@ -188,20 +218,22 @@ public final class BoutData {
     }
 
     /**
-     * Get full list of messages.
-     * @return Messages
+     * {@inheritDoc}
      */
-    public List<MessageData> getMessages() {
+    @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public List<MessageDt> getMessages() {
         synchronized (this) {
             if (this.messages == null) {
-                this.messages = new CopyOnWriteArrayList<MessageData>();
-                final Long[] nums = HelpQueue.make("get-bout-messages")
-                    .priority(HelpQueue.Priority.SYNCHRONOUSLY)
+                this.messages = new CopyOnWriteArrayList<MessageDt>();
+                final List<Long> nums = this.bus
+                    .make("get-bout-messages")
+                    .synchronously()
                     .arg(this.number)
-                    .asDefault(new Long[]{})
-                    .exec(Long[].class);
+                    .asDefault(new ArrayList<Long>())
+                    .exec();
                 for (Long num : nums) {
-                    this.messages.add(MessageData.build(num));
+                    this.messages.add(new MessageData(this.bus, num));
                 }
                 Logger.debug(
                     this,
@@ -212,6 +244,21 @@ public final class BoutData {
             }
             return this.messages;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    @Override
+    public MessageDt findMessage(final Long num)
+        throws MessageNotFoundException {
+        for (MessageDt msg : this.getMessages()) {
+            if (msg.getNumber().equals(num)) {
+                return msg;
+            }
+        }
+        throw new MessageNotFoundException(num);
     }
 
 }

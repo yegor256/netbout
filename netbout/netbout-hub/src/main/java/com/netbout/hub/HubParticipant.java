@@ -26,7 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.data.ParticipantData;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 
@@ -39,25 +39,39 @@ import com.netbout.spi.Participant;
 public final class HubParticipant implements Participant {
 
     /**
+     * The catalog.
+     */
+    private final transient Catalog catalog;
+
+    /**
+     * The bout I'm in.
+     */
+    private final transient Bout ibout;
+
+    /**
      * The data.
      */
-    private final transient ParticipantData data;
+    private final transient ParticipantDt data;
 
     /**
      * Public ctor.
+     * @param ctlg The catalog
+     * @param bout The bout
      * @param dat The data
      */
-    private HubParticipant(final ParticipantData dat) {
+    public HubParticipant(final Catalog ctlg, final Bout bout,
+        final ParticipantDt dat) {
+        this.catalog = ctlg;
+        this.ibout = bout;
         this.data = dat;
     }
 
     /**
-     * Build new object.
-     * @param dat The data
-     * @return The object just built
+     * {@inheritDoc}
      */
-    public static HubParticipant build(final ParticipantData dat) {
-        return new HubParticipant(dat);
+    @Override
+    public Bout bout() {
+        return this.ibout;
     }
 
     /**
@@ -65,7 +79,11 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public Identity identity() {
-        return Identities.make(this.data.getIdentity());
+        try {
+            return this.catalog.make(this.data.getIdentity());
+        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -74,14 +92,6 @@ public final class HubParticipant implements Participant {
     @Override
     public boolean confirmed() {
         return this.data.isConfirmed();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void confirm(final boolean aye) {
-        this.data.setConfirmed(aye);
     }
 
 }

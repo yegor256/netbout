@@ -26,7 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.data.MessageData;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import java.util.Date;
@@ -40,33 +40,55 @@ import java.util.Date;
 final class HubMessage implements Message {
 
     /**
+     * The catalog.
+     */
+    private final transient Catalog catalog;
+
+    /**
      * The viewer.
      */
     private final transient Identity viewer;
 
     /**
+     * The bout where this message is located.
+     */
+    private final transient Bout ibout;
+
+    /**
      * The data.
      */
-    private final transient MessageData data;
+    private final transient MessageDt data;
 
     /**
      * Public ctor.
-     * @param vwr The author
+     * @param ctlg The catalog
+     * @param vwr Viewer
+     * @param bout The bout where this message is located
      * @param dat The data
+     * @checkstyle ParameterNumber (3 lines)
      */
-    private HubMessage(final Identity vwr, final MessageData dat) {
+    public HubMessage(final Catalog ctlg, final Identity vwr,
+        final Bout bout, final MessageDt dat) {
+        this.catalog = ctlg;
         this.viewer = vwr;
+        this.ibout = bout;
         this.data = dat;
     }
 
     /**
-     * Build new object.
-     * @param vwr The author
-     * @param dat The data
-     * @return The object just built
+     * {@inheritDoc}
      */
-    public static HubMessage build(final Identity vwr, final MessageData dat) {
-        return new HubMessage(vwr, dat);
+    @Override
+    public Bout bout() {
+        return this.ibout;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long number() {
+        return this.data.getNumber();
     }
 
     /**
@@ -74,7 +96,11 @@ final class HubMessage implements Message {
      */
     @Override
     public Identity author() {
-        return Identities.make(this.data.getAuthor());
+        try {
+            return this.catalog.make(this.data.getAuthor());
+        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**

@@ -74,6 +74,15 @@ public final class LongMessage {
     }
 
     /**
+     * Get its number.
+     * @return The number
+     */
+    @XmlElement
+    public Long getNumber() {
+        return this.message.number();
+    }
+
+    /**
      * Get author.
      * @return The author
      */

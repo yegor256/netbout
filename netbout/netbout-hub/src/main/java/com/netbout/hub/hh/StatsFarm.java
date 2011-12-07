@@ -26,9 +26,9 @@
  */
 package com.netbout.hub.hh;
 
-import com.netbout.hub.Identities;
-import com.netbout.hub.data.Storage;
+import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
+import com.netbout.spi.cpa.ContextAware;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -41,7 +41,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Stats.
@@ -50,12 +49,17 @@ import org.w3c.dom.Element;
  * @version $Id$
  */
 @Farm
-public final class StatsFarm implements IdentityAware {
+public final class StatsFarm implements IdentityAware, ContextAware {
 
     /**
      * Me.
      */
     private transient Identity identity;
+
+    /**
+     * The hub.
+     */
+    private transient Hub hub;
 
     /**
      * {@inheritDoc}
@@ -70,19 +74,18 @@ public final class StatsFarm implements IdentityAware {
         );
     }
 
-    // /**
-    //  * Post new request to the stage, and calculate new cookie.
-    //  * @param number Bout where it is happening
-    //  * @param path URI path of the request
-    //  * @param params HTTP parameters (GET and POST) as pairs,
-    //  *  e.g. "name=John Doe" (already decoded)
-    //  * @return The cookie
-    //  */
-    // @Operation("route-stage-request")
-    // public String routeStageRequest(final Long number, final String path,
-    //     final String params) {
-    //     return "";
-    // }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void context(final Object ctx) {
+        this.hub = (Hub) ctx;
+        Logger.debug(
+            this,
+            "#context('%s'): injected",
+            ctx.getClass().getName()
+        );
+    }
 
     /**
      * Does this stage exist in the bout?
@@ -121,14 +124,7 @@ public final class StatsFarm implements IdentityAware {
         if (this.identity.name().equals(stage)) {
             final Document doc = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder().newDocument();
-            final Element root = doc.createElement("data");
-            doc.appendChild(root);
-            final Element identities = doc.createElement("identities");
-            root.appendChild(identities);
-            identities.appendChild(doc.createTextNode(Identities.stats()));
-            final Element storage = doc.createElement("storage");
-            root.appendChild(storage);
-            storage.appendChild(doc.createTextNode(Storage.INSTANCE.stats()));
+            doc.appendChild(this.hub.stats(doc));
             final Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer();
             final StringWriter writer = new StringWriter();

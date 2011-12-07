@@ -36,6 +36,7 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
+import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
 /**
  * Test case for {@link ExceptionTrap}.
@@ -45,11 +46,11 @@ import org.xmlmatchers.XmlMatchers;
 public final class ExceptionTrapTest {
 
     /**
-     * Render servlet page.
+     * ExceptionTrap can render page with exception.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPageRendering() throws Exception {
+    public void rendersExceptionIntoHtmlPage() throws Exception {
         final HttpServlet servlet = new ExceptionTrap();
         final HttpServletRequest request =
             Mockito.mock(HttpServletRequest.class);
@@ -65,16 +66,22 @@ public final class ExceptionTrapTest {
         servlet.service(request, response);
         MatcherAssert.assertThat(
             XhtmlConverter.the(writer.toString()),
-            XmlMatchers.hasXPath("//p[contains(.,'code: a')]")
+            XmlMatchers.hasXPath(
+                "//xhtml:p[contains(.,'code: a')]",
+                new SimpleNamespaceContext().withBinding(
+                    "xhtml",
+                    "http://www.w3.org/1999/xhtml"
+                )
+            )
         );
     }
 
     /**
-     * Render servlet page with all nulls.
+     * ExceptionTrap can render page even if most of values are NULL.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testPageRenderingWithNULLs() throws Exception {
+    public void rendersHtmlPageWithNullAttributes() throws Exception {
         final HttpServlet servlet = new ExceptionTrap();
         final HttpServletRequest request =
             Mockito.mock(HttpServletRequest.class);

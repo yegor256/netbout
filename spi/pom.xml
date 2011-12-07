@@ -159,6 +159,25 @@
             <version since="9 Oct 2010">1.3.2</version>
         </dependency>
         <dependency>
+            <!-- JAX-RS API -->
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version since="25 Nov 2011">1.1.1</version>
+        </dependency>
+        <dependency>
+            <!-- JAX-RS implementation, core library -->
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version since="26 Oct 2011">1.9.1</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <!-- JAX-RS implementation, core library -->
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version since="26 Oct 2011">1.9.1</version>
+        </dependency>
+        <dependency>
             <!--
             Logging facility, on top of SLF4J.
             -->
@@ -284,7 +303,6 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version since="2 Sep 2011">2.2</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -438,6 +456,10 @@
                     <version since="2 Oct 2011">2.3</version>
                 </plugin>
                 <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version since="19 Oct 2011">2.2.1</version>
+                </plugin>
+                <plugin>
                     <artifactId>maven-install-plugin</artifactId>
                     <version since="2 Oct 2011">2.3.1</version>
                 </plugin>
@@ -482,6 +504,52 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version since="5 Dec 2011">2.3.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classesDirectory>${project.build.testOutputDirectory}</classesDirectory>
+                            <archive>
+                                <index>true</index>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
+                            <classifier>mock</classifier>
+                            <includes>
+                                <include>**/*Mocker.class</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version since="2 Dec 2011">1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-test-sources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/src/mock/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>

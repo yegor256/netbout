@@ -26,13 +26,14 @@
  */
 package com.netbout.rest;
 
-import com.netbout.harness.PageConverter;
-import com.netbout.harness.ResourceBuilder;
-import com.netbout.hub.HubEntry;
 import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
 
 /**
@@ -43,20 +44,24 @@ import org.xmlmatchers.XmlMatchers;
 public final class BoutRsTest {
 
     /**
-     * Bout resource should be renderable into JAXB-annotated object.
+     * BoutRs can render front page of a bout.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBoutRendering() throws Exception {
-        final BoutRs rest = new ResourceBuilder().build(BoutRs.class);
-        final Bout bout = HubEntry
-            .user("John Doe")
-            .identity("johnny.doe")
-            .start();
+    public void rendersBoutFrontPage() throws Exception {
+        final Identity identity = new IdentityMocker().mock();
+        final Bout bout = new BoutMocker()
+            .withParticipant(identity)
+            .mock();
+        Mockito.doReturn(bout).when(identity).start();
+        Mockito.doReturn(bout).when(identity).bout(Mockito.any(Long.class));
+        final BoutRs rest = new ResourceMocker()
+            .withIdentity(identity)
+            .mock(BoutRs.class);
         rest.setNumber(bout.number());
         final Response response = rest.front();
         MatcherAssert.assertThat(
-            PageConverter.the((Page) response.getEntity(), rest),
+            ResourceMocker.the((Page) response.getEntity(), rest),
             XmlMatchers.hasXPath("/page/bout/participants/participant/identity")
         );
     }

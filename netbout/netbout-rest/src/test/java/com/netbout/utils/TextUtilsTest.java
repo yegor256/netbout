@@ -26,6 +26,7 @@
  */
 package com.netbout.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -39,30 +40,56 @@ import org.junit.Test;
 public final class TextUtilsTest {
 
     /**
-     * Base64 conversions.
+     * TextUtils can convert text to Base64 and backward.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBaseConversions() throws Exception {
-        final String text = "\u041F\u0435\u0442\u0440 I";
-        MatcherAssert.assertThat(
-            TextUtils.fromBase(TextUtils.toBase(text)),
-            Matchers.equalTo(text)
-        );
+    public void convertsBaseToTextAndBack() throws Exception {
+        final String[] texts = new String[] {
+            "\u041F\u0435\u0442\u0440 I",
+            "",
+            "a",
+            "abc",
+            "\u041F\n\r\t    ",
+            // @checkstyle MagicNumber (1 line)
+            StringUtils.repeat("ABC ", 1000),
+        };
+        for (String text : texts) {
+            final String encoded = TextUtils.toBase(text);
+            MatcherAssert.assertThat(
+                "Encoded string contains only valid characters",
+                encoded.matches("[\\w=\\+\\./]*"),
+                Matchers.describedAs(encoded, Matchers.is(true))
+            );
+            MatcherAssert.assertThat(
+                "Encoded string doesn't contain any special chars",
+                encoded.contains("\n"),
+                Matchers.is(false)
+            );
+            MatcherAssert.assertThat(
+                "Decoded version matches the original one",
+                TextUtils.fromBase(encoded),
+                Matchers.equalTo(text)
+            );
+        }
     }
 
     /**
-     * Convert text with velocity.
+     * TextUtils can format Velocity template.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testVelocityConversion() throws Exception {
+    public void formatsVelocityTemplate() throws Exception {
         final VelocityContext context = new VelocityContext();
         final String xsl = TextUtils.format(
             "com/netbout/rest/bout.xsl.vm",
             context
         );
-        MatcherAssert.assertThat(xsl, Matchers.containsString("xsl:include"));
+        MatcherAssert.assertThat(
+            "Output XSL stylesheet is valid",
+            xsl,
+            Matchers.containsString("xsl:include")
+        );
     }
 
 }

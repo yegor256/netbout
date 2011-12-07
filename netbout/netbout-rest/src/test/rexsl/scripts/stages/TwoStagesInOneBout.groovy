@@ -29,44 +29,24 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
-import org.hamcrest.Matchers
 
-// user name: John Doe
-// identity name: johnny.doe
-def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
-def bout = new XmlSlurper()
-    .parseText(
-        new TestClient(rexsl.home)
-            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .header(HttpHeaders.COOKIE, cookie)
-            .get('/s')
-            .body
-    )
-    .bout
-    .number
-['nb:hh', 'nb:db'].each { helper ->
-    new TestClient(rexsl.home)
-        .header(HttpHeaders.COOKIE, cookie)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get(
-            UriBuilder.fromPath('/{bout}/i')
-                .queryParam('name', helper)
-                .build(bout)
-                .toString()
-        )
-}
-def page = new TestClient(rexsl.home)
+def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def bout = jeff.start()
+
+// invite two helpers there
+['nb:hh', 'nb:db'].each { bout.invite(jeff.friend(it)) }
+
+// validate that there are really two stages in the XML
+new TestClient(RestUriBuilder.from(bout).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/{bout}').build(bout).toString())
-Assert.assertThat(
-    XhtmlConverter.the(page.body),
-    XmlMatchers.hasXPath('/page/bout/stages[count(stage) = 2]')
-)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('/page/bout/stages[count(stage) = 2]')
+    .assertXPath('/page/bout/stage[@name]')

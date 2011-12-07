@@ -26,24 +26,14 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.HubEntry;
-import com.netbout.hub.HubIdentity;
-import com.netbout.hub.HubUser;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.FacebookClient;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.io.IOUtils;
 
 /**
  * RESTful front of login functions.
@@ -65,7 +55,15 @@ public final class LoginRs extends AbstractRs {
             .fromPath("https://www.facebook.com/dialog/oauth")
             // @checkstyle MultipleStringLiterals (3 lines)
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
-            .queryParam("redirect_uri", this.redirectUri())
+            .queryParam(
+                "redirect_uri",
+                this.uriInfo()
+                    .getBaseUriBuilder()
+                    .clone()
+                    .path("/fb")
+                    .build()
+                    .toString()
+            )
             .build();
         return new PageBuilder()
             .stylesheet(
@@ -105,144 +103,6 @@ public final class LoginRs extends AbstractRs {
                 )
             )
             .build();
-    }
-
-    /**
-     * Facebook authentication page (callback hits it).
-     * @param code Facebook "authorization code"
-     * @return The JAX-RS response
-     */
-    @Path("/fb")
-    @GET
-    public Response fbauth(@QueryParam("code") final String code) {
-        HubIdentity identity;
-        try {
-            identity = this.authenticate(code);
-        } catch (IOException ex) {
-            throw new ForwardException(this, "/g", ex);
-        }
-        return new PageBuilder()
-            .build(AbstractPage.class)
-            .init(this)
-            .authenticated(identity)
-            .status(Response.Status.TEMPORARY_REDIRECT)
-            .location(this.uriInfo().getBaseUri())
-            .build();
-    }
-
-    /**
-     * Authenticate the user through facebook.
-     * @param code Facebook "authorization code"
-     * @return The user found
-     * @throws IOException If some problem with FB
-     */
-    private HubIdentity authenticate(final String code) throws IOException {
-        final String token = this.token(code);
-        final com.restfb.types.User fbuser = this.fbUser(token);
-        final HubUser user = HubEntry.user(fbuser.getId());
-        final HubIdentity identity = user.identity(fbuser.getId());
-        identity.alias(fbuser.getName());
-        identity.setPhoto(
-            UriBuilder
-                .fromPath("https://graph.facebook.com/{id}/picture")
-                .build(fbuser.getId())
-                .toURL()
-        );
-        return identity;
-    }
-
-    /**
-     * Retrieve facebook access token.
-     * @param code Facebook "authorization code"
-     * @return The token
-     * @throws IOException If some problem with FB
-     */
-    private String token(final String code) throws IOException {
-        final String response = this.retrieve(
-            UriBuilder
-                // @checkstyle MultipleStringLiterals (5 lines)
-                .fromPath("https://graph.facebook.com/oauth/access_token")
-                .queryParam("client_id", Manifests.read("Netbout-FbId"))
-                .queryParam("redirect_uri", this.redirectUri())
-                .queryParam("client_secret", Manifests.read("Netbout-FbSecret"))
-                .queryParam("code", code)
-                .build()
-        );
-        final String[] sectors = response.split("&");
-        for (String sector : sectors) {
-            final String[] pair = sector.split("=");
-            if (pair.length != 2) {
-                throw new IOException(
-                    String.format(
-                        "Invalid response: '%s'",
-                        response
-                    )
-                );
-            }
-            if ("access_token".equals(pair[0])) {
-                return pair[1];
-            }
-        }
-        throw new IOException(
-            String.format(
-                "Access token not found in response: '%s'",
-                response
-            )
-        );
-    }
-
-    /**
-     * Get user name from Facebook, but the code provided.
-     * @param token Facebook access token
-     * @return The user found in FB
-     * @throws IOException If some problem with FB
-     */
-    private com.restfb.types.User fbUser(final String token)
-        throws IOException {
-        try {
-            final FacebookClient client = new DefaultFacebookClient(token);
-            return client.fetchObject("me", com.restfb.types.User.class);
-        } catch (com.restfb.exception.FacebookException ex) {
-            throw new IOException(ex);
-        }
-    }
-
-    /**
-     * Where facebook should redirect.
-     * @return The URI
-     */
-    private URI redirectUri() {
-        return this.uriInfo().getBaseUriBuilder().clone().path("/g/fb").build();
-    }
-
-    /**
-     * Retrive data from the URL through HTTP request.
-     * @param uri The URI
-     * @return The response, text body
-     * @throws IOException If some problem with FB
-     */
-    private String retrieve(final URI uri) throws IOException {
-        final long start = System.currentTimeMillis();
-        HttpURLConnection conn;
-        try {
-            conn = (HttpURLConnection) uri.toURL().openConnection();
-        } catch (java.net.MalformedURLException ex) {
-            throw new IOException(ex);
-        }
-        try {
-            return IOUtils.toString(conn.getInputStream());
-        } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
-        } finally {
-            conn.disconnect();
-            Logger.debug(
-                this,
-                "#retrieve(%s): done [%d] in %dms",
-                uri,
-                conn.getResponseCode(),
-                System.currentTimeMillis() - start
-            );
-        }
     }
 
 }

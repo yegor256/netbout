@@ -29,7 +29,7 @@
  */
 package com.netbout.spi;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * Helper, implementation of identity.
@@ -37,27 +37,18 @@ import java.util.Collection;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Helper {
-
-    /**
-     * Set identity of this helper.
-     * @param identity The identity
-     * @throws HelperException If helper can't perform this request
-     */
-    void init(Identity identity) throws HelperException;
+public interface Helper extends Identity {
 
     /**
      * Returns full list of supported operations (their mnemos).
      * @return The list of names
-     * @throws HelperException If helper can't perform this request
      */
-    Collection<String> supports() throws HelperException;
+    Set<String> supports();
 
     /**
      * Send one single token to the helper, in order to get atomic response.
      * @param token The token to process
-     * @throws HelperException If helper can't perform this request
      */
-    void execute(Token token) throws HelperException;
+    void execute(Token token);
 
 }

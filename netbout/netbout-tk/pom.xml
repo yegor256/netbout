@@ -37,7 +37,7 @@
     <artifactId>netbout-tk</artifactId>
     <version netbout="yes">2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>com.netbout:netbout-tk</name>
+    <name>netbout-tk</name>
     <description>Test/Tool Kit</description>
 
     <distributionManagement>

@@ -33,14 +33,16 @@
 
     <xs:complexType name="link">
         <xs:attribute name="href" type="xs:anyURI"/>
-        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="rel" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="identity">
-        <xs:sequence>
+        <xs:all>
+            <xs:element name="alias" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="aliases" minOccurs="1" maxOccurs="1" />
             <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="photo" type="xs:anyURI" minOccurs="1" maxOccurs="1" />
-        </xs:sequence>
+        </xs:all>
     </xs:complexType>
 
     <xs:complexType name="participant">
@@ -73,6 +75,7 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
+                <xs:element name="query" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="identity" type="identity" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="bouts" minOccurs="1" maxOccurs="1">
                     <xs:complexType>
@@ -82,6 +85,7 @@
                     </xs:complexType>
                 </xs:element>
             </xs:all>
+            <xs:attribute name="nano" type="xs:decimal"/>
         </xs:complexType>
     </xs:element>
 

@@ -27,6 +27,7 @@
 package com.netbout.rest.page;
 
 import com.rexsl.core.Stylesheet;
+import com.rexsl.core.XmlSchema;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,12 +70,27 @@ public final class PageBuilder {
     private transient String xsl = "/xsl/none.xsl";
 
     /**
+     * Schema to use.
+     */
+    private transient String xsd = "";
+
+    /**
      * Configure the stylesheet to be used.
      * @param name Name of stylesheet
      * @return This object
      */
     public PageBuilder stylesheet(final String name) {
         this.xsl = name;
+        return this;
+    }
+
+    /**
+     * Configure the schema to be used.
+     * @param name Name of schema
+     * @return This object
+     */
+    public PageBuilder schema(final String name) {
+        this.xsd = name;
         return this;
     }
 
@@ -151,15 +167,12 @@ public final class PageBuilder {
                 file.getConstPool(),
                 AnnotationsAttribute.visibleTag
             );
-            final Annotation annotation = new Annotation(
-                Stylesheet.class.getName(),
-                file.getConstPool()
+            attribute.addAnnotation(
+                this.make(Stylesheet.class, this.xsl, file)
             );
-            annotation.addMemberValue(
-                "value",
-                new StringMemberValue(this.xsl, file.getConstPool())
+            attribute.addAnnotation(
+                this.make(XmlSchema.class, this.xsd, file)
             );
-            attribute.addAnnotation(annotation);
             for (Annotation existing : this.annotations(ctc, parent)) {
                 attribute.addAnnotation(existing);
             }
@@ -211,6 +224,26 @@ public final class PageBuilder {
             StringUtils.join(names, ", ")
         );
         return result;
+    }
+
+    /**
+     * Construct a new annotation.
+     * @param type Type of annotation
+     * @param value The value to set
+     * @param file Class file
+     * @return The annotation
+     */
+    private Annotation make(final Class type, final String value,
+        final ClassFile file) {
+        final Annotation annotation = new Annotation(
+            type.getName(),
+            file.getConstPool()
+        );
+        annotation.addMemberValue(
+            "value",
+            new StringMemberValue(value, file.getConstPool())
+        );
+        return annotation;
     }
 
 }

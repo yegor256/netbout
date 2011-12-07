@@ -29,77 +29,20 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.rexsl.test.TestClient
-import com.rexsl.test.XhtmlConverter
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
+import com.netbout.spi.client.RestSession
 import javax.ws.rs.core.UriBuilder
-import org.junit.Assert
-import org.xmlmatchers.XmlMatchers
+import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def start(cookie) {
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .header(HttpHeaders.COOKIE, cookie)
-        .get('/s')
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-    new XmlSlurper().parseText(r.body).bout.number
-}
+def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def walter = new RestSession(rexsl.home).authenticate(auth, 'nb:walter', '')
 
-def rename(cookie, bout, title) {
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .header(HttpHeaders.COOKIE, cookie)
-        .body('title=' + title)
-        .post(UriBuilder.fromPath('/{bout}/r').build(bout).toString())
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
-}
+def bout = jeff.start()
+def number = bout.number()
+bout.invite(walter)
+walter.bout(number).confirm(true)
+def text = 'How are you?'
+def msg = walter.bout(number).post(text).number()
+MatcherAssert.assertThat(bout.message(msg).text(), Matchers.equalTo(text))
 
-def invite(cookie, bout, identity) {
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .header(HttpHeaders.COOKIE, cookie)
-        .get(
-            UriBuilder.fromPath('/{bout}/i')
-                .queryParam('name', identity)
-                .build(bout)
-                .toString()
-        )
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-}
-
-def post(cookie, bout, text) {
-    def r = new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .header(HttpHeaders.COOKIE, cookie)
-        .body('text=' + text)
-        .post(UriBuilder.fromPath('/{bout}/p').build(bout).toString())
-    Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_MOVED_PERM))
-}
-
-// user name: John Doe
-// identity name: johnny.doe
-def cookie = 'netbout="Sm9obiBEb2U=.am9obm55LmRvZQ==.97febcab64627f2ebc4bb9292c3cc0bd"'
-
-def bout = start(cookie)
-rename(cookie, bout, 'new interesting discussion...')
-post(cookie, bout, 'Hello, friends!')
-invite(cookie, bout, 'j.depp')
-invite(cookie, bout, 'somebody-we-dont-know-yet')
-invite(cookie, bout, 'nb:db')
-
-def r = new TestClient(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .header(HttpHeaders.COOKIE, cookie)
-    .get(UriBuilder.fromPath('/{bout}').build(bout).toString())
-Assert.assertThat(r.status, Matchers.equalTo(HttpURLConnection.HTTP_OK))
-[
-    "/processing-instruction('xml-stylesheet')[contains(.,'/bout.xsl')]",
-    '/page/identity/name[.="johnny.doe"]',
-    '/page/bout/title[.="new interesting discussion..."]',
-    '/page/bout/participants/participant',
-    '/page/bout/messages/message/text[contains(.,"friends")]',
-].each {
-    Assert.assertThat(XhtmlConverter.the(r.body), XmlMatchers.hasXPath(it))
-}
