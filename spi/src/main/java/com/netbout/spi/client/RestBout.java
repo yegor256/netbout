@@ -74,7 +74,7 @@ final class RestBout implements Bout {
     @Override
     public Long number() {
         final String num = this.client
-            .get()
+            .get("reading bout number")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout")
             .xpath("/page/bout/number/text()")
@@ -88,7 +88,7 @@ final class RestBout implements Bout {
     @Override
     public String title() {
         return this.client
-            .get()
+            .get("reading bout title")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .xpath("/page/bout/title/text()")
             .get(0);
@@ -100,11 +100,11 @@ final class RestBout implements Bout {
     @Override
     public void rename(final String text) {
         this.client
-            .get()
+            .get("reading 'rename' rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='rename']")
             .rel("rename")
-            .post("title", text)
+            .post("renaming bout", "title", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
@@ -114,7 +114,7 @@ final class RestBout implements Bout {
     @Override
     public Collection<Participant> participants() {
         final List<String> names = this.client
-            .get()
+            .get("reading names of bout participants")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/participants")
             .xpath("/page/bout/participants/participant/identity/text()");
@@ -131,12 +131,12 @@ final class RestBout implements Bout {
     @Override
     public Participant invite(final Identity identity) {
         final String name = this.client
-            .get()
+            .get("reading 'invite' rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='invite']")
             .rel("invite")
             .queryParam("name", identity.name())
-            .get()
+            .get("inviting participant to the bout")
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("participant-name");
         return new RestParticipant(this.client.copy(), name);
@@ -148,7 +148,7 @@ final class RestBout implements Bout {
     @Override
     public List<Message> messages(final String query) {
         final List<String> nums = this.client
-            .get()
+            .get("reading numbers of bout messages")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/messages")
             .xpath("/page/bout/messages/message/number");
@@ -174,19 +174,19 @@ final class RestBout implements Bout {
     public void confirm(final boolean status) {
         if (status) {
             this.client
-                .get()
+                .get("reading 'join' rel link")
                 .assertStatus(HttpURLConnection.HTTP_OK)
                 .assertXPath("/page/links/link[@rel='join']")
                 .rel("join")
-                .get()
+                .get("joining the bout")
                 .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
         } else {
             this.client
-                .get()
+                .get("reading 'leave' rel link")
                 .assertStatus(HttpURLConnection.HTTP_OK)
                 .assertXPath("/page/links/link[@rel='leave']")
                 .rel("leave")
-                .get()
+                .get("leaving the bout")
                 .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
         }
     }
@@ -197,11 +197,11 @@ final class RestBout implements Bout {
     @Override
     public Message post(final String text) {
         final String num = this.client
-            .get()
+            .get("reading 'post' rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='post']")
             .rel("post")
-            .post("text", text)
+            .post("posting new message to the bout", "text", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("message-id");
         return new RestMessage(this.client.copy(), Long.valueOf(num));

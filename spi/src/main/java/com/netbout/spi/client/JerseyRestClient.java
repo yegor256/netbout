@@ -83,7 +83,7 @@ final class JerseyRestClient implements RestClient {
      * {@inheritDoc}
      */
     @Override
-    public RestResponse get() {
+    public RestResponse get(final String message) {
         final long start = System.currentTimeMillis();
         final ClientResponse response = this.resource
             .type(MediaType.APPLICATION_XML)
@@ -91,8 +91,9 @@ final class JerseyRestClient implements RestClient {
             .get(ClientResponse.class);
         Logger.info(
             this,
-            "#GET(%s): [%d %s] in %dms",
+            "#GET(%s): \"%s\" [%d %s] in %dms",
             this.resource.getURI(),
+            message,
             response.getStatus(),
             response.getClientResponseStatus().getReasonPhrase(),
             System.currentTimeMillis() - start
@@ -104,7 +105,7 @@ final class JerseyRestClient implements RestClient {
      * {@inheritDoc}
      */
     @Override
-    public RestResponse post(final String... params) {
+    public RestResponse post(final String message, final String... params) {
         final MultivaluedMap data = new MultivaluedMapImpl();
         for (int pos = 0; pos < params.length; pos += 1) {
             data.add(params[pos], params[pos + 1]);
@@ -117,8 +118,9 @@ final class JerseyRestClient implements RestClient {
             .post(ClientResponse.class, data);
         Logger.info(
             this,
-            "#POST(%s): [%d %s] in %dms",
+            "#POST(%s): \"%s\" [%d %s] in %dms",
             this.resource.getURI(),
+            message,
             response.getStatus(),
             response.getClientResponseStatus().getReasonPhrase(),
             System.currentTimeMillis() - start

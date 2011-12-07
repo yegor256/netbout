@@ -59,16 +59,18 @@ interface RestClient {
 
     /**
      * Fetch HTTP GET response.
+     * @param message Explanation of the operation
      * @return This object
      */
-    RestResponse get();
+    RestResponse get(String message);
 
     /**
      * Fetch HTTP POST response.
+     * @param message Explanation of the operation
      * @param params Form names and params
      * @return This object
      */
-    RestResponse post(String... params);
+    RestResponse post(String message, String... params);
 
     /**
      * Just clone this client.

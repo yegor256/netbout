@@ -85,7 +85,7 @@ final class RestIdentity implements Identity {
     @Override
     public String name() {
         return this.client
-            .get()
+            .get("reading identity name")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity")
             .xpath("/page/identity/name/text()")
@@ -98,7 +98,7 @@ final class RestIdentity implements Identity {
     @Override
     public Bout start() {
         final URI uri = this.client
-            .get()
+            .get("starting new bout")
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .location();
         return new RestBout(this.client.copy(uri));
@@ -111,7 +111,7 @@ final class RestIdentity implements Identity {
     public List<Bout> inbox(final String query) {
         final List<String> hrefs = this.client
             .queryParam("q", query)
-            .get()
+            .get("reading hrefs of bouts in the inbox")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bouts")
             .xpath("/page/bouts/bout/@href");
@@ -129,7 +129,7 @@ final class RestIdentity implements Identity {
     public Bout bout(final Long num) {
         final String href = this.client
             .queryParam("q", String.format("bout:%s", num))
-            .get()
+            .get("reading href of a bout by number")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))
             .xpath(String.format("/page/bouts/bout[number='%d']/@href", num))
@@ -143,7 +143,7 @@ final class RestIdentity implements Identity {
     @Override
     public URL photo() {
         final String href = this.client
-            .get()
+            .get("reading photo of identity")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity/photo[.!='']")
             .xpath("/page/identity/photo/text()")
@@ -187,7 +187,7 @@ final class RestIdentity implements Identity {
     @Override
     public Set<String> aliases() {
         final List<String> names = this.client
-            .get()
+            .get("reading aliases of identity")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity/aliases")
             .xpath("/page/identity/aliases/alias/text()");

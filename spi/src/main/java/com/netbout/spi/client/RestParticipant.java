@@ -94,7 +94,7 @@ final class RestParticipant implements Participant {
      */
     public String bySuffix(final String suffix) {
         return this.client
-            .get()
+            .get(String.format("reading %s of a participant", suffix))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(
                 String.format(

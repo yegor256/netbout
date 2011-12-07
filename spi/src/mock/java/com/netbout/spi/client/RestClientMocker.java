@@ -77,9 +77,9 @@ public final class RestClientMocker {
                 .xpath(entry.getKey());
         }
         final RestClient client = Mockito.mock(RestClient.class);
-        Mockito.doReturn(response).when(client).get();
+        Mockito.doReturn(response).when(client).get(Mockito.anyString());
         Mockito.doReturn(response).when(client)
-            .post((String) Mockito.anyVararg());
+            .post(Mockito.anyString(), (String) Mockito.anyVararg());
         return client;
     }
 
