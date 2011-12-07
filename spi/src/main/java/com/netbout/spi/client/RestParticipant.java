@@ -68,7 +68,7 @@ final class RestParticipant implements Participant {
      */
     @Override
     public Bout bout() {
-        return new RestBout(this.client.clone());
+        return new RestBout(this.client.copy());
     }
 
     /**

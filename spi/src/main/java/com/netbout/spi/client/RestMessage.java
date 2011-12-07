@@ -69,7 +69,7 @@ final class RestMessage implements Message {
      */
     @Override
     public Bout bout() {
-        return new RestBout(this.client.clone());
+        return new RestBout(this.client.copy());
     }
 
     /**
@@ -85,7 +85,7 @@ final class RestMessage implements Message {
      */
     @Override
     public Identity author() {
-        return new Friend(this.bySuffix("/author"));
+        return new Friend(this.bySuffix("/author/text()"));
     }
 
     /**
@@ -93,7 +93,7 @@ final class RestMessage implements Message {
      */
     @Override
     public String text() {
-        return this.bySuffix("/text");
+        return this.bySuffix("/text/text()");
     }
 
     /**
@@ -101,7 +101,7 @@ final class RestMessage implements Message {
      */
     @Override
     public Date date() {
-        return new Date(this.bySuffix("/date"));
+        return new Date(this.bySuffix("/date/text()"));
     }
 
     /**
@@ -109,7 +109,7 @@ final class RestMessage implements Message {
      */
     @Override
     public Boolean seen() {
-        return Boolean.valueOf(this.bySuffix("/author"));
+        return Boolean.valueOf(this.bySuffix("/@seen"));
     }
 
     /**

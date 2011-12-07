@@ -74,21 +74,21 @@ interface RestClient {
      * Just clone this client.
      * @return New client
      */
-    RestClient clone();
+    RestClient copy();
 
     /**
      * Clone this client with a new URI.
      * @param uri New entry point
      * @return New client
      */
-    RestClient clone(URI uri);
+    RestClient copy(URI uri);
 
     /**
      * Clone this client with a new URI.
      * @param uri New entry point
      * @return New client
      */
-    RestClient clone(String uri);
+    RestClient copy(String uri);
 
     /**
      * Get URI of this client.

@@ -29,30 +29,49 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Identity;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.sun.jersey.api.client.ClientResponse;
+import org.mockito.Mockito;
 
 /**
- * Test case for {@link RestIdentity}.
+ * Mocker of {@link ClientResponse}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class RestIdentityTest {
+public final class ClientResponseMocker {
 
     /**
-     * RestIdentity can fetch a name of identity through REST API.
-     * @throws Exception If there is some problem inside
+     * Paths.
      */
-    @Test
-    public void fetchesNameOfIdentity() throws Exception {
-        final String name = "Jeff Lebowski";
-        final RestClient client = new RestClientMocker()
-            .onXPath("/page/identity/name/text()", name)
-            .mock();
-        final Identity identity = new RestIdentity(client);
-        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    private final transient ClientResponse response =
+        Mockito.mock(ClientResponse.class);
+
+    /**
+     * Return this status code.
+     * @param code The code
+     * @return This object
+     */
+    public ClientResponseMocker withStatus(final int code) {
+        Mockito.doReturn(code).when(this.response).getStatus();
+        return this;
+    }
+
+    /**
+     * Return this entity.
+     * @param entity The entity
+     * @return This object
+     */
+    public ClientResponseMocker withEntity(final String entity) {
+        Mockito.doReturn(entity).when(this.response)
+            .getEntity(Mockito.any(Class.class));
+        return this;
+    }
+
+    /**
+     * Mock it.
+     * @return Mocked class
+     */
+    public ClientResponse mock() {
+        return this.response;
     }
 
 }

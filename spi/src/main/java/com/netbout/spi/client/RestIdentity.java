@@ -88,7 +88,7 @@ final class RestIdentity implements Identity {
             .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity")
-            .xpath("/page/identity/name")
+            .xpath("/page/identity/name/text()")
             .get(0);
     }
 
@@ -101,7 +101,7 @@ final class RestIdentity implements Identity {
             .get()
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .location();
-        return new RestBout(this.client.clone(uri));
+        return new RestBout(this.client.copy(uri));
     }
 
     /**
@@ -117,7 +117,7 @@ final class RestIdentity implements Identity {
             .xpath("/page/bouts/bout/@href");
         final List<Bout> bouts = new ArrayList<Bout>();
         for (String href : hrefs) {
-            bouts.add(new RestBout(this.client.clone(href)));
+            bouts.add(new RestBout(this.client.copy(href)));
         }
         return bouts;
     }
@@ -134,7 +134,7 @@ final class RestIdentity implements Identity {
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))
             .xpath(String.format("/page/bouts/bout[number='%d']/@href", num))
             .get(0);
-        return new RestBout(this.client.clone(href));
+        return new RestBout(this.client.copy(href));
     }
 
     /**
@@ -146,7 +146,7 @@ final class RestIdentity implements Identity {
             .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity/photo[.!='']")
-            .xpath("/page/identity/photo")
+            .xpath("/page/identity/photo/text()")
             .get(0);
         try {
             return new URL(href);
@@ -190,7 +190,7 @@ final class RestIdentity implements Identity {
             .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity/aliases")
-            .xpath("/page/identity/aliases/alias");
+            .xpath("/page/identity/aliases/alias/text()");
         return new HashSet(names);
     }
 

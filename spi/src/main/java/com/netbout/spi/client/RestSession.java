@@ -39,9 +39,7 @@ import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 /**
@@ -75,7 +73,7 @@ public final class RestSession {
     }
 
     /**
-     * Get identity in the session.
+     * Get identity in the session through Netbout authentication mechanism.
      * @param user The user to authenticate
      * @param identity Name of the identity
      * @param secret The secret word to use
@@ -84,9 +82,9 @@ public final class RestSession {
     public Identity authenticate(final URI user, final String iname,
         final String secret) {
         final WebResource resource = this.client.resource(this.home);
-        resource.type(MediaType.APPLICATION_XML);
-        resource.cookie(new Cookie("netbout", this.fetch(user, iname, secret)));
-        return new RestIdentity(new JerseyRestClient(resource));
+        return new RestIdentity(
+            new JerseyRestClient(resource, this.fetch(user, iname, secret))
+        );
     }
 
     /**
@@ -98,14 +96,40 @@ public final class RestSession {
      */
     public String fetch(final URI user, final String identity,
         final String secret) {
-        return this.client.resource(this.home)
+        final WebResource resource = this.client.resource(this.home)
             .path("/auth")
             .queryParam("user", user.toString())
             .queryParam("identity", identity)
-            .queryParam("secret", secret)
-            .get(ClientResponse.class)
-            .getHeaders()
-            .getFirst("Netbout-auth");
+            .queryParam("secret", secret);
+        final ClientResponse response = resource.get(ClientResponse.class);
+        if (response.getStatus() != HttpURLConnection.HTTP_SEE_OTHER) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Invalid HTTP status %d at %s during authentication",
+                    response.getStatus(),
+                    resource.getURI()
+                )
+            );
+        }
+        final String token = response.getHeaders().getFirst("Netbout-auth");
+        if (token == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Authentication token not found in response header at %s",
+                    resource.getURI()
+                )
+            );
+        }
+        Logger.info(
+            this,
+            "#fetch('%s', '%s', '%s'): '%s' authenticated us as '%s'",
+            user,
+            identity,
+            secret,
+            resource.getURI(),
+            token
+        );
+        return token;
     }
 
 }

@@ -35,6 +35,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.ymock.util.Logger;
 import java.net.URI;
 import java.util.List;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
@@ -52,11 +54,18 @@ final class JerseyRestClient implements RestClient {
     private final transient WebResource resource;
 
     /**
+     * Authentication token.
+     */
+    private final transient String token;
+
+    /**
      * Pubic ctor.
      * @param res The resource to work with
+     * @param tkn Authentication token
      */
-    public JerseyRestClient(final WebResource res) {
+    public JerseyRestClient(final WebResource res, final String tkn) {
         this.resource = res;
+        this.token = tkn;
     }
 
     /**
@@ -64,7 +73,10 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestClient queryParam(final String name, final String value) {
-        return new JerseyRestClient(this.resource.queryParam(name, value));
+        return new JerseyRestClient(
+            this.resource.queryParam(name, value),
+            this.token
+        );
     }
 
     /**
@@ -73,7 +85,10 @@ final class JerseyRestClient implements RestClient {
     @Override
     public RestResponse get() {
         final long start = System.currentTimeMillis();
-        final ClientResponse response = this.resource.get(ClientResponse.class);
+        final ClientResponse response = this.resource
+            .type(MediaType.APPLICATION_XML)
+            .cookie(this.cookie())
+            .get(ClientResponse.class);
         Logger.info(
             this,
             "#GET(%s): [%d %s] in %dms",
@@ -82,7 +97,7 @@ final class JerseyRestClient implements RestClient {
             response.getClientResponseStatus().getReasonPhrase(),
             System.currentTimeMillis() - start
         );
-        return new JerseyRestResponse(response);
+        return new JerseyRestResponse(this, response);
     }
 
     /**
@@ -96,8 +111,10 @@ final class JerseyRestClient implements RestClient {
             pos += 1;
         }
         final long start = System.currentTimeMillis();
-        final ClientResponse response =
-            this.resource.post(ClientResponse.class, data);
+        final ClientResponse response = this.resource
+            .type(MediaType.APPLICATION_XML)
+            .cookie(this.cookie())
+            .post(ClientResponse.class, data);
         Logger.info(
             this,
             "#POST(%s): [%d %s] in %dms",
@@ -106,32 +123,33 @@ final class JerseyRestClient implements RestClient {
             response.getClientResponseStatus().getReasonPhrase(),
             System.currentTimeMillis() - start
         );
-        return new JerseyRestResponse(response);
+        return new JerseyRestResponse(this, response);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RestClient clone() {
-        return new JerseyRestClient(this.resource);
+    public RestClient copy() {
+        return new JerseyRestClient(this.resource, this.token);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RestClient clone(final URI uri) {
-        return new JerseyRestClient(this.resource.uri(uri));
+    public RestClient copy(final URI uri) {
+        return new JerseyRestClient(this.resource.uri(uri), this.token);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RestClient clone(final String uri) {
+    public RestClient copy(final String uri) {
         return new JerseyRestClient(
-            this.resource.uri(UriBuilder.fromUri(uri).build())
+            this.resource.uri(UriBuilder.fromUri(uri).build()),
+            this.token
         );
     }
 
@@ -141,6 +159,14 @@ final class JerseyRestClient implements RestClient {
     @Override
     public URI uri() {
         return this.resource.getURI();
+    }
+
+    /**
+     * Create a cookie for request.
+     * @return The cookie
+     */
+    private Cookie cookie() {
+        return new Cookie("netbout", this.token);
     }
 
 }

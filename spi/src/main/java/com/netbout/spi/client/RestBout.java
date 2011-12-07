@@ -77,7 +77,7 @@ final class RestBout implements Bout {
             .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout")
-            .xpath("/page/bout/number")
+            .xpath("/page/bout/number/text()")
             .get(0);
         return Long.valueOf(num);
     }
@@ -90,7 +90,7 @@ final class RestBout implements Bout {
         return this.client
             .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .xpath("/page/bout/title")
+            .xpath("/page/bout/title/text()")
             .get(0);
     }
 
@@ -117,10 +117,10 @@ final class RestBout implements Bout {
             .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/participants")
-            .xpath("/page/bout/participants/participant/identity");
+            .xpath("/page/bout/participants/participant/identity/text()");
         final List<Participant> dudes = new ArrayList<Participant>();
         for (String name : names) {
-            dudes.add(new RestParticipant(this.client.clone(), name));
+            dudes.add(new RestParticipant(this.client.copy(), name));
         }
         return dudes;
     }
@@ -139,7 +139,7 @@ final class RestBout implements Bout {
             .get()
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("participant-name");
-        return new RestParticipant(this.client.clone(), name);
+        return new RestParticipant(this.client.copy(), name);
     }
 
     /**
@@ -151,10 +151,10 @@ final class RestBout implements Bout {
             .get()
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/messages")
-            .xpath("/page/bout/messages/message/@number");
+            .xpath("/page/bout/messages/message/number");
         final List<Message> msgs = new ArrayList<Message>();
         for (String num : nums) {
-            msgs.add(new RestMessage(this.client.clone(), Long.valueOf(num)));
+            msgs.add(new RestMessage(this.client.copy(), Long.valueOf(num)));
         }
         return msgs;
     }
@@ -164,7 +164,7 @@ final class RestBout implements Bout {
      */
     @Override
     public Message message(final Long number) {
-        return new RestMessage(this.client.clone(), number);
+        return new RestMessage(this.client.copy(), number);
     }
 
     /**
@@ -204,7 +204,7 @@ final class RestBout implements Bout {
             .post("text", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("message-id");
-        return new RestMessage(this.client.clone(), Long.valueOf(num));
+        return new RestMessage(this.client.copy(), Long.valueOf(num));
     }
 
 }
