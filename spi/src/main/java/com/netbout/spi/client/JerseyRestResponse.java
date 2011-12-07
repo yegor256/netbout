@@ -47,6 +47,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -176,7 +177,11 @@ final class JerseyRestResponse implements RestResponse {
         final String hdr = this.response.getHeaders().getFirst(name);
         if (hdr == null) {
             throw new AssertionError(
-                String.format("Header '%s' not found", name)
+                String.format(
+                    "Header '%s' not found in [%s]",
+                    name,
+                    StringUtils.join(this.response.getHeaders().keySet(), ", ")
+                )
             );
         }
         return hdr;
