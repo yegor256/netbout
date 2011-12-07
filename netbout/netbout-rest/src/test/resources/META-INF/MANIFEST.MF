@@ -7,3 +7,7 @@ Netbout-JdbcDriver: org.h2.Driver
 Netbout-JdbcUrl: jdbc:h2:mem:db
 Netbout-JdbcUser: mem
 Netbout-JdbcPassword: mem
+Netbout-SmtpHost: smtp.gmail.com
+Netbout-SmtpPort: 587
+Netbout-SmtpUser: test@netbout.com
+Netbout-SmtpPassword: test5432
