@@ -58,7 +58,6 @@ public final class FacebookRs extends AbstractRs {
      * @param code Facebook "authorization code"
      * @return The JAX-RS response
      */
-    @Path("/")
     @GET
     public Response fbauth(@QueryParam("code") final String code) {
         Identity identity;

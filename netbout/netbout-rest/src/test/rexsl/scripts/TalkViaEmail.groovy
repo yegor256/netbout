@@ -42,5 +42,5 @@ def email = 'test@example.com'
 def bout = jeff.start()
 def friends = jeff.friends(email)
 MatcherAssert.assertThat(friends.size(), Matchers.equalTo(1))
-bout.invite(friends.get(0))
+bout.invite(friends.iterator().next())
 bout.post('How are you doing?')

@@ -138,6 +138,7 @@ public final class LongStage {
             .arg(this.bout.number())
             .arg(this.coords.stage())
             .arg(this.coords.place())
+            .noCache()
             .inBout(this.bout)
             // .progress(report)
             .asDefault("<no-data/>")

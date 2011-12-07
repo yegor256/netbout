@@ -69,7 +69,7 @@ public final class LoginRs extends AbstractRs {
                 this.uriInfo()
                     .getBaseUriBuilder()
                     .clone()
-                    .path(FacebookRs.class, "fbauth")
+                    .path("/fb")
                     .build()
                     .toString()
             )

@@ -30,6 +30,7 @@ import com.netbout.hub.User;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
+import com.netbout.utils.Cryptor;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.rexsl.core.Manifests;
@@ -76,6 +77,7 @@ public final class AuthRs extends AbstractRs {
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.uriInfo().getBaseUri())
+            .header("Netbout-auth", new Cryptor().encrypt(identity))
             .build();
     }
 

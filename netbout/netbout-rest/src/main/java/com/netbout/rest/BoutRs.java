@@ -33,6 +33,7 @@ import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.rexsl.core.Manifests;
 import java.net.URI;
@@ -68,6 +69,11 @@ public final class BoutRs extends AbstractRs {
      * Query to filter messages with.
      */
     private transient String query;
+
+    /**
+     * Mask for suggestions of invitees.
+     */
+    private transient String mask;
 
     /**
      * Stage coordinates.
@@ -115,6 +121,15 @@ public final class BoutRs extends AbstractRs {
     }
 
     /**
+     * Set suggestion keyword.
+     * @param msk The mask
+     */
+    @QueryParam("mask")
+    public void setMask(final String msk) {
+        this.mask = msk;
+    }
+
+    /**
      * Set stage coordinates.
      * @param cookie The information from cookie
      */
@@ -136,38 +151,6 @@ public final class BoutRs extends AbstractRs {
     }
 
     /**
-     * Get bout front page, with suggestions for invites.
-     * @param keyword The keyword to use
-     * @return The JAX-RS response
-     */
-    @GET
-    @Path("/s")
-    public Response suggest(@QueryParam("k") final String keyword) {
-        if (keyword == null) {
-            throw new ForwardException(
-                this,
-                this.self(""),
-                "Query param 'k' missed"
-            );
-        }
-        final List<Invitee> invitees = new ArrayList<Invitee>();
-        for (Identity identity : this.identity().friends(keyword)) {
-            invitees.add(
-                Invitee.build(
-                    identity,
-                    UriBuilder.fromUri(this.self(""))
-                )
-            );
-        }
-        return this.page()
-            .append(new JaxbBundle("keyword", keyword))
-            .append(JaxbGroup.build(invitees, "invitees"))
-            .authenticated(this.identity())
-            .cookie(this.stageCookie())
-            .build();
-    }
-
-    /**
      * Post new message to the bout.
      * @param text Text of message just posted
      * @return The JAX-RS response
@@ -183,13 +166,14 @@ public final class BoutRs extends AbstractRs {
                 "Form param 'text' missed"
             );
         }
-        bout.post(text);
+        final Message msg = bout.post(text);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self(""))
+            .header("Message-number", msg.number())
             .build();
     }
 
@@ -246,6 +230,7 @@ public final class BoutRs extends AbstractRs {
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self(""))
+            .header("Participant-name", name)
             .build();
     }
 
@@ -319,7 +304,7 @@ public final class BoutRs extends AbstractRs {
     private Page page() {
         this.coords.normalize(this.bus(), this.bout());
         final Page page = new PageBuilder()
-            .schema("bout.xsd")
+            .schema("")
             .stylesheet(
                 UriBuilder.fromUri(this.self("/xsl/bout.xsl"))
                     .queryParam("stage", this.coords.stage())
@@ -339,9 +324,21 @@ public final class BoutRs extends AbstractRs {
             )
             .append(new JaxbBundle("query", this.query))
             .link("leave", this.self("/leave"));
+        if (this.mask != null) {
+            final List<Invitee> invitees = new ArrayList<Invitee>();
+            for (Identity identity : this.identity().friends(this.mask)) {
+                invitees.add(
+                    Invitee.build(
+                        identity,
+                        UriBuilder.fromUri(this.self(""))
+                    )
+                );
+            }
+            page.append(new JaxbBundle("mask", this.mask))
+                .append(JaxbGroup.build(invitees, "invitees"));
+        }
         if (this.participant().confirmed()) {
             page.link("post", this.self("/p"))
-                .link("suggest", this.self("/s"))
                 .link("rename", this.self("/r"));
         } else {
             page.link("join", this.self("/join"));

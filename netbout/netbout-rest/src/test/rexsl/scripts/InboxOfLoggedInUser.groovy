@@ -41,7 +41,7 @@ def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 def bout = jeff.start()
 
 // validate content of the inbox
-new TestClient(RestUriBuilder.from(bout).build())
+new TestClient(RestUriBuilder.from(jeff).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
