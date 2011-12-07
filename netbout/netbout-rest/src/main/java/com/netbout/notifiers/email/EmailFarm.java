@@ -36,6 +36,7 @@ import com.netbout.spi.cpa.Operation;
 import com.netbout.utils.Cryptor;
 import com.netbout.utils.TextUtils;
 import com.ymock.util.Logger;
+import javax.mail.internet.InternetAddress;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.velocity.VelocityContext;
 
@@ -47,6 +48,11 @@ import org.apache.velocity.VelocityContext;
  */
 @Farm
 public final class EmailFarm implements IdentityAware {
+
+    /**
+     * Email sender.
+     */
+    private final transient Sender sender = new Sender();
 
     /**
      * Me.
@@ -136,20 +142,21 @@ public final class EmailFarm implements IdentityAware {
             "com/netbout/notifiers/email/email-notification.vm",
             context
         );
-        this.deliver(dude.identity().name(), text);
-    }
-    /**
-     * Deliver this email.
-     * @param email The address of recepient
-     * @param body The body
-     */
-    private void deliver(final String email, final String body) {
-        Logger.info(
-            this,
-            "#deliver('%s', ..) sent:%n%s",
-            email,
-            body
-        );
+        final javax.mail.Message email = this.sender.newMessage();
+        try {
+            email.setFrom(new InternetAddress("no-reply@netbout.com"));
+            email.addRecipient(
+                javax.mail.Message.RecipientType.TO,
+                new InternetAddress(dude.identity().name())
+            );
+            email.setText(text);
+            email.setSubject(dude.bout().title());
+            this.sender.send(email);
+        } catch (javax.mail.internet.AddressException ex) {
+            throw new IllegalArgumentException(ex);
+        } catch (javax.mail.MessagingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
 }

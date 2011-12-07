@@ -112,6 +112,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- JavaMail API 1.4 -->
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version since="7 Dec 2011">1.4.4</version>
+        </dependency>
+        <dependency>
             <!-- Base64 codec -->
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
@@ -235,6 +241,7 @@
                     <execution>
                         <goals>
                             <goal>check</goal>
+                            <goal>package</goal>
                         </goals>
                     </execution>
                 </executions>
