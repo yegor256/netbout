@@ -26,6 +26,7 @@
  */
 package com.netbout.notifiers.email;
 
+import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import java.util.Properties;
 import javax.mail.Message;
@@ -50,7 +51,10 @@ final class Sender {
      * Public ctor.
      */
     public Sender() {
-        this.session = Session.getDefaultInstance(new Properties());
+        final Properties props = new Properties();
+        props.put("mail.smtp.starttls.enable", true);
+        props.put("mail.smtp.auth", true);
+        this.session = Session.getDefaultInstance(props, null);
     }
 
     /**
@@ -68,7 +72,12 @@ final class Sender {
     public void send(final Message message) {
         try {
             final Transport transport = this.session.getTransport("smtp");
-            transport.connect("smtp.gmail.com", 465, "", "");
+            transport.connect(
+                Manifests.read("Netbout-SmtpHost"),
+                Integer.valueOf(Manifests.read("Netbout-SmtpPort")),
+                Manifests.read("Netbout-SmtpUser"),
+                Manifests.read("Netbout-SmtpPassword")
+            );
             transport.sendMessage(message, message.getAllRecipients());
             transport.close();
         } catch (javax.mail.NoSuchProviderException ex) {

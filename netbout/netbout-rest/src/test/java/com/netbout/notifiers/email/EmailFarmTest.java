@@ -81,7 +81,7 @@ public final class EmailFarmTest {
     public void notfiesBoutParticipants() throws Exception {
         final Identity identity = new IdentityMocker().mock();
         final Identity receiver = new IdentityMocker()
-            .namedAs("john@example.com")
+            .namedAs("yegor@tpc2.com")
             .mock();
         final Bout bout = new BoutMocker()
             .withParticipant(receiver)

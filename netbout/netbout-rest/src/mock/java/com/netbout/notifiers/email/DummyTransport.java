@@ -46,7 +46,6 @@ public final class DummyTransport extends Transport {
      */
     public DummyTransport(final Session session, final URLName name) {
         super(session, name);
-        // empty
     }
 
     /**
@@ -63,7 +62,14 @@ public final class DummyTransport extends Transport {
     @Override
     public void connect(final String host, final int port, final String user,
         final String password) {
-        Logger.info(this, "#connect(...)");
+        Logger.info(
+            this,
+            "#connect('%s', %d, '%s', '%s')",
+            host,
+            port,
+            user,
+            password
+        );
     }
 
 }

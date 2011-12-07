@@ -327,6 +327,10 @@
                                         <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}</Netbout-JdbcUrl>
                                         <Netbout-JdbcUser>${mysql.user}</Netbout-JdbcUser>
                                         <Netbout-JdbcPassword>${mysql.password}</Netbout-JdbcPassword>
+                                        <Netbout-SmtpHost>${smtp.host}</Netbout-SmtpHost>
+                                        <Netbout-SmtpPort>${smtp.port}</Netbout-SmtpPort>
+                                        <Netbout-SmtpUser>${smtp.user}</Netbout-SmtpUser>
+                                        <Netbout-SmtpPassword>${smtp.password}</Netbout-SmtpPassword>
                                     </manifestEntries>
                                 </archive>
                             </configuration>

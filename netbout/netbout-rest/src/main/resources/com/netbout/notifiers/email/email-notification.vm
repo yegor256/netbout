@@ -1,10 +1,3 @@
-${recepient.name()},
-
-This message was just posted to "${bout.title()}" by ${message.author().name()}:
-
 ${message.text()}
 
-Click to reply: ${href}
-
-Yours,
-Netbout.com
+This message was just posted to "${bout.title()}" by ${message.author().name()}. Click to reply: ${href}
