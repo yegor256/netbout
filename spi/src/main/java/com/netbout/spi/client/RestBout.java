@@ -132,13 +132,10 @@ final class RestBout implements Bout {
     public Participant invite(final Identity identity) {
         final String name = identity.name();
         final List<String> hrefs = this.client
-            .get("reading 'suggest' rel link")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/links/link[@rel='suggest']")
-            .rel("suggest")
-            .queryParam("k", name)
+            .queryParam("mask", name)
             .get(String.format("reading suggestions for '%s'", name))
             .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath(String.format("/page/mask[.='%s']", name))
             .assertXPath("/page/invitees")
             .xpath(
                 String.format(
@@ -159,7 +156,7 @@ final class RestBout implements Bout {
             .copy(hrefs.get(0))
             .get(String.format("inviting '%s' to the bout", name))
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-            .header("participant-name");
+            .header("Participant-name");
         return new RestParticipant(this.client.copy(), participant);
     }
 
@@ -224,7 +221,7 @@ final class RestBout implements Bout {
             .rel("post")
             .post("posting new message to the bout", "text", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-            .header("message-id");
+            .header("Message-number");
         return new RestMessage(this.client.copy(), Long.valueOf(num));
     }
 

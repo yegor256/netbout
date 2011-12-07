@@ -173,7 +173,13 @@ final class JerseyRestResponse implements RestResponse {
      */
     @Override
     public String header(final String name) {
-        return this.response.getHeaders().getFirst(name);
+        final String hdr = this.response.getHeaders().getFirst(name);
+        if (hdr == null) {
+            throw new AssertionError(
+                String.format("Header '%s' not found", name)
+            );
+        }
+        return hdr;
     }
 
     /**

@@ -181,10 +181,23 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> friends(final String keyword) {
-        throw new UnsupportedOperationException(
-            "Identity#friends() is not implemented yet"
-        );
+    public Set<Identity> friends(final String mask) {
+        final List<String> names = this.client
+            .get("reading 'friends' rel link")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/links/link[@rel='friends']")
+            .rel("friends")
+            .queryParam("mask", mask)
+            .get(String.format("reading suggestions for '%s'", mask))
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath(String.format("/page/mask[.='%s']", mask))
+            .assertXPath("/page/invitees")
+            .xpath("/page/invitees/invitee/name/text()");
+        final Set<Identity> friends = new HashSet<Identity>();
+        for (String name : names) {
+            friends.add(new Friend(name));
+        }
+        return friends;
     }
 
     /**
