@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.servlets;
+package com.netbout.rest;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
@@ -34,28 +34,31 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
 import java.net.URL;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.servlet.ServletContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
 
 /**
- * Starts entire application.
+ * Starter.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Starter implements ServletContextListener {
+@Provider
+public final class Starter implements ContextResolver<Starter> {
 
     /**
-     * {@inheritDoc}
-     * @checkstyle ExecutableStatementCount (35 lines)
+     * Public ctor.
+     * @param context Servlet context
+     * @checkstyle ExecutableStatementCount (3 lines)
      */
-    @Override
-    public void contextInitialized(final ServletContextEvent event) {
+    public Starter(@Context final ServletContext context) {
         final long start = System.currentTimeMillis();
         final Bus bus = new DefaultBus();
         final Hub hub = new DefaultHub(bus);
-        event.getServletContext().setAttribute("com.netbout.rest.HUB", hub);
-        event.getServletContext().setAttribute("com.netbout.rest.BUS", bus);
+        context.setAttribute("com.netbout.rest.HUB", hub);
+        context.setAttribute("com.netbout.rest.BUS", bus);
         final String uname = "netbout";
         try {
             final Identity idb = hub.user(uname).identity("nb:db");
@@ -79,8 +82,8 @@ public final class Starter implements ServletContextListener {
         }
         Logger.info(
             this,
-            "#contextInitialized(%s): done in %dms",
-            event.getClass().getName(),
+            "#Starter(%s): done in %dms",
+            context.getClass().getName(),
             System.currentTimeMillis() - start
         );
     }
@@ -89,12 +92,8 @@ public final class Starter implements ServletContextListener {
      * {@inheritDoc}
      */
     @Override
-    public void contextDestroyed(final ServletContextEvent event) {
-        Logger.info(
-            this,
-            "#contextDestroyed(%s): done",
-            event.getClass().getName()
-        );
+    public Starter getContext(final Class<?> cls) {
+        throw new UnsupportedOperationException("Starter#getContext()");
     }
 
 }
