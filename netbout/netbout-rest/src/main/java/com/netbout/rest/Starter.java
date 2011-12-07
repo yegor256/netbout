@@ -50,6 +50,8 @@ public final class Starter implements ContextResolver<Starter> {
 
     /**
      * Public ctor.
+     * @param context Servlet context
+     * @checkstyle ExecutableStatementCount (3 lines)
      */
     public Starter(@Context final ServletContext context) {
         final long start = System.currentTimeMillis();
@@ -91,7 +93,7 @@ public final class Starter implements ContextResolver<Starter> {
      */
     @Override
     public Starter getContext(final Class<?> cls) {
-        return null;
+        throw new UnsupportedOperationException("Starter#getContext()");
     }
 
 }
