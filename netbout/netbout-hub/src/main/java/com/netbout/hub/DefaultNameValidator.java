@@ -35,22 +35,49 @@ import com.netbout.spi.UnreachableIdentityException;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface NameValidator {
+final class DefaultNameValidator implements NameValidator {
 
     /**
-     * Validate this identity and return TRUE if valid.
-     * @param identity The identity
-     * @return Is it valid?
+     * The bus.
      */
-    Boolean isValid(String identity);
+    private final transient Bus bus;
 
     /**
-     * Validate this identity and return back if valid.
-     * @param identity The identity
-     * @return The same name
-     * @throws UnreachableIdentityException If it's not valid
-     * @checkstyle RedundantThrows (3 lines)
+     * Public ctor.
+     * @param ibus The bus
      */
-    String validate(String identity) throws UnreachableIdentityException;
+    public DefaultNameValidator(final Bus ibus) {
+        this.bus = ibus;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean isValid(final String identity) {
+        Boolean reachable = true;
+        if (!identity.matches("\\d+") && !identity.startsWith("nb:")) {
+            reachable = this.bus
+                .make("can-notify-identity")
+                .synchronously()
+                .arg(identity)
+                .asDefault(false)
+                .exec();
+        }
+        return reachable;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    @Override
+    public String validate(final String identity)
+        throws UnreachableIdentityException {
+        if (!this.isValid(identity)) {
+            throw new UnreachableIdentityException(identity);
+        }
+        return identity;
+    }
 
 }

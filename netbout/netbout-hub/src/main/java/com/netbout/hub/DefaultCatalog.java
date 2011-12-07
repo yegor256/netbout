@@ -79,8 +79,8 @@ final class DefaultCatalog implements Catalog {
     public DefaultCatalog(final Bus ibus) {
         this.bus = ibus;
         this.manager = new DefaultBoutMgr(this.bus);
-        this.validator = new NameValidator(this.bus);
-        this.finder = new IdentityFinder(
+        this.validator = new DefaultNameValidator(this.bus);
+        this.finder = new DefaultIdentityFinder(
             this, this.bus, this.all, this.validator
         );
     }

@@ -35,11 +35,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link NameValidator}.
+ * Test case of {@link DefaultNameValidator}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NameValidatorTest {
+public final class DefaultNameValidatorTest {
 
     /**
      * Validator should ask Bus about possibility to validate the identity.
@@ -51,7 +51,7 @@ public final class NameValidatorTest {
             // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(true, "can-notify-identity")
             .mock();
-        final NameValidator validator = new NameValidator(bus);
+        final NameValidator validator = new DefaultNameValidator(bus);
         final String name = "test@example.com";
         MatcherAssert.assertThat(
             validator.validate(name),
@@ -72,7 +72,7 @@ public final class NameValidatorTest {
             // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(false, "can-notify-identity")
             .mock();
-        final NameValidator validator = new NameValidator(bus);
+        final NameValidator validator = new DefaultNameValidator(bus);
         final String name = "some-strange-identity-name";
         validator.validate(name);
     }
@@ -84,7 +84,7 @@ public final class NameValidatorTest {
     @Test
     public void doesntComplainAboutFacebookIdentity() throws Exception {
         final Bus bus = Mockito.mock(Bus.class);
-        final NameValidator validator = new NameValidator(bus);
+        final NameValidator validator = new DefaultNameValidator(bus);
         final String name = String.valueOf(Math.abs(new Random().nextLong()));
         MatcherAssert.assertThat(
             validator.validate(name),
@@ -99,7 +99,7 @@ public final class NameValidatorTest {
     @Test
     public void doesntComplainAboutNetboutReservedNames() throws Exception {
         final Bus bus = Mockito.mock(Bus.class);
-        final NameValidator validator = new NameValidator(bus);
+        final NameValidator validator = new DefaultNameValidator(bus);
         final String name = "nb:some-name-no-matter-what";
         MatcherAssert.assertThat(
             validator.validate(name),

@@ -26,15 +26,8 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
 import com.netbout.spi.Identity;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import java.util.regex.Pattern;
 
 /**
  * Finds identities by keyword.
@@ -42,112 +35,13 @@ import java.util.regex.Pattern;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class IdentityFinder {
-
-    /**
-     * Catalog of identities.
-     */
-    private final transient Catalog catalog;
-
-    /**
-     * All identities known for us at the moment, and their objects.
-     */
-    private final transient ConcurrentMap<String, Identity> all;
-
-    /**
-     * Bus to work with.
-     */
-    private final transient Bus bus;
-
-    /**
-     * Name validator.
-     */
-    private final transient NameValidator validator;
-
-    /**
-     * Public ctor.
-     * @param ctlg The catalog
-     * @param ibus The bus
-     * @param existing Existing set of identities
-     * @param vld Validator of names
-     * @checkstyle ParameterNumber (4 lines)
-     */
-    public IdentityFinder(final Catalog ctlg, final Bus ibus,
-        final ConcurrentMap<String, Identity> existing,
-        final NameValidator vld) {
-        this.catalog = ctlg;
-        this.bus = ibus;
-        this.all = existing;
-        this.validator = vld;
-    }
+interface IdentityFinder {
 
     /**
      * Find by keyword.
      * @param keyword The keyword
      * @return Found identities
      */
-    public Set<Identity> find(final String keyword) {
-        final Set<Identity> found = new HashSet<Identity>();
-        for (Identity identity : this.all.values()) {
-            if (this.matches(keyword, identity)) {
-                found.add(identity);
-            }
-        }
-        final List<String> external = this.bus
-            .make("find-identities-by-keyword")
-            .synchronously()
-            .arg(keyword)
-            .asDefault(new ArrayList<String>())
-            .exec();
-        for (String name : external) {
-            try {
-                found.add(this.catalog.make(name));
-            } catch (com.netbout.spi.UnreachableIdentityException ex) {
-                Logger.warn(
-                    this,
-                    // @checkstyle LineLength (1 line)
-                    "#find('%s'): some helper returned '%s' identity that is not reachable",
-                    keyword,
-                    name
-                );
-            }
-        }
-        if (this.validator.isValid(keyword)) {
-            try {
-                found.add(
-                    this.catalog.make(
-                        keyword,
-                        new HubUser(this.catalog, keyword)
-                    )
-                );
-            } catch (com.netbout.spi.UnreachableIdentityException ex) {
-                Logger.warn(
-                    this,
-                    "#find('%s'): strange, but it's unreachable",
-                    keyword
-                );
-            }
-        }
-        return found;
-    }
-
-    /**
-     * Does this identity matches a keyword?
-     * @param keyword The keyword
-     * @param identity The identity
-     * @return Yes or no?
-     */
-    private boolean matches(final String keyword,
-        final Identity identity) {
-        boolean matches = identity.name().contains(keyword);
-        final Pattern pattern = Pattern.compile(
-            Pattern.quote(keyword),
-            Pattern.CASE_INSENSITIVE
-        );
-        for (String alias : identity.aliases()) {
-            matches |= pattern.matcher(alias).find();
-        }
-        return matches;
-    }
+    Set<Identity> find(String keyword);
 
 }
