@@ -53,7 +53,8 @@ final class ForwardException extends WebApplicationException {
         final String msg) {
         super(
             Response
-                .status(Response.Status.SEE_OTHER)
+                .status(Response.Status.TEMPORARY_REDIRECT)
+                .header("Netbout-error", msg)
                 .entity(msg)
                 .location(uri)
                 .cookie(
@@ -67,7 +68,8 @@ final class ForwardException extends WebApplicationException {
                         // @checkstyle MagicNumber (1 line)
                         60 * 60,
                         false
-                    ))
+                    )
+                )
                 .build()
         );
     }

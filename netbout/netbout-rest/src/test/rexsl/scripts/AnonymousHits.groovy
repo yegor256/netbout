@@ -32,6 +32,7 @@ package com.netbout.rest.rexsl.scripts
 import com.rexsl.test.TestClient
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 // In this script we are trying to make different hits to the site
 // from anonymous user. All of our hits should lead to /login page.
@@ -43,5 +44,5 @@ import javax.ws.rs.core.MediaType
     new TestClient(rexsl.home)
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get(url)
-        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+        .assertStatus(Response.Status.TEMPORARY_REDIRECT.getStatusCode())
 }
