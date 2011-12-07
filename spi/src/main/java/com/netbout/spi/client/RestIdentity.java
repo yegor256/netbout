@@ -49,6 +49,11 @@ import java.util.Set;
 final class RestIdentity implements Identity {
 
     /**
+     * Query param to search INBOX.
+     */
+    private static final transient String QUERY_PARAM = "q";
+
+    /**
      * Rest client.
      */
     private final transient RestClient client;
@@ -112,9 +117,10 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Bout> inbox(final String query) {
         final List<String> hrefs = this.client
-            .queryParam("q", query)
+            .queryParam(this.QUERY_PARAM, query)
             .get(String.format("reading bouts in the inbox '%s'", query))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bouts")
@@ -132,7 +138,7 @@ final class RestIdentity implements Identity {
     @Override
     public Bout bout(final Long num) {
         final String href = this.client
-            .queryParam("q", String.format("bout:%s", num))
+            .queryParam(this.QUERY_PARAM, String.format("bout:%s", num))
             .get(String.format("reading href of bout #%d", num))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))
@@ -181,6 +187,7 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Set<Identity> friends(final String mask) {
         final List<String> names = this.client
             .get("reading 'friends' rel link")

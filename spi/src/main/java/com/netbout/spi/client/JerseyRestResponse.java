@@ -89,7 +89,7 @@ final class JerseyRestResponse implements RestResponse {
     /**
      * The DOM document from parsed output.
      */
-    private Document doc;
+    private transient Document doc;
 
     /**
      * Public ctor.
@@ -237,15 +237,15 @@ final class JerseyRestResponse implements RestResponse {
 
     /**
      * Convert {@link Document} to {@link String}.
-     * @param doc The document to transform
+     * @param document The document to transform
      * @return The string as a result
      */
-    private String asText(final Document doc) {
+    private String asText(final Document document) {
         try {
             final Transformer trans = this.TFACTORY.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
             final StringWriter writer = new StringWriter();
-            trans.transform(new DOMSource(doc), new StreamResult(writer));
+            trans.transform(new DOMSource(document), new StreamResult(writer));
             return writer.toString();
         } catch (javax.xml.transform.TransformerConfigurationException ex) {
             throw new IllegalStateException(ex);

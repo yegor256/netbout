@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.client;
 
-import java.net.URI;
 import org.junit.Test;
 
 /**
@@ -45,9 +44,9 @@ public final class RestSessionTest {
      */
     @Test
     public void performsAuthentication() throws Exception {
-        final RestSession session = new RestSession(
-            new URI("http://www.netbout.com/some-context")
-        );
+        // final RestSession session = new RestSession(
+        //     new URI("http://www.netbout.com/some-context")
+        // );
         // final Identity identity = session.authenticate(
         //     new URI("http://www.netbout.com/anonymous"),
         //     "foo",

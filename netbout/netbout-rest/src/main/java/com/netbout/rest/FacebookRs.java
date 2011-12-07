@@ -27,7 +27,6 @@
 package com.netbout.rest;
 
 import com.netbout.hub.User;
-import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.restfb.DefaultFacebookClient;

@@ -32,7 +32,6 @@ package com.netbout.rest.rexsl.scripts.stages
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.TestClient
-import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.UriBuilder
 
 def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()

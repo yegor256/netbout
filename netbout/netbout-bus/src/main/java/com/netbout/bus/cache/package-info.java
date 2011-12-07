@@ -23,26 +23,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+
+/**
+ * Cache implementations.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
-
-import com.rexsl.test.TestClient
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
-
-// In this script we are trying to make different hits to the site
-// from anonymous user. All of our hits should lead to /login page.
-
-[
-    '/',
-    '/123',
-].each { url ->
-    new TestClient(rexsl.home)
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get(url)
-        .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
-}
+package com.netbout.bus.cache;

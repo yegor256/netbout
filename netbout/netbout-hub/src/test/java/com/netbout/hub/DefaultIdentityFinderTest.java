@@ -32,7 +32,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -124,6 +123,7 @@ public final class DefaultIdentityFinderTest {
     /**
      * Create bus.
      * @param names Names of identities
+     * @return The bus just mocked
      * @throws Exception If there is some problem inside
      */
     private Bus bus(final String... names) throws Exception {

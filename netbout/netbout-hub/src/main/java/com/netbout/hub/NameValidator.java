@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
 import com.netbout.spi.UnreachableIdentityException;
 
 /**

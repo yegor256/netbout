@@ -38,7 +38,7 @@ import javax.ws.rs.core.UriBuilder
 
 def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
 def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
-def bout = jeff.start()
+jeff.start()
 
 // validate content of the inbox
 new TestClient(RestUriBuilder.from(jeff).build())

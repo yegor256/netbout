@@ -26,23 +26,14 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.User;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
-import com.netbout.spi.Identity;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.FacebookClient;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.io.IOUtils;
 
 /**
  * RESTful front of login functions.

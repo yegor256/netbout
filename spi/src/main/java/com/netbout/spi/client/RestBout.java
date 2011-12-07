@@ -112,6 +112,7 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
         final List<String> names = this.client
             .get("reading names of bout participants")
@@ -164,6 +165,7 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
         final List<String> nums = this.client
             .get("reading numbers of bout messages")

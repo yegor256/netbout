@@ -27,23 +27,14 @@
 package com.netbout.rest;
 
 import com.netbout.hub.User;
-import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.utils.Cryptor;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.FacebookClient;
-import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.io.IOUtils;
 
 /**
  * REST authentication page.
@@ -65,6 +56,7 @@ public final class AuthRs extends AbstractRs {
     public Response auth(@QueryParam("user") final String uname,
         @QueryParam("identity") final String iname,
         @QueryParam("secret") final String secret) {
+        assert secret != null;
         Identity identity;
         try {
             identity = this.authenticate(uname, iname, secret);
@@ -91,6 +83,7 @@ public final class AuthRs extends AbstractRs {
      */
     private Identity authenticate(final String uname, final String iname,
         final String secret) throws IOException {
+        assert secret != null;
         final User user = this.hub().user(uname);
         Identity identity;
         try {
