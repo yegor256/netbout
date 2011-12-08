@@ -112,6 +112,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- Selenium web testing framework -->
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version since="30 Oct 2011">2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- JavaMail API 1.4 -->
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>

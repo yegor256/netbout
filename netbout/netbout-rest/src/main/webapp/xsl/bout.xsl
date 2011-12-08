@@ -77,11 +77,11 @@
         </header>
         <xsl:apply-templates select="/page/bout/participants" />
         <xsl:if test="$participant/@confirmed = 'true'">
-            <form method="get">
+            <form method="get" id="invite">
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='suggest']/@href"/>
                 </xsl:attribute>
-                <input name="k">
+                <input name="k" type="search">
                     <xsl:attribute name="value">
                         <xsl:value-of select="/page/keyword"/>
                     </xsl:attribute>
@@ -89,7 +89,7 @@
                 <input value="invite" type="submit"/>
             </form>
             <xsl:if test="/page/invitees">
-                <ul>
+                <ul id="invitees">
                     <xsl:for-each select="/page/invitees/invitee">
                         <li>
                             <a>
@@ -195,7 +195,7 @@
         <xsl:variable name="msg" select="."/>
         <article class="message">
             <header>
-                <img>
+                <img class="photo">
                     <xsl:attribute name="src">
                         <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/photo"/>
                     </xsl:attribute>

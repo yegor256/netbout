@@ -61,7 +61,7 @@
                         <nav id="crumbs" role="navigation">
                             <ul>
                                 <li>
-                                    <img id="photo">
+                                    <img id="photo" class="photo">
                                         <xsl:attribute name="src">
                                             <xsl:value-of select="identity/photo"/>
                                         </xsl:attribute>

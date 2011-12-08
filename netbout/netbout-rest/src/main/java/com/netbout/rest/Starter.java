@@ -55,6 +55,28 @@ public final class Starter implements ContextResolver<Starter> {
      */
     public Starter(@Context final ServletContext context) {
         final long start = System.currentTimeMillis();
+        this.start(context);
+        Logger.info(
+            this,
+            "#Starter(%s): done in %dms",
+            context.getClass().getName(),
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Starter getContext(final Class<?> cls) {
+        throw new UnsupportedOperationException("Starter#getContext()");
+    }
+
+    /**
+     * Start all.
+     * @param context Servlet context
+     */
+    private void start(@Context final ServletContext context) {
         final Bus bus = new DefaultBus();
         final Hub hub = new DefaultHub(bus);
         context.setAttribute("com.netbout.rest.HUB", hub);
@@ -80,20 +102,6 @@ public final class Starter implements ContextResolver<Starter> {
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
-        Logger.info(
-            this,
-            "#Starter(%s): done in %dms",
-            context.getClass().getName(),
-            System.currentTimeMillis() - start
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Starter getContext(final Class<?> cls) {
-        throw new UnsupportedOperationException("Starter#getContext()");
     }
 
 }

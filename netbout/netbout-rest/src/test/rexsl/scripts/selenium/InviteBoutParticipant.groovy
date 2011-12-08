@@ -23,88 +23,37 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
  */
+package com.netbout.rest.rexsl.scripts.selenium
 
-img {
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import com.rexsl.test.TestClient
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
+import org.openqa.selenium.By
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
-input,
-textarea {
-    font-size: 1.4em;
-}
+def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def bout = jeff.start()
 
-p {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
+def driver = new HtmlUnitDriver()
+driver.setJavascriptEnabled(true)
+driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
 
-ul, ol {
-    margin-left: 2em;
-}
+def ibox = driver.findElementByCssSelector('form#invite input[type="search"]')
+ibox.sendKeys('h')
+ibox.submit()
 
-body {
-    font-family: Arial, sans-serif;
-    font-size: 12pt;
-    line-height: 1.3em;
-    min-height: 100%;
-    position: relative;
-    color: #122632;
-    padding: 1em;
-    margin: 0;
-}
-
-/* top right label about deployed version */
-#version {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 0.2em 0.5em;
-    font-size: 0.8em;
-    background-color: gray;
-    color: white;
-}
-
-#crumbs {
-    display: inline;
-}
-
-    #crumbs ul {
-        margin: 0 !important;
-        display: inline;
-    }
-
-        #crumbs ul li {
-            list-style: none;
-            display: inline;
-            margin-right: 1em;
-        }
-
-        #photo {
-            height: 24px;
-        }
-
-#search {
-    display: inline;
-}
-
-/* message to show */
-#message {
-    color: red;
-}
-
-/* everything between header and footer */
-#content {
-    position: relative;
-}
-
-/* all photos */
-.photo {
-    -moz-box-shadow: 1px 1px 1px gray;
-    -webkit-box-shadow: 1px 1px 1px gray;
-    -o-box-shadow: 1px 1px 1px gray;
-    box-shadow: 1px 1px 1px gray;
-}
-
+def invitees = driver.findElementById('invitees')
+MatcherAssert.assertThat(
+    invitees.findElements(By.cssSelector('li')),
+    Matchers.greaterThan(0)
+)
