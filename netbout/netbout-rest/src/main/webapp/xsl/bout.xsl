@@ -81,7 +81,7 @@
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='suggest']/@href"/>
                 </xsl:attribute>
-                <input name="mask" type="search">
+                <input name="mask" type="search" autocomplete="off">
                     <xsl:attribute name="value">
                         <xsl:value-of select="/page/keyword"/>
                     </xsl:attribute>
@@ -108,7 +108,7 @@
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
                 </xsl:attribute>
-                <input name="title" size="50">
+                <input name="title" size="50" autocomplete="off">
                     <xsl:attribute name="value">
                         <xsl:value-of select="/page/bout/title"/>
                     </xsl:attribute>
@@ -185,7 +185,7 @@
                     <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
                 </xsl:attribute>
                 <dl><textarea name="text" cols="80" rows="5"></textarea></dl>
-                <dl><input name="submit" type="submit" /></dl>
+                <dl><input value="post message" type="submit" /></dl>
             </form>
         </xsl:if>
         <xsl:apply-templates select="/page/bout/messages/message" />
