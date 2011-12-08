@@ -38,78 +38,62 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Identity convertable to XML through JAXB.
+ * Helper, convertable to XML.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "identity")
-@XmlAccessorType(XmlAccessType.NONE)
-public class LongIdentity {
-
-    /**
-     * The identity.
-     */
-    private transient Identity identity;
+public final class LongHelper extends LongIdentity {
 
     /**
      * Public ctor for JAXB.
      */
-    public LongIdentity() {
+    public LongHelper() {
         throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
      * Private ctor.
-     * @param idnt The identity
+     * @param helper The identity
      */
-    public LongIdentity(final Identity idnt) {
-        this.identity = idnt;
+    public LongHelper(final Helper helper) {
+        super(helper);
     }
 
     /**
-     * Get user name.
+     * Is it a helper?
+     * @return The flag
+     */
+    @XmlAttribute
+    public Boolean getHelper() {
+        return true;
+    }
+
+    /**
+     * List of supported operations, if it's a helper.
+     * @return The list
+     */
+    @XmlElement(name = "operation")
+    @XmlElementWrapper(name = "supports")
+    public Set<String> getSupports() {
+        return this.helper().supports();
+    }
+
+    /**
+     * Get location of the helper.
      * @return The name
      */
     @XmlElement
-    public final String getUser() {
-        return this.identity.user();
+    public String getLocation() {
+        return this.helper().location();
     }
 
     /**
-     * Get his alias.
-     * @return The alias
+     * Get helper.
+     * @return The helper
      */
-    @XmlElement
-    public final String getAlias() {
-        return new AliasBuilder(this.identity).build();
-    }
-
-    /**
-     * Get photo.
-     * @return The photo
-     */
-    @XmlElement
-    public final String getPhoto() {
-        return this.identity.photo().toString();
-    }
-
-    /**
-     * List of aliases.
-     * @return The list
-     */
-    @XmlElement(name = "alias")
-    @XmlElementWrapper(name = "aliases")
-    public final Collection<String> getAliases() {
-        return this.identity.aliases();
-    }
-
-    /**
-     * Get identity.
-     * @return The identity
-     */
-    protected final Identity identity() {
-        return this.identity;
+    private Helper helper() {
+        return (Helper) this.identity();
     }
 
 }

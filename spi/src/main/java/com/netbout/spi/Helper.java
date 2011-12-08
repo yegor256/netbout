@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.net.URL;
 import java.util.Set;
 
 /**
@@ -50,5 +51,11 @@ public interface Helper extends Identity {
      * @param token The token to process
      */
     void execute(Token token);
+
+    /**
+     * Where this helper lives.
+     * @return The URL of the helper
+     */
+    URL location();
 
 }

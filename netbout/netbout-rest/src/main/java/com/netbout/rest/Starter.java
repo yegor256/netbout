@@ -112,30 +112,12 @@ public final class Starter implements ContextResolver<Starter> {
                     .synchronously()
                     .asDefault("")
                     .exec();
-                this.hub.promote(
-                    identity,
-                    this.build(identity, new URL(url))
-                );
             }
         } catch (com.netbout.spi.UnreachableIdentityException ex) {
             throw new IllegalStateException(ex);
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
-    }
-
-    /**
-     * Build helper from the URL provided.
-     * @param identity Helper's identity
-     * @param url The URL
-     * @return The helper just created
-     */
-    private Helper build(final Identity identity, final URL url) {
-        final CpaHelper helper = new CpaHelper(identity, url);
-        if (identity.name().startsWith("nb:")) {
-            helper.contextualize(this.hub);
-        }
-        return helper;
     }
 
 }

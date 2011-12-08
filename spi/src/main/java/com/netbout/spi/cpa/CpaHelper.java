@@ -64,6 +64,11 @@ public final class CpaHelper implements Helper {
     private final transient Identity identity;
 
     /**
+     * Where this helper lives.
+     */
+    private final transient URL home;
+
+    /**
      * All discovered operations.
      */
     private final transient ConcurrentMap<String, HelpTarget> ops;
@@ -76,35 +81,23 @@ public final class CpaHelper implements Helper {
      */
     public CpaHelper(final Identity idnt, final String pkg) {
         this.identity = idnt;
-        final long start = System.currentTimeMillis();
-        this.ops = new OpDiscoverer(this).discover(pkg);
-        Logger.info(
-            this,
-            "#CpaHelper('%s', '%s'): %d targets discovered [%dms]",
-            idnt.name(),
-            pkg,
-            this.ops.size(),
-            System.currentTimeMillis() - start
-        );
+        try {
+            this.home = new URL("file", "", pkg);
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        this.ops = this.discover(this.home);
     }
 
     /**
      * Public ctor.
      * @param idnt The identity of me
-     * @param jar Jar URL where to get the code
+     * @param url Jar URL where to get the code
      */
-    public CpaHelper(final Identity idnt, final URL jar) {
+    public CpaHelper(final Identity idnt, final URL url) {
         this.identity = idnt;
-        final long start = System.currentTimeMillis();
-        this.ops = new OpDiscoverer(this).discover(jar);
-        Logger.info(
-            this,
-            "#CpaHelper('%s', '%s'): %d operations discovered [%dms]",
-            idnt.name(),
-            jar,
-            this.ops.size(),
-            System.currentTimeMillis() - start
-        );
+        this.home = url;
+        this.ops = this.discover(url);
     }
 
     /**
@@ -115,6 +108,14 @@ public final class CpaHelper implements Helper {
         for (HelpTarget target : this.ops.values()) {
             target.contextualize(context);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL location() {
+        return this.home;
     }
 
     /**
@@ -244,6 +245,25 @@ public final class CpaHelper implements Helper {
     @Override
     public void invited(final Bout bout) {
         this.identity.invited(bout);
+    }
+
+    /**
+     * Initialize.
+     * @param url URL where to get the code
+     * @return Discovered ops
+     */
+    private ConcurrentMap<String, HelpTarget> discover(final URL url) {
+        final long start = System.currentTimeMillis();
+        final ConcurrentMap<String, HelpTarget> ops =
+            new OpDiscoverer(this).discover(url);
+        Logger.info(
+            this,
+            "#init('%s'): %d operations discovered [%dms]",
+            url,
+            ops.size(),
+            System.currentTimeMillis() - start
+        );
+        return ops;
     }
 
 }

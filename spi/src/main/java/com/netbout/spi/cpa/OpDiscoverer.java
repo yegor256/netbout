@@ -69,44 +69,47 @@ final class OpDiscoverer {
 
     /**
      * Discover all targets in the JAR.
-     * @param jar The JAR URL
+     * @param url The URL with sources
      * @return Associative array of discovered targets/operations
      */
-    public ConcurrentMap<String, HelpTarget> discover(final URL jar) {
-        Object pkg;
-        try {
-            pkg = ((JarURLConnection) jar.openConnection())
-                .getManifest()
-                .getMainAttributes()
-                .get(this.MF_ATTR);
-        } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        if (pkg == null) {
+    public ConcurrentMap<String, HelpTarget> discover(final URL url) {
+        Reflections reflections;
+        if ("jar".equals(url.getProtocol())) {
+            Object pkg;
+            try {
+                pkg = ((JarURLConnection) url.openConnection())
+                    .getManifest()
+                    .getMainAttributes()
+                    .get(this.MF_ATTR);
+            } catch (java.io.IOException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+            if (pkg == null) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Attribute '%s' not found in MANIFEST.MF in '%s'",
+                        this.MF_ATTR,
+                        url
+                    )
+                );
+            }
+            reflections = new Reflections(
+                new ConfigurationBuilder()
+                    .filterInputsBy(new FilterBuilder().include((String) pkg))
+                    .setUrls(new URL[] {url})
+            );
+        } else if ("file".equals(url.getProtocol())) {
+            reflections = new Reflections(url.getFile());
+        } else {
             throw new IllegalArgumentException(
                 String.format(
-                    "Attribute '%s' not found in MANIFEST.MF in '%s'",
-                    this.MF_ATTR,
-                    jar
+                    "Unknown protocol '%s' in URL '%s'",
+                    url.getProtocol(),
+                    url
                 )
             );
         }
-        return this.retrieve(
-            new Reflections(
-                new ConfigurationBuilder()
-                    .filterInputsBy(new FilterBuilder().include((String) pkg))
-                    .setUrls(new URL[] {jar})
-            )
-        );
-    }
-
-    /**
-     * Discover all targets and return them.
-     * @param pkg Name of package
-     * @return Associative array of discovered targets/operations
-     */
-    public ConcurrentMap<String, HelpTarget> discover(final String pkg) {
-        return this.retrieve(new Reflections(pkg));
+        return this.retrieve(reflections);
     }
 
     /**
