@@ -73,10 +73,10 @@ public final class Cryptor {
     public String encrypt(final Identity identity) {
         final StringBuilder builder = new StringBuilder();
         builder
-            .append(TextUtils.toBase(identity.user()))
+            .append(TextUtils.pack(identity.user()))
             .append(this.SEPARATOR)
-            .append(TextUtils.toBase(identity.name()));
-        return TextUtils.toBase(this.pack(builder.toString()));
+            .append(TextUtils.pack(identity.name()));
+        return TextUtils.pack(this.pack(builder.toString()));
     }
 
     /**
@@ -92,14 +92,14 @@ public final class Cryptor {
             throw new DecryptionException(hash, "Hash is NULL");
         }
         final String[] parts = StringUtils.split(
-            TextUtils.fromBase(this.unpack(hash)),
+            TextUtils.unpack(this.unpack(hash)),
             this.SEPARATOR
         );
         if (parts.length != 2) {
             throw new DecryptionException(hash, "Not enough parts");
         }
-        final String uname = TextUtils.fromBase(parts[0]);
-        final String iname = TextUtils.fromBase(parts[1]);
+        final String uname = TextUtils.unpack(parts[0]);
+        final String iname = TextUtils.unpack(parts[1]);
         try {
             return hub.user(uname).identity(iname);
         } catch (com.netbout.spi.UnreachableIdentityException ex) {

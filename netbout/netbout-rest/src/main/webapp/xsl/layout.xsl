@@ -61,7 +61,7 @@
                         <nav id="crumbs" role="navigation">
                             <ul>
                                 <li>
-                                    <img id="photo">
+                                    <img id="photo" class="photo">
                                         <xsl:attribute name="src">
                                             <xsl:value-of select="identity/photo"/>
                                         </xsl:attribute>
@@ -92,7 +92,7 @@
                             <xsl:attribute name="action">
                                 <xsl:value-of select="/page/links/link[@rel='self']"/>
                             </xsl:attribute>
-                            <input name="q" autofocus="true" type="search" required="true">
+                            <input name="q" autofocus="true" autocomplete="off" type="search" required="true">
                                 <xsl:attribute name="value">
                                     <xsl:value-of select="/page/query"/>
                                 </xsl:attribute>

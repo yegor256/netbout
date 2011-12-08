@@ -39,10 +39,6 @@
         .dudes .dude img {
             height: 50px;
             display: block;
-            -moz-box-shadow: 2px 2px 2px gray;
-            -webkit-box-shadow: 2px 2px 2px gray;
-            -o-box-shadow: 2px 2px 2px gray;
-            box-shadow: 2px 2px 2px gray;
         }
 
         .dudes .dude img.pending {

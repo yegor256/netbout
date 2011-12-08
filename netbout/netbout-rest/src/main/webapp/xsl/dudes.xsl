@@ -47,11 +47,12 @@
                         <xsl:attribute name="src">
                             <xsl:value-of select="photo"/>
                         </xsl:attribute>
-                        <xsl:if test="@confirmed != 'true'">
-                            <xsl:attribute name="class">
-                                <xsl:text>pending</xsl:text>
-                            </xsl:attribute>
-                        </xsl:if>
+                        <xsl:attribute name="class">
+                            <xsl:text>photo</xsl:text>
+                            <xsl:if test="@confirmed != 'true'">
+                                <xsl:text> pending</xsl:text>
+                            </xsl:if>
+                        </xsl:attribute>
                     </img>
                     <xsl:variable name="name" select="alias"/>
                     <xsl:choose>

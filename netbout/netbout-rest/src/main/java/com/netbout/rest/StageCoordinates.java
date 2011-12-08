@@ -117,12 +117,12 @@ public final class StageCoordinates {
         final StageCoordinates coords = new StageCoordinates();
         if (pair != null && pair.contains(StageCoordinates.SEPARATOR)) {
             coords.setStage(
-                TextUtils.fromBase(
+                TextUtils.unpack(
                     pair.substring(0, pair.indexOf(StageCoordinates.SEPARATOR))
                 )
             );
             coords.setPlace(
-                TextUtils.fromBase(
+                TextUtils.unpack(
                     pair.substring(
                         pair.indexOf(StageCoordinates.SEPARATOR)
                         + StageCoordinates.SEPARATOR.length()
@@ -143,9 +143,9 @@ public final class StageCoordinates {
         }
         return String.format(
             "%s%s%s",
-            TextUtils.toBase(this.istage),
+            TextUtils.pack(this.istage),
             this.SEPARATOR,
-            TextUtils.toBase(this.iplace)
+            TextUtils.pack(this.iplace)
         );
     }
 

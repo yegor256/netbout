@@ -145,7 +145,13 @@ public final class EmailFarm implements IdentityAware {
         );
         final javax.mail.Message email = this.sender.newMessage();
         try {
-            final Address reply = new InternetAddress("no-reply@netbout.com");
+            final Address reply = new InternetAddress(
+                String.format(
+                    "%s@netbout.com",
+                    TextUtils.pack(dude.identity().name())
+                ),
+                message.author().name()
+            );
             email.addFrom(new Address[] {reply});
             email.setReplyTo(new Address[] {reply});
             email.addRecipient(
@@ -164,6 +170,8 @@ public final class EmailFarm implements IdentityAware {
         } catch (javax.mail.internet.AddressException ex) {
             throw new IllegalArgumentException(ex);
         } catch (javax.mail.MessagingException ex) {
+            throw new IllegalArgumentException(ex);
+        } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(ex);
         }
     }

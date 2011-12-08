@@ -77,11 +77,11 @@
         </header>
         <xsl:apply-templates select="/page/bout/participants" />
         <xsl:if test="$participant/@confirmed = 'true'">
-            <form method="get">
+            <form method="get" id="invite">
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='suggest']/@href"/>
                 </xsl:attribute>
-                <input name="k">
+                <input name="mask" type="search" autocomplete="off">
                     <xsl:attribute name="value">
                         <xsl:value-of select="/page/keyword"/>
                     </xsl:attribute>
@@ -89,7 +89,7 @@
                 <input value="invite" type="submit"/>
             </form>
             <xsl:if test="/page/invitees">
-                <ul>
+                <ul id="invitees">
                     <xsl:for-each select="/page/invitees/invitee">
                         <li>
                             <a>
@@ -108,7 +108,7 @@
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
                 </xsl:attribute>
-                <input name="title" size="50">
+                <input name="title" size="50" autocomplete="off">
                     <xsl:attribute name="value">
                         <xsl:value-of select="/page/bout/title"/>
                     </xsl:attribute>
@@ -185,7 +185,7 @@
                     <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
                 </xsl:attribute>
                 <dl><textarea name="text" cols="80" rows="5"></textarea></dl>
-                <dl><input name="submit" type="submit" /></dl>
+                <dl><input value="post message" type="submit" /></dl>
             </form>
         </xsl:if>
         <xsl:apply-templates select="/page/bout/messages/message" />
@@ -195,7 +195,7 @@
         <xsl:variable name="msg" select="."/>
         <article class="message">
             <header>
-                <img>
+                <img class="photo">
                     <xsl:attribute name="src">
                         <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/photo"/>
                     </xsl:attribute>
