@@ -52,21 +52,18 @@ public final class HelperAuthRs extends AbstractRs {
     @GET
     public Response auth(@QueryParam("identity") final String iname,
         @QueryParam("secret") final String secret) {
-        if (!secret.equals(iname)) {
-            throw new ForwardException(this, "/", "Authentication failure");
+        if ((iname == null) || (secret == null) || secret.isEmpty()) {
+            throw new ForwardException(this, "Authentication failure");
         }
+        final String user = UriBuilder
+            .fromUri("http://www.netbout.com/hauth")
+            .build()
+            .toString();
         Identity identity;
         try {
-            identity = this.hub()
-                .user(
-                    UriBuilder.fromUri("http://www.netbout.com")
-                        .path(this.getClass(), "auth")
-                        .build()
-                        .toString()
-                )
-                .identity(iname);
+            identity = this.hub().user(user).identity(iname);
         } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new ForwardException(this, "/", ex);
+            throw new ForwardException(this, ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)

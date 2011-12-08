@@ -55,7 +55,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
     @Override
     public void register(final Helper helper) {
         this.helpers.add(helper);
-        Logger.debug(
+        Logger.info(
             this,
             "#register(%s): registered (%d total now)",
             helper,

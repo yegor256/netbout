@@ -27,10 +27,15 @@
 package com.netbout.rest;
 
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.utils.Promoter;
 import com.netbout.spi.Identity;
+import com.netbout.spi.cpa.CpaHelper;
+import java.net.URI;
+import java.net.URL;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -60,39 +65,50 @@ public final class HelperRs extends AbstractRs {
             )
             .build(AbstractPage.class)
             .init(this)
-            .authenticated(identity)
+            .link(
+                "promote",
+                this.uriInfo().getBaseUriBuilder()
+                    .clone()
+                    .path("/h/promote")
+                    .build()
+            )
+            .authenticated(this.identity())
             .build();
     }
 
     /**
      * Promote this identity to helper.
-     * @param url The URL of the helper
+     * @param addr The URL of the helper
      * @return The JAX-RS response
      */
     @POST
     @Path("/promote")
-    public Response promote(@FormParam("url") final URL url) {
-        final Identity identity = this.identity();
-        if (url.isEmpty()) {
-            // ???
-        } else {
-            final CpaHelper helper = new CpaHelper(identity, url);
-            if (identity.name().startsWith("nb:")) {
-                helper.contextualize(this.hub());
-            }
-            this.hub().promote(identity, helper);
+    public Response promote(@FormParam("url") final String addr) {
+        URL url;
+        try {
+            url = new URL(addr);
+        } catch (java.net.MalformedURLException ex) {
+            throw new ForwardException(this, this.self(), ex);
         }
+        final Identity identity = this.identity();
+        new Promoter(this.hub()).promote(identity, url);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
-            .authenticated(this.identity())
+            .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
-            .location(
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path(this.getClass(), "front")
-                    .build()
-            )
+            .location(this.self())
+            .build();
+    }
+
+    /**
+     * Get URI of front page.
+     * @return The URI of front page
+     */
+    private URI self() {
+        return this.uriInfo().getBaseUriBuilder()
+            .clone()
+            .path("/h")
             .build();
     }
 

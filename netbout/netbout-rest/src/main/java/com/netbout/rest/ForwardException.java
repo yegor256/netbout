@@ -75,6 +75,15 @@ final class ForwardException extends WebApplicationException {
     /**
      * Constructor.
      * @param res The originator of the exception
+     * @param msg The message
+     */
+    public ForwardException(final Resource res, final String msg) {
+        this(res, res.uriInfo().getBaseUri(), msg);
+    }
+
+    /**
+     * Constructor.
+     * @param res The originator of the exception
      * @param uri Where to forward to
      * @param msg The message
      */
@@ -86,10 +95,10 @@ final class ForwardException extends WebApplicationException {
     /**
      * Constructor.
      * @param res The originator of the exception
-     * @param uri Where to forward to
+     * @param cause Cause of trouble
      */
-    public ForwardException(final Resource res, final String uri) {
-        this(res, UriBuilder.fromUri(uri).build(), "");
+    public ForwardException(final Resource res, final Exception cause) {
+        this(res, res.uriInfo().getBaseUri(), cause.getMessage());
     }
 
     /**

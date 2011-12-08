@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.netbout.rest.jaxb.LongHelper;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
+import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.utils.Cryptor;
 import com.rexsl.core.Manifests;
@@ -153,9 +154,9 @@ public abstract class AbstractPage implements Page {
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
         if (identity instanceof Helper) {
-            this.append(new LongIdentity(identity));
+            this.append(new LongHelper((Helper) identity));
         } else {
-            this.append(new LongHelper(identity));
+            this.append(new LongIdentity(identity));
         }
         this.append(new JaxbBundle("auth", new Cryptor().encrypt(identity)));
         this.link("logout", "/g/out");

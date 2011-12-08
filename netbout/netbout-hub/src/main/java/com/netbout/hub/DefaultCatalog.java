@@ -151,7 +151,7 @@ final class DefaultCatalog implements Catalog {
                 );
             } else if (identity instanceof HubIdentity) {
                 this.assignedTo((HubIdentity) identity, user);
-            } else {
+            } else if (!(identity instanceof Helper)) {
                 identity = new HubIdentity(identity, user);
                 this.save(name, identity);
                 Logger.debug(
@@ -179,6 +179,13 @@ final class DefaultCatalog implements Catalog {
      */
     @Override
     public void promote(final Identity identity, final Helper helper) {
+        Logger.info(
+            this,
+            "#promote('%s', '%s'): replacing existing identity (%s)",
+            identity.name(),
+            helper.getClass().getName(),
+            this.all.get(identity.name()).getClass().getName()
+        );
         this.all.put(identity.name(), helper);
     }
 

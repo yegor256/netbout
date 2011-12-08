@@ -68,6 +68,15 @@ public class LongIdentity {
     }
 
     /**
+     * Get identity name.
+     * @return The name
+     */
+    @XmlElement
+    public final String getName() {
+        return this.identity.name();
+    }
+
+    /**
      * Get user name.
      * @return The name
      */

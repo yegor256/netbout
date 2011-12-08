@@ -98,8 +98,28 @@ final class OpDiscoverer {
                     .filterInputsBy(new FilterBuilder().include((String) pkg))
                     .setUrls(new URL[] {url})
             );
+            Logger.debug(
+                this,
+                "#discover('%s'): reflecting from this URL",
+                url
+            );
         } else if ("file".equals(url.getProtocol())) {
-            reflections = new Reflections(url.getFile());
+            if (url.getPath().isEmpty()) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Path is empty in '%s', can't get name of package",
+                        url
+                    )
+                );
+            }
+            final String pkg = url.getPath();
+            reflections = new Reflections(pkg);
+            Logger.debug(
+                this,
+                "#discover('%s'): reflecting from package '%s'",
+                url,
+                pkg
+            );
         } else {
             throw new IllegalArgumentException(
                 String.format(

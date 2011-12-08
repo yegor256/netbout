@@ -24,80 +24,56 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.jaxb;
+package com.netbout.utils;
 
+import com.netbout.hub.Hub;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.utils.AliasBuilder;
+import com.netbout.spi.cpa.CpaHelper;
+import com.ymock.util.Logger;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Set;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Helper, convertable to XML.
+ * Identity promoter.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "identity")
-@XmlAccessorType(XmlAccessType.NONE)
-public final class LongHelper extends LongIdentity {
+public final class Promoter {
 
     /**
-     * Public ctor for JAXB.
+     * The hub to work with.
      */
-    public LongHelper() {
-        throw new IllegalStateException("This ctor should never be called");
+    private final transient Hub hub;
+
+    /**
+     * Ctor.
+     * @param ihub The hub
+     */
+    public Promoter(final Hub ihub) {
+        this.hub = ihub;
     }
 
     /**
-     * Private ctor.
-     * @param helper The identity
+     * Promote this identity.
+     * @param identity The identity to promote
+     * @param url The URL
+     * @return Helper
      */
-    public LongHelper(final Helper helper) {
-        super(helper);
-    }
-
-    /**
-     * Is it a helper?
-     * @return The flag
-     */
-    @XmlAttribute
-    public Boolean getHelper() {
-        return true;
-    }
-
-    /**
-     * List of supported operations, if it's a helper.
-     * @return The list
-     */
-    @XmlElement(name = "operation")
-    @XmlElementWrapper(name = "supports")
-    public Set<String> getSupports() {
-        return this.helper().supports();
-    }
-
-    /**
-     * Get location of the helper.
-     * @return The name
-     */
-    @XmlElement
-    public URL getLocation() {
-        return this.helper().location();
-    }
-
-    /**
-     * Get helper.
-     * @return The helper
-     */
-    private Helper helper() {
-        return (Helper) this.identity();
+    public Helper promote(final Identity identity, final URL url) {
+        final CpaHelper helper = new CpaHelper(identity, url);
+        if (identity.name().startsWith("nb:")) {
+            helper.contextualize(this.hub);
+        }
+        this.hub.promote(identity, helper);
+        Logger.info(
+            this,
+            "#promote('%s', '%s'): promoted with '%s'",
+            identity.name(),
+            url,
+            helper.getClass().getName()
+        );
+        return helper;
     }
 
 }
