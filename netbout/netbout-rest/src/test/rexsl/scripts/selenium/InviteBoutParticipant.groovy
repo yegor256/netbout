@@ -31,9 +31,6 @@ package com.netbout.rest.rexsl.scripts.selenium
 
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
-import com.rexsl.test.TestClient
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers

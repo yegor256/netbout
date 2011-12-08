@@ -55,7 +55,7 @@ public final class TextUtilsTest {
             StringUtils.repeat("ABC ", 1000),
         };
         for (String text : texts) {
-            final String encoded = TextUtils.toBase(text);
+            final String encoded = TextUtils.pack(text);
             MatcherAssert.assertThat(
                 "Encoded string contains only valid characters",
                 encoded.matches("[\\w=\\+\\./]*"),
@@ -68,7 +68,7 @@ public final class TextUtilsTest {
             );
             MatcherAssert.assertThat(
                 "Decoded version matches the original one",
-                TextUtils.fromBase(encoded),
+                TextUtils.unpack(encoded),
                 Matchers.equalTo(text)
             );
         }

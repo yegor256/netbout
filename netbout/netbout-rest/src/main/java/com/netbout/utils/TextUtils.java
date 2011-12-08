@@ -56,11 +56,11 @@ public final class TextUtils {
     }
 
     /**
-     * Encode string into 64-bit string.
+     * Encode string into packed form.
      * @param text The text to encode
      * @return Encoded text
      */
-    public static String toBase(final String text) {
+    public static String pack(final String text) {
         assert text != null;
         try {
             return new Base64().encodeToString(
@@ -72,11 +72,11 @@ public final class TextUtils {
     }
 
     /**
-     * Decode string from 64-bit string.
+     * Decode string from packed form.
      * @param text The text to decode
      * @return Decoded text
      */
-    public static String fromBase(final String text) {
+    public static String unpack(final String text) {
         assert text != null;
         try {
             return new String(new Base64().decode(text), TextUtils.ENCODING);
