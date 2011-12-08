@@ -54,6 +54,6 @@ ibox.submit()
 
 def invitees = driver.findElementById('invitees')
 MatcherAssert.assertThat(
-    invitees.findElements(By.cssSelector('li')),
+    invitees.findElements(By.cssSelector('li')).size(),
     Matchers.greaterThan(0)
 )
