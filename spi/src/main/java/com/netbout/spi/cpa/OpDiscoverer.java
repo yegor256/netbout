@@ -33,9 +33,13 @@ import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.JarURLConnection;
+import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 /**
  * Discovers operations in classpath.
@@ -46,37 +50,63 @@ import org.reflections.Reflections;
 final class OpDiscoverer {
 
     /**
-     * Discover all targets and return them.
+     * Manifest attribute to denote the name of the package on JAR.
+     */
+    private static final transient String MF_ATTR = "Netbout-Helper-Package";
+
+    /**
+     * The identity of the helper.
+     */
+    private final transient Identity identity;
+
+    /**
+     * Public ctor.
      * @param identity The identity of helper
-     * @param pkg The package to discover in
+     */
+    public OpDiscoverer(final Identity idnt) {
+        this.identity = idnt;
+    }
+
+    /**
+     * Discover all targets in the JAR.
+     * @param jar The JAR URL
      * @return Associative array of discovered targets/operations
      */
-    public ConcurrentMap<String, HelpTarget> discover(final Identity identity,
-        final String pkg) {
-        final ConcurrentMap<String, HelpTarget> targets =
-            new ConcurrentHashMap<String, HelpTarget>();
-        final Reflections reflections = new Reflections(pkg);
-        for (Class tfarm : reflections.getTypesAnnotatedWith(Farm.class)) {
-            Logger.info(
-                this,
-                "#discover(%s): @Farm found at '%s'",
-                pkg,
-                tfarm.getName()
-            );
-            Object farm;
-            try {
-                farm = tfarm.newInstance();
-            } catch (InstantiationException ex) {
-                throw new IllegalArgumentException(ex);
-            } catch (IllegalAccessException ex) {
-                throw new IllegalArgumentException(ex);
-            }
-            if (farm instanceof IdentityAware) {
-                ((IdentityAware) farm).init(identity);
-            }
-            targets.putAll(this.inFarm(farm));
+    public ConcurrentMap<String, HelpTarget> discover(final URL jar) {
+        Object pkg;
+        try {
+            pkg = ((JarURLConnection) jar.openConnection())
+                .getManifest()
+                .getMainAttributes()
+                .get(this.MF_ATTR);
+        } catch (java.io.IOException ex) {
+            throw new IllegalArgumentException(ex);
         }
-        return targets;
+        if (pkg == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Attribute '%s' not found in MANIFEST.MF in '%s'",
+                    this.MF_ATTR,
+                    jar
+                )
+            );
+        }
+        return this.retrieve(
+            new Reflections(
+                new ConfigurationBuilder()
+                    .filterInputsBy(new FilterBuilder().include((String) pkg))
+                    .setUrls(new URL[] {jar})
+            )
+        );
+    }
+
+    /**
+     * Discover all targets and return them.
+     * @param pkg Name of package
+     * @return Associative array of discovered targets/operations
+     */
+    public ConcurrentMap<String, HelpTarget> discover(final String pkg) {
+        return this.retrieve(new Reflections(pkg));
     }
 
     /**
@@ -94,12 +124,42 @@ final class OpDiscoverer {
             }
             final String mnemo = ((Operation) atn).value();
             targets.put(mnemo, HelpTarget.build(farm, method));
-            Logger.info(
+            Logger.debug(
                 this,
                 "#inFarm(%s): @Operation('%s') found",
                 farm.getClass().getName(),
                 mnemo
             );
+        }
+        return targets;
+    }
+
+    /**
+     * Load them from reflections.
+     * @param ref The reflections
+     * @return Associative array of discovered targets/operations
+     */
+    private ConcurrentMap<String, HelpTarget> retrieve(final Reflections ref) {
+        final ConcurrentMap<String, HelpTarget> targets =
+            new ConcurrentHashMap<String, HelpTarget>();
+        for (Class tfarm : ref.getTypesAnnotatedWith(Farm.class)) {
+            Logger.debug(
+                this,
+                "#discover(..): @Farm found at '%s'",
+                tfarm.getName()
+            );
+            Object farm;
+            try {
+                farm = tfarm.newInstance();
+            } catch (InstantiationException ex) {
+                throw new IllegalArgumentException(ex);
+            } catch (IllegalAccessException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+            if (farm instanceof IdentityAware) {
+                ((IdentityAware) farm).init(this.identity);
+            }
+            targets.putAll(this.inFarm(farm));
         }
         return targets;
     }

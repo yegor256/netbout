@@ -71,18 +71,37 @@ public final class CpaHelper implements Helper {
     /**
      * Public ctor.
      * @param idnt The identity of me
-     * @param name Name of the package where to look for annotated methods
+     * @param pkg Name of the package where to look for annotated methods
      *  and farms
      */
-    public CpaHelper(final Identity idnt, final String name) {
+    public CpaHelper(final Identity idnt, final String pkg) {
         this.identity = idnt;
         final long start = System.currentTimeMillis();
-        this.ops = new OpDiscoverer().discover(this, name);
-        Logger.debug(
+        this.ops = new OpDiscoverer(this).discover(pkg);
+        Logger.info(
             this,
-            "#CpaHelper('%s', '%s'): %d targets discovered in %dms",
+            "#CpaHelper('%s', '%s'): %d targets discovered [%dms]",
             idnt.name(),
-            name,
+            pkg,
+            this.ops.size(),
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
+     * Public ctor.
+     * @param idnt The identity of me
+     * @param jar Jar URL where to get the code
+     */
+    public CpaHelper(final Identity idnt, final URL jar) {
+        this.identity = idnt;
+        final long start = System.currentTimeMillis();
+        this.ops = new OpDiscoverer(this).discover(jar);
+        Logger.info(
+            this,
+            "#CpaHelper('%s', '%s'): %d operations discovered [%dms]",
+            idnt.name(),
+            jar,
             this.ops.size(),
             System.currentTimeMillis() - start
         );
