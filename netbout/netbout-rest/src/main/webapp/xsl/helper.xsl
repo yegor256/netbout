@@ -59,8 +59,18 @@
             <xsl:when test="/page/identity/@helper='true'">
                 <p>
                     <xsl:text>You're a helper already with this URL: </xsl:text>
-                    <xsl:value-of select="/page/identity/location"/>
+                    <span class="tt"><xsl:value-of select="/page/identity/location"/></span>
                 </p>
+                <p>
+                    <xsl:text>These operations are supported:</xsl:text>
+                </p>
+                <ul>
+                    <xsl:for-each select="/page/identity/supports/operation">
+                        <li>
+                            <span class="tt"><xsl:value-of select="."/></span>
+                        </li>
+                    </xsl:for-each>
+                </ul>
             </xsl:when>
             <xsl:otherwise>
                 <p>
