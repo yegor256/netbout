@@ -26,13 +26,13 @@
  */
 package com.netbout.rest;
 
+import com.netbout.utils.TextUtils;
 import com.rexsl.core.Manifests;
 import java.net.URI;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Thrown when necessary to forward user to another page and show a message
@@ -59,7 +59,7 @@ final class ForwardException extends WebApplicationException {
                 .cookie(
                     new NewCookie(
                         AbstractPage.MESSAGE_COOKIE,
-                        ForwardException.encode(msg),
+                        TextUtils.pack(msg),
                         res.uriInfo().getBaseUri().getPath(),
                         res.uriInfo().getBaseUri().getHost(),
                         Integer.valueOf(Manifests.read("Netbout-Revision")),
@@ -112,19 +112,6 @@ final class ForwardException extends WebApplicationException {
     public ForwardException(final Resource res, final URI uri,
         final Exception cause) {
         this(res, uri, cause.getMessage());
-    }
-
-    /**
-     * Encode message.
-     * @param text The text to encode
-     * @return Decoded text (from Base64)
-     */
-    private static String encode(final String text) {
-        try {
-            return new Base64().encodeToString(text.getBytes("UTF-8"));
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
     }
 
 }

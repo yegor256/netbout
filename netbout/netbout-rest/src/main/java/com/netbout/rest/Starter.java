@@ -30,12 +30,16 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
+import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
@@ -49,13 +53,25 @@ import javax.ws.rs.ext.Provider;
 public final class Starter implements ContextResolver<Starter> {
 
     /**
+     * Bus.
+     */
+    private final transient Bus bus = new DefaultBus();
+
+    /**
+     * Hub.
+     */
+    private final transient Hub hub = new DefaultHub(this.bus);
+
+    /**
      * Public ctor.
      * @param context Servlet context
      * @checkstyle ExecutableStatementCount (3 lines)
      */
     public Starter(@Context final ServletContext context) {
         final long start = System.currentTimeMillis();
-        this.start(context);
+        context.setAttribute("com.netbout.rest.HUB", this.hub);
+        context.setAttribute("com.netbout.rest.BUS", this.bus);
+        this.start();
         Logger.info(
             this,
             "#Starter(%s): done in %dms",
@@ -74,34 +90,52 @@ public final class Starter implements ContextResolver<Starter> {
 
     /**
      * Start all.
-     * @param context Servlet context
      */
-    private void start(@Context final ServletContext context) {
-        final Bus bus = new DefaultBus();
-        final Hub hub = new DefaultHub(bus);
-        context.setAttribute("com.netbout.rest.HUB", hub);
-        context.setAttribute("com.netbout.rest.BUS", bus);
-        final String uname = "netbout";
+    private void start() {
         try {
-            final Identity idb = hub.user(uname).identity("nb:db");
-            hub.promote(idb, new CpaHelper(idb, "com.netbout.db"));
-            idb.setPhoto(new URL("http://img.netbout.com/db.png"));
-            final Identity ihh = hub.user(uname).identity("nb:hh");
-            ihh.setPhoto(new URL("http://img.netbout.com/hh.png"));
-            final CpaHelper hhelper = new CpaHelper(ihh, "com.netbout.hub.hh");
-            hhelper.contextualize(hub);
-            hub.promote(ihh, hhelper);
-            final Identity iemail = hub.user(uname).identity("nb:email");
-            iemail.setPhoto(new URL("http://img.netbout.com/email.png"));
-            hub.promote(
-                iemail,
-                new CpaHelper(iemail, "com.netbout.notifiers.email")
-            );
+            final Identity idb = this.hub
+                .user(
+                    UriBuilder.fromUri("http://www.netbout.com")
+                        .path(HelperAuthRs.class, "auth")
+                        .build()
+                        .toString()
+                )
+                .identity("nb:db");
+            this.hub.promote(idb, new CpaHelper(idb, "com.netbout.db"));
+            final List<String> helpers = bus.make("get-all-helpers")
+                .synchronously()
+                .asDefault(new ArrayList<String>())
+                .exec();
+            for (String name : helpers) {
+                final Identity identity = idb.friend(name);
+                final String url = bus.make("get-helper-url")
+                    .synchronously()
+                    .asDefault("")
+                    .exec();
+                this.hub.promote(
+                    identity,
+                    this.build(identity, new URL(url))
+                );
+            }
         } catch (com.netbout.spi.UnreachableIdentityException ex) {
             throw new IllegalStateException(ex);
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * Build helper from the URL provided.
+     * @param identity Helper's identity
+     * @param url The URL
+     * @return The helper just created
+     */
+    private Helper build(final Identity identity, final URL url) {
+        final CpaHelper helper = new CpaHelper(identity, url);
+        if (identity.name().startsWith("nb:")) {
+            helper.contextualize(this.hub);
+        }
+        return helper;
     }
 
 }
