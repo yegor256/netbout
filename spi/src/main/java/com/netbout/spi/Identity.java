@@ -115,10 +115,4 @@ public interface Identity {
      */
     void alias(String alias);
 
-    /**
-     * You receive this message when you're being invited to this bout.
-     * @param bout The bout
-     */
-    void invited(Bout bout);
-
 }

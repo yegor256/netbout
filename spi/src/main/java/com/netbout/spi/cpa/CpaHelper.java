@@ -240,14 +240,6 @@ public final class CpaHelper implements Helper {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void invited(final Bout bout) {
-        this.identity.invited(bout);
-    }
-
-    /**
      * Initialize.
      * @param url URL where to get the code
      * @return Discovered ops

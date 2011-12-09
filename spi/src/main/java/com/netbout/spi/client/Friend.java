@@ -165,14 +165,4 @@ final class Friend implements Identity {
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void invited(final Bout bout) {
-        throw new UnsupportedOperationException(
-            "#invited() can't be called on a friend"
-        );
-    }
-
 }

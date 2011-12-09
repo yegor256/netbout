@@ -235,14 +235,4 @@ final class RestIdentity implements Identity {
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void invited(final Bout bout) {
-        throw new IllegalArgumentException(
-            "Identity#invited() shouldn't be called on REST API"
-        );
-    }
-
 }
