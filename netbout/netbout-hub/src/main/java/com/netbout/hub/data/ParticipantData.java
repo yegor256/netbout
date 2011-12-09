@@ -93,18 +93,17 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public void setConfirmed(final Boolean flag) {
-        this.confirmed = flag;
+        this.confirmed = true;
         this.bus.make("changed-participant-status")
             .asap()
             .arg(this.bout)
             .arg(this.identity)
-            .arg(this.confirmed)
+            .arg(flag)
             .asDefault(true)
             .exec();
         Logger.debug(
             this,
-            "#setConfirmed(%b): set",
-            this.confirmed
+            "#setConfirmed(): set"
         );
     }
 

@@ -54,16 +54,23 @@ public final class HubParticipant implements Participant {
     private final transient ParticipantDt data;
 
     /**
+     * Data of bout.
+     */
+    private final transient BoutDt boutdt;
+
+    /**
      * Public ctor.
      * @param ctlg The catalog
      * @param bout The bout
      * @param dat The data
+     * @param bdt Bout data
      */
     public HubParticipant(final Catalog ctlg, final Bout bout,
-        final ParticipantDt dat) {
+        final ParticipantDt dat, final BoutDt bdt) {
         this.catalog = ctlg;
         this.ibout = bout;
         this.data = dat;
+        this.boutdt = bdt;
     }
 
     /**
@@ -84,6 +91,14 @@ public final class HubParticipant implements Participant {
         } catch (com.netbout.spi.UnreachableIdentityException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void kickOff() {
+        this.boutdt.kickOff(this.data.getIdentity());
     }
 
     /**
