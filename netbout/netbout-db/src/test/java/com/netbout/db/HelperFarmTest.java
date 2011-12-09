@@ -1,5 +1,4 @@
-<?xml version='1.0'?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -10,7 +9,7 @@
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
- * incident to the author by email: privacy@netbout.com.
+ * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,25 +23,42 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.db;
+
+import java.util.List;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+/**
+ * Test case of {@link HelperFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
-        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+ */
+public final class HelperFarmTest {
 
-    <!--
-    @see http://liquibase.jira.com/browse/CORE-1073
-    -->
-    <!-- <includeAll path="liquibase" relativeToChangelogFile="true" /> -->
+    /**
+     * Farm to work with.
+     */
+    private final transient HelperFarm farm = new HelperFarm();
 
-    <include file="liquibase/001-basics.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/002-seen.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/003-alias.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/004-helper.xml" relativeToChangelogFile="true" />
+    /**
+     * Find bouts of some identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void registersNewHelperAndFindsIt() throws Exception {
+        final String identity = "Steven Jobs";
+        final String url = "http://localhost/some-address";
+        new IdentityFarm().identityMentioned(identity);
+        this.farm.identityPromoted(identity, url);
+        final List<String> names = this.farm.getAllHelpers();
+        MatcherAssert.assertThat(names, Matchers.hasItem(identity));
+        MatcherAssert.assertThat(
+            this.farm.getHelperUrl(identity),
+            Matchers.equalTo(url)
+        );
+    }
 
-</databaseChangeLog>
+}

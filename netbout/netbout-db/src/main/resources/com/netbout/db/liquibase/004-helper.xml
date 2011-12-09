@@ -35,14 +35,21 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <!--
-    @see http://liquibase.jira.com/browse/CORE-1073
-    -->
-    <!-- <includeAll path="liquibase" relativeToChangelogFile="true" /> -->
-
-    <include file="liquibase/001-basics.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/002-seen.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/003-alias.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/004-helper.xml" relativeToChangelogFile="true" />
+    <changeSet id="4" author="yegor">
+        <createTable tableName="helper" remarks="Registered and promoted helpers">
+            <column name="identity" type="VARCHAR(250)"
+                remarks="The identity, owner of the alias">
+                <constraints primaryKey="true" nullable="false"
+                    foreignKeyName="helper2identity" references="identity(name)" />
+            </column>
+            <column name="url" type="VARCHAR(1024)"
+                remarks="URL of the helper">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB, DEFAULT CHARSET=UTF8"/>
+        </modifySql>
+    </changeSet>
 
 </databaseChangeLog>
