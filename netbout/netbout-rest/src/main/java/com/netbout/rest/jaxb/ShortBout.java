@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.ArrayList;
@@ -60,6 +61,11 @@ public final class ShortBout {
     private final transient UriBuilder builder;
 
     /**
+     * The viewer of it.
+     */
+    private final transient Identity viewer;
+
+    /**
      * Public ctor for JAXB.
      */
     public ShortBout() {
@@ -70,10 +76,13 @@ public final class ShortBout {
      * Private ctor.
      * @param parent Parent bout to refer to
      * @param bldr URI builder
+     * @param vwr The viewer
      */
-    public ShortBout(final Bout parent, final UriBuilder bldr) {
+    public ShortBout(final Bout parent, final UriBuilder bldr,
+        final Identity vwr) {
         this.bout = parent;
         this.builder = bldr;
+        this.viewer = vwr;
     }
 
     /**
@@ -116,7 +125,7 @@ public final class ShortBout {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
-            dudes.add(new LongParticipant(dude, this.builder));
+            dudes.add(new LongParticipant(dude, this.builder, this.viewer));
         }
         return dudes;
     }

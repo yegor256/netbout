@@ -351,7 +351,8 @@ public final class BoutRs extends AbstractRs {
                     this.bout(),
                     this.coords,
                     this.query,
-                    this.self("")
+                    this.self(""),
+                    this.identity()
                 )
             )
             .append(new JaxbBundle("query", this.query))

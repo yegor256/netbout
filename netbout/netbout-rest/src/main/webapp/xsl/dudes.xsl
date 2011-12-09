@@ -55,6 +55,14 @@
                         </xsl:attribute>
                     </img>
                     <xsl:variable name="name" select="alias"/>
+                    <xsl:if test="@me != 'true'">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="link[@rel='kickoff']/@href"/>
+                            </xsl:attribute>
+                            <xsl:text>x</xsl:text>
+                        </a>
+                    </xsl:if>
                     <xsl:choose>
                         <xsl:when test="string-length($name) &gt; 10">
                             <xsl:value-of select="substring($name, 0, 8)"/>

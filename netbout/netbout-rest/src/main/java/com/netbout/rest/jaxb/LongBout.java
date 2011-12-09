@@ -29,6 +29,7 @@ package com.netbout.rest.jaxb;
 import com.netbout.bus.Bus;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.ArrayList;
@@ -77,6 +78,11 @@ public final class LongBout {
     private final transient UriBuilder builder;
 
     /**
+     * The viewer of it.
+     */
+    private final transient Identity viewer;
+
+    /**
      * Public ctor for JAXB.
      */
     public LongBout() {
@@ -90,15 +96,17 @@ public final class LongBout {
      * @param crds The coordinates of the stage to render
      * @param keyword Search keyword
      * @param bldr The builder of URIs
+     * @param vwr The viewer
      * @checkstyle ParameterNumber (3 lines)
      */
     public LongBout(final Bus ibus, final Bout bot, final StageCoordinates crds,
-        final String keyword, final UriBuilder bldr) {
+        final String keyword, final UriBuilder bldr, final Identity vwr) {
         this.bus = ibus;
         this.bout = bot;
         this.coords = crds;
         this.query = keyword;
         this.builder = bldr;
+        this.viewer = vwr;
     }
 
     /**
@@ -170,7 +178,7 @@ public final class LongBout {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
-            dudes.add(new LongParticipant(dude, this.builder));
+            dudes.add(new LongParticipant(dude, this.builder, this.viewer));
         }
         return dudes;
     }
