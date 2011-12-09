@@ -77,15 +77,15 @@ public final class ShortBout {
     }
 
     /**
-     * HREF of the bout.
-     * @return The url
+     * Link to the bout.
+     * @return The link
      */
-    @XmlAttribute
-    public String getHref() {
-        return this.builder
-            .path("/{num}")
-            .build(this.bout.number())
-            .toString();
+    @XmlElement
+    public Link getLink() {
+        return new Link(
+            "page",
+            this.builder.path("/{num}").build(this.bout.number())
+        );
     }
 
     /**

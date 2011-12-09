@@ -40,6 +40,7 @@ import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -76,11 +77,11 @@ public final class PageBuilder {
 
     /**
      * Configure the stylesheet to be used.
-     * @param name Name of stylesheet
+     * @param builder URI builder
      * @return This object
      */
-    public PageBuilder stylesheet(final String name) {
-        this.xsl = name;
+    public PageBuilder stylesheet(final UriBuilder builder) {
+        this.xsl = builder.build().toString();
         return this;
     }
 

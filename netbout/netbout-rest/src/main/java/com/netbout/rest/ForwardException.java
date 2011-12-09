@@ -46,22 +46,22 @@ final class ForwardException extends WebApplicationException {
     /**
      * Constructor.
      * @param res The originator of the exception
-     * @param uri Where to forward to
+     * @param builder Where to forward to
      * @param msg The message
      */
-    public ForwardException(final Resource res, final URI uri,
+    public ForwardException(final Resource res, final UriBuilder builder,
         final String msg) {
         super(
             Response.status(Response.Status.TEMPORARY_REDIRECT)
                 .header("Netbout-error", msg)
                 .entity(msg)
-                .location(uri)
+                .location(builder.build())
                 .cookie(
                     new NewCookie(
                         AbstractPage.MESSAGE_COOKIE,
                         TextUtils.pack(msg),
-                        res.uriInfo().getBaseUri().getPath(),
-                        res.uriInfo().getBaseUri().getHost(),
+                        res.base().build().getPath(),
+                        res.base().build().getHost(),
                         Integer.valueOf(Manifests.read("Netbout-Revision")),
                         "netbout message",
                         // @checkstyle MagicNumber (1 line)
@@ -75,52 +75,12 @@ final class ForwardException extends WebApplicationException {
     /**
      * Constructor.
      * @param res The originator of the exception
-     * @param msg The message
-     */
-    public ForwardException(final Resource res, final String msg) {
-        this(res, res.uriInfo().getBaseUri(), msg);
-    }
-
-    /**
-     * Constructor.
-     * @param res The originator of the exception
-     * @param uri Where to forward to
-     * @param msg The message
-     */
-    public ForwardException(final Resource res, final String uri,
-        final String msg) {
-        this(res, UriBuilder.fromUri(uri).build(), msg);
-    }
-
-    /**
-     * Constructor.
-     * @param res The originator of the exception
+     * @param builder Where to forward to
      * @param cause Cause of trouble
      */
-    public ForwardException(final Resource res, final Exception cause) {
-        this(res, res.uriInfo().getBaseUri(), cause.getMessage());
-    }
-
-    /**
-     * Constructor.
-     * @param res The originator of the exception
-     * @param uri Where to forward to
-     * @param cause Cause of trouble
-     */
-    public ForwardException(final Resource res, final String uri,
+    public ForwardException(final Resource res, final UriBuilder builder,
         final Exception cause) {
-        this(res, UriBuilder.fromUri(uri).build(), cause.getMessage());
-    }
-
-    /**
-     * Constructor.
-     * @param res The originator of the exception
-     * @param uri Where to forward to
-     * @param cause Cause of trouble
-     */
-    public ForwardException(final Resource res, final URI uri,
-        final Exception cause) {
-        this(res, uri, cause.getMessage());
+        this(res, builder, cause.getMessage());
     }
 
 }

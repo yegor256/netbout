@@ -42,6 +42,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -94,8 +95,8 @@ public abstract class AbstractPage implements Page {
      */
     public final Page init(final Resource res) {
         this.home = res;
-        this.link("self", this.home.uriInfo().getAbsolutePath());
-        this.link("home", this.home.uriInfo().getBaseUri());
+        this.link("self", this.home.uriInfo().getAbsolutePathBuilder());
+        this.link("home", this.home.base());
         return this;
     }
 
@@ -107,7 +108,7 @@ public abstract class AbstractPage implements Page {
         this.links.add(
             new Link(
                 name,
-                this.home.uriInfo().getBaseUriBuilder().path(href).build()
+                this.home.base().path(href).build()
             )
         );
         return this;
@@ -117,7 +118,7 @@ public abstract class AbstractPage implements Page {
      * {@inheritDoc}
      */
     @Override
-    public final Page link(final String name, final URI uri) {
+    public final Page link(final String name, final UriBuilder uri) {
         this.links.add(new Link(name, uri));
         return this;
     }
@@ -170,8 +171,8 @@ public abstract class AbstractPage implements Page {
                 new NewCookie(
                     this.AUTH_COOKIE,
                     new Cryptor().encrypt(identity),
-                    this.home.uriInfo().getBaseUri().getPath(),
-                    this.home.uriInfo().getBaseUri().getHost(),
+                    this.home.base().build().getPath(),
+                    this.home.base().build().getHost(),
                     // @checkstyle MultipleStringLiterals (1 line)
                     Integer.valueOf(Manifests.read("Netbout-Revision")),
                     "Netbout.com logged-in user",
@@ -253,7 +254,7 @@ public abstract class AbstractPage implements Page {
             // @checkstyle LineLength (1 line)
             "%s=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
             name,
-            this.home.uriInfo().getBaseUri().getHost(),
+            this.home.base().build().getHost(),
             this.home.httpServletRequest().getContextPath()
         );
     }

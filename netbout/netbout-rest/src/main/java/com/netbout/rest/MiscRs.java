@@ -59,7 +59,7 @@ public final class MiscRs extends AbstractRs {
             message = status.toString();
         }
         return new PageBuilder()
-            .stylesheet("/xsl/error.xsl")
+            .stylesheet(this.base().path("/xsl/error.xsl"))
             .build(AbstractPage.class)
             .init(this)
             .append(

@@ -38,6 +38,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.Providers;
 import org.apache.commons.codec.binary.Base64;
 
@@ -172,6 +173,14 @@ public abstract class AbstractRs implements Resource {
     @Override
     public final String message() {
         return this.imessage;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final UriBuilder base() {
+        return this.uriInfo().getBaseUriBuilder().clone();
     }
 
     /**
@@ -325,7 +334,7 @@ public abstract class AbstractRs implements Resource {
                 this.httpServletRequest().getRequestURI(),
                 ex.getMessage()
             );
-            throw new ForwardException(this, "/g", ex);
+            throw new ForwardException(this, this.base().path("/g"), ex);
         }
     }
 

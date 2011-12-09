@@ -61,14 +61,14 @@ public final class AuthRs extends AbstractRs {
         try {
             identity = this.authenticate(uname, iname, secret);
         } catch (IOException ex) {
-            throw new ForwardException(this, "/g", ex);
+            throw new ForwardException(this, this.base().path("/g"), ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
-            .location(this.uriInfo().getBaseUri())
+            .location(this.base().build())
             .header("Netbout-auth", new Cryptor().encrypt(identity))
             .build();
     }

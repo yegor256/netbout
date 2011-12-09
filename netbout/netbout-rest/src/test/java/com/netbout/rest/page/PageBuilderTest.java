@@ -33,6 +33,7 @@ import com.netbout.rest.Resource;
 import com.netbout.rest.ResourceMocker;
 import com.rexsl.core.Stylesheet;
 import com.rexsl.test.JaxbConverter;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -57,10 +58,12 @@ public final class PageBuilderTest {
     public void testJaxbIsWorking() throws Exception {
         final String stylesheet = "test-stylesheet";
         final Page page = new PageBuilder()
-            .stylesheet(stylesheet)
+            .stylesheet(UriBuilder.fromUri(stylesheet))
             .build(AbstractPage.class)
             .init((Resource) new ResourceMocker().mock(BoutRs.class));
-        new PageBuilder().stylesheet(stylesheet).build(AbstractPage.class);
+        new PageBuilder()
+            .stylesheet(UriBuilder.fromUri(stylesheet))
+            .build(AbstractPage.class);
         MatcherAssert.assertThat(
             page.getClass().getAnnotation(Stylesheet.class),
             Matchers.notNullValue()

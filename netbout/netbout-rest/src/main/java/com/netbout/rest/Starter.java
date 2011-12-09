@@ -98,17 +98,13 @@ public final class Starter implements ContextResolver<Starter> {
      */
     private void start() {
         final Promoter promoter = new Promoter(this.hub);
+        final String dbname = "nb:db";
         try {
             final Identity starter = this.hub
-                .user(
-                    UriBuilder.fromUri("http://www.netbout.com")
-                        .path("/hauth")
-                        .build()
-                        .toString()
-                )
+                .user("http://www.netbout.com/nb")
                 .identity("nb:starter");
             promoter.promote(
-                starter.friend("nb:db"),
+                starter.friend(dbname),
                 new URL("file", "", "com.netbout.db")
             );
             final List<String> helpers = bus.make("get-all-helpers")
@@ -116,8 +112,12 @@ public final class Starter implements ContextResolver<Starter> {
                 .asDefault(new ArrayList<String>())
                 .exec();
             for (String name : helpers) {
+                if (dbname.equals(name)) {
+                    continue;
+                }
                 final String url = bus.make("get-helper-url")
                     .synchronously()
+                    .arg(name)
                     .asDefault("")
                     .exec();
                 promoter.promote(starter.friend(name), new URL(url));

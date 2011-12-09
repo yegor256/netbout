@@ -71,33 +71,17 @@ public final class InboxRs extends AbstractRs {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
         for (Bout bout : identity.inbox(this.query)) {
-            bouts.add(
-                new ShortBout(
-                    bout,
-                    this.uriInfo().getBaseUriBuilder().clone()
-                )
-            );
+            bouts.add(new ShortBout(bout, this.base()));
         }
         return new PageBuilder()
             .schema("")
-            .stylesheet(
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path("/xsl/inbox.xsl")
-                    .build()
-                    .toString()
-            )
+            .stylesheet(this.base().path("/xsl/inbox.xsl"))
             .build(AbstractPage.class)
             .init(this)
             .append(new JaxbBundle("query", this.query))
             .append(JaxbGroup.build(bouts, "bouts"))
-            .link(
-                "friends",
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path("/f")
-                    .build()
-            )
+            .link("friends", this.base().path("/f"))
+            .link("promote", this.base().path("/h/promote"))
             .authenticated(identity)
             .build();
     }
@@ -117,13 +101,7 @@ public final class InboxRs extends AbstractRs {
             .authenticated(identity)
             .entity(String.format("bout #%d created", bout.number()))
             .status(Response.Status.SEE_OTHER)
-            .location(
-                this.uriInfo()
-                    .getBaseUriBuilder()
-                    .clone()
-                    .path("/{num}")
-                    .build(bout.number())
-            )
+            .location(this.base().path("/{num}").build(bout.number()))
             .header("Bout-number", bout.number())
             .build();
     }

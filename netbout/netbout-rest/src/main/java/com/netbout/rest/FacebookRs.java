@@ -63,14 +63,14 @@ public final class FacebookRs extends AbstractRs {
         try {
             identity = this.authenticate(code);
         } catch (IOException ex) {
-            throw new ForwardException(this, "/g", ex);
+            throw new ForwardException(this, this.base().path("/g"), ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
-            .location(this.uriInfo().getBaseUri())
+            .location(this.base().build())
             .build();
     }
 
@@ -121,11 +121,7 @@ public final class FacebookRs extends AbstractRs {
                 .queryParam("client_id", Manifests.read("Netbout-FbId"))
                 .queryParam(
                     "redirect_uri",
-                    this.uriInfo().getBaseUriBuilder()
-                        .clone()
-                        .path("/fb")
-                        .build()
-                        .toString()
+                    this.base().path("/fb").build().toString()
                 )
                 .queryParam("client_secret", Manifests.read("Netbout-FbSecret"))
                 .queryParam("code", code)

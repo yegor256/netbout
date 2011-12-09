@@ -56,22 +56,10 @@ public final class HelperRs extends AbstractRs {
     public Response front() {
         return new PageBuilder()
             .schema("")
-            .stylesheet(
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path("/xsl/helper.xsl")
-                    .build()
-                    .toString()
-            )
+            .stylesheet(this.base().path("/xsl/helper.xsl"))
             .build(AbstractPage.class)
             .init(this)
-            .link(
-                "promote",
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path("/h/promote")
-                    .build()
-            )
+            .link("promote", this.base().path("/h/promote"))
             .authenticated(this.identity())
             .build();
     }
@@ -97,7 +85,7 @@ public final class HelperRs extends AbstractRs {
             .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
-            .location(this.self())
+            .location(this.self().build())
             .build();
     }
 
@@ -105,11 +93,8 @@ public final class HelperRs extends AbstractRs {
      * Get URI of front page.
      * @return The URI of front page
      */
-    private URI self() {
-        return this.uriInfo().getBaseUriBuilder()
-            .clone()
-            .path("/h")
-            .build();
+    private UriBuilder self() {
+        return this.base().path("/h");
     }
 
 }

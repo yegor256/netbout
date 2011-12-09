@@ -172,7 +172,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.self("").build())
             .header("Message-number", msg.number())
             .build();
     }
@@ -199,7 +199,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.self("").build())
             .build();
     }
 
@@ -229,7 +229,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.self("").build())
             .header("Participant-name", name)
             .build();
     }
@@ -247,7 +247,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.self("").build())
             .build();
     }
 
@@ -264,7 +264,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.uriInfo().getBaseUri())
+            .location(this.base().build())
             .build();
     }
 
@@ -298,7 +298,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.self("").build())
             .build();
     }
 
@@ -312,8 +312,7 @@ public final class BoutRs extends AbstractRs {
         try {
             bout = identity.bout(this.number);
         } catch (com.netbout.spi.BoutNotFoundException ex) {
-            // @checkstyle MultipleStringLiterals (1 line)
-            throw new ForwardException(this, "/", ex);
+            throw new ForwardException(this, this.base(), ex);
         }
         return bout;
     }
@@ -340,10 +339,8 @@ public final class BoutRs extends AbstractRs {
         final Page page = new PageBuilder()
             .schema("")
             .stylesheet(
-                UriBuilder.fromUri(this.self("/xsl/bout.xsl"))
+                this.self("/xsl/bout.xsl")
                     .queryParam("stage", this.coords.stage())
-                    .build()
-                    .toString()
             )
             .build(AbstractPage.class)
             .init(this)
@@ -353,7 +350,7 @@ public final class BoutRs extends AbstractRs {
                     this.bout(),
                     this.coords,
                     this.query,
-                    UriBuilder.fromUri(this.self(""))
+                    this.self("")
                 )
             )
             .append(new JaxbBundle("query", this.query))
@@ -361,12 +358,7 @@ public final class BoutRs extends AbstractRs {
         if (this.mask != null) {
             final List<Invitee> invitees = new ArrayList<Invitee>();
             for (Identity identity : this.identity().friends(this.mask)) {
-                invitees.add(
-                    new Invitee(
-                        identity,
-                        UriBuilder.fromUri(this.self(""))
-                    )
-                );
+                invitees.add(new Invitee(identity, this.self("")));
             }
             page.append(new JaxbBundle("mask", this.mask))
                 .append(JaxbGroup.build(invitees, "invitees"));
@@ -383,15 +375,12 @@ public final class BoutRs extends AbstractRs {
     /**
      * Location of myself.
      * @param path The path to add
-     * @return The location
+     * @return The location, its builder actually
      */
-    private URI self(final String path) {
-        return this.uriInfo()
-            .getBaseUriBuilder()
-            .clone()
-            .path("/{num}")
-            .path(path)
-            .build(this.bout().number());
+    private UriBuilder self(final String path) {
+        return this.base()
+            .path(String.format("/%s", this.bout().number()))
+            .path(path);
     }
 
     /**
@@ -402,8 +391,8 @@ public final class BoutRs extends AbstractRs {
         return new NewCookie(
             "netbout-stage",
             this.coords.toString(),
-            this.self("").getPath(),
-            this.uriInfo().getBaseUri().getHost(),
+            this.self("").build().getPath(),
+            this.base().build().getHost(),
             Integer.valueOf(Manifests.read("Netbout-Revision")),
             "Netbout.com stage information",
             // @checkstyle MagicNumber (1 line)

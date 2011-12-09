@@ -51,28 +51,16 @@ public final class LoginRs extends AbstractRs {
      */
     @GET
     public Response login() {
-        final URI fburi = UriBuilder
+        final UriBuilder fburi = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
             // @checkstyle MultipleStringLiterals (3 lines)
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
             .queryParam(
                 "redirect_uri",
-                this.uriInfo()
-                    .getBaseUriBuilder()
-                    .clone()
-                    .path("/fb")
-                    .build()
-                    .toString()
-            )
-            .build();
+                this.base().path("/fb").build().toString()
+            );
         return new PageBuilder()
-            .stylesheet(
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path("/xsl/login.xsl")
-                    .build()
-                    .toString()
-        )
+            .stylesheet(this.base().path("/xsl/login.xsl"))
             .build(AbstractPage.class)
             .init(this)
             .link("facebook", fburi)
@@ -90,13 +78,13 @@ public final class LoginRs extends AbstractRs {
     public Response logout() {
         return Response
             .status(Response.Status.TEMPORARY_REDIRECT)
-            .location(this.uriInfo().getBaseUri())
+            .location(this.base().build())
             .header(
                 "Set-Cookie",
                 String.format(
                     // @checkstyle LineLength (1 line)
                     "netbout=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
-                    this.uriInfo().getBaseUri().getHost(),
+                    this.base().build().getHost(),
                     this.httpServletRequest().getContextPath()
                 )
             )

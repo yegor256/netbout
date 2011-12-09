@@ -27,6 +27,8 @@
 package com.netbout.rest.jaxb;
 
 import java.net.URI;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -53,6 +55,11 @@ public final class Link {
     private final transient URI href;
 
     /**
+     * The type of resource there.
+     */
+    private final transient String type;
+
+    /**
      * Public ctor for JAXB.
      */
     public Link() {
@@ -65,8 +72,31 @@ public final class Link {
      * @param uri The href
      */
     public Link(final String name, final URI uri) {
+        this(name, uri, MediaType.TEXT_XML);
+    }
+
+    /**
+     * Public ctor.
+     * @param name The "rel" of it
+     * @param builder URI builder
+     */
+    public Link(final String name, final UriBuilder builder) {
+        this(name, builder.build(), MediaType.TEXT_XML);
+    }
+
+    /**
+     * Public ctor.
+     * @param name The "rel" of it
+     * @param uri The href
+     * @param tpe Media type of destination
+     */
+    public Link(final String name, final URI uri, final String tpe) {
+        assert name != null;
+        assert uri != null;
+        assert tpe != null;
         this.rel = name;
         this.href = uri;
+        this.type = tpe;
     }
 
     /**
@@ -85,6 +115,15 @@ public final class Link {
     @XmlAttribute
     public URI getHref() {
         return this.href;
+    }
+
+    /**
+     * Type of destination resource.
+     * @return The type
+     */
+    @XmlAttribute
+    public String getType() {
+        return this.type;
     }
 
 }

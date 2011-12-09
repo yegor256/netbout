@@ -81,17 +81,12 @@ public final class BoutStylesheetRs extends AbstractRs {
     public String boutXsl() {
         final VelocityContext context = new VelocityContext();
         context.put(
-            "boutXsl",
-            this.uriInfo().getBaseUriBuilder()
-                .clone()
-                .path("/xsl/bout.xsl")
-                .build()
-                .toString()
+            "boutXsl", 
+            this.base().path("/xsl/bout.xsl").build().toString()
         );
         context.put(
             "stageXsl",
-            this.uriInfo().getBaseUriBuilder()
-                .clone()
+            this.base()
                 .path("/{bout}/xsl/stage.xsl")
                 .queryParam("stage", this.stage)
                 .build(this.bout)

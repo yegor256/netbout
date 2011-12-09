@@ -35,13 +35,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 /**
- * Helper authentication page.
+ * Authorizer of "nb:..." identities.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/hauth")
-public final class HelperAuthRs extends AbstractRs {
+@Path("/nb")
+public final class NbRs extends AbstractRs {
 
     /**
      * Authentication page.
@@ -53,17 +53,17 @@ public final class HelperAuthRs extends AbstractRs {
     public Response auth(@QueryParam("identity") final String iname,
         @QueryParam("secret") final String secret) {
         if ((iname == null) || (secret == null) || secret.isEmpty()) {
-            throw new ForwardException(this, "Authentication failure");
+            throw new ForwardException(this, this.base(), "Failure");
         }
         final String user = UriBuilder
-            .fromUri("http://www.netbout.com/hauth")
+            .fromUri("http://www.netbout.com/nb")
             .build()
             .toString();
         Identity identity;
         try {
             identity = this.hub().user(user).identity(iname);
         } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new ForwardException(this, ex);
+            throw new ForwardException(this, this.base(), ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)

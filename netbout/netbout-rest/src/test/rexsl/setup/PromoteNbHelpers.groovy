@@ -23,63 +23,27 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.ext.Providers;
-
-/**
- * RESTful resource.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+package com.netbout.rest.rexsl.setup
 
-    /**
-     * When this resource was created, in nano seconds.
-     * @return The time
-     */
-    long nano();
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import com.rexsl.test.TestClient
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
 
-    /**
-     * Message to show.
-     * @return The message
-     */
-    String message();
+def auth = UriBuilder.fromUri(rexsl.home).path('/nb').build()
+def hh = new RestSession(rexsl.home).authenticate(auth, 'nb:hh', 'secret')
 
-    /**
-     * Base URI builder.
-     * @return The builder
-     */
-    UriBuilder base();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
-
-    /**
-     * Request just received.
-     * @return The request
-     */
-    HttpServletRequest httpServletRequest();
-
-}
+new TestClient(RestUriBuilder.from(hh).build())
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .rel('/page/links/link[@rel="promote"]/@href')
+    .body('url=file:///com.netbout.hub.hh')
+    .post()
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)

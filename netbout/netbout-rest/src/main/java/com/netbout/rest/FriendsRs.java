@@ -57,18 +57,13 @@ public final class FriendsRs extends AbstractRs {
         if (mask == null) {
             throw new ForwardException(
                 this,
-                this.uriInfo().getBaseUriBuilder().build(),
+                this.base(),
                 "Query param 'mask' missed"
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();
         for (Identity identity : this.identity().friends(mask)) {
-            invitees.add(
-                new Invitee(
-                    identity,
-                    this.uriInfo().getBaseUriBuilder().clone()
-                )
-            );
+            invitees.add(new Invitee(identity, this.base()));
         }
         return new PageBuilder()
             .schema("")

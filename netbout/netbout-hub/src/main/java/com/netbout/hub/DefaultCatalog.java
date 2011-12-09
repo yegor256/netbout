@@ -179,14 +179,19 @@ final class DefaultCatalog implements Catalog {
      */
     @Override
     public void promote(final Identity identity, final Helper helper) {
+        final Identity existing = this.all.get(identity.name());
+        try {
+            this.save(identity.name(), helper);
+        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            throw new IllegalStateException(ex);
+        }
         Logger.info(
             this,
-            "#promote('%s', '%s'): replacing existing identity (%s)",
+            "#promote('%s', '%s'): replaced existing identity (%s)",
             identity.name(),
             helper.getClass().getName(),
-            this.all.get(identity.name()).getClass().getName()
+            existing.getClass().getName()
         );
-        this.all.put(identity.name(), helper);
         this.bus.make("identity-promoted")
             .synchronously()
             .arg(identity.name())

@@ -76,7 +76,7 @@
                     </xsl:if>
                 </xsl:attribute>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="@href"/>
+                    <xsl:value-of select="link[@rel='page']/@href"/>
                 </xsl:attribute>
                 <xsl:text>#</xsl:text>
                 <xsl:value-of select="number" />
