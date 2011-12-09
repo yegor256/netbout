@@ -64,6 +64,7 @@ public final class HubParticipant implements Participant {
      * @param bout The bout
      * @param dat The data
      * @param bdt Bout data
+     * @checkstyle ParameterNumber (3 lines)
      */
     public HubParticipant(final Catalog ctlg, final Bout bout,
         final ParticipantDt dat, final BoutDt bdt) {

@@ -45,6 +45,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class HubBout implements Bout {
 
     /**
@@ -113,6 +114,9 @@ public final class HubBout implements Bout {
     @Override
     public void leave() {
         this.data.kickOff(this.viewer.name());
+        if (this.viewer instanceof InvitationSensitive) {
+            ((InvitationSensitive) this.viewer).kickedOff(this.number());
+        }
     }
 
     /**

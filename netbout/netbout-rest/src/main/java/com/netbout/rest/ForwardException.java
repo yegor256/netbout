@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import com.netbout.utils.TextUtils;
 import com.rexsl.core.Manifests;
-import java.net.URI;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;

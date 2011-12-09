@@ -35,7 +35,6 @@ import com.netbout.spi.Identity;
 import com.netbout.utils.Cryptor;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ws.rs.core.HttpHeaders;

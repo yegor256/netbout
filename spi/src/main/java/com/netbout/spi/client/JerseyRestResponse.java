@@ -200,7 +200,7 @@ final class JerseyRestResponse implements RestResponse {
     @Override
     public RestClient rel(final String rel) {
         String xpath = rel;
-        if (!xpath.startsWith("/")) {
+        if (xpath.charAt(0) != '/') {
             xpath = String.format("/page/links/link[@rel='%s']/@href", rel);
         }
         return this.client.copy(

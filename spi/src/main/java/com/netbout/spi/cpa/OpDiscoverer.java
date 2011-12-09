@@ -61,7 +61,7 @@ final class OpDiscoverer {
 
     /**
      * Public ctor.
-     * @param identity The identity of helper
+     * @param idnt The identity of helper
      */
     public OpDiscoverer(final Identity idnt) {
         this.identity = idnt;
@@ -112,7 +112,10 @@ final class OpDiscoverer {
                     )
                 );
             }
-            final String pkg = url.getPath();
+            String pkg = url.getPath();
+            if (pkg.charAt(0) == '/') {
+                pkg = pkg.substring(1);
+            }
             reflections = new Reflections(pkg);
             Logger.debug(
                 this,

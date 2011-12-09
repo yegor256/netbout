@@ -27,10 +27,8 @@
 package com.netbout.rest;
 
 import com.netbout.rest.page.PageBuilder;
-import com.netbout.utils.Promoter;
 import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import java.net.URI;
+import com.netbout.utils.Promoter;
 import java.net.URL;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;

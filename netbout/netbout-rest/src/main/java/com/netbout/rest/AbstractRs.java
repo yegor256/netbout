@@ -37,8 +37,8 @@ import javax.ws.rs.CookieParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import org.apache.commons.codec.binary.Base64;
 
@@ -98,7 +98,7 @@ public abstract class AbstractRs implements Resource {
     /**
      * Shall we add AUTH to URLs?
      */
-    private transient boolean addAuthToURIs = false;
+    private transient boolean addAuthToURIs;
 
     /**
      * The message to show.
@@ -193,10 +193,9 @@ public abstract class AbstractRs implements Resource {
         final UriBuilder builder = this.uriInfo()
             .getBaseUriBuilder()
             .clone();
-        if (this.icookie != null && !this.icookie.isEmpty()) {
-            // if (this.addAuthToURIs) {
-                builder.queryParam(AbstractRs.AUTH_PARAM, this.icookie);
-            // }
+        if (this.icookie != null && !this.icookie.isEmpty()
+            && this.addAuthToURIs) {
+            builder.queryParam(AbstractRs.AUTH_PARAM, this.icookie);
         }
         return builder;
     }

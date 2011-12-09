@@ -103,9 +103,10 @@ final class DefaultTokenExecutor implements TokenExecutor {
         }
         Logger.debug(
             this,
-            "#run(%s, %d helpers): executed in %dms",
+            "#run(%s, %d helpers): returned [%s] in %dms",
             token,
             targets.size(),
+            token.getResult(),
             System.currentTimeMillis() - start
         );
     }

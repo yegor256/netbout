@@ -246,16 +246,16 @@ public final class CpaHelper implements Helper {
      */
     private ConcurrentMap<String, HelpTarget> discover(final URL url) {
         final long start = System.currentTimeMillis();
-        final ConcurrentMap<String, HelpTarget> ops =
+        final ConcurrentMap<String, HelpTarget> found =
             new OpDiscoverer(this).discover(url);
         Logger.info(
             this,
             "#init('%s'): %d operations discovered [%dms]",
             url,
-            ops.size(),
+            found.size(),
             System.currentTimeMillis() - start
         );
-        return ops;
+        return found;
     }
 
 }

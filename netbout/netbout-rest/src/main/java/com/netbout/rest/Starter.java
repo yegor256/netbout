@@ -30,20 +30,14 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
 import com.netbout.utils.Promoter;
-import com.sun.jersey.api.client.Client;
 import com.ymock.util.Logger;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
@@ -69,7 +63,6 @@ public final class Starter implements ContextResolver<Starter> {
     /**
      * Public ctor.
      * @param context Servlet context
-     * @param info URI info
      * @checkstyle ExecutableStatementCount (3 lines)
      */
     public Starter(@Context final ServletContext context) {
@@ -108,7 +101,7 @@ public final class Starter implements ContextResolver<Starter> {
                 new URL("file", "", "com.netbout.db")
             );
             starter.setPhoto(new URL("http", "img.netbout.com", "starter.png"));
-            final List<String> helpers = bus.make("get-all-helpers")
+            final List<String> helpers = this.bus.make("get-all-helpers")
                 .synchronously()
                 .asDefault(new ArrayList<String>())
                 .exec();
@@ -116,7 +109,7 @@ public final class Starter implements ContextResolver<Starter> {
                 if (dbname.equals(name)) {
                     continue;
                 }
-                final String url = bus.make("get-helper-url")
+                final String url = this.bus.make("get-helper-url")
                     .synchronously()
                     .arg(name)
                     .asDefault("")

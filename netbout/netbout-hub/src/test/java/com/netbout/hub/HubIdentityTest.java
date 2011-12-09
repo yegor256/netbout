@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import java.net.URL;
 import org.junit.Test;

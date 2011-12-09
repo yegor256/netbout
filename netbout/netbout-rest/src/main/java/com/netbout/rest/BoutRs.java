@@ -36,7 +36,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.rexsl.core.Manifests;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.CookieParam;
@@ -55,6 +54,7 @@ import javax.ws.rs.core.UriBuilder;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (400 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
 @Path("/{num : [0-9]+}")
@@ -270,6 +270,7 @@ public final class BoutRs extends AbstractRs {
 
     /**
      * Kick-off somebody from the bout.
+     * @param name Who to kick off
      * @return The JAX-RS response
      */
     @Path("/kickoff")
