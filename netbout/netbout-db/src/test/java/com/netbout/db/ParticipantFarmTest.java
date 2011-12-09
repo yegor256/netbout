@@ -61,11 +61,11 @@ public final class ParticipantFarmTest {
     }
 
     /**
-     * Manipulate with participant status.
+     * ParticipantFarm can manipulate participant status.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBoutStatusChanging() throws Exception {
+    public void manipulatsBoutStatus() throws Exception {
         final String identity = "Steve Jobs";
         new IdentityFarm().changedIdentityPhoto(identity, "");
         this.farm.addedBoutParticipant(this.bout, identity);
@@ -81,11 +81,11 @@ public final class ParticipantFarmTest {
     }
 
     /**
-     * Read all participants of the bout.
+     * ParticipantFarm can read all participants of the bout.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBoutParticipantsReading() throws Exception {
+    public void readsBoutParticipants() throws Exception {
         final String identity = "Bill Gates";
         new IdentityFarm().changedIdentityPhoto(identity, "");
         this.farm.addedBoutParticipant(this.bout, identity);
@@ -94,6 +94,20 @@ public final class ParticipantFarmTest {
             names,
             Matchers.hasItem(identity)
         );
+    }
+
+    /**
+     * ParticipantFarm can remove bout participants.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void addsAndRemovesParticipants() throws Exception {
+        final String identity = "William III";
+        new IdentityFarm().changedIdentityPhoto(identity, "");
+        this.farm.addedBoutParticipant(this.bout, identity);
+        this.farm.removedBoutParticipant(this.bout, identity);
+        final List<String> names = this.farm.getBoutParticipants(this.bout);
+        MatcherAssert.assertThat(names.size(), Matchers.equalTo(0));
     }
 
 }

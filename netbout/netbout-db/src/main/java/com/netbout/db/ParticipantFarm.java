@@ -115,6 +115,36 @@ public final class ParticipantFarm {
     }
 
     /**
+     * Removed participant of the bout.
+     * @param bout The bout
+     * @param identity The name of the person
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("removed-bout-participant")
+    public void removedBoutParticipant(final Long bout, final String identity)
+        throws SQLException {
+        final long start = System.currentTimeMillis();
+        final Connection conn = Database.connection();
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "DELETE FROM participant WHERE bout = ? AND identity = ?"
+            );
+            stmt.setLong(1, bout);
+            stmt.setString(2, identity);
+            stmt.execute();
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#removedBoutParticipant(#%d, '%s'): removed [%dms]",
+            bout,
+            identity,
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
      * Get participant status.
      * @param bout The number of the bout
      * @param identity The participant
