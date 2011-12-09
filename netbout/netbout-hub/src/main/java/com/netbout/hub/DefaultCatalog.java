@@ -187,6 +187,12 @@ final class DefaultCatalog implements Catalog {
             this.all.get(identity.name()).getClass().getName()
         );
         this.all.put(identity.name(), helper);
+        this.bus.make("identity-promoted")
+            .synchronously()
+            .arg(identity.name())
+            .arg(helper.location())
+            .asDefault(true)
+            .exec();
     }
 
     /**
