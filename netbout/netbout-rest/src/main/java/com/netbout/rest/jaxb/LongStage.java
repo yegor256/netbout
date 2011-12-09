@@ -78,23 +78,11 @@ public final class LongStage {
      * @param bot Bout to work with
      * @param crds The coordinates
      */
-    private LongStage(final Bus ibus, final Bout bot,
+    public LongStage(final Bus ibus, final Bout bot,
         final StageCoordinates crds) {
         this.bus = ibus;
         this.bout = bot;
         this.coords = crds;
-    }
-
-    /**
-     * Builder.
-     * @param ibus The bus
-     * @param bot Bout to work with
-     * @param crds The coordinates
-     * @return The instance just created
-     */
-    public static LongStage build(final Bus ibus, final Bout bot,
-        final StageCoordinates crds) {
-        return new LongStage(ibus, bot, crds);
     }
 
     /**

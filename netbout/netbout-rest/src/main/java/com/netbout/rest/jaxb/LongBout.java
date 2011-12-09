@@ -128,7 +128,7 @@ public final class LongBout {
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
         for (String identity : this.coords.all()) {
-            stages.add(ShortStage.build(identity, this.builder.clone()));
+            stages.add(new ShortStage(identity, this.builder.clone()));
         }
         return stages;
     }
@@ -141,7 +141,7 @@ public final class LongBout {
     public LongStage getStage() {
         LongStage stage = null;
         if (!this.coords.stage().isEmpty()) {
-            stage = LongStage.build(this.bus, this.bout, this.coords);
+            stage = new LongStage(this.bus, this.bout, this.coords);
         }
         return stage;
     }
@@ -155,7 +155,7 @@ public final class LongBout {
     public List<LongMessage> getMessages() {
         final List<LongMessage> messages = new ArrayList<LongMessage>();
         for (Message msg : this.bout.messages(this.query)) {
-            messages.add(LongMessage.build(msg));
+            messages.add(new LongMessage(msg));
         }
         return messages;
     }
@@ -170,7 +170,7 @@ public final class LongBout {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
-            dudes.add(LongParticipant.build(dude));
+            dudes.add(new LongParticipant(dude, this.builder));
         }
         return dudes;
     }

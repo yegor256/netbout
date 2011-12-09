@@ -75,9 +75,7 @@ public final class LoginRs extends AbstractRs {
         )
             .build(AbstractPage.class)
             .init(this)
-            .append(
-                new JaxbBundle("facebook").attr(Page.HATEOAS_HREF, fburi)
-            )
+            .link("facebook", fburi)
             .anonymous()
             .build();
     }

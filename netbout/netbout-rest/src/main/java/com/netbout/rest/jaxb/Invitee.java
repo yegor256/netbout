@@ -67,19 +67,9 @@ public final class Invitee {
      * @param idnt Parent identity to refer to
      * @param bldr Uri builder
      */
-    private Invitee(final Identity idnt, final UriBuilder bldr) {
+    public Invitee(final Identity idnt, final UriBuilder bldr) {
         this.identity = idnt;
         this.builder = bldr;
-    }
-
-    /**
-     * Build it.
-     * @param idnt Parent identity to refer to
-     * @param bldr Uri builder
-     * @return The object just created
-     */
-    public static Invitee build(final Identity idnt, final UriBuilder bldr) {
-        return new Invitee(idnt, bldr);
     }
 
     /**

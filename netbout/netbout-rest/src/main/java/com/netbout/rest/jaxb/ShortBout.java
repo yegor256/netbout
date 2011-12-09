@@ -77,16 +77,6 @@ public final class ShortBout {
     }
 
     /**
-     * Builder.
-     * @param parent Parent bout to refer to
-     * @param bldr URI builder
-     * @return The instance just created
-     */
-    public static ShortBout build(final Bout parent, final UriBuilder bldr) {
-        return new ShortBout(parent, bldr);
-    }
-
-    /**
      * HREF of the bout.
      * @return The url
      */
@@ -126,7 +116,7 @@ public final class ShortBout {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
-            dudes.add(LongParticipant.build(dude));
+            dudes.add(new LongParticipant(dude, this.builder));
         }
         return dudes;
     }

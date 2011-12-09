@@ -65,19 +65,9 @@ public final class ShortStage {
      * @param name The identity
      * @param bldr URI builder
      */
-    private ShortStage(final String name, final UriBuilder bldr) {
+    public ShortStage(final String name, final UriBuilder bldr) {
         this.identity = name;
         this.builder = bldr;
-    }
-
-    /**
-     * Builder.
-     * @param name The identity
-     * @param bldr URI builder
-     * @return The instance just created
-     */
-    public static ShortStage build(final String name, final UriBuilder bldr) {
-        return new ShortStage(name, bldr);
     }
 
     /**

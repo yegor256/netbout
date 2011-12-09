@@ -241,7 +241,7 @@ public final class BoutRs extends AbstractRs {
     @Path("/join")
     @GET
     public Response join() {
-        this.bout().confirm(true);
+        this.bout().confirm();
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
@@ -258,7 +258,41 @@ public final class BoutRs extends AbstractRs {
     @Path("/leave")
     @GET
     public Response leave() {
-        this.bout().confirm(false);
+        this.bout().leave();
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(this.identity())
+            .status(Response.Status.SEE_OTHER)
+            .location(this.uriInfo().getBaseUri())
+            .build();
+    }
+
+    /**
+     * Kick-off somebody from the bout.
+     * @return The JAX-RS response
+     */
+    @Path("/kickoff")
+    @GET
+    public Response leave(@QueryParam("name") final String name) {
+        boolean done = false;
+        for (Participant dude : this.bout().participants()) {
+            if (dude.identity().name().equals(name)) {
+                dude.kickOff();
+                done = true;
+                break;
+            }
+        }
+        if (!done) {
+            throw new ForwardException(
+                this,
+                this.self(""),
+                String.format(
+                    "Participant '%s' not found in bout, can't kick off",
+                    name
+                )
+            );
+        }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
@@ -328,7 +362,7 @@ public final class BoutRs extends AbstractRs {
             final List<Invitee> invitees = new ArrayList<Invitee>();
             for (Identity identity : this.identity().friends(this.mask)) {
                 invitees.add(
-                    Invitee.build(
+                    new Invitee(
                         identity,
                         UriBuilder.fromUri(this.self(""))
                     )

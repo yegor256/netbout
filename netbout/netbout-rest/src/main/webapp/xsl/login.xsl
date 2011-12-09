@@ -48,7 +48,7 @@
         <p>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/facebook/@href" />
+                    <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
                 </xsl:attribute>
                 <xsl:text>Login using your Facebook account</xsl:text>
             </a>

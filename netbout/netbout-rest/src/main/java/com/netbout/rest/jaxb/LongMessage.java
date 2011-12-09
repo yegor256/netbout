@@ -60,17 +60,8 @@ public final class LongMessage {
      * Private ctor.
      * @param msg The message
      */
-    private LongMessage(final Message msg) {
+    public LongMessage(final Message msg) {
         this.message = msg;
-    }
-
-    /**
-     * Build it.
-     * @param msg The message
-     * @return The instance of the class
-     */
-    public static LongMessage build(final Message msg) {
-        return new LongMessage(msg);
     }
 
     /**

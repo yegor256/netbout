@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.Link;
 import com.netbout.rest.jaxb.LongHelper;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
@@ -46,6 +47,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -82,7 +85,7 @@ public abstract class AbstractPage implements Page {
     /**
      * Collection of links.
      */
-    private final transient JaxbBundle links = new JaxbBundle("links");
+    private final transient Collection<Link> links = new ArrayList<Link>();
 
     /**
      * Initializer.
@@ -101,12 +104,12 @@ public abstract class AbstractPage implements Page {
      */
     @Override
     public final Page link(final String name, final String href) {
-        this.links.add(Page.HATEOAS_LINK)
-            .attr(Page.HATEOAS_NAME, name)
-            .attr(
-                Page.HATEOAS_HREF,
+        this.links.add(
+            new Link(
+                name,
                 this.home.uriInfo().getBaseUriBuilder().path(href).build()
-            );
+            )
+        );
         return this;
     }
 
@@ -115,9 +118,7 @@ public abstract class AbstractPage implements Page {
      */
     @Override
     public final Page link(final String name, final URI uri) {
-        this.links.add(Page.HATEOAS_LINK)
-            .attr(Page.HATEOAS_NAME, name)
-            .attr(Page.HATEOAS_HREF, uri);
+        this.links.add(new Link(name, uri));
         return this;
     }
 
@@ -207,6 +208,16 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
+     * Get all links.
+     * @return Full list of links
+     */
+    @XmlElement(name = "link")
+    @XmlElementWrapper(name = "links")
+    public final Collection<Link> getLinks() {
+        return this.links;
+    }
+
+    /**
      * Get time of page generation, in nanoseconds.
      * @return Time in nanoseconds
      */
@@ -230,7 +241,6 @@ public abstract class AbstractPage implements Page {
                 .up()
         );
         this.append(new JaxbBundle("message", this.home.message()));
-        this.append(this.links);
     }
 
     /**

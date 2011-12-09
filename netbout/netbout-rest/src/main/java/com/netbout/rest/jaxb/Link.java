@@ -23,26 +23,68 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest.jaxb;
+
+import java.net.URI;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ * HATEOAS link.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+@XmlRootElement(name = "link")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class Link {
 
-import com.netbout.spi.client.RestSession
-import javax.ws.rs.core.UriBuilder
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * Rel name.
+     */
+    private final transient String rel;
 
-def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
-def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
-def walter = new RestSession(rexsl.home).authenticate(auth, 'nb:walter', '')
+    /**
+     * The URI.
+     */
+    private final transient URI href;
 
-def bout = jeff.start()
-def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-def text = 'How are you?'
-def msg = walter.bout(number).post(text).number()
-MatcherAssert.assertThat(bout.message(msg).text(), Matchers.equalTo(text))
+    /**
+     * Public ctor for JAXB.
+     */
+    public Link() {
+        throw new IllegalStateException("This ctor should never be called");
+    }
 
+    /**
+     * Public ctor.
+     * @param name The "rel" of it
+     * @param uri The href
+     */
+    public Link(final String name, final URI uri) {
+        this.rel = name;
+        this.href = uri;
+    }
+
+    /**
+     * REL of the link.
+     * @return The url
+     */
+    @XmlAttribute
+    public String getRel() {
+        return this.rel;
+    }
+
+    /**
+     * HREF of the link.
+     * @return The url
+     */
+    @XmlAttribute
+    public URI getHref() {
+        return this.href;
+    }
+
+}

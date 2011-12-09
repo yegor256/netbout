@@ -64,7 +64,7 @@ public final class FriendsRs extends AbstractRs {
         final List<Invitee> invitees = new ArrayList<Invitee>();
         for (Identity identity : this.identity().friends(mask)) {
             invitees.add(
-                Invitee.build(
+                new Invitee(
                     identity,
                     this.uriInfo().getBaseUriBuilder().clone()
                 )

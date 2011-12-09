@@ -72,7 +72,7 @@ public final class InboxRs extends AbstractRs {
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
         for (Bout bout : identity.inbox(this.query)) {
             bouts.add(
-                ShortBout.build(
+                new ShortBout(
                     bout,
                     this.uriInfo().getBaseUriBuilder().clone()
                 )

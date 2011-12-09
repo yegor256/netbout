@@ -42,7 +42,6 @@ def bout = jeff.start()
 def number = bout.number()
 bout.invite(walter)
 walter.bout(number).confirm()
-def text = 'How are you?'
-def msg = walter.bout(number).post(text).number()
-MatcherAssert.assertThat(bout.message(msg).text(), Matchers.equalTo(text))
+walter.bout(number).leave()
+MatcherAssert.assertThat(walter.inbox("").size(), Matchers.equalTo(0))
 

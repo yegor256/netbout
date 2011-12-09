@@ -48,7 +48,7 @@ public final class LoginRsTest {
         final Response response = rest.login();
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/facebook[@href]")
+            XmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
         );
     }
 

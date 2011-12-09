@@ -40,21 +40,6 @@ import javax.ws.rs.core.Response;
 public interface Page {
 
     /**
-     * Link element.
-     */
-    String HATEOAS_LINK = "link";
-
-    /**
-     * Name attribute.
-     */
-    String HATEOAS_NAME = "rel";
-
-    /**
-     * HREF attribute.
-     */
-    String HATEOAS_HREF = "href";
-
-    /**
      * Add new link.
      * @param name The name of it
      * @param href HREF of the link
