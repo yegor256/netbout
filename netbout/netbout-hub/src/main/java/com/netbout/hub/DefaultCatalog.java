@@ -190,7 +190,7 @@ final class DefaultCatalog implements Catalog {
         this.bus.make("identity-promoted")
             .synchronously()
             .arg(identity.name())
-            .arg(helper.location())
+            .arg(helper.location().toString())
             .asDefault(true)
             .exec();
     }
