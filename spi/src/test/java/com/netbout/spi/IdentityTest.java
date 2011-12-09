@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -83,6 +84,20 @@ public final class IdentityTest {
         final Bout bout = identity.start();
         MatcherAssert.assertThat(bout, Matchers.notNullValue());
         MatcherAssert.assertThat(identity.bout(1L), Matchers.notNullValue());
+    }
+
+    /**
+     * IdentityMocker can add bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void addsBoutByNumber() throws Exception {
+        final Long number = Math.abs(new Random().nextLong());
+        final Bout bout = new BoutMocker().mock();
+        final Identity identity = new IdentityMocker()
+            .withBout(number, bout)
+            .mock();
+        MatcherAssert.assertThat(identity.bout(number), Matchers.equalTo(bout));
     }
 
 }

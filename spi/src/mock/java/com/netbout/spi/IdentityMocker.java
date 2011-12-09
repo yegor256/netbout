@@ -80,6 +80,19 @@ public final class IdentityMocker {
     }
 
     /**
+     * With this bout on board.
+     * @param num Number of it
+     * @param bout The bout
+     * @return This object
+     * @throws BoutNotFoundException If some problem
+     */
+    public IdentityMocker withBout(final Long num, final Bout bout)
+        throws BoutNotFoundException {
+        Mockito.doReturn(bout).when(this.identity).bout(num);
+        return this;
+    }
+
+    /**
      * Mock it.
      * @return Mocked identity
      * @throws Exception If some problem inside

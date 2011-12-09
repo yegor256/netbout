@@ -124,7 +124,7 @@ final class RestIdentity implements Identity {
             .get(String.format("reading bouts in the inbox '%s'", query))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bouts")
-            .xpath("/page/bouts/bout/@href");
+            .xpath("/page/bouts/bout/link[@rel='page']/@href");
         final List<Bout> bouts = new ArrayList<Bout>();
         for (String href : hrefs) {
             bouts.add(new RestBout(this.client.copy(href)));
@@ -142,7 +142,12 @@ final class RestIdentity implements Identity {
             .get(String.format("reading href of bout #%d", num))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))
-            .xpath(String.format("/page/bouts/bout[number='%d']/@href", num))
+            .xpath(
+                String.format(
+                    "/page/bouts/bout[number='%d']/link[@rel='page']/@href",
+                    num
+                )
+            )
             .get(0);
         return new RestBout(this.client.copy(href));
     }
