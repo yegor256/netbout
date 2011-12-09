@@ -342,7 +342,7 @@ public abstract class AbstractRs implements Resource {
                 this.httpServletRequest().getRequestURI(),
                 ex.getMessage()
             );
-            throw new ForwardException(this, this.base().path("/g"), ex);
+            throw new LoginRequiredException(this, ex);
         }
     }
 

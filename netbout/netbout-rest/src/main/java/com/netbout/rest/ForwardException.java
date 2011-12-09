@@ -41,7 +41,7 @@ import javax.ws.rs.core.UriBuilder;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class ForwardException extends WebApplicationException {
+class ForwardException extends WebApplicationException {
 
     /**
      * Constructor.
@@ -51,25 +51,7 @@ final class ForwardException extends WebApplicationException {
      */
     public ForwardException(final Resource res, final UriBuilder builder,
         final String msg) {
-        super(
-            Response.status(Response.Status.TEMPORARY_REDIRECT)
-                .header("Netbout-error", msg)
-                .entity(msg)
-                .location(builder.build())
-                .cookie(
-                    new NewCookie(
-                        AbstractPage.MESSAGE_COOKIE,
-                        TextUtils.pack(msg),
-                        res.base().build().getPath(),
-                        res.base().build().getHost(),
-                        Integer.valueOf(Manifests.read("Netbout-Revision")),
-                        "netbout message",
-                        // @checkstyle MagicNumber (1 line)
-                        60 * 60,
-                        false
-                    ))
-                .build()
-        );
+        super(ForwardException.response(res, builder, msg));
     }
 
     /**
@@ -80,7 +62,37 @@ final class ForwardException extends WebApplicationException {
      */
     public ForwardException(final Resource res, final UriBuilder builder,
         final Exception cause) {
-        this(res, builder, cause.getMessage());
+        super(
+            cause,
+            ForwardException.response(res, builder, cause.getMessage())
+        );
+    }
+
+    /**
+     * Constructor.
+     * @param res The originator of the exception
+     * @param builder Where to forward to
+     * @param msg The message
+     */
+    private static Response response(final Resource res,
+        final UriBuilder builder, final String msg) {
+        final NewCookie cookie = new NewCookie(
+            AbstractPage.MESSAGE_COOKIE,
+            TextUtils.pack(msg),
+            res.base().build().getPath(),
+            res.base().build().getHost(),
+            Integer.valueOf(Manifests.read("Netbout-Revision")),
+            "netbout message",
+            // @checkstyle MagicNumber (1 line)
+            60 * 60,
+            false
+        );
+        return Response.status(Response.Status.TEMPORARY_REDIRECT)
+            .header("Netbout-error", msg)
+            .entity(msg)
+            .location(builder.build())
+            .cookie(cookie)
+            .build();
     }
 
 }

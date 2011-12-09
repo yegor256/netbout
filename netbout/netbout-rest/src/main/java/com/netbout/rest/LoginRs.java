@@ -51,13 +51,16 @@ public final class LoginRs extends AbstractRs {
      */
     @GET
     public Response login() {
+        try {
+            this.identity();
+            throw new ForwardException(this, this.base(), "Already logged in");
+        } catch (LoginRequiredException ex) {
+            // swallow it, it's normal situation
+        }
         final UriBuilder fburi = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
-            .queryParam(
-                "redirect_uri",
-                this.base().path("/fb").build()
-            );
+            .queryParam("redirect_uri", this.base().path("/fb").build());
         return new PageBuilder()
             .stylesheet(this.base().path("/xsl/login.xsl"))
             .build(AbstractPage.class)

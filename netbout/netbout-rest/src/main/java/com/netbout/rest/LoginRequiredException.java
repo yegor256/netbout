@@ -26,31 +26,21 @@
  */
 package com.netbout.rest;
 
-import javax.ws.rs.core.Response;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
-
 /**
- * Test case for {@link LoginRs}.
+ * Login required.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LoginRsTest {
+final class LoginRequiredException extends ForwardException {
 
     /**
-     * LoginRs renders login page.
-     * @throws Exception If there is some problem inside
+     * Constructor.
+     * @param res The originator of the exception
+     * @param cause Cause of this problem
      */
-    @Test
-    public void rendersLoginPage() throws Exception {
-        final LoginRs rest = new ResourceMocker().mock(LoginRs.class);
-        rest.setAuth("some-incorrect-auth-code");
-        final Response response = rest.login();
-        MatcherAssert.assertThat(
-            ResourceMocker.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
-        );
+    public LoginRequiredException(final Resource res, final Exception cause) {
+        super(res, res.base().path("/g"), cause);
     }
 
 }

@@ -54,12 +54,17 @@ public final class BoutStylesheetRs extends AbstractRs {
     private transient String stage;
 
     /**
-     * Set bout number.
+     * Set bout number, and verify that this bout is accessible by this
+     * identity.
      * @param num The number
      */
     @PathParam("num")
     public void setBout(final Long num) {
-        this.bout = num;
+        try {
+            this.bout = this.identity().bout(num).number();
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new ForwardException(this, this.base(), ex);
+        }
     }
 
     /**
@@ -80,13 +85,18 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Produces("text/xsl")
     public String boutXsl() {
         final VelocityContext context = new VelocityContext();
-        context.put("boutXsl", this.base().path("/xsl/bout.xsl").build());
+        context.put(
+            "boutXsl",
+            TextUtils.ucode(this.base().path("/xsl/bout.xsl").build())
+        );
         context.put(
             "stageXsl",
-            this.base()
-                .path("/{bout}/xsl/stage.xsl")
-                .queryParam("stage", this.stage)
-                .build(this.bout)
+            TextUtils.ucode(
+                this.base()
+                    .path("/{bout}/xsl/stage.xsl")
+                    .queryParam("stage", this.stage)
+                    .build(this.bout)
+            )
         );
         return TextUtils.format("com/netbout/rest/bout.xsl.vm", context);
     }

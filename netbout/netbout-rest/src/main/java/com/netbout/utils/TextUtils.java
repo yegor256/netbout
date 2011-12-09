@@ -28,7 +28,9 @@ package com.netbout.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -53,6 +55,15 @@ public final class TextUtils {
      */
     private TextUtils() {
         // empty
+    }
+
+    /**
+     * URI encode.
+     * @param uri The URI to encode
+     * @return Encoded text
+     */
+    public static String ucode(final URI uri) {
+        return StringEscapeUtils.escapeXml(uri.toString());
     }
 
     /**
