@@ -37,13 +37,17 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
 def auth = UriBuilder.fromUri(rexsl.home).path('/nb').build()
-def hh = new RestSession(rexsl.home).authenticate(auth, 'nb:hh', 'secret')
-
-new TestClient(RestUriBuilder.from(hh).build())
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .rel('/page/links/link[@rel="promote"]/@href')
-    .body('url=file:///com.netbout.hub.hh')
-    .post()
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+[
+    'nb:hh' : 'file:///com.netbout.hub.hh',
+    'nb:email' : 'file:///com.netbout.notifiers.email'
+].each {
+    def helper = new RestSession(rexsl.home).authenticate(auth, it.key, 'secret')
+    new TestClient(RestUriBuilder.from(helper).build())
+        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .get()
+        .assertStatus(HttpURLConnection.HTTP_OK)
+        .rel('/page/links/link[@rel="promote"]/@href')
+        .body('url=' + URLEncoder.encode(it.value))
+        .post()
+        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+}

@@ -96,6 +96,11 @@ public abstract class AbstractRs implements Resource {
     private transient String icookie;
 
     /**
+     * Shall we add AUTH to URLs?
+     */
+    private transient boolean addAuthToURIs = false;
+
+    /**
      * The message to show.
      */
     private transient String imessage = "";
@@ -189,7 +194,9 @@ public abstract class AbstractRs implements Resource {
             .getBaseUriBuilder()
             .clone();
         if (this.icookie != null && !this.icookie.isEmpty()) {
-            builder.queryParam(AbstractRs.AUTH_PARAM, this.icookie);
+            // if (this.addAuthToURIs) {
+                builder.queryParam(AbstractRs.AUTH_PARAM, this.icookie);
+            // }
         }
         return builder;
     }
@@ -243,6 +250,7 @@ public abstract class AbstractRs implements Resource {
     public final void setAuth(final String auth) {
         if (auth != null) {
             this.icookie = auth;
+            this.addAuthToURIs = true;
             Logger.debug(
                 this,
                 "#setAuth('%s'): injected",

@@ -274,7 +274,7 @@ public final class BoutRs extends AbstractRs {
      */
     @Path("/kickoff")
     @GET
-    public Response leave(@QueryParam("name") final String name) {
+    public Response kickoff(@QueryParam("name") final String name) {
         boolean done = false;
         for (Participant dude : this.bout().participants()) {
             if (dude.identity().name().equals(name)) {
