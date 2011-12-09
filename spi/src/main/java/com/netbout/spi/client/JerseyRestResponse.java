@@ -199,10 +199,13 @@ final class JerseyRestResponse implements RestResponse {
      */
     @Override
     public RestClient rel(final String rel) {
-        final String href = this.xpath(
-            String.format("/page/links/link[@rel='%s']/@href", rel)
-        ).get(0);
-        return this.client.copy(UriBuilder.fromUri(href).build());
+        String xpath = rel;
+        if (!xpath.startsWith("/")) {
+            xpath = String.format("/page/links/link[@rel='%s']/@href", rel);
+        }
+        return this.client.copy(
+            UriBuilder.fromUri(this.xpath(xpath).get(0)).build()
+        );
     }
 
     /**
