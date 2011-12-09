@@ -56,7 +56,7 @@ public final class AuthRs extends AbstractRs {
     public Response auth(@QueryParam("user") final String uname,
         @QueryParam("identity") final String iname,
         @QueryParam("secret") final String secret) {
-        assert secret != null;
+        this.logoff();
         Identity identity;
         try {
             identity = this.authenticate(uname, iname, secret);

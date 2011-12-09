@@ -59,6 +59,7 @@ public final class FacebookRs extends AbstractRs {
      */
     @GET
     public Response fbauth(@QueryParam("code") final String code) {
+        this.logoff();
         Identity identity;
         try {
             identity = this.authenticate(code);

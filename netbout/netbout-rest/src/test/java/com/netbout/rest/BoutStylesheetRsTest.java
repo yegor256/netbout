@@ -71,7 +71,7 @@ public final class BoutStylesheetRsTest {
         final BoutStylesheetRs rest = new ResourceMocker()
             .withIdentity(identity)
             .mock(BoutStylesheetRs.class);
-        final String stage = "some stage name";
+        final String stage = "R&D stage name";
         rest.setBout(bout.number());
         rest.setStage(stage);
         final String xsl = rest.boutXsl();

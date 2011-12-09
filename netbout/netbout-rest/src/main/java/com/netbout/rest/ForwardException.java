@@ -73,6 +73,7 @@ class ForwardException extends WebApplicationException {
      * @param res The originator of the exception
      * @param builder Where to forward to
      * @param msg The message
+     * @return The JAX-RS response
      */
     private static Response response(final Resource res,
         final UriBuilder builder, final String msg) {

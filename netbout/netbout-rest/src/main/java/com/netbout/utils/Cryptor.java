@@ -28,6 +28,7 @@ package com.netbout.utils;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
 import org.apache.commons.lang.StringUtils;
 
 // import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
@@ -100,11 +101,20 @@ public final class Cryptor {
         }
         final String uname = TextUtils.unpack(parts[0]);
         final String iname = TextUtils.unpack(parts[1]);
+        Identity identity;
         try {
-            return hub.user(uname).identity(iname);
+            identity = hub.user(uname).identity(iname);
         } catch (com.netbout.spi.UnreachableIdentityException ex) {
             throw new DecryptionException(ex);
         }
+        Logger.debug(
+            this,
+            "#decrypt(%s, %s): identity '%s' found",
+            hub.getClass().getName(),
+            hash,
+            identity.name()
+        );
+        return identity;
     }
 
     /**

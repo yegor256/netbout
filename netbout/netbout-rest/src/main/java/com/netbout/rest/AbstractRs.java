@@ -185,10 +185,13 @@ public abstract class AbstractRs implements Resource {
      */
     @Override
     public final UriBuilder base() {
-        return this.uriInfo()
+        final UriBuilder builder = this.uriInfo()
             .getBaseUriBuilder()
-            .clone()
-            .queryParam(AbstractRs.AUTH_PARAM, this.icookie);
+            .clone();
+        if (this.icookie != null && !this.icookie.isEmpty()) {
+            builder.queryParam(AbstractRs.AUTH_PARAM, this.icookie);
+        }
+        return builder;
     }
 
     /**
@@ -344,6 +347,13 @@ public abstract class AbstractRs implements Resource {
             );
             throw new LoginRequiredException(this, ex);
         }
+    }
+
+    /**
+     * Forget current identity, if it exists.
+     */
+    protected final void logoff() {
+        this.icookie = "";
     }
 
     /**
