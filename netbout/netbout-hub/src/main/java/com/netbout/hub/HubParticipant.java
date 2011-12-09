@@ -98,7 +98,11 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public void kickOff() {
-        this.boutdt.kickOff(this.data.getIdentity());
+        final Identity identity = this.identity();
+        this.boutdt.kickOff(identity.name());
+        if (identity instanceof InvitationSensitive) {
+            ((InvitationSensitive) identity).kickedOff(this.ibout.number());
+        }
     }
 
     /**

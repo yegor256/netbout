@@ -28,7 +28,10 @@ package com.netbout.rest;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.hub.DefaultHub;
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
+import com.netbout.hub.User;
+import com.netbout.hub.UserMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
@@ -100,16 +103,29 @@ public final class BoutStylesheetRsTest {
      */
     @Test
     public void testStageXslRendering() throws Exception {
+        final Bout bout = new BoutMocker().mock();
+        final String uname = "Steven";
+        final Identity identity = new IdentityMocker()
+            .withBout(bout.number(), bout)
+            .belongsTo(uname)
+            .mock();
+        final User user = new UserMocker()
+            .namedAs(uname)
+            .withIdentity(identity.name(), identity)
+            .mock();
+        final Hub hub = new HubMocker()
+            .withUser(user.name(), user)
+            .mock();
         final String text = "some text in XSL format";
         final Bus bus = new BusMocker()
             .doReturn(text, "render-stage-xsl")
             .mock();
         final BoutStylesheetRs rest = new ResourceMocker()
-            .withDeps(bus, new DefaultHub(bus))
+            .withIdentity(identity)
+            .withDeps(bus, hub)
             .mock(BoutStylesheetRs.class);
-        final Long bout = new Random().nextLong();
         final String stage = "nb:hh";
-        rest.setBout(bout);
+        rest.setBout(bout.number());
         rest.setStage(stage);
         final String xsl = rest.stageXsl();
         MatcherAssert.assertThat(xsl, Matchers.equalTo(text));

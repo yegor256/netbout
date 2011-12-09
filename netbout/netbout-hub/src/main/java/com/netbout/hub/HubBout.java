@@ -141,7 +141,9 @@ public final class HubBout implements Bout {
             "#invite('%s'): success",
             friend
         );
-        friend.invited(this);
+        if (friend instanceof InvitationSensitive) {
+            ((InvitationSensitive) friend).invited(this);
+        }
         return new HubParticipant(this.catalog, this, dude, this.data);
     }
 
