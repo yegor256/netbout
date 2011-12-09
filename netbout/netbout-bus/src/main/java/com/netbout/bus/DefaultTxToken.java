@@ -112,6 +112,15 @@ final class DefaultTxToken implements TxToken {
      */
     @Override
     public Plain<?> arg(final int pos) {
+        if (this.args.size() <= pos) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "#arg(%d) can't find argument in '%s' token",
+                    pos,
+                    this.imnemo
+                )
+            );
+        }
         return this.args.get(pos);
     }
 
