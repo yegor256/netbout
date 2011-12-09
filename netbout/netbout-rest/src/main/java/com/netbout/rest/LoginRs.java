@@ -53,11 +53,10 @@ public final class LoginRs extends AbstractRs {
     public Response login() {
         final UriBuilder fburi = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
-            // @checkstyle MultipleStringLiterals (3 lines)
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
             .queryParam(
                 "redirect_uri",
-                this.base().path("/fb").build().toString()
+                this.base().path("/fb").build()
             );
         return new PageBuilder()
             .stylesheet(this.base().path("/xsl/login.xsl"))

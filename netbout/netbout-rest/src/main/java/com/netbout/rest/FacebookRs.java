@@ -121,7 +121,7 @@ public final class FacebookRs extends AbstractRs {
                 .queryParam("client_id", Manifests.read("Netbout-FbId"))
                 .queryParam(
                     "redirect_uri",
-                    this.base().path("/fb").build().toString()
+                    this.base().path("/fb").build()
                 )
                 .queryParam("client_secret", Manifests.read("Netbout-FbSecret"))
                 .queryParam("code", code)

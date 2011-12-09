@@ -51,6 +51,11 @@ import org.apache.commons.codec.binary.Base64;
 public abstract class AbstractRs implements Resource {
 
     /**
+     * Name of the authentication parameter.
+     */
+    public static final String AUTH_PARAM = "auth";
+
+    /**
      * When this resource was started, in nanoseconds.
      */
     private final transient long inano = System.nanoTime();
@@ -180,7 +185,10 @@ public abstract class AbstractRs implements Resource {
      */
     @Override
     public final UriBuilder base() {
-        return this.uriInfo().getBaseUriBuilder().clone();
+        return this.uriInfo()
+            .getBaseUriBuilder()
+            .clone()
+            .queryParam(AbstractRs.AUTH_PARAM, this.icookie);
     }
 
     /**
@@ -228,7 +236,7 @@ public abstract class AbstractRs implements Resource {
      * because of <tt>&#64;CookieParam</tt> annotation.
      * @param auth The auth code to set
      */
-    @QueryParam("auth")
+    @QueryParam(AbstractRs.AUTH_PARAM)
     public final void setAuth(final String auth) {
         if (auth != null) {
             this.icookie = auth;

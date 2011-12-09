@@ -80,17 +80,13 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Produces("text/xsl")
     public String boutXsl() {
         final VelocityContext context = new VelocityContext();
-        context.put(
-            "boutXsl", 
-            this.base().path("/xsl/bout.xsl").build().toString()
-        );
+        context.put("boutXsl", this.base().path("/xsl/bout.xsl").build());
         context.put(
             "stageXsl",
             this.base()
                 .path("/{bout}/xsl/stage.xsl")
                 .queryParam("stage", this.stage)
                 .build(this.bout)
-                .toString()
         );
         return TextUtils.format("com/netbout/rest/bout.xsl.vm", context);
     }
