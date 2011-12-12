@@ -50,7 +50,10 @@ class ForwardException extends WebApplicationException {
      */
     public ForwardException(final Resource res, final UriBuilder builder,
         final String msg) {
-        super(ForwardException.response(res, builder, msg));
+        super(
+            new IllegalArgumentException(msg),
+            ForwardException.response(res, builder, msg)
+        );
     }
 
     /**

@@ -43,6 +43,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * REST authentication page.
@@ -154,6 +159,8 @@ public final class AuthRs extends AbstractRs {
     /**
      * Remote identity representative.
      */
+    @XmlRootElement(name = "page")
+    @XmlAccessorType(XmlAccessType.NONE)
     private static final class RemoteIdentity implements Identity {
         /**
          * {@inheritDoc}
