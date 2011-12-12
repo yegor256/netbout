@@ -159,9 +159,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!--
-            Javax Servlet API 2.3.
-            -->
+            <!-- Javax Servlet API 2.3. -->
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version since="26 Oct 2011">2.3</version>
@@ -252,46 +250,16 @@
         </repository>
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>bees-plugins-snapshots</id>
-            <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
                     <version since="2 Dec 2010">2.1</version>
-                    <configuration>
-                        <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
-                        <archive>
-                            <manifestEntries>
-                                <Netbout-Revision>${buildNumber}</Netbout-Revision>
-                                <Netbout-Version>${project.version}</Netbout-Version>
-                                <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
-                                <Netbout-FbId>${fb.id}</Netbout-FbId>
-                                <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
-                                <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>com.cloudbees</groupId>
-                <artifactId>bees-maven-plugin</artifactId>
-                <version since="30 Oct 2011">1.0-SNAPSHOT</version>
-                <configuration>
-                    <apikey>${bees.apikey}</apikey>
-                    <secret>${bees.secret}</secret>
-                    <message>${buildNumber}</message>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>com.rexsl</groupId>
                 <artifactId>rexsl-maven-plugin</artifactId>
@@ -310,10 +278,16 @@
 
     <profiles>
         <profile>
-            <id>build-number</id>
+            <id>continuous-integration</id>
             <activation>
                 <property><name>ci</name></property>
             </activation>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>bees-plugins-snapshots</id>
+                    <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot/</url>
+                </pluginRepository>
+            </pluginRepositories>
             <build>
                 <plugins>
                     <plugin>
@@ -338,76 +312,22 @@
                             </execution>
                         </executions>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>deploy-to-testing</id>
-            <activation>
-                <property><name>ci</name></property>
-            </activation>
-            <build>
-                <plugins>
                     <plugin>
                         <groupId>com.cloudbees</groupId>
                         <artifactId>bees-maven-plugin</artifactId>
+                        <version since="30 Oct 2011">1.0-SNAPSHOT</version>
+                        <configuration>
+                            <appid>${bees.appid}</appid>
+                            <apikey>${bees.apikey}</apikey>
+                            <secret>${bees.secret}</secret>
+                            <message>${buildNumber}</message>
+                        </configuration>
                         <executions>
                             <execution>
-                                <id>deploy-to-testing</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals>
-                                <configuration>
-                                    <appid>netbout/netbout-test</appid>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <artifactId>maven-war-plugin</artifactId>
-                            <configuration>
-                                <archive>
-                                    <manifestEntries>
-                                        <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
-                                        <Netbout-JdbcUrl>jdbc:mysql://test-db.netbout.com:3306/netbout-test</Netbout-JdbcUrl>
-                                        <Netbout-JdbcUser>netbout-test</Netbout-JdbcUser>
-                                        <Netbout-JdbcPassword>secret</Netbout-JdbcPassword>
-                                        <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
-                                        <Netbout-SmtpPort>2525</Netbout-SmtpPort>
-                                        <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
-                                        <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
-                                    </manifestEntries>
-                                </archive>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>deploy-to-production</id>
-            <activation>
-                <property><name>ci</name></property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.cloudbees</groupId>
-                        <artifactId>bees-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>deploy-to-production</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>deploy</goal>
                                 </goals>
-                                <configuration>
-                                    <appid>${bees.appid}</appid>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -417,8 +337,14 @@
                         <plugin>
                             <artifactId>maven-war-plugin</artifactId>
                             <configuration>
+                                <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
                                 <archive>
                                     <manifestEntries>
+                                        <Netbout-Revision>${buildNumber}</Netbout-Revision>
+                                        <Netbout-Version>${project.version}</Netbout-Version>
+                                        <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                        <Netbout-FbId>${fb.id}</Netbout-FbId>
+                                        <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
                                         <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
                                         <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}</Netbout-JdbcUrl>
                                         <Netbout-JdbcUser>${mysql.user}</Netbout-JdbcUser>
@@ -433,6 +359,47 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>catapult</id>
+            <activation>
+                <file><exists>pom.xml</exists></file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>war-for-catapult</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>war</goal>
+                                </goals>
+                                <configuration>
+                                    <archive>
+                                        <manifestEntries>
+                                            <Netbout-Revision>555</Netbout-Revision>
+                                            <Netbout-Version>${project.version}</Netbout-Version>
+                                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                            <Netbout-FbId>12345</Netbout-FbId>
+                                            <Netbout-FbSecret>secret</Netbout-FbSecret>
+                                            <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
+                                            <Netbout-JdbcUrl>jdbc:mysql://test-db.netbout.com:3306/netbout-test</Netbout-JdbcUrl>
+                                            <Netbout-JdbcUser>netbout-test</Netbout-JdbcUser>
+                                            <Netbout-JdbcPassword>secret</Netbout-JdbcPassword>
+                                            <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
+                                            <Netbout-SmtpPort>2525</Netbout-SmtpPort>
+                                            <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
+                                            <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
+                                        </manifestEntries>
+                                    </archive>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>
