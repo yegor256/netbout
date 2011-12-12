@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import java.net.URL;
 import java.util.concurrent.ConcurrentMap;
@@ -54,7 +53,7 @@ public final class OpDiscovererTest {
         final Identity identity = Mockito.mock(Identity.class);
         final OpDiscoverer discoverer = new OpDiscoverer(identity);
         final URL url = new FarmMocker().mock();
-        ConcurrentMap<String, HelpTarget> ops = discoverer.discover(url);
+        final ConcurrentMap<String, HelpTarget> ops = discoverer.discover(url);
         MatcherAssert.assertThat(ops.size(), Matchers.greaterThan(0));
     }
 

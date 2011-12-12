@@ -31,17 +31,12 @@ package com.netbout.spi.cpa;
 
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
-import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.reflections.Reflections;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 
 /**
  * Discovers operations in classpath.
@@ -50,11 +45,6 @@ import org.reflections.util.FilterBuilder;
  * @version $Id$
  */
 final class OpDiscoverer {
-
-    /**
-     * Manifest attribute to denote the name of the package on JAR.
-     */
-    private static final transient String MF_ATTR = "Netbout-Helper-Package";
 
     /**
      * The identity of the helper.
@@ -78,16 +68,10 @@ final class OpDiscoverer {
         Reflections reflections;
         if ("file".equals(url.getProtocol())) {
             reflections = this.fromPackage(url.getPath());
-        } else if ("http".equals(url.getProtocol())) {
-            try {
-                reflections = this.fromWeb(url);
-            } catch (IOException ex) {
-                throw new IllegalArgumentException(ex);
-            }
         } else {
             throw new IllegalArgumentException(
                 String.format(
-                    "Unknown protocol '%s' in URL '%s'",
+                    "Unknown protocol '%s' in '%s' (has to be 'file')",
                     url.getProtocol(),
                     url
                 )
@@ -152,39 +136,6 @@ final class OpDiscoverer {
     }
 
     /**
-     * Creates reflections from HTTP URL.
-     * @param url The URL of the JAR
-     * @return Reflections
-     * @throws IOException If failed
-     */
-    private Reflections fromWeb(final URL url) throws IOException {
-        URL jurl;
-        try {
-            jurl = this.download(url).toURL();
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        final Object pkg = ((JarURLConnection) jurl.openConnection())
-                .getManifest()
-                .getMainAttributes()
-                .get(this.MF_ATTR);
-        if (pkg == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Attribute '%s' not found in MANIFEST.MF in '%s'",
-                    this.MF_ATTR,
-                    url
-                )
-            );
-        }
-        return new Reflections(
-            new ConfigurationBuilder()
-                .filterInputsBy(new FilterBuilder().include((String) pkg))
-                .setUrls(new URL[] {jurl})
-        );
-    }
-
-    /**
      * Creates reflections from package.
      * @param pkg The name of the package
      * @return Reflections
@@ -200,17 +151,6 @@ final class OpDiscoverer {
             name = name.substring(1);
         }
         return new Reflections(name);
-    }
-
-    /**
-     * Download file from the given URL.
-     * @param url The URL to download from
-     * @return Reflections
-     * @throws IOException If failed
-     */
-    private File download(final URL url) throws IOException {
-        final File file = File.createTempFile("netbout", ".jar");
-        return file;
     }
 
 }
