@@ -47,7 +47,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout</groupId>
     <artifactId>netbout</artifactId>
-    <version netbout="yes">2.0-SNAPSHOT</version>
+    <version netbout="yes">1.4</version>
     <packaging>pom</packaging>
     <name>netbout</name>
 
@@ -159,13 +159,13 @@
                 <!-- Service programming interface of the netbout -->
                 <groupId>com.netbout.spi</groupId>
                 <artifactId>netbout-spi</artifactId>
-                <version netbout="yes">2.0-SNAPSHOT</version>
+                <version netbout="yes">1.4</version>
             </dependency>
             <dependency>
                 <!-- Testing stub -->
                 <groupId>com.netbout.spi</groupId>
                 <artifactId>netbout-stub</artifactId>
-                <version netbout="yes">2.0-SNAPSHOT</version>
+                <version netbout="yes">1.4</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -287,7 +287,7 @@
                             <dependency>
                                 <groupId>com.netbout</groupId>
                                 <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">2.0-SNAPSHOT</version>
+                                <version netbout="yes">1.4</version>
                             </dependency>
                         </dependencies>
                         <executions>
