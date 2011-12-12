@@ -39,7 +39,7 @@ import javax.ws.rs.core.UriBuilder;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/nb")
+@Path("/mock-auth")
 public final class AuthRsMocker extends AbstractRs {
 
     /**
@@ -51,8 +51,8 @@ public final class AuthRsMocker extends AbstractRs {
     @GET
     public Response auth(@QueryParam("identity") final String iname,
         @QueryParam("secret") final String secret) {
-        if ((iname == null) || (secret == null) || secret.isEmpty()) {
-            throw new ForwardException(this, this.base(), "Failure");
+        if ((iname == null) || (secret == null)) {
+            throw new ForwardException(this, this.base(), "NULL inputs");
         }
         if (!iname.matches("nb:[a-z]+")) {
             throw new ForwardException(this, this.base(), "Invalid name");

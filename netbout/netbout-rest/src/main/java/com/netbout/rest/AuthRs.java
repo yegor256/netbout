@@ -143,10 +143,14 @@ public final class AuthRs extends AbstractRs {
      * @throws IOException If some problem with FB
      */
     private Identity load(final URI uri) throws IOException {
-        return Client.create().resource(uri)
-            .accept(MediaType.APPLICATION_XML)
-            .get(RemotePage.class)
-            .getIdentity();
+        try {
+            return Client.create().resource(uri)
+                .accept(MediaType.APPLICATION_XML)
+                .get(RemotePage.class)
+                .getIdentity();
+        } catch (com.sun.jersey.api.client.UniformInterfaceException ex) {
+            throw new IOException(ex);
+        }
     }
 
     /**
@@ -170,10 +174,11 @@ public final class AuthRs extends AbstractRs {
         /**
          * Get identity.
          * @return The identity
+         * @throws IOException If some problem with data
          */
-        public RemoteIdentity getIdentity() {
+        public RemoteIdentity getIdentity() throws IOException {
             if (this.identity == null) {
-                throw new IllegalStateException("/page/identity missed");
+                throw new IOException("/page/identity missed");
             }
             return this.identity;
         }
@@ -219,13 +224,14 @@ public final class AuthRs extends AbstractRs {
         /**
          * Set photo.
          * @param url The URL
+         * @throws IOException If some problem with data
          */
         @XmlElement(name = "photo")
-        public void setJaxbPhoto(final String url) {
+        public void setJaxbPhoto(final String url) throws IOException {
             try {
                 this.iphoto = new URL(url);
             } catch (java.net.MalformedURLException ex) {
-                throw new IllegalStateException(ex);
+                throw new IOException(ex);
             }
         }
         /**
@@ -263,7 +269,6 @@ public final class AuthRs extends AbstractRs {
         public Bout start() {
             throw new UnsupportedOperationException("#start()");
         }
-
         /**
          * {@inheritDoc}
          */
@@ -271,7 +276,6 @@ public final class AuthRs extends AbstractRs {
         public Bout bout(final Long number) {
             throw new UnsupportedOperationException("#bout()");
         }
-
         /**
          * {@inheritDoc}
          */
@@ -279,7 +283,6 @@ public final class AuthRs extends AbstractRs {
         public List<Bout> inbox(final String query) {
             throw new UnsupportedOperationException("#inbox()");
         }
-
         /**
          * {@inheritDoc}
          */
@@ -290,7 +293,6 @@ public final class AuthRs extends AbstractRs {
             }
             return this.iphoto;
         }
-
         /**
          * {@inheritDoc}
          */

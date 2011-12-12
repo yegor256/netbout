@@ -48,7 +48,7 @@ import org.xmlmatchers.XmlMatchers;
 public final class AuthRsTest {
 
     /**
-     * NbRs can authenticate identity by user name, identity, and secret.
+     * AuthRs can authenticate identity by user name, identity, and secret.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -89,6 +89,24 @@ public final class AuthRsTest {
             response.getStatus(),
             Matchers.equalTo(HttpURLConnection.HTTP_SEE_OTHER)
         );
+    }
+
+    /**
+     * AuthRs can properly report a problem if authentication fails.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = ForwardException.class)
+    public void reportsProblemIfAuthenticationFails() throws Exception {
+        final ContainerMocker container = new ContainerMocker()
+            .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
+            .mock();
+        final String uname = UriBuilder
+            .fromUri(container.home())
+            .path("/")
+            .build()
+            .toString();
+        final AuthRs rest = new ResourceMocker().mock(AuthRs.class);
+        final Response response = rest.auth(uname, "", "");
     }
 
 }

@@ -340,7 +340,9 @@ public final class BoutRs extends AbstractRs {
         final Page page = new PageBuilder()
             .schema("")
             .stylesheet(
-                this.self("/xsl/bout.xsl")
+                this.baseWithToken()
+                    .path(String.format("/%s", this.bout().number()))
+                    .path("/xsl/bout.xsl")
                     .queryParam("stage", this.coords.stage())
             )
             .build(AbstractPage.class)

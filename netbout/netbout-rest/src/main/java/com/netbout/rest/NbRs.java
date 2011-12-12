@@ -27,8 +27,13 @@
 package com.netbout.rest;
 
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.utils.Cipher;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -54,20 +59,10 @@ public final class NbRs extends AbstractRs {
     public Response auth(@QueryParam("identity") final String iname,
         @QueryParam("secret") final String secret) {
         this.validate(iname, secret);
-        final String user = UriBuilder
-            .fromUri("http://www.netbout.com/nb")
-            .build()
-            .toString();
-        Identity identity;
-        try {
-            identity = this.hub().user(user).identity(iname);
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new ForwardException(this, this.base(), ex);
-        }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
-            .authenticated(identity)
+            .authenticated(new NbIdentity(iname.substring(3)))
             .build();
     }
 
@@ -89,6 +84,109 @@ public final class NbRs extends AbstractRs {
             }
         } catch (com.netbout.utils.DecryptionException ex) {
             throw new ForwardException(this, this.base(), ex);
+        }
+    }
+
+    /**
+     * Nb identity representative.
+     */
+    private static final class NbIdentity implements Identity {
+        /**
+         * The suffix after "nb:".
+         */
+        private transient String suffix;
+        /**
+         * Public ctor.
+         * @param sfx The suffix after "nb:"
+         */
+        public NbIdentity(final String sfx) {
+            this.suffix = sfx;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String user() {
+            return "http://www.netbout.com/nb";
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String name() {
+            return String.format("nb:%s", this.suffix);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public URL photo() {
+            try {
+                return new URL(
+                    String.format(
+                        "http://img.netbout.com/nb/%s.png",
+                        this.suffix
+                    )
+                );
+            } catch (java.net.MalformedURLException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<String> aliases() {
+            return new HashSet<String>();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Bout start() {
+            throw new UnsupportedOperationException("#start()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Bout bout(final Long number) {
+            throw new UnsupportedOperationException("#bout()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public List<Bout> inbox(final String query) {
+            throw new UnsupportedOperationException("#inbox()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void setPhoto(final URL pic) {
+            throw new UnsupportedOperationException("#setPhoto()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Identity friend(final String name) {
+            throw new UnsupportedOperationException("#friend()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Identity> friends(final String keyword) {
+            throw new UnsupportedOperationException("#friends()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void alias(final String alias) {
+            throw new UnsupportedOperationException("#alias()");
         }
     }
 

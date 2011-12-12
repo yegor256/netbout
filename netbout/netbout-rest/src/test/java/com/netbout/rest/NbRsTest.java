@@ -50,12 +50,7 @@ public final class NbRsTest {
     public void authenticatesByNamesAndSecret() throws Exception {
         final String iname = "nb:test";
         final String uname = "http://www.netbout.com/nb";
-        final Identity identity = new IdentityMocker()
-            .namedAs(iname)
-            .belongsTo(uname)
-            .mock();
         final NbRs rest = new ResourceMocker()
-            .withIdentity(identity)
             .mock(NbRs.class);
         final String secret = new Cipher().encrypt(iname);
         final Response response = rest.auth(iname, secret);
