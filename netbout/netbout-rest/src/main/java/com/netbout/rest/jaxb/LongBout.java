@@ -29,6 +29,7 @@ package com.netbout.rest.jaxb;
 import com.netbout.bus.Bus;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.ArrayList;
@@ -77,6 +78,11 @@ public final class LongBout {
     private final transient UriBuilder builder;
 
     /**
+     * The viewer of it.
+     */
+    private final transient Identity viewer;
+
+    /**
      * Public ctor for JAXB.
      */
     public LongBout() {
@@ -90,15 +96,17 @@ public final class LongBout {
      * @param crds The coordinates of the stage to render
      * @param keyword Search keyword
      * @param bldr The builder of URIs
+     * @param vwr The viewer
      * @checkstyle ParameterNumber (3 lines)
      */
     public LongBout(final Bus ibus, final Bout bot, final StageCoordinates crds,
-        final String keyword, final UriBuilder bldr) {
+        final String keyword, final UriBuilder bldr, final Identity vwr) {
         this.bus = ibus;
         this.bout = bot;
         this.coords = crds;
         this.query = keyword;
         this.builder = bldr;
+        this.viewer = vwr;
     }
 
     /**
@@ -125,10 +133,11 @@ public final class LongBout {
      */
     @XmlElement(name = "stage")
     @XmlElementWrapper(name = "stages")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
         for (String identity : this.coords.all()) {
-            stages.add(ShortStage.build(identity, this.builder.clone()));
+            stages.add(new ShortStage(identity, this.builder.clone()));
         }
         return stages;
     }
@@ -141,7 +150,7 @@ public final class LongBout {
     public LongStage getStage() {
         LongStage stage = null;
         if (!this.coords.stage().isEmpty()) {
-            stage = LongStage.build(this.bus, this.bout, this.coords);
+            stage = new LongStage(this.bus, this.bout, this.coords);
         }
         return stage;
     }
@@ -152,10 +161,11 @@ public final class LongBout {
      */
     @XmlElement(name = "message")
     @XmlElementWrapper(name = "messages")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<LongMessage> getMessages() {
         final List<LongMessage> messages = new ArrayList<LongMessage>();
         for (Message msg : this.bout.messages(this.query)) {
-            messages.add(LongMessage.build(msg));
+            messages.add(new LongMessage(msg));
         }
         return messages;
     }
@@ -166,11 +176,12 @@ public final class LongBout {
      */
     @XmlElement(name = "participant")
     @XmlElementWrapper(name = "participants")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
-            dudes.add(LongParticipant.build(dude));
+            dudes.add(new LongParticipant(dude, this.builder, this.viewer));
         }
         return dudes;
     }

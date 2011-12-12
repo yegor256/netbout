@@ -33,6 +33,7 @@ import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.reflections.Reflections;
@@ -46,37 +47,37 @@ import org.reflections.Reflections;
 final class OpDiscoverer {
 
     /**
-     * Discover all targets and return them.
-     * @param identity The identity of helper
-     * @param pkg The package to discover in
+     * The identity of the helper.
+     */
+    private final transient Identity identity;
+
+    /**
+     * Public ctor.
+     * @param idnt The identity of helper
+     */
+    public OpDiscoverer(final Identity idnt) {
+        this.identity = idnt;
+    }
+
+    /**
+     * Discover all targets in the JAR.
+     * @param url The URL with sources
      * @return Associative array of discovered targets/operations
      */
-    public ConcurrentMap<String, HelpTarget> discover(final Identity identity,
-        final String pkg) {
-        final ConcurrentMap<String, HelpTarget> targets =
-            new ConcurrentHashMap<String, HelpTarget>();
-        final Reflections reflections = new Reflections(pkg);
-        for (Class tfarm : reflections.getTypesAnnotatedWith(Farm.class)) {
-            Logger.info(
-                this,
-                "#discover(%s): @Farm found at '%s'",
-                pkg,
-                tfarm.getName()
+    public ConcurrentMap<String, HelpTarget> discover(final URL url) {
+        Reflections reflections;
+        if ("file".equals(url.getProtocol())) {
+            reflections = this.fromPackage(url.getPath());
+        } else {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Unknown protocol '%s' in '%s' (has to be 'file')",
+                    url.getProtocol(),
+                    url
+                )
             );
-            Object farm;
-            try {
-                farm = tfarm.newInstance();
-            } catch (InstantiationException ex) {
-                throw new IllegalArgumentException(ex);
-            } catch (IllegalAccessException ex) {
-                throw new IllegalArgumentException(ex);
-            }
-            if (farm instanceof IdentityAware) {
-                ((IdentityAware) farm).init(identity);
-            }
-            targets.putAll(this.inFarm(farm));
         }
-        return targets;
+        return this.retrieve(reflections);
     }
 
     /**
@@ -94,7 +95,7 @@ final class OpDiscoverer {
             }
             final String mnemo = ((Operation) atn).value();
             targets.put(mnemo, HelpTarget.build(farm, method));
-            Logger.info(
+            Logger.debug(
                 this,
                 "#inFarm(%s): @Operation('%s') found",
                 farm.getClass().getName(),
@@ -102,6 +103,54 @@ final class OpDiscoverer {
             );
         }
         return targets;
+    }
+
+    /**
+     * Load them from reflections.
+     * @param ref The reflections
+     * @return Associative array of discovered targets/operations
+     */
+    private ConcurrentMap<String, HelpTarget> retrieve(final Reflections ref) {
+        final ConcurrentMap<String, HelpTarget> targets =
+            new ConcurrentHashMap<String, HelpTarget>();
+        for (Class tfarm : ref.getTypesAnnotatedWith(Farm.class)) {
+            Logger.debug(
+                this,
+                "#discover(..): @Farm found at '%s'",
+                tfarm.getName()
+            );
+            Object farm;
+            try {
+                farm = tfarm.newInstance();
+            } catch (InstantiationException ex) {
+                throw new IllegalArgumentException(ex);
+            } catch (IllegalAccessException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+            if (farm instanceof IdentityAware) {
+                ((IdentityAware) farm).init(this.identity);
+            }
+            targets.putAll(this.inFarm(farm));
+        }
+        return targets;
+    }
+
+    /**
+     * Creates reflections from package.
+     * @param pkg The name of the package
+     * @return Reflections
+     */
+    private Reflections fromPackage(final String pkg) {
+        if (pkg.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Package is empty, can't load classes"
+            );
+        }
+        String name = pkg;
+        if (name.charAt(0) == '/') {
+            name = name.substring(1);
+        }
+        return new Reflections(name);
     }
 
 }

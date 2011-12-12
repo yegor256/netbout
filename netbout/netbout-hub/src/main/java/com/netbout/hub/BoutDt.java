@@ -59,9 +59,14 @@ public interface BoutDt {
     /**
      * Confirm participation.
      * @param identity Who confirms?
-     * @param aye To confirm?
      */
-    void confirm(String identity, Boolean aye);
+    void confirm(String identity);
+
+    /**
+     * Kick off this identity of the bout.
+     * @param identity Who leaves
+     */
+    void kickOff(String identity);
 
     /**
      * Add new participant.

@@ -26,8 +26,10 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.utils.AliasBuilder;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -50,6 +52,16 @@ public final class LongParticipant {
     private transient Participant participant;
 
     /**
+     * URI builder.
+     */
+    private final transient UriBuilder builder;
+
+    /**
+     * The viewer of it.
+     */
+    private final transient Identity viewer;
+
+    /**
      * Public ctor for JAXB.
      */
     public LongParticipant() {
@@ -59,18 +71,29 @@ public final class LongParticipant {
     /**
      * Private ctor.
      * @param dude The participant
+     * @param bldr The builder
+     * @param vwr The viewer
      */
-    private LongParticipant(final Participant dude) {
+    public LongParticipant(final Participant dude, final UriBuilder bldr,
+        final Identity vwr) {
         this.participant = dude;
+        this.builder = bldr;
+        this.viewer = vwr;
     }
 
     /**
-     * Build it.
-     * @param dude The participant
-     * @return The instance of the class
+     * Get kick-off link.
+     * @return The link
      */
-    public static LongParticipant build(final Participant dude) {
-        return new LongParticipant(dude);
+    @XmlElement
+    public Link getLink() {
+        return new Link(
+            "kickoff",
+            this.builder.clone()
+                .path("/kickoff")
+                .queryParam("name", this.participant.identity().name())
+                .build()
+        );
     }
 
     /**
@@ -107,6 +130,15 @@ public final class LongParticipant {
     @XmlAttribute
     public Boolean isConfirmed() {
         return this.participant.confirmed();
+    }
+
+    /**
+     * Is it me?
+     * @return Is it?
+     */
+    @XmlAttribute
+    public Boolean isMe() {
+        return this.participant.identity().equals(this.viewer);
     }
 
 }

@@ -37,6 +37,7 @@ import javax.ws.rs.CookieParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import org.apache.commons.codec.binary.Base64;
@@ -47,7 +48,13 @@ import org.apache.commons.codec.binary.Base64;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public abstract class AbstractRs implements Resource {
+
+    /**
+     * Name of the authentication parameter.
+     */
+    public static final String AUTH_PARAM = "auth";
 
     /**
      * When this resource was started, in nanoseconds.
@@ -88,6 +95,11 @@ public abstract class AbstractRs implements Resource {
      * Cookie.
      */
     private transient String icookie;
+
+    /**
+     * Shall we add AUTH to URLs?
+     */
+    private transient boolean addAuthToURIs;
 
     /**
      * The message to show.
@@ -175,6 +187,21 @@ public abstract class AbstractRs implements Resource {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final UriBuilder base() {
+        final UriBuilder builder = this.uriInfo()
+            .getBaseUriBuilder()
+            .clone();
+        if (this.icookie != null && !this.icookie.isEmpty()
+            && this.addAuthToURIs) {
+            builder.queryParam(AbstractRs.AUTH_PARAM, this.icookie);
+        }
+        return builder;
+    }
+
+    /**
      * Inject message, if it was sent.
      * @param msg The message
      */
@@ -219,10 +246,11 @@ public abstract class AbstractRs implements Resource {
      * because of <tt>&#64;CookieParam</tt> annotation.
      * @param auth The auth code to set
      */
-    @QueryParam("auth")
+    @QueryParam(AbstractRs.AUTH_PARAM)
     public final void setAuth(final String auth) {
         if (auth != null) {
             this.icookie = auth;
+            this.addAuthToURIs = true;
             Logger.debug(
                 this,
                 "#setAuth('%s'): injected",
@@ -325,8 +353,15 @@ public abstract class AbstractRs implements Resource {
                 this.httpServletRequest().getRequestURI(),
                 ex.getMessage()
             );
-            throw new ForwardException(this, "/g", ex);
+            throw new LoginRequiredException(this, ex);
         }
+    }
+
+    /**
+     * Forget current identity, if it exists.
+     */
+    protected final void logoff() {
+        this.icookie = "";
     }
 
     /**
@@ -359,6 +394,17 @@ public abstract class AbstractRs implements Resource {
             );
         }
         return this.ihub;
+    }
+
+    /**
+     * Get base with auth token.
+     * @return The builder
+     */
+    protected final UriBuilder baseWithToken() {
+        return this.uriInfo()
+            .getBaseUriBuilder()
+            .queryParam(AbstractRs.AUTH_PARAM, this.icookie)
+            .clone();
     }
 
 }

@@ -64,6 +64,11 @@ public final class CpaHelper implements Helper {
     private final transient Identity identity;
 
     /**
+     * Where this helper lives.
+     */
+    private final transient URL home;
+
+    /**
      * All discovered operations.
      */
     private final transient ConcurrentMap<String, HelpTarget> ops;
@@ -71,21 +76,12 @@ public final class CpaHelper implements Helper {
     /**
      * Public ctor.
      * @param idnt The identity of me
-     * @param name Name of the package where to look for annotated methods
-     *  and farms
+     * @param url Jar URL where to get the code
      */
-    public CpaHelper(final Identity idnt, final String name) {
+    public CpaHelper(final Identity idnt, final URL url) {
         this.identity = idnt;
-        final long start = System.currentTimeMillis();
-        this.ops = new OpDiscoverer().discover(this, name);
-        Logger.debug(
-            this,
-            "#CpaHelper('%s', '%s'): %d targets discovered in %dms",
-            idnt.name(),
-            name,
-            this.ops.size(),
-            System.currentTimeMillis() - start
-        );
+        this.home = url;
+        this.ops = this.discover(url);
     }
 
     /**
@@ -96,6 +92,14 @@ public final class CpaHelper implements Helper {
         for (HelpTarget target : this.ops.values()) {
             target.contextualize(context);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL location() {
+        return this.home;
     }
 
     /**
@@ -220,11 +224,22 @@ public final class CpaHelper implements Helper {
     }
 
     /**
-     * {@inheritDoc}
+     * Initialize.
+     * @param url URL where to get the code
+     * @return Discovered ops
      */
-    @Override
-    public void invited(final Bout bout) {
-        this.identity.invited(bout);
+    private ConcurrentMap<String, HelpTarget> discover(final URL url) {
+        final long start = System.currentTimeMillis();
+        final ConcurrentMap<String, HelpTarget> found =
+            new OpDiscoverer(this).discover(url);
+        Logger.info(
+            this,
+            "#init('%s'): %d operations discovered [%dms]",
+            url,
+            found.size(),
+            System.currentTimeMillis() - start
+        );
+        return found;
     }
 
 }

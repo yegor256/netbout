@@ -24,45 +24,78 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
+package com.netbout.rest.jaxb;
 
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.netbout.spi.Helper;
+import java.net.URL;
+import java.util.Set;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Simple helper.
+ * Helper, convertable to XML.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Farm
-public final class SimpleHelper {
+@XmlRootElement(name = "identity")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class LongHelper extends LongIdentity {
 
     /**
-     * Translate text.
-     * @param text The message to translate
-     * @return New text to show
+     * Public ctor for JAXB.
      */
-    @Operation("simple-translation")
-    public String translate(final String text) {
-        return text.replaceAll("[a-z]", "X");
+    public LongHelper() {
+        super();
+        throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
-     * Return list.
-     * @param size Size of list to return
+     * Private ctor.
+     * @param helper The identity
+     */
+    public LongHelper(final Helper helper) {
+        super(helper);
+    }
+
+    /**
+     * Is it a helper?
+     * @return The flag
+     */
+    @XmlAttribute
+    public Boolean getHelper() {
+        return true;
+    }
+
+    /**
+     * List of supported operations, if it's a helper.
      * @return The list
      */
-    @Operation("simple-list")
-    public List<Long> list(final Long size) {
-        final List<Long> list = new ArrayList<Long>();
-        final Random random = new Random();
-        for (int pos = 0; pos < size; pos += 1) {
-            list.add(random.nextLong());
-        }
-        return list;
+    @XmlElement(name = "operation")
+    @XmlElementWrapper(name = "supports")
+    public Set<String> getSupports() {
+        return this.helper().supports();
+    }
+
+    /**
+     * Get location of the helper.
+     * @return The name
+     */
+    @XmlElement
+    public URL getLocation() {
+        return this.helper().location();
+    }
+
+    /**
+     * Get helper.
+     * @return The helper
+     */
+    private Helper helper() {
+        return (Helper) this.identity();
     }
 
 }

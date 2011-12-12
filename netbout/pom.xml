@@ -431,6 +431,7 @@
                         <version since="5 Dec 2011">2.3.2</version>
                         <executions>
                             <execution>
+                                <id>mock-artifact</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>jar</goal>

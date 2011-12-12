@@ -45,6 +45,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class HubBout implements Bout {
 
     /**
@@ -103,8 +104,19 @@ public final class HubBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public void confirm(final boolean aye) {
-        this.data.confirm(this.viewer.name(), aye);
+    public void confirm() {
+        this.data.confirm(this.viewer.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void leave() {
+        this.data.kickOff(this.viewer.name());
+        if (this.viewer instanceof InvitationSensitive) {
+            ((InvitationSensitive) this.viewer).kickedOff(this.number());
+        }
     }
 
     /**
@@ -128,14 +140,15 @@ public final class HubBout implements Bout {
             throw new IllegalStateException("You can't invite until you join");
         }
         final ParticipantDt dude = this.data.addParticipant(friend.name());
-        dude.setConfirmed(false);
         Logger.debug(
             this,
             "#invite('%s'): success",
             friend
         );
-        friend.invited(this);
-        return new HubParticipant(this.catalog, this, dude);
+        if (friend instanceof InvitationSensitive) {
+            ((InvitationSensitive) friend).invited(this);
+        }
+        return new HubParticipant(this.catalog, this, dude, this.data);
     }
 
     /**
@@ -147,7 +160,9 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantDt dude : this.data.getParticipants()) {
-            participants.add(new HubParticipant(this.catalog, this, dude));
+            participants.add(
+                new HubParticipant(this.catalog, this, dude, this.data)
+            );
         }
         Logger.debug(
             this,

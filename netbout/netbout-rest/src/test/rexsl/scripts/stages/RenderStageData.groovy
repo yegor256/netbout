@@ -31,7 +31,7 @@ package com.netbout.rest.rexsl.scripts.stages
 
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
-import com.rexsl.test.TestClient
+import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
@@ -42,7 +42,7 @@ def bout = jeff.start()
 bout.invite(jeff.friend('nb:hh'))
 
 // validate that the stage is really there, in XHTML
-new TestClient(RestUriBuilder.from(bout).build())
+RestTester.start(RestUriBuilder.from(bout))
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)

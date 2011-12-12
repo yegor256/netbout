@@ -26,13 +26,12 @@
  */
 package com.netbout.rest;
 
+import com.netbout.utils.TextUtils;
 import com.rexsl.core.Manifests;
-import java.net.URI;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Thrown when necessary to forward user to another page and show a message
@@ -41,90 +40,80 @@ import org.apache.commons.codec.binary.Base64;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class ForwardException extends WebApplicationException {
+class ForwardException extends WebApplicationException {
 
     /**
      * Constructor.
      * @param res The originator of the exception
-     * @param uri Where to forward to
      * @param msg The message
      */
-    public ForwardException(final Resource res, final URI uri,
+    public ForwardException(final Resource res, final String msg) {
+        this(res, res.base().path("/g"), msg);
+    }
+
+    /**
+     * Constructor.
+     * @param res The originator of the exception
+     * @param builder Where to forward to
+     * @param msg The message
+     */
+    public ForwardException(final Resource res, final UriBuilder builder,
         final String msg) {
         super(
-            Response.status(Response.Status.TEMPORARY_REDIRECT)
-                .header("Netbout-error", msg)
-                .entity(msg)
-                .location(uri)
-                .cookie(
-                    new NewCookie(
-                        AbstractPage.MESSAGE_COOKIE,
-                        ForwardException.encode(msg),
-                        res.uriInfo().getBaseUri().getPath(),
-                        res.uriInfo().getBaseUri().getHost(),
-                        Integer.valueOf(Manifests.read("Netbout-Revision")),
-                        "netbout message",
-                        // @checkstyle MagicNumber (1 line)
-                        60 * 60,
-                        false
-                    ))
-                .build()
+            new IllegalArgumentException(msg),
+            ForwardException.response(res, builder, msg)
         );
     }
 
     /**
      * Constructor.
      * @param res The originator of the exception
-     * @param uri Where to forward to
+     * @param cause Cause of trouble
+     */
+    public ForwardException(final Resource res, final Exception cause) {
+        this(res, res.base().path("/"), cause);
+    }
+
+    /**
+     * Constructor.
+     * @param res The originator of the exception
+     * @param builder Where to forward to
+     * @param cause Cause of trouble
+     */
+    public ForwardException(final Resource res, final UriBuilder builder,
+        final Exception cause) {
+        super(
+            cause,
+            ForwardException.response(res, builder, cause.getMessage())
+        );
+    }
+
+    /**
+     * Constructor.
+     * @param res The originator of the exception
+     * @param builder Where to forward to
      * @param msg The message
+     * @return The JAX-RS response
      */
-    public ForwardException(final Resource res, final String uri,
-        final String msg) {
-        this(res, UriBuilder.fromUri(uri).build(), msg);
-    }
-
-    /**
-     * Constructor.
-     * @param res The originator of the exception
-     * @param uri Where to forward to
-     */
-    public ForwardException(final Resource res, final String uri) {
-        this(res, UriBuilder.fromUri(uri).build(), "");
-    }
-
-    /**
-     * Constructor.
-     * @param res The originator of the exception
-     * @param uri Where to forward to
-     * @param cause Cause of trouble
-     */
-    public ForwardException(final Resource res, final String uri,
-        final Exception cause) {
-        this(res, UriBuilder.fromUri(uri).build(), cause.getMessage());
-    }
-
-    /**
-     * Constructor.
-     * @param res The originator of the exception
-     * @param uri Where to forward to
-     * @param cause Cause of trouble
-     */
-    public ForwardException(final Resource res, final URI uri,
-        final Exception cause) {
-        this(res, uri, cause.getMessage());
-    }
-
-    /**
-     * Encode message.
-     * @param text The text to encode
-     * @return Decoded text (from Base64)
-     */
-    private static String encode(final String text) {
-        try {
-            return new Base64().encodeToString(text.getBytes("UTF-8"));
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+    private static Response response(final Resource res,
+        final UriBuilder builder, final String msg) {
+        final NewCookie cookie = new NewCookie(
+            AbstractPage.MESSAGE_COOKIE,
+            TextUtils.pack(msg),
+            res.base().build().getPath(),
+            res.base().build().getHost(),
+            Integer.valueOf(Manifests.read("Netbout-Revision")),
+            "netbout message",
+            // @checkstyle MagicNumber (1 line)
+            60 * 60,
+            false
+        );
+        return Response.status(Response.Status.TEMPORARY_REDIRECT)
+            .header("Netbout-error", msg)
+            .entity(msg)
+            .location(builder.build())
+            .cookie(cookie)
+            .build();
     }
 
 }

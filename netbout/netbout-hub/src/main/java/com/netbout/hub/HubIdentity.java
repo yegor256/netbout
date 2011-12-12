@@ -41,7 +41,7 @@ import java.util.Set;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-final class HubIdentity implements Identity {
+final class HubIdentity implements Identity, InvitationSensitive {
 
     /**
      * Orphan identity.
@@ -175,7 +175,15 @@ final class HubIdentity implements Identity {
      */
     @Override
     public void invited(final Bout bout) {
-        this.orphan.invited(bout);
+        ((InvitationSensitive) this.orphan).invited(bout);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void kickedOff(final Long bout) {
+        ((InvitationSensitive) this.orphan).kickedOff(bout);
     }
 
 }

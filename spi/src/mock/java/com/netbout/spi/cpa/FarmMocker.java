@@ -30,6 +30,7 @@
 package com.netbout.spi.cpa;
 
 import com.netbout.spi.Identity;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,7 +43,20 @@ import org.hamcrest.Matchers;
  * @version $Id$
  */
 @Farm
-final class SampleFarm implements IdentityAware {
+final class FarmMocker implements IdentityAware {
+
+    /**
+     * Mock this farm.
+     * @return The URL for a helper
+     * @throws java.net.MalformedURLException If some problem inside
+     */
+    public URL mock() throws java.net.MalformedURLException {
+        return new URL(
+            "file",
+            "localhost",
+            this.getClass().getPackage().getName()
+        );
+    }
 
     /**
      * {@inheritDoc}

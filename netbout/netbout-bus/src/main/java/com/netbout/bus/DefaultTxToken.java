@@ -27,6 +27,7 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Plain;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.lang.StringUtils;
@@ -70,10 +71,14 @@ final class DefaultTxToken implements TxToken {
      */
     @Override
     public String toString() {
+        final List<String> values = new ArrayList<String>();
+        for (Plain<?> arg : this.args) {
+            values.add(String.format("\"%s\"", arg.value()));
+        }
         return String.format(
-            "%s[(%s)]",
+            "%s[%s]",
             this.mnemo(),
-            StringUtils.join(this.args, ")(")
+            StringUtils.join(values, ", ")
         );
     }
 
@@ -107,6 +112,15 @@ final class DefaultTxToken implements TxToken {
      */
     @Override
     public Plain<?> arg(final int pos) {
+        if (this.args.size() <= pos) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "#arg(%d) can't find argument in '%s' token",
+                    pos,
+                    this.imnemo
+                )
+            );
+        }
         return this.args.get(pos);
     }
 

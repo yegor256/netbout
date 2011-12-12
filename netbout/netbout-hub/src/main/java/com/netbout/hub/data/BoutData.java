@@ -93,12 +93,42 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public void confirm(final String identity, final Boolean aye) {
+    public void confirm(final String identity) {
         for (ParticipantDt dude : this.getParticipants()) {
             if (dude.getIdentity().equals(identity)) {
-                dude.setConfirmed(aye);
+                dude.setConfirmed(true);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void kickOff(final String identity) {
+        ParticipantDt found = null;
+        for (ParticipantDt dude : this.getParticipants()) {
+            if (dude.getIdentity().equals(identity)) {
+                found = dude;
+                break;
+            }
+        }
+        if (found == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Identity '%s' is not in bout #%d, can't kick off",
+                    identity,
+                    this.number
+                )
+            );
+        }
+        this.participants.remove(found);
+        this.bus.make("removed-bout-participant")
+            .asap()
+            .arg(this.number)
+            .arg(identity)
+            .asDefault(true)
+            .exec();
     }
 
     /**

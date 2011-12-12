@@ -55,4 +55,9 @@ public interface Participant {
      */
     boolean confirmed();
 
+    /**
+     * Kick him off this bout.
+     */
+    void kickOff();
+
 }

@@ -41,7 +41,7 @@ def walter = new RestSession(rexsl.home).authenticate(auth, 'nb:walter', '')
 def bout = jeff.start()
 def number = bout.number()
 bout.invite(walter)
-walter.bout(number).confirm(true)
+walter.bout(number).confirm()
 def text = 'How are you?'
 def msg = walter.bout(number).post(text).number()
 MatcherAssert.assertThat(bout.message(msg).text(), Matchers.equalTo(text))

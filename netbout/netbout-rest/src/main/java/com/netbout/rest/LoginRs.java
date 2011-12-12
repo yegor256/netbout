@@ -26,10 +26,8 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
 import com.rexsl.core.Manifests;
-import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -50,34 +48,24 @@ public final class LoginRs extends AbstractRs {
      * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     public Response login() {
-        final URI fburi = UriBuilder
+        try {
+            this.identity();
+            throw new ForwardException(this, this.base(), "Already logged in");
+            // @checkstyle EmptyBlock (3 lines)
+        } catch (LoginRequiredException ex) {
+            // swallow it, it's normal situation
+        }
+        final UriBuilder fburi = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
-            // @checkstyle MultipleStringLiterals (3 lines)
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
-            .queryParam(
-                "redirect_uri",
-                this.uriInfo()
-                    .getBaseUriBuilder()
-                    .clone()
-                    .path("/fb")
-                    .build()
-                    .toString()
-            )
-            .build();
+            .queryParam("redirect_uri", this.base().path("/fb").build());
         return new PageBuilder()
-            .stylesheet(
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path("/xsl/login.xsl")
-                    .build()
-                    .toString()
-        )
+            .stylesheet(this.base().path("/xsl/login.xsl"))
             .build(AbstractPage.class)
             .init(this)
-            .append(
-                new JaxbBundle("facebook").attr(Page.HATEOAS_HREF, fburi)
-            )
+            .link("facebook", fburi)
             .anonymous()
             .build();
     }
@@ -92,13 +80,13 @@ public final class LoginRs extends AbstractRs {
     public Response logout() {
         return Response
             .status(Response.Status.TEMPORARY_REDIRECT)
-            .location(this.uriInfo().getBaseUri())
+            .location(this.base().build())
             .header(
                 "Set-Cookie",
                 String.format(
                     // @checkstyle LineLength (1 line)
                     "netbout=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
-                    this.uriInfo().getBaseUri().getHost(),
+                    this.base().build().getHost(),
                     this.httpServletRequest().getContextPath()
                 )
             )

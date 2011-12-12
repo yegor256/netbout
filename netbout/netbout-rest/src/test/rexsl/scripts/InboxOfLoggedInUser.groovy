@@ -31,7 +31,7 @@ package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
-import com.rexsl.test.TestClient
+import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
@@ -41,7 +41,7 @@ def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 jeff.start()
 
 // validate content of the inbox
-new TestClient(RestUriBuilder.from(jeff).build())
+RestTester.start(RestUriBuilder.from(jeff))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)

@@ -45,10 +45,11 @@ public final class LoginRsTest {
     @Test
     public void rendersLoginPage() throws Exception {
         final LoginRs rest = new ResourceMocker().mock(LoginRs.class);
+        rest.setAuth("some-incorrect-auth-code");
         final Response response = rest.login();
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/facebook[@href]")
+            XmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
         );
     }
 

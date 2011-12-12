@@ -50,6 +50,7 @@ Manifests.inject('Netbout-JdbcPassword', password)
 
 def conn = Database.connection()
 [
+    'DELETE FROM helper',
     'DELETE FROM alias',
     'DELETE FROM seen',
     'DELETE FROM message',
@@ -69,7 +70,7 @@ def conn = Database.connection()
 ].each { query ->
     def stmt = conn.createStatement()
     stmt.execute(query)
-    Logger.info(this, 'SQL executed: %s', query)
+    Logger.debug(this, 'SQL executed: %s', query)
 }
 conn.close()
 Logger.info(this, 'Test database is ready at %s', url)

@@ -28,6 +28,7 @@ package com.netbout.utils;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
 import org.apache.commons.lang.StringUtils;
 
 // import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
@@ -45,25 +46,10 @@ public final class Cryptor {
      */
     private static final String SEPARATOR = ".";
 
-    // /**
-    //  * Password to use in encryption.
-    //  */
-    // private static final String PASSWORD = "j&^%hgfRR43$#&==_ )(00(0}{-~";
-    //
-    // /**
-    //  * Encryptor.
-    //  */
-    // private final StandardPBEStringEncryptor encryptor =
-    //     new StandardPBEStringEncryptor();
-
-    // /**
-    //  * Public ctor.
-    //  */
-    // public Cryptor() {
-    //     this.encryptor.setPassword(this.PASSWORD);
-    //     this.encryptor
-    //        .setAlgorithm(StandardPBEByteEncryptor.DEFAULT_ALGORITHM);
-    // }
+    /**
+     * Cipher.
+     */
+    private static final Cipher CIPHER = new Cipher();
 
     /**
      * Encrypt user+identity into text.
@@ -76,7 +62,7 @@ public final class Cryptor {
             .append(TextUtils.pack(identity.user()))
             .append(this.SEPARATOR)
             .append(TextUtils.pack(identity.name()));
-        return TextUtils.pack(this.pack(builder.toString()));
+        return TextUtils.pack(this.CIPHER.encrypt(builder.toString()));
     }
 
     /**
@@ -92,7 +78,7 @@ public final class Cryptor {
             throw new DecryptionException(hash, "Hash is NULL");
         }
         final String[] parts = StringUtils.split(
-            TextUtils.unpack(this.unpack(hash)),
+            TextUtils.unpack(this.CIPHER.decrypt(hash)),
             this.SEPARATOR
         );
         if (parts.length != 2) {
@@ -100,31 +86,20 @@ public final class Cryptor {
         }
         final String uname = TextUtils.unpack(parts[0]);
         final String iname = TextUtils.unpack(parts[1]);
+        Identity identity;
         try {
-            return hub.user(uname).identity(iname);
+            identity = hub.user(uname).identity(iname);
         } catch (com.netbout.spi.UnreachableIdentityException ex) {
             throw new DecryptionException(ex);
         }
-    }
-
-    /**
-     * Pack with encryption.
-     * @param text The text to work with
-     * @return The packed string
-     */
-    private String pack(final String text) {
-        return text;
-        // return this.encryptor.encrypt(text);
-    }
-
-    /**
-     * Decrypt and unpack.
-     * @param hash Packed text
-     * @return The original string
-     */
-    private String unpack(final String hash) {
-        return hash;
-        // return this.encryptor.decrypt(hash);
+        Logger.debug(
+            this,
+            "#decrypt(%s, %s): identity '%s' found",
+            hub.getClass().getName(),
+            hash,
+            identity.name()
+        );
+        return identity;
     }
 
 }

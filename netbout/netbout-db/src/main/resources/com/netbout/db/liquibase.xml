@@ -43,5 +43,6 @@
     <include file="liquibase/001-basics.xml" relativeToChangelogFile="true" />
     <include file="liquibase/002-seen.xml" relativeToChangelogFile="true" />
     <include file="liquibase/003-alias.xml" relativeToChangelogFile="true" />
+    <include file="liquibase/004-helper.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>

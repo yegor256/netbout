@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import java.net.URL;
 import org.junit.Test;
@@ -67,8 +66,6 @@ public final class HubIdentityTest {
         Mockito.verify(original).friends("");
         wrapper.aliases();
         Mockito.verify(original).aliases();
-        wrapper.invited(Mockito.mock(Bout.class));
-        Mockito.verify(original).invited(Mockito.any(Bout.class));
     }
 
 }

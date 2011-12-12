@@ -108,3 +108,8 @@ body {
     box-shadow: 1px 1px 1px gray;
 }
 
+/* fixed font */
+.tt {
+    font-family: 'Courier New', monospace;
+}
+

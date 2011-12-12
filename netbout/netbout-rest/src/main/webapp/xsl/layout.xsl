@@ -69,6 +69,9 @@
                                 </li>
                                 <li>
                                     <xsl:value-of select="identity/alias"/>
+                                    <xsl:if test="identity/@helper='true'">
+                                        <xsl:text> (helper)</xsl:text>
+                                    </xsl:if>
                                 </li>
                                 <li>
                                     <a>

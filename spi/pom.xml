@@ -246,7 +246,7 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version since="1 Nov 2011">0.9.5</version>
+            <version since="8 Dec 2011">0.9.5</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -510,6 +510,7 @@
                 <version since="5 Dec 2011">2.3.2</version>
                 <executions>
                     <execution>
+                        <id>mock-artifact</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar</goal>

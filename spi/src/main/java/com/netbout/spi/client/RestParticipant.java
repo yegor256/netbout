@@ -87,6 +87,32 @@ final class RestParticipant implements Participant {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void kickOff() {
+        this.client
+            .get("reading 'kickoff' rel link")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "/page/bout/participants/participant[@identity='%s']/link[@rel='kickoff']",
+                    this.name
+                )
+            )
+            .rel(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "/page/bout/participants/participant[@identity='%s']/link[@rel='kickoff']/@href",
+                    this.name
+                )
+            )
+            .get(String.format("kicking off '%s' participant", this.name))
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+    }
+
+    /**
      * Fetch by XPath suffix.
      * @param suffix The suffix of XPath
      * @return The value found

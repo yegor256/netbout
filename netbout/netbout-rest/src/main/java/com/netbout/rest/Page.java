@@ -28,8 +28,8 @@ package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Identity;
-import java.net.URI;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * Page.
@@ -38,21 +38,6 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 public interface Page {
-
-    /**
-     * Link element.
-     */
-    String HATEOAS_LINK = "link";
-
-    /**
-     * Name attribute.
-     */
-    String HATEOAS_NAME = "rel";
-
-    /**
-     * HREF attribute.
-     */
-    String HATEOAS_HREF = "href";
 
     /**
      * Add new link.
@@ -65,10 +50,10 @@ public interface Page {
     /**
      * Add new link.
      * @param name The name of it
-     * @param uri Absolute URI
+     * @param builder Builder of URI
      * @return This object
      */
-    Page link(String name, URI uri);
+    Page link(String name, UriBuilder builder);
 
     /**
      * Append new JAXB-annotated element.

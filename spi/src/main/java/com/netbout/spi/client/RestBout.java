@@ -45,6 +45,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class RestBout implements Bout {
 
     /**
@@ -191,24 +192,28 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public void confirm(final boolean status) {
-        if (status) {
-            this.client
-                .get("reading 'join' rel link")
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .assertXPath("/page/links/link[@rel='join']")
-                .rel("join")
-                .get("joining the bout")
-                .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
-        } else {
-            this.client
-                .get("reading 'leave' rel link")
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .assertXPath("/page/links/link[@rel='leave']")
-                .rel("leave")
-                .get("leaving the bout")
-                .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
-        }
+    public void confirm() {
+        this.client
+            .get("reading 'join' rel link")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/links/link[@rel='join']")
+            .rel("join")
+            .get("joining the bout")
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void leave() {
+        this.client
+            .get("reading 'leave' rel link")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/links/link[@rel='leave']")
+            .rel("leave")
+            .get("leaving the bout")
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
     /**

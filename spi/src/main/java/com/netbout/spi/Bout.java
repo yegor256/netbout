@@ -65,10 +65,14 @@ public interface Bout {
     Collection<Participant> participants();
 
     /**
-     * Confirm participantion in this bout (or reject).
-     * @param confirm To confirm or reject?
+     * Confirm participantion in this bout.
      */
-    void confirm(boolean confirm);
+    void confirm();
+
+    /**
+     * Leave this bout.
+     */
+    void leave();
 
     /**
      * Invite new participant.

@@ -112,6 +112,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version since="15 Oct 2011">1.0-SNAPSHOT</version>
+            <classifier>mock</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Embedded Java Servlet Container, for tests only. -->
+            <groupId>com.sun.grizzly</groupId>
+            <artifactId>grizzly-servlet-webserver</artifactId>
+            <version>1.9.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- Selenium web testing framework -->
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -323,6 +337,9 @@
                             <artifactId>maven-war-plugin</artifactId>
                             <version since="2 Dec 2010">2.1</version>
                             <configuration>
+                                <configuration>
+                                    <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
+                                </configuration>
                                 <archive>
                                     <manifestEntries>
                                         <Netbout-Revision>${buildNumber}</Netbout-Revision>

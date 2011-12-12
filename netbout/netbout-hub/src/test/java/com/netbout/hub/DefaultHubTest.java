@@ -30,6 +30,7 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import java.net.URL;
 import java.util.Random;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
@@ -91,6 +92,7 @@ public final class DefaultHubTest {
         final User user = hub.user("Billy Bonce");
         final Identity identity = user.identity(name);
         final Helper helper = Mockito.mock(Helper.class);
+        Mockito.doReturn(new URL("file:com.netbout")).when(helper).location();
         Mockito.doReturn(name).when(helper).name();
         hub.promote(identity, helper);
         MatcherAssert.assertThat(

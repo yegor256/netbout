@@ -31,7 +31,7 @@ package com.netbout.rest.rexsl.scripts.stages
 
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
-import com.rexsl.test.TestClient
+import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
@@ -44,7 +44,7 @@ def bout = jeff.start()
 ['nb:hh', 'nb:db'].each { bout.invite(jeff.friend(it)) }
 
 // validate that there are really two stages in the XML
-new TestClient(RestUriBuilder.from(bout).build())
+RestTester.start(RestUriBuilder.from(bout))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)

@@ -55,7 +55,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
     @Override
     public void register(final Helper helper) {
         this.helpers.add(helper);
-        Logger.debug(
+        Logger.info(
             this,
             "#register(%s): registered (%d total now)",
             helper,
@@ -103,9 +103,10 @@ final class DefaultTokenExecutor implements TokenExecutor {
         }
         Logger.debug(
             this,
-            "#run(%s, %d helpers): executed in %dms",
+            "#run(%s, %d helpers): returned [%s] in %dms",
             token,
             targets.size(),
+            token.getResult(),
             System.currentTimeMillis() - start
         );
     }

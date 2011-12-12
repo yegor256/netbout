@@ -26,24 +26,29 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.Link;
+import com.netbout.rest.jaxb.LongHelper;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
+import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.utils.Cryptor;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -80,7 +85,7 @@ public abstract class AbstractPage implements Page {
     /**
      * Collection of links.
      */
-    private final transient JaxbBundle links = new JaxbBundle("links");
+    private final transient Collection<Link> links = new ArrayList<Link>();
 
     /**
      * Initializer.
@@ -89,8 +94,8 @@ public abstract class AbstractPage implements Page {
      */
     public final Page init(final Resource res) {
         this.home = res;
-        this.link("self", this.home.uriInfo().getAbsolutePath());
-        this.link("home", this.home.uriInfo().getBaseUri());
+        this.link("self", this.home.uriInfo().getAbsolutePathBuilder());
+        this.link("home", this.home.base());
         return this;
     }
 
@@ -99,12 +104,12 @@ public abstract class AbstractPage implements Page {
      */
     @Override
     public final Page link(final String name, final String href) {
-        this.links.add(Page.HATEOAS_LINK)
-            .attr(Page.HATEOAS_NAME, name)
-            .attr(
-                Page.HATEOAS_HREF,
-                this.home.uriInfo().getBaseUriBuilder().path(href).build()
-            );
+        this.links.add(
+            new Link(
+                name,
+                this.home.base().path(href).build()
+            )
+        );
         return this;
     }
 
@@ -112,10 +117,8 @@ public abstract class AbstractPage implements Page {
      * {@inheritDoc}
      */
     @Override
-    public final Page link(final String name, final URI uri) {
-        this.links.add(Page.HATEOAS_LINK)
-            .attr(Page.HATEOAS_NAME, name)
-            .attr(Page.HATEOAS_HREF, uri);
+    public final Page link(final String name, final UriBuilder uri) {
+        this.links.add(new Link(name, uri));
         return this;
     }
 
@@ -151,7 +154,11 @@ public abstract class AbstractPage implements Page {
     @Override
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
-        this.append(new LongIdentity(identity));
+        if (identity instanceof Helper) {
+            this.append(new LongHelper((Helper) identity));
+        } else {
+            this.append(new LongIdentity(identity));
+        }
         this.append(new JaxbBundle("auth", new Cryptor().encrypt(identity)));
         this.link("logout", "/g/out");
         this.link("start", "/s");
@@ -163,8 +170,8 @@ public abstract class AbstractPage implements Page {
                 new NewCookie(
                     this.AUTH_COOKIE,
                     new Cryptor().encrypt(identity),
-                    this.home.uriInfo().getBaseUri().getPath(),
-                    this.home.uriInfo().getBaseUri().getHost(),
+                    this.home.base().build().getPath(),
+                    this.home.base().build().getHost(),
                     // @checkstyle MultipleStringLiterals (1 line)
                     Integer.valueOf(Manifests.read("Netbout-Revision")),
                     "Netbout.com logged-in user",
@@ -201,6 +208,16 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
+     * Get all links.
+     * @return Full list of links
+     */
+    @XmlElement(name = "link")
+    @XmlElementWrapper(name = "links")
+    public final Collection<Link> getLinks() {
+        return this.links;
+    }
+
+    /**
      * Get time of page generation, in nanoseconds.
      * @return Time in nanoseconds
      */
@@ -224,7 +241,6 @@ public abstract class AbstractPage implements Page {
                 .up()
         );
         this.append(new JaxbBundle("message", this.home.message()));
-        this.append(this.links);
     }
 
     /**
@@ -237,7 +253,7 @@ public abstract class AbstractPage implements Page {
             // @checkstyle LineLength (1 line)
             "%s=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
             name,
-            this.home.uriInfo().getBaseUri().getHost(),
+            this.home.base().build().getHost(),
             this.home.httpServletRequest().getContextPath()
         );
     }
