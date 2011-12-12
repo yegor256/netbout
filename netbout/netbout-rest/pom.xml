@@ -253,6 +253,27 @@
     </repositories>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version since="2 Dec 2010">2.1</version>
+                    <configuration>
+                        <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
+                        <archive>
+                            <manifestEntries>
+                                <Netbout-Revision>${buildNumber}</Netbout-Revision>
+                                <Netbout-Version>${project.version}</Netbout-Version>
+                                <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                <Netbout-FbId>${fb.id}</Netbout-FbId>
+                                <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
+                                <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.rexsl</groupId>
@@ -315,18 +336,19 @@
                         <groupId>com.cloudbees</groupId>
                         <artifactId>bees-maven-plugin</artifactId>
                         <version since="30 Oct 2011">1.0-SNAPSHOT</version>
-                        <configuration>
-                            <appid>${bees.appid}</appid>
-                            <apikey>${bees.apikey}</apikey>
-                            <secret>${bees.secret}</secret>
-                            <message>${buildNumber}</message>
-                        </configuration>
                         <executions>
                             <execution>
+                                <id>production-deploy</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>deploy</goal>
                                 </goals>
+                                <configuration>
+                                    <appid>${bees.appid}</appid>
+                                    <apikey>${bees.apikey}</apikey>
+                                    <secret>${bees.secret}</secret>
+                                    <message>${buildNumber}</message>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -335,18 +357,9 @@
                     <plugins>
                         <plugin>
                             <artifactId>maven-war-plugin</artifactId>
-                            <version since="2 Dec 2010">2.1</version>
                             <configuration>
-                                <configuration>
-                                    <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
-                                </configuration>
                                 <archive>
                                     <manifestEntries>
-                                        <Netbout-Revision>${buildNumber}</Netbout-Revision>
-                                        <Netbout-Version>${project.version}</Netbout-Version>
-                                        <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
-                                        <Netbout-FbId>${fb.id}</Netbout-FbId>
-                                        <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
                                         <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
                                         <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}</Netbout-JdbcUrl>
                                         <Netbout-JdbcUser>${mysql.user}</Netbout-JdbcUser>
