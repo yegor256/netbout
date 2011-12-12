@@ -31,6 +31,8 @@ package com.netbout.spi.cpa;
 
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
@@ -74,55 +76,14 @@ final class OpDiscoverer {
      */
     public ConcurrentMap<String, HelpTarget> discover(final URL url) {
         Reflections reflections;
-        if ("http".equals(url.getProtocol())) {
-            Object pkg;
+        if ("file".equals(url.getProtocol())) {
+            reflections = this.fromPackage(url.getPath());
+        } else if ("http".equals(url.getProtocol())) {
             try {
-                pkg = ((JarURLConnection) url.openConnection())
-                    .getManifest()
-                    .getMainAttributes()
-                    .get(this.MF_ATTR);
-            } catch (java.io.IOException ex) {
+                reflections = this.fromWeb(url);
+            } catch (IOException ex) {
                 throw new IllegalArgumentException(ex);
             }
-            if (pkg == null) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "Attribute '%s' not found in MANIFEST.MF in '%s'",
-                        this.MF_ATTR,
-                        url
-                    )
-                );
-            }
-            reflections = new Reflections(
-                new ConfigurationBuilder()
-                    .filterInputsBy(new FilterBuilder().include((String) pkg))
-                    .setUrls(new URL[] {url})
-            );
-            Logger.debug(
-                this,
-                "#discover('%s'): reflecting from this URL",
-                url
-            );
-        } else if ("file".equals(url.getProtocol())) {
-            if (url.getPath().isEmpty()) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "Path is empty in '%s', can't get name of package",
-                        url
-                    )
-                );
-            }
-            String pkg = url.getPath();
-            if (pkg.charAt(0) == '/') {
-                pkg = pkg.substring(1);
-            }
-            reflections = new Reflections(pkg);
-            Logger.debug(
-                this,
-                "#discover('%s'): reflecting from package '%s'",
-                url,
-                pkg
-            );
         } else {
             throw new IllegalArgumentException(
                 String.format(
@@ -188,6 +149,68 @@ final class OpDiscoverer {
             targets.putAll(this.inFarm(farm));
         }
         return targets;
+    }
+
+    /**
+     * Creates reflections from HTTP URL.
+     * @param url The URL of the JAR
+     * @return Reflections
+     * @throws IOException If failed
+     */
+    private Reflections fromWeb(final URL url) throws IOException {
+        URL jurl;
+        try {
+            jurl = this.download(url).toURL();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        final Object pkg = ((JarURLConnection) jurl.openConnection())
+                .getManifest()
+                .getMainAttributes()
+                .get(this.MF_ATTR);
+        if (pkg == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Attribute '%s' not found in MANIFEST.MF in '%s'",
+                    this.MF_ATTR,
+                    url
+                )
+            );
+        }
+        return new Reflections(
+            new ConfigurationBuilder()
+                .filterInputsBy(new FilterBuilder().include((String) pkg))
+                .setUrls(new URL[] {jurl})
+        );
+    }
+
+    /**
+     * Creates reflections from package.
+     * @param pkg The name of the package
+     * @return Reflections
+     */
+    private Reflections fromPackage(final String pkg) {
+        if (pkg.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Package is empty, can't load classes"
+            );
+        }
+        String name = pkg;
+        if (name.charAt(0) == '/') {
+            name = name.substring(1);
+        }
+        return new Reflections(name);
+    }
+
+    /**
+     * Download file from the given URL.
+     * @param url The URL to download from
+     * @return Reflections
+     * @throws IOException If failed
+     */
+    private File download(final URL url) throws IOException {
+        final File file = File.createTempFile("netbout", ".jar");
+        return file;
     }
 
 }

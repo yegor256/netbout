@@ -76,22 +76,6 @@ public final class CpaHelper implements Helper {
     /**
      * Public ctor.
      * @param idnt The identity of me
-     * @param pkg Name of the package where to look for annotated methods
-     *  and farms
-     */
-    public CpaHelper(final Identity idnt, final String pkg) {
-        this.identity = idnt;
-        try {
-            this.home = new URL("file", "", pkg);
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        this.ops = this.discover(this.home);
-    }
-
-    /**
-     * Public ctor.
-     * @param idnt The identity of me
      * @param url Jar URL where to get the code
      */
     public CpaHelper(final Identity idnt, final URL url) {

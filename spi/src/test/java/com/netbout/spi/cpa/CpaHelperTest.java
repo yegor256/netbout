@@ -49,7 +49,6 @@ import org.mockito.Mockito;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
 public final class CpaHelperTest {
 
     /**
@@ -64,18 +63,15 @@ public final class CpaHelperTest {
     @Before
     public void prepare() throws Exception {
         final Identity identity = Mockito.mock(Identity.class);
-        this.helper = new CpaHelper(
-            identity,
-            this.getClass().getPackage().getName()
-        );
+        this.helper = new CpaHelper(identity, new FarmMocker().mock());
     }
 
     /**
-     * Helper discovers farms and operations in classpatch.
+     * CpaHelper can discover operations from annotations.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testDiscoveryOfOperations() throws Exception {
+    public void discoversOperationsInClasses() throws Exception {
         MatcherAssert.assertThat(
             this.helper.supports().size(),
             Matchers.greaterThan(0)
@@ -83,11 +79,11 @@ public final class CpaHelperTest {
     }
 
     /**
-     * Test with different types of params.
+     * CpaHelper can process tokens with different types of params.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testDifferentTypesOfParams() throws Exception {
+    public void acceptsTokensWithDifferentTypesOfParams() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("comparison").when(token).mnemo();
         Mockito.doReturn(new PlainString("alpha-12")).when(token).arg(0);
@@ -97,11 +93,11 @@ public final class CpaHelperTest {
     }
 
     /**
-     * Test with NULL response.
+     * CpaHelper can handle NULL response.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testNullResponse() throws Exception {
+    public void handlesNullResponse() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("empty").when(token).mnemo();
         this.helper.execute(token);
@@ -109,11 +105,11 @@ public final class CpaHelperTest {
     }
 
     /**
-     * Test with lists.
+     * CpaHelper can handle lists are return types.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testLists() throws Exception {
+    public void handlesListsAsResults() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("list").when(token).mnemo();
         this.helper.execute(token);
@@ -121,11 +117,11 @@ public final class CpaHelperTest {
     }
 
     /**
-     * Test with text lists.
+     * CpaHelper can handle lists of texts.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testTextLists() throws Exception {
+    public void handlesTextLists() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("texts").when(token).mnemo();
         this.helper.execute(token);
@@ -133,11 +129,11 @@ public final class CpaHelperTest {
     }
 
     /**
-     * Helper can't execute unknown operation.
+     * CpaHelper can throw exception if a call is made to an unknown operation.
      * @throws Exception If there is some problem inside
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testCallToUnknownOperation() throws Exception {
+    public void throwsExceptionWhenAnUnknownOperationCalled() throws Exception {
         final Token token = Mockito.mock(Token.class);
         Mockito.doReturn("unknown-operation").when(token).mnemo();
         this.helper.execute(token);
