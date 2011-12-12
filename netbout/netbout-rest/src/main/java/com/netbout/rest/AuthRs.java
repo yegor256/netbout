@@ -35,6 +35,8 @@ import com.sun.jersey.api.client.Client;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.ws.rs.GET;
@@ -48,6 +50,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * REST authentication page.
@@ -102,17 +105,6 @@ public final class AuthRs extends AbstractRs {
                 .queryParam("secret", secret)
                 .build()
         );
-        if (!remote.user().equals(uname)) {
-            throw new ForwardException(
-                this,
-                this.base().path("/g"),
-                String.format(
-                    "Invalid user name retrieved '%s', while '%s' expected",
-                    remote.user(),
-                    uname
-                )
-            );
-        }
         if (!remote.name().equals(iname)) {
             throw new ForwardException(
                 this,
@@ -153,28 +145,116 @@ public final class AuthRs extends AbstractRs {
     private Identity load(final URI uri) throws IOException {
         return Client.create().resource(uri)
             .accept(MediaType.APPLICATION_XML)
-            .get(RemoteIdentity.class);
+            .get(RemotePage.class)
+            .getIdentity();
+    }
+
+    /**
+     * Remote page wrapper.
+     */
+    @XmlRootElement(name = "page")
+    @XmlAccessorType(XmlAccessType.NONE)
+    private static final class RemotePage {
+        /**
+         * The identity.
+         */
+        private RemoteIdentity identity;
+        /**
+         * Set identity.
+         * @param idnt The identity
+         */
+        @XmlElement
+        public void setIdentity(final RemoteIdentity idnt) {
+            this.identity = idnt;
+        }
+        /**
+         * Get identity.
+         * @return The identity
+         */
+        public RemoteIdentity getIdentity() {
+            if (this.identity == null) {
+                throw new IllegalStateException("/page/identity missed");
+            }
+            return this.identity;
+        }
     }
 
     /**
      * Remote identity representative.
      */
-    @XmlRootElement(name = "page")
-    @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name = "identity")
     private static final class RemoteIdentity implements Identity {
+        /**
+         * User name.
+         */
+        private transient String uname;
+        /**
+         * Identity name.
+         */
+        private transient String iname;
+        /**
+         * Photo of identity.
+         */
+        private transient URL iphoto;
+        /**
+         * Aliases.
+         */
+        private transient List<String> ialiases = new ArrayList<String>();
+        /**
+         * Set user name.
+         * @param name The name of it
+         */
+        @XmlElement
+        public void setUser(final String name) {
+            this.uname = name;
+        }
+        /**
+         * Set identity name.
+         * @param name The name of it
+         */
+        @XmlElement
+        public void setName(final String name) {
+            this.iname = name;
+        }
+        /**
+         * Set photo.
+         * @param url The URL
+         */
+        @XmlElement
+        public void setPhoto(final String url) {
+            try {
+                this.iphoto = new URL(url);
+            } catch (java.net.MalformedURLException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        /**
+         * Set aliases.
+         * @param names List of them
+         */
+        @XmlElement
+        public void setAliases(final List<String> names) {
+            this.ialiases.addAll(names);
+        }
         /**
          * {@inheritDoc}
          */
         @Override
         public String user() {
-            return "";
+            if (this.uname == null) {
+                throw new IllegalStateException("/page/identity/user missed");
+            }
+            return this.uname;
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public String name() {
-            return "";
+            if (this.iname == null) {
+                throw new IllegalStateException("/page/identity/name missed");
+            }
+            return this.iname;
         }
         /**
          * {@inheritDoc}
@@ -205,7 +285,7 @@ public final class AuthRs extends AbstractRs {
          */
         @Override
         public URL photo() {
-            return null;
+            return this.iphoto;
         }
 
         /**
@@ -234,7 +314,7 @@ public final class AuthRs extends AbstractRs {
          */
         @Override
         public Set<String> aliases() {
-            return null;
+            return new HashSet(this.ialiases);
         }
         /**
          * {@inheritDoc}

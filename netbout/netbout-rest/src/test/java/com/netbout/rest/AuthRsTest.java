@@ -53,16 +53,22 @@ public final class AuthRsTest {
      */
     @Test
     public void authenticatesByNamesAndSecret() throws Exception {
+        final String iname = "nb:test";
         final ContainerMocker container = new ContainerMocker()
             .expectMethod(Matchers.equalTo("GET"))
             .expectHeader(
                 HttpHeaders.ACCEPT,
                 Matchers.containsString(MediaType.APPLICATION_XML)
             )
-            .returnBody("<page><identity><name>abc</name></identity></page>")
+            .returnBody(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "<page><identity><user>?</user><name>%s</name></identity></page>",
+                    iname
+                )
+            )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
-        final String iname = "nb:test";
         final String uname = UriBuilder
             .fromUri(container.home())
             .path("/")
