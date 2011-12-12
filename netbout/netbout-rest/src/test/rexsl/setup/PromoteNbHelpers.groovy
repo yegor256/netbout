@@ -31,7 +31,7 @@ package com.netbout.rest.rexsl.setup
 
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
-import com.rexsl.test.TestClient
+import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
@@ -42,12 +42,11 @@ def auth = UriBuilder.fromUri(rexsl.home).path('/nb').build()
     'nb:email' : 'file:///com.netbout.notifiers.email'
 ].each {
     def helper = new RestSession(rexsl.home).authenticate(auth, it.key, 'secret')
-    new TestClient(RestUriBuilder.from(helper).build())
+    RestTester.start(RestUriBuilder.from(helper).build())
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get()
         .assertStatus(HttpURLConnection.HTTP_OK)
         .rel('/page/links/link[@rel="promote"]/@href')
-        .body('url=' + URLEncoder.encode(it.value))
-        .post()
+        .post('url=' + URLEncoder.encode(it.value))
         .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 }

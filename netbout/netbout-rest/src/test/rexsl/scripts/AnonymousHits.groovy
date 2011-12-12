@@ -29,10 +29,11 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.rexsl.test.TestClient
+import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.UriBuilder
 
 // In this script we are trying to make different hits to the site
 // from anonymous user. All of our hits should lead to /login page.
@@ -40,9 +41,9 @@ import javax.ws.rs.core.Response
 [
     '/',
     '/123',
-].each { url ->
-    new TestClient(rexsl.home)
+].each { path ->
+    RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get(url)
+        .get()
         .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
 }

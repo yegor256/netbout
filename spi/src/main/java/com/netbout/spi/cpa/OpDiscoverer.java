@@ -74,7 +74,7 @@ final class OpDiscoverer {
      */
     public ConcurrentMap<String, HelpTarget> discover(final URL url) {
         Reflections reflections;
-        if ("jar".equals(url.getProtocol())) {
+        if ("http".equals(url.getProtocol())) {
             Object pkg;
             try {
                 pkg = ((JarURLConnection) url.openConnection())

@@ -29,10 +29,10 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.rexsl.test.TestClient
+import com.rexsl.test.RestTester
 import javax.ws.rs.core.UriBuilder
 
-new TestClient(rexsl.home)
-    .get(UriBuilder.fromPath('/exception').queryParam('text', 'hello').build())
+RestTester.start(UriBuilder.fromUri(rexsl.home).path('/exception').queryParam('text', 'hello'))
+    .get()
     .assertStatus(HttpURLConnection.HTTP_INTERNAL_ERROR)
     .assertXPath('//xhtml:title[contains(.,"error")]')
