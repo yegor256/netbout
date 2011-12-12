@@ -35,7 +35,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout</groupId>
     <artifactId>netbout-tk</artifactId>
-    <version netbout="yes">1.4</version>
+    <version netbout="yes">2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>netbout-tk</name>
     <description>Test/Tool Kit</description>
