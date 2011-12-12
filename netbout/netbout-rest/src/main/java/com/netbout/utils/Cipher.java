@@ -34,72 +34,50 @@ import org.apache.commons.lang.StringUtils;
 // import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 // import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 /**
- * Encrypts and decrypts.
+ * Cipher and de-cipher texts.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Cryptor {
+public final class Cipher {
+
+    // /**
+    //  * Password to use in encryption.
+    //  */
+    // private static final String PASSWORD = "j&^%hgfRR43$#&==_ )(00(0}{-~";
+    //
+    // /**
+    //  * Encryptor.
+    //  */
+    // private final StandardPBEStringEncryptor encryptor =
+    //     new StandardPBEStringEncryptor();
+
+    // /**
+    //  * Public ctor.
+    //  */
+    // public Cryptor() {
+    //     this.encryptor.setPassword(this.PASSWORD);
+    //     this.encryptor
+    //        .setAlgorithm(StandardPBEByteEncryptor.DEFAULT_ALGORITHM);
+    // }
 
     /**
-     * Separator between name and hash.
-     */
-    private static final String SEPARATOR = ".";
-
-    /**
-     * Cipher.
-     */
-    private static final Cipher CIPHER = new Cipher();
-
-    /**
-     * Encrypt user+identity into text.
-     * @param identity The identity
+     * Encrypt some text.
+     * @param text The text to encrypt
      * @return Encrypted string
      */
-    public String encrypt(final Identity identity) {
-        final StringBuilder builder = new StringBuilder();
-        builder
-            .append(TextUtils.pack(identity.user()))
-            .append(this.SEPARATOR)
-            .append(TextUtils.pack(identity.name()));
-        return TextUtils.pack(this.CIPHER.encrypt(builder.toString()));
+    public String encrypt(final String text) {
+        return text;
     }
 
     /**
-     * Get identity from hash.
-     * @param hub Hub where to get identities
+     * Decrypt from hash.
      * @param hash The hash to use
-     * @return The name found in it
+     * @return The original text
      * @throws DecryptionException If we can't decrypt it
      */
-    public Identity decrypt(final Hub hub, final String hash)
-        throws DecryptionException {
-        if (hash == null) {
-            throw new DecryptionException(hash, "Hash is NULL");
-        }
-        final String[] parts = StringUtils.split(
-            TextUtils.unpack(this.CIPHER.decrypt(hash)),
-            this.SEPARATOR
-        );
-        if (parts.length != 2) {
-            throw new DecryptionException(hash, "Not enough parts");
-        }
-        final String uname = TextUtils.unpack(parts[0]);
-        final String iname = TextUtils.unpack(parts[1]);
-        Identity identity;
-        try {
-            identity = hub.user(uname).identity(iname);
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new DecryptionException(ex);
-        }
-        Logger.debug(
-            this,
-            "#decrypt(%s, %s): identity '%s' found",
-            hub.getClass().getName(),
-            hash,
-            identity.name()
-        );
-        return identity;
+    public String decrypt(final String hash) throws DecryptionException {
+        return hash;
     }
 
 }

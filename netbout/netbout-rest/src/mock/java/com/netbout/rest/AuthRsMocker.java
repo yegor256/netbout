@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
-import com.netbout.utils.Cipher;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -36,13 +35,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 /**
- * Authorizer of "nb:..." identities.
- *
+ * Mocks authentication mechanism.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @Path("/nb")
-public final class NbRs extends AbstractRs {
+public final class AuthRsMocker extends AbstractRs {
 
     /**
      * Authentication page.
@@ -53,11 +51,16 @@ public final class NbRs extends AbstractRs {
     @GET
     public Response auth(@QueryParam("identity") final String iname,
         @QueryParam("secret") final String secret) {
-        this.validate(iname, secret);
-        final String user = UriBuilder
-            .fromUri("http://www.netbout.com/nb")
-            .build()
-            .toString();
+        if ((iname == null) || (secret == null) || secret.isEmpty()) {
+            throw new ForwardException(this, this.base(), "Failure");
+        }
+        if (!iname.matches("nb:[a-z]+")) {
+            throw new ForwardException(this, this.base(), "Invalid name");
+        }
+        if (!secret.isEmpty()) {
+            throw new ForwardException(this, this.base(), "Wrong secret");
+        }
+        final String user = this.base().path("/mock-auth").build().toString();
         Identity identity;
         try {
             identity = this.hub().user(user).identity(iname);
@@ -69,27 +72,6 @@ public final class NbRs extends AbstractRs {
             .init(this)
             .authenticated(identity)
             .build();
-    }
-
-    /**
-     * Validate them.
-     * @param iname Name of identity
-     * @param secret The secret code
-     */
-    private void validate(final String iname, final String secret) {
-        if ((iname == null) || (secret == null) || secret.isEmpty()) {
-            throw new ForwardException(this, this.base(), "Failure");
-        }
-        if (!iname.matches("nb:[a-z]+")) {
-            throw new ForwardException(this, this.base(), "Invalid name");
-        }
-        try {
-            if (!new Cipher().decrypt(secret).equals(iname)) {
-                throw new ForwardException(this, this.base(), "Wrong secret");
-            }
-        } catch (com.netbout.utils.DecryptionException ex) {
-            throw new ForwardException(this, this.base(), ex);
-        }
     }
 
 }

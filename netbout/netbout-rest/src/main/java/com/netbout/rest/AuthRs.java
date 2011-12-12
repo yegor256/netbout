@@ -28,13 +28,21 @@ package com.netbout.rest;
 
 import com.netbout.hub.User;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.utils.Cryptor;
+import com.sun.jersey.api.client.Client;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
+import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * REST authentication page.
@@ -83,7 +91,34 @@ public final class AuthRs extends AbstractRs {
      */
     private Identity authenticate(final String uname, final String iname,
         final String secret) throws IOException {
-        assert secret != null;
+        final Identity remote = this.load(
+            UriBuilder.fromUri(uname)
+                .queryParam("identity", iname)
+                .queryParam("secret", secret)
+                .build()
+        );
+        if (!remote.user().equals(uname)) {
+            throw new ForwardException(
+                this,
+                this.base().path("/g"),
+                String.format(
+                    "Invalid user name retrieved '%s', while '%s' expected",
+                    remote.user(),
+                    uname
+                )
+            );
+        }
+        if (!remote.name().equals(iname)) {
+            throw new ForwardException(
+                this,
+                this.base().path("/g"),
+                String.format(
+                    "Invalid identity name retrieved '%s', while '%s' expected",
+                    remote.name(),
+                    iname
+                )
+            );
+        }
         final User user = this.hub().user(uname);
         Identity identity;
         try {
@@ -97,10 +132,110 @@ public final class AuthRs extends AbstractRs {
                 )
             );
         }
-        // tbd
-        // identity.alias("?");
-        // identity.setPhoto(UriBuilder.fromUri("?").build().toURL());
+        for (String alias : remote.aliases()) {
+            identity.alias(alias);
+        }
+        identity.setPhoto(remote.photo());
         return identity;
+    }
+
+    /**
+     * Load identity from the URL provided.
+     * @param uri The URI to load from
+     * @return The identity found
+     * @throws IOException If some problem with FB
+     */
+    private Identity load(final URI uri) throws IOException {
+        return Client.create().resource(uri)
+            .accept(MediaType.APPLICATION_XML)
+            .get(RemoteIdentity.class);
+    }
+
+    /**
+     * Remote identity representative.
+     */
+    private static final class RemoteIdentity implements Identity {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String user() {
+            return "";
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String name() {
+            return "";
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Bout start() {
+            throw new UnsupportedOperationException("#start()");
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Bout bout(final Long number) {
+            throw new UnsupportedOperationException("#bout()");
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public List<Bout> inbox(final String query) {
+            throw new UnsupportedOperationException("#inbox()");
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public URL photo() {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void setPhoto(final URL pic) {
+            throw new UnsupportedOperationException("#setPhoto()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Identity friend(final String name) {
+            throw new UnsupportedOperationException("#friend()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Identity> friends(final String keyword) {
+            throw new UnsupportedOperationException("#friends()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<String> aliases() {
+            return null;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void alias(final String alias) {
+            throw new UnsupportedOperationException("#alias()");
+        }
     }
 
 }

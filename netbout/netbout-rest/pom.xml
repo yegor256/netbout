@@ -323,6 +323,9 @@
                             <artifactId>maven-war-plugin</artifactId>
                             <version since="2 Dec 2010">2.1</version>
                             <configuration>
+                                <configuration>
+                                    <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
+                                </configuration>
                                 <archive>
                                     <manifestEntries>
                                         <Netbout-Revision>${buildNumber}</Netbout-Revision>
