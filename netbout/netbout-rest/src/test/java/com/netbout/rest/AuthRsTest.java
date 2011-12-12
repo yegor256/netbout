@@ -54,6 +54,7 @@ public final class AuthRsTest {
     @Test
     public void authenticatesByNamesAndSecret() throws Exception {
         final String iname = "nb:test";
+        final String photo = "http://localhost/some-pic.png";
         final ContainerMocker container = new ContainerMocker()
             .expectMethod(Matchers.equalTo("GET"))
             .expectHeader(
@@ -63,8 +64,9 @@ public final class AuthRsTest {
             .returnBody(
                 String.format(
                     // @checkstyle LineLength (1 line)
-                    "<page><identity><user>?</user><name>%s</name></identity></page>",
-                    iname
+                    "<page><identity><user>?</user><name>%s</name><photo>%s</photo></identity></page>",
+                    iname,
+                    photo
                 )
             )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)

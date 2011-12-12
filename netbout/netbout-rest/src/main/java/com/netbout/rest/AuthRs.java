@@ -220,8 +220,8 @@ public final class AuthRs extends AbstractRs {
          * Set photo.
          * @param url The URL
          */
-        @XmlElement
-        public void setPhoto(final String url) {
+        @XmlElement(name = "photo")
+        public void setJaxbPhoto(final String url) {
             try {
                 this.iphoto = new URL(url);
             } catch (java.net.MalformedURLException ex) {
@@ -285,6 +285,9 @@ public final class AuthRs extends AbstractRs {
          */
         @Override
         public URL photo() {
+            if (this.iphoto == null) {
+                throw new IllegalStateException("/page/identity/photo missed");
+            }
             return this.iphoto;
         }
 
