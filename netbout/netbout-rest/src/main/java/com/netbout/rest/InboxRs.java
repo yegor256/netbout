@@ -67,6 +67,7 @@ public final class InboxRs extends AbstractRs {
      * @return The JAX-RS response
      */
     @GET
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Response inbox() {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();

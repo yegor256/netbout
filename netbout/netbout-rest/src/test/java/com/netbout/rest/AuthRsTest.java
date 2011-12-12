@@ -28,9 +28,9 @@ package com.netbout.rest;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.utils.Cipher;
 import com.rexsl.test.ContainerMocker;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -38,7 +38,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case for {@link AuthRs}.
@@ -71,11 +70,7 @@ public final class AuthRsTest {
             )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
-        final String uname = UriBuilder
-            .fromUri(container.home())
-            .path("/")
-            .build()
-            .toString();
+        final String uname = this.normalize(container.home());
         final String secret = "some secret";
         final Identity identity = new IdentityMocker()
             .namedAs(iname)
@@ -100,13 +95,22 @@ public final class AuthRsTest {
         final ContainerMocker container = new ContainerMocker()
             .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
             .mock();
-        final String uname = UriBuilder
-            .fromUri(container.home())
+        final String uname = this.normalize(container.home());
+        final AuthRs rest = new ResourceMocker().mock(AuthRs.class);
+        rest.auth(uname, "", "");
+    }
+
+    /**
+     * It's a bug in ReXSL.
+     * @param uri The URI to normalize
+     * @return Normal URI
+     */
+    private String normalize(final URI uri) {
+        return UriBuilder
+            .fromUri(uri)
             .path("/")
             .build()
             .toString();
-        final AuthRs rest = new ResourceMocker().mock(AuthRs.class);
-        final Response response = rest.auth(uname, "", "");
     }
 
 }

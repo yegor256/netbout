@@ -45,6 +45,15 @@ class ForwardException extends WebApplicationException {
     /**
      * Constructor.
      * @param res The originator of the exception
+     * @param msg The message
+     */
+    public ForwardException(final Resource res, final String msg) {
+        this(res, res.base().path("/g"), msg);
+    }
+
+    /**
+     * Constructor.
+     * @param res The originator of the exception
      * @param builder Where to forward to
      * @param msg The message
      */
@@ -54,6 +63,15 @@ class ForwardException extends WebApplicationException {
             new IllegalArgumentException(msg),
             ForwardException.response(res, builder, msg)
         );
+    }
+
+    /**
+     * Constructor.
+     * @param res The originator of the exception
+     * @param cause Cause of trouble
+     */
+    public ForwardException(final Resource res, final Exception cause) {
+        this(res, res.base().path("/"), cause);
     }
 
     /**

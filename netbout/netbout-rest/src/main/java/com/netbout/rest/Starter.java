@@ -89,6 +89,7 @@ public final class Starter implements ContextResolver<Starter> {
     /**
      * Start all.
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private void start() {
         final Promoter promoter = new Promoter(this.hub);
         final String dbname = "nb:db";

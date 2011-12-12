@@ -48,10 +48,12 @@ public final class LoginRs extends AbstractRs {
      * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     public Response login() {
         try {
             this.identity();
             throw new ForwardException(this, this.base(), "Already logged in");
+            // @checkstyle EmptyBlock (3 lines)
         } catch (LoginRequiredException ex) {
             // swallow it, it's normal situation
         }

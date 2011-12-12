@@ -50,6 +50,7 @@ public final class LongHelper extends LongIdentity {
      * Public ctor for JAXB.
      */
     public LongHelper() {
+        super();
         throw new IllegalStateException("This ctor should never be called");
     }
 

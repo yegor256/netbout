@@ -48,6 +48,7 @@ import org.apache.commons.codec.binary.Base64;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public abstract class AbstractRs implements Resource {
 
     /**

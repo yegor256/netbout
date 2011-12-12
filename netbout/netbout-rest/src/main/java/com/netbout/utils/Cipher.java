@@ -26,11 +26,6 @@
  */
 package com.netbout.utils;
 
-import com.netbout.hub.Hub;
-import com.netbout.spi.Identity;
-import com.ymock.util.Logger;
-import org.apache.commons.lang.StringUtils;
-
 // import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 // import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 /**

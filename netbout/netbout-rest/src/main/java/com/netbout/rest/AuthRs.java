@@ -47,7 +47,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -59,6 +58,7 @@ import javax.xml.bind.annotation.XmlType;
  * @version $Id$
  */
 @Path("/auth")
+@SuppressWarnings("PMD.TooManyMethods")
 public final class AuthRs extends AbstractRs {
 
     /**
@@ -77,7 +77,7 @@ public final class AuthRs extends AbstractRs {
         try {
             identity = this.authenticate(uname, iname, secret);
         } catch (IOException ex) {
-            throw new ForwardException(this, this.base().path("/g"), ex);
+            throw new ForwardException(this, ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)
@@ -108,7 +108,6 @@ public final class AuthRs extends AbstractRs {
         if (!remote.name().equals(iname)) {
             throw new ForwardException(
                 this,
-                this.base().path("/g"),
                 String.format(
                     "Invalid identity name retrieved '%s', while '%s' expected",
                     remote.name(),
@@ -162,7 +161,7 @@ public final class AuthRs extends AbstractRs {
         /**
          * The identity.
          */
-        private RemoteIdentity identity;
+        private transient RemoteIdentity identity;
         /**
          * Set identity.
          * @param idnt The identity
@@ -204,7 +203,7 @@ public final class AuthRs extends AbstractRs {
         /**
          * Aliases.
          */
-        private transient List<String> ialiases = new ArrayList<String>();
+        private final transient List<String> ialiases = new ArrayList<String>();
         /**
          * Set user name.
          * @param name The name of it

@@ -133,6 +133,7 @@ public final class LongBout {
      */
     @XmlElement(name = "stage")
     @XmlElementWrapper(name = "stages")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
         for (String identity : this.coords.all()) {
@@ -160,6 +161,7 @@ public final class LongBout {
      */
     @XmlElement(name = "message")
     @XmlElementWrapper(name = "messages")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<LongMessage> getMessages() {
         final List<LongMessage> messages = new ArrayList<LongMessage>();
         for (Message msg : this.bout.messages(this.query)) {
@@ -174,6 +176,7 @@ public final class LongBout {
      */
     @XmlElement(name = "participant")
     @XmlElementWrapper(name = "participants")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();

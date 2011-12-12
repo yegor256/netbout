@@ -48,7 +48,7 @@ public class LongIdentity {
     /**
      * The identity.
      */
-    private transient Identity identity;
+    private transient Identity person;
 
     /**
      * Public ctor for JAXB.
@@ -62,7 +62,7 @@ public class LongIdentity {
      * @param idnt The identity
      */
     public LongIdentity(final Identity idnt) {
-        this.identity = idnt;
+        this.person = idnt;
     }
 
     /**
@@ -71,7 +71,7 @@ public class LongIdentity {
      */
     @XmlElement
     public final String getName() {
-        return this.identity.name();
+        return this.person.name();
     }
 
     /**
@@ -80,7 +80,7 @@ public class LongIdentity {
      */
     @XmlElement
     public final String getUser() {
-        return this.identity.user();
+        return this.person.user();
     }
 
     /**
@@ -89,7 +89,7 @@ public class LongIdentity {
      */
     @XmlElement
     public final String getAlias() {
-        return new AliasBuilder(this.identity).build();
+        return new AliasBuilder(this.person).build();
     }
 
     /**
@@ -98,7 +98,7 @@ public class LongIdentity {
      */
     @XmlElement
     public final String getPhoto() {
-        return this.identity.photo().toString();
+        return this.person.photo().toString();
     }
 
     /**
@@ -108,7 +108,7 @@ public class LongIdentity {
     @XmlElement(name = "alias")
     @XmlElementWrapper(name = "aliases")
     public final Collection<String> getAliases() {
-        return this.identity.aliases();
+        return this.person.aliases();
     }
 
     /**
@@ -116,7 +116,7 @@ public class LongIdentity {
      * @return The identity
      */
     protected final Identity identity() {
-        return this.identity;
+        return this.person;
     }
 
 }

@@ -43,5 +43,5 @@ def number = bout.number()
 bout.invite(walter)
 walter.bout(number).confirm()
 walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox("").size(), Matchers.equalTo(0))
+MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(0))
 

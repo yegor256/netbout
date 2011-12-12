@@ -121,6 +121,7 @@ public final class ShortBout {
      */
     @XmlElement(name = "participant")
     @XmlElementWrapper(name = "participants")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();

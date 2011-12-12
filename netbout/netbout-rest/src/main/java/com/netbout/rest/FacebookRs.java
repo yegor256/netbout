@@ -64,7 +64,7 @@ public final class FacebookRs extends AbstractRs {
         try {
             identity = this.authenticate(code);
         } catch (IOException ex) {
-            throw new ForwardException(this, this.base().path("/g"), ex);
+            throw new ForwardException(this, ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)

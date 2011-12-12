@@ -38,7 +38,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 /**
  * Authorizer of "nb:..." identities.
@@ -47,7 +46,13 @@ import javax.ws.rs.core.UriBuilder;
  * @version $Id$
  */
 @Path("/nb")
+@SuppressWarnings("PMD.TooManyMethods")
 public final class NbRs extends AbstractRs {
+
+    /**
+     * The prefix.
+     */
+    private static final String PREFIX = "nb:";
 
     /**
      * Authentication page.
@@ -59,10 +64,13 @@ public final class NbRs extends AbstractRs {
     public Response auth(@QueryParam("identity") final String iname,
         @QueryParam("secret") final String secret) {
         this.validate(iname, secret);
+        final Identity identity = new NbIdentity(
+            iname.substring(this.PREFIX.length())
+        );
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
-            .authenticated(new NbIdentity(iname.substring(3)))
+            .authenticated(identity)
             .build();
     }
 
@@ -75,7 +83,7 @@ public final class NbRs extends AbstractRs {
         if ((iname == null) || (secret == null) || secret.isEmpty()) {
             throw new ForwardException(this, this.base(), "Failure");
         }
-        if (!iname.matches("nb:[a-z]+")) {
+        if (!iname.matches(String.format("%s[a-z]+", this.PREFIX))) {
             throw new ForwardException(this, this.base(), "Invalid name");
         }
         try {
@@ -94,7 +102,7 @@ public final class NbRs extends AbstractRs {
         /**
          * The suffix after "nb:".
          */
-        private transient String suffix;
+        private final transient String suffix;
         /**
          * Public ctor.
          * @param sfx The suffix after "nb:"
@@ -114,7 +122,7 @@ public final class NbRs extends AbstractRs {
          */
         @Override
         public String name() {
-            return String.format("nb:%s", this.suffix);
+            return String.format("%s%s", NbRs.PREFIX, this.suffix);
         }
         /**
          * {@inheritDoc}

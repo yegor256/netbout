@@ -335,6 +335,7 @@ public final class BoutRs extends AbstractRs {
      * Main page.
      * @return The page
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private Page page() {
         this.coords.normalize(this.bus(), this.bout());
         final Page page = new PageBuilder()
@@ -383,7 +384,7 @@ public final class BoutRs extends AbstractRs {
      */
     private UriBuilder self(final String path) {
         return this.base()
-            .path(String.format("/%s", this.bout().number()))
+            .path(String.format("/%d", this.bout().number()))
             .path(path);
     }
 

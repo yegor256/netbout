@@ -53,6 +53,7 @@ public final class FriendsRs extends AbstractRs {
      * @return The JAX-RS response
      */
     @GET
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Response list(@QueryParam("mask") final String mask) {
         if (mask == null) {
             throw new ForwardException(
