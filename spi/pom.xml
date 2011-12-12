@@ -305,14 +305,15 @@
                         <artifactId>maven-assembly-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>sources-package</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
-                                    <descriptorRefs>
-                                        <descriptorRef>src</descriptorRef>
-                                    </descriptorRefs>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/sources.xml</descriptor>
+                                    </descriptors>
                                 </configuration>
                             </execution>
                         </executions>
