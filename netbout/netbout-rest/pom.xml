@@ -42,7 +42,36 @@
     <packaging>war</packaging>
     <name>netbout-rest</name>
 
+    <repositories>
+        <repository>
+            <id>rexsl.snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>woquo.s3</id>
+            <url>s3://repo.woquo.com/snapshot</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-umpa</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-nebo</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-mentor</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-hub</artifactId>
@@ -242,13 +271,6 @@
             <artifactId>powermock-api-mockito</artifactId>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>rexsl.snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
 
     <build>
         <pluginManagement>
