@@ -30,6 +30,7 @@
 package com.netbout.spi.client;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.ymock.util.Logger;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
@@ -173,7 +174,13 @@ final class JerseyRestResponse implements RestResponse {
      */
     @Override
     public URI location() {
-        return this.response.getLocation();
+        final URI uri = this.response.getLocation();
+        Logger.debug(
+            this,
+            "#location(): returned '%s'",
+            uri
+        );
+        return uri;
     }
 
     /**
@@ -203,9 +210,13 @@ final class JerseyRestResponse implements RestResponse {
         if (xpath.charAt(0) != '/') {
             xpath = String.format("/page/links/link[@rel='%s']/@href", rel);
         }
-        return this.client.copy(
-            UriBuilder.fromUri(this.xpath(xpath).get(0)).build()
-        );
+        final URI uri = UriBuilder.fromUri(this.xpath(xpath).get(0)).build();
+            Logger.debug(
+                this,
+                "#rel('%s'): going to '%s'",
+                uri
+            );
+        return this.client.copy(uri);
     }
 
     /**
