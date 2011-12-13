@@ -93,18 +93,41 @@ public final class HelperFarm {
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO helper (identity, url) VALUES (?, ?)"
+                "SELECT url FROM helper WHERE identity = ?"
             );
             stmt.setString(1, name);
-            stmt.setString(2, url);
-            stmt.executeUpdate();
-            Logger.debug(
-                this,
-                "#identityPromoted('%s', '%s'): inserted [%dms]",
-                name,
-                url,
-                System.currentTimeMillis() - start
-            );
+            final ResultSet rset = stmt.executeQuery();
+            try {
+                if (rset.next()) {
+                    final String existing = rset.getString(1);
+                    if (!existing.equals(url)) {
+                        throw new IllegalArgumentException(
+                            String.format(
+                                "Identity '%s' is already promoted with '%s', can't change to '%s'",
+                                name,
+                                existing,
+                                url
+                            )
+                        );
+                    }
+                } else {
+                    final PreparedStatement istmt = conn.prepareStatement(
+                        "INSERT INTO helper (identity, url) VALUES (?, ?)"
+                    );
+                    istmt.setString(1, name);
+                    istmt.setString(2, url);
+                    istmt.executeUpdate();
+                    Logger.debug(
+                        this,
+                        "#identityPromoted('%s', '%s'): inserted [%dms]",
+                        name,
+                        url,
+                        System.currentTimeMillis() - start
+                    );
+                }
+            } finally {
+                rset.close();
+            }
         } finally {
             conn.close();
         }
