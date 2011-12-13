@@ -39,6 +39,7 @@ import javax.ws.rs.core.UriBuilder
 def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
 def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 def bout = jeff.start()
+bout.rename('Trying to render an empty stage')
 
 // call some stage that DOESN'T exist in this bout - it should
 // not be rendered

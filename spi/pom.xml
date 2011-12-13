@@ -168,14 +168,14 @@
             <!-- JAX-RS implementation, core library -->
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version since="26 Oct 2011">1.9.1</version>
+            <version since="13 Dec 2011">1.11</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- JAX-RS implementation, core library -->
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version since="26 Oct 2011">1.9.1</version>
+            <version since="13 Dec 2011">1.11</version>
         </dependency>
         <dependency>
             <!--
@@ -488,7 +488,7 @@
                     to the STDOUT as well, not only to the file.
                     -->
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version since="2 Oct 2011">2.10</version>
+                    <version since="13 Dec 2011">2.11</version>
                     <configuration>
                         <argLine>-Dfile.encoding=UTF8</argLine>
                         <runOrder>random</runOrder>

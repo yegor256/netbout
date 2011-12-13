@@ -32,6 +32,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.utils.Cryptor;
 import com.sun.jersey.api.client.Client;
+import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -72,6 +73,12 @@ public final class AuthRs extends AbstractRs {
     public Response auth(@QueryParam("user") final String uname,
         @QueryParam("identity") final String iname,
         @QueryParam("secret") final String secret) {
+        if (uname == null || iname == null || secret == null) {
+            throw new ForwardException(
+                this,
+                "'user', 'identity', and 'secret' query params are mandatory"
+            );
+        }
         this.logoff();
         Identity identity;
         try {
@@ -142,14 +149,24 @@ public final class AuthRs extends AbstractRs {
      * @throws IOException If some problem with FB
      */
     private Identity load(final URI uri) throws IOException {
+        final long start = System.currentTimeMillis();
+        Identity identity;
         try {
-            return Client.create().resource(uri)
+            identity = Client.create().resource(uri)
                 .accept(MediaType.APPLICATION_XML)
                 .get(RemotePage.class)
                 .getIdentity();
         } catch (com.sun.jersey.api.client.UniformInterfaceException ex) {
             throw new IOException(ex);
         }
+        Logger.debug(
+            this,
+            "#load(%s): identity '%s' found in %dms",
+            uri,
+            identity.name(),
+            System.currentTimeMillis() - start
+        );
+        return identity;
     }
 
     /**

@@ -40,6 +40,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
 def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 def bout = jeff.start()
+bout.rename('Selenimum test')
 
 def driver = new HtmlUnitDriver()
 driver.setJavascriptEnabled(true)

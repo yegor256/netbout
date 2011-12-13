@@ -72,7 +72,13 @@ public final class InboxRs extends AbstractRs {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
         for (Bout bout : identity.inbox(this.query)) {
-            bouts.add(new ShortBout(bout, this.base(), identity));
+            bouts.add(
+                new ShortBout(
+                    bout,
+                    this.base().path(String.format("/%d", bout.number())),
+                    identity
+                )
+            );
         }
         return new PageBuilder()
             .schema("")

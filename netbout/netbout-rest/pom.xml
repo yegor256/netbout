@@ -159,9 +159,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!--
-            Javax Servlet API 2.3.
-            -->
+            <!-- Javax Servlet API 2.3. -->
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version since="26 Oct 2011">2.3</version>
@@ -253,6 +251,14 @@
     </repositories>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version since="2 Dec 2010">2.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.rexsl</groupId>
@@ -272,11 +278,6 @@
 
     <profiles>
         <profile>
-            <!--
-            This profile activates all continuous integration specific
-            plugins, not necessary in development. To activate
-            this profile run: "mvn -Dci"
-            -->
             <id>continuous-integration</id>
             <activation>
                 <property><name>ci</name></property>
@@ -323,6 +324,7 @@
                         </configuration>
                         <executions>
                             <execution>
+                                <id>deploy-to-production</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>deploy</goal>
@@ -335,11 +337,8 @@
                     <plugins>
                         <plugin>
                             <artifactId>maven-war-plugin</artifactId>
-                            <version since="2 Dec 2010">2.1</version>
                             <configuration>
-                                <configuration>
-                                    <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
-                                </configuration>
+                                <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
                                 <archive>
                                     <manifestEntries>
                                         <Netbout-Revision>${buildNumber}</Netbout-Revision>
@@ -361,6 +360,119 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>catapult</id>
+            <activation>
+                <file><exists>pom.xml</exists></file>
+            </activation>
+            <properties>
+                <catapult.warName>${project.build.finalName}-catapult</catapult.warName>
+                <!--
+                @todo #160 If you change this path to something different from
+                 "/" there will be many problems with paths of XSL and CSS files.
+                 It's definitely a defect and should be fixed either in netbout
+                 project or in rexsl.
+                -->
+                <catapult.context>/</catapult.context>
+            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.rexsl</groupId>
+                            <artifactId>rexsl-maven-plugin</artifactId>
+                            <configuration>
+                                <systemPropertyVariables>
+                                    <catapult.home>http://localhost:${catapult.port}${catapult.context}</catapult.home>
+                                </systemPropertyVariables>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <id>reserve-tomcat-port</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>reserve-network-port</goal>
+                                </goals>
+                                <configuration>
+                                    <portNames>
+                                        <portName>catapult.port</portName>
+                                    </portNames>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>war-for-catapult</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>war</goal>
+                                </goals>
+                                <configuration>
+                                    <warName>${catapult.warName}</warName>
+                                    <archive>
+                                        <manifestEntries>
+                                            <Netbout-Revision>555</Netbout-Revision>
+                                            <Netbout-Version>${project.version}</Netbout-Version>
+                                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                            <Netbout-FbId>12345</Netbout-FbId>
+                                            <Netbout-FbSecret>secret</Netbout-FbSecret>
+                                            <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
+                                            <Netbout-JdbcUrl>jdbc:mysql://test-db.netbout.com:3306/netbout-test</Netbout-JdbcUrl>
+                                            <Netbout-JdbcUser>netbout-test</Netbout-JdbcUser>
+                                            <Netbout-JdbcPassword>secret</Netbout-JdbcPassword>
+                                            <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
+                                            <Netbout-SmtpPort>2525</Netbout-SmtpPort>
+                                            <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
+                                            <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
+                                        </manifestEntries>
+                                    </archive>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>tomcat-maven-plugin</artifactId>
+                        <version since="13 Dec 2011">1.1</version>
+                        <configuration>
+                            <fork>true</fork>
+                            <path>${catapult.context}</path>
+                            <port>${catapult.port}</port>
+                            <uriEncoding>UTF-8</uriEncoding>
+                            <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
+                            <warDirectory>${project.build.directory}/${catapult.warName}.war</warDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-embedded-tomcat</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run-war-only</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop-embedded-tomcat</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>

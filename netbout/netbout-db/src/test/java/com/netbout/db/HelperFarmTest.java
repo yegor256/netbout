@@ -44,7 +44,7 @@ public final class HelperFarmTest {
     private final transient HelperFarm farm = new HelperFarm();
 
     /**
-     * Find bouts of some identity.
+     * HelperFarm can find bouts of some identity.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -59,6 +59,31 @@ public final class HelperFarmTest {
             this.farm.getHelperUrl(identity),
             Matchers.equalTo(url)
         );
+    }
+
+    /**
+     * HelperFarm can register helper twice.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void registersHelperTwice() throws Exception {
+        final String identity = "Alex Baldwin";
+        final String url = "http://localhost/some-other-address";
+        new IdentityFarm().identityMentioned(identity);
+        this.farm.identityPromoted(identity, url);
+        this.farm.identityPromoted(identity, url);
+    }
+
+    /**
+     * HelperFarm can catch a problem if a new URL is different.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void registersHelperTwiceWithDifferentUrl() throws Exception {
+        final String identity = "Jeff Lebowski";
+        new IdentityFarm().identityMentioned(identity);
+        this.farm.identityPromoted(identity, "http://localhost/abc");
+        this.farm.identityPromoted(identity, "http://localhost/cde");
     }
 
 }

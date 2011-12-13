@@ -32,7 +32,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import org.apache.velocity.VelocityContext;
 
 /**
@@ -41,7 +40,7 @@ import org.apache.velocity.VelocityContext;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/{num : [0-9]+}/xsl")
+@Path("/{num : [0-9]+}/xsl/{stage : [\\w:\\.\\-]+}")
 public final class BoutStylesheetRs extends AbstractRs {
 
     /**
@@ -68,17 +67,17 @@ public final class BoutStylesheetRs extends AbstractRs {
      * Set stage name.
      * @param name Name of the stage
      */
-    @QueryParam("stage")
+    @PathParam("stage")
     public void setStage(final String name) {
         this.stage = name;
     }
 
     /**
-     * Get bout XSL.
+     * Get wrapper XSL.
      * @return The XSL
      */
     @GET
-    @Path("/bout.xsl")
+    @Path("/wrapper.xsl")
     @Produces("text/xsl")
     public String boutXsl() {
         final VelocityContext context = new VelocityContext();
@@ -90,12 +89,11 @@ public final class BoutStylesheetRs extends AbstractRs {
             "stageXsl",
             TextUtils.ucode(
                 this.base()
-                    .path("/{bout}/xsl/stage.xsl")
-                    .queryParam("stage", this.stage)
-                    .build(this.bout().number())
+                    .path("/{bout}/xsl/{stage}/stage.xsl")
+                    .build(this.bout().number(), this.stage)
             )
         );
-        return TextUtils.format("com/netbout/rest/bout.xsl.vm", context);
+        return TextUtils.format("com/netbout/rest/wrapper.xsl.vm", context);
     }
 
     /**
@@ -106,10 +104,16 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
+        String stg;
+        if ("-".equals(this.stage)) {
+            stg = "";
+        } else {
+            stg = this.stage;
+        }
         return this.bus().make("render-stage-xsl")
             .synchronously()
             .arg(this.bout().number())
-            .arg(this.stage)
+            .arg(stg)
             // @checkstyle LineLength (1 line)
             .asDefault("<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>")
             .exec();

@@ -27,20 +27,31 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+package com.netbout.rest.rexsl.scripts.catapult
 
 import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import com.netbout.utils.Cipher
+import com.rexsl.test.RestTester
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
 
-def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
-def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
-def email = 'test@example.com'
-
+def home = new URI(System.getProperty('catapult.home'))
+def auth = UriBuilder.fromUri(home).path('/nb').build()
+def cipher = new Cipher()
+def name = 'nb:jeff'
+def jeff = new RestSession(home).authenticate(auth, name, cipher.encrypt(name))
 def bout = jeff.start()
-bout.rename('Jeff talking by email')
-def friends = jeff.friends(email)
-MatcherAssert.assertThat(friends.size(), Matchers.equalTo(1))
-bout.invite(friends.iterator().next())
-bout.post('How are you doing?')
+bout.rename('Catapult inbox testing')
+
+RestTester.start(RestUriBuilder.from(jeff))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    // @todo #160 This HTML retrieval doesn't work because of a defect in
+    //  Tomcat 6 (I think it's a defect). It passes all requests to RestfulServlet,
+    //  even those who are for "/xsl/*". That's why there is an endless cycle
+    //  which breaks the build. I think that we should switch to Tomcat 7
+    //  somehow.
+    // .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)

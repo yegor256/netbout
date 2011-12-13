@@ -101,7 +101,9 @@ public final class Starter implements ContextResolver<Starter> {
                 starter.friend(dbname),
                 new URL("file", "", "com.netbout.db")
             );
-            starter.setPhoto(new URL("http", "img.netbout.com", "starter.png"));
+            starter.setPhoto(
+                new URL("http", "img.netbout.com", "nb/starter.png")
+            );
             final List<String> helpers = this.bus.make("get-all-helpers")
                 .synchronously()
                 .asDefault(new ArrayList<String>())
