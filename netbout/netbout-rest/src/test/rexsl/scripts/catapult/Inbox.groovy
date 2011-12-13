@@ -37,7 +37,7 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def home = UriBuilder.fromUri("http://test.netbout.com").build()
+def home = new URI("http", "localhost", Integer.valueOf(System.getProperty("tomcat.port")), "/")
 def auth = UriBuilder.fromUri(home).path('/auth').build()
 def cipher = new Cipher()
 def name = 'nb:jeff'
