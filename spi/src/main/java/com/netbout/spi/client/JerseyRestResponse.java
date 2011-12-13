@@ -214,6 +214,7 @@ final class JerseyRestResponse implements RestResponse {
             Logger.debug(
                 this,
                 "#rel('%s'): going to '%s'",
+                rel,
                 uri
             );
         return this.client.copy(uri);
