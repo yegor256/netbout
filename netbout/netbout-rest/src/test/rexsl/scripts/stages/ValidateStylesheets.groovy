@@ -37,6 +37,7 @@ import javax.ws.rs.core.UriBuilder
 def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
 def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 def bout = jeff.start()
+bout.rename('Stage stylesheet validation')
 def helper = 'nb:hh'
 def param = 'stage'
 bout.invite(jeff.friend(helper))

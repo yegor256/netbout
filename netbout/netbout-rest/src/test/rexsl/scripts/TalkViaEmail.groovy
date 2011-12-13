@@ -39,6 +39,7 @@ def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 def email = 'test@example.com'
 
 def bout = jeff.start()
+bout.rename('Jeff talking by email')
 def friends = jeff.friends(email)
 MatcherAssert.assertThat(friends.size(), Matchers.equalTo(1))
 bout.invite(friends.iterator().next())

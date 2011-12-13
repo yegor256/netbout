@@ -451,6 +451,8 @@
                             <fork>true</fork>
                             <path>${catapult.context}</path>
                             <port>${catapult.port}</port>
+                            <uriEncoding>UTF-8</uriEncoding>
+                            <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
                             <warDirectory>${project.build.directory}/${catapult.warName}.war</warDirectory>
                         </configuration>
                         <executions>

@@ -39,6 +39,7 @@ def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 def walter = new RestSession(rexsl.home).authenticate(auth, 'nb:walter', '')
 
 def bout = jeff.start()
+bout.rename('Some test conversation between Jeff and Walter')
 def number = bout.number()
 bout.invite(walter)
 walter.bout(number).confirm()

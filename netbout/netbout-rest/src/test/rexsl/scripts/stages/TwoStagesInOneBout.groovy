@@ -39,6 +39,7 @@ import javax.ws.rs.core.UriBuilder
 def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
 def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 def bout = jeff.start()
+bout.rename('Two stages in one bout')
 
 // invite two helpers there
 ['nb:hh', 'nb:db'].each { bout.invite(jeff.friend(it)) }

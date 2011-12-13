@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.utils.TextUtils;
 import com.rexsl.core.Manifests;
+import com.ymock.util.Logger;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -107,6 +108,13 @@ class ForwardException extends WebApplicationException {
             // @checkstyle MagicNumber (1 line)
             60 * 60,
             false
+        );
+        Logger.debug(
+            ForwardException.class,
+            "#response(%s, %s, %s): forwarding",
+            res.getClass().getName(),
+            builder.build(),
+            msg
         );
         return Response.status(Response.Status.TEMPORARY_REDIRECT)
             .header("Netbout-error", msg)

@@ -29,6 +29,7 @@ package com.netbout.rest.page;
 import com.rexsl.core.Stylesheet;
 import com.rexsl.core.XmlSchema;
 import com.ymock.util.Logger;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public final class PageBuilder {
     /**
      * Stylesheet to use.
      */
-    private transient String xsl = "/xsl/none.xsl";
+    private transient URI xsl = UriBuilder.fromUri("/xsl/none.xsl").build();
 
     /**
      * Schema to use.
@@ -81,7 +82,7 @@ public final class PageBuilder {
      * @return This object
      */
     public PageBuilder stylesheet(final UriBuilder builder) {
-        this.xsl = builder.build().toString();
+        this.xsl = builder.build();
         return this;
     }
 
@@ -129,10 +130,9 @@ public final class PageBuilder {
     private Class createOrFind(final Class base) {
         synchronized (PageBuilder.class) {
             final String name = String.format(
-                "%s$%s$%d",
+                "%s$%s",
                 base.getName(),
-                this.xsl.replaceAll("[^\\w]", ""),
-                Math.abs(this.xsl.hashCode())
+                this.xsl.getPath().replaceAll("[^\\w]", "")
             );
             Class cls;
             if (ClassPool.getDefault().getOrNull(name) == null) {
@@ -146,7 +146,7 @@ public final class PageBuilder {
                 // let's double check that the class found really is the
                 // class we're looking for
                 assert ((Stylesheet) cls.getAnnotation(Stylesheet.class))
-                    .value().equals(this.xsl);
+                    .value().equals(this.xsl.toString());
             }
             return cls;
         }
@@ -169,7 +169,7 @@ public final class PageBuilder {
                 AnnotationsAttribute.visibleTag
             );
             attribute.addAnnotation(
-                this.make(Stylesheet.class, this.xsl, file)
+                this.make(Stylesheet.class, this.xsl.toString(), file)
             );
             attribute.addAnnotation(
                 this.make(XmlSchema.class, this.xsd, file)

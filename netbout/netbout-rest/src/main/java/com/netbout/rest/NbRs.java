@@ -30,6 +30,7 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.utils.Cipher;
+import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
@@ -66,6 +67,12 @@ public final class NbRs extends AbstractRs {
         this.validate(iname, secret);
         final Identity identity = new NbIdentity(
             iname.substring(this.PREFIX.length())
+        );
+        Logger.debug(
+            this,
+            "#auth('%s', '%s'): authenticated",
+            iname,
+            secret
         );
         return new PageBuilder()
             .build(AbstractPage.class)
