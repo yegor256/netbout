@@ -93,7 +93,7 @@ public final class HelperFarm {
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT url FROM helper WHERE identity = ?"
+                "SELECT url FROM helper WHERE identity = ? "
             );
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
@@ -103,6 +103,7 @@ public final class HelperFarm {
                     if (!existing.equals(url)) {
                         throw new IllegalArgumentException(
                             String.format(
+                                // @checkstyle LineLength (1 line)
                                 "Identity '%s' is already promoted with '%s', can't change to '%s'",
                                 name,
                                 existing,

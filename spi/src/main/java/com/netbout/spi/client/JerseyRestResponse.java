@@ -211,12 +211,12 @@ final class JerseyRestResponse implements RestResponse {
             xpath = String.format("/page/links/link[@rel='%s']/@href", rel);
         }
         final URI uri = UriBuilder.fromUri(this.xpath(xpath).get(0)).build();
-            Logger.debug(
-                this,
-                "#rel('%s'): going to '%s'",
-                rel,
-                uri
-            );
+        Logger.debug(
+            this,
+            "#rel('%s'): going to '%s'",
+            rel,
+            uri
+        );
         return this.client.copy(uri);
     }
 

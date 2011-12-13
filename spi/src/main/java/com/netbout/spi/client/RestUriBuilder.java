@@ -68,7 +68,7 @@ public final class RestUriBuilder {
         final URI uri = ((RestBout) bout).uri();
         Logger.debug(
             RestUriBuilder.class,
-            "#from(%s): URI '%s' found",
+            "#from(%s): Bout URI '%s' found",
             bout.getClass().getName(),
             uri
         );
@@ -93,7 +93,7 @@ public final class RestUriBuilder {
         final URI uri = ((RestIdentity) identity).uri();
         Logger.debug(
             RestUriBuilder.class,
-            "#from(%s): URI '%s' found",
+            "#from(%s): Identity URI '%s' found",
             identity.getClass().getName(),
             uri
         );

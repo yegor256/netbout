@@ -80,6 +80,18 @@ public final class StageCoordinates {
     }
 
     /**
+     * Get stage for URI path.
+     * @return The name of it
+     */
+    public String stageForPath() {
+        String stg = this.stage();
+        if (stg.isEmpty()) {
+            stg = "-";
+        }
+        return stg;
+    }
+
+    /**
      * Set stage.
      * @param name The name of it
      */

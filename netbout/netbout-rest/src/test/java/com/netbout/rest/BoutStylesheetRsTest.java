@@ -37,7 +37,7 @@ import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlConverter;
-import java.net.URLEncoder;
+import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -85,10 +85,9 @@ public final class BoutStylesheetRsTest {
             )
         );
         final String xpath = String.format(
-            // @checkstyle LineLength (1 line)
-            "//xsl:include[contains(@href,'/%d/xsl/stage.xsl') and contains(@href,'stage=%s')]",
-            bout.number(),
-            URLEncoder.encode(stage, "UTF-8")
+            "//xsl:include[contains(@href,'%s')]",
+            UriBuilder.fromPath("/{bout}/xsl/{stage}/stage.xsl")
+                .build(bout.number(), stage)
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),

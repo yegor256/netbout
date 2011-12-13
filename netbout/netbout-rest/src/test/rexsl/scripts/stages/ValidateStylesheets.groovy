@@ -39,17 +39,16 @@ def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
 def bout = jeff.start()
 bout.rename('Stage stylesheet validation')
 def helper = 'nb:hh'
-def param = 'stage'
 bout.invite(jeff.friend(helper))
 
 // validate global bout XSL
-RestTester.start(RestUriBuilder.from(bout).path('/xsl/bout.xsl').queryParam(param, helper))
+RestTester.start(RestUriBuilder.from(bout).path('/xsl/{stage}/wrapper.xsl').build(helper))
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('//xsl:include')
 
 // validate local stage-related XSL
-RestTester.start(RestUriBuilder.from(bout).path('/xsl/stage.xsl').queryParam(param, helper))
+RestTester.start(RestUriBuilder.from(bout).path('/xsl/{stage}/stage.xsl').build(helper))
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('//xsl:template')

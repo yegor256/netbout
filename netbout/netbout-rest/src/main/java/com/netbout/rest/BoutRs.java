@@ -342,9 +342,11 @@ public final class BoutRs extends AbstractRs {
             .schema("")
             .stylesheet(
                 this.baseWithToken()
-                    .path(String.format("/%s", this.bout().number()))
-                    .path("/xsl/bout.xsl")
-                    .queryParam("stage", this.coords.stage())
+                    // @checkstyle MultipleStringLiterals (1 line)
+                    .path(String.format("/%d", this.bout().number()))
+                    .path("/xsl")
+                    .path(String.format("/%s", this.coords.stageForPath()))
+                    .path("/wrapper.xsl")
             )
             .build(AbstractPage.class)
             .init(this)
@@ -384,6 +386,7 @@ public final class BoutRs extends AbstractRs {
      */
     private UriBuilder self(final String path) {
         return this.base()
+            // @checkstyle MultipleStringLiterals (1 line)
             .path(String.format("/%d", this.bout().number()))
             .path(path);
     }
