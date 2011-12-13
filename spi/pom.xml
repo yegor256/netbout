@@ -488,7 +488,7 @@
                     to the STDOUT as well, not only to the file.
                     -->
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version since="2 Oct 2011">2.10</version>
+                    <version since="13 Dec 2011">2.11</version>
                     <configuration>
                         <argLine>-Dfile.encoding=UTF8</argLine>
                         <runOrder>random</runOrder>

@@ -369,6 +369,12 @@
             </activation>
             <properties>
                 <catapult.warName>${project.build.finalName}-catapult</catapult.warName>
+                <!--
+                @todo #160 If you change this path to something different from
+                 "/" there will be many problems with paths of XSL and CSS files.
+                 It's definitely a defect and should be fixed either in netbout
+                 project or in rexsl.
+                -->
                 <catapult.context>/</catapult.context>
             </properties>
             <build>
@@ -378,9 +384,9 @@
                             <groupId>com.rexsl</groupId>
                             <artifactId>rexsl-maven-plugin</artifactId>
                             <configuration>
-                                <!-- <portNames>
-                                    <portName>catapult.port</portName>
-                                </portNames> -->
+                                <systemPropertyVariables>
+                                    <catapult.home>http://localhost:${catapult.port}${catapult.context}</catapult.home>
+                                </systemPropertyVariables>
                             </configuration>
                         </plugin>
                     </plugins>
@@ -442,7 +448,7 @@
                         <artifactId>tomcat-maven-plugin</artifactId>
                         <version since="13 Dec 2011">1.1</version>
                         <configuration>
-                            <!-- <fork>true</fork> -->
+                            <fork>true</fork>
                             <path>${catapult.context}</path>
                             <port>${catapult.port}</port>
                             <warDirectory>${project.build.directory}/${catapult.warName}.war</warDirectory>
