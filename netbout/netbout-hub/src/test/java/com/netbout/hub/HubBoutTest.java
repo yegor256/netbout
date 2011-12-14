@@ -26,13 +26,10 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -43,11 +40,6 @@ import org.mockito.Mockito;
  * @version $Id$
  */
 public final class HubBoutTest {
-
-    /**
-     * Name of viewer.
-     */
-    private transient Urn name;
 
     /**
      * The viewer.
@@ -70,12 +62,12 @@ public final class HubBoutTest {
      */
     @Before
     public void prepare() throws Exception {
-        this.name = new UrnMocker().mock();
-        Mockito.doReturn(this.name).when(this.viewer).name();
-        Mockito.doReturn(this.viewer).when(this.hub).identity(this.name);
+        final Urn name = new UrnMocker().mock();
+        Mockito.doReturn(name).when(this.viewer).name();
+        Mockito.doReturn(this.viewer).when(this.hub).identity(name);
         this.boutDtMocker.withParticipant(
             new ParticipantDtMocker()
-                .withIdentity(this.name.toString())
+                .withIdentity(name.toString())
                 .confirmed()
                 .mock()
         );
@@ -87,7 +79,6 @@ public final class HubBoutTest {
      */
     @Test
     public void wrapsBoutDtDataProperties() throws Exception {
-        final Bus bus = new BusMocker().mock();
         final BoutDt data = this.boutDtMocker.mock();
         final Bout bout = new HubBout(this.hub, this.viewer, data);
         bout.number();
@@ -102,7 +93,6 @@ public final class HubBoutTest {
      */
     @Test
     public void wrapsBoutRenamingMechanism() throws Exception {
-        final Bus bus = new BusMocker().mock();
         final BoutDt data = this.boutDtMocker.mock();
         final Bout bout = new HubBout(this.hub, this.viewer, data);
         final String title = "some title, no matter which one..";
@@ -116,7 +106,6 @@ public final class HubBoutTest {
      */
     @Test
     public void acceptsInvitationRequestsAndPassesThemToDt() throws Exception {
-        final Bus bus = new BusMocker().mock();
         final BoutDt data = this.boutDtMocker.mock();
         final Bout bout = new HubBout(this.hub, this.viewer, data);
         final Identity friend = Mockito.mock(Identity.class);

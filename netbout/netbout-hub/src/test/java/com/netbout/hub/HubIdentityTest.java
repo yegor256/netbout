@@ -26,12 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.net.URL;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link HubIdentity}.
@@ -46,6 +41,7 @@ public final class HubIdentityTest {
      */
     @Test
     public void toBeContinued() throws Exception {
+        // tbd...
     }
 
 }

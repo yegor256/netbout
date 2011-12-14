@@ -26,23 +26,13 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.net.URL;
-import java.util.Random;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.w3c.dom.Document;
-import org.xmlmatchers.XmlMatchers;
-import org.xmlmatchers.transform.XmlConverters;
 
 /**
  * Test case of {@link Hub} and {@link HubMocker}.
@@ -65,7 +55,10 @@ public final class HubTest {
             .withIdentity(name.toString())
             .mock();
         final Identity found = hub.identity(name);
-        MatcherAssert.assertThat(found, Matchers.equalTo(identity));
+        MatcherAssert.assertThat(
+            found.name(),
+            Matchers.equalTo(identity.name())
+        );
     }
 
 }

@@ -28,7 +28,6 @@ package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.bus.DefaultBus;
 import com.netbout.hub.BoutMgr;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
@@ -91,6 +90,7 @@ public final class DefaultBoutMgrTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @org.junit.Ignore
     public void createsNewBoutWithRealBus() throws Exception {
         final Bus bus = new BusMocker().mock();
         final BoutMgr mgr = new DefaultBoutMgr(new DefaultHub(bus));

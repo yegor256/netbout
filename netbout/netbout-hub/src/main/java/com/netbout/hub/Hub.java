@@ -31,7 +31,6 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
-import java.net.URL;
 import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,6 +48,7 @@ public interface Hub {
      * @param name The name of the identity
      * @return The identity found
      * @throws UnreachableUrnException If we can't reach it
+     * @checkstyle RedundantThrows (3 lines)
      */
     Identity identity(Urn name) throws UnreachableUrnException;
 

@@ -26,15 +26,15 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Default URN resolver.
@@ -45,6 +45,11 @@ import org.w3c.dom.Element;
 final class DefaultUrnResolver implements UrnResolver {
 
     /**
+     * Marker for URL template.
+     */
+    private static final String MARKER = "{nss}";
+
+    /**
      * The hub.
      */
     private final transient Hub hub;
@@ -52,8 +57,8 @@ final class DefaultUrnResolver implements UrnResolver {
     /**
      * Namespaces and related URL templates.
      */
-    private final transient ConcurrentMap<String, String> namespaces
-        = new ConcurrentHashMap<String, String>();
+    private final transient ConcurrentMap<String, String> inamespaces =
+        new ConcurrentHashMap<String, String>();
 
     /**
      * Public ctor.
@@ -67,22 +72,82 @@ final class DefaultUrnResolver implements UrnResolver {
      * {@inheritDoc}
      */
     @Override
+    public void register(final Identity owner, final String namespace,
+        final String template) {
+        if (!namespace.matches("^[a-z]{1,31}$")) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Namespace is not valid '%s'",
+                    namespace
+                )
+            );
+        }
+        try {
+            new URL(template.replace(this.MARKER, "-"));
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Template format is not valid '%s'",
+                    template
+                ),
+                ex
+            );
+        }
+        this.namespaces().put(namespace, template);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (3 lines)
+     */
+    @Override
     public URL authority(final Urn urn) throws UnreachableUrnException {
         final String nid = urn.nid();
-        if (!this.namespaces.containsKey(nid)) {
+        if (!this.namespaces().containsKey(nid)) {
             throw new UnreachableUrnException(
                 urn,
                 "Namespace is not registered"
             );
         }
-        final String url = this.namespaces.get(nid).replace("{nss}", urn.nss());
+        final String url = this.namespaces().get(nid)
+            .replace(this.MARKER, urn.nss());
         try {
             return new URL(url);
         } catch (java.net.MalformedURLException ex) {
-            throw new UnreachableUrnException(
-                urn,
-                String.format("Invalid URL generated '%s'", url)
-            );
+            throw new UnreachableUrnException(urn, ex);
+        }
+    }
+
+    /**
+     * Load namespaces and URLs from DB helper.
+     * @return The list of namespaces and templates
+     */
+    private ConcurrentMap<String, String> namespaces() {
+        synchronized (this) {
+            if (this.inamespaces.isEmpty()) {
+                final List<String> names = this.hub.bus()
+                    .make("get-all-namespaces")
+                    .synchronously()
+                    .asDefault(new ArrayList<String>())
+                    .exec();
+                for (String name : names) {
+                    final String template = this.hub.bus()
+                        .make("get-namespace-template")
+                        .synchronously()
+                        .exec();
+                    final Urn owner = this.hub.bus()
+                        .make("get-namespace-owner")
+                        .synchronously()
+                        .exec();
+                    this.inamespaces.put(name, template);
+                }
+                Logger.debug(
+                    this,
+                    "#load(): loaded %d namespaces",
+                    this.inamespaces.size()
+                );
+            }
+            return this.inamespaces;
         }
     }
 

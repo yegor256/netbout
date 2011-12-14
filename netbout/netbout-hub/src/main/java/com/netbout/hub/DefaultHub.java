@@ -33,7 +33,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +48,7 @@ import org.w3c.dom.Element;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class DefaultHub implements Hub {
 
     /**
@@ -108,6 +108,7 @@ public final class DefaultHub implements Hub {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (3 lines)
      */
     @Override
     public Identity identity(final Urn name) throws UnreachableUrnException {
@@ -221,7 +222,7 @@ public final class DefaultHub implements Hub {
     /**
      * Token for searching of identities in storage.
      */
-    private static final class Token {
+    private static final class Token implements Comparable<Identity> {
         /**
          * Name of identity.
          */
@@ -233,6 +234,14 @@ public final class DefaultHub implements Hub {
         public Token(final Urn urn) {
             this.name = urn;
         }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compareTo(final Identity identity) {
+            return this.name.compareTo(identity.name());
+        }
+
         /**
          * {@inheritDoc}
          */
