@@ -134,8 +134,8 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public URL user() {
-        return this.identity.user();
+    public URL authority() {
+        return this.identity.authority();
     }
 
     /**

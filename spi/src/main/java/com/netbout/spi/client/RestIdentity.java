@@ -79,10 +79,19 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public URL user() {
-        throw new UnsupportedOperationException(
-            "Identity#user() is not supported by Netbout REST API"
-        );
+    public URL authority() {
+        try {
+            return new URL(
+                this.client
+                    .get("reading authority of identity")
+                    .assertStatus(HttpURLConnection.HTTP_OK)
+                    .assertXPath("/page/identity/authority")
+                    .xpath("/page/identity/authority/text()")
+                    .get(0)
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**

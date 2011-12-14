@@ -62,7 +62,7 @@ public final class IdentityTest {
         final String uname = "http://localhost/auth";
         final Identity identity = new IdentityMocker().belongsTo(uname).mock();
         MatcherAssert.assertThat(
-            identity.user().toString(),
+            identity.authority().toString(),
             Matchers.equalTo(uname)
         );
     }
@@ -75,7 +75,7 @@ public final class IdentityTest {
     public void setsAllIdentityPropertiesByDefault() throws Exception {
         final Identity identity = new IdentityMocker().mock();
         MatcherAssert.assertThat(identity.name(), Matchers.notNullValue());
-        MatcherAssert.assertThat(identity.user(), Matchers.notNullValue());
+        MatcherAssert.assertThat(identity.authority(), Matchers.notNullValue());
     }
 
     /**

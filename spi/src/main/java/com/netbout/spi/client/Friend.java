@@ -62,9 +62,9 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public URL user() {
+    public URL authority() {
         throw new UnsupportedOperationException(
-            "#user() can't be called on a friend"
+            "#authority() can't be called on a friend"
         );
     }
 

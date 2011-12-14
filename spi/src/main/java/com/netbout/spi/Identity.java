@@ -43,10 +43,10 @@ import java.util.Set;
 public interface Identity {
 
     /**
-     * Get the name of his user.
-     * @return The URL of the user
+     * Who validated this user.
+     * @return The URL of the authority
      */
-    URL user();
+    URL authority();
 
     /**
      * Get name of the identity, which is unique in the system.
