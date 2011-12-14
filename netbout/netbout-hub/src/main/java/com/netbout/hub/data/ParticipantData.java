@@ -28,6 +28,7 @@ package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
 import com.netbout.hub.ParticipantDt;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 
 /**
@@ -51,7 +52,7 @@ final class ParticipantData implements ParticipantDt {
     /**
      * The participant.
      */
-    private final transient String identity;
+    private final transient Urn identity;
 
     /**
      * Is it confirmed?
@@ -64,7 +65,7 @@ final class ParticipantData implements ParticipantDt {
      * @param num The number
      * @param idnt The identity
      */
-    public ParticipantData(final Bus ibus, final Long num, final String idnt) {
+    public ParticipantData(final Bus ibus, final Long num, final Urn idnt) {
         this.bus = ibus;
         assert num != null;
         this.bout = num;
@@ -84,7 +85,7 @@ final class ParticipantData implements ParticipantDt {
      * {@inheritDoc}
      */
     @Override
-    public String getIdentity() {
+    public Urn getIdentity() {
         return this.identity;
     }
 

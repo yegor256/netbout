@@ -30,6 +30,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableIdentityException;
+import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
@@ -83,7 +84,7 @@ final class HubIdentity implements Identity, InvitationSensitive {
      * {@inheritDoc}
      */
     @Override
-    public String user() {
+    public URL user() {
         return this.iuser.name();
     }
 
@@ -91,7 +92,7 @@ final class HubIdentity implements Identity, InvitationSensitive {
      * {@inheritDoc}
      */
     @Override
-    public String name() {
+    public Urn name() {
         return this.orphan.name();
     }
 
@@ -141,7 +142,7 @@ final class HubIdentity implements Identity, InvitationSensitive {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final String name)
+    public Identity friend(final Urn name)
         throws UnreachableIdentityException {
         return this.orphan.friend(name);
     }

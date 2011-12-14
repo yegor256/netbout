@@ -28,6 +28,7 @@ package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
 import com.netbout.hub.MessageDt;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,7 +60,7 @@ final class MessageData implements MessageDt {
     /**
      * The author.
      */
-    private transient String author;
+    private transient Urn author;
 
     /**
      * The text.
@@ -142,7 +143,7 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public void setAuthor(final String idnt) {
+    public void setAuthor(final Urn idnt) {
         this.author = idnt;
         this.bus.make("changed-message-author")
             .asap()
@@ -162,7 +163,7 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public String getAuthor() {
+    public Urn getAuthor() {
         if (this.author == null) {
             this.author = this.bus.make("get-message-author")
                 .synchronously()

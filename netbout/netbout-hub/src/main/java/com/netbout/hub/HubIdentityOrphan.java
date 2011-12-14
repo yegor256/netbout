@@ -31,6 +31,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableIdentityException;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public final class HubIdentityOrphan implements Identity, InvitationSensitive {
     /**
      * The name.
      */
-    private final transient String iname;
+    private final transient Urn iname;
 
     /**
      * The photo.
@@ -98,7 +99,7 @@ public final class HubIdentityOrphan implements Identity, InvitationSensitive {
      * @checkstyle ParameterNumber (3 lines)
      */
     public HubIdentityOrphan(final Bus ibus, final Catalog ctlg,
-        final BoutMgr mgr, final String name) {
+        final BoutMgr mgr, final Urn name) {
         this.bus = ibus;
         this.catalog = ctlg;
         this.manager = mgr;
@@ -126,7 +127,7 @@ public final class HubIdentityOrphan implements Identity, InvitationSensitive {
      * {@inheritDoc}
      */
     @Override
-    public String user() {
+    public URL user() {
         throw new IllegalStateException(
             String.format(
                 "Identity '%s' is not assigned to any user yet",
@@ -139,7 +140,7 @@ public final class HubIdentityOrphan implements Identity, InvitationSensitive {
      * {@inheritDoc}
      */
     @Override
-    public String name() {
+    public Urn name() {
         return this.iname;
     }
 
@@ -246,7 +247,7 @@ public final class HubIdentityOrphan implements Identity, InvitationSensitive {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final String name)
+    public Identity friend(final Urn name)
         throws UnreachableIdentityException {
         final Identity identity = this.catalog.make(name);
         Logger.debug(

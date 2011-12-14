@@ -28,6 +28,8 @@ package com.netbout.hub;
 
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.UnreachableIdentityException;
+import java.net.URL;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -40,11 +42,12 @@ import org.w3c.dom.Element;
 public interface Hub {
 
     /**
-     * Find user by name.
-     * @param name The name of the user to find
-     * @return The user found
+     * Find identity by URN.
+     * @param name The name of the identity
+     * @return The identity found
+     * @throws UnreachableIdentityException If we can't reach it
      */
-    User user(String name);
+    Identity identity(Urn name) throws UnreachableIdentityException;
 
     /**
      * Create statistics in the given XML document and return their element.

@@ -30,6 +30,7 @@ import com.netbout.bus.Bus;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
+import java.net.URL;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -47,9 +48,20 @@ public final class DefaultHub implements Hub {
     private final transient Bus bus;
 
     /**
-     * Catalog of identities.
+     * All identities known for us at the moment, and their objects.
      */
-    private final transient Catalog catalog;
+    private final transient ConcurrentMap<Urn, Identity> all =
+        new ConcurrentHashMap<Urn, Identity>();
+
+    /**
+     * Manager of bouts.
+     */
+    private final transient BoutMgr manager;
+
+    /**
+     * Identity finder.
+     */
+    private final transient IdentityFinder finder;
 
     /**
      * Public ctor.
@@ -57,21 +69,36 @@ public final class DefaultHub implements Hub {
      */
     public DefaultHub(final Bus ibus) {
         this.bus = ibus;
-        this.catalog = new DefaultCatalog(this.bus);
+        this.manager = new DefaultBoutMgr(this.bus);
+        this.finder = new DefaultIdentityFinder(
+            this, this.bus, this.all, this.validator
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public User user(final String name) {
-        final User user = new HubUser(this.catalog, name);
-        Logger.debug(
-            this,
-            "#user('%s'): instantiated",
-            name
-        );
-        return user;
+    public Identity identity(final Urn name) {
+        Identity identity;
+        if (this.all.containsKey(name)) {
+            identity = this.all.get(name);
+        } else {
+            identity = new HubIdentityOrphan(
+                this.bus,
+                this,
+                this.manager,
+                name
+            );
+            this.save(name, identity);
+            Logger.debug(
+                this,
+                "#make('%s'): created just by name (%d total)",
+                name,
+                this.all.size()
+            );
+        }
+        return identity;
     }
 
     /**
@@ -79,7 +106,16 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public Element stats(final Document doc) {
-        return this.catalog.stats(doc);
+        final Element root = doc.createElement("hub");
+        final Element identities = doc.createElement("identities");
+        root.appendChild(identities);
+        for (String name : this.all.keySet()) {
+            final Element identity = doc.createElement("identity");
+            identities.appendChild(identity);
+            identity.appendChild(doc.createTextNode(name));
+        }
+        root.appendChild(this.manager.stats(doc));
+        return root;
     }
 
     /**
@@ -87,9 +123,43 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public void promote(final Identity identity, final Helper helper) {
-        assert identity.equals(helper);
         this.bus.register(helper);
-        this.catalog.promote(identity, helper);
+        final Identity existing = this.all.get(identity.name());
+        try {
+            this.save(identity.name(), helper);
+        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(
+            this,
+            "#promote('%s', '%s'): replaced existing identity (%s)",
+            identity.name(),
+            helper.getClass().getName(),
+            existing.getClass().getName()
+        );
+        this.bus.make("identity-promoted")
+            .synchronously()
+            .arg(identity.name())
+            .arg(helper.location().toString())
+            .asDefault(true)
+            .exec();
+    }
+
+    /**
+     * Save identity to storage.
+     * @param name The name
+     * @param identity The identity
+     * @throws UnreachableIdentityException If can't reach it by name
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    private void save(final String name, final Identity identity)
+        throws UnreachableIdentityException {
+        this.all.put(this.validator.validate(name), identity);
+        this.bus.make("identity-mentioned")
+            .synchronously()
+            .arg(name)
+            .asDefault(true)
+            .exec();
     }
 
 }

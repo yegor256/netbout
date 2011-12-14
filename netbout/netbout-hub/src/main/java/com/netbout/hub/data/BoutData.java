@@ -31,6 +31,7 @@ import com.netbout.hub.BoutDt;
 import com.netbout.hub.MessageDt;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.MessageNotFoundException;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,7 +94,7 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public void confirm(final String identity) {
+    public void confirm(final Urn identity) {
         for (ParticipantDt dude : this.getParticipants()) {
             if (dude.getIdentity().equals(identity)) {
                 dude.setConfirmed(true);
@@ -105,7 +106,7 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public void kickOff(final String identity) {
+    public void kickOff(final Urn identity) {
         ParticipantDt found = null;
         for (ParticipantDt dude : this.getParticipants()) {
             if (dude.getIdentity().equals(identity)) {
@@ -175,7 +176,7 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public ParticipantDt addParticipant(final String name) {
+    public ParticipantDt addParticipant(final Urn name) {
         final ParticipantDt data =
             new ParticipantData(this.bus, this.number, name);
         this.getParticipants().add(data);
@@ -204,13 +205,13 @@ final class BoutData implements BoutDt {
         synchronized (this) {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantDt>();
-                final List<String> identities = this.bus
+                final List<Urn> identities = this.bus
                     .make("get-bout-participants")
                     .synchronously()
                     .arg(this.number)
-                    .asDefault(new ArrayList<String>())
+                    .asDefault(new ArrayList<Urn>())
                     .exec();
-                for (String identity : identities) {
+                for (Urn identity : identities) {
                     this.participants.add(
                         new ParticipantData(this.bus, this.number, identity)
                     );

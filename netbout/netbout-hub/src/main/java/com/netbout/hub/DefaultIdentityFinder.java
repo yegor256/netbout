@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,7 +53,7 @@ final class DefaultIdentityFinder implements IdentityFinder {
     /**
      * All identities known for us at the moment, and their objects.
      */
-    private final transient ConcurrentMap<String, Identity> all;
+    private final transient ConcurrentMap<Urn, Identity> all;
 
     /**
      * Bus to work with.
@@ -73,7 +74,7 @@ final class DefaultIdentityFinder implements IdentityFinder {
      * @checkstyle ParameterNumber (4 lines)
      */
     public DefaultIdentityFinder(final Catalog ctlg, final Bus ibus,
-        final ConcurrentMap<String, Identity> existing,
+        final ConcurrentMap<Urn, Identity> existing,
         final NameValidator vld) {
         this.catalog = ctlg;
         this.bus = ibus;
@@ -92,13 +93,13 @@ final class DefaultIdentityFinder implements IdentityFinder {
                 found.add(identity);
             }
         }
-        final List<String> external = this.bus
+        final List<Urn> external = this.bus
             .make("find-identities-by-keyword")
             .synchronously()
             .arg(keyword)
-            .asDefault(new ArrayList<String>())
+            .asDefault(new ArrayList<Urn>())
             .exec();
-        for (String name : external) {
+        for (Urn name : external) {
             try {
                 found.add(this.catalog.make(name));
             } catch (com.netbout.spi.UnreachableIdentityException ex) {
@@ -122,7 +123,7 @@ final class DefaultIdentityFinder implements IdentityFinder {
      */
     private boolean matches(final String keyword,
         final Identity identity) {
-        boolean matches = identity.name().contains(keyword);
+        boolean matches = identity.name().toString().contains(keyword);
         final Pattern pattern = Pattern.compile(
             Pattern.quote(keyword),
             Pattern.CASE_INSENSITIVE
@@ -140,7 +141,7 @@ final class DefaultIdentityFinder implements IdentityFinder {
      * @return New set of identities
      */
     public Set<Identity> withExact(final Set<Identity> found,
-        final String name) {
+        final Urn name) {
         boolean exists = false;
         for (Identity identity : found) {
             if (identity.name().equals(name)) {
