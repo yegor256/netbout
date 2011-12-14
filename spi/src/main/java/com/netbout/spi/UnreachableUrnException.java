@@ -46,4 +46,13 @@ public final class UnreachableUrnException extends Exception {
         super(String.format("%s: '%s'", cause, urn));
     }
 
+    /**
+     * Public ctor.
+     * @param urn The URN
+     * @param cause The cause of the exception
+     */
+    public UnreachableUrnException(final Urn urn, final Throwable cause) {
+        super(urn.toString(), cause);
+    }
+
 }
