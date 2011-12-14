@@ -42,7 +42,7 @@ import org.apache.commons.lang.StringUtils;
  * @version $Id$
  * @see <a href="http://tools.ietf.org/html/rfc2141">RFC2141</a>
  */
-public final class Urn {
+public final class Urn implements Comparable {
 
     /**
      * The prefix.
@@ -125,6 +125,14 @@ public final class Urn {
     @Override
     public String toString() {
         return this.uri.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Object obj) {
+        return this.uri.compareTo(((Urn) obj).uri);
     }
 
     /**
