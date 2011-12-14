@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -78,7 +79,7 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public String user() {
+    public URL user() {
         throw new UnsupportedOperationException(
             "Identity#user() is not supported by Netbout REST API"
         );
@@ -88,13 +89,15 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public String name() {
-        return this.client
-            .get("reading identity name")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/identity")
-            .xpath("/page/identity/name/text()")
-            .get(0);
+    public Urn name() {
+        return Urn.create(
+            this.client
+                .get("reading identity name")
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .assertXPath("/page/identity")
+                .xpath("/page/identity/name/text()")
+                .get(0)
+        );
     }
 
     /**
@@ -184,7 +187,7 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final String name) {
+    public Identity friend(final Urn name) {
         return new Friend(name);
     }
 
@@ -207,7 +210,7 @@ final class RestIdentity implements Identity {
             .xpath("/page/invitees/invitee/name/text()");
         final Set<Identity> friends = new HashSet<Identity>();
         for (String name : names) {
-            friends.add(new Friend(name));
+            friends.add(new Friend(Urn.create(name)));
         }
         return friends;
     }

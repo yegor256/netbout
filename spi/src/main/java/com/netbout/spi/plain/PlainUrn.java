@@ -27,34 +27,89 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi.client;
+package com.netbout.spi.plain;
 
-import com.netbout.spi.Identity;
+import com.netbout.spi.Plain;
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 /**
- * Test case for {@link RestIdentity}.
+ * Plain URN.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class RestIdentityTest {
+public final class PlainUrn implements Plain<Urn> {
 
     /**
-     * RestIdentity can fetch a name of identity through REST API.
-     * @throws Exception If there is some problem inside
+     * Prefix.
      */
-    @Test
-    public void fetchesNameOfIdentity() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final RestClient client = new RestClientMocker()
-            .onXPath("/page/identity/name/text()", name.toString())
-            .mock();
-        final Identity identity = new RestIdentity(client);
-        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    private static final String PREFIX = "URN:";
+
+    /**
+     * The value.
+     */
+    private final transient Urn urn;
+
+    /**
+     * Public ctor.
+     * @param text The text presentation
+     */
+    public PlainUrn(final String text) {
+        this.urn = Urn.create(text.substring(this.PREFIX.length()));
+    }
+
+    /**
+     * Public ctor.
+     * @param addr The URN
+     */
+    public PlainUrn(final Urn addr) {
+        this.urn = addr;
+    }
+
+    /**
+     * Is it of our type?
+     * @param text The text
+     * @return Is it or not?
+     */
+    public static boolean isIt(final String text) {
+        return text.startsWith(PlainUrn.PREFIX);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.urn.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof PlainUrn)
+            && (this.hashCode() == obj.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Urn value() {
+        return this.urn;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format(
+            "%s%s",
+            this.PREFIX,
+            this.urn.toString()
+        );
     }
 
 }

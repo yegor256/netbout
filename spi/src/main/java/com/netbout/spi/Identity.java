@@ -44,15 +44,15 @@ public interface Identity {
 
     /**
      * Get the name of his user.
-     * @return The name of the user
+     * @return The URL of the user
      */
-    String user();
+    URL user();
 
     /**
      * Get name of the identity, which is unique in the system.
      * @return The name of the identity
      */
-    String name();
+    Urn name();
 
     /**
      * Start new bout.
@@ -94,7 +94,7 @@ public interface Identity {
      * @return The identity just found
      * @throws UnreachableIdentityException If such a friend can't be reached
      */
-    Identity friend(String name) throws UnreachableIdentityException;
+    Identity friend(Urn name) throws UnreachableIdentityException;
 
     /**
      * Find friends by keyword.

@@ -81,10 +81,10 @@ public final class BoutTest {
      */
     @Test
     public void canAssignParticipantsToBout() throws Exception {
-        final String name = "some-identity-name";
+        final Urn name = new UrnMocker().mock();
         final Identity identity = new IdentityMocker().mock();
         final Bout bout = new BoutMocker()
-            .withParticipant(name)
+            .withParticipant(name.toString())
             .withParticipant(identity)
             .mock();
         MatcherAssert.assertThat(

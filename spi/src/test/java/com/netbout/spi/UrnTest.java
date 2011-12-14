@@ -29,79 +29,85 @@
  */
 package com.netbout.spi;
 
-import java.util.Random;
+import java.net.URI;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link Identity} and {@link IdentityMocker}.
+ * Test case for {@link Urn}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class IdentityTest {
+public final class UrnTest {
 
     /**
-     * IdentityMocker can assign name to identity.
+     * Urn can be instantiated from plain text.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void canHaveANameMocked() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final Identity identity = new IdentityMocker()
-            .namedAs(name.toString()).mock();
-        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    public void instantiatesFromText() throws Exception {
+        final Urn urn = new Urn("urn:netbout:jeff-lebowski");
+        MatcherAssert.assertThat(urn.nid(), Matchers.equalTo("netbout"));
+        MatcherAssert.assertThat(urn.nss(), Matchers.equalTo("jeff-lebowski"));
     }
 
     /**
-     * IdentityMocker can assign user to identity.
+     * Urn can be instantiated from components.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void canBelongToSomeMockedUser() throws Exception {
-        final String uname = "http://localhost/auth";
-        final Identity identity = new IdentityMocker().belongsTo(uname).mock();
-        MatcherAssert.assertThat(
-            identity.user().toString(),
-            Matchers.equalTo(uname)
-        );
+    public void instantiatesFromComponents() throws Exception {
+        final String nid = "foo";
+        final String nss = "\u8416 & \u8415 *&^%$#@!-~`\"'";
+        final Urn urn = new Urn(nid, nss);
+        MatcherAssert.assertThat(urn.nid(), Matchers.equalTo(nid));
+        MatcherAssert.assertThat(urn.nss(), Matchers.equalTo(nss));
+        MatcherAssert.assertThat(urn.toURI(), Matchers.instanceOf(URI.class));
     }
 
     /**
-     * IdentityMocker can set properties by default.
+     * Urn can be tested for equivalence of another Urn.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void setsAllIdentityPropertiesByDefault() throws Exception {
-        final Identity identity = new IdentityMocker().mock();
-        MatcherAssert.assertThat(identity.name(), Matchers.notNullValue());
-        MatcherAssert.assertThat(identity.user(), Matchers.notNullValue());
+    public void comparesForEquivalence() throws Exception {
+        final String text = "urn:foo:some-other-specific-string";
+        final Urn first = new Urn(text);
+        final Urn second = new Urn(text);
+        MatcherAssert.assertThat(first, Matchers.equalTo(second));
     }
 
     /**
-     * IdentityMocker can start new bout.
+     * Urn can be tested for equivalence with another URI.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void startsBoutByDefault() throws Exception {
-        final Identity identity = new IdentityMocker().mock();
-        final Bout bout = identity.start();
-        MatcherAssert.assertThat(bout, Matchers.notNullValue());
-        MatcherAssert.assertThat(identity.bout(1L), Matchers.notNullValue());
+    public void comparesForEquivalenceWithUri() throws Exception {
+        final String text = "urn:foo:some-specific-string";
+        final Urn first = new Urn(text);
+        final URI second = new URI(text);
+        MatcherAssert.assertThat(first.equals(second), Matchers.is(true));
     }
 
     /**
-     * IdentityMocker can add bout.
+     * Urn can be converted to string.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void addsBoutByNumber() throws Exception {
-        final Long number = Math.abs(new Random().nextLong());
-        final Bout bout = new BoutMocker().mock();
-        final Identity identity = new IdentityMocker()
-            .withBout(number, bout)
-            .mock();
-        MatcherAssert.assertThat(identity.bout(number), Matchers.equalTo(bout));
+    public void convertsToString() throws Exception {
+        final String text = "urn:foo:text-of-urn";
+        final Urn urn = new Urn(text);
+        MatcherAssert.assertThat(urn.toString(), Matchers.equalTo(text));
+    }
+
+    /**
+     * Urn can catch incorrect syntax.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = java.net.URISyntaxException.class)
+    public void catchesIncorrectUrnSyntax() throws Exception {
+        new Urn("some incorrect name");
     }
 
 }

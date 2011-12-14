@@ -32,6 +32,7 @@ package com.netbout.spi.client;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -84,7 +85,7 @@ final class RestMessage implements Message {
      */
     @Override
     public Identity author() {
-        return new Friend(this.bySuffix("/author/text()"));
+        return new Friend(Urn.create(this.bySuffix("/author/text()")));
     }
 
     /**

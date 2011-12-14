@@ -27,34 +27,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi.client;
+package com.netbout.spi;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import java.util.Random;
 
 /**
- * Test case for {@link RestIdentity}.
+ * Mocker of {@link Urn}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class RestIdentityTest {
+public final class UrnMocker {
 
     /**
-     * RestIdentity can fetch a name of identity through REST API.
-     * @throws Exception If there is some problem inside
+     * Mock it.
+     * @return Mocked URN
+     * @throws Exception If some problem inside
      */
-    @Test
-    public void fetchesNameOfIdentity() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final RestClient client = new RestClientMocker()
-            .onXPath("/page/identity/name/text()", name.toString())
-            .mock();
-        final Identity identity = new RestIdentity(client);
-        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    public Urn mock() throws Exception {
+        return new Urn("foo", String.valueOf(Math.abs(new Random().nextInt())));
     }
 
 }

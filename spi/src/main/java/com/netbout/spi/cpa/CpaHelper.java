@@ -35,6 +35,7 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Token;
 import com.netbout.spi.UnreachableIdentityException;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.List;
@@ -45,12 +46,7 @@ import java.util.concurrent.ConcurrentMap;
  * Classpath annotations helper.
  *
  * <p>Your classes should be annotated with <tt>&#64;Farm</tt> and
- * <tt>&#64;Operation</tt> annotations. Every operation should accept one of
- * following types: {@link Long}, {@link String}, {@link Boolean}.
- * Every operation should return one of the
- * following types: <tt>void</tt>, {@link String}, {@link Long},
- * {@link Boolean}, and an array of {@link Long}. All other types will lead
- * to runtime exception in {@link #CpaHelper(String)} constructor.
+ * <tt>&#64;Operation</tt> annotations.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -138,7 +134,7 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public String user() {
+    public URL user() {
         return this.identity.user();
     }
 
@@ -146,7 +142,7 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public String name() {
+    public Urn name() {
         return this.identity.name();
     }
 
@@ -194,7 +190,7 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final String name)
+    public Identity friend(final Urn name)
         throws UnreachableIdentityException {
         return this.identity.friend(name);
     }

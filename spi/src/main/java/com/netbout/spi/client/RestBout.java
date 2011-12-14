@@ -33,6 +33,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
@@ -122,7 +123,9 @@ final class RestBout implements Bout {
             .xpath("/page/bout/participants/participant/identity/text()");
         final List<Participant> dudes = new ArrayList<Participant>();
         for (String name : names) {
-            dudes.add(new RestParticipant(this.client.copy(), name));
+            dudes.add(
+                new RestParticipant(this.client.copy(), Urn.create(name))
+            );
         }
         return dudes;
     }
@@ -132,9 +135,9 @@ final class RestBout implements Bout {
      */
     @Override
     public Participant invite(final Identity identity) {
-        final String name = identity.name();
+        final Urn name = identity.name();
         final List<String> hrefs = this.client
-            .queryParam("mask", name)
+            .queryParam("mask", name.toString())
             .get(String.format("reading suggestions for '%s'", name))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/mask[.='%s']", name))
@@ -159,7 +162,7 @@ final class RestBout implements Bout {
             .get(String.format("inviting '%s' to the bout", name))
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("Participant-name");
-        return new RestParticipant(this.client.copy(), participant);
+        return new RestParticipant(this.client.copy(), Urn.create(participant));
     }
 
     /**
