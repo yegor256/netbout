@@ -26,69 +26,64 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.net.URL;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Hub.
+ * Default URN resolver.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Hub {
+final class DefaultUrnResolver implements UrnResolver {
 
     /**
-     * Find identity by URN.
-     * @param name The name of the identity
-     * @return The identity found
-     * @throws UnreachableUrnException If we can't reach it
+     * The hub.
      */
-    Identity identity(Urn name) throws UnreachableUrnException;
+    private final transient Hub hub;
 
     /**
-     * Get URN resolver.
-     * @return The resolver
+     * Namespaces and related URL templates.
      */
-    UrnResolver resolver();
+    private final transient ConcurrentMap<String, String> namespaces
+        = new ConcurrentHashMap<String, String>();
 
     /**
-     * Get bus.
-     * @return The bus
+     * Public ctor.
+     * @param ihub The hub
      */
-    Bus bus();
+    public DefaultUrnResolver(final Hub ihub) {
+        this.hub = ihub;
+    }
 
     /**
-     * Get manager of bouts.
-     * @return The manager
+     * {@inheritDoc}
      */
-    BoutMgr manager();
-
-    /**
-     * Create statistics in the given XML document and return their element.
-     * @param doc The document to work in
-     * @return The element just created
-     */
-    Element stats(Document doc);
-
-    /**
-     * Promote existing identity to the helper.
-     * @param identity The identity to promote
-     * @param helper The helper to use
-     */
-    void promote(Identity identity, Helper helper);
-
-    /**
-     * Find identities by keyword.
-     * @param keyword The keyword
-     * @return The identities found
-     */
-    Set<Identity> findByKeyword(String keyword);
+    @Override
+    public URL authority(final Urn urn) throws UnreachableUrnException {
+        final String nid = urn.nid();
+        if (!this.namespaces.containsKey(nid)) {
+            throw new UnreachableUrnException(
+                urn,
+                "Namespace is not registered"
+            );
+        }
+        final String url = this.namespaces.get(nid).replace("{nss}", urn.nss());
+        try {
+            return new URL(url);
+        } catch (java.net.MalformedURLException ex) {
+            throw new UnreachableUrnException(
+                urn,
+                String.format("Invalid URL generated '%s'", url)
+            );
+        }
+    }
 
 }

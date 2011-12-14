@@ -26,69 +26,24 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.net.URL;
-import java.util.Set;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
- * Hub.
+ * URN resolver.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Hub {
+public interface UrnResolver {
 
     /**
-     * Find identity by URN.
-     * @param name The name of the identity
-     * @return The identity found
+     * Resolve URN to URL (get is authority).
+     * @param urn The URN
+     * @return The authority
      * @throws UnreachableUrnException If we can't reach it
      */
-    Identity identity(Urn name) throws UnreachableUrnException;
-
-    /**
-     * Get URN resolver.
-     * @return The resolver
-     */
-    UrnResolver resolver();
-
-    /**
-     * Get bus.
-     * @return The bus
-     */
-    Bus bus();
-
-    /**
-     * Get manager of bouts.
-     * @return The manager
-     */
-    BoutMgr manager();
-
-    /**
-     * Create statistics in the given XML document and return their element.
-     * @param doc The document to work in
-     * @return The element just created
-     */
-    Element stats(Document doc);
-
-    /**
-     * Promote existing identity to the helper.
-     * @param identity The identity to promote
-     * @param helper The helper to use
-     */
-    void promote(Identity identity, Helper helper);
-
-    /**
-     * Find identities by keyword.
-     * @param keyword The keyword
-     * @return The identities found
-     */
-    Set<Identity> findByKeyword(String keyword);
+    URL authority(Urn urn) throws UnreachableUrnException;
 
 }

@@ -27,11 +27,18 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.UnreachableUrnException;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,7 +54,17 @@ public final class DefaultHub implements Hub {
     /**
      * The bus.
      */
-    private final transient Bus bus;
+    private final transient Bus ibus;
+
+    /**
+     * Manager of bouts.
+     */
+    private final transient BoutMgr imanager;
+
+    /**
+     * Resolver.
+     */
+    private final transient UrnResolver iresolver;
 
     /**
      * All identities known for us at the moment.
@@ -56,44 +73,52 @@ public final class DefaultHub implements Hub {
         new ConcurrentSkipListSet<Identity>();
 
     /**
-     * Manager of bouts.
-     */
-    private final transient BoutMgr manager;
-
-    /**
-     * Identity finder.
-     */
-    private final transient IdentityFinder finder;
-
-    /**
      * Public ctor.
-     * @param ibus The bus
+     * @param bus The bus
      */
-    public DefaultHub(final Bus ibus) {
-        this.bus = ibus;
-        this.manager = new DefaultBoutMgr(this.bus);
-        this.finder = new DefaultIdentityFinder(
-            this, this.bus, this.all
-        );
+    public DefaultHub(final Bus bus) {
+        this.ibus = bus;
+        this.imanager = new DefaultBoutMgr(this);
+        this.iresolver = new DefaultUrnResolver(this);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Identity identity(final Urn name) {
+    public UrnResolver resolver() {
+        return this.iresolver;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bus bus() {
+        return this.ibus;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BoutMgr manager() {
+        return this.imanager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity identity(final Urn name) throws UnreachableUrnException {
+        this.resolver().authority(name);
         final DefaultHub.Token token = new DefaultHub.Token(name);
         Identity identity;
-        if (this.all.containsKey(token)) {
+        if (this.all.contains(token)) {
             identity = (Identity) this.all.floor(token);
         } else {
-            identity = new HubIdentity(
-                this.bus,
-                this,
-                this.manager,
-                name
-            );
-            this.save(name, identity);
+            identity = new HubIdentity(this, name);
+            this.save(identity);
             Logger.debug(
                 this,
                 "#identity('%s'): created new (%d total)",
@@ -112,12 +137,14 @@ public final class DefaultHub implements Hub {
         final Element root = doc.createElement("hub");
         final Element identities = doc.createElement("identities");
         root.appendChild(identities);
-        for (String name : this.all.keySet()) {
+        for (Object object : this.all) {
             final Element identity = doc.createElement("identity");
             identities.appendChild(identity);
-            identity.appendChild(doc.createTextNode(name));
+            identity.appendChild(
+                doc.createTextNode(((Identity) object).name().toString())
+            );
         }
-        root.appendChild(this.manager.stats(doc));
+        root.appendChild(this.manager().stats(doc));
         return root;
     }
 
@@ -126,8 +153,13 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public void promote(final Identity identity, final Helper helper) {
-        this.bus.register(helper);
-        final Identity existing = this.identity(identity.name());
+        this.bus().register(helper);
+        Identity existing;
+        try {
+            existing = this.identity(identity.name());
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         this.all.remove(existing);
         this.save(helper);
         Logger.info(
@@ -137,7 +169,7 @@ public final class DefaultHub implements Hub {
             helper.getClass().getName(),
             existing.getClass().getName()
         );
-        this.bus.make("identity-promoted")
+        this.bus().make("identity-promoted")
             .synchronously()
             .arg(identity.name())
             .arg(helper.location())
@@ -151,7 +183,7 @@ public final class DefaultHub implements Hub {
     @Override
     public Set<Identity> findByKeyword(final String keyword) {
         final Set<Identity> found = new HashSet<Identity>();
-        final List<Urn> names = this.bus
+        final List<Urn> names = this.bus()
             .make("find-identities-by-keyword")
             .synchronously()
             .arg(keyword)
@@ -160,7 +192,7 @@ public final class DefaultHub implements Hub {
         for (Urn name : names) {
             try {
                 found.add(this.identity(name));
-            } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            } catch (com.netbout.spi.UnreachableUrnException ex) {
                 Logger.warn(
                     this,
                     // @checkstyle LineLength (1 line)
@@ -179,7 +211,7 @@ public final class DefaultHub implements Hub {
      */
     private void save(final Identity identity) {
         this.all.add(identity);
-        this.bus.make("identity-mentioned")
+        this.bus().make("identity-mentioned")
             .synchronously()
             .arg(identity.name())
             .asDefault(true)
@@ -193,7 +225,7 @@ public final class DefaultHub implements Hub {
         /**
          * Name of identity.
          */
-        private final transient name;
+        private final transient Urn name;
         /**
          * Public ctor.
          * @param urn The name of identity

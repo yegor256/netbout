@@ -26,7 +26,7 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.bus.Bus;
+import com.netbout.hub.Hub;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
@@ -42,7 +42,7 @@ final class ParticipantData implements ParticipantDt {
     /**
      * Bus to work with.
      */
-    private final transient Bus bus;
+    private final transient Hub hub;
 
     /**
      * Number of bout.
@@ -61,12 +61,12 @@ final class ParticipantData implements ParticipantDt {
 
     /**
      * Public ctor.
-     * @param ibus The bus
+     * @param ihub The hub
      * @param num The number
      * @param idnt The identity
      */
-    public ParticipantData(final Bus ibus, final Long num, final Urn idnt) {
-        this.bus = ibus;
+    public ParticipantData(final Hub ihub, final Long num, final Urn idnt) {
+        this.hub = ihub;
         assert num != null;
         this.bout = num;
         assert idnt != null;
@@ -95,7 +95,7 @@ final class ParticipantData implements ParticipantDt {
     @Override
     public void setConfirmed(final Boolean flag) {
         this.confirmed = true;
-        this.bus.make("changed-participant-status")
+        this.hub.bus().make("changed-participant-status")
             .asap()
             .arg(this.bout)
             .arg(this.identity)
@@ -114,7 +114,7 @@ final class ParticipantData implements ParticipantDt {
     @Override
     public Boolean isConfirmed() {
         if (this.confirmed == null) {
-            this.confirmed = this.bus.make("get-participant-status")
+            this.confirmed = this.hub.bus().make("get-participant-status")
                 .synchronously()
                 .arg(this.bout)
                 .arg(this.identity)

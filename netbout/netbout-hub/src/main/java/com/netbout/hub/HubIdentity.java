@@ -26,11 +26,10 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableIdentityException;
+import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
@@ -56,19 +55,9 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         "http://img.netbout.com/unknown.png";
 
     /**
-     * The bus.
+     * The hub.
      */
-    private final transient Bus bus;
-
-    /**
-     * The catalog.
-     */
-    private final transient Hub catalog;
-
-    /**
-     * The manager of bouts.
-     */
-    private final transient BoutMgr manager;
+    private final transient Hub hub;
 
     /**
      * The name.
@@ -92,17 +81,11 @@ public final class HubIdentity implements Identity, InvitationSensitive {
 
     /**
      * Public ctor.
-     * @param ibus The bus
      * @param ihub The hub
-     * @param mgr Manager of bouts
      * @param name The identity's name
-     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubIdentity(final Bus ibus, final Hub ihub,
-        final BoutMgr mgr, final Urn name) {
-        this.bus = ibus;
+    public HubIdentity(final Hub ihub, final Urn name) {
         this.hub = ihub;
-        this.manager = mgr;
         this.iname = name;
     }
 
@@ -128,6 +111,11 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public URL authority() {
+        try {
+            return this.hub.resolver().authority(this.name());
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -143,10 +131,10 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public Bout start() {
-        final Long num = this.manager.create();
+        final Long num = this.hub.manager().create();
         BoutDt data;
         try {
-            data = this.manager.find(num);
+            data = this.hub.manager().find(num);
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
@@ -158,7 +146,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
             num
         );
         this.myBouts().add(num);
-        return new HubBout(this.hub, this.bus, this, data);
+        return new HubBout(this.hub, this, data);
     }
 
     /**
@@ -170,9 +158,13 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         final HubBout bout;
         bout = new HubBout(
             this.hub,
-            this.bus,
             this,
-            this.manager.find(number)
+            this.hub.manager().find(number)
+        );
+        Logger.debug(
+            this,
+            "#bout(#%d): bout found",
+            number
         );
         return bout;
     }
@@ -205,7 +197,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     @Override
     public URL photo() {
         if (this.iphoto == null) {
-            final String url = this.bus.make("get-identity-photo")
+            final String url = this.hub.bus().make("get-identity-photo")
                 .synchronously()
                 .arg(this.name())
                 .asDefault(this.DEFAULT_PHOTO)
@@ -223,12 +215,12 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         synchronized (this) {
             this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
         }
-        this.bus.make("identity-mentioned")
+        this.hub.bus().make("identity-mentioned")
             .synchronously()
             .arg(this.name())
             .asDefault(true)
             .exec();
-        this.bus.make("changed-identity-photo")
+        this.hub.bus().make("changed-identity-photo")
             .synchronously()
             .arg(this.name())
             .arg(this.iphoto.toString())
@@ -241,8 +233,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final Urn name)
-        throws UnreachableIdentityException {
+    public Identity friend(final Urn name) throws UnreachableUrnException {
         final Identity identity = this.hub.identity(name);
         Logger.debug(
             this,
@@ -294,7 +285,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
                 this.name()
             );
         } else {
-            this.bus.make("added-identity-alias")
+            this.hub.bus().make("added-identity-alias")
                 .asap()
                 .arg(this.name())
                 .arg(alias)
@@ -334,7 +325,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         synchronized (this) {
             if (this.ibouts == null) {
                 this.ibouts = new CopyOnWriteArraySet<Long>(
-                    (List<Long>) this.bus
+                    (List<Long>) this.hub.bus()
                         .make("get-bouts-of-identity")
                         .synchronously()
                         .arg(this.name())
@@ -354,7 +345,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         synchronized (this) {
             if (this.ialiases == null) {
                 this.ialiases = new CopyOnWriteArraySet<String>(
-                    (List<String>) this.bus
+                    (List<String>) this.hub.bus()
                         .make("get-aliases-of-identity")
                         .synchronously()
                         .arg(this.name())
