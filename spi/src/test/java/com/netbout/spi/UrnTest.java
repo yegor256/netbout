@@ -125,7 +125,7 @@ public final class UrnTest {
         for (String text : texts) {
             final Urn urn = Urn.create(text);
             MatcherAssert.assertThat(
-                new Urn(urn.toString()),
+                Urn.create(urn.toString()),
                 Matchers.equalTo(urn)
             );
         }
