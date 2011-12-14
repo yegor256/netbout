@@ -24,13 +24,18 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.auth;
 
+import com.netbout.rest.ForwardException;
+import com.netbout.rest.ResourceMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import com.rexsl.test.ContainerMocker;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -52,7 +57,7 @@ public final class AuthRsTest {
      */
     @Test
     public void authenticatesByNamesAndSecret() throws Exception {
-        final String iname = "nb:test";
+        final Urn iname = new UrnMocker().mock();
         final String photo = "http://localhost/some-pic.png";
         final ContainerMocker container = new ContainerMocker()
             .expectMethod(Matchers.equalTo("GET"))
@@ -63,23 +68,22 @@ public final class AuthRsTest {
             .returnBody(
                 String.format(
                     // @checkstyle LineLength (1 line)
-                    "<page><identity><user>?</user><name>%s</name><photo>%s</photo></identity></page>",
+                    "<page><identity><authority>?</authority><name>%s</name><photo>%s</photo></identity></page>",
                     iname,
                     photo
                 )
             )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
-        final String uname = this.normalize(container.home());
+        final URL authority = this.normalize(container.home());
         final String secret = "some secret";
         final Identity identity = new IdentityMocker()
             .namedAs(iname)
-            .belongsTo(uname)
             .mock();
         final AuthRs rest = new ResourceMocker()
             .withIdentity(identity)
             .mock(AuthRs.class);
-        final Response response = rest.auth(uname, iname, secret);
+        final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
             response.getStatus(),
             Matchers.equalTo(HttpURLConnection.HTTP_SEE_OTHER)
@@ -95,22 +99,23 @@ public final class AuthRsTest {
         final ContainerMocker container = new ContainerMocker()
             .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
             .mock();
-        final String uname = this.normalize(container.home());
+        final URL authority = this.normalize(container.home());
         final AuthRs rest = new ResourceMocker().mock(AuthRs.class);
-        rest.auth(uname, "", "");
+        rest.auth(new Urn("foo", "test"), "");
     }
 
     /**
      * It's a bug in ReXSL.
      * @param uri The URI to normalize
-     * @return Normal URI
+     * @return Normal URL
+     * @throws Exception If some problem
      */
-    private String normalize(final URI uri) {
+    private URL normalize(final URI uri) throws Exception {
         return UriBuilder
             .fromUri(uri)
             .path("/")
             .build()
-            .toString();
+            .toURL();
     }
 
 }

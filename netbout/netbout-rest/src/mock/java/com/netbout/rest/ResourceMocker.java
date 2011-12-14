@@ -30,10 +30,9 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
-import com.netbout.hub.User;
-import com.netbout.hub.UserMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
 import com.netbout.utils.Cryptor;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.XhtmlConverter;
@@ -177,14 +176,9 @@ public final class ResourceMocker {
      */
     public <T> T mock(final Class<? extends Resource> type) throws Exception {
         if (this.hub == null) {
-            final String uname = this.identity.user();
-            final String iname = this.identity.name();
-            final User user = new UserMocker()
-                .namedAs(uname)
-                .withIdentity(iname, this.identity)
-                .mock();
+            final Urn iname = this.identity.name();
             this.hub = new HubMocker()
-                .withUser(uname, user)
+                .withIdentity(iname, this.identity)
                 .mock();
         }
         // @checkstyle IllegalType (1 line)

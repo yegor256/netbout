@@ -24,8 +24,13 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.auth;
 
+import com.netbout.rest.ForwardException;
+import com.netbout.rest.Page;
+import com.netbout.rest.ResourceMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import com.netbout.utils.Cipher;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
@@ -45,11 +50,11 @@ public final class NbRsTest {
      */
     @Test
     public void authenticatesByNamesAndSecret() throws Exception {
-        final String iname = "nb:test";
+        final Urn iname = new UrnMocker().mock();
         final String uname = "http://www.netbout.com/nb";
         final NbRs rest = new ResourceMocker()
             .mock(NbRs.class);
-        final String secret = new Cipher().encrypt(iname);
+        final String secret = new Cipher().encrypt(iname.toString());
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
@@ -70,7 +75,7 @@ public final class NbRsTest {
     @Test(expected = ForwardException.class)
     public void doesntAuthenticateWithIncorrectSecret() throws Exception {
         final NbRs rest = new ResourceMocker().mock(NbRs.class);
-        rest.auth("nb:name", "incorrect-secret-code");
+        rest.auth(Urn.create("urn:foo:name"), "incorrect-secret-code");
     }
 
 }

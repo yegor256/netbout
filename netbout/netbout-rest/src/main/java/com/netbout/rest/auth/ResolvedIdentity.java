@@ -48,7 +48,7 @@ import javax.ws.rs.core.Response;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class ResolvedIdentity implements Identity {
+public final class ResolvedIdentity implements Identity {
 
     /**
      * Authority.

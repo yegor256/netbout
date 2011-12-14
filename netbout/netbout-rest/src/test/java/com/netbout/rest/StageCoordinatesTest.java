@@ -68,7 +68,7 @@ public final class StageCoordinatesTest {
         coords.setStage(stage);
         coords.setPlace(place);
         coords.normalize(new BusMocker().mock(), Mockito.mock(Bout.class));
-        MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(""));
+        MatcherAssert.assertThat(coords.hasStage(), Matchers.equalTo(false));
     }
 
     /**
@@ -92,7 +92,10 @@ public final class StageCoordinatesTest {
         final String text = coords.toString();
         final StageCoordinates reverted = StageCoordinates.valueOf(text);
         reverted.normalize(bus, bout);
-        MatcherAssert.assertThat(reverted.stage(), Matchers.equalTo(stage));
+        MatcherAssert.assertThat(
+            reverted.stage().toString(),
+            Matchers.equalTo(stage)
+        );
         MatcherAssert.assertThat(reverted.place(), Matchers.equalTo(place));
     }
 

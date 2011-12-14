@@ -43,37 +43,6 @@ import org.mockito.Mockito;
 public final class EmailFarmTest {
 
     /**
-     * EmailFarm can validate incoming name as email.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void validatesEmailFormat() throws Exception {
-        final EmailFarm farm = new EmailFarm();
-        final String[] valid = new String[] {
-            "test.me-now+1@example.com.ua",
-            "test1_88@alpha-beta-gamma.net.kz",
-            "test@example.com",
-        };
-        for (String email : valid) {
-            MatcherAssert.assertThat(
-                farm.canNotifyIdentity(email),
-                Matchers.is(true)
-            );
-        }
-        final String[] invalid = new String[] {
-            "tes t@example.com.ua",
-            "7274562",
-            "test-that-doesn't-work",
-        };
-        for (String email : invalid) {
-            MatcherAssert.assertThat(
-                farm.canNotifyIdentity(email),
-                Matchers.nullValue()
-            );
-        }
-    }
-
-    /**
      * EmailFarm can send notify bout participants.
      * @throws Exception If there is some problem inside
      */
@@ -81,7 +50,7 @@ public final class EmailFarmTest {
     public void notfiesBoutParticipants() throws Exception {
         final Identity identity = new IdentityMocker().mock();
         final Identity receiver = new IdentityMocker()
-            .namedAs("yegor@tpc2.com")
+            .namedAs("urn:email:yegor@tpc2.com")
             .mock();
         final Bout bout = new BoutMocker()
             .withParticipant(receiver)

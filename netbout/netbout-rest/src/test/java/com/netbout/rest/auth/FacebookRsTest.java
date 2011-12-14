@@ -24,14 +24,17 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.auth;
 
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
-import com.netbout.hub.User;
-import com.netbout.hub.UserMocker;
+import com.netbout.rest.ResourceMocker;
+import com.netbout.rest.UriInfoMocker;
+import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import com.rexsl.core.Manifests;
 import java.net.URI;
 import javax.ws.rs.core.Response;
@@ -64,13 +67,11 @@ public final class FacebookRsTest {
         // @checkstyle LineLength (1 line)
         final String code = "AQCJ9EpLpqvj9cbag0mU8z6cHqyk-2CN5cigCzwB1aykqqqpiFNzAjsnNbRRY7x4n4h2ZEmrRVHhHSHzcFTtXobWM8LJSCHSB1_cjvsJS2vy2DsqRA3qGRAjUY8pKk0tO2zYpX-kFpnn2V6Z1xxvb7uyP-qrV_mQNWSYHKfPWKL0yTxo-NpFAGT4mDYNXl_cCMs";
         final URI base = new URI("http://localhost/test/me");
-        final String uname = "338105383";
-        final User user = new UserMocker()
-            .namedAs(uname)
-            .withIdentity(uname, new IdentityMocker().namedAs(uname).mock())
-            .mock();
+        final String fbid = "438947328947329";
+        final Urn iname = new UrnMocker().mock();
+        final Identity identity = new IdentityMocker().namedAs(iname).mock();
         final Hub hub = new HubMocker()
-            .withUser(uname, user)
+            .withIdentity(iname, identity)
             .mock();
         final UriInfo info = new UriInfoMocker()
             .withRequestUri(base)
@@ -100,10 +101,10 @@ public final class FacebookRsTest {
         );
         final com.restfb.types.User fbuser =
             Mockito.mock(com.restfb.types.User.class);
-        Mockito.doReturn(uname).when(fbuser).getId();
+        Mockito.doReturn(fbid).when(fbuser).getId();
         Mockito.doReturn("John Doe").when(fbuser).getName();
         PowerMockito.doReturn(fbuser).when(spy, "fbUser", "abc|cde");
-        final Response response = spy.fbauth(code);
+        final Response response = spy.auth(iname, code);
         MatcherAssert.assertThat(
             response.getStatus(),
             Matchers.equalTo(Response.Status.SEE_OTHER.getStatusCode())
