@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import org.mockito.Mockito;
@@ -49,8 +50,22 @@ public final class HubMocker {
      * @throws Exception If some problem inside
      */
     public HubMocker withIdentity(final String name) throws Exception {
-        Mockito.doReturn(new IdentityMocker().namedAs(name).mock())
-            .when(this.hub).identity(new Urn(name));
+        return this.withIdentity(
+            new Urn(name),
+            new IdentityMocker().namedAs(name).mock()
+        );
+    }
+
+    /**
+     * With this identity on board.
+     * @param name The name of it
+     * @param identity The identity
+     * @return This object
+     * @throws Exception If some problem inside
+     */
+    public HubMocker withIdentity(final Urn name, final Identity identity)
+        throws Exception {
+        Mockito.doReturn(identity).when(this.hub).identity(name);
         return this;
     }
 
