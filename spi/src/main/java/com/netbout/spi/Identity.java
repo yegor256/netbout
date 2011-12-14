@@ -92,9 +92,9 @@ public interface Identity {
      * Find another identity by name.
      * @param name Unique name of identity
      * @return The identity just found
-     * @throws UnreachableIdentityException If such a friend can't be reached
+     * @throws UnreachableUrnException If such a friend can't be reached
      */
-    Identity friend(Urn name) throws UnreachableIdentityException;
+    Identity friend(Urn name) throws UnreachableUrnException;
 
     /**
      * Find friends by keyword.

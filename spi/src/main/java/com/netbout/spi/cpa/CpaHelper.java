@@ -34,7 +34,7 @@ import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Token;
-import com.netbout.spi.UnreachableIdentityException;
+import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
@@ -190,8 +190,7 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final Urn name)
-        throws UnreachableIdentityException {
+    public Identity friend(final Urn name) throws UnreachableUrnException {
         return this.identity.friend(name);
     }
 

@@ -30,19 +30,20 @@
 package com.netbout.spi;
 
 /**
- * Thowable when identity can't be reached by the system anyhow.
+ * Thowable when URN can't be reached by the system anyhow.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UnreachableIdentityException extends Exception {
+public final class UnreachableUrnException extends Exception {
 
     /**
      * Public ctor.
-     * @param name The name of identity
+     * @param urn The URN
+     * @param cause The cause of the exception
      */
-    public UnreachableIdentityException(final String name) {
-        super(String.format("Identity '%s' can't be reached", name));
+    public UnreachableUrnException(final Urn urn, final String cause) {
+        super(String.format("%s: '%s'", cause, urn));
     }
 
 }
