@@ -66,7 +66,17 @@ public final class IdentityMocker {
      * @throws Exception If some problem inside
      */
     public IdentityMocker namedAs(final String name) throws Exception {
-        Mockito.doReturn(new Urn(name)).when(this.identity).name();
+        return this.namedAs(new Urn(name));
+    }
+
+    /**
+     * This is the name of identity.
+     * @param The name of it
+     * @return This object
+     * @throws Exception If some problem inside
+     */
+    public IdentityMocker namedAs(final Urn name) throws Exception {
+        Mockito.doReturn(name).when(this.identity).name();
         return this;
     }
 
@@ -77,7 +87,17 @@ public final class IdentityMocker {
      * @throws Exception If some problem inside
      */
     public IdentityMocker belongsTo(final String name) throws Exception {
-        Mockito.doReturn(new URL(name)).when(this.identity).authority();
+        return this.belongsTo(new URL(name));
+    }
+
+    /**
+     * This is the user of identity, which it belongs to.
+     * @param The name of user
+     * @return This object
+     * @throws Exception If some problem inside
+     */
+    public IdentityMocker belongsTo(final URL name) throws Exception {
+        Mockito.doReturn(name).when(this.identity).authority();
         return this;
     }
 
