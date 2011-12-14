@@ -80,7 +80,7 @@ public final class StatsFarm implements IdentityAware {
      * @return Does it?
      */
     @Operation("does-stage-exist")
-    public Boolean doesStageExist(final Long number, final String stage) {
+    public Boolean doesStageExist(final Long number, final Urn stage) {
         Boolean exists = null;
         if (this.identity.name().equals(stage)) {
             exists = Boolean.TRUE;
