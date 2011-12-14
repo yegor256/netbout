@@ -47,7 +47,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class HubIdentityOrphan implements Identity, InvitationSensitive {
+public final class HubIdentity implements Identity, InvitationSensitive {
 
     /**
      * Default photo of identity.
