@@ -45,11 +45,11 @@ public final class HubMessageTest {
      */
     @Test
     public void wrapsMessageDtDataProperties() throws Exception {
-        final Catalog catalog = Mockito.mock(Catalog.class);
+        final Hub hub = Mockito.mock(Hub.class);
         final Identity viewer = Mockito.mock(Identity.class);
         final Bout bout = Mockito.mock(Bout.class);
         final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(catalog, viewer, bout, data);
+        final Message msg = new HubMessage(hub, viewer, bout, data);
         msg.number();
         Mockito.verify(data).getNumber();
         msg.author();

@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.TxBuilder;
+import com.netbout.spi.Urn;
 import java.util.Collection;
 import java.util.ArrayList;
 import org.mockito.Mockito;
@@ -67,7 +68,7 @@ public final class BoutDtMocker {
     public BoutDt mock() {
         Mockito.doReturn(this.participants).when(this.bout).getParticipants();
         Mockito.doReturn(new ParticipantDtMocker().mock()).when(this.bout)
-            .addParticipant(Mockito.anyString());
+            .addParticipant(Mockito.any(Urn.class));
         return this.bout;
     }
 

@@ -30,6 +30,8 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,8 +47,7 @@ public final class HubBoutTest {
     /**
      * Name of viewer.
      */
-    private final transient String name =
-        String.valueOf(Math.abs(new Random().nextLong()));
+    private transient Urn name;
 
     /**
      * The viewer.
@@ -61,7 +62,7 @@ public final class HubBoutTest {
     /**
      * The catalog.
      */
-    private final transient Catalog catalog = Mockito.mock(Catalog.class);
+    private final transient Hub hub = Mockito.mock(Hub.class);
 
     /**
      * Prepare all mocks.
@@ -69,11 +70,12 @@ public final class HubBoutTest {
      */
     @Before
     public void prepare() throws Exception {
+        this.name = new UrnMocker().mock();
         Mockito.doReturn(this.name).when(this.viewer).name();
-        Mockito.doReturn(this.viewer).when(this.catalog).make(this.name);
+        Mockito.doReturn(this.viewer).when(this.hub).identity(this.name);
         this.boutDtMocker.withParticipant(
             new ParticipantDtMocker()
-                .withIdentity(this.name)
+                .withIdentity(this.name.toString())
                 .confirmed()
                 .mock()
         );
@@ -87,7 +89,7 @@ public final class HubBoutTest {
     public void wrapsBoutDtDataProperties() throws Exception {
         final Bus bus = new BusMocker().mock();
         final BoutDt data = this.boutDtMocker.mock();
-        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
+        final Bout bout = new HubBout(this.hub, this.viewer, data);
         bout.number();
         Mockito.verify(data).getNumber();
         bout.title();
@@ -102,7 +104,7 @@ public final class HubBoutTest {
     public void wrapsBoutRenamingMechanism() throws Exception {
         final Bus bus = new BusMocker().mock();
         final BoutDt data = this.boutDtMocker.mock();
-        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
+        final Bout bout = new HubBout(this.hub, this.viewer, data);
         final String title = "some title, no matter which one..";
         bout.rename(title);
         Mockito.verify(data).setTitle(title);
@@ -116,9 +118,9 @@ public final class HubBoutTest {
     public void acceptsInvitationRequestsAndPassesThemToDt() throws Exception {
         final Bus bus = new BusMocker().mock();
         final BoutDt data = this.boutDtMocker.mock();
-        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
+        final Bout bout = new HubBout(this.hub, this.viewer, data);
         final Identity friend = Mockito.mock(Identity.class);
-        final String fname = String.valueOf(Math.abs(new Random().nextLong()));
+        final Urn fname = new UrnMocker().mock();
         Mockito.doReturn(fname).when(friend).name();
         bout.invite(friend);
         Mockito.verify(data).addParticipant(fname);

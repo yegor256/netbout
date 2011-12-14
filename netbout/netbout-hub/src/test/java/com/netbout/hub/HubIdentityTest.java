@@ -27,6 +27,8 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import java.net.URL;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,33 +41,11 @@ import org.mockito.Mockito;
 public final class HubIdentityTest {
 
     /**
-     * HubIdentity can "wrap" another Identity and add User property to it.
+     * HubIdentity can...
      * @throws Exception If there is some problem inside
-     * @checkstyle ExecutableStatementCount (30 lines)
      */
     @Test
-    public void wrapsAnotherIdentityAndAddsUserProperty() throws Exception {
-        final Identity original = Mockito.mock(Identity.class);
-        final User user = Mockito.mock(User.class);
-        final Identity wrapper = new HubIdentity(original, user);
-        wrapper.name();
-        Mockito.verify(original).name();
-        wrapper.start();
-        Mockito.verify(original).start();
-        wrapper.bout(1L);
-        Mockito.verify(original).bout(1L);
-        wrapper.inbox("");
-        Mockito.verify(original).inbox("");
-        wrapper.photo();
-        Mockito.verify(original).photo();
-        wrapper.setPhoto(new URL("http://localhost/photo.png"));
-        Mockito.verify(original).setPhoto(Mockito.any(URL.class));
-        wrapper.friend("");
-        Mockito.verify(original).friend("");
-        wrapper.friends("");
-        Mockito.verify(original).friends("");
-        wrapper.aliases();
-        Mockito.verify(original).aliases();
+    public void toBeContinued() throws Exception {
     }
 
 }
