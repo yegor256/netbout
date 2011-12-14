@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
+import java.net.URL;
 import org.mockito.Mockito;
 
 /**
@@ -72,8 +73,13 @@ public final class HubMocker {
     /**
      * Build it.
      * @return The bout
+     * @throws Exception If some problem inside
      */
-    public Hub mock() {
+    public Hub mock() throws Exception {
+        final UrnResolver resolver = Mockito.mock(UrnResolver.class);
+        Mockito.doReturn(new URL("http://abc")).when(resolver)
+            .authority(Mockito.any(Urn.class));
+        Mockito.doReturn(resolver).when(this.hub).resolver();
         return this.hub;
     }
 
