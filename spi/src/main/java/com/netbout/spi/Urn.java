@@ -71,6 +71,13 @@ public final class Urn implements Comparable {
     private final transient URI uri;
 
     /**
+     * Public ctor, for JAXB mostly.
+     */
+    public Urn() {
+        throw new IllegalStateException("#Urn() shouldn't be called");
+    }
+
+    /**
      * Public ctor.
      * @param text The text of the URN
      * @throws URISyntaxException If syntax is not correct
