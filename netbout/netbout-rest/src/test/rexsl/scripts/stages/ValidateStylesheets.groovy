@@ -32,13 +32,11 @@ package com.netbout.rest.rexsl.scripts.stages
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
-import javax.ws.rs.core.UriBuilder
 
-def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
-def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
 def bout = jeff.start()
 bout.rename('Stage stylesheet validation')
-def helper = 'nb:hh'
+def helper = 'urn:test:hh'
 bout.invite(jeff.friend(helper))
 
 // validate global bout XSL

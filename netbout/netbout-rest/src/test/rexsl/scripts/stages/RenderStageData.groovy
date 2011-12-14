@@ -34,13 +34,11 @@ import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.UriBuilder
 
-def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
-def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
 def bout = jeff.start()
-bout.rename('Rendering nb:hh stage data')
-bout.invite(jeff.friend('nb:hh'))
+bout.rename('Rendering urn:test:hh stage data')
+bout.invite(jeff.friend('urn:test:hh'))
 
 // validate that the stage is really there, in XHTML
 RestTester.start(RestUriBuilder.from(bout))

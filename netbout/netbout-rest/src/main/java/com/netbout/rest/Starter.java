@@ -93,12 +93,11 @@ public final class Starter implements ContextResolver<Starter> {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private void start() {
         final Promoter promoter = new Promoter(this.hub);
-        final Urn dbname = new Urn("netbout", "db");
         try {
-            final Identity starter =
-                this.hub.identity(new Urn("netbout", "starter"));
+            final Identity persister =
+                this.hub.identity(new Urn("netbout", "db"));
             promoter.promote(
-                starter.friend(dbname),
+                persister,
                 new URL("file", "", "com.netbout.db")
             );
             final List<Urn> helpers = this.bus.make("get-all-helpers")
@@ -106,14 +105,14 @@ public final class Starter implements ContextResolver<Starter> {
                 .asDefault(new ArrayList<Urn>())
                 .exec();
             for (Urn name : helpers) {
-                if (dbname.equals(name)) {
+                if (name.equals(persister.name())) {
                     continue;
                 }
                 final URL url = this.bus.make("get-helper-url")
                     .synchronously()
                     .arg(name)
                     .exec();
-                promoter.promote(starter.friend(name), url);
+                promoter.promote(persister.friend(name), url);
             }
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);

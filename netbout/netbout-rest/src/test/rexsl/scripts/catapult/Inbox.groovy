@@ -35,13 +35,11 @@ import com.netbout.utils.Cipher
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.UriBuilder
 
 def home = new URI(System.getProperty('catapult.home'))
-def auth = UriBuilder.fromUri(home).path('/nb').build()
 def cipher = new Cipher()
-def name = 'nb:jeff'
-def jeff = new RestSession(home).authenticate(auth, name, cipher.encrypt(name))
+def name = 'urn:netbout:jeff'
+def jeff = new RestSession(home).authenticate(name, cipher.encrypt(name))
 def bout = jeff.start()
 bout.rename('Catapult inbox testing')
 

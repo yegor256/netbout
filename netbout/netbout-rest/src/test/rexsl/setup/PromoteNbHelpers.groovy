@@ -31,19 +31,16 @@ package com.netbout.rest.rexsl.setup
 
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
-import com.netbout.utils.Cipher
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def auth = UriBuilder.fromUri(rexsl.home).path('/nb').build()
-def cipher = new Cipher()
 [
-    'nb:hh' : 'file:///com.netbout.hub.hh',
-    'nb:email' : 'file:///com.netbout.notifiers.email'
+    'urn:test:hh' : 'file:com.netbout.hub.hh',
+    'urn:test:email' : 'file:com.netbout.notifiers.email'
 ].each {
-    def helper = new RestSession(rexsl.home).authenticate(auth, it.key, cipher.encrypt(it.key))
+    def helper = new RestSession(rexsl.home).authenticate(it.key, '')
     RestTester.start(RestUriBuilder.from(helper).build())
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get()

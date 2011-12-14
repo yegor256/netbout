@@ -34,9 +34,8 @@ import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
-def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
-def walter = new RestSession(rexsl.home).authenticate(auth, 'nb:walter', '')
+def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
+def walter = new RestSession(rexsl.home).authenticate('urn:test:walter', '')
 
 def bout = jeff.start()
 bout.rename('Some test conversation between Jeff and Walter')

@@ -36,14 +36,13 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def auth = UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
-def jeff = new RestSession(rexsl.home).authenticate(auth, 'nb:jeff', '')
+def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
 def bout = jeff.start()
 bout.rename('Trying to render an empty stage')
 
 // call some stage that DOESN'T exist in this bout - it should
 // not be rendered
-RestTester.start(RestUriBuilder.from(bout).queryParam('stage', 'nb:hh'))
+RestTester.start(RestUriBuilder.from(bout).queryParam('stage', 'urn:test:hh'))
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)

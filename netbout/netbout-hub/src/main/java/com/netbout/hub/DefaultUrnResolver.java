@@ -102,15 +102,19 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     @Override
     public URL authority(final Urn urn) throws UnreachableUrnException {
+        String url;
         final String nid = urn.nid();
-        if (!this.namespaces().containsKey(nid)) {
-            throw new UnreachableUrnException(
-                urn,
-                "Namespace is not registered"
-            );
+        if ("netbout".equals(nid)) {
+            url = "http://www.netbout.com/nb";
+        } else {
+            if (!this.namespaces().containsKey(nid)) {
+                throw new UnreachableUrnException(
+                    urn,
+                    "Namespace is not registered"
+                );
+            }
+            url = this.namespaces().get(nid).replace(this.MARKER, urn.nss());
         }
-        final String url = this.namespaces().get(nid)
-            .replace(this.MARKER, urn.nss());
         try {
             return new URL(url);
         } catch (java.net.MalformedURLException ex) {

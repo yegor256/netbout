@@ -23,29 +23,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+
+/**
+ * Authentication pages, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts.stages
-
-import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
-import com.rexsl.test.RestTester
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-
-def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
-def bout = jeff.start()
-bout.rename('Two stages in one bout')
-
-// invite two helpers there
-['urn:test:hh', 'urn:test:db'].each { bout.invite(jeff.friend(it)) }
-
-// validate that there are really two stages in the XML
-RestTester.start(RestUriBuilder.from(bout))
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page/bout/stages[count(stage) = 2]')
-    .assertXPath('/page/bout/stage[@name]')
+package com.netbout.rest.auth;
