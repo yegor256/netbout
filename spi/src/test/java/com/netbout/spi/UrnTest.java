@@ -110,4 +110,25 @@ public final class UrnTest {
         new Urn("some incorrect name");
     }
 
+    /**
+     * Urn can pass correct syntax.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void passesCorrectUrnSyntax() throws Exception {
+        final String[] texts = new String[] {
+            "urn:foo:some+text+with+spaces",
+            "urn:foo:some%20text%20with%20spaces",
+            "urn:a:",
+            "urn:verylongnamespaceid:",
+        };
+        for (String text : texts) {
+            final Urn urn = new Urn(text);
+            MatcherAssert.assertThat(
+                new Urn(urn.toString()),
+                Matchers.equalTo(urn)
+            );
+        }
+    }
+
 }
