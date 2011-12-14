@@ -72,8 +72,8 @@ public class LongIdentity {
      * @return The name
      */
     @XmlElement
-    public final Urn getName() {
-        return this.person.name();
+    public final String getName() {
+        return this.person.name().toString();
     }
 
     /**

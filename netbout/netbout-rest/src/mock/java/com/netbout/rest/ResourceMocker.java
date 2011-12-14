@@ -30,6 +30,7 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
+import com.netbout.hub.UrnResolver;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
@@ -80,6 +81,11 @@ public final class ResourceMocker {
     private transient Identity identity = new IdentityMocker().mock();
 
     /**
+     * URL for all namespaces.
+     */
+    private transient URL namespaceUrl;
+
+    /**
      * Providers.
      */
     private transient Providers providers =
@@ -123,6 +129,16 @@ public final class ResourceMocker {
             .getContextResolver(
                 Marshaller.class, MediaType.APPLICATION_XML_TYPE
             );
+    }
+
+    /**
+     * With this URL for all namespaces.
+     * @param url The URL
+     * @return This object
+     */
+    public ResourceMocker withNamespaceURL(final URL url) {
+        this.namespaceUrl = url;
+        return this;
     }
 
     /**
@@ -180,6 +196,12 @@ public final class ResourceMocker {
             this.hub = new HubMocker()
                 .withIdentity(iname, this.identity)
                 .mock();
+            if (this.namespaceUrl != null) {
+                final UrnResolver resolver = Mockito.mock(UrnResolver.class);
+                Mockito.doReturn(this.namespaceUrl).when(resolver)
+                    .authority(Mockito.any(Urn.class));
+                Mockito.doReturn(resolver).when(this.hub).resolver();
+            }
         }
         // @checkstyle IllegalType (1 line)
         final AbstractRs rest = (AbstractRs) type.newInstance();

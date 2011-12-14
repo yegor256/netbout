@@ -75,13 +75,13 @@ public final class AuthRsTest {
             )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
-        final URL authority = this.normalize(container.home());
         final String secret = "some secret";
         final Identity identity = new IdentityMocker()
             .namedAs(iname)
             .mock();
         final AuthRs rest = new ResourceMocker()
             .withIdentity(identity)
+            .withNamespaceURL(this.normalize(container.home()))
             .mock(AuthRs.class);
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
@@ -99,8 +99,9 @@ public final class AuthRsTest {
         final ContainerMocker container = new ContainerMocker()
             .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
             .mock();
-        final URL authority = this.normalize(container.home());
-        final AuthRs rest = new ResourceMocker().mock(AuthRs.class);
+        final AuthRs rest = new ResourceMocker()
+            .withNamespaceURL(this.normalize(container.home()))
+            .mock(AuthRs.class);
         rest.auth(new Urn("foo", "test"), "");
     }
 

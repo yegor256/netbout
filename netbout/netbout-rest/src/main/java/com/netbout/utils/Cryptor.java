@@ -69,8 +69,10 @@ public final class Cryptor {
         final String iname = this.CIPHER.decrypt(TextUtils.unpack(hash));
         Identity identity;
         try {
-            identity = hub.identity(Urn.create(iname));
+            identity = hub.identity(new Urn(iname));
         } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new DecryptionException(ex);
+        } catch (java.net.URISyntaxException ex) {
             throw new DecryptionException(ex);
         }
         Logger.debug(

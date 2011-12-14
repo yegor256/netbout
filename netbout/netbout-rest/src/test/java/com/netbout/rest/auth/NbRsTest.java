@@ -50,7 +50,7 @@ public final class NbRsTest {
      */
     @Test
     public void authenticatesByNamesAndSecret() throws Exception {
-        final Urn iname = new UrnMocker().mock();
+        final Urn iname = new Urn("netbout", "hh");
         final String uname = "http://www.netbout.com/nb";
         final NbRs rest = new ResourceMocker()
             .mock(NbRs.class);
@@ -60,7 +60,7 @@ public final class NbRsTest {
             ResourceMocker.the((Page) response.getEntity(), rest),
             XmlMatchers.hasXPath(
                 String.format(
-                    "/page/identity[name='%s' and user='%s']",
+                    "/page/identity[name='%s' and authority='%s']",
                     iname,
                     uname
                 )

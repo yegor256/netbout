@@ -82,7 +82,6 @@ public final class CryptorTest {
     public void hashDoestHaveIllegalCharacters() throws Exception {
         final Identity identity = new IdentityMocker()
             .namedAs("urn:foo:hello@example.com")
-            .belongsTo("\u041F\u0435\u0442\u0440 IV")
             .mock();
         final String hash = new Cryptor().encrypt(identity);
         MatcherAssert.assertThat(

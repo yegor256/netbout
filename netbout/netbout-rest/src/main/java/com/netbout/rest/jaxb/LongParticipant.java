@@ -103,8 +103,8 @@ public final class LongParticipant {
      * @return The name
      */
     @XmlElement
-    public Urn getIdentity() {
-        return this.participant.identity().name();
+    public String getIdentity() {
+        return this.participant.identity().name().toString();
     }
 
     /**

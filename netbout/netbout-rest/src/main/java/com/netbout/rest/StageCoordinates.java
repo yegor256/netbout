@@ -181,7 +181,7 @@ public final class StageCoordinates {
         }
         return String.format(
             "%s%s%s",
-            TextUtils.pack(this.istage.toString()),
+            TextUtils.pack(this.stageAsText()),
             this.SEPARATOR,
             TextUtils.pack(this.iplace)
         );

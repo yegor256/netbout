@@ -36,6 +36,7 @@ import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.core.Manifests;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -107,7 +108,7 @@ public final class FacebookRsTest {
         final Response response = spy.auth(iname, code);
         MatcherAssert.assertThat(
             response.getStatus(),
-            Matchers.equalTo(Response.Status.SEE_OTHER.getStatusCode())
+            Matchers.equalTo(HttpURLConnection.HTTP_OK)
         );
     }
 

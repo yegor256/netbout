@@ -88,8 +88,8 @@ public final class ShortStage {
      * @return The number
      */
     @XmlValue
-    public Urn getName() {
-        return this.identity;
+    public String getName() {
+        return this.identity.toString();
     }
 
 }

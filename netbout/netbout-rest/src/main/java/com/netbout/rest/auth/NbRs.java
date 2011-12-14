@@ -86,8 +86,19 @@ public final class NbRs extends AbstractRs {
         if ((iname == null) || (secret == null) || secret.isEmpty()) {
             throw new ForwardException(this, this.base(), "Failure");
         }
+        if (!"netbout".equals(iname.nid())) {
+            throw new ForwardException(
+                this,
+                this.base(),
+                String.format("Bad namespace '%s' in '%s'", iname.nid(), iname)
+            );
+        }
         if (!iname.nss().matches(String.format("(db|hh|email)"))) {
-            throw new ForwardException(this, this.base(), "Invalid name");
+            throw new ForwardException(
+                this,
+                this.base(),
+                String.format("Invalid name '%s' in '%s'", iname.nss(), iname)
+            );
         }
         try {
             if (!new Cipher().decrypt(secret).equals(iname.toString())) {

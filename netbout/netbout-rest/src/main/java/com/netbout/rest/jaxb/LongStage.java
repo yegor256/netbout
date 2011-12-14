@@ -91,8 +91,8 @@ public final class LongStage {
      * @return The number
      */
     @XmlAttribute
-    public Urn getName() {
-        return this.coords.stage();
+    public String getName() {
+        return this.coords.stage().toString();
     }
 
     /**
