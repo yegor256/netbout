@@ -74,7 +74,10 @@
             </xsl:when>
             <xsl:otherwise>
                 <p>
-                    <xsl:text>You're not a helper yet. Fill this form with a URL of your JAR and get promoted:</xsl:text>
+                    <xsl:text>
+                        You're not a helper yet. Fill this form with
+                        a URL of your JAR and get promoted:
+                    </xsl:text>
                 </p>
                 <form method="post">
                     <xsl:attribute name="action">
@@ -89,6 +92,26 @@
                 </form>
             </xsl:otherwise>
         </xsl:choose>
+        <p>
+            <xsl:text>Namespaces registered for you (</xsl:text>
+            <span class="tt"><xsl:text>&lt;namespace&gt; ":" &lt;URL template&gt;</xsl:text></span>
+            <xsl:text> per line):</xsl:text>
+        </p>
+        <form method="post">
+            <xsl:attribute name="action">
+                <xsl:value-of select="/page/links/link[@rel='namespaces']/@href"/>
+            </xsl:attribute>
+            <textarea name="text" cols="40" rows="4">
+                <xsl:for-each select="/page/namespaces/namespace">
+                    <xsl:value-of select="name"/>
+                    <xsl:text>=</xsl:text>
+                    <xsl:value-of select="template"/>
+                    <xsl:text>&#x0d;</xsl:text>
+                </xsl:for-each>
+            </textarea>
+            <br/>
+            <input value="register" type="submit"/>
+        </form>
     </xsl:template>
 
 </xsl:stylesheet>

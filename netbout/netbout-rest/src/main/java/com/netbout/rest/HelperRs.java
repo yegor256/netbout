@@ -26,16 +26,23 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.Namespace;
+import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.utils.Promoter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Helper-related pages.
@@ -58,6 +65,8 @@ public final class HelperRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .link("promote", this.base().path("/h/promote"))
+            .link("namespaces", this.base().path("/h/namespaces"))
+            .append(JaxbGroup.build(this.namespaces(), "namespaces"))
             .authenticated(this.identity())
             .build();
     }
@@ -85,6 +94,46 @@ public final class HelperRs extends AbstractRs {
             .status(Response.Status.SEE_OTHER)
             .location(this.self().build())
             .build();
+    }
+
+    /**
+     * Register these namespaces.
+     * @param text List of namespaces and URLs
+     * @return The JAX-RS response
+     */
+    @POST
+    @Path("/namespaces")
+    public Response register(@FormParam("text") final String text) {
+        final Identity identity = this.identity();
+        for (String line : StringUtils.split(text, "\n")) {
+            final String[] parts = StringUtils.split(line, "=", 2);
+            this.hub().resolver().register(
+                identity,
+                StringUtils.trim(parts[0]),
+                StringUtils.trim(parts[1])
+            );
+        }
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(identity)
+            .status(Response.Status.SEE_OTHER)
+            .location(this.self().build())
+            .build();
+    }
+
+    /**
+     * Get list of my namespaces.
+     * @return The collection of them
+     */
+    private Collection<Namespace> namespaces() {
+        final Collection<Namespace> namespaces = new ArrayList<Namespace>();
+        final ConcurrentMap<String, String> map = this.hub().resolver()
+            .registered(this.identity());
+        for (ConcurrentMap.Entry<String, String> entry : map.entrySet()) {
+            namespaces.add(new Namespace(entry.getKey(), entry.getValue()));
+        }
+        return namespaces;
     }
 
     /**

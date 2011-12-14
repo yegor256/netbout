@@ -45,13 +45,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
- * Authorizer of "nb:..." identities.
+ * Authorizer of "urn:netbout:..." identities.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @Path("/nb")
-@SuppressWarnings("PMD.TooManyMethods")
 public final class NbRs extends AbstractRs {
 
     /**
@@ -83,8 +82,12 @@ public final class NbRs extends AbstractRs {
      * @param secret The secret code
      */
     private Identity authenticate(final Urn iname, final String secret) {
-        if ((iname == null) || (secret == null) || secret.isEmpty()) {
-            throw new ForwardException(this, this.base(), "Failure");
+        if ((iname == null) || (secret == null)) {
+            throw new ForwardException(
+                this,
+                this.base(),
+                "Both 'identity' and 'secret' query params are mandatory"
+            );
         }
         if (!"netbout".equals(iname.nid())) {
             throw new ForwardException(
@@ -102,7 +105,11 @@ public final class NbRs extends AbstractRs {
         }
         try {
             if (!new Cipher().decrypt(secret).equals(iname.toString())) {
-                throw new ForwardException(this, this.base(), "Wrong secret");
+                throw new ForwardException(
+                    this,
+                    this.base(),
+                    String.format("Wrong secret '%s' for '%s'", secret, iname)
+                );
             }
         } catch (com.netbout.utils.DecryptionException ex) {
             throw new ForwardException(this, this.base(), ex);

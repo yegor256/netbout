@@ -104,19 +104,16 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
-        String stg;
-        if ("-".equals(this.stage)) {
-            stg = "";
-        } else {
-            stg = this.stage;
+        String xsl = "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>";
+        if (!"null".equals(this.stage)) {
+            xsl = this.bus().make("render-stage-xsl")
+                .synchronously()
+                .arg(this.bout().number())
+                .arg(this.stage)
+                .asDefault(xsl)
+                .exec();
         }
-        return this.bus().make("render-stage-xsl")
-            .synchronously()
-            .arg(this.bout().number())
-            .arg(stg)
-            // @checkstyle LineLength (1 line)
-            .asDefault("<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>")
-            .exec();
+        return xsl;
     }
 
     /**

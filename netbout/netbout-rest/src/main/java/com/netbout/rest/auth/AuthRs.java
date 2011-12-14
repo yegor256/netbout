@@ -62,7 +62,6 @@ import javax.xml.bind.annotation.XmlType;
  * @version $Id$
  */
 @Path("/auth")
-@SuppressWarnings("PMD.TooManyMethods")
 public final class AuthRs extends AbstractRs {
 
     /**
@@ -106,28 +105,7 @@ public final class AuthRs extends AbstractRs {
      */
     private Identity authenticate(final Urn iname,
         final String secret) throws IOException {
-        URL entry;
-        try {
-            entry = this.hub().resolver().authority(iname);
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new ForwardException(this, ex);
-        }
-        final Identity remote = this.load(
-            UriBuilder.fromUri(entry.toString())
-                .queryParam("identity", iname)
-                .queryParam("secret", secret)
-                .build()
-        );
-        if (!remote.name().equals(iname)) {
-            throw new ForwardException(
-                this,
-                String.format(
-                    "Invalid identity name retrieved '%s', while '%s' expected",
-                    remote.name(),
-                    iname
-                )
-            );
-        }
+        final Identity remote = this.remote(iname, secret);
         Identity identity;
         try {
             identity = this.hub().identity(iname);
@@ -145,6 +123,51 @@ public final class AuthRs extends AbstractRs {
         }
         identity.setPhoto(remote.photo());
         return identity;
+    }
+
+    /**
+     * Validate provided data.
+     * @param iname Identity name
+     * @param secret Secret word
+     * @return Identity name, if it's valid
+     */
+    private Identity remote(final Urn iname, final String secret)
+        throws IOException {
+        Identity remote;
+        if ("void".equals(iname.nid())) {
+            if (!iname.nss().isEmpty()) {
+                throw new ForwardException(this, "NSS should be empty");
+            }
+            final RemoteIdentity idnt = new RemoteIdentity();
+            idnt.setAuthority("http://www.netbout.com/nb");
+            idnt.setName(iname.toString());
+            idnt.setJaxbPhoto("http://img.netbout.com/unknown.png");
+            remote = idnt;
+        } else {
+            URL entry;
+            try {
+                entry = this.hub().resolver().authority(iname);
+            } catch (com.netbout.spi.UnreachableUrnException ex) {
+                throw new ForwardException(this, ex);
+            }
+            remote = this.load(
+                UriBuilder.fromUri(entry.toString())
+                    .queryParam("identity", iname)
+                    .queryParam("secret", secret)
+                    .build()
+            );
+            if (!remote.name().equals(iname)) {
+                throw new ForwardException(
+                    this,
+                    String.format(
+                        "Invalid identity name retrieved '%s', while '%s' expected",
+                        remote.name(),
+                        iname
+                    )
+                );
+            }
+        }
+        return remote;
     }
 
     /**

@@ -36,6 +36,19 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
+def starter = new RestSession(rexsl.home).authenticate('urn:void:', '')
+def text = 'test=' + UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+RestTester.start(RestUriBuilder.from(starter).build())
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .rel('/page/links/link[@rel="helper"]/@href')
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get()
+    .rel('/page/links/link[@rel="namespaces"]/@href')
+    .post('text=' + URLEncoder.encode(text))
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+
 [
     'urn:test:hh' : 'file:com.netbout.hub.hh',
     'urn:test:email' : 'file:com.netbout.notifiers.email'
@@ -45,6 +58,9 @@ import javax.ws.rs.core.UriBuilder
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get()
         .assertStatus(HttpURLConnection.HTTP_OK)
+        .rel('/page/links/link[@rel="helper"]/@href')
+        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .get()
         .rel('/page/links/link[@rel="promote"]/@href')
         .post('url=' + URLEncoder.encode(it.value))
         .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)

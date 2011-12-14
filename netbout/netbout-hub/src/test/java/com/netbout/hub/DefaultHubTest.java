@@ -30,6 +30,7 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.net.URL;
@@ -62,7 +63,9 @@ public final class DefaultHubTest {
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .mock();
         final Hub hub = new DefaultHub(bus);
-        hub.resolver().register(null, name.nid(), "http://abc");
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://abc"
+        );
         final Identity identity = hub.identity(name);
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
     }
@@ -97,7 +100,9 @@ public final class DefaultHubTest {
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .mock();
         final Hub hub = new DefaultHub(bus);
-        hub.resolver().register(null, name.nid(), "http://cde");
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://cde"
+        );
         final Identity identity = hub.identity(name);
         final Helper helper = Mockito.mock(Helper.class);
         Mockito.doReturn(new URL("file:com.netbout")).when(helper).location();
@@ -120,7 +125,9 @@ public final class DefaultHubTest {
             .mock();
         final Hub hub = new DefaultHub(bus);
         final Urn name = new UrnMocker().mock();
-        hub.resolver().register(null, name.nid(), "http://foo");
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://foo"
+        );
         final Identity first = hub.identity(name);
         MatcherAssert.assertThat(hub.identity(name), Matchers.equalTo(first));
     }
@@ -136,7 +143,9 @@ public final class DefaultHubTest {
             .mock();
         final Hub hub = new DefaultHub(bus);
         final Urn name = new UrnMocker().mock();
-        hub.resolver().register(null, name.nid(), "http://bar");
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://bar"
+        );
         hub.identity(name);
         hub.identity(name);
         Mockito.verify(bus, Mockito.times(1)).make("identity-mentioned");
@@ -172,7 +181,9 @@ public final class DefaultHubTest {
             .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
             .mock();
         final Hub hub = new DefaultHub(bus);
-        hub.resolver().register(null, name.nid(), "http://foo-foo");
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://foo-foo"
+        );
         final Identity identity = hub.identity(name);
         MatcherAssert.assertThat(
             hub.findByKeyword(name.nss()),

@@ -57,8 +57,8 @@ public final class AuthRsMocker extends AbstractRs {
         if ((iname == null) || (secret == null)) {
             throw new ForwardException(this, this.base(), "NULL inputs");
         }
-        if (!"mock".equals(iname.nid())) {
-            throw new ForwardException(this, this.base(), "Invalid name");
+        if (!"test".equals(iname.nid())) {
+            throw new ForwardException(this, this.base(), "Invalid NID");
         }
         if (!secret.isEmpty()) {
             throw new ForwardException(this, this.base(), "Wrong secret");

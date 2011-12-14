@@ -33,6 +33,7 @@ import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -94,6 +95,22 @@ final class DefaultUrnResolver implements UrnResolver {
             );
         }
         this.namespaces().put(namespace, template);
+        Logger.info(
+            this,
+            "#register('%s', '%s', '%s'): added (%d in total)",
+            owner.name(),
+            namespace,
+            template,
+            this.namespaces().size()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ConcurrentMap<String, String> registered(final Identity owner) {
+        return this.inamespaces;
     }
 
     /**
@@ -104,22 +121,33 @@ final class DefaultUrnResolver implements UrnResolver {
     public URL authority(final Urn urn) throws UnreachableUrnException {
         String url;
         final String nid = urn.nid();
-        if ("netbout".equals(nid)) {
+        if (nid.matches("^(void|netbout)$")) {
             url = "http://www.netbout.com/nb";
         } else {
             if (!this.namespaces().containsKey(nid)) {
                 throw new UnreachableUrnException(
                     urn,
-                    "Namespace is not registered"
+                    String.format(
+                        "Namespace '%s' is not registered",
+                        nid
+                    )
                 );
             }
             url = this.namespaces().get(nid).replace(this.MARKER, urn.nss());
         }
+        URL result;
         try {
-            return new URL(url);
+            result = new URL(url);
         } catch (java.net.MalformedURLException ex) {
             throw new UnreachableUrnException(urn, ex);
         }
+        Logger.debug(
+            this,
+            "#authority('%s'): resolved to '%s'",
+            urn,
+            result
+        );
+        return result;
     }
 
     /**
@@ -145,7 +173,7 @@ final class DefaultUrnResolver implements UrnResolver {
                         .exec();
                     this.inamespaces.put(name, template);
                 }
-                Logger.debug(
+                Logger.info(
                     this,
                     "#load(): loaded %d namespaces",
                     this.inamespaces.size()

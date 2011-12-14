@@ -24,44 +24,67 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.rest.jaxb;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableUrnException;
-import com.netbout.spi.Urn;
-import java.net.URL;
-import java.util.concurrent.ConcurrentMap;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * URN resolver.
+ * Namespace.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface UrnResolver {
+@XmlRootElement(name = "namespace")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class Namespace {
 
     /**
-     * Register namespace.
-     * @param owner Who is registering
-     * @param namespace The namespace to register
-     * @param template URL template
+     * Name.
      */
-    void register(Identity owner, String namespace, String template);
+    private final transient String name;
 
     /**
-     * Get all namespaces registered for the given identity.
-     * @param owner Who is asking
-     * @return The list of them, as a map
+     * Template.
      */
-    ConcurrentMap<String, String> registered(Identity owner);
+    private final transient String template;
 
     /**
-     * Resolve URN to URL (get is authority).
-     * @param urn The URN
-     * @return The authority
-     * @throws UnreachableUrnException If we can't reach it
-     * @checkstyle RedundantThrows (2 lines)
+     * Public ctor for JAXB.
      */
-    URL authority(Urn urn) throws UnreachableUrnException;
+    public Namespace() {
+        throw new IllegalStateException("This ctor should never be called");
+    }
+
+    /**
+     * Public ctor.
+     * @param nam Name
+     * @param tmpl Template
+     */
+    public Namespace(final String nam, final String tmpl) {
+        this.name = nam;
+        this.template = tmpl;
+    }
+
+    /**
+     * Get name.
+     * @return The name
+     */
+    @XmlElement
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Get template.
+     * @return The template
+     */
+    @XmlElement
+    public String getTemplate() {
+        return this.template;
+    }
 
 }

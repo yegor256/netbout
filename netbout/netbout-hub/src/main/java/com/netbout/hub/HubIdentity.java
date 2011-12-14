@@ -231,7 +231,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         this.hub.bus().make("changed-identity-photo")
             .synchronously()
             .arg(this.name())
-            .arg(this.iphoto.toString())
+            .arg(this.iphoto)
             .asDefault(true)
             .exec();
     }
