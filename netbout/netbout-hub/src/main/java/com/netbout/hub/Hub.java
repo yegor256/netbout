@@ -63,4 +63,11 @@ public interface Hub {
      */
     void promote(Identity identity, Helper helper);
 
+    /**
+     * Find identities by keyword.
+     * @param keyword The keyword
+     * @return The identities found
+     */
+    Set<Identity> findByKeyword(String keyword);
+
 }

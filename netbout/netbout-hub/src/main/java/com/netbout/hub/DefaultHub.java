@@ -31,6 +31,8 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.net.URL;
+import java.util.NavigableSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -48,10 +50,10 @@ public final class DefaultHub implements Hub {
     private final transient Bus bus;
 
     /**
-     * All identities known for us at the moment, and their objects.
+     * All identities known for us at the moment.
      */
-    private final transient ConcurrentMap<Urn, Identity> all =
-        new ConcurrentHashMap<Urn, Identity>();
+    private final transient NavigableSet all =
+        new ConcurrentSkipListSet<Identity>();
 
     /**
      * Manager of bouts.
@@ -71,7 +73,7 @@ public final class DefaultHub implements Hub {
         this.bus = ibus;
         this.manager = new DefaultBoutMgr(this.bus);
         this.finder = new DefaultIdentityFinder(
-            this, this.bus, this.all, this.validator
+            this, this.bus, this.all
         );
     }
 
@@ -80,11 +82,12 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public Identity identity(final Urn name) {
+        final DefaultHub.Token token = new DefaultHub.Token(name);
         Identity identity;
-        if (this.all.containsKey(name)) {
-            identity = this.all.get(name);
+        if (this.all.containsKey(token)) {
+            identity = (Identity) this.all.floor(token);
         } else {
-            identity = new HubIdentityOrphan(
+            identity = new HubIdentity(
                 this.bus,
                 this,
                 this.manager,
@@ -93,7 +96,7 @@ public final class DefaultHub implements Hub {
             this.save(name, identity);
             Logger.debug(
                 this,
-                "#make('%s'): created just by name (%d total)",
+                "#identity('%s'): created new (%d total)",
                 name,
                 this.all.size()
             );
@@ -124,12 +127,9 @@ public final class DefaultHub implements Hub {
     @Override
     public void promote(final Identity identity, final Helper helper) {
         this.bus.register(helper);
-        final Identity existing = this.all.get(identity.name());
-        try {
-            this.save(identity.name(), helper);
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new IllegalStateException(ex);
-        }
+        final Identity existing = this.identity(identity.name());
+        this.all.remove(existing);
+        this.save(helper);
         Logger.info(
             this,
             "#promote('%s', '%s'): replaced existing identity (%s)",
@@ -140,26 +140,81 @@ public final class DefaultHub implements Hub {
         this.bus.make("identity-promoted")
             .synchronously()
             .arg(identity.name())
-            .arg(helper.location().toString())
+            .arg(helper.location())
             .asDefault(true)
             .exec();
     }
 
     /**
-     * Save identity to storage.
-     * @param name The name
-     * @param identity The identity
-     * @throws UnreachableIdentityException If can't reach it by name
-     * @checkstyle RedundantThrows (4 lines)
+     * {@inheritDoc}
      */
-    private void save(final String name, final Identity identity)
-        throws UnreachableIdentityException {
-        this.all.put(this.validator.validate(name), identity);
+    @Override
+    public Set<Identity> findByKeyword(final String keyword) {
+        final Set<Identity> found = new HashSet<Identity>();
+        final List<Urn> names = this.bus
+            .make("find-identities-by-keyword")
+            .synchronously()
+            .arg(keyword)
+            .asDefault(new ArrayList<Urn>())
+            .exec();
+        for (Urn name : names) {
+            try {
+                found.add(this.identity(name));
+            } catch (com.netbout.spi.UnreachableIdentityException ex) {
+                Logger.warn(
+                    this,
+                    // @checkstyle LineLength (1 line)
+                    "#findByKeyword('%s'): some helper returned '%s' identity that is not reachable",
+                    keyword,
+                    name
+                );
+            }
+        }
+        return found;
+    }
+
+    /**
+     * Save identity to storage.
+     * @param identity The identity
+     */
+    private void save(final Identity identity) {
+        this.all.add(identity);
         this.bus.make("identity-mentioned")
             .synchronously()
-            .arg(name)
+            .arg(identity.name())
             .asDefault(true)
             .exec();
+    }
+
+    /**
+     * Token for searching of identities in storage.
+     */
+    private static final class Token {
+        /**
+         * Name of identity.
+         */
+        private final transient name;
+        /**
+         * Public ctor.
+         * @param urn The name of identity
+         */
+        public Token(final Urn urn) {
+            this.name = urn;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object obj) {
+            return obj.hashCode() == this.hashCode();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return this.name.hashCode();
+        }
     }
 
 }

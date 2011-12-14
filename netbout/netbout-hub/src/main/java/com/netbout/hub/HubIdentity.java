@@ -63,7 +63,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     /**
      * The catalog.
      */
-    private final transient Catalog catalog;
+    private final transient Hub catalog;
 
     /**
      * The manager of bouts.
@@ -93,15 +93,15 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     /**
      * Public ctor.
      * @param ibus The bus
-     * @param ctlg The catalog
+     * @param ihub The hub
      * @param mgr Manager of bouts
      * @param name The identity's name
      * @checkstyle ParameterNumber (3 lines)
      */
-    public HubIdentityOrphan(final Bus ibus, final Catalog ctlg,
+    public HubIdentity(final Bus ibus, final Hub ihub,
         final BoutMgr mgr, final Urn name) {
         this.bus = ibus;
-        this.catalog = ctlg;
+        this.hub = ihub;
         this.manager = mgr;
         this.iname = name;
     }
@@ -127,13 +127,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      * {@inheritDoc}
      */
     @Override
-    public URL user() {
-        throw new IllegalStateException(
-            String.format(
-                "Identity '%s' is not assigned to any user yet",
-                this.name()
-            )
-        );
+    public URL authority() {
     }
 
     /**
@@ -164,7 +158,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
             num
         );
         this.myBouts().add(num);
-        return new HubBout(this.catalog, this.bus, this, data);
+        return new HubBout(this.hub, this.bus, this, data);
     }
 
     /**
@@ -175,7 +169,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     public Bout bout(final Long number) throws BoutNotFoundException {
         final HubBout bout;
         bout = new HubBout(
-            this.catalog,
+            this.hub,
             this.bus,
             this,
             this.manager.find(number)
@@ -249,7 +243,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     @Override
     public Identity friend(final Urn name)
         throws UnreachableIdentityException {
-        final Identity identity = this.catalog.make(name);
+        final Identity identity = this.hub.identity(name);
         Logger.debug(
             this,
             "#friend('%s'): found",
@@ -263,7 +257,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public Set<Identity> friends(final String keyword) {
-        final Set<Identity> friends = this.catalog.findByKeyword(keyword);
+        final Set<Identity> friends = this.hub.findByKeyword(keyword);
         Logger.debug(
             this,
             "#friends('%s'): found %d friends",
