@@ -68,6 +68,14 @@ final class RestIdentity implements Identity {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Identity identity) {
+        return this.name().compareTo(identity.name());
+    }
+
+    /**
      * Get its URI.
      * @return The URI
      */

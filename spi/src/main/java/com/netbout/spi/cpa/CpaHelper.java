@@ -134,6 +134,14 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
+    public int compareTo(final Identity idnt) {
+        return this.identity.compareTo(idnt);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public URL authority() {
         return this.identity.authority();
     }

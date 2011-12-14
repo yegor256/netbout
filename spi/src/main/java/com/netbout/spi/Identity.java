@@ -40,7 +40,13 @@ import java.util.Set;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public interface Identity {
+public interface Identity extends Comparable<Identity> {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    int compareTo(Identity identity);
 
     /**
      * Who validated this user.

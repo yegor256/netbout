@@ -62,6 +62,14 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
+    public int compareTo(final Identity identity) {
+        return this.iname.compareTo(identity.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public URL authority() {
         throw new UnsupportedOperationException(
             "#authority() can't be called on a friend"
