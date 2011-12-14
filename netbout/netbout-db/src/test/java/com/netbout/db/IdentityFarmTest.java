@@ -26,6 +26,8 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
+import java.net.URL;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -53,8 +55,8 @@ public final class IdentityFarmTest {
         final Long bout = bfarm.getNextBoutNumber();
         bfarm.startedNewBout(bout);
         final ParticipantFarm pfarm = new ParticipantFarm();
-        final String identity = "Steven Jobs";
-        this.farm.changedIdentityPhoto(identity, "");
+        final Urn identity = new Urn("foo", "Steven Jobs");
+        this.farm.changedIdentityPhoto(identity, new URL("http://xx"));
         pfarm.addedBoutParticipant(bout, identity);
         final List<Long> numbers = this.farm.getBoutsOfIdentity(identity);
         MatcherAssert.assertThat(numbers, Matchers.hasItem(bout));
@@ -66,8 +68,8 @@ public final class IdentityFarmTest {
      */
     @Test
     public void testChangeIdentityPhoto() throws Exception {
-        final String name = "John Cleese";
-        final String photo = "http://localhost/img.png";
+        final Urn name = new Urn("xx", "John Cleese");
+        final URL photo = new URL("http://localhost/img.png");
         this.farm.changedIdentityPhoto(name, photo);
         MatcherAssert.assertThat(
             this.farm.getIdentityPhoto(name),

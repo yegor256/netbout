@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
@@ -213,7 +214,7 @@ public final class MessageFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-message-author")
-    public String getMessageAuthor(final Long number)
+    public Urn getMessageAuthor(final Long number)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -247,7 +248,7 @@ public final class MessageFarm {
             author,
             System.currentTimeMillis() - start
         );
-        return author;
+        return Urn.create(author);
     }
 
     /**
@@ -257,7 +258,7 @@ public final class MessageFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("changed-message-author")
-    public void changedMessageAuthor(final Long number, final String author)
+    public void changedMessageAuthor(final Long number, final Urn author)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -265,7 +266,7 @@ public final class MessageFarm {
             final PreparedStatement stmt = conn.prepareStatement(
                 "UPDATE message SET author = ? WHERE number = ?"
             );
-            stmt.setString(1, author);
+            stmt.setString(1, author.toString());
             stmt.setLong(2, number);
             final int updated = stmt.executeUpdate();
             if (updated != 1) {

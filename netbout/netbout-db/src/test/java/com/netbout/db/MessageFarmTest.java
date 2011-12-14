@@ -26,6 +26,8 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
@@ -89,8 +91,8 @@ public final class MessageFarmTest {
     public void testChangeMessageAuthor() throws Exception {
         final Long number = this.farm.createBoutMessage(this.bout);
         this.farm.changedMessageDate(number, new Date());
-        final String author = "Jeff Bridges";
-        new IdentityFarm().changedIdentityPhoto(author, "");
+        final Urn author = new Urn("foo", "Jeff Bridges");
+        new IdentityFarm().changedIdentityPhoto(author, new URL("http://x"));
         this.farm.changedMessageAuthor(number, author);
         MatcherAssert.assertThat(
             this.farm.getMessageAuthor(number),

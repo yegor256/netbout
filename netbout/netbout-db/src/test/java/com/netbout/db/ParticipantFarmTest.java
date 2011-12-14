@@ -26,6 +26,8 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
+import java.net.URL;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -66,8 +68,8 @@ public final class ParticipantFarmTest {
      */
     @Test
     public void manipulatsBoutStatus() throws Exception {
-        final String identity = "Steve Jobs";
-        new IdentityFarm().changedIdentityPhoto(identity, "");
+        final Urn identity = new Urn("foo", "Steve Jobs");
+        new IdentityFarm().changedIdentityPhoto(identity, new URL("http://x"));
         this.farm.addedBoutParticipant(this.bout, identity);
         MatcherAssert.assertThat(
             this.farm.getParticipantStatus(this.bout, identity),
@@ -86,10 +88,10 @@ public final class ParticipantFarmTest {
      */
     @Test
     public void readsBoutParticipants() throws Exception {
-        final String identity = "Bill Gates";
-        new IdentityFarm().changedIdentityPhoto(identity, "");
+        final Urn identity = new Urn("x", "Bill Gates");
+        new IdentityFarm().changedIdentityPhoto(identity, new URL("http://y"));
         this.farm.addedBoutParticipant(this.bout, identity);
-        final List<String> names = this.farm.getBoutParticipants(this.bout);
+        final List<Urn> names = this.farm.getBoutParticipants(this.bout);
         MatcherAssert.assertThat(
             names,
             Matchers.hasItem(identity)
@@ -102,11 +104,11 @@ public final class ParticipantFarmTest {
      */
     @Test
     public void addsAndRemovesParticipants() throws Exception {
-        final String identity = "William III";
-        new IdentityFarm().changedIdentityPhoto(identity, "");
+        final Urn identity = new Urn("xxx", "William III");
+        new IdentityFarm().changedIdentityPhoto(identity, new URL("http://z"));
         this.farm.addedBoutParticipant(this.bout, identity);
         this.farm.removedBoutParticipant(this.bout, identity);
-        final List<String> names = this.farm.getBoutParticipants(this.bout);
+        final List<Urn> names = this.farm.getBoutParticipants(this.bout);
         MatcherAssert.assertThat(names.size(), Matchers.equalTo(0));
     }
 

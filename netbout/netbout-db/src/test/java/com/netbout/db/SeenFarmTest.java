@@ -26,6 +26,8 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
+import java.net.URL;
 import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -49,8 +51,8 @@ public final class SeenFarmTest {
      */
     @Test
     public void testMessageSeenFlag() throws Exception {
-        final String identity = "Felix";
-        new IdentityFarm().changedIdentityPhoto(identity, "");
+        final Urn identity = new Urn("foo", "Felix");
+        new IdentityFarm().changedIdentityPhoto(identity, new URL("http://x"));
         final Long bout = new BoutFarm().getNextBoutNumber();
         new BoutFarm().startedNewBout(bout);
         new ParticipantFarm().addedBoutParticipant(bout, identity);

@@ -27,6 +27,8 @@
 package com.netbout.db;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlConverter;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -53,7 +55,7 @@ public final class StatsFarmTest {
     @Test
     public void testSummaryRendering() throws Exception {
         final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn("some-name").when(identity).name();
+        Mockito.doReturn(new UrnMocker().mock()).when(identity).name();
         this.farm.init(identity);
         final String xml = this.farm.renderStageXml(1L, identity.name(), "");
         MatcherAssert.assertThat(
@@ -69,7 +71,7 @@ public final class StatsFarmTest {
     @Test
     public void testRenderingOfXslStylesheet() throws Exception {
         final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn("stage-1").when(identity).name();
+        Mockito.doReturn(new UrnMocker().mock()).when(identity).name();
         this.farm.init(identity);
         final String xsl = this.farm.renderStageXsl(1L, identity.name());
         MatcherAssert.assertThat(

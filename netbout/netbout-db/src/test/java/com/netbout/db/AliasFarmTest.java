@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -49,7 +50,7 @@ public final class AliasFarmTest {
      */
     @Test
     public void testAliasFinding() throws Exception {
-        final String identity = "William Shakespear";
+        final Urn identity = new Urn("foo", "William Shakespear");
         final String alias = "willy@example.com";
         new IdentityFarm().identityMentioned(identity);
         this.farm.addedIdentityAlias(identity, alias);
@@ -63,7 +64,7 @@ public final class AliasFarmTest {
      */
     @Test
     public void testGlobalFinding() throws Exception {
-        final String identity = "Martin Fowler";
+        final Urn identity = new Urn("bar", "Martin Fowler");
         final String alias = "martin@example.com";
         final IdentityFarm ifarm = new IdentityFarm();
         ifarm.identityMentioned(identity);

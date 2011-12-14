@@ -26,9 +26,11 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,11 +53,11 @@ public final class HelperFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-all-helpers")
-    public List<String> getAllHelpers()
+    public List<Urn> getAllHelpers()
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
-        final List<String> names = new ArrayList<String>();
+        final List<Urn> names = new ArrayList<Urn>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 "SELECT identity FROM helper"
@@ -63,7 +65,7 @@ public final class HelperFarm {
             final ResultSet rset = stmt.executeQuery();
             try {
                 while (rset.next()) {
-                    names.add(rset.getString(1));
+                    names.add(Urn.create(rset.getString(1)));
                 }
             } finally {
                 rset.close();
@@ -87,7 +89,7 @@ public final class HelperFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("identity-promoted")
-    public void identityPromoted(final String name, final String url)
+    public void identityPromoted(final Urn name, final URL url)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -95,12 +97,12 @@ public final class HelperFarm {
             final PreparedStatement stmt = conn.prepareStatement(
                 "SELECT url FROM helper WHERE identity = ? "
             );
-            stmt.setString(1, name);
+            stmt.setString(1, name.toString());
             final ResultSet rset = stmt.executeQuery();
             try {
                 if (rset.next()) {
                     final String existing = rset.getString(1);
-                    if (!existing.equals(url)) {
+                    if (!existing.equals(url.toString())) {
                         throw new IllegalArgumentException(
                             String.format(
                                 // @checkstyle LineLength (1 line)
@@ -115,8 +117,8 @@ public final class HelperFarm {
                     final PreparedStatement istmt = conn.prepareStatement(
                         "INSERT INTO helper (identity, url) VALUES (?, ?)"
                     );
-                    istmt.setString(1, name);
-                    istmt.setString(2, url);
+                    istmt.setString(1, name.toString());
+                    istmt.setString(2, url.toString());
                     istmt.executeUpdate();
                     Logger.debug(
                         this,
@@ -141,16 +143,15 @@ public final class HelperFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-helper-url")
-    public String getHelperUrl(final String name)
-        throws SQLException {
+    public URL getHelperUrl(final Urn name) throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
-        String url;
+        URL url;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 "SELECT url FROM helper WHERE identity = ?"
             );
-            stmt.setString(1, name);
+            stmt.setString(1, name.toString());
             final ResultSet rset = stmt.executeQuery();
             try {
                 if (!rset.next()) {
@@ -161,7 +162,11 @@ public final class HelperFarm {
                         )
                     );
                 }
-                url = rset.getString(1);
+                try {
+                    url = new URL(rset.getString(1));
+                } catch (java.net.MalformedURLException ex) {
+                    throw new IllegalStateException(ex);
+                }
             } finally {
                 rset.close();
             }
