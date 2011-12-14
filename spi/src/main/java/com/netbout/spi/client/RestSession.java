@@ -80,42 +80,39 @@ public final class RestSession {
 
     /**
      * Get identity in the session through Netbout authentication mechanism.
-     * @param user The user to authenticate
      * @param iname Name of the identity
      * @param secret The secret word to use
      * @return The identity to work with
      */
-    public Identity authenticate(final URI user, final String iname,
-        final String secret) {
+    public Identity authenticate(final String iname, final String secret) {
         return new RestIdentity(
             new JerseyRestClient(
                 this.client.resource(this.home),
-                this.fetch(user, iname, secret)
+                this.fetch(iname, secret)
             )
         );
     }
 
     /**
      * Fetch auth code.
-     * @param user The user to authenticate
      * @param identity Name of the identity
      * @param secret The secret word to use
      * @return The URL
      */
-    public String fetch(final URI user, final String identity,
-        final String secret) {
+    private String fetch(final String identity, final String secret) {
         final WebResource resource = this.client.resource(this.home)
             .path("/auth")
-            .queryParam("user", user.toString())
             .queryParam("identity", identity)
             .queryParam("secret", secret);
         final ClientResponse response = resource.get(ClientResponse.class);
         if (response.getStatus() != HttpURLConnection.HTTP_SEE_OTHER) {
             throw new IllegalArgumentException(
                 String.format(
-                    "Invalid HTTP status %d at %s during authentication",
+                    // @checkstyle LineLength (1 line)
+                    "Invalid HTTP status %d at %s during authentication of '%s'",
                     response.getStatus(),
-                    resource.getURI()
+                    resource.getURI(),
+                    identity
                 )
             );
         }
@@ -123,15 +120,16 @@ public final class RestSession {
         if (token == null) {
             throw new IllegalArgumentException(
                 String.format(
-                    "Authentication token not found in response header at %s",
-                    resource.getURI()
+                    // @checkstyle LineLength (1 line)
+                    "Authentication token not found in response header at '%s' during authentication of '%s'",
+                    resource.getURI(),
+                    identity
                 )
             );
         }
         Logger.debug(
             this,
-            "#fetch('%s', '%s', '%s'): '%s' authenticated us as '%s'",
-            user,
+            "#fetch('%s', '%s'): '%s' authenticated us as '%s'",
             identity,
             secret,
             resource.getURI(),
