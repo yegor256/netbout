@@ -28,11 +28,10 @@ package com.netbout.utils;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import org.apache.commons.lang.StringUtils;
 
-// import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
-// import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 /**
  * Encrypts and decrypts.
  *
@@ -40,11 +39,6 @@ import org.apache.commons.lang.StringUtils;
  * @version $Id$
  */
 public final class Cryptor {
-
-    /**
-     * Separator between name and hash.
-     */
-    private static final String SEPARATOR = ".";
 
     /**
      * Cipher.
@@ -57,12 +51,7 @@ public final class Cryptor {
      * @return Encrypted string
      */
     public String encrypt(final Identity identity) {
-        final StringBuilder builder = new StringBuilder();
-        builder
-            .append(TextUtils.pack(identity.user()))
-            .append(this.SEPARATOR)
-            .append(TextUtils.pack(identity.name()));
-        return TextUtils.pack(this.CIPHER.encrypt(builder.toString()));
+        return TextUtils.pack(this.CIPHER.encrypt(identity.name().toString()));
     }
 
     /**
@@ -77,19 +66,11 @@ public final class Cryptor {
         if (hash == null) {
             throw new DecryptionException(hash, "Hash is NULL");
         }
-        final String[] parts = StringUtils.split(
-            TextUtils.unpack(this.CIPHER.decrypt(hash)),
-            this.SEPARATOR
-        );
-        if (parts.length != 2) {
-            throw new DecryptionException(hash, "Not enough parts");
-        }
-        final String uname = TextUtils.unpack(parts[0]);
-        final String iname = TextUtils.unpack(parts[1]);
+        final String iname = this.CIPHER.decrypt(TextUtils.unpack(hash));
         Identity identity;
         try {
-            identity = hub.user(uname).identity(iname);
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            identity = hub.identity(Urn.create(iname));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new DecryptionException(ex);
         }
         Logger.debug(

@@ -35,6 +35,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
 import java.util.ArrayList;
 import java.util.List;
@@ -210,7 +211,7 @@ public final class BoutRs extends AbstractRs {
      */
     @Path("/i")
     @GET
-    public Response invite(@QueryParam("name") final String name) {
+    public Response invite(@QueryParam("name") final Urn name) {
         final Bout bout = this.bout();
         if (name == null) {
             throw new ForwardException(
@@ -221,7 +222,7 @@ public final class BoutRs extends AbstractRs {
         }
         try {
             bout.invite(this.identity().friend(name));
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
@@ -345,7 +346,7 @@ public final class BoutRs extends AbstractRs {
                     // @checkstyle MultipleStringLiterals (1 line)
                     .path(String.format("/%d", this.bout().number()))
                     .path("/xsl")
-                    .path(String.format("/%s", this.coords.stageForPath()))
+                    .path(String.format("/%s", this.coords.stageAsText()))
                     .path("/wrapper.xsl")
             )
             .build(AbstractPage.class)

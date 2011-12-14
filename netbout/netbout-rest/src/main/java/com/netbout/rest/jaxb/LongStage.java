@@ -29,6 +29,7 @@ package com.netbout.rest.jaxb;
 import com.netbout.bus.Bus;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Urn;
 import java.io.StringReader;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -90,7 +91,7 @@ public final class LongStage {
      * @return The number
      */
     @XmlAttribute
-    public String getName() {
+    public Urn getName() {
         return this.coords.stage();
     }
 

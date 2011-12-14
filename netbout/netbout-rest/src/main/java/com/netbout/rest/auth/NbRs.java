@@ -24,11 +24,15 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.auth;
 
+import com.netbout.rest.AbstractPage;
+import com.netbout.rest.AbstractRs;
+import com.netbout.rest.ForwardException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.netbout.utils.Cipher;
 import com.ymock.util.Logger;
 import java.net.URL;
@@ -51,23 +55,15 @@ import javax.ws.rs.core.Response;
 public final class NbRs extends AbstractRs {
 
     /**
-     * The prefix.
-     */
-    private static final String PREFIX = "nb:";
-
-    /**
      * Authentication page.
      * @param iname Name of identity
      * @param secret The secret code
      * @return The JAX-RS response
      */
     @GET
-    public Response auth(@QueryParam("identity") final String iname,
+    public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
-        this.validate(iname, secret);
-        final Identity identity = new NbIdentity(
-            iname.substring(this.PREFIX.length())
-        );
+        final Identity identity = this.authenticate(iname, secret);
         Logger.debug(
             this,
             "#auth('%s', '%s'): authenticated",
@@ -86,122 +82,33 @@ public final class NbRs extends AbstractRs {
      * @param iname Name of identity
      * @param secret The secret code
      */
-    private void validate(final String iname, final String secret) {
+    private Identity authenticate(final Urn iname, final String secret) {
         if ((iname == null) || (secret == null) || secret.isEmpty()) {
             throw new ForwardException(this, this.base(), "Failure");
         }
-        if (!iname.matches(String.format("%s[a-z]+", this.PREFIX))) {
+        if (!iname.nss().matches(String.format("(db|hh|email)"))) {
             throw new ForwardException(this, this.base(), "Invalid name");
         }
         try {
-            if (!new Cipher().decrypt(secret).equals(iname)) {
+            if (!new Cipher().decrypt(secret).equals(iname.toString())) {
                 throw new ForwardException(this, this.base(), "Wrong secret");
             }
         } catch (com.netbout.utils.DecryptionException ex) {
             throw new ForwardException(this, this.base(), ex);
         }
-    }
-
-    /**
-     * Nb identity representative.
-     */
-    private static final class NbIdentity implements Identity {
-        /**
-         * The suffix after "nb:".
-         */
-        private final transient String suffix;
-        /**
-         * Public ctor.
-         * @param sfx The suffix after "nb:"
-         */
-        public NbIdentity(final String sfx) {
-            this.suffix = sfx;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String user() {
-            return "http://www.netbout.com/nb";
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name() {
-            return String.format("%s%s", NbRs.PREFIX, this.suffix);
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public URL photo() {
-            try {
-                return new URL(
+        try {
+            return new ResolvedIdentity(
+                new URL("http://www.netbout.com/nb"),
+                iname,
+                new URL(
                     String.format(
                         "http://img.netbout.com/nb/%s.png",
-                        this.suffix
+                        iname.nss()
                     )
-                );
-            } catch (java.net.MalformedURLException ex) {
-                throw new IllegalArgumentException(ex);
-            }
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Set<String> aliases() {
-            return new HashSet<String>();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Bout start() {
-            throw new UnsupportedOperationException("#start()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Bout bout(final Long number) {
-            throw new UnsupportedOperationException("#bout()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public List<Bout> inbox(final String query) {
-            throw new UnsupportedOperationException("#inbox()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setPhoto(final URL pic) {
-            throw new UnsupportedOperationException("#setPhoto()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Identity friend(final String name) {
-            throw new UnsupportedOperationException("#friend()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Set<Identity> friends(final String keyword) {
-            throw new UnsupportedOperationException("#friends()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void alias(final String alias) {
-            throw new UnsupportedOperationException("#alias()");
+                )
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
         }
     }
 

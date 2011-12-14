@@ -24,12 +24,15 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.auth;
 
-import com.netbout.hub.User;
+import com.netbout.rest.AbstractPage;
+import com.netbout.rest.AbstractRs;
+import com.netbout.rest.ForwardException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.netbout.utils.Cryptor;
 import com.sun.jersey.api.client.Client;
 import com.ymock.util.Logger;
@@ -64,25 +67,23 @@ public final class AuthRs extends AbstractRs {
 
     /**
      * Authentication page.
-     * @param uname User name
      * @param iname Identity name
      * @param secret Secret word
      * @return The JAX-RS response
      */
     @GET
-    public Response auth(@QueryParam("user") final String uname,
-        @QueryParam("identity") final String iname,
+    public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
-        if (uname == null || iname == null || secret == null) {
+        if (iname == null || secret == null) {
             throw new ForwardException(
                 this,
-                "'user', 'identity', and 'secret' query params are mandatory"
+                "'identity' and 'secret' query params are mandatory"
             );
         }
         this.logoff();
         Identity identity;
         try {
-            identity = this.authenticate(uname, iname, secret);
+            identity = this.authenticate(iname, secret);
         } catch (IOException ex) {
             throw new ForwardException(this, ex);
         }
@@ -98,16 +99,21 @@ public final class AuthRs extends AbstractRs {
 
     /**
      * Authenticate the user through facebook.
-     * @param uname User name
      * @param iname Identity name
      * @param secret Secret word
      * @return The identity found
      * @throws IOException If some problem with FB
      */
-    private Identity authenticate(final String uname, final String iname,
+    private Identity authenticate(final Urn iname,
         final String secret) throws IOException {
+        URL entry;
+        try {
+            entry = this.hub().resolver().authority(iname);
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new ForwardException(this, ex);
+        }
         final Identity remote = this.load(
-            UriBuilder.fromUri(uname)
+            UriBuilder.fromUri(entry.toString())
                 .queryParam("identity", iname)
                 .queryParam("secret", secret)
                 .build()
@@ -122,11 +128,10 @@ public final class AuthRs extends AbstractRs {
                 )
             );
         }
-        final User user = this.hub().user(uname);
         Identity identity;
         try {
-            identity = user.identity(iname);
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            identity = this.hub().identity(iname);
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalStateException(
                 String.format(
                     "Identity '%s' is not reachable: %s",
@@ -167,183 +172,6 @@ public final class AuthRs extends AbstractRs {
             System.currentTimeMillis() - start
         );
         return identity;
-    }
-
-    /**
-     * Remote page wrapper.
-     */
-    @XmlRootElement(name = "page")
-    @XmlAccessorType(XmlAccessType.NONE)
-    private static final class RemotePage {
-        /**
-         * The identity.
-         */
-        private transient RemoteIdentity identity;
-        /**
-         * Set identity.
-         * @param idnt The identity
-         */
-        @XmlElement
-        public void setIdentity(final RemoteIdentity idnt) {
-            this.identity = idnt;
-        }
-        /**
-         * Get identity.
-         * @return The identity
-         * @throws IOException If some problem with data
-         */
-        public RemoteIdentity getIdentity() throws IOException {
-            if (this.identity == null) {
-                throw new IOException("/page/identity missed");
-            }
-            return this.identity;
-        }
-    }
-
-    /**
-     * Remote identity representative.
-     */
-    @XmlType(name = "identity")
-    private static final class RemoteIdentity implements Identity {
-        /**
-         * User name.
-         */
-        private transient String uname;
-        /**
-         * Identity name.
-         */
-        private transient String iname;
-        /**
-         * Photo of identity.
-         */
-        private transient URL iphoto;
-        /**
-         * Aliases.
-         */
-        private final transient List<String> ialiases = new ArrayList<String>();
-        /**
-         * Set user name.
-         * @param name The name of it
-         */
-        @XmlElement
-        public void setUser(final String name) {
-            this.uname = name;
-        }
-        /**
-         * Set identity name.
-         * @param name The name of it
-         */
-        @XmlElement
-        public void setName(final String name) {
-            this.iname = name;
-        }
-        /**
-         * Set photo.
-         * @param url The URL
-         * @throws IOException If some problem with data
-         */
-        @XmlElement(name = "photo")
-        public void setJaxbPhoto(final String url) throws IOException {
-            try {
-                this.iphoto = new URL(url);
-            } catch (java.net.MalformedURLException ex) {
-                throw new IOException(ex);
-            }
-        }
-        /**
-         * Set aliases.
-         * @param names List of them
-         */
-        @XmlElement
-        public void setAliases(final List<String> names) {
-            this.ialiases.addAll(names);
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String user() {
-            if (this.uname == null) {
-                throw new IllegalStateException("/page/identity/user missed");
-            }
-            return this.uname;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name() {
-            if (this.iname == null) {
-                throw new IllegalStateException("/page/identity/name missed");
-            }
-            return this.iname;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Bout start() {
-            throw new UnsupportedOperationException("#start()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Bout bout(final Long number) {
-            throw new UnsupportedOperationException("#bout()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public List<Bout> inbox(final String query) {
-            throw new UnsupportedOperationException("#inbox()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public URL photo() {
-            if (this.iphoto == null) {
-                throw new IllegalStateException("/page/identity/photo missed");
-            }
-            return this.iphoto;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setPhoto(final URL pic) {
-            throw new UnsupportedOperationException("#setPhoto()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Identity friend(final String name) {
-            throw new UnsupportedOperationException("#friend()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Set<Identity> friends(final String keyword) {
-            throw new UnsupportedOperationException("#friends()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Set<String> aliases() {
-            return new HashSet(this.ialiases);
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void alias(final String alias) {
-            throw new UnsupportedOperationException("#alias()");
-        }
     }
 
 }

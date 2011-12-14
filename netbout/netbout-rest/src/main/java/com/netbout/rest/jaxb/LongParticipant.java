@@ -28,7 +28,9 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.netbout.utils.AliasBuilder;
+import java.net.URL;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -101,7 +103,7 @@ public final class LongParticipant {
      * @return The name
      */
     @XmlElement
-    public String getIdentity() {
+    public Urn getIdentity() {
         return this.participant.identity().name();
     }
 
@@ -119,8 +121,8 @@ public final class LongParticipant {
      * @return The photo
      */
     @XmlElement
-    public String getPhoto() {
-        return this.participant.identity().photo().toString();
+    public URL getPhoto() {
+        return this.participant.identity().photo();
     }
 
     /**

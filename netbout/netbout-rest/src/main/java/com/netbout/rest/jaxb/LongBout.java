@@ -32,6 +32,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -136,7 +137,7 @@ public final class LongBout {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
-        for (String identity : this.coords.all()) {
+        for (Urn identity : this.coords.all()) {
             stages.add(new ShortStage(identity, this.builder.clone()));
         }
         return stages;
@@ -149,7 +150,7 @@ public final class LongBout {
     @XmlElement
     public LongStage getStage() {
         LongStage stage = null;
-        if (!this.coords.stage().isEmpty()) {
+        if (this.coords.hasStage()) {
             stage = new LongStage(this.bus, this.bout, this.coords);
         }
         return stage;

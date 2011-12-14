@@ -31,6 +31,7 @@ import com.netbout.bus.DefaultBus;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.netbout.utils.Promoter;
 import com.ymock.util.Logger;
 import java.net.URL;
@@ -92,34 +93,29 @@ public final class Starter implements ContextResolver<Starter> {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private void start() {
         final Promoter promoter = new Promoter(this.hub);
-        final String dbname = "nb:db";
+        final Urn dbname = new Urn("netbout", "db");
         try {
-            final Identity starter = this.hub
-                .user("http://www.netbout.com/nb")
-                .identity("nb:starter");
+            final Identity starter =
+                this.hub.identity(new Urn("netbout", "starter"));
             promoter.promote(
                 starter.friend(dbname),
                 new URL("file", "", "com.netbout.db")
             );
-            starter.setPhoto(
-                new URL("http", "img.netbout.com", "nb/starter.png")
-            );
-            final List<String> helpers = this.bus.make("get-all-helpers")
+            final List<Urn> helpers = this.bus.make("get-all-helpers")
                 .synchronously()
-                .asDefault(new ArrayList<String>())
+                .asDefault(new ArrayList<Urn>())
                 .exec();
-            for (String name : helpers) {
+            for (Urn name : helpers) {
                 if (dbname.equals(name)) {
                     continue;
                 }
-                final String url = this.bus.make("get-helper-url")
+                final URL url = this.bus.make("get-helper-url")
                     .synchronously()
                     .arg(name)
-                    .asDefault("")
                     .exec();
-                promoter.promote(starter.friend(name), new URL(url));
+                promoter.promote(starter.friend(name), url);
             }
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);

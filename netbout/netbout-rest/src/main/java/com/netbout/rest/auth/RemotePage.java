@@ -24,53 +24,70 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.rest.auth;
 
-import com.netbout.hub.Hub;
-import com.netbout.spi.Helper;
+import com.netbout.rest.AbstractRs;
+import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
+import com.netbout.spi.Urn;
+import com.netbout.utils.Cryptor;
+import com.sun.jersey.api.client.Client;
 import com.ymock.util.Logger;
+import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Identity promoter.
+ * Remote page wrapper.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Promoter {
+@XmlRootElement(name = "page")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class RemotePage {
 
     /**
-     * The hub to work with.
+     * The identity.
      */
-    private final transient Hub hub;
+    private transient RemoteIdentity identity;
 
     /**
-     * Ctor.
-     * @param ihub The hub
+     * Set identity.
+     * @param idnt The identity
      */
-    public Promoter(final Hub ihub) {
-        this.hub = ihub;
+    @XmlElement
+    public void setIdentity(final RemoteIdentity idnt) {
+        this.identity = idnt;
     }
 
     /**
-     * Promote this identity.
-     * @param identity The identity to promote
-     * @param url The URL
-     * @return Helper
+     * Get identity.
+     * @return The identity
+     * @throws IOException If some problem with data
      */
-    public Helper promote(final Identity identity, final URL url) {
-        final CpaHelper helper = new CpaHelper(identity, url);
-        this.hub.promote(identity, helper);
-        Logger.info(
-            this,
-            "#promote('%s', '%s'): promoted with '%s'",
-            identity.name(),
-            url,
-            helper.getClass().getName()
-        );
-        return helper;
+    public RemoteIdentity getIdentity() throws IOException {
+        if (this.identity == null) {
+            throw new IOException("/page/identity missed");
+        }
+        return this.identity;
     }
 
 }
+

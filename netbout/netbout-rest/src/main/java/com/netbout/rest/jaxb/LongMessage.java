@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -78,7 +79,7 @@ public final class LongMessage {
      * @return The author
      */
     @XmlElement
-    public String getAuthor() {
+    public Urn getAuthor() {
         return this.message.author().name();
     }
 

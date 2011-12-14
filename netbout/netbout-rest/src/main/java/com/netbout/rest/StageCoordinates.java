@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.netbout.utils.TextUtils;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,12 +55,12 @@ public final class StageCoordinates {
     /**
      * List of all stages.
      */
-    private transient Collection<String> stages;
+    private transient Collection<Urn> stages;
 
     /**
      * Name of stage.
      */
-    private transient String istage = "";
+    private transient Urn istage;
 
     /**
      * Place of stage.
@@ -67,10 +68,23 @@ public final class StageCoordinates {
     private transient String iplace = "";
 
     /**
+     * Stage is set?
+     * @return Is it?
+     */
+    public boolean hasStage() {
+        if (this.stages == null) {
+            throw new IllegalStateException(
+                "Call #normalize() before #hasStage()"
+            );
+        }
+        return this.istage != null;
+    }
+
+    /**
      * Get stage.
      * @return The name of it
      */
-    public String stage() {
+    public Urn stage() {
         if (this.stages == null) {
             throw new IllegalStateException(
                 "Call #normalize() before #stage()"
@@ -80,15 +94,20 @@ public final class StageCoordinates {
     }
 
     /**
-     * Get stage for URI path.
-     * @return The name of it
+     * Get stage as text.
+     * @return The text
      */
-    public String stageForPath() {
-        String stg = this.stage();
-        if (stg.isEmpty()) {
-            stg = "-";
+    public String stageAsText() {
+        if (this.stages == null) {
+            throw new IllegalStateException(
+                "Call #normalize() before #stageAsText()"
+            );
         }
-        return stg;
+        String text = "null";
+        if (this.istage != null) {
+            text = this.istage.toString();
+        }
+        return text;
     }
 
     /**
@@ -96,7 +115,11 @@ public final class StageCoordinates {
      * @param name The name of it
      */
     public void setStage(final String name) {
-        this.istage = name;
+        if (!name.startsWith("urn:")) {
+            this.istage = null;
+        } else {
+            this.istage = Urn.create(name);
+        }
     }
 
     /**
@@ -130,7 +153,10 @@ public final class StageCoordinates {
         if (pair != null && pair.contains(StageCoordinates.SEPARATOR)) {
             coords.setStage(
                 TextUtils.unpack(
-                    pair.substring(0, pair.indexOf(StageCoordinates.SEPARATOR))
+                    pair.substring(
+                        0,
+                        pair.indexOf(StageCoordinates.SEPARATOR)
+                    )
                 )
             );
             coords.setPlace(
@@ -155,7 +181,7 @@ public final class StageCoordinates {
         }
         return String.format(
             "%s%s%s",
-            TextUtils.pack(this.istage),
+            TextUtils.pack(this.istage.toString()),
             this.SEPARATOR,
             TextUtils.pack(this.iplace)
         );
@@ -165,7 +191,7 @@ public final class StageCoordinates {
      * List of all stages, their names.
      * @return The list
      */
-    public Collection<String> all() {
+    public Collection<Urn> all() {
         if (this.stages == null) {
             throw new IllegalStateException("Call #normalize() before #all()");
         }
@@ -181,9 +207,9 @@ public final class StageCoordinates {
         if (this.stages != null) {
             throw new IllegalStateException("Duplicate call to #normalize()");
         }
-        this.stages = new ArrayList<String>();
+        this.stages = new ArrayList<Urn>();
         for (Participant dude : bout.participants()) {
-            final String name = dude.identity().name();
+            final Urn name = dude.identity().name();
             final Boolean exists = bus.make("does-stage-exist")
                 .synchronously()
                 .arg(bout.number())
@@ -195,11 +221,11 @@ public final class StageCoordinates {
                 this.stages.add(name);
             }
         }
-        if (this.istage.isEmpty() && this.stages.size() > 0) {
+        if (this.istage == null && this.stages.size() > 0) {
             this.istage = this.stages.iterator().next();
         }
         if (!this.stages.contains(this.istage)) {
-            this.istage = "";
+            this.istage = null;
         }
     }
 

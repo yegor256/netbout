@@ -41,7 +41,7 @@ import javax.ws.rs.core.UriBuilder;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-class ForwardException extends WebApplicationException {
+public class ForwardException extends WebApplicationException {
 
     /**
      * Constructor.

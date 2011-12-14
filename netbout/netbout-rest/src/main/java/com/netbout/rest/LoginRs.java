@@ -26,10 +26,14 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.auth.FacebookRs;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -67,6 +71,33 @@ public final class LoginRs extends AbstractRs {
             .init(this)
             .link("facebook", fburi)
             .anonymous()
+            .build();
+    }
+
+    /**
+     * Facebook authentication page (callback hits it).
+     * @param code Facebook "authorization code"
+     * @return The JAX-RS response
+     */
+    @GET
+    @Path("/facebook")
+    public Response fbauth(@QueryParam("code") final String code) {
+        this.logoff();
+        final Identity remote = (Identity) new FacebookRs()
+            .auth(Urn.create("urn:facebook:0"), code)
+            .getEntity();
+        Identity identity;
+        try {
+            identity = this.hub().identity(remote.name());
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new ForwardException(this, ex);
+        }
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(identity)
+            .status(Response.Status.SEE_OTHER)
+            .location(this.base().build())
             .build();
     }
 

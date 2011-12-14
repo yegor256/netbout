@@ -24,11 +24,14 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.auth;
 
-import com.netbout.hub.User;
+import com.netbout.rest.AbstractPage;
+import com.netbout.rest.AbstractRs;
+import com.netbout.rest.ForwardException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.rexsl.core.Manifests;
@@ -53,25 +56,30 @@ import org.apache.commons.io.IOUtils;
 public final class FacebookRs extends AbstractRs {
 
     /**
-     * Facebook authentication page (callback hits it).
-     * @param code Facebook "authorization code"
+     * Authentication page.
+     * @param iname Name of identity
+     * @param secret The secret code
      * @return The JAX-RS response
      */
     @GET
-    public Response fbauth(@QueryParam("code") final String code) {
-        this.logoff();
+    public Response auth(@QueryParam("identity") final Urn iname,
+        @QueryParam("secret") final String secret) {
         Identity identity;
         try {
-            identity = this.authenticate(code);
+            identity = this.authenticate(secret);
         } catch (IOException ex) {
             throw new ForwardException(this, ex);
         }
+        Logger.debug(
+            this,
+            "#auth('%s', '%s'): authenticated",
+            iname,
+            secret
+        );
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(identity)
-            .status(Response.Status.SEE_OTHER)
-            .location(this.base().build())
             .build();
     }
 
@@ -81,31 +89,19 @@ public final class FacebookRs extends AbstractRs {
      * @return The identity found
      * @throws IOException If some problem with FB
      */
-    private Identity authenticate(final String code) throws IOException {
+    private Identity authenticate(final String code)
+        throws IOException {
         final String token = this.token(code);
         final com.restfb.types.User fbuser = this.fbUser(token);
         assert fbuser != null;
-        final User user = this.hub().user(fbuser.getId());
-        Identity identity;
-        try {
-            identity = user.identity(fbuser.getId());
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new IllegalStateException(
-                String.format(
-                    "Facebook identity '%s' is not reachable: %s",
-                    fbuser.getId(),
-                    ex
-                )
-            );
-        }
-        identity.alias(fbuser.getName());
-        identity.setPhoto(
+        return new ResolvedIdentity(
+            UriBuilder.fromUri("http://www.netbout.com/fb").build().toURL(),
+            new Urn("facebook", fbuser.getId()),
             UriBuilder
                 .fromPath("https://graph.facebook.com/{id}/picture")
                 .build(fbuser.getId())
                 .toURL()
-        );
-        return identity;
+        ).addAlias(fbuser.getName());
     }
 
     /**
