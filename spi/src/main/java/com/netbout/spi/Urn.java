@@ -63,7 +63,7 @@ public final class Urn {
      * Validating regular expr.
      */
     private static final String REGEX =
-        "^urn:[a-z]{1,31}:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-fA-F]{2})*$";
+        "^urn:[a-z]{1,31}:([\\w()+,\\-.:=@;$_!*']|%[0-9a-fA-F]{2})*$";
 
     /**
      * The URI.

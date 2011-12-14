@@ -117,13 +117,13 @@ public final class UrnTest {
     @Test
     public void passesCorrectUrnSyntax() throws Exception {
         final String[] texts = new String[] {
-            "urn:foo:some+text+with+spaces",
+            "urn:foo:Some+Text+With+Spaces",
             "urn:foo:some%20text%20with%20spaces",
             "urn:a:",
             "urn:verylongnamespaceid:",
         };
         for (String text : texts) {
-            final Urn urn = new Urn(text);
+            final Urn urn = Urn.create(text);
             MatcherAssert.assertThat(
                 new Urn(urn.toString()),
                 Matchers.equalTo(urn)
