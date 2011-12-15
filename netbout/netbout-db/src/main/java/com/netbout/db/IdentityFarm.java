@@ -63,7 +63,7 @@ public final class IdentityFarm {
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 // @checkstyle LineLength (1 line)
-                "SELECT identity.name FROM identity JOIN alias ON alias.identity = identity.name WHERE UCASE(identity.name) LIKE ? OR UCASE(alias.name) LIKE ?"
+                "SELECT identity.name FROM identity LEFT JOIN alias ON alias.identity = identity.name WHERE UCASE(identity.name) LIKE ? OR UCASE(alias.name) LIKE ? GROUP BY identity.name"
             );
             final String matcher = String.format(
                 "%%%s%%",
