@@ -107,10 +107,12 @@ public final class IdentityFarmTest {
     public void findsIdentitiesByTheirNames() throws Exception {
         final Urn identity = new IdentityRowMocker()
             .namedAs("urn:test:test@example.com")
+            .withAlias("William")
             .mock();
         final String[] keywords = new String[] {
+            "urn:test:test@example.co",
             "test",
-            "@example.com",
+            "@example",
         };
         for (String keyword : keywords) {
             MatcherAssert.assertThat(

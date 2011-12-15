@@ -27,8 +27,6 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import java.net.URL;
-import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

@@ -30,6 +30,7 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -96,7 +97,12 @@ public final class IdentityRowMocker {
     public Urn mock() throws Exception {
         final IdentityFarm farm = new IdentityFarm();
         farm.identityMentioned(this.identity);
-        farm.changedIdentityPhoto(this.identity, new URL("http://localhost"));
+        farm.changedIdentityPhoto(
+            this.identity,
+            new URL(
+                String.format("http://localhost/%d", new Random().nextLong())
+            )
+        );
         for (String alias : this.aliases) {
             new AliasRowMocker(this.identity).namedAs(alias).mock();
         }

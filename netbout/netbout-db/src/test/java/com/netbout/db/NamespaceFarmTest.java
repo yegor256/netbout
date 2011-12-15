@@ -27,57 +27,54 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Random;
+import java.util.List;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Mocker of {@code ALIAS} row in a database.
+ * Test case of {@link NamespaceFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasRowMocker {
+public final class NamespaceFarmTest {
 
     /**
-     * The identity it is related to.
+     * Farm to work with.
      */
-    private final transient Urn identity;
+    private final transient NamespaceFarm farm = new NamespaceFarm();
 
     /**
-     * The alias.
+     * NamespaceFarm can find all namespaces.
+     * @throws Exception If there is some problem inside
      */
-    private transient String alias;
+    @Test
+    public void findsAllRegisteredNamespaces() throws Exception {
+        final String name = new NamespaceRowMocker().mock();
+        final List<String> names = this.farm.getAllNamespaces();
+        MatcherAssert.assertThat(names, Matchers.hasItem(name));
+    }
 
     /**
-     * Public ctor.
-     * @param name The identity
+     * NamespaceFarm can find name and template of a namespace.
+     * @throws Exception If there is some problem inside
      */
-    public AliasRowMocker(final Urn name) {
-        this.identity = name;
-        this.alias = String.format(
-            "Captain William Bones no.%d",
-            Math.abs(new Random().nextLong())
+    @Test
+    public void findsNameAndTemplateOfNamespace() throws Exception {
+        final Urn identity = new IdentityRowMocker().mock();
+        final String template = "http://localhost/abc/{nss}/cde";
+        final String name = new NamespaceRowMocker()
+            .withTemplate(template)
+            .withOwner(identity)
+            .mock();
+        MatcherAssert.assertThat(
+            this.farm.getNamespaceOwner(name),
+            Matchers.equalTo(identity)
         );
-    }
-
-    /**
-     * With this name.
-     * @param name The alias
-     * @return This object
-     * @throws Exception If there is some problem inside
-     */
-    public AliasRowMocker namedAs(final String name) throws Exception {
-        this.alias = name;
-        return this;
-    }
-
-    /**
-     * Mock it and return its text.
-     * @throws Exception If there is some problem inside
-     */
-    public String mock() throws Exception {
-        final AliasFarm afarm = new AliasFarm();
-        afarm.addedIdentityAlias(this.identity, this.alias);
-        return this.alias;
+        MatcherAssert.assertThat(
+            this.farm.getNamespaceTemplate(name),
+            Matchers.equalTo(template)
+        );
     }
 
 }

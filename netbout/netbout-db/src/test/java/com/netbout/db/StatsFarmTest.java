@@ -28,12 +28,9 @@ package com.netbout.db;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlConverter;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.namespace.SimpleNamespaceContext;
 

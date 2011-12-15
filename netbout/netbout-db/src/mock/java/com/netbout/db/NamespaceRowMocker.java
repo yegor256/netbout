@@ -28,56 +28,81 @@ package com.netbout.db;
 
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.util.Random;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Mocker of {@code ALIAS} row in a database.
+ * Mocker of {@code NAMESPACE} row in a database.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasRowMocker {
+public final class NamespaceRowMocker {
 
     /**
-     * The identity it is related to.
+     * Owner of namespace.
      */
-    private final transient Urn identity;
+    private transient Urn identity;
 
     /**
-     * The alias.
+     * Name of namespace.
      */
-    private transient String alias;
+    private transient String name = "foo";
+
+    /**
+     * Template of it.
+     */
+    private transient String template = "http://localhost/foo";
 
     /**
      * Public ctor.
-     * @param name The identity
+     * @throws Exception If there is some problem inside
      */
-    public AliasRowMocker(final Urn name) {
-        this.identity = name;
-        this.alias = String.format(
-            "Captain William Bones no.%d",
-            Math.abs(new Random().nextLong())
-        );
+    public NamespaceRowMocker() throws Exception {
+        this.identity = new IdentityRowMocker().mock();
     }
 
     /**
      * With this name.
-     * @param name The alias
-     * @return This object
+     * @param nam The name
+     * @return THis object
      * @throws Exception If there is some problem inside
      */
-    public AliasRowMocker namedAs(final String name) throws Exception {
-        this.alias = name;
+    public NamespaceRowMocker namedAs(final String nam) throws Exception {
+        this.name = nam;
         return this;
     }
 
     /**
-     * Mock it and return its text.
+     * With this owner.
+     * @param name The owner
+     * @return THis object
+     * @throws Exception If there is some problem inside
+     */
+    public NamespaceRowMocker withOwner(final Urn name) throws Exception {
+        this.identity = name;
+        return this;
+    }
+
+    /**
+     * With this template.
+     * @param name The name
+     * @return THis object
+     * @throws Exception If there is some problem inside
+     */
+    public NamespaceRowMocker withTemplate(final String name) throws Exception {
+        this.template = name;
+        return this;
+    }
+
+    /**
+     * Mock it and return its name.
      * @throws Exception If there is some problem inside
      */
     public String mock() throws Exception {
-        final AliasFarm afarm = new AliasFarm();
-        afarm.addedIdentityAlias(this.identity, this.alias);
-        return this.alias;
+        final NamespaceFarm farm = new NamespaceFarm();
+        farm.namespaceWasRegistered(this.identity, this.name, this.template);
+        return this.name;
     }
 
 }

@@ -146,7 +146,7 @@ public final class HelperFarm {
     public URL getHelperUrl(final Urn name) throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
-        URL url;
+        String value;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 "SELECT url FROM helper WHERE identity = ?"
@@ -162,16 +162,18 @@ public final class HelperFarm {
                         )
                     );
                 }
-                try {
-                    url = new URL(rset.getString(1));
-                } catch (java.net.MalformedURLException ex) {
-                    throw new IllegalStateException(ex);
-                }
+                value = rset.getString(1);
             } finally {
                 rset.close();
             }
         } finally {
             conn.close();
+        }
+        URL url;
+        try {
+            url = new URL(value);
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
         }
         Logger.debug(
             this,
