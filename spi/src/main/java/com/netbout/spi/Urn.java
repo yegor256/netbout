@@ -45,6 +45,11 @@ import org.apache.commons.lang.StringUtils;
 public final class Urn implements Comparable {
 
     /**
+     * Marker of an empty URN.
+     */
+    private static final String EMPTY = "void";
+
+    /**
      * The prefix.
      */
     private static final String PREFIX = "urn";
@@ -74,7 +79,7 @@ public final class Urn implements Comparable {
      * Public ctor, for JAXB mostly.
      */
     public Urn() {
-        throw new IllegalStateException("#Urn() shouldn't be called");
+        this(Urn.EMPTY, "");
     }
 
     /**
@@ -162,6 +167,14 @@ public final class Urn implements Comparable {
     @Override
     public int hashCode() {
         return this.uri.hashCode();
+    }
+
+    /**
+     * Is it empty?
+     * @return Yes of no
+     */
+    public boolean isEmpty() {
+        return this.EMPTY.equals(this.nid());
     }
 
     /**

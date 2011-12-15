@@ -131,4 +131,14 @@ public final class UrnTest {
         }
     }
 
+    /**
+     * Urn can be "empty".
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void emptyUrnIsAFirstClassCitizen() throws Exception {
+        final Urn urn = new Urn();
+        MatcherAssert.assertThat(urn.isEmpty(), Matchers.equalTo(true));
+    }
+
 }
