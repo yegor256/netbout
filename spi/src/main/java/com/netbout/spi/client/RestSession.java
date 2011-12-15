@@ -30,6 +30,7 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -84,7 +85,7 @@ public final class RestSession {
      * @param secret The secret word to use
      * @return The identity to work with
      */
-    public Identity authenticate(final String iname, final String secret) {
+    public Identity authenticate(final Urn iname, final String secret) {
         return new RestIdentity(
             new JerseyRestClient(
                 this.client.resource(this.home),
@@ -99,10 +100,10 @@ public final class RestSession {
      * @param secret The secret word to use
      * @return The URL
      */
-    private String fetch(final String identity, final String secret) {
+    private String fetch(final Urn identity, final String secret) {
         final WebResource resource = this.client.resource(this.home)
             .path("/auth")
-            .queryParam("identity", identity)
+            .queryParam("identity", identity.toString())
             .queryParam("secret", secret);
         final ClientResponse response = resource.get(ClientResponse.class);
         if (response.getStatus() != HttpURLConnection.HTTP_SEE_OTHER) {

@@ -152,7 +152,7 @@ final class RestBout implements Bout {
             throw new IllegalStateException(
                 String.format(
                     // @checkstyle LineLength (1 line)
-                    "Can't invite '%s' to the bout because Netbout doesn't suggest his/her identity",
+                    "Can't invite '%s' to the bout because Netbout doesn't suggest any identities by this keyword",
                     name
                 )
             );
