@@ -47,37 +47,20 @@ public final class ParticipantFarmTest {
     private final transient ParticipantFarm farm = new ParticipantFarm();
 
     /**
-     * Bout number to work with.
-     */
-    private transient Long bout;
-
-    /**
-     * Start new bout to work with.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void prepareNewBout() throws Exception {
-        final BoutFarm bfarm = new BoutFarm();
-        this.bout = bfarm.getNextBoutNumber();
-        bfarm.startedNewBout(this.bout);
-    }
-
-    /**
      * ParticipantFarm can manipulate participant status.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void manipulatsBoutStatus() throws Exception {
-        final Urn identity = new Urn("foo", "Steve Jobs");
-        new IdentityFarm().changedIdentityPhoto(identity, new URL("http://x"));
-        this.farm.addedBoutParticipant(this.bout, identity);
+        final Long bout = new BoutRowMocker().mock();
+        final Urn identity = new ParticipantRowMocker(bout).mock();
         MatcherAssert.assertThat(
-            this.farm.getParticipantStatus(this.bout, identity),
+            this.farm.getParticipantStatus(bout, identity),
             Matchers.equalTo(false)
         );
-        this.farm.changedParticipantStatus(this.bout, identity, true);
+        this.farm.changedParticipantStatus(bout, identity, true);
         MatcherAssert.assertThat(
-            this.farm.getParticipantStatus(this.bout, identity),
+            this.farm.getParticipantStatus(bout, identity),
             Matchers.equalTo(true)
         );
     }
@@ -88,10 +71,9 @@ public final class ParticipantFarmTest {
      */
     @Test
     public void readsBoutParticipants() throws Exception {
-        final Urn identity = new Urn("x", "Bill Gates");
-        new IdentityFarm().changedIdentityPhoto(identity, new URL("http://y"));
-        this.farm.addedBoutParticipant(this.bout, identity);
-        final List<Urn> names = this.farm.getBoutParticipants(this.bout);
+        final Long bout = new BoutRowMocker().mock();
+        final Urn identity = new ParticipantRowMocker(bout).mock();
+        final List<Urn> names = this.farm.getBoutParticipants(bout);
         MatcherAssert.assertThat(
             names,
             Matchers.hasItem(identity)
@@ -104,11 +86,10 @@ public final class ParticipantFarmTest {
      */
     @Test
     public void addsAndRemovesParticipants() throws Exception {
-        final Urn identity = new Urn("xxx", "William III");
-        new IdentityFarm().changedIdentityPhoto(identity, new URL("http://z"));
-        this.farm.addedBoutParticipant(this.bout, identity);
-        this.farm.removedBoutParticipant(this.bout, identity);
-        final List<Urn> names = this.farm.getBoutParticipants(this.bout);
+        final Long bout = new BoutRowMocker().mock();
+        final Urn identity = new ParticipantRowMocker(bout).mock();
+        this.farm.removedBoutParticipant(bout, identity);
+        final List<Urn> names = this.farm.getBoutParticipants(bout);
         MatcherAssert.assertThat(names.size(), Matchers.equalTo(0));
     }
 

@@ -27,6 +27,7 @@
 package com.netbout.db;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlConverter;
@@ -54,10 +55,11 @@ public final class StatsFarmTest {
      */
     @Test
     public void testSummaryRendering() throws Exception {
-        final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn(new UrnMocker().mock()).when(identity).name();
+        final Long bout = new BoutRowMocker().mock();
+        final Identity identity =
+            new IdentityMocker().namedAs(new IdentityRowMocker().mock()).mock();
         this.farm.init(identity);
-        final String xml = this.farm.renderStageXml(1L, identity.name(), "");
+        final String xml = this.farm.renderStageXml(bout, identity.name(), "");
         MatcherAssert.assertThat(
             XhtmlConverter.the(xml),
             XmlMatchers.hasXPath("/data/summary")
@@ -70,10 +72,11 @@ public final class StatsFarmTest {
      */
     @Test
     public void testRenderingOfXslStylesheet() throws Exception {
-        final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn(new UrnMocker().mock()).when(identity).name();
+        final Long bout = new BoutRowMocker().mock();
+        final Identity identity =
+            new IdentityMocker().namedAs(new IdentityRowMocker().mock()).mock();
         this.farm.init(identity);
-        final String xsl = this.farm.renderStageXsl(1L, identity.name());
+        final String xsl = this.farm.renderStageXsl(bout, identity.name());
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
             XmlMatchers.hasXPath(

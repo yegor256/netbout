@@ -27,35 +27,44 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import java.util.List;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Test case of {@link AliasFarm}.
+ * Mocker of {@code BOUT} row in a database.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasFarmTest {
+public final class BoutRowMocker {
 
     /**
-     * Farm to work with.
+     * Participants to add.
      */
-    private final transient AliasFarm farm = new AliasFarm();
+    private final transient Set<Urn> participants = new HashSet<Urn>();
 
     /**
-     * AliasFarm can add alias to identity and find it then.
+     * With this participant on board.
+     * @param name The name
+     * @return THis object
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void addsAnAliasAndRetrievesItBack() throws Exception {
-        final String alias = "willy@example.com";
-        final Urn identity = new IdentityRowMocker()
-            .withAlias(alias)
-            .mock();
-        final List<String> aliases = this.farm.getAliasesOfIdentity(identity);
-        MatcherAssert.assertThat(aliases, Matchers.hasItem(alias));
+    public BoutRowMocker withParticipant(final Urn name) throws Exception {
+        this.participants.add(name);
+        return this;
+    }
+
+    /**
+     * Mock it and return its number.
+     * @throws Exception If there is some problem inside
+     */
+    public Long mock() throws Exception {
+        final BoutFarm farm = new BoutFarm();
+        final Long bout = farm.getNextBoutNumber();
+        farm.startedNewBout(bout);
+        for (Urn name : this.participants) {
+            new ParticipantRowMocker(bout).namedAs(name).mock();
+        }
+        return bout;
     }
 
 }

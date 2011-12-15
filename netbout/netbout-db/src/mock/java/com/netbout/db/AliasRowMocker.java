@@ -27,35 +27,52 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import java.util.List;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.spi.UrnMocker;
 
 /**
- * Test case of {@link AliasFarm}.
+ * Mocker of {@code ALIAS} row in a database.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasFarmTest {
+public final class AliasRowMocker {
 
     /**
-     * Farm to work with.
+     * The identity it is related to.
      */
-    private final transient AliasFarm farm = new AliasFarm();
+    private final transient Urn identity;
 
     /**
-     * AliasFarm can add alias to identity and find it then.
+     * The alias.
+     */
+    private transient String alias = "Captain William Bones";
+
+    /**
+     * Public ctor.
+     * @param name The identity
+     */
+    public AliasRowMocker(final Urn name) {
+        this.identity = name;
+    }
+
+    /**
+     * With this name.
+     * @param name The alias
+     * @return This object
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void addsAnAliasAndRetrievesItBack() throws Exception {
-        final String alias = "willy@example.com";
-        final Urn identity = new IdentityRowMocker()
-            .withAlias(alias)
-            .mock();
-        final List<String> aliases = this.farm.getAliasesOfIdentity(identity);
-        MatcherAssert.assertThat(aliases, Matchers.hasItem(alias));
+    public AliasRowMocker namedAs(final String name) throws Exception {
+        this.alias = name;
+        return this;
+    }
+
+    /**
+     * Mock it and return its text.
+     * @throws Exception If there is some problem inside
+     */
+    public String mock() throws Exception {
+        final AliasFarm afarm = new AliasFarm();
+        afarm.addedIdentityAlias(this.identity, this.alias);
+        return this.alias;
     }
 
 }

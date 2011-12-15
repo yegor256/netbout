@@ -27,62 +27,80 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import java.net.URL;
-import java.util.List;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Test case of {@link HelperFarm}.
+ * Mocker of {@code IDENTITY} row in a database.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HelperFarmTest {
+public final class IdentityRowMocker {
 
     /**
-     * Farm to work with.
+     * Aliases to add.
      */
-    private final transient HelperFarm farm = new HelperFarm();
+    private final transient Set<String> aliases = new HashSet<String>();
 
     /**
-     * HelperFarm can find bouts of some identity.
+     * Name of identity.
+     */
+    private transient Urn identity;
+
+    /**
+     * Public ctor.
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void registersNewHelperAndFindsIt() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
-        final URL url = new URL("http://localhost/some-address");
-        this.farm.identityPromoted(identity, url);
-        final List<Urn> names = this.farm.getAllHelpers();
-        MatcherAssert.assertThat(names, Matchers.hasItem(identity));
-        MatcherAssert.assertThat(
-            this.farm.getHelperUrl(identity),
-            Matchers.equalTo(url)
-        );
+    public IdentityRowMocker() throws Exception {
+        this.identity = new UrnMocker().mock();
     }
 
     /**
-     * HelperFarm can register helper twice.
+     * With this name.
+     * @param name The name
+     * @return THis object
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void registersHelperTwice() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
-        final URL url = new URL("http://localhost/some-other-address");
-        this.farm.identityPromoted(identity, url);
-        this.farm.identityPromoted(identity, url);
+    public IdentityRowMocker namedAs(final String name) throws Exception {
+        return this.namedAs(new Urn(name));
     }
 
     /**
-     * HelperFarm can catch a problem if a new URL is different.
+     * With this name.
+     * @param name The name
+     * @return THis object
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void registersHelperTwiceWithDifferentUrl() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
-        this.farm.identityPromoted(identity, new URL("http://localhost/abc"));
-        this.farm.identityPromoted(identity, new URL("http://localhost/cde"));
+    public IdentityRowMocker namedAs(final Urn name) throws Exception {
+        this.identity = name;
+        return this;
+    }
+
+    /**
+     * With this alias on board.
+     * @param name The alias
+     * @return THis object
+     * @throws Exception If there is some problem inside
+     */
+    public IdentityRowMocker withAlias(final String name) throws Exception {
+        this.aliases.add(name);
+        return this;
+    }
+
+    /**
+     * Mock it and return its URN.
+     * @throws Exception If there is some problem inside
+     */
+    public Urn mock() throws Exception {
+        final IdentityFarm farm = new IdentityFarm();
+        farm.identityMentioned(this.identity);
+        farm.changedIdentityPhoto(this.identity, new URL("http://localhost"));
+        for (String alias : this.aliases) {
+            new AliasRowMocker(this.identity).namedAs(alias).mock();
+        }
+        return this.identity;
     }
 
 }

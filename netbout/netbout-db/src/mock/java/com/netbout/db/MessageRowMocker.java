@@ -27,35 +27,38 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import java.util.List;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.spi.UrnMocker;
+import java.util.Date;
 
 /**
- * Test case of {@link AliasFarm}.
+ * Mocker of {@code MESSAGE} row in a database.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasFarmTest {
+public final class MessageRowMocker {
 
     /**
-     * Farm to work with.
+     * The bout it is related to.
      */
-    private final transient AliasFarm farm = new AliasFarm();
+    private final transient Long bout;
 
     /**
-     * AliasFarm can add alias to identity and find it then.
+     * Public ctor.
+     * @param number The bout
+     */
+    public MessageRowMocker(final Long number) {
+        this.bout = number;
+    }
+
+    /**
+     * Mock it and return its number.
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void addsAnAliasAndRetrievesItBack() throws Exception {
-        final String alias = "willy@example.com";
-        final Urn identity = new IdentityRowMocker()
-            .withAlias(alias)
-            .mock();
-        final List<String> aliases = this.farm.getAliasesOfIdentity(identity);
-        MatcherAssert.assertThat(aliases, Matchers.hasItem(alias));
+    public Long mock() throws Exception {
+        final MessageFarm farm = new MessageFarm();
+        final Long number = farm.createBoutMessage(this.bout);
+        farm.changedMessageDate(number, new Date());
+        return number;
     }
 
 }

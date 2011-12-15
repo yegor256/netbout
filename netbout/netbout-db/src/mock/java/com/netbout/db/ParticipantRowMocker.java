@@ -27,35 +27,66 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import java.util.List;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.spi.UrnMocker;
 
 /**
- * Test case of {@link AliasFarm}.
+ * Mocker of {@code PARTICIPANT} row in a database.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasFarmTest {
+public final class ParticipantRowMocker {
 
     /**
-     * Farm to work with.
+     * The bout it is related to.
      */
-    private final transient AliasFarm farm = new AliasFarm();
+    private final transient Long bout;
 
     /**
-     * AliasFarm can add alias to identity and find it then.
+     * The name of it.
+     */
+    private transient Urn identity;
+
+    /**
+     * Public ctor.
+     * @param number The bout
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void addsAnAliasAndRetrievesItBack() throws Exception {
-        final String alias = "willy@example.com";
-        final Urn identity = new IdentityRowMocker()
-            .withAlias(alias)
-            .mock();
-        final List<String> aliases = this.farm.getAliasesOfIdentity(identity);
-        MatcherAssert.assertThat(aliases, Matchers.hasItem(alias));
+    public ParticipantRowMocker(final Long number) throws Exception {
+        this.identity = new UrnMocker().mock();
+        this.bout = number;
+    }
+
+    /**
+     * With this name.
+     * @param name The name of participant
+     * @return This object
+     * @throws Exception If there is some problem inside
+     */
+    public ParticipantRowMocker namedAs(final String name) throws Exception {
+        return this.namedAs(new Urn(name));
+    }
+
+    /**
+     * With this name.
+     * @param name The name of participant
+     * @return This object
+     * @throws Exception If there is some problem inside
+     */
+    public ParticipantRowMocker namedAs(final Urn name) throws Exception {
+        this.identity = name;
+        return this;
+    }
+
+    /**
+     * Mock it and return its name.
+     * @throws Exception If there is some problem inside
+     */
+    public Urn mock() throws Exception {
+        final IdentityFarm ifarm = new IdentityFarm();
+        ifarm.identityMentioned(this.identity);
+        final ParticipantFarm farm = new ParticipantFarm();
+        farm.addedBoutParticipant(this.bout, this.identity);
+        return identity;
     }
 
 }

@@ -51,13 +51,9 @@ public final class SeenFarmTest {
      */
     @Test
     public void testMessageSeenFlag() throws Exception {
-        final Urn identity = new Urn("foo", "Felix");
-        new IdentityFarm().changedIdentityPhoto(identity, new URL("http://x"));
-        final Long bout = new BoutFarm().getNextBoutNumber();
-        new BoutFarm().startedNewBout(bout);
-        new ParticipantFarm().addedBoutParticipant(bout, identity);
-        final Long msg = new MessageFarm().createBoutMessage(bout);
-        new MessageFarm().changedMessageDate(msg, new Date());
+        final Long bout = new BoutRowMocker().mock();
+        final Urn identity = new ParticipantRowMocker(bout).mock();
+        final Long msg = new MessageRowMocker(bout).mock();
         MatcherAssert.assertThat(
             this.farm.wasMessageSeen(msg, identity),
             Matchers.equalTo(false)
