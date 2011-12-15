@@ -205,7 +205,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     @Override
     public URL photo() {
         if (this.iphoto == null) {
-            final String url = this.hub.bus().make("get-identity-photo")
+            final URL url = this.hub.bus().make("get-identity-photo")
                 .synchronously()
                 .arg(this.name())
                 .asDefault(this.DEFAULT_PHOTO)

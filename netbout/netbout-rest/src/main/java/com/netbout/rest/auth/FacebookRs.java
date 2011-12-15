@@ -28,7 +28,7 @@ package com.netbout.rest.auth;
 
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
-import com.netbout.rest.ForwardException;
+import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
@@ -68,7 +68,7 @@ public final class FacebookRs extends AbstractRs {
         try {
             identity = this.authenticate(secret);
         } catch (IOException ex) {
-            throw new ForwardException(this, ex);
+            throw new LoginRequiredException(this, ex);
         }
         Logger.debug(
             this,

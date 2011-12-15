@@ -28,7 +28,7 @@ package com.netbout.rest.auth;
 
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
-import com.netbout.rest.ForwardException;
+import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
@@ -74,7 +74,7 @@ public final class AuthRs extends AbstractRs {
     public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
         if (iname == null || secret == null) {
-            throw new ForwardException(
+            throw new LoginRequiredException(
                 this,
                 "'identity' and 'secret' query params are mandatory"
             );
@@ -84,7 +84,7 @@ public final class AuthRs extends AbstractRs {
         try {
             identity = this.authenticate(iname, secret);
         } catch (IOException ex) {
-            throw new ForwardException(this, ex);
+            throw new LoginRequiredException(this, ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)
@@ -145,7 +145,7 @@ public final class AuthRs extends AbstractRs {
             try {
                 entry = this.hub().resolver().authority(iname);
             } catch (com.netbout.spi.UnreachableUrnException ex) {
-                throw new ForwardException(this, ex);
+                throw new LoginRequiredException(this, ex);
             }
             remote = this.load(
                 UriBuilder.fromUri(entry.toString())
@@ -154,7 +154,7 @@ public final class AuthRs extends AbstractRs {
                     .build()
             );
             if (!remote.name().equals(iname)) {
-                throw new ForwardException(
+                throw new LoginRequiredException(
                     this,
                     String.format(
                         "Invalid identity name retrieved '%s', while '%s' expected",

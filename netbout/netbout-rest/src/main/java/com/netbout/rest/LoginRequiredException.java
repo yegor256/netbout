@@ -32,7 +32,16 @@ package com.netbout.rest;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class LoginRequiredException extends ForwardException {
+public final class LoginRequiredException extends ForwardException {
+
+    /**
+     * Constructor.
+     * @param res The originator of the exception
+     * @param cause Cause of this problem
+     */
+    public LoginRequiredException(final Resource res, final String cause) {
+        super(res, res.base().path("/g"), cause);
+    }
 
     /**
      * Constructor.

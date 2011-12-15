@@ -117,24 +117,29 @@ public final class StageCoordinates {
     public static StageCoordinates valueOf(final String pair) {
         final StageCoordinates coords = new StageCoordinates();
         if (pair != null && pair.contains(StageCoordinates.SEPARATOR)) {
-            coords.setStage(
-                Urn.create(
-                    TextUtils.unpack(
-                        pair.substring(
-                            0,
-                            pair.indexOf(StageCoordinates.SEPARATOR)
+            try {
+                coords.setStage(
+                    new Urn(
+                        TextUtils.unpack(
+                            pair.substring(
+                                0,
+                                pair.indexOf(StageCoordinates.SEPARATOR)
+                            )
                         )
                     )
-                )
-            );
-            coords.setPlace(
-                TextUtils.unpack(
-                    pair.substring(
-                        pair.indexOf(StageCoordinates.SEPARATOR)
-                        + StageCoordinates.SEPARATOR.length()
+                );
+                coords.setPlace(
+                    TextUtils.unpack(
+                        pair.substring(
+                            pair.indexOf(StageCoordinates.SEPARATOR)
+                            + StageCoordinates.SEPARATOR.length()
+                        )
                     )
-                )
-            );
+                );
+            } catch (java.net.URISyntaxException ex) {
+                coords.setStage(new Urn());
+                coords.setPlace("");
+            }
         }
         return coords;
     }

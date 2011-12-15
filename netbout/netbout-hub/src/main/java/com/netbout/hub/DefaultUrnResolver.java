@@ -128,20 +128,16 @@ final class DefaultUrnResolver implements UrnResolver {
     public URL authority(final Urn urn) throws UnreachableUrnException {
         String url;
         final String nid = urn.nid();
-        if (nid.matches("^(void|netbout)$")) {
-            url = "http://www.netbout.com/nb";
-        } else {
-            if (!this.namespaces().containsKey(nid)) {
-                throw new UnreachableUrnException(
-                    urn,
-                    String.format(
-                        "Namespace '%s' is not registered",
-                        nid
-                    )
-                );
-            }
-            url = this.namespaces().get(nid).replace(this.MARKER, urn.nss());
+        if (!this.namespaces().containsKey(nid)) {
+            throw new UnreachableUrnException(
+                urn,
+                String.format(
+                    "Namespace '%s' is not registered",
+                    nid
+                )
+            );
         }
+        url = this.namespaces().get(nid).replace(this.MARKER, urn.nss());
         URL result;
         try {
             result = new URL(url);

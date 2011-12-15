@@ -28,7 +28,7 @@ package com.netbout.rest.auth;
 
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
-import com.netbout.rest.ForwardException;
+import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
@@ -83,36 +83,32 @@ public final class NbRs extends AbstractRs {
      */
     private Identity authenticate(final Urn iname, final String secret) {
         if ((iname == null) || (secret == null)) {
-            throw new ForwardException(
+            throw new LoginRequiredException(
                 this,
-                this.base(),
                 "Both 'identity' and 'secret' query params are mandatory"
             );
         }
         if (!"netbout".equals(iname.nid())) {
-            throw new ForwardException(
+            throw new LoginRequiredException(
                 this,
-                this.base(),
                 String.format("Bad namespace '%s' in '%s'", iname.nid(), iname)
             );
         }
         if (!iname.nss().matches(String.format("(db|hh|email)"))) {
-            throw new ForwardException(
+            throw new LoginRequiredException(
                 this,
-                this.base(),
                 String.format("Invalid name '%s' in '%s'", iname.nss(), iname)
             );
         }
         try {
             if (!new Cipher().decrypt(secret).equals(iname.toString())) {
-                throw new ForwardException(
+                throw new LoginRequiredException(
                     this,
-                    this.base(),
                     String.format("Wrong secret '%s' for '%s'", secret, iname)
                 );
             }
         } catch (com.netbout.utils.DecryptionException ex) {
-            throw new ForwardException(this, this.base(), ex);
+            throw new LoginRequiredException(this, ex);
         }
         try {
             return new ResolvedIdentity(

@@ -90,7 +90,7 @@ public final class LoginRs extends AbstractRs {
         try {
             identity = this.hub().identity(remote.name());
         } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new ForwardException(this, ex);
+            throw new LoginRequiredException(this, ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)

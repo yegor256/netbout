@@ -51,6 +51,20 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <insert tableName="identity">
+            <column name="name" value="urn:void:"/>
+            <column name="photo" value="http://img.netbout.com/void.png"/>
+        </insert>
+        <insert tableName="namespace">
+            <column name="name" value="void"/>
+            <column name="identity" value="urn:void:"/>
+            <column name="template" value="http://www.netbout.com/nb"/>
+        </insert>
+        <insert tableName="namespace">
+            <column name="name" value="netbout"/>
+            <column name="identity" value="urn:void:"/>
+            <column name="template" value="http://www.netbout.com/nb"/>
+        </insert>
         <modifySql dbms="mysql">
             <append value=" ENGINE=InnoDB, DEFAULT CHARSET=UTF8"/>
         </modifySql>

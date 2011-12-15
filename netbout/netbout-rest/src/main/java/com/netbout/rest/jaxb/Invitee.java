@@ -101,8 +101,8 @@ public final class Invitee {
      * @return The name
      */
     @XmlElement
-    public Urn getName() {
-        return this.identity.name();
+    public String getName() {
+        return this.identity.name().toString();
     }
 
     /**

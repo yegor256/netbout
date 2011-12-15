@@ -98,4 +98,17 @@ public final class StageCoordinatesTest {
         MatcherAssert.assertThat(reverted.place(), Matchers.equalTo(place));
     }
 
+    /**
+     * StageCoordinates can handle incorrect format of input properly.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesIncorrectFormatProperly() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Bout bout = new BoutMocker().mock();
+        final StageCoordinates coords = StageCoordinates.valueOf("ouch");
+        coords.normalize(bus, bout);
+        MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(new Urn()));
+    }
+
 }

@@ -77,4 +77,15 @@ public final class NamespaceFarmTest {
         );
     }
 
+    /**
+     * NamespaceFarm can have system namespaces built-in.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsSystemNamespacesByDefault() throws Exception {
+        final List<String> names = this.farm.getAllNamespaces();
+        MatcherAssert.assertThat(names, Matchers.hasItem("netbout"));
+        MatcherAssert.assertThat(names, Matchers.hasItem("void"));
+    }
+
 }
