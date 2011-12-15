@@ -73,16 +73,6 @@ final class HelpTarget {
     }
 
     /**
-     * Inject context into every {@link ContextAware} farm.
-     * @param context The context to inject (any object you like)
-     */
-    public void contextualize(final Object context) {
-        if (this.farm instanceof ContextAware) {
-            ((ContextAware) this.farm).context(context);
-        }
-    }
-
-    /**
      * Execute it with arguments.
      * @param token The token
      */
