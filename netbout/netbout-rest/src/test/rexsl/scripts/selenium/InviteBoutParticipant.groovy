@@ -29,6 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts.selenium
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import org.hamcrest.MatcherAssert
@@ -36,8 +37,8 @@ import org.hamcrest.Matchers
 import org.openqa.selenium.By
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
-def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
-def bout = jeff.start()
+def boris = new RestSession(rexsl.home).authenticate(new Urn('urn:test:boris'), '')
+def bout = boris.start()
 bout.rename('Selenimum test')
 
 def driver = new HtmlUnitDriver()

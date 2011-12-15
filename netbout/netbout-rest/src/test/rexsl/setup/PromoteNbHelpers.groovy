@@ -29,6 +29,7 @@
  */
 package com.netbout.rest.rexsl.setup
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
@@ -36,7 +37,7 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def starter = new RestSession(rexsl.home).authenticate('urn:void:', '')
+def starter = new RestSession(rexsl.home).authenticate(new Urn(), '')
 def text = 'test=' + UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
 RestTester.start(RestUriBuilder.from(starter).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
@@ -53,7 +54,7 @@ RestTester.start(RestUriBuilder.from(starter).build())
     'urn:test:hh' : 'file:com.netbout.hub.hh',
     'urn:test:email' : 'file:com.netbout.notifiers.email'
 ].each {
-    def helper = new RestSession(rexsl.home).authenticate(it.key, '')
+    def helper = new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
     RestTester.start(RestUriBuilder.from(helper).build())
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get()

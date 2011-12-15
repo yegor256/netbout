@@ -33,7 +33,6 @@ import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -95,6 +94,14 @@ final class DefaultUrnResolver implements UrnResolver {
             );
         }
         this.namespaces().put(namespace, template);
+        this.hub.bus()
+            .make("namespace-was-registered")
+            .asap()
+            .arg(owner.name())
+            .arg(namespace)
+            .arg(template)
+            .asDefault(false)
+            .exec();
         Logger.info(
             this,
             "#register('%s', '%s', '%s'): added (%d in total)",
@@ -166,10 +173,12 @@ final class DefaultUrnResolver implements UrnResolver {
                     final String template = this.hub.bus()
                         .make("get-namespace-template")
                         .synchronously()
+                        .arg(name)
                         .exec();
                     final Urn owner = this.hub.bus()
                         .make("get-namespace-owner")
                         .synchronously()
+                        .arg(name)
                         .exec();
                     this.inamespaces.put(name, template);
                 }

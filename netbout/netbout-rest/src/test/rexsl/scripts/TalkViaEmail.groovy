@@ -29,17 +29,18 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
+def ozzie = new RestSession(rexsl.home).authenticate(new Urn('urn:test:ozzie'), '')
 def email = 'urn:email:test@example.com'
 
-def bout = jeff.start()
+def bout = ozzie.start()
 bout.rename('Jeff talking by email')
-def friends = jeff.friends(email)
+def friends = ozzie.friends(email)
 MatcherAssert.assertThat(friends.size(), Matchers.equalTo(1))
 bout.invite(friends.iterator().next())
 bout.post('How are you doing?')

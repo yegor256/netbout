@@ -134,10 +134,7 @@ public final class AuthRs extends AbstractRs {
     private Identity remote(final Urn iname, final String secret)
         throws IOException {
         Identity remote;
-        if ("void".equals(iname.nid())) {
-            if (!iname.nss().isEmpty()) {
-                throw new ForwardException(this, "NSS should be empty");
-            }
+        if (iname.isEmpty()) {
             final RemoteIdentity idnt = new RemoteIdentity();
             idnt.setAuthority("http://www.netbout.com/nb");
             idnt.setName(iname.toString());

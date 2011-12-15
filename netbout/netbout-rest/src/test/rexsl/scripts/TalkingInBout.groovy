@@ -29,20 +29,21 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
-def walter = new RestSession(rexsl.home).authenticate('urn:test:walter', '')
+def mandy = new RestSession(rexsl.home).authenticate(new Urn('urn:test:mandy'), '')
+def bob = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bob'), '')
 
-def bout = jeff.start()
+def bout = mandy.start()
 bout.rename('Some test conversation between Jeff and Walter')
 def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
+bout.invite(bob)
+bob.bout(number).confirm()
 def text = 'How are you?'
-def msg = walter.bout(number).post(text).number()
+def msg = bob.bout(number).post(text).number()
 MatcherAssert.assertThat(bout.message(msg).text(), Matchers.equalTo(text))
 

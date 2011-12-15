@@ -50,6 +50,7 @@ Manifests.inject('Netbout-JdbcPassword', password)
 
 def conn = Database.connection()
 [
+    'DELETE FROM namespace',
     'DELETE FROM helper',
     'DELETE FROM alias',
     'DELETE FROM seen',
@@ -57,16 +58,17 @@ def conn = Database.connection()
     'DELETE FROM participant',
     'DELETE FROM bout',
     'DELETE FROM identity',
-    "INSERT INTO identity (name, photo) VALUES ('4466', 'http://www.ofcelebrity.net/photos/johnny-depp-6.jpg')",
-    "INSERT INTO identity (name, photo) VALUES ('6677', 'http://www.topnews.in/light/files/John-Turturro.jpg')",
-    "INSERT INTO alias (identity, name) VALUES ('4466', 'Jeff Lebowski')",
-    "INSERT INTO alias (identity, name) VALUES ('6677', 'Johnny Depp')",
+    "INSERT INTO identity (name, photo) VALUES ('urn:facebook:6677', 'http://www.ofcelebrity.net/photos/johnny-depp-6.jpg')",
+    "INSERT INTO identity (name, photo) VALUES ('urn:facebook:4466', 'http://www.topnews.in/light/files/John-Turturro.jpg')",
+    "INSERT INTO alias (identity, name) VALUES ('urn:facebook:6677', 'Johnny Depp')",
+    "INSERT INTO alias (identity, name) VALUES ('urn:facebook:4466', 'John Turturro')",
     "INSERT INTO bout (number, title) VALUES (1, 'interesting discussion...')",
-    "INSERT INTO participant (bout, identity, confirmed) VALUES (1, '4466', 1)",
-    "INSERT INTO participant (bout, identity, confirmed) VALUES (1, '6677', 1)",
-    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 03:18:34', '4466', 'hi all!')",
-    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 04:23:11', '6677', 'works for me')",
-    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 05:28:22', '4466', 'most recent message')",
+    "INSERT INTO participant (bout, identity, confirmed) VALUES (1, 'urn:facebook:4466', 1)",
+    "INSERT INTO participant (bout, identity, confirmed) VALUES (1, 'urn:facebook:6677', 1)",
+    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 03:18:34', 'urn:facebook:4466', 'hi all!')",
+    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 04:23:11', 'urn:facebook:6677', 'works for me')",
+    "INSERT INTO message (bout, date, author, text) VALUES (1, '2011-11-15 05:28:22', 'urn:facebook:4466', 'most recent message')",
+    "INSERT INTO namespace (name, identity, template) VALUES ('foo', 'urn:facebook:6677', 'http://localhost/foo')",
 ].each { query ->
     def stmt = conn.createStatement()
     stmt.execute(query)

@@ -53,7 +53,7 @@ public final class StageCoordinatesTest {
         final Urn stage = new UrnMocker().mock();
         final String place = "/some/place?with&some info";
         final StageCoordinates coords = new StageCoordinates();
-        coords.setStage(stage.toString());
+        coords.setStage(stage);
         coords.setPlace(place);
         coords.stage();
     }
@@ -67,10 +67,10 @@ public final class StageCoordinatesTest {
         final Urn stage = new UrnMocker().mock();
         final String place = "/some/place";
         final StageCoordinates coords = new StageCoordinates();
-        coords.setStage(stage.toString());
+        coords.setStage(stage);
         coords.setPlace(place);
         coords.normalize(new BusMocker().mock(), Mockito.mock(Bout.class));
-        MatcherAssert.assertThat(coords.hasStage(), Matchers.equalTo(false));
+        MatcherAssert.assertThat(coords.stage().isEmpty(), Matchers.is(true));
     }
 
     /**
@@ -82,7 +82,7 @@ public final class StageCoordinatesTest {
         final Urn stage = new UrnMocker().mock();
         final String place = "/some/place?with-info";
         final StageCoordinates coords = new StageCoordinates();
-        coords.setStage(stage.toString());
+        coords.setStage(stage);
         coords.setPlace(place);
         final Bus bus = new BusMocker()
             .doReturn(true, "does-stage-exist")

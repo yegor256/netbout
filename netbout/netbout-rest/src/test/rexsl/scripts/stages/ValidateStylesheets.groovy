@@ -29,14 +29,15 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 
-def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
+def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
 def bout = jeff.start()
 bout.rename('Stage stylesheet validation')
-def helper = 'urn:test:hh'
+def helper = new Urn('urn:test:hh')
 bout.invite(jeff.friend(helper))
 
 // validate global bout XSL

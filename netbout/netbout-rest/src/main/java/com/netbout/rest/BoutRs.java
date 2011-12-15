@@ -95,7 +95,7 @@ public final class BoutRs extends AbstractRs {
      * @param name The name of it
      */
     @QueryParam("stage")
-    public void setStage(final String name) {
+    public void setStage(final Urn name) {
         if (name != null) {
             this.coords.setStage(name);
         }
@@ -346,7 +346,7 @@ public final class BoutRs extends AbstractRs {
                     // @checkstyle MultipleStringLiterals (1 line)
                     .path(String.format("/%d", this.bout().number()))
                     .path("/xsl")
-                    .path(String.format("/%s", this.coords.stageAsText()))
+                    .path(String.format("/%s", this.coords.stage()))
                     .path("/wrapper.xsl")
             )
             .build(AbstractPage.class)

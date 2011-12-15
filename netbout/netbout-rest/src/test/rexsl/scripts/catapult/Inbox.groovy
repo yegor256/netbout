@@ -29,6 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts.catapult
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.netbout.utils.Cipher
@@ -38,12 +39,12 @@ import javax.ws.rs.core.MediaType
 
 def home = new URI(System.getProperty('catapult.home'))
 def cipher = new Cipher()
-def name = 'urn:netbout:jeff'
-def jeff = new RestSession(home).authenticate(name, cipher.encrypt(name))
-def bout = jeff.start()
+def name = new Urn('urn:netbout:bobby')
+def bobby = new RestSession(home).authenticate(name, cipher.encrypt(name.toString()))
+def bout = bobby.start()
 bout.rename('Catapult inbox testing')
 
-RestTester.start(RestUriBuilder.from(jeff))
+RestTester.start(RestUriBuilder.from(bobby))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     // @todo #160 This HTML retrieval doesn't work because of a defect in
     //  Tomcat 6 (I think it's a defect). It passes all requests to RestfulServlet,

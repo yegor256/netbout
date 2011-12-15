@@ -29,16 +29,17 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 
-def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
+def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
 def bout = jeff.start()
 bout.rename('Rendering urn:test:hh stage data')
-bout.invite(jeff.friend('urn:test:hh'))
+bout.invite(jeff.friend(new Urn('urn:test:hh')))
 
 // validate that the stage is really there, in XHTML
 RestTester.start(RestUriBuilder.from(bout))

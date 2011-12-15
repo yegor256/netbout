@@ -60,25 +60,12 @@ public final class StageCoordinates {
     /**
      * Name of stage.
      */
-    private transient Urn istage;
+    private transient Urn istage = new Urn();
 
     /**
      * Place of stage.
      */
     private transient String iplace = "";
-
-    /**
-     * Stage is set?
-     * @return Is it?
-     */
-    public boolean hasStage() {
-        if (this.stages == null) {
-            throw new IllegalStateException(
-                "Call #normalize() before #hasStage()"
-            );
-        }
-        return this.istage != null;
-    }
 
     /**
      * Get stage.
@@ -94,32 +81,11 @@ public final class StageCoordinates {
     }
 
     /**
-     * Get stage as text.
-     * @return The text
-     */
-    public String stageAsText() {
-        if (this.stages == null) {
-            throw new IllegalStateException(
-                "Call #normalize() before #stageAsText()"
-            );
-        }
-        String text = "null";
-        if (this.istage != null) {
-            text = this.istage.toString();
-        }
-        return text;
-    }
-
-    /**
      * Set stage.
      * @param name The name of it
      */
-    public void setStage(final String name) {
-        if (!name.startsWith("urn:")) {
-            this.istage = null;
-        } else {
-            this.istage = Urn.create(name);
-        }
+    public void setStage(final Urn name) {
+        this.istage = name;
     }
 
     /**
@@ -152,10 +118,12 @@ public final class StageCoordinates {
         final StageCoordinates coords = new StageCoordinates();
         if (pair != null && pair.contains(StageCoordinates.SEPARATOR)) {
             coords.setStage(
-                TextUtils.unpack(
-                    pair.substring(
-                        0,
-                        pair.indexOf(StageCoordinates.SEPARATOR)
+                Urn.create(
+                    TextUtils.unpack(
+                        pair.substring(
+                            0,
+                            pair.indexOf(StageCoordinates.SEPARATOR)
+                        )
                     )
                 )
             );
@@ -181,9 +149,9 @@ public final class StageCoordinates {
         }
         return String.format(
             "%s%s%s",
-            TextUtils.pack(this.stageAsText()),
+            TextUtils.pack(this.stage().toString()),
             this.SEPARATOR,
-            TextUtils.pack(this.iplace)
+            TextUtils.pack(this.place())
         );
     }
 
@@ -221,11 +189,11 @@ public final class StageCoordinates {
                 this.stages.add(name);
             }
         }
-        if (this.istage == null && this.stages.size() > 0) {
+        if (this.istage.isEmpty() && this.stages.size() > 0) {
             this.istage = this.stages.iterator().next();
         }
         if (!this.stages.contains(this.istage)) {
-            this.istage = null;
+            this.istage = new Urn();
         }
     }
 

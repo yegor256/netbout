@@ -29,17 +29,18 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 
-def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
-jeff.start()
+def william = new RestSession(rexsl.home).authenticate(new Urn('urn:test:willy'), '')
+william.start()
 
 // validate content of the inbox
-RestTester.start(RestUriBuilder.from(jeff))
+RestTester.start(RestUriBuilder.from(william))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get()
     .assertStatus(HttpURLConnection.HTTP_OK)

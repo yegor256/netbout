@@ -29,12 +29,13 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def jeff = new RestSession(rexsl.home).authenticate('urn:test:jeff', '')
-def walter = new RestSession(rexsl.home).authenticate('urn:test:walter', '')
+def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
+def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
 
 def bout = jeff.start()
 def number = bout.number()

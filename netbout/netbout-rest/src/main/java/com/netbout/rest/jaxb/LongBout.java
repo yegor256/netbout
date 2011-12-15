@@ -150,7 +150,7 @@ public final class LongBout {
     @XmlElement
     public LongStage getStage() {
         LongStage stage = null;
-        if (this.coords.hasStage()) {
+        if (!this.coords.stage().isEmpty()) {
             stage = new LongStage(this.bus, this.bout, this.coords);
         }
         return stage;
