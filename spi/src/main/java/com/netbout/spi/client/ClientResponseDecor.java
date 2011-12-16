@@ -30,7 +30,6 @@
 package com.netbout.spi.client;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.ymock.util.Decor;
 import java.util.Formattable;
 import java.util.Formatter;
 import java.util.List;
@@ -43,7 +42,6 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Decor("ClientResponseDecor")
 public final class ClientResponseDecor implements Formattable {
 
     /**

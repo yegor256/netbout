@@ -110,10 +110,10 @@ final class JerseyRestResponse implements RestResponse {
             throw new AssertionError(
                 Logger.format(
                     // @checkstyle LineLength (1 line)
-                    "Status code %d is not equal to %d:\n%[ClientResponseDecor]s",
+                    "Status code %d is not equal to %d:\n%s",
                     this.response.getStatus(),
                     code,
-                    this.response
+                    new ClientResponseDecor(this.response)
                 )
             );
         }
@@ -129,7 +129,7 @@ final class JerseyRestResponse implements RestResponse {
             throw new AssertionError(
                 Logger.format(
                     // @checkstyle LineLength (1 line)
-                    "Document doesn't match XPath '%s':\n%[com.ymock.util.decors.DocumentDecor]s",
+                    "Document doesn't match XPath '%s':\n%[document]s",
                     xpath,
                     this.document()
                 )
@@ -184,10 +184,10 @@ final class JerseyRestResponse implements RestResponse {
         if (hdr == null) {
             throw new AssertionError(
                 Logger.format(
-                    "Header '%s' not found in [%s]:\n%[ClientResponseDecor]s",
+                    "Header '%s' not found in [%s]:\n%s",
                     name,
                     StringUtils.join(this.response.getHeaders().keySet(), ", "),
-                    this.response
+                    new ClientResponseDecor(this.response)
                 )
             );
         }

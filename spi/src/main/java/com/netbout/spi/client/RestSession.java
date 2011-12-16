@@ -110,11 +110,11 @@ public final class RestSession {
             throw new IllegalArgumentException(
                 Logger.format(
                     // @checkstyle LineLength (1 line)
-                    "Invalid HTTP status #%d at '%s' during authentication of '%s':\n%[ClientResponseDecor]s",
+                    "Invalid HTTP status #%d at '%s' during authentication of '%s':\n%s",
                     response.getStatus(),
                     resource.getURI(),
                     identity,
-                    response
+                    new ClientResponseDecor(response)
                 )
             );
         }
@@ -123,10 +123,10 @@ public final class RestSession {
             throw new IllegalArgumentException(
                 Logger.format(
                     // @checkstyle LineLength (1 line)
-                    "Authentication token not found in response header at '%s' during authentication of '%s':\n%[ClientResponseDecor]s",
+                    "Authentication token not found in response header at '%s' during authentication of '%s':\n%s",
                     resource.getURI(),
                     identity,
-                    response
+                    new ClientResponseDecor(response)
                 )
             );
         }
