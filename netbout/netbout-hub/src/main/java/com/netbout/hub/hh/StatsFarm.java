@@ -26,10 +26,8 @@
  */
 package com.netbout.hub.hh;
 
-import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.ContextAware;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -50,17 +48,12 @@ import org.w3c.dom.Document;
  * @version $Id$
  */
 @Farm
-public final class StatsFarm implements IdentityAware, ContextAware {
+public final class StatsFarm implements IdentityAware {
 
     /**
      * Me.
      */
     private transient Identity identity;
-
-    /**
-     * The hub.
-     */
-    private transient Hub hub;
 
     /**
      * {@inheritDoc}
@@ -72,19 +65,6 @@ public final class StatsFarm implements IdentityAware, ContextAware {
             this,
             "#init('%s'): injected",
             this.identity.name()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void context(final Object ctx) {
-        this.hub = (Hub) ctx;
-        Logger.debug(
-            this,
-            "#context('%s'): injected",
-            ctx.getClass().getName()
         );
     }
 
@@ -125,7 +105,8 @@ public final class StatsFarm implements IdentityAware, ContextAware {
         if (this.identity.name().equals(stage)) {
             final Document doc = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder().newDocument();
-            doc.appendChild(this.hub.stats(doc));
+            doc.appendChild(doc.createElement("identities"));
+            // doc.appendChild(this.hub.stats(doc));
             final Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer();
             final StringWriter writer = new StringWriter();

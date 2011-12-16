@@ -127,17 +127,21 @@ final class DefaultUrnResolver implements UrnResolver {
     @Override
     public URL authority(final Urn urn) throws UnreachableUrnException {
         String url;
-        final String nid = urn.nid();
-        if (!this.namespaces().containsKey(nid)) {
-            throw new UnreachableUrnException(
-                urn,
-                String.format(
-                    "Namespace '%s' is not registered",
-                    nid
-                )
-            );
+        if (urn.isEmpty() || "netbout".equals(urn.nid())) {
+            url = "http://www.netbout.com/nb";
+        } else {
+            final String nid = urn.nid();
+            if (!this.namespaces().containsKey(nid)) {
+                throw new UnreachableUrnException(
+                    urn,
+                    String.format(
+                        "Namespace '%s' is not registered",
+                        nid
+                    )
+                );
+            }
+            url = this.namespaces().get(nid).replace(this.MARKER, urn.nss());
         }
-        url = this.namespaces().get(nid).replace(this.MARKER, urn.nss());
         URL result;
         try {
             result = new URL(url);
@@ -176,6 +180,7 @@ final class DefaultUrnResolver implements UrnResolver {
                         .synchronously()
                         .arg(name)
                         .exec();
+                    assert owner != null;
                     this.inamespaces.put(name, template);
                 }
                 Logger.info(

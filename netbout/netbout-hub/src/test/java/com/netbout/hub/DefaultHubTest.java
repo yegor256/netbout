@@ -49,7 +49,9 @@ import org.xmlmatchers.transform.XmlConverters;
  * Test case of {@link DefaultHub}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle MultipleStringLiterals (500 lines)
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class DefaultHubTest {
 
     /**
