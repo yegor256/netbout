@@ -50,14 +50,14 @@ Manifests.inject('Netbout-JdbcPassword', password)
 
 def conn = Database.connection()
 [
-    'DELETE FROM namespace',
+    'DELETE FROM namespace WHERE identity != "urn:void:"',
     'DELETE FROM helper',
     'DELETE FROM alias',
     'DELETE FROM seen',
     'DELETE FROM message',
     'DELETE FROM participant',
     'DELETE FROM bout',
-    'DELETE FROM identity',
+    'DELETE FROM identity WHERE name != "urn:void:"',
     "INSERT INTO identity (name, photo) VALUES ('urn:facebook:6677', 'http://www.ofcelebrity.net/photos/johnny-depp-6.jpg')",
     "INSERT INTO identity (name, photo) VALUES ('urn:facebook:4466', 'http://www.topnews.in/light/files/John-Turturro.jpg')",
     "INSERT INTO alias (identity, name) VALUES ('urn:facebook:6677', 'Johnny Depp')",
