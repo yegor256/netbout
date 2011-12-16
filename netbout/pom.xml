@@ -52,7 +52,6 @@
     <name>netbout</name>
 
     <modules>
-        <module>netbout-tk</module>
         <module>netbout-db</module>
         <module>netbout-bus</module>
         <module>netbout-hub</module>
@@ -289,13 +288,9 @@
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
                         <version since="21 Nov 2011">0.1.7</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.netbout</groupId>
-                                <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">2.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
+                        <configuration>
+                            <license>file:${basedir}/LICENSE.txt</license>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
