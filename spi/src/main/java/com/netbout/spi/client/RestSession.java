@@ -66,7 +66,7 @@ public final class RestSession {
     public RestSession(final URI uri) {
         if (!uri.isAbsolute()) {
             throw new IllegalArgumentException(
-                String.format(
+                Logger.format(
                     "URI '%s' has to be absolute",
                     uri
                 )
@@ -108,24 +108,25 @@ public final class RestSession {
         final ClientResponse response = resource.get(ClientResponse.class);
         if (response.getStatus() != HttpURLConnection.HTTP_SEE_OTHER) {
             throw new IllegalArgumentException(
-                String.format(
+                Logger.format(
                     // @checkstyle LineLength (1 line)
-                    "Invalid HTTP status #%d at '%s' during authentication of '%s':%n%s",
+                    "Invalid HTTP status #%d at '%s' during authentication of '%s':\n%[ClientResponseDecor]s",
                     response.getStatus(),
                     resource.getURI(),
                     identity,
-                    response.toString()
+                    response
                 )
             );
         }
         final String token = response.getHeaders().getFirst("Netbout-auth");
         if (token == null) {
             throw new IllegalArgumentException(
-                String.format(
+                Logger.format(
                     // @checkstyle LineLength (1 line)
-                    "Authentication token not found in response header at '%s' during authentication of '%s'",
+                    "Authentication token not found in response header at '%s' during authentication of '%s':\n%[ClientResponseDecor]s",
                     resource.getURI(),
-                    identity
+                    identity,
+                    response
                 )
             );
         }

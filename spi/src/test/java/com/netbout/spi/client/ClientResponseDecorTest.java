@@ -30,73 +30,34 @@
 package com.netbout.spi.client;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import java.util.ArrayList;
-import java.util.List;
-import javax.ws.rs.core.MultivaluedMap;
+import java.util.Formattable;
+import java.util.Formatter;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Mocker of {@link ClientResponse}.
+ * Test case for {@link ClientResponseDecor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ClientResponseMocker {
+public final class ClientResponseDecorTest {
 
     /**
-     * Paths.
+     * BoutMocker can assign title to the bout.
+     * @throws Exception If there is some problem inside
      */
-    private final transient ClientResponse response =
-        Mockito.mock(ClientResponse.class);
-
-    /**
-     * Headers.
-     */
-    private final transient MultivaluedMap headers = new MultivaluedMapImpl();
-
-    /**
-     * Return this status code.
-     * @param code The code
-     * @return This object
-     */
-    public ClientResponseMocker withStatus(final int code) {
-        Mockito.doReturn(code).when(this.response).getStatus();
-        return this;
-    }
-
-    /**
-     * Return this header.
-     * @param name The name of ti
-     * @param value The value
-     * @return This object
-     */
-    public ClientResponseMocker withHeader(final String name,
-        final String value) {
-        if (!this.headers.containsKey(name)) {
-            this.headers.put(name, new ArrayList<String>());
-        }
-        ((List) this.headers.get(name)).add(value);
-        return this;
-    }
-
-    /**
-     * Return this entity.
-     * @param entity The entity
-     * @return This object
-     */
-    public ClientResponseMocker withEntity(final String entity) {
-        Mockito.doReturn(entity).when(this.response)
-            .getEntity(Mockito.any(Class.class));
-        return this;
-    }
-
-    /**
-     * Mock it.
-     * @return Mocked class
-     */
-    public ClientResponse mock() {
-        Mockito.doReturn(this.headers).when(this.response).getHeaders();
-        return this.response;
+    @Test
+    public void canHaveATitleMocked() throws Exception {
+        final ClientResponse response = new ClientResponseMocker()
+            .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML)
+            .mock();
+        final Formattable decor = new ClientResponseDecor(response);
+        final Appendable dest = Mockito.mock(Appendable.class);
+        final Formatter fmt = new Formatter(dest);
+        decor.formatTo(fmt, 0, 0, 0);
+        Mockito.verify(dest).append("\tContent-Type: text/xml\n");
     }
 
 }

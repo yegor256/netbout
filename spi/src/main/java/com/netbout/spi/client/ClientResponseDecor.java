@@ -30,73 +30,54 @@
 package com.netbout.spi.client;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import java.util.ArrayList;
+import com.ymock.util.Decor;
+import java.util.Formattable;
+import java.util.Formatter;
 import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
-import org.mockito.Mockito;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * Mocker of {@link ClientResponse}.
+ * Decor for {@link ClientResponse}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ClientResponseMocker {
+@Decor("ClientResponseDecor")
+public final class ClientResponseDecor implements Formattable {
 
     /**
-     * Paths.
+     * The response.
      */
-    private final transient ClientResponse response =
-        Mockito.mock(ClientResponse.class);
+    private final transient ClientResponse response;
 
     /**
-     * Headers.
+     * Public ctor.
+     * @param resp The response
      */
-    private final transient MultivaluedMap headers = new MultivaluedMapImpl();
-
-    /**
-     * Return this status code.
-     * @param code The code
-     * @return This object
-     */
-    public ClientResponseMocker withStatus(final int code) {
-        Mockito.doReturn(code).when(this.response).getStatus();
-        return this;
+    public ClientResponseDecor(final Object resp) {
+        this.response = (ClientResponse) resp;
     }
 
     /**
-     * Return this header.
-     * @param name The name of ti
-     * @param value The value
-     * @return This object
+     * {@inheritDoc}
+     * @checkstyle ParameterNumber (4 lines)
      */
-    public ClientResponseMocker withHeader(final String name,
-        final String value) {
-        if (!this.headers.containsKey(name)) {
-            this.headers.put(name, new ArrayList<String>());
+    @Override
+    public void formatTo(final Formatter formatter, final int flags,
+        final int width, final int precision) {
+        final StringBuilder builder = new StringBuilder();
+        for (MultivaluedMap.Entry<String, List<String>> header
+            : this.response.getHeaders().entrySet()) {
+            builder.append(
+                String.format(
+                    "\t%s: %s%n",
+                    header.getKey(),
+                    StringUtils.join(header.getValue(), ", ")
+                )
+            );
         }
-        ((List) this.headers.get(name)).add(value);
-        return this;
-    }
-
-    /**
-     * Return this entity.
-     * @param entity The entity
-     * @return This object
-     */
-    public ClientResponseMocker withEntity(final String entity) {
-        Mockito.doReturn(entity).when(this.response)
-            .getEntity(Mockito.any(Class.class));
-        return this;
-    }
-
-    /**
-     * Mock it.
-     * @return Mocked class
-     */
-    public ClientResponse mock() {
-        Mockito.doReturn(this.headers).when(this.response).getHeaders();
-        return this.response;
+        formatter.format("%s", builder.toString());
     }
 
 }
