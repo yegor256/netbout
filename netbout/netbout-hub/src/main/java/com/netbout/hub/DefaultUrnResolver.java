@@ -127,21 +127,17 @@ final class DefaultUrnResolver implements UrnResolver {
     @Override
     public URL authority(final Urn urn) throws UnreachableUrnException {
         String url;
-        if (urn.isEmpty() || "netbout".equals(urn.nid())) {
-            url = "http://www.netbout.com/nb";
-        } else {
-            final String nid = urn.nid();
-            if (!this.namespaces().containsKey(nid)) {
-                throw new UnreachableUrnException(
-                    urn,
-                    String.format(
-                        "Namespace '%s' is not registered",
-                        nid
-                    )
-                );
-            }
-            url = this.namespaces().get(nid).replace(this.MARKER, urn.nss());
+        final String nid = urn.nid();
+        if (!this.namespaces().containsKey(nid)) {
+            throw new UnreachableUrnException(
+                urn,
+                String.format(
+                    "Namespace '%s' is not registered",
+                    nid
+                )
+            );
         }
+        url = this.namespaces().get(nid).replace(this.MARKER, urn.nss());
         URL result;
         try {
             result = new URL(url);
@@ -164,6 +160,8 @@ final class DefaultUrnResolver implements UrnResolver {
     private ConcurrentMap<String, String> namespaces() {
         synchronized (this) {
             if (this.inamespaces.isEmpty()) {
+                this.inamespaces.put("void", "http://www.netbout.com/");
+                this.inamespaces.put("netbout", "http://www.netbout.com/nb");
                 final List<String> names = this.hub.bus()
                     .make("get-all-namespaces")
                     .synchronously()
