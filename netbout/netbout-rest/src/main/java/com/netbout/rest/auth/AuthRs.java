@@ -110,13 +110,7 @@ public final class AuthRs extends AbstractRs {
         try {
             identity = this.hub().identity(iname);
         } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new IllegalStateException(
-                String.format(
-                    "Identity '%s' is not reachable: %s",
-                    iname,
-                    ex
-                )
-            );
+            throw new LoginRequiredException(this, ex);
         }
         for (String alias : remote.aliases()) {
             identity.alias(alias);
@@ -134,7 +128,7 @@ public final class AuthRs extends AbstractRs {
     private Identity remote(final Urn iname, final String secret)
         throws IOException {
         Identity remote;
-        if (iname.isEmpty()) {
+        if (iname.isEmpty() && "localhost".equals(secret)) {
             final RemoteIdentity idnt = new RemoteIdentity();
             idnt.setAuthority("http://www.netbout.com/nb");
             idnt.setName(iname.toString());
@@ -151,12 +145,14 @@ public final class AuthRs extends AbstractRs {
                 UriBuilder.fromUri(entry.toString())
                     .queryParam("identity", iname)
                     .queryParam("secret", secret)
+                    .queryParam("ip", this.httpServletRequest().getRemoteAddr())
                     .build()
             );
             if (!remote.name().equals(iname)) {
                 throw new LoginRequiredException(
                     this,
                     String.format(
+                        // @checkstyle LineLength (1 line)
                         "Invalid identity name retrieved '%s', while '%s' expected",
                         remote.name(),
                         iname

@@ -36,10 +36,10 @@ import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 def ozzie = new RestSession(rexsl.home).authenticate(new Urn('urn:test:ozzie'), '')
-def email = 'urn:email:test@example.com'
+def email = 'test@example.com'
 
 def bout = ozzie.start()
-bout.rename('Jeff talking by email')
+bout.rename('Ozzie talking by email')
 def friends = ozzie.friends(email)
 MatcherAssert.assertThat(friends.size(), Matchers.equalTo(1))
 bout.invite(friends.iterator().next())

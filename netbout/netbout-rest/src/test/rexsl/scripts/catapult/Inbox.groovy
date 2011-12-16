@@ -36,8 +36,23 @@ import com.netbout.utils.Cipher
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
 
 def home = new URI(System.getProperty('catapult.home'))
+
+def starter = new RestSession(home).authenticate(new Urn(), 'localhost')
+def text = 'netbout=' + UriBuilder.fromUri(home).path('/nb').build()
+RestTester.start(RestUriBuilder.from(starter).build())
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .rel('/page/links/link[@rel="helper"]/@href')
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get()
+    .rel('/page/links/link[@rel="namespaces"]/@href')
+    .post('text=' + URLEncoder.encode(text))
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+
 def cipher = new Cipher()
 def name = new Urn('urn:netbout:bobby')
 def bobby = new RestSession(home).authenticate(name, cipher.encrypt(name.toString()))

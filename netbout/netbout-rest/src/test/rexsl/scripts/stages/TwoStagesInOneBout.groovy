@@ -36,12 +36,12 @@ import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def bout = jeff.start()
+def rita = new RestSession(rexsl.home).authenticate(new Urn('urn:test:rita'), '')
+def bout = rita.start()
 bout.rename('Two stages in one bout')
 
 // invite two helpers there
-['urn:test:hh', 'urn:test:db'].each { bout.invite(jeff.friend(new Urn(it))) }
+['urn:test:hh', 'urn:netbout:db'].each { bout.invite(rita.friend(new Urn(it))) }
 
 // validate that there are really two stages in the XML
 RestTester.start(RestUriBuilder.from(bout))

@@ -94,7 +94,7 @@ public final class NbRs extends AbstractRs {
                 String.format("Bad namespace '%s' in '%s'", iname.nid(), iname)
             );
         }
-        if (!iname.nss().matches(String.format("(db|hh|email)"))) {
+        if (!iname.nss().matches("[a-z]{2,32}")) {
             throw new LoginRequiredException(
                 this,
                 String.format("Invalid name '%s' in '%s'", iname.nss(), iname)

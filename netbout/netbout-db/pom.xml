@@ -72,6 +72,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.ymock</groupId>
+            <artifactId>ymock-util</artifactId>
+        </dependency>
+        <dependency>
             <!--
             Liquibase DB migration tool
             @see http://www.liquibase.org/
