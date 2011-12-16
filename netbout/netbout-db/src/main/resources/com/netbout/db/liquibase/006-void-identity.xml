@@ -35,25 +35,11 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet id="5" author="yegor">
-        <createTable tableName="namespace" remarks="Registered namespaces">
-            <column name="name" type="VARCHAR(32)"
-                remarks="Name of the namespace">
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="identity" type="VARCHAR(250)"
-                remarks="The identity, owner of the namespace">
-                <constraints nullable="false"
-                    foreignKeyName="namespace2identity" references="identity(name)" />
-            </column>
-            <column name="template" type="VARCHAR(1024)"
-                remarks="Template of the namespace">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <modifySql dbms="mysql">
-            <append value=" ENGINE=InnoDB, DEFAULT CHARSET=UTF8"/>
-        </modifySql>
+    <changeSet id="6" author="yegor">
+        <insert tableName="identity">
+            <column name="name" value="urn:void:"/>
+            <column name="photo" value="http://img.netbout.com/void.png"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>

@@ -84,8 +84,10 @@ public final class NamespaceFarmTest {
     @Test
     public void findsSystemNamespacesByDefault() throws Exception {
         final List<String> names = this.farm.getAllNamespaces();
-        MatcherAssert.assertThat(names, Matchers.hasItem("netbout"));
-        MatcherAssert.assertThat(names, Matchers.hasItem("void"));
+        final String[] system = new String[] {"void", "netbout", "facebook"};
+        for (String name : system) {
+            MatcherAssert.assertThat(names, Matchers.hasItem(name));
+        }
     }
 
 }

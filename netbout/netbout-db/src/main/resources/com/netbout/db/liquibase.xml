@@ -45,5 +45,7 @@
     <include file="liquibase/003-alias.xml" relativeToChangelogFile="true" />
     <include file="liquibase/004-helper.xml" relativeToChangelogFile="true" />
     <include file="liquibase/005-namespace.xml" relativeToChangelogFile="true" />
+    <include file="liquibase/006-void-identity.xml" relativeToChangelogFile="true" />
+    <include file="liquibase/007-system-namespaces.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
