@@ -141,4 +141,22 @@ public final class UrnTest {
         MatcherAssert.assertThat(urn.isEmpty(), Matchers.equalTo(true));
     }
 
+    /**
+     * Urn can be "empty" only in one form.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void emptyUrnHasOnlyOneVariant() throws Exception {
+        new Urn("void", "it-is-impossible-to-have-any-NSS-here");
+    }
+
+    /**
+     * Urn can be "empty" only in one form, with from-text ctor.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = java.net.URISyntaxException.class)
+    public void emptyUrnHasOnlyOneVariantWithTextCtor() throws Exception {
+        new Urn("urn:void:it-is-impossible-to-have-any-NSS-here");
+    }
+
 }

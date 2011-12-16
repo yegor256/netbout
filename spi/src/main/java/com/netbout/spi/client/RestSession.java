@@ -110,10 +110,11 @@ public final class RestSession {
             throw new IllegalArgumentException(
                 String.format(
                     // @checkstyle LineLength (1 line)
-                    "Invalid HTTP status #%d at '%s' during authentication of '%s'",
+                    "Invalid HTTP status #%d at '%s' during authentication of '%s':%n%s",
                     response.getStatus(),
                     resource.getURI(),
-                    identity
+                    identity,
+                    response.toString()
                 )
             );
         }

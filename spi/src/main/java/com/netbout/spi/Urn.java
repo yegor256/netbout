@@ -92,6 +92,7 @@ public final class Urn implements Comparable {
             throw new URISyntaxException(text, "Invalid format of URN");
         }
         this.uri = new URI(text);
+        this.validate();
     }
 
     /**
@@ -115,6 +116,11 @@ public final class Urn implements Comparable {
             );
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalStateException(ex);
+        }
+        try {
+            this.validate();
+        } catch (URISyntaxException ex) {
+            throw new IllegalArgumentException(ex);
         }
     }
 
@@ -217,6 +223,19 @@ public final class Urn implements Comparable {
             // @checkstyle MagicNumber (1 line)
             3
         )[pos];
+    }
+
+    /**
+     * Validate URN.
+     * @throws URISyntaxException If it's not valid
+     */
+    private void validate() throws URISyntaxException {
+        if (this.isEmpty() && !this.nss().isEmpty()) {
+            throw new URISyntaxException(
+                this.toString(),
+                "Empty URN can't have NSS"
+            );
+        }
     }
 
 }
