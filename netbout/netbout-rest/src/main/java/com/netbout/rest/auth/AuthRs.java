@@ -80,12 +80,7 @@ public final class AuthRs extends AbstractRs {
             );
         }
         this.logoff();
-        Identity identity;
-        try {
-            identity = this.authenticate(iname, secret);
-        } catch (IOException ex) {
-            throw new LoginRequiredException(this, ex);
-        }
+        final Identity identity = this.authenticate(iname, secret);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
@@ -101,10 +96,9 @@ public final class AuthRs extends AbstractRs {
      * @param iname Identity name
      * @param secret Secret word
      * @return The identity found
-     * @throws IOException If some problem with FB
      */
     private Identity authenticate(final Urn iname,
-        final String secret) throws IOException {
+        final String secret) {
         final Identity remote = this.remote(iname, secret);
         Identity identity;
         try {
@@ -125,8 +119,7 @@ public final class AuthRs extends AbstractRs {
      * @param secret Secret word
      * @return Identity name, if it's valid
      */
-    private Identity remote(final Urn iname, final String secret)
-        throws IOException {
+    private Identity remote(final Urn iname, final String secret) {
         Identity remote;
         if (iname.isEmpty() && "localhost".equals(secret)) {
             final RemoteIdentity idnt = new RemoteIdentity();
@@ -141,20 +134,31 @@ public final class AuthRs extends AbstractRs {
             } catch (com.netbout.spi.UnreachableUrnException ex) {
                 throw new LoginRequiredException(this, ex);
             }
-            remote = this.load(
-                UriBuilder.fromUri(entry.toString())
-                    .queryParam("identity", iname)
-                    .queryParam("secret", secret)
-                    .queryParam("ip", this.httpServletRequest().getRemoteAddr())
-                    .build()
-            );
+            final URI uri = UriBuilder.fromUri(entry.toString())
+                .queryParam("identity", iname)
+                .queryParam("secret", secret)
+                .queryParam("ip", this.httpServletRequest().getRemoteAddr())
+                .build();
+            try {
+                remote = this.load(uri);
+            } catch (IOException ex) {
+                throw new LoginRequiredException(
+                    this,
+                    String.format(
+                        "Failed to load identity from '%s': %s",
+                        uri,
+                        ex.getMessage()
+                    )
+                );
+            }
             if (!remote.name().equals(iname)) {
                 throw new LoginRequiredException(
                     this,
                     String.format(
                         // @checkstyle LineLength (1 line)
-                        "Invalid identity name retrieved '%s', while '%s' expected",
+                        "Invalid identity name '%s' retrieved from '%s', while '%s' expected",
                         remote.name(),
+                        uri,
                         iname
                     )
                 );
@@ -178,7 +182,10 @@ public final class AuthRs extends AbstractRs {
                 .get(RemotePage.class)
                 .getIdentity();
         } catch (com.sun.jersey.api.client.UniformInterfaceException ex) {
-            throw new IOException(ex);
+            throw new IOException(
+                String.format("Failed to load identity from %s", uri),
+                ex
+            );
         }
         Logger.debug(
             this,

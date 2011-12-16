@@ -85,14 +85,13 @@ public final class RemoteIdentity implements Identity {
     /**
      * Set authority.
      * @param url The name of it
-     * @throws IOException If some problem with data
      */
     @XmlElement
-    public void setAuthority(final String url) throws IOException {
+    public void setAuthority(final String url) {
         try {
             this.iauthority = new URL(url);
         } catch (java.net.MalformedURLException ex) {
-            throw new IOException(ex);
+            throw new IllegalArgumentException(ex);
         }
     }
 
@@ -108,14 +107,13 @@ public final class RemoteIdentity implements Identity {
     /**
      * Set photo.
      * @param url The URL
-     * @throws IOException If some problem with data
      */
     @XmlElement(name = "photo")
-    public void setJaxbPhoto(final String url) throws IOException {
+    public void setJaxbPhoto(final String url) {
         try {
             this.iphoto = new URL(url);
         } catch (java.net.MalformedURLException ex) {
-            throw new IOException(ex);
+            throw new IllegalArgumentException(ex);
         }
     }
 
