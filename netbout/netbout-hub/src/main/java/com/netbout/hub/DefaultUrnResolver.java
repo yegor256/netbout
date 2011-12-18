@@ -66,6 +66,8 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     public DefaultUrnResolver(final Hub ihub) {
         this.hub = ihub;
+        this.inamespaces.put("void", "http://www.netbout.com/");
+        this.inamespaces.put("netbout", "http://www.netbout.com/nb");
     }
 
     /**
@@ -104,7 +106,7 @@ final class DefaultUrnResolver implements UrnResolver {
             .exec();
         Logger.info(
             this,
-            "#register('%s', '%s', '%s'): added (%d in total)",
+            "#register('%s', '%s', '%s'): namespace registered (%d in total)",
             owner.name(),
             namespace,
             template,
@@ -160,9 +162,7 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     private ConcurrentMap<String, String> namespaces() {
         synchronized (this) {
-            if (this.inamespaces.isEmpty()) {
-                this.inamespaces.put("void", "http://www.netbout.com/");
-                this.inamespaces.put("netbout", "http://www.netbout.com/nb");
+            if (this.inamespaces.size() <= 2) {
                 final List<String> names = this.hub.bus()
                     .make("get-all-namespaces")
                     .synchronously()
