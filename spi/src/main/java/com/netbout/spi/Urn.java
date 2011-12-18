@@ -110,14 +110,6 @@ public final class Urn implements Comparable {
         if (nss == null) {
             throw new IllegalArgumentException("NSS can't be NULL");
         }
-        if (!nid.matches("^[a-z]{0,31}$")) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "NID '%s' can contain only letters",
-                    nid
-                )
-            );
-        }
         try {
             this.uri = URI.create(
                 String.format(
@@ -248,6 +240,14 @@ public final class Urn implements Comparable {
             throw new URISyntaxException(
                 this.toString(),
                 "Empty URN can't have NSS"
+            );
+        }
+        if (!this.nid().matches("^[a-z]{0,31}$")) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "NID '%s' can contain only letters",
+                    this.nid()
+                )
             );
         }
     }

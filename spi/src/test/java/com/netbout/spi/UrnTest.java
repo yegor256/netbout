@@ -160,6 +160,33 @@ public final class UrnTest {
     }
 
     /**
+     * Urn can throw exception for incorrect syntax.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void throwsExceptionForIncorrectUrnSyntax() throws Exception {
+        final String[] texts = new String[] {
+            "abc",
+            "",
+            "urn::",
+            "urn:incorrect namespace name with spaces:test",
+            "urn:abc+foo:test-me",
+            "urn:incorrect%20namespace:",
+            "urn:verylongnameofanamespaceverylongnameofanamespace:",
+            "urn:test:spaces are not allowed here",
+            "urn:test:unicode-has-to-be-encoded:\u8514",
+        };
+        for (String text : texts) {
+            try {
+                Urn.create(text);
+                MatcherAssert.assertThat(text, Matchers.nullValue());
+            } catch (IllegalArgumentException ex) {
+                assert ex != null;
+            }
+        }
+    }
+
+    /**
      * Urn can be "empty".
      * @throws Exception If there is some problem inside
      */
