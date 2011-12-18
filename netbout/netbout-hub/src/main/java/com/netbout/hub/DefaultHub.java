@@ -197,9 +197,10 @@ public final class DefaultHub implements Hub {
                 Logger.warn(
                     this,
                     // @checkstyle LineLength (1 line)
-                    "#findByKeyword('%s'): some helper returned '%s' identity that is not reachable",
+                    "#findByKeyword('%s'): some helper returned '%s' identity that is not reachable:\n%[exception]s",
                     keyword,
-                    name
+                    name,
+                    ex
                 );
             }
         }

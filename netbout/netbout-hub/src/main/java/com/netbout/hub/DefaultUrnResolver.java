@@ -131,9 +131,10 @@ final class DefaultUrnResolver implements UrnResolver {
         if (!this.namespaces().containsKey(nid)) {
             throw new UnreachableUrnException(
                 urn,
-                String.format(
-                    "Namespace '%s' is not registered",
-                    nid
+                Logger.format(
+                    "Namespace '%s' is not registered among %[list]s",
+                    nid,
+                    this.namespaces().keySet()
                 )
             );
         }
@@ -183,8 +184,9 @@ final class DefaultUrnResolver implements UrnResolver {
                 }
                 Logger.info(
                     this,
-                    "#load(): loaded %d namespaces",
-                    this.inamespaces.size()
+                    "#load(): loaded %d namespaces: %[list]s",
+                    this.inamespaces.size(),
+                    this.inamespaces.keySet()
                 );
             }
             return this.inamespaces;
