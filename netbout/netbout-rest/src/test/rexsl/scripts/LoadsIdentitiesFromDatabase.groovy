@@ -31,14 +31,12 @@ package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
-import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 def rick = new RestSession(rexsl.home).authenticate(new Urn('urn:test:rick'), '')
 
-def friends = rick.friends('t')
 def names = []
 rick.friends('t').each { names.add(it.name()); }
-MatcherAssert.assertThat(names, Matchers.hasItem(new Urn('urn:facebook:6677')))
+MatcherAssert.assertThat(names, Matchers.hasItem(new Urn('urn:facebook:4466')))
 

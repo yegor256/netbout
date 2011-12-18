@@ -348,10 +348,10 @@ public abstract class AbstractRs implements Resource {
         } catch (com.netbout.utils.DecryptionException ex) {
             Logger.debug(
                 this,
-                "Decryption failure from %s calling '%s': %s",
+                "Decryption failure from %s calling '%s': %[exception]s",
                 this.httpServletRequest().getRemoteAddr(),
                 this.httpServletRequest().getRequestURI(),
-                ex.getMessage()
+                ex
             );
             throw new LoginRequiredException(this, ex);
         }

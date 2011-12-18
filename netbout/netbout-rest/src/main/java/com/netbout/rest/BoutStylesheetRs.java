@@ -105,7 +105,8 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
-        String xsl = "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>";
+        String xsl =
+            "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>";
         if (!this.stage.isEmpty()) {
             xsl = this.bus().make("render-stage-xsl")
                 .synchronously()

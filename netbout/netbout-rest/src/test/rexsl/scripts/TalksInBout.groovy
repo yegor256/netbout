@@ -31,7 +31,6 @@ package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
-import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 

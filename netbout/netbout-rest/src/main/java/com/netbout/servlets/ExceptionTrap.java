@@ -28,8 +28,6 @@ package com.netbout.servlets;
 
 import com.netbout.utils.TextUtils;
 import com.ymock.util.Logger;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

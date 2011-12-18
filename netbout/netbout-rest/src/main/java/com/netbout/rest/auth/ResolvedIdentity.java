@@ -26,21 +26,13 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.utils.Cipher;
-import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
 
 /**
  * Resolved identity.
@@ -48,6 +40,7 @@ import javax.ws.rs.core.Response;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class ResolvedIdentity implements Identity {
 
     /**
@@ -72,7 +65,9 @@ public final class ResolvedIdentity implements Identity {
 
     /**
      * Public ctor.
-     * @param name The name
+     * @param authority The authority
+     * @param name The name of it
+     * @param photo Its photo
      */
     public ResolvedIdentity(final URL authority, final Urn name,
         final URL photo) {

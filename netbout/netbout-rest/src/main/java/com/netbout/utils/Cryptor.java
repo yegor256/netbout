@@ -30,7 +30,6 @@ import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Encrypts and decrypts.

@@ -30,7 +30,6 @@ import com.netbout.rest.ForwardException;
 import com.netbout.rest.Page;
 import com.netbout.rest.ResourceMocker;
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import com.netbout.utils.Cipher;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;

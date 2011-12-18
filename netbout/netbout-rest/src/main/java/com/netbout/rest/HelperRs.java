@@ -34,7 +34,6 @@ import com.netbout.utils.Promoter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -65,6 +64,7 @@ public final class HelperRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .link("promote", this.base().path("/h/promote"))
+            // @checkstyle MultipleStringLiterals (2 lines)
             .link("namespaces", this.base().path("/h/namespaces"))
             .append(JaxbGroup.build(this.namespaces(), "namespaces"))
             .authenticated(this.identity())
@@ -126,6 +126,7 @@ public final class HelperRs extends AbstractRs {
      * Get list of my namespaces.
      * @return The collection of them
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private Collection<Namespace> namespaces() {
         final Collection<Namespace> namespaces = new ArrayList<Namespace>();
         final ConcurrentMap<String, String> map = this.hub().resolver()

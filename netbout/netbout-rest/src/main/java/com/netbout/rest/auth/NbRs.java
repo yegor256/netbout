@@ -30,15 +30,11 @@ import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.utils.Cipher;
 import com.ymock.util.Logger;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -80,6 +76,7 @@ public final class NbRs extends AbstractRs {
      * Validate them.
      * @param iname Name of identity
      * @param secret The secret code
+     * @return The identity just authenticated
      */
     private Identity authenticate(final Urn iname, final String secret) {
         if ((iname == null) || (secret == null)) {

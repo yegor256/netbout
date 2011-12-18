@@ -26,31 +26,14 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.utils.Cryptor;
-import com.sun.jersey.api.client.Client;
-import com.ymock.util.Logger;
-import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -60,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  * @version $Id$
  */
 @XmlType(name = "identity")
+@SuppressWarnings("PMD.TooManyMethods")
 public final class RemoteIdentity implements Identity {
 
     /**

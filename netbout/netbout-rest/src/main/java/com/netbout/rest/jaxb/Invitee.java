@@ -27,7 +27,6 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.utils.AliasBuilder;
 import java.net.URL;
 import javax.ws.rs.core.UriBuilder;
