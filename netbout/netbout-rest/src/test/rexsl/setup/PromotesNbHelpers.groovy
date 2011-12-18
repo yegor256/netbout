@@ -38,7 +38,8 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
 def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
-def text = 'test=' + UriBuilder.fromUri(rexsl.home).path('/mock-auth').build()
+def text = 'test=' + UriBuilder.fromUri(rexsl.home).path('/mock-auth').build() +
+    '\nfacebook=' + UriBuilder.fromUri(rexsl.home).path('/fb').build()
 RestTester.start(RestUriBuilder.from(starter).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get()

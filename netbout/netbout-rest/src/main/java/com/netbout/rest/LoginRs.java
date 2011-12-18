@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.auth.FacebookRs;
+import com.netbout.rest.auth.AuthMediator;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
@@ -83,9 +83,13 @@ public final class LoginRs extends AbstractRs {
     @Path("/fb")
     public Response fbauth(@QueryParam("code") final String code) {
         this.logoff();
-        final Identity remote = (Identity) new FacebookRs()
-            .auth(Urn.create("urn:facebook:0"), code)
-            .getEntity();
+        Identity remote;
+        try {
+            remote = new AuthMediator(this.hub().resolver())
+                .authenticate(new Urn("facebook", ""), code);
+        } catch (java.io.IOException ex) {
+            throw new LoginRequiredException(this, ex);
+        }
         Identity identity;
         try {
             identity = this.hub().identity(remote.name());

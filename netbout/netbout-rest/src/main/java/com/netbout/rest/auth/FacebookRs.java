@@ -74,6 +74,12 @@ public final class FacebookRs extends AbstractRs {
         try {
             identity = this.authenticate(secret);
         } catch (IOException ex) {
+            Logger.warn(
+                this,
+                "Failed to auth at facebook (secret='%s'): %[exception]s",
+                secret,
+                ex
+            );
             throw new LoginRequiredException(this, ex);
         }
         Logger.debug(
