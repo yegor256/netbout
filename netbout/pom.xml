@@ -52,7 +52,6 @@
     <name>netbout</name>
 
     <modules>
-        <module>netbout-tk</module>
         <module>netbout-db</module>
         <module>netbout-bus</module>
         <module>netbout-hub</module>
@@ -169,6 +168,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <!-- Logging facility, on top of SLF4J. -->
+                <groupId>com.ymock</groupId>
+                <artifactId>ymock-util</artifactId>
+                <version since="16 Dec 2011">1.0.3</version>
+            </dependency>
+            <dependency>
                 <!--
                 This library simplifies string operations. This is
                 org.apache.commons.lang.*.
@@ -254,14 +259,14 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version since="19 Sep 2011">1.6.2</version>
-                <scope>runtime</scope>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <!-- Use LOG4J logging facility for all loggings. -->
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version since="19 Sep 2011">1.2.16</version>
-                <scope>runtime</scope>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -283,13 +288,9 @@
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
                         <version since="21 Nov 2011">0.1.7</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.netbout</groupId>
-                                <artifactId>netbout-tk</artifactId>
-                                <version netbout="yes">2.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
+                        <configuration>
+                            <license>file:${basedir}/LICENSE.txt</license>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>

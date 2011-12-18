@@ -26,13 +26,24 @@
  */
 package com.netbout.rest;
 
+import javax.ws.rs.core.UriBuilder;
+
 /**
  * Login required.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class LoginRequiredException extends ForwardException {
+public final class LoginRequiredException extends ForwardException {
+
+    /**
+     * Constructor.
+     * @param res The originator of the exception
+     * @param cause Cause of this problem
+     */
+    public LoginRequiredException(final Resource res, final String cause) {
+        super(res, LoginRequiredException.path(res), cause);
+    }
 
     /**
      * Constructor.
@@ -40,7 +51,16 @@ final class LoginRequiredException extends ForwardException {
      * @param cause Cause of this problem
      */
     public LoginRequiredException(final Resource res, final Exception cause) {
-        super(res, res.base().path("/g"), cause);
+        super(res, LoginRequiredException.path(res), cause);
+    }
+
+    /**
+     * Build path to forward to.
+     * @param res The originator of the exception
+     * @return The destination
+     */
+    private static UriBuilder path(final Resource res) {
+        return res.base().path("/g");
     }
 
 }

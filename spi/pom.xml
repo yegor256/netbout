@@ -178,12 +178,10 @@
             <version since="13 Dec 2011">1.11</version>
         </dependency>
         <dependency>
-            <!--
-            Logging facility, on top of SLF4J.
-            -->
+            <!-- Logging facility, on top of SLF4J. -->
             <groupId>com.ymock</groupId>
             <artifactId>ymock-util</artifactId>
-            <version since="2 Nov 2011">1.0</version>
+            <version since="16 Dec 2011">1.0.3</version>
         </dependency>
         <dependency>
             <!-- Forward all calls to SLF4J to LOG4J. -->

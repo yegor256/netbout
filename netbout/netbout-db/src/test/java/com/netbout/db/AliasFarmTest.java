@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -44,38 +45,17 @@ public final class AliasFarmTest {
     private final transient AliasFarm farm = new AliasFarm();
 
     /**
-     * Find aliases of some identity.
+     * AliasFarm can add alias to identity and find it then.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testAliasFinding() throws Exception {
-        final String identity = "William Shakespear";
+    public void addsAnAliasAndRetrievesItBack() throws Exception {
         final String alias = "willy@example.com";
-        new IdentityFarm().identityMentioned(identity);
-        this.farm.addedIdentityAlias(identity, alias);
+        final Urn identity = new IdentityRowMocker()
+            .withAlias(alias)
+            .mock();
         final List<String> aliases = this.farm.getAliasesOfIdentity(identity);
         MatcherAssert.assertThat(aliases, Matchers.hasItem(alias));
-    }
-
-    /**
-     * Find identity by keyword.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testGlobalFinding() throws Exception {
-        final String identity = "Martin Fowler";
-        final String alias = "martin@example.com";
-        final IdentityFarm ifarm = new IdentityFarm();
-        ifarm.identityMentioned(identity);
-        this.farm.addedIdentityAlias(identity, alias);
-        MatcherAssert.assertThat(
-            ifarm.findIdentitiesByKeyword("FOWLER"),
-            Matchers.hasItem(identity)
-        );
-        MatcherAssert.assertThat(
-            ifarm.findIdentitiesByKeyword("MARTIN"),
-            Matchers.hasItem(identity)
-        );
     }
 
 }

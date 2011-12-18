@@ -39,9 +39,9 @@ import com.netbout.spi.Participant;
 public final class HubParticipant implements Participant {
 
     /**
-     * The catalog.
+     * The hub.
      */
-    private final transient Catalog catalog;
+    private final transient Hub hub;
 
     /**
      * The bout I'm in.
@@ -60,15 +60,15 @@ public final class HubParticipant implements Participant {
 
     /**
      * Public ctor.
-     * @param ctlg The catalog
+     * @param ihub The hub
      * @param bout The bout
      * @param dat The data
      * @param bdt Bout data
      * @checkstyle ParameterNumber (3 lines)
      */
-    public HubParticipant(final Catalog ctlg, final Bout bout,
+    public HubParticipant(final Hub ihub, final Bout bout,
         final ParticipantDt dat, final BoutDt bdt) {
-        this.catalog = ctlg;
+        this.hub = ihub;
         this.ibout = bout;
         this.data = dat;
         this.boutdt = bdt;
@@ -88,8 +88,8 @@ public final class HubParticipant implements Participant {
     @Override
     public Identity identity() {
         try {
-            return this.catalog.make(this.data.getIdentity());
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            return this.hub.identity(this.data.getIdentity());
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
         }
     }

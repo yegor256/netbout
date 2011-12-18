@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -49,14 +48,9 @@ import java.util.List;
 public final class HubBout implements Bout {
 
     /**
-     * The bus.
+     * The hub.
      */
-    private final transient Bus bus;
-
-    /**
-     * The catalog.
-     */
-    private final transient Catalog catalog;
+    private final transient Hub hub;
 
     /**
      * The viewer.
@@ -70,16 +64,12 @@ public final class HubBout implements Bout {
 
     /**
      * Public ctor.
-     * @param ctlg The catalog
-     * @param ibus The bus
+     * @param ihub The hub
      * @param idnt The viewer
      * @param dat The data
-     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubBout(final Catalog ctlg, final Bus ibus, final Identity idnt,
-        final BoutDt dat) {
-        this.catalog = ctlg;
-        this.bus = ibus;
+    public HubBout(final Hub ihub, final Identity idnt, final BoutDt dat) {
+        this.hub = ihub;
         this.viewer = idnt;
         this.data = dat;
     }
@@ -148,7 +138,7 @@ public final class HubBout implements Bout {
         if (friend instanceof InvitationSensitive) {
             ((InvitationSensitive) friend).invited(this);
         }
-        return new HubParticipant(this.catalog, this, dude, this.data);
+        return new HubParticipant(this.hub, this, dude, this.data);
     }
 
     /**
@@ -161,7 +151,7 @@ public final class HubBout implements Bout {
             = new ArrayList<Participant>();
         for (ParticipantDt dude : this.data.getParticipants()) {
             participants.add(
-                new HubParticipant(this.catalog, this, dude, this.data)
+                new HubParticipant(this.hub, this, dude, this.data)
             );
         }
         Logger.debug(
@@ -184,7 +174,7 @@ public final class HubBout implements Bout {
         Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
         for (MessageDt msg : datas) {
-            messages.add(new HubMessage(this.catalog, this.viewer, this, msg));
+            messages.add(new HubMessage(this.hub, this.viewer, this, msg));
         }
         Logger.debug(
             this,
@@ -202,7 +192,7 @@ public final class HubBout implements Bout {
     @Override
     public Message message(final Long num) throws MessageNotFoundException {
         final Message message = new HubMessage(
-            this.catalog,
+            this.hub,
             this.viewer,
             this,
             this.data.findMessage(num)
@@ -233,13 +223,13 @@ public final class HubBout implements Bout {
             text
         );
         final Message message = new HubMessage(
-            this.catalog,
+            this.hub,
             this.viewer,
             this,
             msg
         );
         message.text();
-        this.bus.make("notify-bout-participants")
+        this.hub.bus().make("notify-bout-participants")
             .arg(this.number())
             .arg(message.number())
             .asDefault(false)

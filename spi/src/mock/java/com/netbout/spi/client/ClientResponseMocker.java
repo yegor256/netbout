@@ -31,6 +31,9 @@ package com.netbout.spi.client;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.core.MultivaluedMap;
 import org.mockito.Mockito;
 
 /**
@@ -47,12 +50,32 @@ public final class ClientResponseMocker {
         Mockito.mock(ClientResponse.class);
 
     /**
+     * Headers.
+     */
+    private final transient MultivaluedMap headers = new MultivaluedMapImpl();
+
+    /**
      * Return this status code.
      * @param code The code
      * @return This object
      */
     public ClientResponseMocker withStatus(final int code) {
         Mockito.doReturn(code).when(this.response).getStatus();
+        return this;
+    }
+
+    /**
+     * Return this header.
+     * @param name The name of ti
+     * @param value The value
+     * @return This object
+     */
+    public ClientResponseMocker withHeader(final String name,
+        final String value) {
+        if (!this.headers.containsKey(name)) {
+            this.headers.put(name, new ArrayList<String>());
+        }
+        ((List) this.headers.get(name)).add(value);
         return this;
     }
 
@@ -72,8 +95,7 @@ public final class ClientResponseMocker {
      * @return Mocked class
      */
     public ClientResponse mock() {
-        Mockito.doReturn(new MultivaluedMapImpl())
-            .when(this.response).getHeaders();
+        Mockito.doReturn(this.headers).when(this.response).getHeaders();
         return this.response;
     }
 

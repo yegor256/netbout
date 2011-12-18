@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.netbout.utils.TextUtils;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,12 +55,12 @@ public final class StageCoordinates {
     /**
      * List of all stages.
      */
-    private transient Collection<String> stages;
+    private transient Collection<Urn> stages;
 
     /**
      * Name of stage.
      */
-    private transient String istage = "";
+    private transient Urn istage = new Urn();
 
     /**
      * Place of stage.
@@ -70,7 +71,7 @@ public final class StageCoordinates {
      * Get stage.
      * @return The name of it
      */
-    public String stage() {
+    public Urn stage() {
         if (this.stages == null) {
             throw new IllegalStateException(
                 "Call #normalize() before #stage()"
@@ -80,22 +81,10 @@ public final class StageCoordinates {
     }
 
     /**
-     * Get stage for URI path.
-     * @return The name of it
-     */
-    public String stageForPath() {
-        String stg = this.stage();
-        if (stg.isEmpty()) {
-            stg = "-";
-        }
-        return stg;
-    }
-
-    /**
      * Set stage.
      * @param name The name of it
      */
-    public void setStage(final String name) {
+    public void setStage(final Urn name) {
         this.istage = name;
     }
 
@@ -128,19 +117,29 @@ public final class StageCoordinates {
     public static StageCoordinates valueOf(final String pair) {
         final StageCoordinates coords = new StageCoordinates();
         if (pair != null && pair.contains(StageCoordinates.SEPARATOR)) {
-            coords.setStage(
-                TextUtils.unpack(
-                    pair.substring(0, pair.indexOf(StageCoordinates.SEPARATOR))
-                )
-            );
-            coords.setPlace(
-                TextUtils.unpack(
-                    pair.substring(
-                        pair.indexOf(StageCoordinates.SEPARATOR)
-                        + StageCoordinates.SEPARATOR.length()
+            try {
+                coords.setStage(
+                    new Urn(
+                        TextUtils.unpack(
+                            pair.substring(
+                                0,
+                                pair.indexOf(StageCoordinates.SEPARATOR)
+                            )
+                        )
                     )
-                )
-            );
+                );
+                coords.setPlace(
+                    TextUtils.unpack(
+                        pair.substring(
+                            pair.indexOf(StageCoordinates.SEPARATOR)
+                            + StageCoordinates.SEPARATOR.length()
+                        )
+                    )
+                );
+            } catch (java.net.URISyntaxException ex) {
+                coords.setStage(new Urn());
+                coords.setPlace("");
+            }
         }
         return coords;
     }
@@ -155,9 +154,9 @@ public final class StageCoordinates {
         }
         return String.format(
             "%s%s%s",
-            TextUtils.pack(this.istage),
+            TextUtils.pack(this.stage().toString()),
             this.SEPARATOR,
-            TextUtils.pack(this.iplace)
+            TextUtils.pack(this.place())
         );
     }
 
@@ -165,7 +164,7 @@ public final class StageCoordinates {
      * List of all stages, their names.
      * @return The list
      */
-    public Collection<String> all() {
+    public Collection<Urn> all() {
         if (this.stages == null) {
             throw new IllegalStateException("Call #normalize() before #all()");
         }
@@ -181,9 +180,9 @@ public final class StageCoordinates {
         if (this.stages != null) {
             throw new IllegalStateException("Duplicate call to #normalize()");
         }
-        this.stages = new ArrayList<String>();
+        this.stages = new ArrayList<Urn>();
         for (Participant dude : bout.participants()) {
-            final String name = dude.identity().name();
+            final Urn name = dude.identity().name();
             final Boolean exists = bus.make("does-stage-exist")
                 .synchronously()
                 .arg(bout.number())
@@ -199,7 +198,7 @@ public final class StageCoordinates {
             this.istage = this.stages.iterator().next();
         }
         if (!this.stages.contains(this.istage)) {
-            this.istage = "";
+            this.istage = new Urn();
         }
     }
 

@@ -26,6 +26,8 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Urn;
+
 /**
  * Participant data type.
  *
@@ -44,7 +46,7 @@ public interface ParticipantDt {
      * Get identity.
      * @return The identity
      */
-    String getIdentity();
+    Urn getIdentity();
 
     /**
      * Set status.

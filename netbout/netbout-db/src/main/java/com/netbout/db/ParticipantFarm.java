@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
@@ -52,11 +53,11 @@ public final class ParticipantFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-bout-participants")
-    public List<String> getBoutParticipants(final Long bout)
+    public List<Urn> getBoutParticipants(final Long bout)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
-        final List<String> names = new ArrayList<String>();
+        final List<Urn> names = new ArrayList<Urn>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 // @checkstyle LineLength (1 line)
@@ -66,7 +67,7 @@ public final class ParticipantFarm {
             final ResultSet rset = stmt.executeQuery();
             try {
                 while (rset.next()) {
-                    names.add(rset.getString(1));
+                    names.add(Urn.create(rset.getString(1)));
                 }
             } finally {
                 rset.close();
@@ -91,7 +92,7 @@ public final class ParticipantFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("added-bout-participant")
-    public void addedBoutParticipant(final Long bout, final String identity)
+    public void addedBoutParticipant(final Long bout, final Urn identity)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -100,7 +101,7 @@ public final class ParticipantFarm {
                 "INSERT INTO participant (bout, identity) VALUES (?, ?)"
             );
             stmt.setLong(1, bout);
-            stmt.setString(2, identity);
+            stmt.setString(2, identity.toString());
             stmt.execute();
         } finally {
             conn.close();
@@ -121,7 +122,7 @@ public final class ParticipantFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("removed-bout-participant")
-    public void removedBoutParticipant(final Long bout, final String identity)
+    public void removedBoutParticipant(final Long bout, final Urn identity)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -130,7 +131,7 @@ public final class ParticipantFarm {
                 "DELETE FROM participant WHERE bout = ? AND identity = ?"
             );
             stmt.setLong(1, bout);
-            stmt.setString(2, identity);
+            stmt.setString(2, identity.toString());
             stmt.execute();
         } finally {
             conn.close();
@@ -152,7 +153,7 @@ public final class ParticipantFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-participant-status")
-    public Boolean getParticipantStatus(final Long bout, final String identity)
+    public Boolean getParticipantStatus(final Long bout, final Urn identity)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -163,7 +164,7 @@ public final class ParticipantFarm {
                 "SELECT confirmed FROM participant WHERE bout = ? AND identity = ?"
             );
             stmt.setLong(1, bout);
-            stmt.setString(2, identity);
+            stmt.setString(2, identity.toString());
             final ResultSet rset = stmt.executeQuery();
             try {
                 if (!rset.next()) {
@@ -202,7 +203,7 @@ public final class ParticipantFarm {
      */
     @Operation("changed-participant-status")
     public void changedParticipantStatus(final Long bout,
-        final String identity, final Boolean status) throws SQLException {
+        final Urn identity, final Boolean status) throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
@@ -213,7 +214,7 @@ public final class ParticipantFarm {
             stmt.setBoolean(1, status);
             stmt.setLong(2, bout);
             // @checkstyle MagicNumber (1 line)
-            stmt.setString(3, identity);
+            stmt.setString(3, identity.toString());
             final int updated = stmt.executeUpdate();
             if (updated != 1) {
                 throw new SQLException(

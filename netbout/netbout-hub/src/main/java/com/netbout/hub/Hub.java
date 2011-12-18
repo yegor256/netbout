@@ -26,8 +26,12 @@
  */
 package com.netbout.hub;
 
+import com.netbout.bus.Bus;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.UnreachableUrnException;
+import com.netbout.spi.Urn;
+import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -40,11 +44,31 @@ import org.w3c.dom.Element;
 public interface Hub {
 
     /**
-     * Find user by name.
-     * @param name The name of the user to find
-     * @return The user found
+     * Find identity by URN.
+     * @param name The name of the identity
+     * @return The identity found
+     * @throws UnreachableUrnException If we can't reach it
+     * @checkstyle RedundantThrows (3 lines)
      */
-    User user(String name);
+    Identity identity(Urn name) throws UnreachableUrnException;
+
+    /**
+     * Get URN resolver.
+     * @return The resolver
+     */
+    UrnResolver resolver();
+
+    /**
+     * Get bus.
+     * @return The bus
+     */
+    Bus bus();
+
+    /**
+     * Get manager of bouts.
+     * @return The manager
+     */
+    BoutMgr manager();
 
     /**
      * Create statistics in the given XML document and return their element.
@@ -59,5 +83,12 @@ public interface Hub {
      * @param helper The helper to use
      */
     void promote(Identity identity, Helper helper);
+
+    /**
+     * Find identities by keyword.
+     * @param keyword The keyword
+     * @return The identities found
+     */
+    Set<Identity> findByKeyword(String keyword);
 
 }

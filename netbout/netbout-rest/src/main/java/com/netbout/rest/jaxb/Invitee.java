@@ -28,6 +28,7 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
 import com.netbout.utils.AliasBuilder;
+import java.net.URL;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -100,7 +101,7 @@ public final class Invitee {
      */
     @XmlElement
     public String getName() {
-        return this.identity.name();
+        return this.identity.name().toString();
     }
 
     /**
@@ -108,8 +109,8 @@ public final class Invitee {
      * @return The photo
      */
     @XmlElement
-    public String getPhoto() {
-        return this.identity.photo().toString();
+    public URL getPhoto() {
+        return this.identity.photo();
     }
 
 }

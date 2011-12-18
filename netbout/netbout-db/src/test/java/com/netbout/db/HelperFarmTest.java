@@ -26,6 +26,8 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
+import java.net.URL;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -49,11 +51,10 @@ public final class HelperFarmTest {
      */
     @Test
     public void registersNewHelperAndFindsIt() throws Exception {
-        final String identity = "Steven Jobs";
-        final String url = "http://localhost/some-address";
-        new IdentityFarm().identityMentioned(identity);
+        final Urn identity = new IdentityRowMocker().mock();
+        final URL url = new URL("http://localhost/some-address");
         this.farm.identityPromoted(identity, url);
-        final List<String> names = this.farm.getAllHelpers();
+        final List<Urn> names = this.farm.getAllHelpers();
         MatcherAssert.assertThat(names, Matchers.hasItem(identity));
         MatcherAssert.assertThat(
             this.farm.getHelperUrl(identity),
@@ -67,9 +68,8 @@ public final class HelperFarmTest {
      */
     @Test
     public void registersHelperTwice() throws Exception {
-        final String identity = "Alex Baldwin";
-        final String url = "http://localhost/some-other-address";
-        new IdentityFarm().identityMentioned(identity);
+        final Urn identity = new IdentityRowMocker().mock();
+        final URL url = new URL("http://localhost/some-other-address");
         this.farm.identityPromoted(identity, url);
         this.farm.identityPromoted(identity, url);
     }
@@ -80,10 +80,9 @@ public final class HelperFarmTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void registersHelperTwiceWithDifferentUrl() throws Exception {
-        final String identity = "Jeff Lebowski";
-        new IdentityFarm().identityMentioned(identity);
-        this.farm.identityPromoted(identity, "http://localhost/abc");
-        this.farm.identityPromoted(identity, "http://localhost/cde");
+        final Urn identity = new IdentityRowMocker().mock();
+        this.farm.identityPromoted(identity, new URL("http://localhost/abc"));
+        this.farm.identityPromoted(identity, new URL("http://localhost/cde"));
     }
 
 }

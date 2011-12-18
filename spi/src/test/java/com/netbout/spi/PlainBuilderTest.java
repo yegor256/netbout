@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -63,9 +64,10 @@ public final class PlainBuilderTest {
     /**
      * Incoming params.
      * @return The collection of them
+     * @throws Exception If some problem inside
      */
     @Parameterized.Parameters
-    public static Collection<Object[]> parameters() {
+    public static Collection<Object[]> parameters() throws Exception {
         final Random random = new Random();
         return Arrays.asList(
             new Object[][] {
@@ -74,6 +76,9 @@ public final class PlainBuilderTest {
                 new Object[] {"a"},
                 new Object[] {"some text: 8(&^%$,:;,\"/\\+ "},
                 new Object[] {new Date()},
+                new Object[] {new Urn("urn:foo:test")},
+                new Object[] {new Urn("bar", "&^%$#@\u8514")},
+                new Object[] {new URL("http://localhost/test")},
                 new Object[] {new Date(Math.abs(random.nextLong()))},
                 new Object[] {true},
                 new Object[] {Boolean.FALSE},

@@ -30,8 +30,12 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import java.net.URL;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -45,20 +49,27 @@ import org.xmlmatchers.transform.XmlConverters;
  * Test case of {@link DefaultHub}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle MultipleStringLiterals (500 lines)
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class DefaultHubTest {
 
     /**
-     * DefaultHub can create a user by name.
+     * DefaultHub can create an identity by name.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void createsUserByName() throws Exception {
-        final String name = "Chuck Norris";
-        final Bus bus = new BusMocker().mock();
+    public void createsIdentityByName() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
         final Hub hub = new DefaultHub(bus);
-        final User user = hub.user(name);
-        MatcherAssert.assertThat(user.name(), Matchers.equalTo(name));
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://abc"
+        );
+        final Identity identity = hub.identity(name);
+        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
     }
 
     /**
@@ -76,7 +87,7 @@ public final class DefaultHubTest {
         doc.appendChild(hub.stats(doc));
         MatcherAssert.assertThat(
             XmlConverters.the(doc),
-            XmlMatchers.hasXPath("/catalog")
+            XmlMatchers.hasXPath("/hub")
         );
     }
 
@@ -86,18 +97,99 @@ public final class DefaultHubTest {
      */
     @Test
     public void promotesIdentityToHelper() throws Exception {
-        final Bus bus = new BusMocker().mock();
+        final Urn name = new UrnMocker().mock();
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
         final Hub hub = new DefaultHub(bus);
-        final String name = String.valueOf(Math.abs(new Random().nextLong()));
-        final User user = hub.user("Billy Bonce");
-        final Identity identity = user.identity(name);
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://cde"
+        );
+        final Identity identity = hub.identity(name);
         final Helper helper = Mockito.mock(Helper.class);
         Mockito.doReturn(new URL("file:com.netbout")).when(helper).location();
         Mockito.doReturn(name).when(helper).name();
         hub.promote(identity, helper);
         MatcherAssert.assertThat(
-            user.identity(name),
+            hub.identity(name),
             Matchers.equalTo((Identity) helper)
+        );
+    }
+
+    /**
+     * Hub can return the same identity on similar requests.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void doesntDuplicateIdentities() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        final Urn name = new UrnMocker().mock();
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://foo"
+        );
+        final Identity first = hub.identity(name);
+        MatcherAssert.assertThat(hub.identity(name), Matchers.equalTo(first));
+    }
+
+    /**
+     * Catalog can inform Bus on every identity being mentioned, just once.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void informsBusAboutIdentityBeingMentioned() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        final Urn name = new UrnMocker().mock();
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://bar"
+        );
+        hub.identity(name);
+        hub.identity(name);
+        Mockito.verify(bus, Mockito.times(1)).make("identity-mentioned");
+    }
+
+    /**
+     * Catalog can check identity name and throws exception if it's unreachable.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = com.netbout.spi.UnreachableUrnException.class)
+    public void doesntAllowUnreachableIdentities() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        final Urn name = new UrnMocker().mock();
+        hub.identity(name);
+    }
+
+    /**
+     * DefaultHub can find identities in pool when they are there.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsIdentitiesByNameWhenTheyExist() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final List<Urn> names = new ArrayList<Urn>();
+        names.add(name);
+        final Bus bus = new BusMocker()
+            // @checkstyle MultipleStringLiterals (1 line)
+            .doReturn(names, "find-identities-by-keyword")
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://foo-foo"
+        );
+        final Identity identity = hub.identity(name);
+        MatcherAssert.assertThat(
+            hub.findByKeyword(name.nss()),
+            Matchers.hasItem(identity)
         );
     }
 

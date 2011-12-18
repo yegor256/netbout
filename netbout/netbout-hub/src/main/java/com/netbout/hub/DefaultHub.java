@@ -27,9 +27,18 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.UnreachableUrnException;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.NavigableSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -39,39 +48,86 @@ import org.w3c.dom.Element;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class DefaultHub implements Hub {
 
     /**
      * The bus.
      */
-    private final transient Bus bus;
+    private final transient Bus ibus;
 
     /**
-     * Catalog of identities.
+     * Manager of bouts.
      */
-    private final transient Catalog catalog;
+    private final transient BoutMgr imanager;
+
+    /**
+     * Resolver.
+     */
+    private final transient UrnResolver iresolver;
+
+    /**
+     * All identities known for us at the moment.
+     */
+    private final transient NavigableSet all =
+        new ConcurrentSkipListSet<Identity>();
 
     /**
      * Public ctor.
-     * @param ibus The bus
+     * @param bus The bus
      */
-    public DefaultHub(final Bus ibus) {
-        this.bus = ibus;
-        this.catalog = new DefaultCatalog(this.bus);
+    public DefaultHub(final Bus bus) {
+        this.ibus = bus;
+        this.imanager = new DefaultBoutMgr(this);
+        this.iresolver = new DefaultUrnResolver(this);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public User user(final String name) {
-        final User user = new HubUser(this.catalog, name);
-        Logger.debug(
-            this,
-            "#user('%s'): instantiated",
-            name
-        );
-        return user;
+    public UrnResolver resolver() {
+        return this.iresolver;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bus bus() {
+        return this.ibus;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BoutMgr manager() {
+        return this.imanager;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (3 lines)
+     */
+    @Override
+    public Identity identity(final Urn name) throws UnreachableUrnException {
+        this.resolver().authority(name);
+        final DefaultHub.Token token = new DefaultHub.Token(name);
+        Identity identity;
+        if (this.all.contains(token)) {
+            identity = (Identity) this.all.floor(token);
+        } else {
+            identity = new HubIdentity(this, name);
+            this.save(identity);
+            Logger.debug(
+                this,
+                "#identity('%s'): created new (%d total)",
+                name,
+                this.all.size()
+            );
+        }
+        return identity;
     }
 
     /**
@@ -79,7 +135,18 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public Element stats(final Document doc) {
-        return this.catalog.stats(doc);
+        final Element root = doc.createElement("hub");
+        final Element identities = doc.createElement("identities");
+        root.appendChild(identities);
+        for (Object object : this.all) {
+            final Element identity = doc.createElement("identity");
+            identities.appendChild(identity);
+            identity.appendChild(
+                doc.createTextNode(((Identity) object).name().toString())
+            );
+        }
+        root.appendChild(this.manager().stats(doc));
+        return root;
     }
 
     /**
@@ -87,9 +154,109 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public void promote(final Identity identity, final Helper helper) {
-        assert identity.equals(helper);
-        this.bus.register(helper);
-        this.catalog.promote(identity, helper);
+        this.bus().register(helper);
+        Identity existing;
+        try {
+            existing = this.identity(identity.name());
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        this.all.remove(existing);
+        this.save(helper);
+        Logger.info(
+            this,
+            "#promote('%s', '%s'): replaced existing identity (%s)",
+            identity.name(),
+            helper.getClass().getName(),
+            existing.getClass().getName()
+        );
+        this.bus().make("identity-promoted")
+            .synchronously()
+            .arg(identity.name())
+            .arg(helper.location())
+            .asDefault(true)
+            .exec();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Identity> findByKeyword(final String keyword) {
+        final Set<Identity> found = new HashSet<Identity>();
+        final List<Urn> names = this.bus()
+            .make("find-identities-by-keyword")
+            .synchronously()
+            .arg(keyword)
+            .asDefault(new ArrayList<Urn>())
+            .exec();
+        for (Urn name : names) {
+            try {
+                found.add(this.identity(name));
+            } catch (com.netbout.spi.UnreachableUrnException ex) {
+                Logger.warn(
+                    this,
+                    // @checkstyle LineLength (1 line)
+                    "#findByKeyword('%s'): some helper returned '%s' identity that is not reachable:\n%[exception]s",
+                    keyword,
+                    name,
+                    ex
+                );
+            }
+        }
+        return found;
+    }
+
+    /**
+     * Save identity to storage.
+     * @param identity The identity
+     */
+    private void save(final Identity identity) {
+        this.all.add(identity);
+        this.bus().make("identity-mentioned")
+            .synchronously()
+            .arg(identity.name())
+            .asDefault(true)
+            .exec();
+    }
+
+    /**
+     * Token for searching of identities in storage.
+     */
+    private static final class Token implements Comparable<Identity> {
+        /**
+         * Name of identity.
+         */
+        private final transient Urn name;
+        /**
+         * Public ctor.
+         * @param urn The name of identity
+         */
+        public Token(final Urn urn) {
+            this.name = urn;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compareTo(final Identity identity) {
+            return this.name.compareTo(identity.name());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object obj) {
+            return obj.hashCode() == this.hashCode();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return this.name.hashCode();
+        }
     }
 
 }

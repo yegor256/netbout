@@ -60,7 +60,7 @@ public final class AliasBuilder {
         if (iter.hasNext()) {
             alias = iter.next();
         } else {
-            alias = this.identity.name();
+            alias = this.identity.name().toString();
         }
         return alias;
     }

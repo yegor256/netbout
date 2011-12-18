@@ -27,8 +27,7 @@
 package com.netbout.servlets;
 
 import com.netbout.utils.TextUtils;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import com.ymock.util.Logger;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,32 +55,15 @@ public final class ExceptionTrap extends HttpServlet {
         this.extend(context, request, "request_uri");
         context.put(
             "stacktrace",
-            this.stacktrace(
-                (Throwable) request
-                    .getAttribute("javax.servlet.error.exception")
+            Logger.format(
+                "%[exception]s",
+                request.getAttribute("javax.servlet.error.exception")
             )
         );
         response.getWriter().print(
             TextUtils.format("com/netbout/servlets/re.html.vm", context)
         );
         response.getWriter().close();
-    }
-
-    /**
-     * Convert exception to string.
-     * @param exp The exception
-     * @return The stacktrace
-     */
-    private String stacktrace(final Throwable exp) {
-        String text;
-        if (exp == null) {
-            text = "no stacktrace";
-        } else {
-            final StringWriter writer = new StringWriter();
-            exp.printStackTrace(new PrintWriter(writer));
-            text = writer.toString();
-        }
-        return text;
     }
 
     /**

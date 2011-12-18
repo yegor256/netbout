@@ -32,17 +32,11 @@ package com.netbout.spi.client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.ymock.util.Logger;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -72,12 +66,6 @@ final class JerseyRestResponse implements RestResponse {
         XPathFactory.newInstance();
 
     /**
-     * DOM transformer factory, DOM.
-     */
-    private static final TransformerFactory TFACTORY =
-        TransformerFactory.newInstance();
-
-    /**
      * Original resource where this response.
      */
     private final transient RestClient client;
@@ -104,9 +92,10 @@ final class JerseyRestResponse implements RestResponse {
         final String error = resp.getHeaders().getFirst("Netbout-error");
         if (error != null) {
             throw new AssertionError(
-                String.format(
-                    "Error header detected: '%s'",
-                    error
+                Logger.format(
+                    "Error header detected: '%s':\n%[]s",
+                    error,
+                    this.response
                 )
             );
         }
@@ -119,10 +108,12 @@ final class JerseyRestResponse implements RestResponse {
     public RestResponse assertStatus(final int code) {
         if (this.response.getStatus() != code) {
             throw new AssertionError(
-                String.format(
-                    "Status code %d is not equal to %d",
+                Logger.format(
+                    // @checkstyle LineLength (1 line)
+                    "Status code %d is not equal to %d:\n%s",
                     this.response.getStatus(),
-                    code
+                    code,
+                    new ClientResponseDecor(this.response)
                 )
             );
         }
@@ -136,10 +127,11 @@ final class JerseyRestResponse implements RestResponse {
     public RestResponse assertXPath(final String xpath) {
         if (this.xpath(xpath).isEmpty()) {
             throw new AssertionError(
-                String.format(
-                    "Document doesn't match XPath '%s':%n%s",
+                Logger.format(
+                    // @checkstyle LineLength (1 line)
+                    "Document doesn't match XPath '%s':\n%[document]s",
                     xpath,
-                    this.asText(this.document())
+                    this.document()
                 )
             );
         }
@@ -191,10 +183,11 @@ final class JerseyRestResponse implements RestResponse {
         final String hdr = this.response.getHeaders().getFirst(name);
         if (hdr == null) {
             throw new AssertionError(
-                String.format(
-                    "Header '%s' not found in [%s]",
+                Logger.format(
+                    "Header '%s' not found in [%s]:\n%s",
                     name,
-                    StringUtils.join(this.response.getHeaders().keySet(), ", ")
+                    StringUtils.join(this.response.getHeaders().keySet(), ", "),
+                    new ClientResponseDecor(this.response)
                 )
             );
         }
@@ -208,7 +201,7 @@ final class JerseyRestResponse implements RestResponse {
     public RestClient rel(final String rel) {
         String xpath = rel;
         if (xpath.charAt(0) != '/') {
-            xpath = String.format("/page/links/link[@rel='%s']/@href", rel);
+            xpath = Logger.format("/page/links/link[@rel='%s']/@href", rel);
         }
         final URI uri = UriBuilder.fromUri(this.xpath(xpath).get(0)).build();
         Logger.debug(
@@ -247,25 +240,6 @@ final class JerseyRestResponse implements RestResponse {
                 }
             }
             return this.doc;
-        }
-    }
-
-    /**
-     * Convert {@link Document} to {@link String}.
-     * @param document The document to transform
-     * @return The string as a result
-     */
-    private String asText(final Document document) {
-        try {
-            final Transformer trans = this.TFACTORY.newTransformer();
-            trans.setOutputProperty(OutputKeys.INDENT, "yes");
-            final StringWriter writer = new StringWriter();
-            trans.transform(new DOMSource(document), new StreamResult(writer));
-            return writer.toString();
-        } catch (javax.xml.transform.TransformerConfigurationException ex) {
-            throw new IllegalStateException(ex);
-        } catch (javax.xml.transform.TransformerException ex) {
-            throw new IllegalStateException(ex);
         }
     }
 

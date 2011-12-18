@@ -62,9 +62,6 @@ public final class Promoter {
      */
     public Helper promote(final Identity identity, final URL url) {
         final CpaHelper helper = new CpaHelper(identity, url);
-        if (identity.name().startsWith("nb:")) {
-            helper.contextualize(this.hub);
-        }
         this.hub.promote(identity, helper);
         Logger.info(
             this,

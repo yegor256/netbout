@@ -65,7 +65,7 @@ public final class MessageMocker {
         final Long number = Math.abs(new Random().nextLong());
         Mockito.doReturn(number).when(this.message).number();
         final Identity author = Mockito.mock(Identity.class);
-        Mockito.doReturn("Author").when(author).name();
+        Mockito.doReturn(new UrnMocker().mock()).when(author).name();
         Mockito.doReturn(author).when(this.message).author();
         Mockito.doReturn("some text").when(this.message).text();
         Mockito.doReturn(new Date()).when(this.message).date();

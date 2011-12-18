@@ -64,7 +64,9 @@ public final class PlainDate implements Plain<Date> {
      * @param text The text presentation
      */
     public PlainDate(final String text) {
-        this.date = new Date(this.FORMATTER.parseMillis(text.substring(1)));
+        this.date = new Date(
+            this.FORMATTER.parseMillis(text.substring(this.PREFIX.length()))
+        );
     }
 
     /**

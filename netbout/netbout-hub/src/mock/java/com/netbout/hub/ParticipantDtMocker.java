@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.TxBuilder;
+import com.netbout.spi.Urn;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
@@ -48,8 +49,9 @@ public final class ParticipantDtMocker {
      * With this number of bout.
      * @param bout The bout number
      * @return This object
+     * @throws Exception If some problem inside
      */
-    public ParticipantDtMocker withBout(final Long bout) {
+    public ParticipantDtMocker withBout(final Long bout) throws Exception {
         Mockito.doReturn(bout).when(this.participant).getBout();
         return this;
     }
@@ -58,17 +60,21 @@ public final class ParticipantDtMocker {
      * With this identity name.
      * @param identity The name
      * @return This object
+     * @throws Exception If some problem inside
      */
-    public ParticipantDtMocker withIdentity(final String identity) {
-        Mockito.doReturn(identity).when(this.participant).getIdentity();
+    public ParticipantDtMocker withIdentity(final String identity)
+        throws Exception {
+        Mockito.doReturn(new Urn(identity))
+            .when(this.participant).getIdentity();
         return this;
     }
 
     /**
      * Should be confirmed.
      * @return This object
+     * @throws Exception If some problem inside
      */
-    public ParticipantDtMocker confirmed() {
+    public ParticipantDtMocker confirmed() throws Exception {
         Mockito.doReturn(true).when(this.participant).isConfirmed();
         return this;
     }

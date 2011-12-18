@@ -26,9 +26,8 @@
  */
 package com.netbout.hub.hh;
 
-import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.ContextAware;
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -49,17 +48,12 @@ import org.w3c.dom.Document;
  * @version $Id$
  */
 @Farm
-public final class StatsFarm implements IdentityAware, ContextAware {
+public final class StatsFarm implements IdentityAware {
 
     /**
      * Me.
      */
     private transient Identity identity;
-
-    /**
-     * The hub.
-     */
-    private transient Hub hub;
 
     /**
      * {@inheritDoc}
@@ -75,26 +69,13 @@ public final class StatsFarm implements IdentityAware, ContextAware {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void context(final Object ctx) {
-        this.hub = (Hub) ctx;
-        Logger.debug(
-            this,
-            "#context('%s'): injected",
-            ctx.getClass().getName()
-        );
-    }
-
-    /**
      * Does this stage exist in the bout?
      * @param number Bout where it is happening
      * @param stage Name of stage to render
      * @return Does it?
      */
     @Operation("does-stage-exist")
-    public Boolean doesStageExist(final Long number, final String stage) {
+    public Boolean doesStageExist(final Long number, final Urn stage) {
         Boolean exists = null;
         if (this.identity.name().equals(stage)) {
             exists = Boolean.TRUE;
@@ -118,13 +99,14 @@ public final class StatsFarm implements IdentityAware, ContextAware {
      * @throws Exception If some problem inside
      */
     @Operation("render-stage-xml")
-    public String renderStageXml(final Long number, final String stage,
+    public String renderStageXml(final Long number, final Urn stage,
         final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             final Document doc = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder().newDocument();
-            doc.appendChild(this.hub.stats(doc));
+            doc.appendChild(doc.createElement("identities"));
+            // doc.appendChild(this.hub.stats(doc));
             final Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer();
             final StringWriter writer = new StringWriter();
@@ -150,7 +132,7 @@ public final class StatsFarm implements IdentityAware, ContextAware {
      * @throws java.io.IOException If some problem inside
      */
     @Operation("render-stage-xsl")
-    public String renderStageXsl(final Long number, final String stage)
+    public String renderStageXsl(final Long number, final Urn stage)
         throws java.io.IOException {
         String xsl = null;
         if (this.identity.name().equals(stage)) {

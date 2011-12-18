@@ -26,11 +26,11 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import java.util.Date;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -46,70 +46,61 @@ public final class MessageFarmTest {
     private final transient MessageFarm farm = new MessageFarm();
 
     /**
-     * Bout number to work with.
-     */
-    private transient Long bout;
-
-    /**
-     * Start new bout to work with.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void prepareNewBout() throws Exception {
-        final BoutFarm bfarm = new BoutFarm();
-        this.bout = bfarm.getNextBoutNumber();
-        bfarm.startedNewBout(this.bout);
-    }
-
-    /**
-     * Add new message to a bout and retrieve it back.
+     * MessageFarm can add a new message to a bout and retrieve it back.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testAddMessageAndRetrieveItBack() throws Exception {
-        final Long number = this.farm.createBoutMessage(this.bout);
+    public void addsMessageToBoutAndRetrievesItBack() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Long message = new MessageRowMocker(bout).mock();
+        final List<Long> nums = this.farm.getBoutMessages(bout);
+        MatcherAssert.assertThat(nums, Matchers.hasItem(message));
+    }
+
+    /**
+     * MessageFarm can set and read message date.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void setsAndReadsMessageDate() throws Exception {
+        final Long message =
+            new MessageRowMocker(new BoutRowMocker().mock()).mock();
         final Date date = new Date();
-        this.farm.changedMessageDate(number, date);
+        this.farm.changedMessageDate(message, date);
         MatcherAssert.assertThat(
-            this.farm.getMessageDate(number),
+            this.farm.getMessageDate(message),
             Matchers.equalTo(date)
         );
-        final List<Long> nums = this.farm.getBoutMessages(this.bout);
-        MatcherAssert.assertThat(
-            nums,
-            Matchers.hasItem(number)
-        );
     }
 
     /**
-     * Set and change message author.
+     * MessageFarm can set and read message author.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testChangeMessageAuthor() throws Exception {
-        final Long number = this.farm.createBoutMessage(this.bout);
-        this.farm.changedMessageDate(number, new Date());
-        final String author = "Jeff Bridges";
-        new IdentityFarm().changedIdentityPhoto(author, "");
-        this.farm.changedMessageAuthor(number, author);
+    public void setsAndReadsMessageAuthor() throws Exception {
+        final Long message =
+            new MessageRowMocker(new BoutRowMocker().mock()).mock();
+        final Urn author = new IdentityRowMocker().mock();
+        this.farm.changedMessageAuthor(message, author);
         MatcherAssert.assertThat(
-            this.farm.getMessageAuthor(number),
+            this.farm.getMessageAuthor(message),
             Matchers.equalTo(author)
         );
     }
 
     /**
-     * Set and change message text.
+     * MessageFarm can set and read message text.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testChangeMessageText() throws Exception {
-        final Long number = this.farm.createBoutMessage(this.bout);
-        this.farm.changedMessageDate(number, new Date());
+    public void setsAndReadsMessageText() throws Exception {
+        final Long message =
+            new MessageRowMocker(new BoutRowMocker().mock()).mock();
         final String text = "hello, dude! :)";
-        this.farm.changedMessageText(number, text);
+        this.farm.changedMessageText(message, text);
         MatcherAssert.assertThat(
-            this.farm.getMessageText(number),
+            this.farm.getMessageText(message),
             Matchers.equalTo(text)
         );
     }

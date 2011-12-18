@@ -47,8 +47,9 @@ public final class IdentityTest {
      */
     @Test
     public void canHaveANameMocked() throws Exception {
-        final String name = "some-name-of-identity";
-        final Identity identity = new IdentityMocker().namedAs(name).mock();
+        final Urn name = new UrnMocker().mock();
+        final Identity identity = new IdentityMocker()
+            .namedAs(name.toString()).mock();
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
     }
 
@@ -58,9 +59,12 @@ public final class IdentityTest {
      */
     @Test
     public void canBelongToSomeMockedUser() throws Exception {
-        final String uname = "user-name";
+        final String uname = "http://localhost/auth";
         final Identity identity = new IdentityMocker().belongsTo(uname).mock();
-        MatcherAssert.assertThat(identity.user(), Matchers.equalTo(uname));
+        MatcherAssert.assertThat(
+            identity.authority().toString(),
+            Matchers.equalTo(uname)
+        );
     }
 
     /**
@@ -71,7 +75,7 @@ public final class IdentityTest {
     public void setsAllIdentityPropertiesByDefault() throws Exception {
         final Identity identity = new IdentityMocker().mock();
         MatcherAssert.assertThat(identity.name(), Matchers.notNullValue());
-        MatcherAssert.assertThat(identity.user(), Matchers.notNullValue());
+        MatcherAssert.assertThat(identity.authority(), Matchers.notNullValue());
     }
 
     /**

@@ -30,12 +30,12 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
-import com.netbout.hub.User;
-import com.netbout.hub.UserMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlConverter;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
@@ -73,7 +73,7 @@ public final class BoutStylesheetRsTest {
         final BoutStylesheetRs rest = new ResourceMocker()
             .withIdentity(identity)
             .mock(BoutStylesheetRs.class);
-        final String stage = "R&D stage name";
+        final Urn stage = new UrnMocker().mock();
         rest.setBout(bout.number());
         rest.setStage(stage);
         final String xsl = rest.boutXsl();
@@ -102,17 +102,11 @@ public final class BoutStylesheetRsTest {
     @Test
     public void testStageXslRendering() throws Exception {
         final Bout bout = new BoutMocker().mock();
-        final String uname = "Steven";
         final Identity identity = new IdentityMocker()
             .withBout(bout.number(), bout)
-            .belongsTo(uname)
-            .mock();
-        final User user = new UserMocker()
-            .namedAs(uname)
-            .withIdentity(identity.name(), identity)
             .mock();
         final Hub hub = new HubMocker()
-            .withUser(user.name(), user)
+            .withIdentity(identity.name(), identity)
             .mock();
         final String text = "some text in XSL format";
         final Bus bus = new BusMocker()
@@ -122,7 +116,7 @@ public final class BoutStylesheetRsTest {
             .withIdentity(identity)
             .withDeps(bus, hub)
             .mock(BoutStylesheetRs.class);
-        final String stage = "nb:hh";
+        final Urn stage = new UrnMocker().mock();
         rest.setBout(bout.number());
         rest.setStage(stage);
         final String xsl = rest.stageXsl();

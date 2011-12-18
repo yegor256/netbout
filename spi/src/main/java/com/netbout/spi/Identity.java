@@ -40,19 +40,25 @@ import java.util.Set;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public interface Identity {
+public interface Identity extends Comparable<Identity> {
 
     /**
-     * Get the name of his user.
-     * @return The name of the user
+     * {@inheritDoc}
      */
-    String user();
+    @Override
+    int compareTo(Identity identity);
+
+    /**
+     * Who validated this user.
+     * @return The URL of the authority
+     */
+    URL authority();
 
     /**
      * Get name of the identity, which is unique in the system.
      * @return The name of the identity
      */
-    String name();
+    Urn name();
 
     /**
      * Start new bout.
@@ -92,9 +98,9 @@ public interface Identity {
      * Find another identity by name.
      * @param name Unique name of identity
      * @return The identity just found
-     * @throws UnreachableIdentityException If such a friend can't be reached
+     * @throws UnreachableUrnException If such a friend can't be reached
      */
-    Identity friend(String name) throws UnreachableIdentityException;
+    Identity friend(Urn name) throws UnreachableUrnException;
 
     /**
      * Find friends by keyword.

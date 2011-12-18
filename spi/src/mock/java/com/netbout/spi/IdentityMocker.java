@@ -51,9 +51,9 @@ public final class IdentityMocker {
      * @throws Exception If some problem inside
      */
     public IdentityMocker() throws Exception {
-        final String name = String.valueOf(Math.abs(new Random().nextInt()));
-        Mockito.doReturn(name).when(this.identity).name();
-        Mockito.doReturn(name).when(this.identity).user();
+        Mockito.doReturn(new UrnMocker().mock()).when(this.identity).name();
+        Mockito.doReturn(new URL("http://localhost"))
+            .when(this.identity).authority();
         Mockito.doReturn(new BoutMocker().mock()).when(this.identity).start();
         Mockito.doReturn(new BoutMocker().mock()).when(this.identity)
             .bout(Mockito.any(Long.class));
@@ -63,8 +63,19 @@ public final class IdentityMocker {
      * This is the name of identity.
      * @param The name of it
      * @return This object
+     * @throws Exception If some problem inside
      */
-    public IdentityMocker namedAs(final String name) {
+    public IdentityMocker namedAs(final String name) throws Exception {
+        return this.namedAs(new Urn(name));
+    }
+
+    /**
+     * This is the name of identity.
+     * @param The name of it
+     * @return This object
+     * @throws Exception If some problem inside
+     */
+    public IdentityMocker namedAs(final Urn name) throws Exception {
         Mockito.doReturn(name).when(this.identity).name();
         return this;
     }
@@ -73,9 +84,20 @@ public final class IdentityMocker {
      * This is the user of identity, which it belongs to.
      * @param The name of user
      * @return This object
+     * @throws Exception If some problem inside
      */
-    public IdentityMocker belongsTo(final String name) {
-        Mockito.doReturn(name).when(this.identity).user();
+    public IdentityMocker belongsTo(final String name) throws Exception {
+        return this.belongsTo(new URL(name));
+    }
+
+    /**
+     * This is the user of identity, which it belongs to.
+     * @param The name of user
+     * @return This object
+     * @throws Exception If some problem inside
+     */
+    public IdentityMocker belongsTo(final URL name) throws Exception {
+        Mockito.doReturn(name).when(this.identity).authority();
         return this;
     }
 

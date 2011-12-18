@@ -91,7 +91,7 @@ public final class LongStage {
      */
     @XmlAttribute
     public String getName() {
-        return this.coords.stage();
+        return this.coords.stage().toString();
     }
 
     /**

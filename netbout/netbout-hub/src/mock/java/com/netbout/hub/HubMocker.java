@@ -26,6 +26,10 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
+import java.net.URL;
 import org.mockito.Mockito;
 
 /**
@@ -41,21 +45,41 @@ public final class HubMocker {
     private final transient Hub hub = Mockito.mock(Hub.class);
 
     /**
-     * With this user.
+     * With this identity on board.
      * @param name The name of it
-     * @param user The user
      * @return This object
+     * @throws Exception If some problem inside
      */
-    public HubMocker withUser(final String name, final User user) {
-        Mockito.doReturn(user).when(this.hub).user(name);
+    public HubMocker withIdentity(final String name) throws Exception {
+        return this.withIdentity(
+            new Urn(name),
+            new IdentityMocker().namedAs(name).mock()
+        );
+    }
+
+    /**
+     * With this identity on board.
+     * @param name The name of it
+     * @param identity The identity
+     * @return This object
+     * @throws Exception If some problem inside
+     */
+    public HubMocker withIdentity(final Urn name, final Identity identity)
+        throws Exception {
+        Mockito.doReturn(identity).when(this.hub).identity(name);
         return this;
     }
 
     /**
      * Build it.
      * @return The bout
+     * @throws Exception If some problem inside
      */
-    public Hub mock() {
+    public Hub mock() throws Exception {
+        final UrnResolver resolver = Mockito.mock(UrnResolver.class);
+        Mockito.doReturn(new URL("http://abc")).when(resolver)
+            .authority(Mockito.any(Urn.class));
+        Mockito.doReturn(resolver).when(this.hub).resolver();
         return this.hub;
     }
 

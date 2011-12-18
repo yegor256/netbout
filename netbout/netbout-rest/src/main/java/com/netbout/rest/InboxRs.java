@@ -88,7 +88,7 @@ public final class InboxRs extends AbstractRs {
             .append(new JaxbBundle("query", this.query))
             .append(JaxbGroup.build(bouts, "bouts"))
             .link("friends", this.base().path("/f"))
-            .link("promote", this.base().path("/h/promote"))
+            .link("helper", this.base().path("/h"))
             .authenticated(identity)
             .build();
     }

@@ -26,8 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.auth.ResolvedIdentity;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
+import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -49,23 +52,26 @@ public final class AuthRsMocker extends AbstractRs {
      * @return The JAX-RS response
      */
     @GET
-    public Response auth(@QueryParam("identity") final String iname,
+    public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
         if ((iname == null) || (secret == null)) {
             throw new ForwardException(this, this.base(), "NULL inputs");
         }
-        if (!iname.matches("nb:[a-z]+")) {
-            throw new ForwardException(this, this.base(), "Invalid name");
+        if (!"test".equals(iname.nid())) {
+            throw new ForwardException(this, this.base(), "Invalid NID");
         }
         if (!secret.isEmpty()) {
             throw new ForwardException(this, this.base(), "Wrong secret");
         }
-        final String user = this.base().path("/mock-auth").build().toString();
         Identity identity;
         try {
-            identity = this.hub().user(user).identity(iname);
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new ForwardException(this, this.base(), ex);
+            identity = new ResolvedIdentity(
+                this.base().path("/mock-auth").build().toURL(),
+                iname,
+                new URL("http://img.netbout.com/unknown.png")
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new ForwardException(this, ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)

@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
@@ -50,7 +51,7 @@ public final class SeenFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("message-was-seen")
-    public void messageWasSeen(final Long msg, final String identity)
+    public void messageWasSeen(final Long msg, final Urn identity)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -59,7 +60,7 @@ public final class SeenFarm {
                 "INSERT INTO seen (message, identity) VALUES (?, ?)"
             );
             stmt.setLong(1, msg);
-            stmt.setString(2, identity);
+            stmt.setString(2, identity.toString());
             stmt.execute();
         } finally {
             conn.close();
@@ -81,7 +82,7 @@ public final class SeenFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("was-message-seen")
-    public Boolean wasMessageSeen(final Long msg, final String identity)
+    public Boolean wasMessageSeen(final Long msg, final Urn identity)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -91,7 +92,7 @@ public final class SeenFarm {
                 "SELECT message FROM seen WHERE message = ? AND identity = ?"
             );
             stmt.setLong(1, msg);
-            stmt.setString(2, identity);
+            stmt.setString(2, identity.toString());
             final ResultSet rset = stmt.executeQuery();
             try {
                 if (rset.next()) {

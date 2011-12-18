@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import java.util.Date;
+import com.netbout.spi.Urn;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -49,13 +49,9 @@ public final class SeenFarmTest {
      */
     @Test
     public void testMessageSeenFlag() throws Exception {
-        final String identity = "Felix";
-        new IdentityFarm().changedIdentityPhoto(identity, "");
-        final Long bout = new BoutFarm().getNextBoutNumber();
-        new BoutFarm().startedNewBout(bout);
-        new ParticipantFarm().addedBoutParticipant(bout, identity);
-        final Long msg = new MessageFarm().createBoutMessage(bout);
-        new MessageFarm().changedMessageDate(msg, new Date());
+        final Long bout = new BoutRowMocker().mock();
+        final Urn identity = new ParticipantRowMocker(bout).mock();
+        final Long msg = new MessageRowMocker(bout).mock();
         MatcherAssert.assertThat(
             this.farm.wasMessageSeen(msg, identity),
             Matchers.equalTo(false)

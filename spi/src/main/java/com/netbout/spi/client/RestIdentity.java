@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -67,6 +68,14 @@ final class RestIdentity implements Identity {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Identity identity) {
+        return this.name().compareTo(identity.name());
+    }
+
+    /**
      * Get its URI.
      * @return The URI
      */
@@ -78,23 +87,34 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public String user() {
-        throw new UnsupportedOperationException(
-            "Identity#user() is not supported by Netbout REST API"
-        );
+    public URL authority() {
+        try {
+            return new URL(
+                this.client
+                    .get("reading authority of identity")
+                    .assertStatus(HttpURLConnection.HTTP_OK)
+                    .assertXPath("/page/identity/authority")
+                    .xpath("/page/identity/authority/text()")
+                    .get(0)
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String name() {
-        return this.client
-            .get("reading identity name")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/identity")
-            .xpath("/page/identity/name/text()")
-            .get(0);
+    public Urn name() {
+        return Urn.create(
+            this.client
+                .get("reading identity name")
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .assertXPath("/page/identity")
+                .xpath("/page/identity/name/text()")
+                .get(0)
+        );
     }
 
     /**
@@ -184,7 +204,7 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final String name) {
+    public Identity friend(final Urn name) {
         return new Friend(name);
     }
 
@@ -207,7 +227,7 @@ final class RestIdentity implements Identity {
             .xpath("/page/invitees/invitee/name/text()");
         final Set<Identity> friends = new HashSet<Identity>();
         for (String name : names) {
-            friends.add(new Friend(name));
+            friends.add(new Friend(Urn.create(name)));
         }
         return friends;
     }

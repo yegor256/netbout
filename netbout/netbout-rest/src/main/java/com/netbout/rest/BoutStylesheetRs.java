@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Urn;
 import com.netbout.utils.TextUtils;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -51,7 +52,7 @@ public final class BoutStylesheetRs extends AbstractRs {
     /**
      * Name of the stage.
      */
-    private transient String stage;
+    private transient Urn stage;
 
     /**
      * Set bout number, and verify that this bout is accessible by this
@@ -68,7 +69,7 @@ public final class BoutStylesheetRs extends AbstractRs {
      * @param name Name of the stage
      */
     @PathParam("stage")
-    public void setStage(final String name) {
+    public void setStage(final Urn name) {
         this.stage = name;
     }
 
@@ -104,19 +105,17 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/stage.xsl")
     @Produces("text/xsl")
     public String stageXsl() {
-        String stg;
-        if ("-".equals(this.stage)) {
-            stg = "";
-        } else {
-            stg = this.stage;
+        String xsl =
+            "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>";
+        if (!this.stage.isEmpty()) {
+            xsl = this.bus().make("render-stage-xsl")
+                .synchronously()
+                .arg(this.bout().number())
+                .arg(this.stage)
+                .asDefault(xsl)
+                .exec();
         }
-        return this.bus().make("render-stage-xsl")
-            .synchronously()
-            .arg(this.bout().number())
-            .arg(stg)
-            // @checkstyle LineLength (1 line)
-            .asDefault("<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>")
-            .exec();
+        return xsl;
     }
 
     /**
