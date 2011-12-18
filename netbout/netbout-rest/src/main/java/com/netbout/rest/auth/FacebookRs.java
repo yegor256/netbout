@@ -64,6 +64,12 @@ public final class FacebookRs extends AbstractRs {
     @GET
     public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
+        if (iname == null || secret == null) {
+            throw new LoginRequiredException(
+                this,
+                "'identity' and 'secret' query params are mandatory"
+            );
+        }
         Identity identity;
         try {
             identity = this.authenticate(secret);

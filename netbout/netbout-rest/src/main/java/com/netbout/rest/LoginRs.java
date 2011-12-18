@@ -64,7 +64,7 @@ public final class LoginRs extends AbstractRs {
         final UriBuilder fburi = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
-            .queryParam("redirect_uri", this.base().path("/fb").build());
+            .queryParam("redirect_uri", this.base().path("/g/fb").build());
         return new PageBuilder()
             .stylesheet(this.base().path("/xsl/login.xsl"))
             .build(AbstractPage.class)
@@ -80,7 +80,7 @@ public final class LoginRs extends AbstractRs {
      * @return The JAX-RS response
      */
     @GET
-    @Path("/facebook")
+    @Path("/fb")
     public Response fbauth(@QueryParam("code") final String code) {
         this.logoff();
         final Identity remote = (Identity) new FacebookRs()

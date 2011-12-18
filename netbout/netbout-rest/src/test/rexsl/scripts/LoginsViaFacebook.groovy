@@ -29,23 +29,27 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.UriBuilder
 import org.apache.http.client.utils.URLEncodedUtils
 
 def fburi = RestTester.start(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get()
     .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
-    .headers
-    .getFirst(HttpHeaders.LOCATION)
-
-def redirect = URLEncodedUtils.parse(new URI(fburi), 'UTF-8').find { it.name == 'redirect_uri' }.value
-def fburi = RestTester.start(UriBuilder.fromUri(redirect).queryParam('code', 'secret-facebook-code'))
+    .follow()
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get()
-    .assertStatus(Response.Status.SEE_OTHER)
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('/page/links/link[@rel="facebook"]')
+    .gpath
+    .links.link.find { it.@rel == 'facebook' }.@href.toURI()
+
+def redirect = URLEncodedUtils.parse(fburi, 'UTF-8').find { it.name == 'redirect_uri' }.value
+RestTester.start(UriBuilder.fromUri(redirect).queryParam('code', 'secret-facebook-code'))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
