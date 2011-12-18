@@ -88,6 +88,9 @@ public final class Urn implements Comparable {
      * @throws URISyntaxException If syntax is not correct
      */
     public Urn(final String text) throws URISyntaxException {
+        if (text == null) {
+            throw new IllegalArgumentException("Text can't be NULL");
+        }
         if (!text.matches(this.REGEX)) {
             throw new URISyntaxException(text, "Invalid format of URN");
         }
@@ -101,6 +104,12 @@ public final class Urn implements Comparable {
      * @param nss The namespace specific string
      */
     public Urn(final String nid, final String nss) {
+        if (nid == null) {
+            throw new IllegalArgumentException("NID can't be NULL");
+        }
+        if (nss == null) {
+            throw new IllegalArgumentException("NSS can't be NULL");
+        }
         if (!nid.matches("^[a-z]{0,31}$")) {
             throw new IllegalArgumentException(
                 String.format(

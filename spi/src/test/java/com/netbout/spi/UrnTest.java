@@ -39,6 +39,7 @@ import org.junit.Test;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class UrnTest {
 
     /**
@@ -53,6 +54,15 @@ public final class UrnTest {
     }
 
     /**
+     * Urn can throw exception when text is NULL.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsExceptionWhenTextIsNull() throws Exception {
+        new Urn(null);
+    }
+
+    /**
      * Urn can be instantiated from components.
      * @throws Exception If there is some problem inside
      */
@@ -64,6 +74,24 @@ public final class UrnTest {
         MatcherAssert.assertThat(urn.nid(), Matchers.equalTo(nid));
         MatcherAssert.assertThat(urn.nss(), Matchers.equalTo(nss));
         MatcherAssert.assertThat(urn.toURI(), Matchers.instanceOf(URI.class));
+    }
+
+    /**
+     * Urn can throw exception when NID is NULL.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsExceptionWhenNidIsNull() throws Exception {
+        new Urn(null, "some-test-nss");
+    }
+
+    /**
+     * Urn can throw exception when NSS is NULL.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsExceptionWhenNssIsNull() throws Exception {
+        new Urn("namespace1", null);
     }
 
     /**
