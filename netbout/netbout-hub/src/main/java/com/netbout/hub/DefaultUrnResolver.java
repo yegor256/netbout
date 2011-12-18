@@ -182,12 +182,14 @@ final class DefaultUrnResolver implements UrnResolver {
                     assert owner != null;
                     this.inamespaces.put(name, template);
                 }
-                Logger.info(
-                    this,
-                    "#load(): loaded %d namespaces: %[list]s",
-                    this.inamespaces.size(),
-                    this.inamespaces.keySet()
-                );
+                if (!names.isEmpty()) {
+                    Logger.info(
+                        this,
+                        "#load(): loaded %d namespaces: %[list]s",
+                        names.size(),
+                        names
+                    );
+                }
             }
             return this.inamespaces;
         }
