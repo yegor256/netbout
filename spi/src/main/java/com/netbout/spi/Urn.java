@@ -102,7 +102,12 @@ public final class Urn implements Comparable {
      */
     public Urn(final String nid, final String nss) {
         if (!nid.matches("^[a-z]{0,31}$")) {
-            throw new IllegalArgumentException("NID can contain only letters");
+            throw new IllegalArgumentException(
+                String.format(
+                    "NID '%s' can contain only letters",
+                    nid
+                )
+            );
         }
         try {
             this.uri = URI.create(
