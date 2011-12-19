@@ -69,7 +69,7 @@ public final class UrnResolverMocker {
     /**
      * Resolver.
      */
-    private static final class Resolver implements UrnResolver {
+    public static final class Resolver implements UrnResolver {
         /**
          * Namespaces and related URL templates.
          */
