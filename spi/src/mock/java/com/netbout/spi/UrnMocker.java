@@ -39,12 +39,30 @@ import java.util.Random;
 public final class UrnMocker {
 
     /**
+     * Namespace.
+     */
+    private transient String namespace = "foo";
+
+    /**
+     * With this namespace.
+     * @param name The namespace
+     * @return This object
+     */
+    public UrnMocker withNamespace(final String name) {
+        this.namespace = name;
+        return this;
+    }
+
+    /**
      * Mock it.
      * @return Mocked URN
      * @throws Exception If some problem inside
      */
     public Urn mock() throws Exception {
-        return new Urn("foo", String.valueOf(Math.abs(new Random().nextInt())));
+        return new Urn(
+            this.namespace,
+            String.valueOf(Math.abs(new Random().nextLong()))
+        );
     }
 
 }
