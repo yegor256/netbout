@@ -524,7 +524,7 @@
                             </archive>
                             <classifier>mock</classifier>
                             <includes>
-                                <include>**/*Mocker.class</include>
+                                <include>**/*Mocker*.class</include>
                             </includes>
                         </configuration>
                     </execution>
