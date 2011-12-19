@@ -27,23 +27,14 @@
 package com.netbout.rest.auth;
 
 import com.netbout.hub.UrnResolver;
-import com.netbout.rest.AbstractPage;
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.LoginRequiredException;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.utils.Cryptor;
 import com.sun.jersey.api.client.Client;
 import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 /**
@@ -89,7 +80,6 @@ public final class AuthMediator {
      * Authenticate as a local stub.
      * @param iname Identity name
      * @return Identity
-     * @throws IOException If some problem with FB
      */
     private Identity stub(final Urn iname) {
         final RemoteIdentity identity = new RemoteIdentity();
@@ -151,6 +141,7 @@ public final class AuthMediator {
      * @return The identity found
      * @throws IOException If some problem with FB
      */
+    @SuppressWarnings("PMD.AvoidCatchingThrowable")
     private Identity load(final URI uri) throws IOException {
         final long start = System.currentTimeMillis();
         Identity identity;
@@ -159,6 +150,7 @@ public final class AuthMediator {
                 .accept(MediaType.APPLICATION_XML)
                 .get(RemotePage.class)
                 .getIdentity();
+            // @checkstyle IllegalCatch (1 line)
         } catch (Throwable ex) {
             throw new IOException(
                 String.format("Failed to load identity from '%s'", uri),

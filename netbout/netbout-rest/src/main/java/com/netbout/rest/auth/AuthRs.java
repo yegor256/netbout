@@ -33,16 +33,11 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.utils.Cryptor;
-import com.sun.jersey.api.client.Client;
 import com.ymock.util.Logger;
-import java.net.URI;
-import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 /**
  * REST authentication page.
@@ -93,6 +88,7 @@ public final class AuthRs extends AbstractRs {
             remote = new AuthMediator(this.hub().resolver())
                 .authenticate(iname, secret);
         } catch (java.io.IOException ex) {
+            Logger.warn(this, "%[exception]s", ex);
             throw new LoginRequiredException(this, ex);
         }
         Identity identity;

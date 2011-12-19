@@ -27,10 +27,12 @@
 package com.netbout.rest;
 
 import com.netbout.rest.auth.AuthMediator;
+import com.netbout.rest.auth.FacebookRs;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
+import com.ymock.util.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -86,8 +88,9 @@ public final class LoginRs extends AbstractRs {
         Identity remote;
         try {
             remote = new AuthMediator(this.hub().resolver())
-                .authenticate(new Urn("facebook", ""), code);
+                .authenticate(new Urn(FacebookRs.NAMESPACE, ""), code);
         } catch (java.io.IOException ex) {
+            Logger.warn(this, "%[exception]s", ex);
             throw new LoginRequiredException(this, ex);
         }
         Identity identity;

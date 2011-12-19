@@ -27,37 +27,14 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+package com.netbout.rest.rexsl.setup
 
-import com.rexsl.test.RestTester
-import com.ymock.server.YMockServer
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
-import javax.ws.rs.core.UriBuilder
-import org.apache.http.client.utils.URLEncodedUtils
-
-RestTester.start(rexsl.home)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
-    .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
-    .follow()
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page/links/link[@rel="facebook"]')
-    .gpath
-    .links.link.find { it.@rel == 'facebook' }.@href.toURI()
+import com.ymock.mock.socket.SMSocketImplFactory
 
 /**
-@todo #163 This mechanism doesn't work, because YMOCK can't properly
- mock sockets at the moment. Working on this...
-
-def redirect = URLEncodedUtils.parse(fburi, 'UTF-8').find { it.name == 'redirect_uri' }.value
-new YMockServer('com.ymock.mock.socket:graph.facebook.com')
-    .when('.*GET.*', '{id: "64372382"}')
-RestTester.start(UriBuilder.fromUri(redirect).queryParam('code', 'secret-facebook-code'))
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+@todo #163 This mechanism doesn't work, because it's not implemented
+ in YMOCK yet. Here is the latest problem: http://stackoverflow.com/questions/8563290
+SMSocketImplFactory.INSTANCE
+    .start()
+    .match("graph.facebook.com")
 */
