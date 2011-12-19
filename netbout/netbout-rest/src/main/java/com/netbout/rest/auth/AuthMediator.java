@@ -121,7 +121,7 @@ public final class AuthMediator {
                 ex
             );
         }
-        if (!remote.name().equals(iname)) {
+        if (!remote.name().equals(iname) && !iname.nss().isEmpty()) {
             throw new IOException(
                 String.format(
                     // @checkstyle LineLength (1 line)
