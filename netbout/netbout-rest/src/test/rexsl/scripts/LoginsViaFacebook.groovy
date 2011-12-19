@@ -27,50 +27,37 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.setup
+package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
+import com.ymock.server.YMockServer
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriBuilder
+import org.apache.http.client.utils.URLEncodedUtils
 
-def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
-[
-    'test' : '/mock-auth',
-    'facebook': '/fb'
-].each {
-    RestTester.start(RestUriBuilder.from(starter).build())
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get()
-        .assertStatus(HttpURLConnection.HTTP_OK)
-        .rel('//link[@rel="helper"]/@href')
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get()
-        .rel('//link[@rel="namespaces"]/@href')
-        .post(
-            'text=' + URLEncoder.encode(
-                it.key + '=' + UriBuilder.fromUri(rexsl.home).path(it.value).build()
-            )
-        )
-        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-}
+RestTester.start(rexsl.home)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get()
+    .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
+    .follow()
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('/page/links/link[@rel="facebook"]')
+    .gpath
+    .links.link.find { it.@rel == 'facebook' }.@href.toURI()
 
-[
-    'urn:test:hh' : 'file:com.netbout.hub.hh',
-    'urn:test:email' : 'file:com.netbout.notifiers.email'
-].each {
-    def helper = new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
-    RestTester.start(RestUriBuilder.from(helper).build())
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get()
-        .assertStatus(HttpURLConnection.HTTP_OK)
-        .rel('/page/links/link[@rel="helper"]/@href')
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get()
-        .rel('/page/links/link[@rel="promote"]/@href')
-        .post('url=' + URLEncoder.encode(it.value))
-        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-}
+/**
+@todo #163 This mechanism doesn't work, because YMOCK can't properly
+ mock sockets at the moment. Working on this...
+
+def redirect = URLEncodedUtils.parse(fburi, 'UTF-8').find { it.name == 'redirect_uri' }.value
+new YMockServer('com.ymock.mock.socket:graph.facebook.com')
+    .when('.*GET.*', '{id: "64372382"}')
+RestTester.start(UriBuilder.fromUri(redirect).queryParam('code', 'secret-facebook-code'))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get()
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+*/

@@ -51,9 +51,15 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
  */
 @Path("/fb")
 public final class FacebookRs extends AbstractRs {
+
+    /**
+     * Namespace.
+     */
+    public static final String NAMESPACE = "facebook";
 
     /**
      * Authentication page.
@@ -64,10 +70,33 @@ public final class FacebookRs extends AbstractRs {
     @GET
     public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
+        if (iname == null || secret == null) {
+            throw new LoginRequiredException(
+                this,
+                "'identity' and 'secret' query params are mandatory"
+            );
+        }
+        if (!this.NAMESPACE.equals(iname.nid())) {
+            throw new LoginRequiredException(
+                this,
+                String.format(
+                    "NID '%s' is not correct in '%s', '%s' expected",
+                    iname.nid(),
+                    iname,
+                    this.NAMESPACE
+                )
+            );
+        }
         Identity identity;
         try {
             identity = this.authenticate(secret);
         } catch (IOException ex) {
+            Logger.warn(
+                this,
+                "Failed to auth at facebook (secret='%s'): %[exception]s",
+                secret,
+                ex
+            );
             throw new LoginRequiredException(this, ex);
         }
         Logger.debug(
@@ -96,7 +125,7 @@ public final class FacebookRs extends AbstractRs {
         assert fbuser != null;
         return new ResolvedIdentity(
             UriBuilder.fromUri("http://www.netbout.com/fb").build().toURL(),
-            new Urn("facebook", fbuser.getId()),
+            new Urn(this.NAMESPACE, fbuser.getId()),
             UriBuilder
                 .fromPath("https://graph.facebook.com/{id}/picture")
                 .build(fbuser.getId())
@@ -118,7 +147,7 @@ public final class FacebookRs extends AbstractRs {
                 .queryParam("client_id", Manifests.read("Netbout-FbId"))
                 .queryParam(
                     "redirect_uri",
-                    this.base().path("/fb").build()
+                    this.base().path("/g/fb").build()
                 )
                 .queryParam("client_secret", Manifests.read("Netbout-FbSecret"))
                 .queryParam("code", code)

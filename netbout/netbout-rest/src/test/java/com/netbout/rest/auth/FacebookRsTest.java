@@ -69,7 +69,9 @@ public final class FacebookRsTest {
         final String code = "AQCJ9EpLpqvj9cbag0mU8z6cHqyk-2CN5cigCzwB1aykqqqpiFNzAjsnNbRRY7x4n4h2ZEmrRVHhHSHzcFTtXobWM8LJSCHSB1_cjvsJS2vy2DsqRA3qGRAjUY8pKk0tO2zYpX-kFpnn2V6Z1xxvb7uyP-qrV_mQNWSYHKfPWKL0yTxo-NpFAGT4mDYNXl_cCMs";
         final URI base = new URI("http://localhost/test/me");
         final String fbid = "438947328947329";
-        final Urn iname = new UrnMocker().mock();
+        final Urn iname = new UrnMocker()
+            .withNamespace(FacebookRs.NAMESPACE)
+            .mock();
         final Identity identity = new IdentityMocker().namedAs(iname).mock();
         final Hub hub = new HubMocker()
             .withIdentity(iname, identity)
@@ -77,7 +79,7 @@ public final class FacebookRsTest {
         final UriInfo info = new UriInfoMocker()
             .withRequestUri(base)
             .mock();
-        final URI redirect = UriBuilder.fromUri(base).path("/fb").build();
+        final URI redirect = UriBuilder.fromUri(base).path("/g/fb").build();
         final FacebookRs rest = new ResourceMocker()
             .withDeps(new BusMocker().mock(), hub)
             .withUriInfo(info)

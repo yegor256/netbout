@@ -26,11 +26,13 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.auth.AuthMediator;
 import com.netbout.rest.auth.FacebookRs;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
+import com.ymock.util.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -64,7 +66,7 @@ public final class LoginRs extends AbstractRs {
         final UriBuilder fburi = UriBuilder
             .fromPath("https://www.facebook.com/dialog/oauth")
             .queryParam("client_id", Manifests.read("Netbout-FbId"))
-            .queryParam("redirect_uri", this.base().path("/fb").build());
+            .queryParam("redirect_uri", this.base().path("/g/fb").build());
         return new PageBuilder()
             .stylesheet(this.base().path("/xsl/login.xsl"))
             .build(AbstractPage.class)
@@ -80,12 +82,17 @@ public final class LoginRs extends AbstractRs {
      * @return The JAX-RS response
      */
     @GET
-    @Path("/facebook")
+    @Path("/fb")
     public Response fbauth(@QueryParam("code") final String code) {
         this.logoff();
-        final Identity remote = (Identity) new FacebookRs()
-            .auth(Urn.create("urn:facebook:0"), code)
-            .getEntity();
+        Identity remote;
+        try {
+            remote = new AuthMediator(this.hub().resolver())
+                .authenticate(new Urn(FacebookRs.NAMESPACE, ""), code);
+        } catch (java.io.IOException ex) {
+            Logger.warn(this, "%[exception]s", ex);
+            throw new LoginRequiredException(this, ex);
+        }
         Identity identity;
         try {
             identity = this.hub().identity(remote.name());

@@ -33,17 +33,11 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.utils.Cryptor;
-import com.sun.jersey.api.client.Client;
 import com.ymock.util.Logger;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 /**
  * REST authentication page.
@@ -89,7 +83,14 @@ public final class AuthRs extends AbstractRs {
      */
     private Identity authenticate(final Urn iname,
         final String secret) {
-        final Identity remote = this.remote(iname, secret);
+        Identity remote;
+        try {
+            remote = new AuthMediator(this.hub().resolver())
+                .authenticate(iname, secret);
+        } catch (java.io.IOException ex) {
+            Logger.warn(this, "%[exception]s", ex);
+            throw new LoginRequiredException(this, ex);
+        }
         Identity identity;
         try {
             identity = this.hub().identity(iname);
@@ -100,90 +101,6 @@ public final class AuthRs extends AbstractRs {
             identity.alias(alias);
         }
         identity.setPhoto(remote.photo());
-        return identity;
-    }
-
-    /**
-     * Validate provided data.
-     * @param iname Identity name
-     * @param secret Secret word
-     * @return Identity name, if it's valid
-     */
-    private Identity remote(final Urn iname, final String secret) {
-        Identity remote;
-        if (iname.isEmpty() && "localhost".equals(secret)) {
-            final RemoteIdentity idnt = new RemoteIdentity();
-            idnt.setAuthority("http://www.netbout.com/nb");
-            idnt.setName(iname.toString());
-            idnt.setJaxbPhoto("http://img.netbout.com/unknown.png");
-            remote = idnt;
-        } else {
-            URL entry;
-            try {
-                entry = this.hub().resolver().authority(iname);
-            } catch (com.netbout.spi.UnreachableUrnException ex) {
-                throw new LoginRequiredException(this, ex);
-            }
-            final URI uri = UriBuilder.fromUri(entry.toString())
-                .queryParam("identity", iname)
-                .queryParam("secret", secret)
-                .queryParam("ip", this.httpServletRequest().getRemoteAddr())
-                .build();
-            try {
-                remote = this.load(uri);
-            } catch (IOException ex) {
-                throw new LoginRequiredException(
-                    this,
-                    Logger.format(
-                        "Failed to load identity from '%s': %[exception]s",
-                        uri,
-                        ex
-                    )
-                );
-            }
-            if (!remote.name().equals(iname)) {
-                throw new LoginRequiredException(
-                    this,
-                    String.format(
-                        // @checkstyle LineLength (1 line)
-                        "Invalid identity name '%s' retrieved from '%s', while '%s' expected",
-                        remote.name(),
-                        uri,
-                        iname
-                    )
-                );
-            }
-        }
-        return remote;
-    }
-
-    /**
-     * Load identity from the URL provided.
-     * @param uri The URI to load from
-     * @return The identity found
-     * @throws IOException If some problem with FB
-     */
-    private Identity load(final URI uri) throws IOException {
-        final long start = System.currentTimeMillis();
-        Identity identity;
-        try {
-            identity = Client.create().resource(uri)
-                .accept(MediaType.APPLICATION_XML)
-                .get(RemotePage.class)
-                .getIdentity();
-        } catch (com.sun.jersey.api.client.UniformInterfaceException ex) {
-            throw new IOException(
-                String.format("Failed to load identity from %s", uri),
-                ex
-            );
-        }
-        Logger.debug(
-            this,
-            "#load(%s): identity '%s' found in %dms",
-            uri,
-            identity.name(),
-            System.currentTimeMillis() - start
-        );
         return identity;
     }
 
