@@ -98,7 +98,7 @@ public final class Database {
             Database.factory(),
             new GenericObjectPool(null),
             null,
-            null,
+            "SELECT name FROM identity WHERE name = ''",
             false,
             true
         );
