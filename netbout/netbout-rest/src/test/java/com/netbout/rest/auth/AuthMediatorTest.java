@@ -80,6 +80,10 @@ public final class AuthMediatorTest {
             identity.name(),
             Matchers.equalTo(iname)
         );
+        MatcherAssert.assertThat(
+            identity.photo().toString(),
+            Matchers.equalTo(photo)
+        );
     }
 
     /**

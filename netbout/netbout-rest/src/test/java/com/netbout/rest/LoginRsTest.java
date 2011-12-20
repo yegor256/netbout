@@ -26,9 +26,23 @@
  */
 package com.netbout.rest;
 
+import com.netbout.bus.BusMocker;
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import javax.ws.rs.core.Response;
+import javax.xml.transform.Source;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlmatchers.XmlMatchers;
 
 /**
@@ -36,6 +50,8 @@ import org.xmlmatchers.XmlMatchers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(LoginRs.class)
 public final class LoginRsTest {
 
     /**
@@ -51,6 +67,42 @@ public final class LoginRsTest {
             ResourceMocker.the((Page) response.getEntity(), rest),
             XmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
         );
+    }
+
+    /**
+     * LoginRs can authenticate through facebook.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void authenticateWithFacebook() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final Identity identity = new IdentityMocker().namedAs(name).mock();
+        final Hub hub = new HubMocker()
+            .withIdentity(name, identity)
+            .mock();
+        final LoginRs rest = new ResourceMocker()
+            .withDeps(new BusMocker().mock(), hub)
+            .mock(LoginRs.class);
+        final LoginRs spy = PowerMockito.spy(rest);
+        final Identity remote = new IdentityMocker()
+            .withAlias("some alias")
+            .withPhoto("http://localhost/some-picture.png")
+            .namedAs(name)
+            .mock();
+        final String code = "some-auth-code";
+        PowerMockito.doReturn(remote).when(spy, "remote", Mockito.eq(code));
+        final Source xhtml = ResourceMocker.the(
+            (Page) spy.fbauth(code).getEntity(), rest
+        );
+        final String[] xpaths = new String[] {
+            String.format("/page/identity[name='%s']", name),
+            "/page/identity[alias='some alias']",
+            "/page/identity[photo='http://localhost/some-picture.png']",
+            "/page/identity/aliases[count(alias) > 0]",
+        };
+        for (String xpath : xpaths) {
+            MatcherAssert.assertThat(xhtml, XmlMatchers.hasXPath(xpath));
+        }
     }
 
 }

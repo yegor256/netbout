@@ -84,15 +84,8 @@ public final class LoginRs extends AbstractRs {
     @GET
     @Path("/fb")
     public Response fbauth(@QueryParam("code") final String code) {
+        final Identity remote = this.remote(code);
         this.logoff();
-        Identity remote;
-        try {
-            remote = new AuthMediator(this.hub().resolver())
-                .authenticate(new Urn(FacebookRs.NAMESPACE, ""), code);
-        } catch (java.io.IOException ex) {
-            Logger.warn(this, "%[exception]s", ex);
-            throw new LoginRequiredException(this, ex);
-        }
         Identity identity;
         try {
             identity = this.hub().identity(remote.name());
@@ -129,6 +122,23 @@ public final class LoginRs extends AbstractRs {
                 )
             )
             .build();
+    }
+
+    /**
+     * Authenticate with a code.
+     * @param code Facebook "authorization code"
+     * @return The identity
+     */
+    private Identity remote(final String code) {
+        Identity remote;
+        try {
+            remote = new AuthMediator(this.hub().resolver())
+                .authenticate(new Urn(FacebookRs.NAMESPACE, ""), code);
+        } catch (java.io.IOException ex) {
+            Logger.warn(this, "%[exception]s", ex);
+            throw new LoginRequiredException(this, ex);
+        }
+        return remote;
     }
 
 }
