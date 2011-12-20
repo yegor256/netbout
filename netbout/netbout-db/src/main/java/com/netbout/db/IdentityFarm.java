@@ -63,7 +63,7 @@ public final class IdentityFarm {
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 // @checkstyle LineLength (1 line)
-                "SELECT identity.name FROM identity LEFT JOIN alias ON alias.identity = identity.name WHERE UCASE(identity.name) LIKE ? OR UCASE(alias.name) LIKE ? GROUP BY identity.name"
+                "SELECT identity.name FROM identity LEFT JOIN alias ON alias.identity = identity.name WHERE UCASE(identity.name) LIKE ? OR UCASE(alias.name) LIKE ? GROUP BY identity.name LIMIT 10"
             );
             final String matcher = String.format(
                 "%%%s%%",
@@ -84,10 +84,12 @@ public final class IdentityFarm {
         }
         Logger.debug(
             this,
-            "#findIdentitiesByKeyword('%s'): retrieved %d identitie(s) [%dms]",
+            // @checkstyle LineLength (1 line)
+            "#findIdentitiesByKeyword('%s'): retrieved %d identitie(s) [%dms]: %[list]s",
             keyword,
             names.size(),
-            System.currentTimeMillis() - start
+            System.currentTimeMillis() - start,
+            names
         );
         return names;
     }
