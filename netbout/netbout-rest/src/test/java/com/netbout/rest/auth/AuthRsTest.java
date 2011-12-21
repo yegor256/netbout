@@ -66,12 +66,13 @@ public final class AuthRsTest {
                 Matchers.containsString(MediaType.APPLICATION_XML)
             )
             .returnBody(
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "<page><identity><authority>?</authority><name>%s</name><photo>%s</photo></identity></page>",
-                    iname,
-                    photo
-                )
+                // @checkstyle StringLiteralsConcatenation (6 lines)
+                "<page><identity>"
+                + "<aliases><alias>hello</alias></aliases>"
+                + "<authority>http://localhost</authority>"
+                + String.format("<name>%s</name>", iname)
+                + String.format("<photo>%s</photo>", photo)
+                + "</identity></page>"
             )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
@@ -106,7 +107,7 @@ public final class AuthRsTest {
     }
 
     /**
-     * It's a bug in ReXSL.
+     * It's a bug in ReXSL (http://trac.fazend.com/rexsl/ticket/94).
      * @param uri The URI to normalize
      * @return Normal URL
      * @throws Exception If some problem
