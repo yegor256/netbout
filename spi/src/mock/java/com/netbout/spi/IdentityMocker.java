@@ -30,7 +30,9 @@
 package com.netbout.spi;
 
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import org.mockito.Mockito;
 
 /**
@@ -47,6 +49,11 @@ public final class IdentityMocker {
     private final Identity identity = Mockito.mock(Identity.class);
 
     /**
+     * Aliases.
+     */
+    private final Set<String> aliases = new HashSet<String>();
+
+    /**
      * Public ctor.
      * @throws Exception If some problem inside
      */
@@ -57,6 +64,8 @@ public final class IdentityMocker {
         Mockito.doReturn(new BoutMocker().mock()).when(this.identity).start();
         Mockito.doReturn(new BoutMocker().mock()).when(this.identity)
             .bout(Mockito.any(Long.class));
+        Mockito.doReturn(new URL("http://localhost/unknown.png"))
+            .when(this.identity).photo();
     }
 
     /**
@@ -102,6 +111,28 @@ public final class IdentityMocker {
     }
 
     /**
+     * With this alias.
+     * @param alias The alias
+     * @return This object
+     */
+    public IdentityMocker withAlias(final String alias) {
+        this.aliases.add(alias);
+        return this;
+    }
+
+    /**
+     * With this photo.
+     * @param photo The photo
+     * @return This object
+     * @throws java.net.MalformedURLException When format problem
+     */
+    public IdentityMocker withPhoto(final String photo)
+        throws java.net.MalformedURLException {
+        Mockito.doReturn(new URL(photo)).when(this.identity).photo();
+        return this;
+    }
+
+    /**
      * With this bout on board.
      * @param num Number of it
      * @param bout The bout
@@ -120,8 +151,7 @@ public final class IdentityMocker {
      * @throws Exception If some problem inside
      */
     public Identity mock() throws Exception {
-        Mockito.doReturn(new URL("http://localhost/unknown.png"))
-            .when(this.identity).photo();
+        Mockito.doReturn(this.aliases).when(this.identity).aliases();
         return this.identity;
     }
 
