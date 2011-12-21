@@ -27,7 +27,6 @@
 package com.netbout.rest.auth;
 
 import com.netbout.hub.UrnResolver;
-import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.sun.jersey.api.client.Client;
 import com.ymock.util.Logger;
@@ -65,9 +64,9 @@ public final class AuthMediator {
      * @return Identity name, if it's valid
      * @throws IOException If some problem with FB
      */
-    public Identity authenticate(final Urn iname, final String secret)
+    public RemoteIdentity authenticate(final Urn iname, final String secret)
         throws IOException {
-        Identity remote;
+        RemoteIdentity remote;
         if (iname.isEmpty() && "localhost".equals(secret)) {
             remote = this.stub(iname);
         } else {
@@ -81,7 +80,7 @@ public final class AuthMediator {
      * @param iname Identity name
      * @return Identity
      */
-    private Identity stub(final Urn iname) {
+    private RemoteIdentity stub(final Urn iname) {
         final RemoteIdentity identity = new RemoteIdentity();
         identity.setAuthority("http://www.netbout.com/nb");
         identity.setName(iname.toString());
@@ -96,9 +95,9 @@ public final class AuthMediator {
      * @return Identity
      * @throws IOException If some problem
      */
-    private Identity remote(final Urn iname, final String secret)
+    private RemoteIdentity remote(final Urn iname, final String secret)
         throws IOException {
-        Identity remote;
+        RemoteIdentity remote;
         URL entry;
         try {
             entry = this.resolver.authority(iname);
@@ -142,9 +141,9 @@ public final class AuthMediator {
      * @throws IOException If some problem with FB
      */
     @SuppressWarnings("PMD.AvoidCatchingThrowable")
-    private Identity load(final URI uri) throws IOException {
+    private RemoteIdentity load(final URI uri) throws IOException {
         final long start = System.currentTimeMillis();
-        Identity identity;
+        RemoteIdentity identity;
         try {
             identity = Client.create().resource(uri)
                 .accept(MediaType.APPLICATION_XML)

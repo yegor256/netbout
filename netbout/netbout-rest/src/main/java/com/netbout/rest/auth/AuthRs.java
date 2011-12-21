@@ -83,7 +83,7 @@ public final class AuthRs extends AbstractRs {
      */
     private Identity authenticate(final Urn iname,
         final String secret) {
-        Identity remote;
+        RemoteIdentity remote;
         try {
             remote = new AuthMediator(this.hub().resolver())
                 .authenticate(iname, secret);
@@ -93,14 +93,10 @@ public final class AuthRs extends AbstractRs {
         }
         Identity identity;
         try {
-            identity = this.hub().identity(iname);
+            identity = remote.findIn(this.hub());
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new LoginRequiredException(this, ex);
         }
-        for (String alias : remote.aliases()) {
-            identity.alias(alias);
-        }
-        identity.setPhoto(remote.photo());
         return identity;
     }
 

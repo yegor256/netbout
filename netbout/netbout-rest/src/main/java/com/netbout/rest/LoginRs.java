@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.rest.auth.AuthMediator;
 import com.netbout.rest.auth.FacebookRs;
+import com.netbout.rest.auth.RemoteIdentity;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
@@ -84,18 +85,11 @@ public final class LoginRs extends AbstractRs {
     @GET
     @Path("/fb")
     public Response fbauth(@QueryParam("code") final String code) {
+        final RemoteIdentity remote = this.remote(code);
         this.logoff();
-        Identity remote;
-        try {
-            remote = new AuthMediator(this.hub().resolver())
-                .authenticate(new Urn(FacebookRs.NAMESPACE, ""), code);
-        } catch (java.io.IOException ex) {
-            Logger.warn(this, "%[exception]s", ex);
-            throw new LoginRequiredException(this, ex);
-        }
         Identity identity;
         try {
-            identity = this.hub().identity(remote.name());
+            identity = remote.findIn(this.hub());
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new LoginRequiredException(this, ex);
         }
@@ -129,6 +123,23 @@ public final class LoginRs extends AbstractRs {
                 )
             )
             .build();
+    }
+
+    /**
+     * Authenticate with a code.
+     * @param code Facebook "authorization code"
+     * @return The identity
+     */
+    private RemoteIdentity remote(final String code) {
+        RemoteIdentity remote;
+        try {
+            remote = new AuthMediator(this.hub().resolver())
+                .authenticate(new Urn(FacebookRs.NAMESPACE, ""), code);
+        } catch (java.io.IOException ex) {
+            Logger.warn(this, "%[exception]s", ex);
+            throw new LoginRequiredException(this, ex);
+        }
+        return remote;
     }
 
 }

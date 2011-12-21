@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.auth;
 
+import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
@@ -65,6 +66,23 @@ public final class RemoteIdentity implements Identity {
      * Aliases.
      */
     private final transient Set<String> ialiases = new HashSet<String>();
+
+    /**
+     * Find it in hub and return.
+     * @param hub The hub to find in
+     * @return The identity found
+     * @throws com.netbout.spi.UnreachableUrnException If can't find it
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    public Identity findIn(final Hub hub)
+        throws com.netbout.spi.UnreachableUrnException {
+        final Identity identity = hub.identity(this.iname);
+        for (String alias : this.aliases()) {
+            identity.alias(alias);
+        }
+        identity.setPhoto(this.photo());
+        return identity;
+    }
 
     /**
      * Set authority.
