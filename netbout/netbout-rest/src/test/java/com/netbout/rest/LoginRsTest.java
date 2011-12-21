@@ -56,7 +56,7 @@ import org.xmlmatchers.XmlMatchers;
 public final class LoginRsTest {
 
     /**
-     * LoginRs renders login page.
+     * LoginRs can render a login page.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -105,6 +105,17 @@ public final class LoginRsTest {
         for (String xpath : xpaths) {
             MatcherAssert.assertThat(xhtml, XmlMatchers.hasXPath(xpath));
         }
+    }
+
+    /**
+     * LoginRs can detect a situation when a logged in user is trying to login.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = ForwardException.class)
+    public void forwardsIfUserAlreadyLoggedIn() throws Exception {
+        final LoginRs rest = new ResourceMocker()
+            .mock(LoginRs.class);
+        rest.login();
     }
 
 }
