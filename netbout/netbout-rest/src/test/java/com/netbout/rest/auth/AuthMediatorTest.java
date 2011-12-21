@@ -64,7 +64,7 @@ public final class AuthMediatorTest {
             .returnBody(
                 String.format(
                     // @checkstyle LineLength (1 line)
-                    "<page><identity><authority>?</authority><name>%s</name><photo>%s</photo></identity></page>",
+                    "<page><identity><aliases><alias>hello</alias></aliases><authority>?</authority><name>%s</name><photo>%s</photo></identity></page>",
                     iname,
                     photo
                 )
@@ -76,13 +76,14 @@ public final class AuthMediatorTest {
             .mock();
         final Identity identity = new AuthMediator(resolver)
             .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret");
-        MatcherAssert.assertThat(
-            identity.name(),
-            Matchers.equalTo(iname)
-        );
+        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(iname));
         MatcherAssert.assertThat(
             identity.photo().toString(),
             Matchers.equalTo(photo)
+        );
+        MatcherAssert.assertThat(
+            identity.aliases().size(),
+            Matchers.equalTo(1)
         );
     }
 
