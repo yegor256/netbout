@@ -75,6 +75,7 @@ public final class PlainBuilderTest {
                 new Object[] {""},
                 new Object[] {"a"},
                 new Object[] {"some text: 8(&^%$,:;,\"/\\+ "},
+                new Object[] {"\u043F\u0440\u0438\u0432\u0435\u0442"},
                 new Object[] {new Date()},
                 new Object[] {new Urn("urn:foo:test")},
                 new Object[] {new Urn("bar", "&^%$#@\u8514")},
