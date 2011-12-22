@@ -41,7 +41,7 @@ import org.mockito.stubbing.Answer;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HelperMocker implements Answer {
+public final class HelperMocker {
 
     /**
      * Mocked helper.
@@ -58,21 +58,24 @@ public final class HelperMocker implements Answer {
      * Public ctor.
      */
     public HelperMocker() {
-        Mockito.doAnswer(this).when(this.helper)
-            .execute(Mockito.any(Token.class));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object answer(final InvocationOnMock invocation) {
-        final Token token = (Token) invocation.getArguments()[0];
-        final String mnemo = token.mnemo();
-        if (this.ops.containsKey(mnemo)) {
-            token.result(PlainBuilder.fromObject(this.ops.get(mnemo)));
-        }
-        return true;
+        Mockito.doReturn(this.ops.keySet()).when(this.helper).supports();
+        Mockito.doAnswer(
+            new Answer() {
+                @Override
+                public Object answer(final InvocationOnMock invocation) {
+                    final Token token = (Token) invocation.getArguments()[0];
+                    final String mnemo = token.mnemo();
+                    if (HelperMocker.this.ops.containsKey(mnemo)) {
+                        token.result(
+                            PlainBuilder.fromObject(
+                                HelperMocker.this.ops.get(mnemo)
+                            )
+                        );
+                    }
+                    return true;
+                }
+            }
+        ).when(this.helper).execute(Mockito.any(Token.class));
     }
 
     /**
@@ -91,7 +94,6 @@ public final class HelperMocker implements Answer {
      * @return This object
      */
     public Helper mock() {
-        Mockito.doReturn(this.ops.keySet()).when(this.helper).supports();
         return this.helper;
     }
 

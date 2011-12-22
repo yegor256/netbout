@@ -55,36 +55,37 @@ public final class IdentityMocker {
 
     /**
      * Public ctor.
-     * @throws Exception If some problem inside
      */
-    public IdentityMocker() throws Exception {
-        Mockito.doReturn(new UrnMocker().mock()).when(this.identity).name();
-        Mockito.doReturn(new URL("http://localhost"))
-            .when(this.identity).authority();
+    public IdentityMocker() {
+        this.namedAs(new UrnMocker().mock());
+        this.withAlias("test identity alias");
+        this.belongsTo("http://localhost/some-authority");
+        this.withPhoto("http://localhost/unknown.png");
+        Mockito.doReturn(this.aliases).when(this.identity).aliases();
         Mockito.doReturn(new BoutMocker().mock()).when(this.identity).start();
-        Mockito.doReturn(new BoutMocker().mock()).when(this.identity)
-            .bout(Mockito.any(Long.class));
-        Mockito.doReturn(new URL("http://localhost/unknown.png"))
-            .when(this.identity).photo();
+        try {
+            Mockito.doReturn(new BoutMocker().mock()).when(this.identity)
+                .bout(Mockito.any(Long.class));
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**
      * This is the name of identity.
      * @param The name of it
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public IdentityMocker namedAs(final String name) throws Exception {
-        return this.namedAs(new Urn(name));
+    public IdentityMocker namedAs(final String name) {
+        return this.namedAs(Urn.create(name));
     }
 
     /**
      * This is the name of identity.
      * @param The name of it
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public IdentityMocker namedAs(final Urn name) throws Exception {
+    public IdentityMocker namedAs(final Urn name) {
         Mockito.doReturn(name).when(this.identity).name();
         return this;
     }
@@ -93,19 +94,21 @@ public final class IdentityMocker {
      * This is the user of identity, which it belongs to.
      * @param The name of user
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public IdentityMocker belongsTo(final String name) throws Exception {
-        return this.belongsTo(new URL(name));
+    public IdentityMocker belongsTo(final String name) {
+        try {
+            return this.belongsTo(new URL(name));
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**
      * This is the user of identity, which it belongs to.
      * @param The name of user
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public IdentityMocker belongsTo(final URL name) throws Exception {
+    public IdentityMocker belongsTo(final URL name) {
         Mockito.doReturn(name).when(this.identity).authority();
         return this;
     }
@@ -124,11 +127,13 @@ public final class IdentityMocker {
      * With this photo.
      * @param photo The photo
      * @return This object
-     * @throws java.net.MalformedURLException When format problem
      */
-    public IdentityMocker withPhoto(final String photo)
-        throws java.net.MalformedURLException {
-        Mockito.doReturn(new URL(photo)).when(this.identity).photo();
+    public IdentityMocker withPhoto(final String photo) {
+        try {
+            Mockito.doReturn(new URL(photo)).when(this.identity).photo();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return this;
     }
 
@@ -139,19 +144,20 @@ public final class IdentityMocker {
      * @return This object
      * @throws BoutNotFoundException If some problem
      */
-    public IdentityMocker withBout(final Long num, final Bout bout)
-        throws BoutNotFoundException {
-        Mockito.doReturn(bout).when(this.identity).bout(num);
+    public IdentityMocker withBout(final Long num, final Bout bout) {
+        try {
+            Mockito.doReturn(bout).when(this.identity).bout(num);
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return this;
     }
 
     /**
      * Mock it.
      * @return Mocked identity
-     * @throws Exception If some problem inside
      */
-    public Identity mock() throws Exception {
-        Mockito.doReturn(this.aliases).when(this.identity).aliases();
+    public Identity mock() {
         return this.identity;
     }
 

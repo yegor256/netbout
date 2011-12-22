@@ -45,6 +45,14 @@ public final class ParticipantMocker {
     private final Participant participant = Mockito.mock(Participant.class);
 
     /**
+     * Public ctor.
+     */
+    public ParticipantMocker() {
+        this.withIdentity(new IdentityMocker().mock());
+        this.inBout(new BoutMocker().mock());
+    }
+
+    /**
      * This is the participant.
      * @param The identity
      * @return This object

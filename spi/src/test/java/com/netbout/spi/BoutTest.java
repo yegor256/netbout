@@ -72,7 +72,7 @@ public final class BoutTest {
             bout.messages("").size(),
             Matchers.greaterThan(0)
         );
-        MatcherAssert.assertThat(bout.message(1L), Matchers.notNullValue());
+        MatcherAssert.assertThat(bout.message(0L), Matchers.notNullValue());
     }
 
     /**

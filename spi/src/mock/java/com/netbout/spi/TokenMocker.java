@@ -45,6 +45,13 @@ public final class TokenMocker {
     private final Token token = Mockito.mock(Token.class);
 
     /**
+     * Public ctor.
+     */
+    public TokenMocker() {
+        this.withMnemo("some-test-mnemo");
+    }
+
+    /**
      * Use this mnemo.
      * @param mnemo The mnemo of operation
      * @return This object
