@@ -29,6 +29,8 @@ package com.netbout.hub;
 import com.netbout.bus.Bus;
 import com.netbout.bus.TxBuilder;
 import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
@@ -46,12 +48,20 @@ public final class ParticipantDtMocker {
     private final ParticipantDt participant = Mockito.mock(ParticipantDt.class);
 
     /**
+     * Public ctor.
+     */
+    public ParticipantDtMocker() {
+        this.withBout(Math.abs(new Random().nextLong()));
+        this.withIdentity(new UrnMocker().mock());
+        this.confirmed();
+    }
+
+    /**
      * With this number of bout.
      * @param bout The bout number
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public ParticipantDtMocker withBout(final Long bout) throws Exception {
+    public ParticipantDtMocker withBout(final Long bout) {
         Mockito.doReturn(bout).when(this.participant).getBout();
         return this;
     }
@@ -60,21 +70,26 @@ public final class ParticipantDtMocker {
      * With this identity name.
      * @param identity The name
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public ParticipantDtMocker withIdentity(final String identity)
-        throws Exception {
-        Mockito.doReturn(new Urn(identity))
-            .when(this.participant).getIdentity();
+    public ParticipantDtMocker withIdentity(final String identity) {
+        return this.withIdentity(Urn.create(identity));
+    }
+
+    /**
+     * With this identity name.
+     * @param name The name
+     * @return This object
+     */
+    public ParticipantDtMocker withIdentity(final Urn name) {
+        Mockito.doReturn(name).when(this.participant).getIdentity();
         return this;
     }
 
     /**
      * Should be confirmed.
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public ParticipantDtMocker confirmed() throws Exception {
+    public ParticipantDtMocker confirmed() {
         Mockito.doReturn(true).when(this.participant).isConfirmed();
         return this;
     }

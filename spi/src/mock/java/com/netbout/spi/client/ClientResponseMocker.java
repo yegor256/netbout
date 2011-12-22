@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
@@ -53,6 +54,15 @@ public final class ClientResponseMocker {
      * Headers.
      */
     private final transient MultivaluedMap headers = new MultivaluedMapImpl();
+
+    /**
+     * Public ctor.
+     */
+    public ClientResponseMocker() {
+        Mockito.doReturn(this.headers).when(this.response).getHeaders();
+        this.withStatus(HttpURLConnection.HTTP_OK);
+        this.withEntity("");
+    }
 
     /**
      * Return this status code.
@@ -95,7 +105,6 @@ public final class ClientResponseMocker {
      * @return Mocked class
      */
     public ClientResponse mock() {
-        Mockito.doReturn(this.headers).when(this.response).getHeaders();
         return this.response;
     }
 
