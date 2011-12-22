@@ -24,40 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.notifiers.email;
+package com.netbout.hub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import org.junit.Test;
+import java.util.Random;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
- * Test case for {@link EmailFarm}.
+ * Mocker of {@link BoutMgr}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class EmailFarmTest {
+public final class BoutMgrMocker {
 
     /**
-     * EmailFarm can send notify bout participants.
-     * @throws Exception If there is some problem inside
+     * The object/mock.
      */
-    @Test
-    public void notfiesBoutParticipants() throws Exception {
-        final Identity identity = new IdentityMocker().mock();
-        final Identity receiver = new IdentityMocker()
-            .namedAs("urn:email:yegor@tpc2.com")
-            .mock();
-        final Bout bout = new BoutMocker()
-            .withParticipant(receiver)
-            .titledAs("some bout title")
-            .mock();
-        Mockito.doReturn(bout).when(identity).bout(Mockito.anyLong());
-        final EmailFarm farm = new EmailFarm();
-        farm.init(identity);
-        farm.notifyBoutParticipants(bout.number(), 0L);
+    private final transient BoutMgr mgr = Mockito.mock(BoutMgr.class);
+
+    /**
+     * Build it.
+     * @return The mock
+     */
+    public BoutMgr mock() {
+        Mockito.doReturn(Math.abs(new Random().nextLong()))
+            .when(this.mgr).create();
+        try {
+            Mockito.doAnswer(
+                new Answer() {
+                    public Object answer(final InvocationOnMock invocation) {
+                        Long num = (Long) invocation.getArguments()[0];
+                        return new BoutDtMocker().withNumber(num).mock();
+                    }
+                }
+            ).when(this.mgr).find(Mockito.anyLong());
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        return this.mgr;
     }
 
 }

@@ -26,6 +26,8 @@
  */
 package com.netbout.hub;
 
+import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
@@ -45,14 +47,52 @@ public final class HubMocker {
     private final transient Hub hub = Mockito.mock(Hub.class);
 
     /**
+     * Public ctor.
+     */
+    public HubMocker() {
+        this.withBus(new BusMocker().mock());
+        this.withUrnResolver(new UrnResolverMocker().mock());
+        this.withBoutMgr(new BoutMgrMocker().mock());
+    }
+
+    /**
+     * With this bus.
+     * @param bus The bus to use
+     * @return This object
+     */
+    public HubMocker withBus(final Bus bus) {
+        Mockito.doReturn(bus).when(this.hub).bus();
+        return this;
+    }
+
+    /**
+     * With this URN resolver.
+     * @param resolver The resolver to use
+     * @return This object
+     */
+    public HubMocker withUrnResolver(final UrnResolver resolver) {
+        Mockito.doReturn(resolver).when(this.hub).resolver();
+        return this;
+    }
+
+    /**
+     * With this BoutMgr.
+     * @param mgr The manager to use
+     * @return This object
+     */
+    public HubMocker withBoutMgr(final BoutMgr mgr) {
+        Mockito.doReturn(mgr).when(this.hub).manager();
+        return this;
+    }
+
+    /**
      * With this identity on board.
      * @param name The name of it
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public HubMocker withIdentity(final String name) throws Exception {
+    public HubMocker withIdentity(final String name) {
         return this.withIdentity(
-            new Urn(name),
+            Urn.create(name),
             new IdentityMocker().namedAs(name).mock()
         );
     }
@@ -62,24 +102,21 @@ public final class HubMocker {
      * @param name The name of it
      * @param identity The identity
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public HubMocker withIdentity(final Urn name, final Identity identity)
-        throws Exception {
-        Mockito.doReturn(identity).when(this.hub).identity(name);
+    public HubMocker withIdentity(final Urn name, final Identity identity) {
+        try {
+            Mockito.doReturn(identity).when(this.hub).identity(name);
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return this;
     }
 
     /**
      * Build it.
      * @return The bout
-     * @throws Exception If some problem inside
      */
-    public Hub mock() throws Exception {
-        final UrnResolver resolver = Mockito.mock(UrnResolver.class);
-        Mockito.doReturn(new URL("http://abc")).when(resolver)
-            .authority(Mockito.any(Urn.class));
-        Mockito.doReturn(resolver).when(this.hub).resolver();
+    public Hub mock() {
         return this.hub;
     }
 

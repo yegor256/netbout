@@ -34,6 +34,7 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -190,6 +191,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
                 throw new IllegalStateException(ex);
             }
         }
+        Collections.reverse(list);
         Logger.debug(
             this,
             "#inbox('%s'): %d bouts found",

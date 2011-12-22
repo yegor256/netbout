@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import org.junit.Before;
@@ -44,17 +45,17 @@ public final class HubBoutTest {
     /**
      * The viewer.
      */
-    private final transient Identity viewer = Mockito.mock(Identity.class);
+    private transient Identity viewer;
 
     /**
      * The bout data type to work with.
      */
-    private final transient BoutDtMocker boutDtMocker = new BoutDtMocker();
+    private transient BoutDtMocker boutDtMocker;
 
     /**
-     * The catalog.
+     * The hub.
      */
-    private final transient Hub hub = Mockito.mock(Hub.class);
+    private transient Hub hub;
 
     /**
      * Prepare all mocks.
@@ -62,14 +63,16 @@ public final class HubBoutTest {
      */
     @Before
     public void prepare() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        Mockito.doReturn(name).when(this.viewer).name();
-        Mockito.doReturn(this.viewer).when(this.hub).identity(name);
-        this.boutDtMocker.withParticipant(
-            new ParticipantDtMocker()
-                .withIdentity(name.toString())
-                .confirmed()
-                .mock()
+        this.viewer = new IdentityMocker().mock();
+        this.hub = new HubMocker()
+            .withIdentity(this.viewer.name(), this.viewer)
+            .mock();
+        this.boutDtMocker = new BoutDtMocker()
+            .withParticipant(
+                new ParticipantDtMocker()
+                    .withIdentity(this.viewer.name())
+                    .confirmed()
+                    .mock()
         );
     }
 

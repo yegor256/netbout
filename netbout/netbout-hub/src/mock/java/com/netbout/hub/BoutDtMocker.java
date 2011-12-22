@@ -31,6 +31,7 @@ import com.netbout.bus.TxBuilder;
 import com.netbout.spi.Urn;
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Random;
 import org.mockito.Mockito;
 
 /**
@@ -52,6 +53,24 @@ public final class BoutDtMocker {
         new ArrayList<ParticipantDt>();
 
     /**
+     * Public ctor.
+     */
+    public BoutDtMocker() {
+        Mockito.doReturn(this.participants).when(this.bout).getParticipants();
+        this.withNumber(Math.abs(new Random().nextLong()));
+    }
+
+    /**
+     * With this number.
+     * @param num The number
+     * @return This object
+     */
+    public BoutDtMocker withNumber(final Long num) {
+        Mockito.doReturn(num).when(this.bout).getNumber();
+        return this;
+    }
+
+    /**
      * With this participant on board.
      * @param identity The participant
      * @return This object
@@ -66,9 +85,6 @@ public final class BoutDtMocker {
      * @return The bout
      */
     public BoutDt mock() {
-        Mockito.doReturn(this.participants).when(this.bout).getParticipants();
-        Mockito.doReturn(new ParticipantDtMocker().mock()).when(this.bout)
-            .addParticipant(Mockito.any(Urn.class));
         return this.bout;
     }
 

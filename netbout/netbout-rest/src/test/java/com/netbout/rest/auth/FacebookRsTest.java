@@ -70,7 +70,7 @@ public final class FacebookRsTest {
         final URI base = new URI("http://localhost/test/me");
         final String fbid = "438947328947329";
         final Urn iname = new UrnMocker()
-            .withNamespace(FacebookRs.NAMESPACE)
+            .withNid(FacebookRs.NAMESPACE)
             .mock();
         final Identity identity = new IdentityMocker().namedAs(iname).mock();
         final Hub hub = new HubMocker()

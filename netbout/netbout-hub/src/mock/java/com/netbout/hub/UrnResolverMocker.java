@@ -33,6 +33,9 @@ import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link UrnResolver}.
@@ -45,7 +48,41 @@ public final class UrnResolverMocker {
      * The object.
      */
     private final transient UrnResolver resolver =
-        new UrnResolverMocker.Resolver();
+        Mockito.mock(UrnResolver.class);
+
+    /**
+     * Namespaces and related URL templates.
+     */
+    private final transient ConcurrentMap<String, URL> namespaces =
+        new ConcurrentHashMap<String, URL>();
+
+    /**
+     * Public ctor.
+     */
+    public UrnResolverMocker() {
+        final Answer answer = new Answer() {
+            public Object answer(final InvocationOnMock invocation) {
+                Urn urn = (Urn) invocation.getArguments()[0];
+                final String nid = urn.nid();
+                if (!UrnResolverMocker.this.namespaces.containsKey(nid)) {
+                    throw new IllegalArgumentException(
+                        Logger.format(
+                            "NID of '%s' is not registered among %[list]s",
+                            urn,
+                            UrnResolverMocker.this.namespaces.keySet()
+                        )
+                    );
+                }
+                return UrnResolverMocker.this.namespaces.get(nid);
+            }
+        };
+        try {
+            Mockito.doAnswer(answer).when(this.resolver)
+                .authority(Mockito.any(Urn.class));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
 
     /**
      * Resolve this namespace to the given URL.
@@ -54,7 +91,7 @@ public final class UrnResolverMocker {
      * @return This object
      */
     public UrnResolverMocker resolveAs(final String name, final URL url) {
-        this.resolver.register(null, name, url.toString());
+        this.namespaces.put(name, url);
         return this;
     }
 
@@ -64,55 +101,6 @@ public final class UrnResolverMocker {
      */
     public UrnResolver mock() {
         return this.resolver;
-    }
-
-    /**
-     * Resolver.
-     */
-    private static final class Resolver implements UrnResolver {
-        /**
-         * Namespaces and related URL templates.
-         */
-        private final transient ConcurrentMap<String, URL> namespaces =
-            new ConcurrentHashMap<String, URL>();
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void register(final Identity owner, final String namespace,
-            final String url) {
-            try {
-                this.namespaces.put(namespace, new URL(url));
-            } catch (java.net.MalformedURLException ex) {
-                throw new IllegalArgumentException(ex);
-            }
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public ConcurrentMap<String, String> registered(final Identity owner) {
-            return null;
-        }
-        /**
-         * {@inheritDoc}
-         * @checkstyle RedundantThrows (3 lines)
-         */
-        @Override
-        public URL authority(final Urn urn) throws UnreachableUrnException {
-            final String nid = urn.nid();
-            if (!this.namespaces.containsKey(nid)) {
-                throw new UnreachableUrnException(
-                    urn,
-                    Logger.format(
-                        "Namespace '%s' is not registered among %[list]s",
-                        nid,
-                        this.namespaces.keySet()
-                    )
-                );
-            }
-            return this.namespaces.get(nid);
-        }
     }
 
 }

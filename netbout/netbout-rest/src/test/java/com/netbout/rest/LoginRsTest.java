@@ -76,7 +76,7 @@ public final class LoginRsTest {
      */
     @Test
     public void authenticateWithFacebook() throws Exception {
-        final Urn name = new UrnMocker().withNamespace("netbout").mock();
+        final Urn name = new UrnMocker().withNid("netbout").mock();
         final Bus bus = new BusMocker()
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
