@@ -89,6 +89,7 @@ public final class PlainBuilderTest {
                     ),
                 },
                 new Object[]{Arrays.asList(new Boolean[]{true, false}), },
+                new Object[]{Arrays.asList(new Boolean[]{}), },
                 new Object[] {
                     Arrays.asList(
                         new String[]{"some text", "another text;;;", }

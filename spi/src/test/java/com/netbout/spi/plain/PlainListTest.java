@@ -31,9 +31,8 @@ package com.netbout.spi.plain;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Date;
-import java.util.Random;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -69,9 +68,9 @@ public final class PlainListTest {
      */
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() throws Exception {
-        final Random random = new Random();
         return Arrays.asList(
             new Object[][] {
+                new Object[] {Arrays.asList(new Long[]{})},
                 new Object[] {Arrays.asList(new Long[]{1L, 2L})},
                 new Object[] {Arrays.asList(new Date[]{new Date()})},
                 new Object[] {Arrays.asList(new Boolean[]{true, false})},
