@@ -171,13 +171,20 @@ final class RestBout implements Bout {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
-        final List<String> nums = this.client
-            .get("reading numbers of bout messages")
+        final RestResponse response = this.client
+            .get("reading numbers of bout messages");
+        final List<String> nums = response
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/messages")
             .xpath("/page/bout/messages/message/number");
         final List<Message> msgs = new ArrayList<Message>();
         for (String num : nums) {
+            if (num == null) {
+                response.fail("/message/number not found");
+            }
+            if (!num.matches("^\\d+$")) {
+                response.fail("Invalid number of message");
+            }
             msgs.add(new RestMessage(this.client.copy(), Long.valueOf(num)));
         }
         return msgs;

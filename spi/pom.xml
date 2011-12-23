@@ -162,7 +162,7 @@
             <!-- ReXSL test client -->
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
-            <version since="23 Dec 2011">0.2.5</version>
+            <version since="23 Dec 2011">1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <!-- ReXSL test client, mocks -->
@@ -192,6 +192,12 @@
             <version since="13 Dec 2011">1.11</version>
         </dependency>
         <dependency>
+            <!-- Groovy engine. -->
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all-minimal</artifactId>
+            <version since="3 Sep 2011">1.5.8</version>
+        </dependency>
+        <dependency>
             <!-- Logging facility, on top of SLF4J. -->
             <groupId>com.ymock</groupId>
             <artifactId>ymock-util</artifactId>
@@ -213,15 +219,13 @@
         </dependency>
         <dependency>
             <!--
-            We are using JUnit framework for unit test organization
-            and management. This framework is the most stable and mature
-            in the market. Other options considered: TestNG.
-            @link http://www.junit.org/
+            Assertions and matchers for unit tests.
+            @link http://code.google.com/p/hamcrest/wiki/Tutorial
             -->
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version since="3 July 2011">4.8.2</version>
-            <scope>test</scope>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version since="23 Dec 2011">1.2.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <!--
@@ -229,8 +233,20 @@
             @link http://code.google.com/p/hamcrest/wiki/Tutorial
             -->
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version since="6 Apr 2011">1.1</version>
+            <artifactId>hamcrest-library</artifactId>
+            <version since="23 Dec 2011">1.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <!--
+            We are using JUnit framework for unit test organization
+            and management. This framework is the most stable and mature
+            in the market. Other options considered: TestNG.
+            @link http://www.junit.org/
+            -->
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version since="23 Dec 2011">4.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -270,6 +286,13 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version since="8 Nov 2011">1.5</version>
+        </dependency>
+        <dependency>
+            <!-- Embedded Java Servlet Container, for com.rexsl:rexsl-test:mock -->
+            <groupId>com.sun.grizzly</groupId>
+            <artifactId>grizzly-servlet-webserver</artifactId>
+            <version>1.9.10</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

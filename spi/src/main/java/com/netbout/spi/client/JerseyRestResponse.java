@@ -106,11 +106,24 @@ final class JerseyRestResponse implements RestResponse {
      * {@inheritDoc}
      */
     @Override
+    public void fail(final String cause) {
+        throw new AssertionError(
+            Logger.format(
+                "%s:\n%s",
+                cause,
+                new ClientResponseDecor(this.response)
+            )
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public RestResponse assertStatus(final int code) {
         if (this.response.getStatus() != code) {
             throw new AssertionError(
                 Logger.format(
-                    // @checkstyle LineLength (1 line)
                     "Status code %d is not equal to %d:\n%s",
                     this.response.getStatus(),
                     code,
@@ -129,7 +142,6 @@ final class JerseyRestResponse implements RestResponse {
         if (this.xpath(xpath).isEmpty()) {
             throw new AssertionError(
                 Logger.format(
-                    // @checkstyle LineLength (1 line)
                     "Document doesn't match XPath '%s':\n%[document]s",
                     xpath,
                     this.document()

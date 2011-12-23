@@ -29,50 +29,63 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.rexsl.test.ContainerMocker;
+import com.rexsl.test.RestTester;
+import com.rexsl.test.TestClient;
+import com.rexsl.test.TestClientMocker;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link RestSession}.
+ * Test case for {@link RexslRestClient}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class RestSessionTest {
+public final class RexslRestClientTest {
 
     /**
-     * RestSession can perform authentication and obtain auth token.
+     * RestSession can return URI of home page.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void performsAuthentication() throws Exception {
-        final URI home = new ContainerMocker()
-            .returnHeader(RestSession.AUTH_HEADER, "abc")
-            .returnStatus(HttpURLConnection.HTTP_SEE_OTHER)
-            .mock()
-            .home();
-        final RestSession session = new RestSession(home);
-        final Identity identity = session.authenticate(new Urn(), "");
-        MatcherAssert.assertThat(identity, Matchers.notNullValue());
+    public void returnsUri() throws Exception {
+        final String uri = "http://localhost/some";
+        final TestClient tclient = new TestClientMocker()
+            .withUri(uri)
+            .mock();
+        final RestClient client = new RexslRestClient(tclient, "");
+        MatcherAssert.assertThat(
+            client.uri().toString(),
+            Matchers.equalTo(uri)
+        );
     }
 
     /**
-     * RestSession can throw exception if HTTP status is not valid.
+     * RestSession can return URI of home page.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = AssertionError.class)
-    public void throwsExceptionOnInvalidHttpStatusCode() throws Exception {
-        final URI home = new ContainerMocker()
-            .returnHeader(RestSession.AUTH_HEADER, "foo")
-            .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
-            .mock()
-            .home();
-        new RestSession(home).authenticate(new Urn(), "");
+    @Test
+    public void sendsGetRequestWithParams() throws Exception {
+        final String token = "some auth token";
+        final ContainerMocker container = new ContainerMocker()
+            .expectRequestUri(Matchers.endsWith("foo"))
+            .expectMethod(Matchers.equalTo(RestTester.GET))
+            .expectHeader(HttpHeaders.COOKIE, Matchers.equalTo(token))
+            .returnBody("<page><a/></page>")
+            .returnStatus(HttpURLConnection.HTTP_OK)
+            .mock();
+        final URI uri = UriBuilder.fromUri(container.home())
+            .path("/foo")
+            .build();
+        new RexslRestClient(RestTester.start(uri), token)
+            .get("just a test")
+            .assertXPath("/page/a")
+            .assertStatus(HttpURLConnection.HTTP_OK);
     }
 
 }
