@@ -29,6 +29,7 @@
  */
 package com.netbout.spi.client;
 
+import com.rexsl.test.ClientResponseMocker;
 import java.net.HttpURLConnection;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

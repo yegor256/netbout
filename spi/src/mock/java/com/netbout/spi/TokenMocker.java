@@ -29,7 +29,11 @@
  */
 package com.netbout.spi;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link Token}.
@@ -42,13 +46,26 @@ public final class TokenMocker {
     /**
      * Mocked token.
      */
-    private final Token token = Mockito.mock(Token.class);
+    private final transient Token token = Mockito.mock(Token.class);
+
+    /**
+     * Arguments.
+     */
+    private final transient List<Plain<?>> args = new ArrayList<Plain<?>>();
 
     /**
      * Public ctor.
      */
     public TokenMocker() {
         this.withMnemo("some-test-mnemo");
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    final int pos = (Integer) invocation.getArguments()[0];
+                    return TokenMocker.this.args.get(pos);
+                }
+            }
+        ).when(this.token).arg(Mockito.anyInt());
     }
 
     /**
@@ -58,6 +75,16 @@ public final class TokenMocker {
      */
     public TokenMocker withMnemo(final String mnemo) {
         Mockito.doReturn(mnemo).when(this.token).mnemo();
+        return this;
+    }
+
+    /**
+     * Use this argument.
+     * @param value The argument
+     * @return This object
+     */
+    public TokenMocker withArg(final Object value) {
+        this.args.add(PlainBuilder.fromObject(value));
         return this;
     }
 

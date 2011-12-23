@@ -29,6 +29,7 @@
  */
 package com.netbout.spi.client;
 
+import com.rexsl.test.ClientResponseDecor;
 import com.sun.jersey.api.client.ClientResponse;
 import com.ymock.util.Logger;
 import java.io.StringReader;

@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
+import com.rexsl.test.ClientResponseDecor;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
