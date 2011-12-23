@@ -36,7 +36,6 @@ import com.netbout.spi.Token;
 import com.netbout.spi.TokenMocker;
 import com.netbout.spi.plain.PlainBoolean;
 import com.netbout.spi.plain.PlainList;
-import com.netbout.spi.plain.PlainLong;
 import com.netbout.spi.plain.PlainString;
 import com.netbout.spi.plain.PlainVoid;
 import org.hamcrest.MatcherAssert;
@@ -125,6 +124,21 @@ public final class CpaHelperTest {
         final Token token = new TokenMocker().withMnemo("texts").mock();
         this.helper.execute(token);
         Mockito.verify(token).result(Mockito.any(PlainList.class));
+    }
+
+    /**
+     * CpaHelper can work properly with UTF-8 texts.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesUnicodeTexts() throws Exception {
+        final String text = "\u0443\u0440\u0430!";
+        final Token token = new TokenMocker()
+            .withMnemo("echo")
+            .withArg(text)
+            .mock();
+        this.helper.execute(token);
+        Mockito.verify(token).result(new PlainString(text));
     }
 
     /**
