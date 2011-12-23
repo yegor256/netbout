@@ -186,12 +186,6 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!-- JAX-RS implementation, core library -->
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version since="13 Dec 2011">1.11</version>
-        </dependency>
-        <dependency>
             <!-- Groovy engine. -->
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all-minimal</artifactId>
