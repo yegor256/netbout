@@ -98,7 +98,7 @@ public final class HubBoutTest {
     public void wrapsBoutRenamingMechanism() throws Exception {
         final BoutDt data = this.boutDtMocker.mock();
         final Bout bout = new HubBout(this.hub, this.viewer, data);
-        final String title = "some title, no matter which one..";
+        final String title = "some title, \u0443\u0440\u0430!";
         bout.rename(title);
         Mockito.verify(data).setTitle(title);
     }

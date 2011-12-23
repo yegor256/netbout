@@ -87,7 +87,7 @@ public final class BoutFarmTest {
             this.farm.getBoutTitle(num),
             Matchers.equalTo("")
         );
-        final String title = "interesting discussion about something...";
+        final String title = "interesting discussion, \u0443\u0440\u0430!";
         this.farm.changedBoutTitle(num, title);
         MatcherAssert.assertThat(
             this.farm.getBoutTitle(num),
