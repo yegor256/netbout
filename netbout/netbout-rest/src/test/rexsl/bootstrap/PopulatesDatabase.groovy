@@ -34,7 +34,7 @@ import com.rexsl.core.Manifests
 import com.ymock.util.Logger
 
 def driver = 'com.mysql.jdbc.Driver'
-def url = 'jdbc:mysql://test-db.netbout.com:3306/netbout-test'
+def url = 'jdbc:mysql://test-db.netbout.com:3306/netbout-test?useUnicode=true&characterEncoding=utf-8'
 def user = 'netbout-test'
 def password = 'secret'
 

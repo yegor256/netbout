@@ -46,7 +46,7 @@ bout.rename('Some test conversation between Jeff and Walter, \u0443\u0440\u0430!
 def number = bout.number()
 bout.invite(bob)
 bob.bout(number).confirm()
-def text = 'How are you? \u0443\u0440\u0430!'
+def text = 'Hi, dude!'
 def msg = bob.bout(number).post(text).number()
 MatcherAssert.assertThat(bout.message(msg).text(), Matchers.equalTo(text))
 
@@ -59,4 +59,4 @@ RestTester.start(RestUriBuilder.from(bout))
     .assertXPath('/page/bout/participants/participant[identity="urn:test:mandy"]')
     .assertXPath('/page/bout/participants/participant[identity="urn:test:bob"]')
     .assertXPath('/page/bout/messages/message[author="urn:test:bob"]')
-    .assertXPath('/page/bout/messages/message[contains(text,"\u0443\u0440\u0430")]')
+    .assertXPath('/page/bout/messages/message[text="Hi, dude!"]')

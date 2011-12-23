@@ -91,7 +91,7 @@ public final class HubBoutTest {
     }
 
     /**
-     * HubBout can "wrap" BoutDt renaminng mechanism.
+     * HubBout can "wrap" BoutDt renaming mechanism.
      * @throws Exception If there is some problem inside
      */
     @Test

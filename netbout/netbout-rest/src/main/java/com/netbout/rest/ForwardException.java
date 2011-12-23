@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.spi.client.RestSession;
 import com.netbout.utils.TextUtils;
 import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
@@ -117,7 +118,7 @@ public class ForwardException extends WebApplicationException {
             msg
         );
         return Response.status(Response.Status.TEMPORARY_REDIRECT)
-            .header("Netbout-error", msg)
+            .header(RestSession.ERROR_HEADER, msg)
             .entity(msg)
             .location(builder.build())
             .cookie(cookie)
