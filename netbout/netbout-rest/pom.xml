@@ -132,18 +132,18 @@
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-core</artifactId>
-            <version since="18 Dec 2011">0.2.4</version>
+            <version since="23 Dec 2011">0.2.5</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
-            <version since="18 Dec 2011">0.2.4</version>
+            <version since="23 Dec 2011">0.2.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
-            <version since="18 Dec 2011">0.2.4</version>
+            <version since="23 Dec 2011">0.2.5</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
@@ -305,7 +305,7 @@
             <plugin>
                 <groupId>com.rexsl</groupId>
                 <artifactId>rexsl-maven-plugin</artifactId>
-                <version since="18 Dec 2011">0.2.4</version>
+                <version since="23 Dec 2011">0.2.5</version>
                 <executions>
                     <execution>
                         <goals>

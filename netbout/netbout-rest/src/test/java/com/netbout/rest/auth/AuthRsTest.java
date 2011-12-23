@@ -82,7 +82,7 @@ public final class AuthRsTest {
             .mock();
         final AuthRs rest = new ResourceMocker()
             .withIdentity(identity)
-            .withNamespaceURL(this.normalize(container.home()))
+            .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
@@ -101,23 +101,9 @@ public final class AuthRsTest {
             .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
             .mock();
         final AuthRs rest = new ResourceMocker()
-            .withNamespaceURL(this.normalize(container.home()))
+            .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
         rest.auth(new Urn("foo", "test"), "");
-    }
-
-    /**
-     * It's a bug in ReXSL (http://trac.fazend.com/rexsl/ticket/94).
-     * @param uri The URI to normalize
-     * @return Normal URL
-     * @throws Exception If some problem
-     */
-    private URL normalize(final URI uri) throws Exception {
-        return UriBuilder
-            .fromUri(uri)
-            .path("/")
-            .build()
-            .toURL();
     }
 
 }
