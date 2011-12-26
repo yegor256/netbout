@@ -51,14 +51,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.woquo</groupId>
             <artifactId>woquo-umpa</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -118,6 +110,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.ymock</groupId>
             <artifactId>ymock-util</artifactId>
         </dependency>
@@ -146,7 +146,6 @@
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
             <version>${rexsl.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
@@ -196,10 +195,10 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!-- Javax Servlet API 2.3. -->
+            <!-- Javax Servlet API 2.4. -->
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version since="26 Oct 2011">2.3</version>
+            <version since="26 Oct 2011">2.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
