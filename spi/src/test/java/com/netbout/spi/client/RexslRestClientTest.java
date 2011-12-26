@@ -35,7 +35,9 @@ import com.rexsl.test.TestClient;
 import com.rexsl.test.TestClientMocker;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -55,13 +57,18 @@ public final class RexslRestClientTest {
     @Test
     public void returnsUri() throws Exception {
         final String uri = "http://localhost/some";
+        final String token = "some secret token";
+        final URI target = UriBuilder
+            .fromUri(uri)
+            .queryParam(RestSession.AUTH_PARAM, token)
+            .build();
         final TestClient tclient = new TestClientMocker()
             .withUri(uri)
             .mock();
-        final RestClient client = new RexslRestClient(tclient, "");
+        final RestClient client = new RexslRestClient(tclient, token);
         MatcherAssert.assertThat(
-            client.uri().toString(),
-            Matchers.equalTo(uri)
+            client.uri(),
+            Matchers.equalTo(target)
         );
     }
 
@@ -72,10 +79,13 @@ public final class RexslRestClientTest {
     @Test
     public void sendsGetRequestWithParams() throws Exception {
         final String token = "some auth token";
+        final String cookie = new Cookie(RestSession.AUTH_COOKIE, token)
+            .toString();
         final ContainerMocker container = new ContainerMocker()
             .expectRequestUri(Matchers.endsWith("foo"))
             .expectMethod(Matchers.equalTo(RestTester.GET))
-            .expectHeader(HttpHeaders.COOKIE, Matchers.equalTo(token))
+            .expectHeader(HttpHeaders.COOKIE, Matchers.equalTo(cookie))
+            .expectHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
             .returnBody("<page><a/></page>")
             .returnStatus(HttpURLConnection.HTTP_OK)
             .mock();

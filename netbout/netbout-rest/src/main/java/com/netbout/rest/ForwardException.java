@@ -100,7 +100,7 @@ public class ForwardException extends WebApplicationException {
     private static Response response(final Resource res,
         final UriBuilder builder, final String msg) {
         final NewCookie cookie = new NewCookie(
-            AbstractPage.MESSAGE_COOKIE,
+            RestSession.MESSAGE_COOKIE,
             TextUtils.pack(msg),
             res.base().build().getPath(),
             res.base().build().getHost(),

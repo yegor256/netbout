@@ -49,7 +49,7 @@ MatcherAssert.assertThat(bout.messages("").get(0).text(), Matchers.equalTo('\u04
 // validate content of the bout page
 RestTester.start(RestUriBuilder.from(bout))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
+    .get('read bout content')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('/page/identity[name="urn:test:cindy"]')
     .assertXPath('/page/bout/participants/participant[identity="urn:test:cindy"]')

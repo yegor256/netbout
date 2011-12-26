@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.netbout.bus.Bus;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
+import com.netbout.spi.client.RestSession;
 import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContext;
@@ -50,11 +51,6 @@ import org.apache.commons.codec.binary.Base64;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public abstract class AbstractRs implements Resource {
-
-    /**
-     * Name of the authentication parameter.
-     */
-    public static final String AUTH_PARAM = "auth";
 
     /**
      * When this resource was started, in nanoseconds.
@@ -196,7 +192,7 @@ public abstract class AbstractRs implements Resource {
             .clone();
         if (this.icookie != null && !this.icookie.isEmpty()
             && this.addAuthToURIs) {
-            builder.queryParam(AbstractRs.AUTH_PARAM, this.icookie);
+            builder.queryParam(RestSession.AUTH_PARAM, this.icookie);
         }
         return builder;
     }
@@ -229,7 +225,7 @@ public abstract class AbstractRs implements Resource {
      * because of <tt>&#64;CookieParam</tt> annotation.
      * @param cookie The cookie to set
      */
-    @CookieParam(AbstractPage.AUTH_COOKIE)
+    @CookieParam(RestSession.AUTH_COOKIE)
     public final void setCookie(final String cookie) {
         if (cookie != null) {
             this.icookie = cookie;
@@ -246,7 +242,7 @@ public abstract class AbstractRs implements Resource {
      * because of <tt>&#64;CookieParam</tt> annotation.
      * @param auth The auth code to set
      */
-    @QueryParam(AbstractRs.AUTH_PARAM)
+    @QueryParam(RestSession.AUTH_PARAM)
     public final void setAuth(final String auth) {
         if (auth != null) {
             this.icookie = auth;
@@ -403,7 +399,7 @@ public abstract class AbstractRs implements Resource {
     protected final UriBuilder baseWithToken() {
         return this.uriInfo()
             .getBaseUriBuilder()
-            .queryParam(AbstractRs.AUTH_PARAM, this.icookie)
+            .queryParam(RestSession.AUTH_PARAM, this.icookie)
             .clone();
     }
 

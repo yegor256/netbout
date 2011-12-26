@@ -57,6 +57,21 @@ public final class RestSession {
     public static final String ERROR_HEADER = "Netbout-error";
 
     /**
+     * Authentication query param.
+     */
+    public static final String AUTH_PARAM = "auth";
+
+    /**
+     * Name of the user authentication cookie.
+     */
+    public static final String AUTH_COOKIE = "netbout";
+
+    /**
+     * Name of the message transferring cookie.
+     */
+    public static final String MESSAGE_COOKIE = "netbout-msg";
+
+    /**
      * Home URI.
      */
     private final transient URI home;
@@ -108,6 +123,7 @@ public final class RestSession {
             .get("authorization")
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .assertHeader(this.AUTH_HEADER, Matchers.notNullValue())
+            .assertHeader(this.AUTH_HEADER, Matchers.not(Matchers.empty()))
             .getHeaders()
             .getFirst(this.AUTH_HEADER);
         Logger.debug(

@@ -44,6 +44,6 @@ bout.invite(jeff.friend(new Urn('urn:test:hh')))
 // validate that the stage is really there, in XHTML
 RestTester.start(RestUriBuilder.from(bout))
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
-    .get()
+    .get('read bout page')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('//xhtml:section[@id="stage"]//xhtml:p')

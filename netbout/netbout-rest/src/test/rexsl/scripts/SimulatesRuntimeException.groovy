@@ -33,6 +33,6 @@ import com.rexsl.test.RestTester
 import javax.ws.rs.core.UriBuilder
 
 RestTester.start(UriBuilder.fromUri(rexsl.home).path('/exception').queryParam('text', '\u0443\u0440\u0430!'))
-    .get()
+    .get('initiate exception')
     .assertStatus(HttpURLConnection.HTTP_INTERNAL_ERROR)
     .assertXPath('//xhtml:title[contains(.,"error")]')

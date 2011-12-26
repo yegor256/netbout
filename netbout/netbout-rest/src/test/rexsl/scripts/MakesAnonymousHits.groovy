@@ -44,6 +44,6 @@ import javax.ws.rs.core.UriBuilder
 ].each { path ->
     RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get()
+        .get('anonymous hit')
         .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
 }

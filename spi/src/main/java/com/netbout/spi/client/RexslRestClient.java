@@ -34,7 +34,9 @@ import com.rexsl.test.TestClient;
 import com.rexsl.test.TestResponse;
 import java.net.URI;
 import java.net.URLEncoder;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.Matchers;
 
@@ -63,6 +65,8 @@ final class RexslRestClient implements RestClient {
      */
     public RexslRestClient(final TestClient clnt, final String tkn) {
         this.client = clnt;
+        assert tkn != null : "authentication token is mandatory";
+        assert !tkn.isEmpty() : "token can't be empty";
         this.token = tkn;
     }
 
@@ -87,7 +91,11 @@ final class RexslRestClient implements RestClient {
     @Override
     public RestResponse get(final String message) {
         final TestResponse response = this.client
-            .header(HttpHeaders.COOKIE, this.token)
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .header(
+                HttpHeaders.COOKIE,
+                new Cookie(RestSession.AUTH_COOKIE, this.token)
+            )
             .get(message)
             .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue());
         return new RexslRestResponse(this, response);
@@ -108,7 +116,11 @@ final class RexslRestClient implements RestClient {
                 .append(URLEncoder.encode(params[pos + 1]));
         }
         final TestResponse response = this.client
-            .header(HttpHeaders.COOKIE, this.token)
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .header(
+                HttpHeaders.COOKIE,
+                new Cookie(RestSession.AUTH_COOKIE, this.token)
+            )
             .post(message, data.toString())
             .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue());
         return new RexslRestResponse(this, response);
@@ -146,7 +158,10 @@ final class RexslRestClient implements RestClient {
      */
     @Override
     public URI uri() {
-        return this.client.uri();
+        return UriBuilder
+            .fromUri(this.client.uri())
+            .queryParam(RestSession.AUTH_PARAM, this.token)
+            .build();
     }
 
 }
