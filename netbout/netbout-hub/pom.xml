@@ -69,7 +69,7 @@
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
-            <version since="23 Dec 2011">1.0-SNAPSHOT</version>
+            <version>${rexsl.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

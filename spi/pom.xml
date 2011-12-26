@@ -130,6 +130,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <rexsl.version>0.2.6</rexsl.version>
     </properties>
 
     <repositories>
@@ -162,13 +163,13 @@
             <!-- ReXSL test client -->
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
-            <version since="23 Dec 2011">1.0-SNAPSHOT</version>
+            <version>${rexsl.version}</version>
         </dependency>
         <dependency>
             <!-- ReXSL test client, mocks -->
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
-            <version since="23 Dec 2011">1.0-SNAPSHOT</version>
+            <version>${rexsl.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
