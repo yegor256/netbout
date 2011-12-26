@@ -121,9 +121,9 @@ public abstract class AbstractRs implements Resource {
     public final Providers providers() {
         if (this.iproviders == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#providers was never injected by JAX-RS",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#providers was never injected by JAX-RS",
+                    this
                 )
             );
         }
@@ -137,9 +137,9 @@ public abstract class AbstractRs implements Resource {
     public final HttpHeaders httpHeaders() {
         if (this.ihttpHeaders == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#httpHeaders was never injected by JAX-RS",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#httpHeaders was never injected by JAX-RS",
+                    this
                 )
             );
         }
@@ -153,9 +153,9 @@ public abstract class AbstractRs implements Resource {
     public final UriInfo uriInfo() {
         if (this.iuriInfo == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#uriInfo was never injected by JAX-RS",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#uriInfo was never injected by JAX-RS",
+                    this
                 )
             );
         }
@@ -169,9 +169,9 @@ public abstract class AbstractRs implements Resource {
     public final HttpServletRequest httpServletRequest() {
         if (this.ihttpRequest == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#httpRequest was never injected by JAX-RS",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#httpRequest was never injected by JAX-RS",
+                    this
                 )
             );
         }
@@ -269,8 +269,8 @@ public abstract class AbstractRs implements Resource {
         this.iuriInfo = info;
         Logger.debug(
             this,
-            "#setUriInfo(%s): injected",
-            info.getClass().getName()
+            "#setUriInfo(%[type]s): injected",
+            info
         );
     }
 
@@ -284,8 +284,8 @@ public abstract class AbstractRs implements Resource {
         this.iproviders = prov;
         Logger.debug(
             this,
-            "#setProviders(%s): injected",
-            prov.getClass().getName()
+            "#setProviders(%[type]s): injected",
+            prov
         );
     }
 
@@ -299,8 +299,8 @@ public abstract class AbstractRs implements Resource {
         this.ihttpHeaders = hdrs;
         Logger.debug(
             this,
-            "#setHttpHeaders(%s): injected",
-            hdrs.getClass().getName()
+            "#setHttpHeaders(%[type]s): injected",
+            hdrs
         );
     }
 
@@ -314,8 +314,8 @@ public abstract class AbstractRs implements Resource {
         this.ihttpRequest = request;
         Logger.debug(
             this,
-            "#setHttpServletRequest(%s): injected",
-            request.getClass().getName()
+            "#setHttpServletRequest(%[type]s): injected",
+            request
         );
     }
 
@@ -332,8 +332,8 @@ public abstract class AbstractRs implements Resource {
         this.ibus = (Bus) context.getAttribute("com.netbout.rest.BUS");
         Logger.debug(
             this,
-            "#setServletContext(%s): injected",
-            context.getClass().getName()
+            "#setServletContext(%[type]s): injected",
+            context
         );
     }
 
@@ -371,9 +371,9 @@ public abstract class AbstractRs implements Resource {
     protected final Bus bus() {
         if (this.ibus == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#bus was never injected by container",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#bus was never injected by container",
+                    this
                 )
             );
         }
@@ -387,9 +387,9 @@ public abstract class AbstractRs implements Resource {
     protected final Hub hub() {
         if (this.ibus == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#hub was never injected by container",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#hub was never injected by container",
+                    this
                 )
             );
         }

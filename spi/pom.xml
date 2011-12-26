@@ -149,7 +149,7 @@
             -->
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version since="15 Oct 2010">2.5</version>
+            <version since="26 Dec 2010">2.6</version>
         </dependency>
         <dependency>
             <!--
@@ -185,12 +185,6 @@
             <artifactId>jersey-server</artifactId>
             <version since="13 Dec 2011">1.11</version>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <!-- Groovy engine. -->
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all-minimal</artifactId>
-            <version since="3 Sep 2011">1.5.8</version>
         </dependency>
         <dependency>
             <!-- Logging facility, on top of SLF4J. -->

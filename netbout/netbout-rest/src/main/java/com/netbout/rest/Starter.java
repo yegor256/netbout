@@ -73,8 +73,8 @@ public final class Starter implements ContextResolver<Starter> {
         this.start();
         Logger.info(
             this,
-            "#Starter(%s): done in %dms",
-            context.getClass().getName(),
+            "#Starter(%[type]s): done in %dms",
+            context,
             System.currentTimeMillis() - start
         );
     }

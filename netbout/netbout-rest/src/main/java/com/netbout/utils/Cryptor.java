@@ -76,8 +76,8 @@ public final class Cryptor {
         }
         Logger.debug(
             this,
-            "#decrypt(%s, %s): identity '%s' found",
-            hub.getClass().getName(),
+            "#decrypt(%[type]s, %s): identity '%s' found",
+            hub,
             hash,
             identity.name()
         );

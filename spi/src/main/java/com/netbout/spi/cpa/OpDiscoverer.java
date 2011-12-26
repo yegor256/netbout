@@ -97,8 +97,8 @@ final class OpDiscoverer {
             targets.put(mnemo, HelpTarget.build(farm, method));
             Logger.debug(
                 this,
-                "#inFarm(%s): @Operation('%s') found",
-                farm.getClass().getName(),
+                "#inFarm(%s): @Operation('%[type]s') found",
+                farm,
                 mnemo
             );
         }

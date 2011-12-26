@@ -165,10 +165,10 @@ public final class DefaultHub implements Hub {
         this.save(helper);
         Logger.info(
             this,
-            "#promote('%s', '%s'): replaced existing identity (%s)",
+            "#promote('%s', '%[type]s'): replaced existing identity (%[type]s)",
             identity.name(),
-            helper.getClass().getName(),
-            existing.getClass().getName()
+            helper,
+            existing
         );
         this.bus().make("identity-promoted")
             .synchronously()

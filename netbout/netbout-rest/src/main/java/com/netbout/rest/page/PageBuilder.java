@@ -114,9 +114,9 @@ public final class PageBuilder {
         Logger.debug(
             PageBuilder.class,
             // @checkstyle LineLength (1 line)
-            "#build(%s): page of class %s created",
+            "#build(%s): page of class %[type]s created",
             base.getName(),
-            page.getClass().getName()
+            page
         );
         return page;
     }

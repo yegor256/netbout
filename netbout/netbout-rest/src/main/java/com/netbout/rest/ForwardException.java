@@ -112,8 +112,8 @@ public class ForwardException extends WebApplicationException {
         );
         Logger.debug(
             ForwardException.class,
-            "#response(%s, %s, %s): forwarding",
-            res.getClass().getName(),
+            "#response(%[type]s, %s, %s): forwarding",
+            res,
             builder.build(),
             msg
         );
