@@ -176,15 +176,9 @@ final class RestBout implements Bout {
         final List<String> nums = response
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/messages")
-            .xpath("/page/bout/messages/message/number");
+            .xpath("/page/bout/messages/message/number/text()");
         final List<Message> msgs = new ArrayList<Message>();
         for (String num : nums) {
-            if (num == null) {
-                response.fail("/message/number not found");
-            }
-            if (!num.matches("^\\d+$")) {
-                response.fail("Invalid number of message");
-            }
             msgs.add(new RestMessage(this.client.copy(), Long.valueOf(num)));
         }
         return msgs;

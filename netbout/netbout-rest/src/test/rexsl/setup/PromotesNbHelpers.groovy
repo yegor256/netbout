@@ -44,7 +44,7 @@ def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
 ].each {
     RestTester.start(RestUriBuilder.from(starter).build())
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('home page')
+        .get('home page of starter')
         .assertStatus(HttpURLConnection.HTTP_OK)
         .rel('//link[@rel="helper"]/@href')
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)

@@ -66,11 +66,11 @@ def conn = Database.connection()
     "INSERT INTO participant (bout, identity, confirmed) VALUES (555, 'urn:facebook:4466', 1)",
     "INSERT INTO participant (bout, identity, confirmed) VALUES (555, 'urn:test:cindy', 1)",
     """INSERT INTO message (bout, date, author, text) VALUES
-        (555, '2011-11-15 03:18:34', 'urn:facebook:4466', 'hi all!')""",
+        (555, '2011-11-15 03:18:34', 'urn:facebook:4466', 'first message')""",
     """INSERT INTO message (bout, date, author, text) VALUES
-        (555, '2011-11-15 04:23:11', 'urn:test:cindy', '\u0443')""",
+        (555, '2011-11-15 04:28:22', 'urn:test:cindy', 'second message')""",
     """INSERT INTO message (bout, date, author, text) VALUES
-        (555, '2011-11-15 05:28:22', 'urn:test:cindy', 'most recent message')""",
+        (555, '2011-11-15 05:23:11', 'urn:test:cindy', '\u0443!')""",
     """INSERT INTO namespace (name, identity, template) VALUES
         ('foo', 'urn:facebook:4466', 'http://localhost/foo')""",
 ].each { query ->

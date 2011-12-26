@@ -40,11 +40,11 @@ import org.hamcrest.Matchers
 
 def cindy = new RestSession(rexsl.home).authenticate(new Urn('urn:test:cindy'), '')
 
-final NUMBER = 555L;
+final NUMBER = 555L
 def bout = cindy.bout(NUMBER)
 MatcherAssert.assertThat(bout.number(), Matchers.equalTo(NUMBER))
 MatcherAssert.assertThat(bout.title(), Matchers.equalTo('\u0443\u0440\u0430!'))
-MatcherAssert.assertThat(bout.messages("").get(0).text(), Matchers.equalTo('\u0443!'))
+MatcherAssert.assertThat(bout.messages('').get(0).text(), Matchers.equalTo('\u0443!'))
 
 // validate content of the bout page
 RestTester.start(RestUriBuilder.from(bout))

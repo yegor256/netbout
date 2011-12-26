@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.page;
 
-import com.rexsl.core.Stylesheet;
 import com.rexsl.core.Schema;
+import com.rexsl.core.Stylesheet;
 import com.ymock.util.Logger;
 import java.net.URI;
 import java.util.ArrayList;
