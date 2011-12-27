@@ -70,7 +70,18 @@
     <xsl:template name="content">
         <header>
             <h1>
-                <span contenteditable="true">
+                <span>
+                    <xsl:if test="$participant/@confirmed = 'true'">
+                        <xsl:attribute name="contenteditable">
+                            <xsl:text>true</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="onblur">
+                            <xsl:text>
+                                $("#rename input[name='title']").val($(this).text());
+                                $("#rename").submit();
+                            </xsl:text>
+                        </xsl:attribute>
+                    </xsl:if>
                     <xsl:value-of select="$title"/>
                 </span>
             </h1>
@@ -104,7 +115,7 @@
             </xsl:if>
         </xsl:if>
         <xsl:if test="$participant/@confirmed = 'true'">
-            <form method="post">
+            <form id="rename" method="post" style="display: none;">
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
                 </xsl:attribute>

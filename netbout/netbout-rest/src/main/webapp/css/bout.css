@@ -25,6 +25,15 @@
  * SUCH DAMAGE.
  */
 
+h1 {
+    font-size: 2.2em;
+}
+
+input,
+textarea {
+    border: 0.1em solid gray;
+}
+
 #holder {
     margin-top: 2em;
     margin-bottom: 2em;
@@ -50,6 +59,12 @@
     margin-bottom: 2em;
 }
 
+    #post textarea {
+        width: 100%;
+        font-size: 1.4em;
+        padding: 1em;
+    }
+
 .message {
     border-top: 1px dotted gray;
     padding-top: 1em;
@@ -60,10 +75,16 @@
 
     .message header {
         position: relative;
-        height: 60px;
+        height: 6em;
+        font-size: 1.4em;
     }
 
         .message header img {
             height: 50px;
             margin-right: 1em;
         }
+
+    .message p {
+        font-size: 1.4em;
+    }
+
