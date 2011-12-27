@@ -32,6 +32,7 @@ import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.client.RestSession;
 import com.netbout.utils.Cryptor;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
@@ -61,16 +62,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
 public abstract class AbstractPage implements Page {
-
-    /**
-     * Name of the user authentication cookie.
-     */
-    public static final String AUTH_COOKIE = "netbout";
-
-    /**
-     * Name of the message transferring cookie.
-     */
-    public static final String MESSAGE_COOKIE = "netbout-msg";
 
     /**
      * Home resource of this page.
@@ -165,10 +156,13 @@ public abstract class AbstractPage implements Page {
         this.extend();
         return Response.ok()
             .entity(this)
-            .header(HttpHeaders.SET_COOKIE, this.nocookie(this.MESSAGE_COOKIE))
+            .header(
+                HttpHeaders.SET_COOKIE,
+                this.nocookie(RestSession.MESSAGE_COOKIE)
+            )
             .cookie(
                 new NewCookie(
-                    this.AUTH_COOKIE,
+                    RestSession.AUTH_COOKIE,
                     new Cryptor().encrypt(identity),
                     this.home.base().build().getPath(),
                     this.home.base().build().getHost(),
@@ -192,8 +186,14 @@ public abstract class AbstractPage implements Page {
         this.extend();
         return Response.ok()
             .entity(this)
-            .header(HttpHeaders.SET_COOKIE, this.nocookie(this.MESSAGE_COOKIE))
-            .header(HttpHeaders.SET_COOKIE, this.nocookie(this.AUTH_COOKIE))
+            .header(
+                HttpHeaders.SET_COOKIE,
+                this.nocookie(RestSession.MESSAGE_COOKIE)
+            )
+            .header(
+                HttpHeaders.SET_COOKIE,
+                this.nocookie(RestSession.AUTH_COOKIE)
+            )
             .type(MediaType.TEXT_XML);
     }
 

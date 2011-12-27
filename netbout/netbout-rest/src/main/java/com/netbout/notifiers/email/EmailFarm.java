@@ -30,6 +30,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.client.RestSession;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -106,7 +107,10 @@ public final class EmailFarm implements IdentityAware {
             "href",
             UriBuilder.fromUri("http://www.netbout.com/")
                 .path("/{num}")
-                .queryParam("auth", new Cryptor().encrypt(dude.identity()))
+                .queryParam(
+                    RestSession.AUTH_PARAM,
+                    new Cryptor().encrypt(dude.identity())
+                )
                 .build(dude.bout().number())
                 .toString()
         );

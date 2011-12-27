@@ -46,7 +46,7 @@ bout.rename('Two stages in one bout')
 // validate that there are really two stages in the XML
 RestTester.start(RestUriBuilder.from(bout))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
+    .get('read bout page')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('/page/bout/stages[count(stage) = 2]')
     .assertXPath('/page/bout/stage[@name]')

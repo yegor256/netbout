@@ -130,6 +130,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <rexsl.version>0.2.7</rexsl.version>
     </properties>
 
     <repositories>
@@ -148,7 +149,7 @@
             -->
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version since="15 Oct 2010">2.5</version>
+            <version since="26 Dec 2010">2.6</version>
         </dependency>
         <dependency>
             <!--
@@ -157,6 +158,20 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
             <version since="9 Oct 2010">1.3.2</version>
+        </dependency>
+        <dependency>
+            <!-- ReXSL test client -->
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version>${rexsl.version}</version>
+        </dependency>
+        <dependency>
+            <!-- ReXSL test client, mocks -->
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version>${rexsl.version}</version>
+            <classifier>mock</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <!-- JAX-RS API -->
@@ -172,16 +187,10 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!-- JAX-RS implementation, core library -->
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version since="13 Dec 2011">1.11</version>
-        </dependency>
-        <dependency>
             <!-- Logging facility, on top of SLF4J. -->
             <groupId>com.ymock</groupId>
             <artifactId>ymock-util</artifactId>
-            <version since="16 Dec 2011">1.0.3</version>
+            <version since="26 Dec 2011">1.0.4</version>
         </dependency>
         <dependency>
             <!-- Forward all calls to SLF4J to LOG4J. -->
@@ -199,15 +208,13 @@
         </dependency>
         <dependency>
             <!--
-            We are using JUnit framework for unit test organization
-            and management. This framework is the most stable and mature
-            in the market. Other options considered: TestNG.
-            @link http://www.junit.org/
+            org.hamcrest.MatcherAssert class.
+            @link http://code.google.com/p/hamcrest/wiki/Tutorial
             -->
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version since="3 July 2011">4.8.2</version>
-            <scope>test</scope>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version since="23 Dec 2011">1.2.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <!--
@@ -215,8 +222,20 @@
             @link http://code.google.com/p/hamcrest/wiki/Tutorial
             -->
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version since="6 Apr 2011">1.1</version>
+            <artifactId>hamcrest-library</artifactId>
+            <version since="23 Dec 2011">1.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <!--
+            We are using JUnit framework for unit test organization
+            and management. This framework is the most stable and mature
+            in the market. Other options considered: TestNG.
+            @link http://www.junit.org/
+            -->
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version since="23 Dec 2011">4.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -256,6 +275,13 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version since="8 Nov 2011">1.5</version>
+        </dependency>
+        <dependency>
+            <!-- Embedded Java Servlet Container, for com.rexsl:rexsl-test:mock -->
+            <groupId>com.sun.grizzly</groupId>
+            <artifactId>grizzly-servlet-webserver</artifactId>
+            <version>1.9.10</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -305,7 +331,7 @@
                             <dependency>
                                 <groupId>com.ymock</groupId>
                                 <artifactId>ymock-tk</artifactId>
-                                <version since="18 Dec 2011">1.0.3</version>
+                                <version since="26 Dec 2011">1.0.4</version>
                             </dependency>
                         </dependencies>
                         <executions>

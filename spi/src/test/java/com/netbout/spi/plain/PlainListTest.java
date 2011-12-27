@@ -27,13 +27,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.plain;
 
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Random;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -41,24 +41,24 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 /**
- * Test case for {@link PlainBuilder}.
+ * Test case for {@link PlainList}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @RunWith(Parameterized.class)
-public final class PlainBuilderTest {
+public final class PlainListTest {
 
     /**
      * The data to test against.
      */
-    private final transient Object data;
+    private final transient List list;
 
     /**
      * Public ctor.
-     * @param obj The object
+     * @param lst The list
      */
-    public PlainBuilderTest(final Object obj) {
-        this.data = obj;
+    public PlainListTest(final List lst) {
+        this.list = lst;
     }
 
     /**
@@ -68,50 +68,39 @@ public final class PlainBuilderTest {
      */
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() throws Exception {
-        final Random random = new Random();
         return Arrays.asList(
             new Object[][] {
-                new Object[] {random.nextLong()},
-                new Object[] {""},
-                new Object[] {"a"},
-                new Object[] {"some text: 8(&^%$,:;,\"/\\+ "},
-                new Object[] {"\u043F\u0440\u0438\u0432\u0435\u0442"},
-                new Object[] {new Date()},
-                new Object[] {new Urn("urn:foo:test")},
-                new Object[] {new Urn("bar", "&^%$#@\u8514")},
-                new Object[] {new URL("http://localhost/test")},
-                new Object[] {new Date(Math.abs(random.nextLong()))},
-                new Object[] {true},
-                new Object[] {Boolean.FALSE},
+                new Object[] {Arrays.asList(new Long[]{})},
+                new Object[] {Arrays.asList(new Long[]{1L, 2L})},
+                new Object[] {Arrays.asList(new Date[]{new Date()})},
+                new Object[] {Arrays.asList(new Boolean[]{true, false})},
+                new Object[] {Arrays.asList(new String[]{"abc", "cde;"})},
                 new Object[] {
                     Arrays.asList(
-                        new Long[]{random.nextLong(), random.nextLong(), }
+                        new String[]{
+                            "\u0443\u0440\u0430!",
+                            "\u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442!",
+                        }
                     ),
                 },
-                new Object[]{Arrays.asList(new Boolean[]{true, false}), },
-                new Object[]{Arrays.asList(new Boolean[]{}), },
-                new Object[] {
-                    Arrays.asList(
-                        new String[]{"some text", "another text;;;", }
-                    ),
-                },
-                new Object[] {Arrays.asList(new String[]{"\u043F\u0440"})},
-                new Object[] {Arrays.asList(new String[]{"\u043F", "\u0440"})},
             }
         );
     }
 
     /**
-     * PlainBuilder can convert objects to texts and back.
+     * PlainList can convert lists to texts and back.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void convertsInBothWays() throws Exception {
-        final Plain<?> plain = PlainBuilder.fromObject(this.data);
+        final String sep = ", ";
+        final String original = StringUtils.join(this.list, sep);
+        final PlainList plain = new PlainList(this.list);
         final String text = plain.toString();
+        final List reverse = PlainList.valueOf(text).value();
         MatcherAssert.assertThat(
-            ((Plain) PlainBuilder.fromText(text)).value(),
-            Matchers.equalTo(((Plain) plain).value())
+            StringUtils.join(reverse, sep),
+            Matchers.equalTo(original)
         );
     }
 

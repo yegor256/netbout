@@ -85,9 +85,9 @@ public final class PlainBuilder {
         } else {
             throw new IllegalArgumentException(
                 String.format(
-                    "Can't convert '%s' (%s) to Plain<?>",
+                    "Can't convert '%s' (%[type]s) to Plain<?>",
                     data.toString(),
-                    data.getClass().getName()
+                    data
                 )
             );
         }

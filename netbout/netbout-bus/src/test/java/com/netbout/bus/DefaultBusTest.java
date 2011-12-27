@@ -46,16 +46,17 @@ public final class DefaultBusTest {
     @Test
     public void testSynchronousTransaction() throws Exception {
         final Bus bus = new DefaultBus();
+        final String text = "\u0443\u0440\u0430!";
         final String mnemo = "simple-translation";
         final Helper helper = new HelperMocker()
-            .doReturn("works fine", mnemo)
+            .doReturn(text, mnemo)
             .mock();
         bus.register(helper);
         final String result = bus.make(mnemo)
             .synchronously()
             .arg("some argument")
             .exec();
-        MatcherAssert.assertThat(result, Matchers.containsString("fine"));
+        MatcherAssert.assertThat(result, Matchers.equalTo(text));
     }
 
 }

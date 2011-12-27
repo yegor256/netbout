@@ -29,22 +29,30 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.spi.Urn
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.UriBuilder
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 
-// In this script we are trying to make different hits to the
-// pages that definitely don't exist in the system. All of them
-// should lead to 404 HTTP code
+def cindy = new RestSession(rexsl.home).authenticate(new Urn('urn:test:cindy'), '')
 
-[
-    '/some-strange-name',
-    '/-some-thing-else'
-].each { path ->
-    RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('reading non-existing page')
-        .assertStatus(HttpURLConnection.HTTP_NOT_FOUND)
-        .assertXPath("/page/links/link[@rel='self']")
-}
+final NUMBER = 555L
+def bout = cindy.bout(NUMBER)
+MatcherAssert.assertThat(bout.number(), Matchers.equalTo(NUMBER))
+MatcherAssert.assertThat(bout.title(), Matchers.equalTo('\u0443\u0440\u0430!'))
+MatcherAssert.assertThat(bout.messages('').get(0).text(), Matchers.equalTo('\u0443!'))
+
+// validate content of the bout page
+RestTester.start(RestUriBuilder.from(bout))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read bout content')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('/page/identity[name="urn:test:cindy"]')
+    .assertXPath('/page/bout/participants/participant[identity="urn:test:cindy"]')
+    .assertXPath('/page/bout/participants/participant[identity="urn:facebook:4466"]')
+    .assertXPath('/page/bout/messages/message[author="urn:test:cindy"]')
+    .assertXPath('/page/bout/messages/message[contains(text,"\u0443")]')

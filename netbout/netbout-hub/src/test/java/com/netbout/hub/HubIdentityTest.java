@@ -56,7 +56,7 @@ public final class HubIdentityTest {
         final Bout first = new BoutMocker().withNumber(1L).mock();
         final Bout second = new BoutMocker()
             .withNumber(2L)
-            .withMessage("some new message")
+            .withMessage("some new message, \u0443\u0440\u0430!")
             .mock();
         final List<Long> nums = new ArrayList<Long>();
         nums.add(first.number());

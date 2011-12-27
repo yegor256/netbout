@@ -30,11 +30,8 @@ import com.netbout.hub.UrnResolver;
 import com.netbout.hub.UrnResolverMocker;
 import com.netbout.spi.Urn;
 import com.rexsl.test.ContainerMocker;
-import java.net.URI;
-import java.net.URL;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -72,7 +69,7 @@ public final class AuthMediatorTest {
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
         final UrnResolver resolver = new UrnResolverMocker()
-            .resolveAs(FacebookRs.NAMESPACE, this.normalize(container.home()))
+            .resolveAs(FacebookRs.NAMESPACE, container.home().toURL())
             .mock();
         final RemoteIdentity identity = new AuthMediator(resolver)
             .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-1");
@@ -99,25 +96,11 @@ public final class AuthMediatorTest {
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
         final UrnResolver resolver = new UrnResolverMocker()
-            .resolveAs(FacebookRs.NAMESPACE, this.normalize(container.home()))
+            .resolveAs(FacebookRs.NAMESPACE, container.home().toURL())
             .mock();
         final RemoteIdentity identity = new AuthMediator(resolver)
             .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-2");
         identity.name();
-    }
-
-    /**
-     * It's a bug in ReXSL (http://trac.fazend.com/rexsl/ticket/94).
-     * @param uri The URI to normalize
-     * @return Normal URL
-     * @throws Exception If some problem
-     */
-    private URL normalize(final URI uri) throws Exception {
-        return UriBuilder
-            .fromUri(uri)
-            .path("/")
-            .build()
-            .toURL();
     }
 
 }

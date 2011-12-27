@@ -32,6 +32,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
@@ -49,9 +50,11 @@ public final class BoutRsTest {
      */
     @Test
     public void rendersBoutFrontPage() throws Exception {
+        final String title = "\u0443\u0440\u0430!";
         final Identity identity = new IdentityMocker().mock();
         final Bout bout = new BoutMocker()
             .withParticipant(identity)
+            .titledAs(title)
             .mock();
         Mockito.doReturn(bout).when(identity).start();
         Mockito.doReturn(bout).when(identity).bout(Mockito.any(Long.class));
@@ -62,7 +65,14 @@ public final class BoutRsTest {
         final Response response = rest.front();
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/bout/participants/participant/identity")
+            Matchers.allOf(
+                XmlMatchers.hasXPath(
+                    "/page/bout/participants/participant/identity"
+                ),
+                XmlMatchers.hasXPath(
+                    String.format("/page/bout[title='%s']", title)
+                )
+            )
         );
     }
 

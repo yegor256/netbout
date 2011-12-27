@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.spi.client.RestSession;
 import com.netbout.utils.TextUtils;
 import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
@@ -99,7 +100,7 @@ public class ForwardException extends WebApplicationException {
     private static Response response(final Resource res,
         final UriBuilder builder, final String msg) {
         final NewCookie cookie = new NewCookie(
-            AbstractPage.MESSAGE_COOKIE,
+            RestSession.MESSAGE_COOKIE,
             TextUtils.pack(msg),
             res.base().build().getPath(),
             res.base().build().getHost(),
@@ -111,13 +112,13 @@ public class ForwardException extends WebApplicationException {
         );
         Logger.debug(
             ForwardException.class,
-            "#response(%s, %s, %s): forwarding",
-            res.getClass().getName(),
+            "#response(%[type]s, %s, %s): forwarding",
+            res,
             builder.build(),
             msg
         );
         return Response.status(Response.Status.TEMPORARY_REDIRECT)
-            .header("Netbout-error", msg)
+            .header(RestSession.ERROR_HEADER, msg)
             .entity(msg)
             .location(builder.build())
             .cookie(cookie)

@@ -65,10 +65,10 @@ public final class Promoter {
         this.hub.promote(identity, helper);
         Logger.info(
             this,
-            "#promote('%s', '%s'): promoted with '%s'",
+            "#promote('%s', '%s'): promoted with '%[type]s'",
             identity.name(),
             url,
-            helper.getClass().getName()
+            helper
         );
         return helper;
     }
