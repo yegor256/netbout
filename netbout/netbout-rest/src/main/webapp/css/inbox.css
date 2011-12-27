@@ -26,21 +26,31 @@
  */
 
 ul.bouts {
-    margin-left: 0 !important;
-    padding-left: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-    ul.bouts li{
-        clear: both;
-        margin-bottom: 1em;
-        list-style: none;
+li.bout {
+    clear: both;
+    margin-top: 4em;
+    list-style: none;
+}
+
+    li.bout div.header {
+        margin-bottom: 0.5em;
     }
 
-        ul.bouts li a.title{
-            font-size: 1.2em;
+        li.bout div.header span {
+            font-size: 1.4em;
         }
 
-        ul.bouts li a.unread{
+        li.bout div.header span.num {
+            margin-right: 0.3em;
+        }
+
+        li.bout div.header a.title {
+            font-size: 2.2em;
             font-weight: bold;
+            margin-right: 0.3em;
         }
 

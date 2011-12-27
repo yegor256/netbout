@@ -43,6 +43,8 @@
     <xsl:template match="page">
         <html lang="en-US">
             <head>
+                <script type="text/javascript"
+                    src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"/>
                 <link href="/css/global.css" rel="stylesheet" type="text/css"
                     media="all"></link>
                 <link href="/css/layout.css" rel="stylesheet" type="text/css"

@@ -67,34 +67,32 @@
     </xsl:template>
 
     <xsl:template match="bout">
-        <li>
-            <a class="title unread">
-                <xsl:attribute name="class">
-                    <xsl:text>title</xsl:text>
+        <li class="bout">
+            <div class="header">
+                <span class="num">
+                    <xsl:text>#</xsl:text>
+                    <xsl:value-of select="number" />
+                </span>
+                <a class="title">
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="link[@rel='page']/@href"/>
+                    </xsl:attribute>
+                    <xsl:choose>
+                        <xsl:when test="title != ''">
+                            <xsl:value-of select="title" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>untitled</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
                     <xsl:if test="@seen &lt; @messages">
-                        <xsl:text> unread</xsl:text>
+                        <span class="red">
+                            <xsl:value-of select="@messages - @seen"/>
+                            <xsl:text> new</xsl:text>
+                        </span>
                     </xsl:if>
-                </xsl:attribute>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="link[@rel='page']/@href"/>
-                </xsl:attribute>
-                <xsl:text>#</xsl:text>
-                <xsl:value-of select="number" />
-                <xsl:text>: </xsl:text>
-                <xsl:choose>
-                    <xsl:when test="title != ''">
-                        <xsl:value-of select="title" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>untitled</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:if test="@seen &lt; @messages">
-                    <xsl:text> (</xsl:text>
-                    <xsl:value-of select="@messages - @seen"/>
-                    <xsl:text> unread)</xsl:text>
-                </xsl:if>
-            </a>
+                </a>
+            </div>
             <xsl:apply-templates select="participants" />
         </li>
     </xsl:template>

@@ -91,10 +91,10 @@ body {
     position: fixed;
     right: 0;
     bottom: 0;
-    padding: 0.2em 0.5em;
-    font-size: 0.8em;
-    background-color: gray;
-    color: white;
+    padding: 0.4em 0.8em;
+    background-color: #e4e5e3;
+    color: gray;
+    font-size: 1em;
 }
 
 #crumbs {
@@ -123,11 +123,10 @@ body {
 
         #crumbs ul li span {
             font-size: 1.4em;
-            font-weight: bolder;
+            font-weight: bold;
         }
 
         #crumbs ul li a {
-            text-decoration: none;
             color: #4b4250;
         }
 
