@@ -25,15 +25,15 @@
  * SUCH DAMAGE.
  */
 
-img {
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
+img,
+body,
 input,
 textarea {
-    font-size: 1.4em;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    color: #211922;
+    padding: 0;
+    margin: 0;
+    border: 0;
 }
 
 p {
@@ -45,71 +45,22 @@ ul, ol {
     margin-left: 2em;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    font-size: 12pt;
-    line-height: 1.3em;
-    min-height: 100%;
-    position: relative;
-    color: #122632;
-    padding: 1em;
-    margin: 0;
-}
-
-/* top right label about deployed version */
-#version {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 0.2em 0.5em;
-    font-size: 0.8em;
-    background-color: gray;
-    color: white;
-}
-
-#crumbs {
-    display: inline;
-}
-
-    #crumbs ul {
-        margin: 0 !important;
-        display: inline;
-    }
-
-        #crumbs ul li {
-            list-style: none;
-            display: inline;
-            margin-right: 1em;
-        }
-
-        #photo {
-            height: 24px;
-        }
-
-#search {
-    display: inline;
-}
-
-/* message to show */
-#message {
-    color: red;
-}
-
-/* everything between header and footer */
-#content {
-    position: relative;
-}
-
 /* all photos */
 .photo {
-    -moz-box-shadow: 1px 1px 1px gray;
-    -webkit-box-shadow: 1px 1px 1px gray;
-    -o-box-shadow: 1px 1px 1px gray;
-    box-shadow: 1px 1px 1px gray;
+    -moz-box-shadow: 0.1em 0.1em 0.1em gray;
+    -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
+    -o-box-shadow: 0.1em 0.1em 0.1em gray;
+    box-shadow: 0.1em 0.1em 0.1em gray;
 }
 
 /* fixed font */
 .tt {
     font-family: 'Courier New', monospace;
+}
+
+/* red text marker */
+.red {
+    color: #f24a40;
+    margin-left: 0.2em;
 }
 
