@@ -70,7 +70,11 @@
     <xsl:template name="content">
         <header>
             <h1>
-                <span>
+                <span class="num">
+                    <xsl:text>#</xsl:text>
+                    <xsl:value-of select="/page/bout/number"/>
+                </span>
+                <span class="title">
                     <xsl:if test="$participant/@confirmed = 'true'">
                         <xsl:attribute name="contenteditable">
                             <xsl:text>true</xsl:text>
@@ -79,6 +83,13 @@
                             <xsl:text>
                                 $("#rename input[name='title']").val($(this).text());
                                 $("#rename").submit();
+                            </xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="onkeydown">
+                            <xsl:text>
+                                if (arguments[0].keyCode == 13) {
+                                    $(this).blur();
+                                }
                             </xsl:text>
                         </xsl:attribute>
                     </xsl:if>
@@ -94,8 +105,13 @@
                 </xsl:attribute>
                 <input name="mask" type="search" autocomplete="off">
                     <xsl:attribute name="value">
-                        <xsl:value-of select="/page/keyword"/>
+                        <xsl:value-of select="/page/mask"/>
                     </xsl:attribute>
+                    <xsl:if test="/page/mask != ''">
+                        <xsl:attribute name="autofocus">
+                            <xsl:text>true</xsl:text>
+                        </xsl:attribute>
+                    </xsl:if>
                 </input>
                 <input value="invite" type="submit"/>
             </form>
@@ -196,7 +212,7 @@
                     <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
                 </xsl:attribute>
                 <dl><textarea name="text" cols="80" rows="5"></textarea></dl>
-                <dl><input value="post message" type="submit" /></dl>
+                <dl><input value="Post new message" type="submit" /></dl>
             </form>
         </xsl:if>
         <xsl:apply-templates select="/page/bout/messages/message" />
@@ -205,27 +221,30 @@
     <xsl:template match="message">
         <xsl:variable name="msg" select="."/>
         <article class="message">
-            <header>
+            <aside class="left">
                 <img class="photo">
                     <xsl:attribute name="src">
                         <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/photo"/>
                     </xsl:attribute>
                 </img>
-                <xsl:text>by </xsl:text>
-                <b>
-                <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
-                </b>
-                <xsl:text> at </xsl:text>
-                <xsl:value-of select="date"/>
-                <span style="color: red;">
-                    <xsl:if test="@seen = 'false'">
-                        <xsl:text> new</xsl:text>
-                    </xsl:if>
-                </span>
-            </header>
-            <p>
-                <xsl:value-of select="text"/>
-            </p>
+            </aside>
+            <div class="right">
+                <header class="meta">
+                    <b>
+                    <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
+                    </b>
+                    <xsl:text> at </xsl:text>
+                    <xsl:value-of select="date"/>
+                    <span style="color: red;">
+                        <xsl:if test="@seen = 'false'">
+                            <xsl:text> new</xsl:text>
+                        </xsl:if>
+                    </span>
+                </header>
+                <p class="text">
+                    <xsl:value-of select="text"/>
+                </p>
+            </div>
         </article>
     </xsl:template>
 

@@ -48,13 +48,15 @@
             <body>
                 <div id="wrapper">
                     <div id="content">
-                        <img src="http://img.netbout.com/logo.png" />
+                        <img src="http://img.netbout.com/logo.png"
+                            style="width: 113px; height: 27px; margin-bottom: 20px;" />
                         <br/>
                         <a>
                             <xsl:attribute name="href">
                                 <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
                             </xsl:attribute>
-                            <img src="http://img.netbout.com/facebook.png" />
+                            <img src="http://img.netbout.com/facebook.png"
+                                style="width: 173px; height: 28px;"/>
                         </a>
                     </div>
                 </div>

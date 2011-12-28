@@ -44,6 +44,12 @@
                             <xsl:value-of select="(position()-1) * 5.7"/>
                             <xsl:text>em;</xsl:text>
                         </xsl:attribute>
+                        <xsl:attribute name="onmouseover">
+                            <xsl:text>$(this).show();</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="onmouseout">
+                            <xsl:text>$(this).hide();</xsl:text>
+                        </xsl:attribute>
                         <span>
                             <xsl:value-of select="alias"/>
                         </span>

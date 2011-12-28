@@ -90,7 +90,8 @@
                     <xsl:attribute name="href">
                         <xsl:value-of select="links/link[@rel='home']/@href"/>
                     </xsl:attribute>
-                    <img src="http://img.netbout.com/logo.png"/>
+                    <img src="http://img.netbout.com/logo.png"
+                        style="width: 113px; height: 27px;"/>
                 </a>
             </div>
             <div id="right">
@@ -139,6 +140,11 @@
                             <xsl:attribute name="value">
                                 <xsl:value-of select="/page/query"/>
                             </xsl:attribute>
+                            <xsl:if test="/page/query != ''">
+                                <xsl:attribute name="autofocus">
+                                    <xsl:text>true</xsl:text>
+                                </xsl:attribute>
+                            </xsl:if>
                         </input>
                     </form>
                 </xsl:if>

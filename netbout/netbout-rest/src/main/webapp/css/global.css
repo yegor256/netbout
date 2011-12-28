@@ -29,8 +29,13 @@ a,
 img,
 body,
 input,
+h1,
+h2,
+h3,
 textarea {
     font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 1em;
+    font-weight: normal;
     color: #211922;
     padding: 0;
     margin: 0;
