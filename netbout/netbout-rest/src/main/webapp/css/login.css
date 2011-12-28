@@ -25,44 +25,41 @@
  * SUCH DAMAGE.
  */
 
-/* row of photos and names */
-.dudes {
-    position: relative;
-    height: 5em;
+body {
+    background-color: #f3f3f1;
+    min-height: 100%;
 }
 
-    .dudes .dude {
-        position: absolute;
-    }
+/* wrapper */
+#wrapper {
+    /* IE hack, see http://www.jakpsatweb.cz/css/css-vertical-center-solution.html */
+    #position: relative;
+    /* normal CSS3 code */
+    width: 100%;
+    height: 100%;
+    display: table;
+    overflow: hidden;
+}
 
-        .dudes .dude img {
-            height: 5em;
-            width: 5em;
-            display: block;
-            box-shadow: 0.1em 0.1em 0.1em gray;
-            -moz-box-shadow: 0.1em 0.1em 0.1em gray;
-            -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
-            -o-box-shadow: 0.1em 0.1em 0.1em gray;
-        }
+/* content */
+#content {
+    /* IE hack */
+    #position: relative;
+    #top: -50%;
+    /* normal CSS3 code */
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
 
-            .dudes .dude img.pending {
-                opacity: 0.4;
-            }
-
-    .dudes .bar {
-        position: absolute;
-        top: 5em;
-        left: 0;
-        background-color: #f3f3f1;
-        box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
-        -moz-box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
-        -webkit-box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
-        -o-box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
-        padding: 0.3em 1em 0.3em 0.5em;
-        display: none;
-    }
-
-        .dudes .bar span {
-            font-size: 1.4em;
-        }
+/* bottom right label about deployed version */
+#version {
+    font-size: 12px;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    padding: 0.4em 0.8em;
+    background-color: #e4e5e3;
+    color: gray;
+}
 
