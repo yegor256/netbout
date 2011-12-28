@@ -51,3 +51,15 @@ body {
     text-align: center;
     vertical-align: middle;
 }
+
+/* bottom right label about deployed version */
+#version {
+    font-size: 12px;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    padding: 0.4em 0.8em;
+    background-color: #e4e5e3;
+    color: gray;
+}
+

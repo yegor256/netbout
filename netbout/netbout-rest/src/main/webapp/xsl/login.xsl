@@ -36,6 +36,8 @@
 
     <xsl:output method="xhtml"/>
 
+    <xsl:include href="/xsl/templates.xsl" />
+
     <xsl:template match="/">
         <html lang="en-US">
             <head>
@@ -46,6 +48,14 @@
                 <title>login</title>
             </head>
             <body>
+                <aside id="version">
+                    <xsl:text>r</xsl:text>
+                    <xsl:value-of select="/page/version/revision"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:call-template name="nano">
+                        <xsl:with-param name="nano" select="/page/@nano" />
+                    </xsl:call-template>
+                </aside>
                 <div id="wrapper">
                     <div id="content">
                         <img src="http://img.netbout.com/logo.png"
