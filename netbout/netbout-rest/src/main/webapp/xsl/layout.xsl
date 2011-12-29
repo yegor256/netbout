@@ -62,7 +62,7 @@
                 </div>
                 <section id="content" role="main">
                     <xsl:if test="message != ''">
-                        <aside id="message">
+                        <aside id="error-message">
                             <xsl:value-of select="message"/>
                         </aside>
                     </xsl:if>
@@ -91,7 +91,7 @@
                         <xsl:value-of select="links/link[@rel='home']/@href"/>
                     </xsl:attribute>
                     <img src="http://img.netbout.com/logo.png"
-                        style="width: 113px; height: 27px;"/>
+                        style="width: 11.3em; height: 2.7em;"/>
                 </a>
             </div>
             <div id="right">
@@ -104,7 +104,11 @@
                                         <xsl:value-of select="identity/photo"/>
                                     </xsl:attribute>
                                 </img>
-                                <span><xsl:value-of select="identity/alias"/></span>
+                                <span>
+                                    <xsl:call-template name="alias">
+                                        <xsl:with-param name="alias" select="identity/alias" />
+                                    </xsl:call-template>
+                                </span>
                                 <xsl:if test="identity/@helper='true'">
                                     <span><xsl:text> (helper)</xsl:text></span>
                                 </xsl:if>
@@ -134,8 +138,7 @@
                         <xsl:attribute name="action">
                             <xsl:value-of select="/page/links/link[@rel='self']"/>
                         </xsl:attribute>
-                        <input value="" type="submit" id="search-button"/>
-                        <input name="q" id="search-input" placeholder="find..."
+                        <input name="q" id="search-input" placeholder="Find..."
                             autocomplete="off" size="10" maxlength="120" required="true">
                             <xsl:attribute name="value">
                                 <xsl:value-of select="/page/query"/>
@@ -146,6 +149,7 @@
                                 </xsl:attribute>
                             </xsl:if>
                         </input>
+                        <input value="" type="submit" hidden="true"/>
                     </form>
                 </xsl:if>
             </div>

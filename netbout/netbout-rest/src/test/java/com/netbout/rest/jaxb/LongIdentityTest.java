@@ -24,52 +24,39 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.hh;
+package com.netbout.rest.jaxb;
 
-import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link StatsFarm}.
+ * Test case for {@link LongIdentity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class StatsFarmTest {
+public final class LongIdentityTest {
 
     /**
-     * Farm renders stage XML.
+     * LongIdentity can be converted to XML.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void rendersStageXml() throws Exception {
-        final StatsFarm farm = new StatsFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        final String xml = farm.renderStageXml(1L, identity.name(), "");
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xml),
-            XhtmlMatchers.hasXPath("/identities")
-            // XmlMatchers.hasXPath("/hub/identities")
+    public void convertsToXml() throws Exception {
+        final LongIdentity obj = new LongIdentity(
+            new IdentityMocker().mock()
         );
-    }
-
-    /**
-     * Render XSL.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testRenderingOfXslStylesheet() throws Exception {
-        final StatsFarm farm = new StatsFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        final String xsl = farm.renderStageXsl(1L, identity.name());
         MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
-            XhtmlMatchers.hasXPath("/xsl:stylesheet")
+            JaxbConverter.the(obj),
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("/identity/name"),
+                XhtmlMatchers.hasXPath("/identity/authority"),
+                XhtmlMatchers.hasXPath("/identity/alias"),
+                XhtmlMatchers.hasXPath("/identity/aliases")
+            )
         );
     }
 

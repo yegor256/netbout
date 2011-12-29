@@ -54,8 +54,11 @@ public final class BusMocker {
      * Expecting this mnemo.
      * @param val The value to return
      * @param mnemo The mnemo name
+     * @param args Optional arguments
+     * @return This object
      */
-    public BusMocker doReturn(final Object val, final String mnemo) {
+    public BusMocker doReturn(final Object val, final String mnemo,
+        final Object... args) {
         final TxBuilder builder = Mockito.mock(TxBuilder.class);
         Mockito.doReturn(builder).when(builder).synchronously();
         Mockito.doReturn(builder).when(builder).asap();
@@ -63,6 +66,7 @@ public final class BusMocker {
         Mockito.doReturn(builder).when(builder).arg(Mockito.anyObject());
         Mockito.doReturn(builder).when(builder).asDefault(Mockito.anyObject());
         Mockito.doReturn(builder).when(builder).inBout(Mockito.any(Bout.class));
+        Mockito.doReturn(builder).when(builder).noCache();
         Mockito.doReturn(val).when(builder).exec();
         Mockito.doReturn(builder).when(bus).make(Mockito.contains(mnemo));
         return this;

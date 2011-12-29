@@ -29,8 +29,13 @@ package com.netbout.hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import java.util.Date;
+import java.util.List;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,6 +44,7 @@ import org.mockito.Mockito;
  * Test case of {@link HubBout}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (200 lines)
  */
 public final class HubBoutTest {
 
@@ -116,6 +122,44 @@ public final class HubBoutTest {
         Mockito.doReturn(fname).when(friend).name();
         bout.invite(friend);
         Mockito.verify(data).addParticipant(fname);
+    }
+
+    /**
+     * HubBout can return messages in proper order.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void returnsMessagesInChronologicalOrder() throws Exception {
+        final BoutDt data = this.boutDtMocker
+            .but()
+            .withMessage(
+                new MessageDtMocker()
+                    .withNumber(1L)
+                    .withDate(new Date(1L))
+                    .mock()
+            )
+            .withMessage(
+                new MessageDtMocker()
+                    // @checkstyle MagicNumber (1 line)
+                    .withNumber(3L)
+                    // @checkstyle MagicNumber (1 line)
+                    .withDate(new Date(3L))
+                    .mock()
+            )
+            .withMessage(
+                new MessageDtMocker()
+                    .withNumber(2L)
+                    .withDate(new Date(2L))
+                    .mock()
+            )
+            .mock();
+        final Bout bout = new HubBout(this.hub, this.viewer, data);
+        final List<Message> messages = bout.messages("");
+        MatcherAssert.assertThat(
+            messages.get(0).number(),
+            // @checkstyle MagicNumber (1 line)
+            Matchers.equalTo(3L)
+        );
     }
 
 }

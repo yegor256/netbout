@@ -37,7 +37,7 @@ import java.util.Date;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class HubMessage implements Message {
+final class HubMessage implements Message, Comparable<Message> {
 
     /**
      * The hub.
@@ -73,6 +73,14 @@ final class HubMessage implements Message {
         this.viewer = vwr;
         this.ibout = bout;
         this.data = dat;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Message msg) {
+        return this.date().compareTo(msg.date());
     }
 
     /**

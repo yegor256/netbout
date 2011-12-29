@@ -95,7 +95,7 @@ final class ParticipantData implements ParticipantDt {
     @Override
     public void setConfirmed(final Boolean flag) {
         this.confirmed = true;
-        this.hub.bus().make("changed-participant-status")
+        this.hub.make("changed-participant-status")
             .asap()
             .arg(this.bout)
             .arg(this.identity)
@@ -114,7 +114,7 @@ final class ParticipantData implements ParticipantDt {
     @Override
     public Boolean isConfirmed() {
         if (this.confirmed == null) {
-            this.confirmed = this.hub.bus().make("get-participant-status")
+            this.confirmed = this.hub.make("get-participant-status")
                 .synchronously()
                 .arg(this.bout)
                 .arg(this.identity)

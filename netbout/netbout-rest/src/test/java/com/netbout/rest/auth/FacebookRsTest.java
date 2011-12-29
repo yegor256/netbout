@@ -26,7 +26,6 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.netbout.rest.ResourceMocker;
@@ -81,7 +80,7 @@ public final class FacebookRsTest {
             .mock();
         final URI redirect = UriBuilder.fromUri(base).path("/g/fb").build();
         final FacebookRs rest = new ResourceMocker()
-            .withDeps(new BusMocker().mock(), hub)
+            .withHub(hub)
             .withUriInfo(info)
             .mock(FacebookRs.class);
         final FacebookRs spy = PowerMockito.spy(rest);

@@ -26,47 +26,78 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
-import java.net.URL;
-import java.util.Map;
+import java.util.Date;
+import java.util.Random;
+import org.mockito.Mockito;
 
 /**
- * URN resolver.
- *
+ * Mocker of {@link MessageDt}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface UrnResolver {
+public final class MessageDtMocker {
 
     /**
-     * Marker for URL template.
+     * The object.
      */
-    String MARKER = "{nss}";
+    private final transient MessageDt message = Mockito.mock(MessageDt.class);
 
     /**
-     * Register namespace.
-     * @param owner Who is registering
-     * @param namespace The namespace to register
-     * @param template URL template
+     * Public ctor.
      */
-    void register(Identity owner, String namespace, String template);
+    public MessageDtMocker() {
+        this.withNumber(Math.abs(new Random().nextLong()));
+        this.withDate(new Date());
+        this.withText("some random text");
+    }
 
     /**
-     * Get all namespaces registered for the given identity.
-     * @param owner Who is asking
-     * @return The list of them, as a map
+     * With this number.
+     * @param num The number
+     * @return This object
      */
-    Map<String, String> registered(Identity owner);
+    public MessageDtMocker withNumber(final Long num) {
+        Mockito.doReturn(num).when(this.message).getNumber();
+        return this;
+    }
 
     /**
-     * Resolve URN to URL (get is authority).
-     * @param urn The URN
-     * @return The authority
-     * @throws UnreachableUrnException If we can't reach it
-     * @checkstyle RedundantThrows (2 lines)
+     * With this date.
+     * @param date The date of message
+     * @return This object
      */
-    URL authority(Urn urn) throws UnreachableUrnException;
+    public MessageDtMocker withDate(final Date date) {
+        Mockito.doReturn(date).when(this.message).getDate();
+        return this;
+    }
+
+    /**
+     * With this author.
+     * @param author The author
+     * @return This object
+     */
+    public MessageDtMocker withAuthor(final Urn author) {
+        Mockito.doReturn(author).when(this.message).getAuthor();
+        return this;
+    }
+
+    /**
+     * With this text.
+     * @param text The text of the message
+     * @return This object
+     */
+    public MessageDtMocker withText(final String text) {
+        Mockito.doReturn(text).when(this.message).getText();
+        return this;
+    }
+
+    /**
+     * Build it.
+     * @return The bout
+     */
+    public MessageDt mock() {
+        return this.message;
+    }
 
 }

@@ -67,3 +67,21 @@ ul, ol {
     padding-left: 0.2em;
 }
 
+input {
+    font-size: 1.4em;
+    border: 0.071em solid #bfbcc1;
+    background-color: white;
+    padding: 0.5em 0.71em; /* multiply by FONT-SIZE = 1em */
+}
+
+    input[type="submit"] {
+        background-color: #f3f3f1;
+    }
+
+textarea {
+    font-size: 1.4em;
+    width: 62.29em; /* multiply by 1.4 = 90em - (1.4 * 2) = 87.2em */
+    padding: 1em;
+    border: 0.071em solid #bfbcc1;
+    overflow: hidden;
+}

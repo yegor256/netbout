@@ -45,11 +45,11 @@ def driver = new HtmlUnitDriver()
 driver.setJavascriptEnabled(true)
 driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
 
-def ibox = driver.findElementByCssSelector('form#invite input[type="search"]')
+def ibox = driver.findElementByCssSelector('form#invite input[name="mask"]')
 ibox.sendKeys('h')
 ibox.submit()
 
-def invitees = driver.findElementById('invitees')
+def invitees = driver.findElementById('invite-list')
 MatcherAssert.assertThat(
     invitees.findElements(By.cssSelector('li')).size(),
     Matchers.greaterThan(0)

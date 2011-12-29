@@ -24,53 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.hh;
-
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.XhtmlConverter;
-import com.rexsl.test.XhtmlMatchers;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
 
 /**
- * Test case of {@link StatsFarm}.
+ * RESTful interface, JAXB objects.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class StatsFarmTest {
-
-    /**
-     * Farm renders stage XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void rendersStageXml() throws Exception {
-        final StatsFarm farm = new StatsFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        final String xml = farm.renderStageXml(1L, identity.name(), "");
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xml),
-            XhtmlMatchers.hasXPath("/identities")
-            // XmlMatchers.hasXPath("/hub/identities")
-        );
-    }
-
-    /**
-     * Render XSL.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testRenderingOfXslStylesheet() throws Exception {
-        final StatsFarm farm = new StatsFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        final String xsl = farm.renderStageXsl(1L, identity.name());
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
-            XhtmlMatchers.hasXPath("/xsl:stylesheet")
-        );
-    }
-
-}
+package com.netbout.rest.jaxb;

@@ -42,6 +42,7 @@
     </links>
     <identity>
         <alias>Willy</alias>
+        <aliases/>
         <name>William.Shakespeare</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
     </identity>
@@ -72,18 +73,22 @@
         </stages>
         <participants>
             <participant href="/xml/PageBout.xml" confirmed="1">
+                <alias>Johnny Depp</alias>
                 <identity>depp</identity>
                 <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
             </participant>
             <participant href="/xml/PageBout.xml" confirmed="1">
+                <alias>Javier</alias>
                 <identity>javier@gmail.com</identity>
                 <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
             </participant>
             <participant href="/xml/PageBout.xml" confirmed="0">
+                <alias>John Turturro</alias>
                 <identity>john.turturro</identity>
                 <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
             </participant>
             <participant href="/xml/PageBout.xml" confirmed="1">
+                <alias>2Pac</alias>
                 <identity>2pac</identity>
                 <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>
             </participant>

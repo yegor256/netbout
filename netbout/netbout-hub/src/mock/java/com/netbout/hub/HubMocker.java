@@ -33,6 +33,8 @@ import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link Hub}.
@@ -47,21 +49,36 @@ public final class HubMocker {
     private final transient Hub hub = Mockito.mock(Hub.class);
 
     /**
+     * Mocked bus.
+     */
+    private final transient BusMocker bmocker = new BusMocker();
+
+    /**
      * Public ctor.
      */
     public HubMocker() {
-        this.withBus(new BusMocker().mock());
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    final String mnemo = (String) invocation.getArguments()[0];
+                    return HubMocker.this.bmocker.mock().make(mnemo);
+                }
+            }
+        ).when(this.hub).make(Mockito.anyString());
         this.withUrnResolver(new UrnResolverMocker().mock());
         this.withBoutMgr(new BoutMgrMocker().mock());
     }
 
     /**
-     * With this bus.
-     * @param bus The bus to use
+     * Expecting this mnemo.
+     * @param val The value to return
+     * @param mnemo The mnemo name
+     * @param args Optional arguments
      * @return This object
      */
-    public HubMocker withBus(final Bus bus) {
-        Mockito.doReturn(bus).when(this.hub).bus();
+    public HubMocker doReturn(final Object val, final String mnemo,
+        final Object... args) {
+        this.bmocker.doReturn(val, mnemo, args);
         return this;
     }
 

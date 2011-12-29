@@ -191,7 +191,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
                 throw new IllegalStateException(ex);
             }
         }
-        Collections.reverse(list);
+        Collections.sort(list, Collections.reverseOrder());
         Logger.debug(
             this,
             "#inbox('%s'): %d bouts found",
@@ -207,7 +207,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     @Override
     public URL photo() {
         if (this.iphoto == null) {
-            final URL url = this.hub.bus().make("get-identity-photo")
+            final URL url = this.hub.make("get-identity-photo")
                 .synchronously()
                 .arg(this.name())
                 .asDefault(this.DEFAULT_PHOTO)
@@ -225,12 +225,12 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         synchronized (this) {
             this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
         }
-        this.hub.bus().make("identity-mentioned")
+        this.hub.make("identity-mentioned")
             .synchronously()
             .arg(this.name())
             .asDefault(true)
             .exec();
-        this.hub.bus().make("changed-identity-photo")
+        this.hub.make("changed-identity-photo")
             .synchronously()
             .arg(this.name())
             .arg(this.iphoto)
@@ -295,7 +295,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
                 this.name()
             );
         } else {
-            this.hub.bus().make("added-identity-alias")
+            this.hub.make("added-identity-alias")
                 .asap()
                 .arg(this.name())
                 .arg(alias)
@@ -335,7 +335,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         synchronized (this) {
             if (this.ibouts == null) {
                 this.ibouts = new CopyOnWriteArraySet<Long>(
-                    (List<Long>) this.hub.bus()
+                    (List<Long>) this.hub
                         .make("get-bouts-of-identity")
                         .synchronously()
                         .arg(this.name())
@@ -355,7 +355,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         synchronized (this) {
             if (this.ialiases == null) {
                 this.ialiases = new CopyOnWriteArraySet<String>(
-                    (List<String>) this.hub.bus()
+                    (List<String>) this.hub
                         .make("get-aliases-of-identity")
                         .synchronously()
                         .arg(this.name())

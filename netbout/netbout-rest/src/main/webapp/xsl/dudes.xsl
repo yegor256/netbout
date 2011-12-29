@@ -51,7 +51,9 @@
                             <xsl:text>$(this).hide();</xsl:text>
                         </xsl:attribute>
                         <span>
-                            <xsl:value-of select="alias"/>
+                            <xsl:call-template name="alias">
+                                <xsl:with-param name="alias" select="alias" />
+                            </xsl:call-template>
                         </span>
                         <xsl:if test="@me != 'true'">
                             <a>

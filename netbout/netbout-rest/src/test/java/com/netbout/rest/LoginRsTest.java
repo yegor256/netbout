@@ -26,18 +26,19 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
-import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
 import com.netbout.rest.auth.RemoteIdentity;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.ws.rs.core.Response;
-import javax.xml.transform.Source;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -77,34 +78,36 @@ public final class LoginRsTest {
     @Test
     public void authenticateWithFacebook() throws Exception {
         final Urn name = new UrnMocker().withNid("netbout").mock();
-        final Bus bus = new BusMocker()
+        final Identity identity = new IdentityMocker().namedAs(name).mock();
+        final Hub hub = new HubMocker()
+            .withIdentity(name, identity)
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
             .mock();
-        final Hub hub = new DefaultHub(bus);
         final LoginRs rest = new ResourceMocker()
-            .withDeps(bus, hub)
+            .withHub(hub)
             .mock(LoginRs.class);
         final LoginRs spy = PowerMockito.spy(rest);
         final RemoteIdentity remote = new RemoteIdentity();
+        final URL photo = new URL("http://localhost/some-picture.png");
+        final String alias = "some identity alias";
         remote.setAuthority("http://localhost/authority");
         remote.setName(name.toString());
-        remote.setJaxbPhoto("http://localhost/some-picture.png");
-        remote.setAliases(Arrays.asList(new String[] {"some alias"}));
+        remote.setJaxbPhoto(photo.toString());
+        remote.setAliases(Arrays.asList(new String[] {alias}));
         final String code = "some-auth-code";
         PowerMockito.doReturn(remote).when(spy, "remote", Mockito.eq(code));
-        final Source xhtml = ResourceMocker.the(
-            (Page) spy.fbauth(code).getEntity(), rest
+        MatcherAssert.assertThat(
+            ResourceMocker.the((Page) spy.fbauth(code).getEntity(), rest),
+            Matchers.allOf(
+                XmlMatchers.hasXPath(
+                    String.format("/page/identity[name='%s']", name)
+                ),
+                XmlMatchers.hasXPath("/page/identity/aliases[count(alias) > 0]")
+            )
         );
-        final String[] xpaths = new String[] {
-            String.format("/page/identity[name='%s']", name),
-            "/page/identity[alias='some alias']",
-            "/page/identity[photo='http://localhost/some-picture.png']",
-            "/page/identity/aliases[count(alias) > 0]",
-        };
-        for (String xpath : xpaths) {
-            MatcherAssert.assertThat(xhtml, XmlMatchers.hasXPath(xpath));
-        }
+        Mockito.verify(identity).setPhoto(photo);
+        Mockito.verify(identity).alias(alias);
     }
 
     /**
@@ -113,9 +116,7 @@ public final class LoginRsTest {
      */
     @Test(expected = ForwardException.class)
     public void forwardsIfUserAlreadyLoggedIn() throws Exception {
-        final LoginRs rest = new ResourceMocker()
-            .mock(LoginRs.class);
-        rest.login();
+        ((LoginRs) new ResourceMocker().mock(LoginRs.class)).login();
     }
 
 }

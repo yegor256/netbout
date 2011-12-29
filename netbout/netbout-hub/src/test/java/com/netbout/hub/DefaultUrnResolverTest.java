@@ -26,8 +26,8 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.net.URL;
@@ -54,16 +54,38 @@ public final class DefaultUrnResolverTest {
         final URL url = new URL("http://localhost/abc");
         final List<String> names = new ArrayList<String>();
         names.add(namespace);
-        final Bus bus = new BusMocker()
+        final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(names, "get-all-namespaces")
             .doReturn(url.toString(), "get-namespace-template")
             .doReturn(new UrnMocker().mock(), "get-namespace-owner")
             .mock();
-        final Hub hub = new DefaultHub(bus);
         final UrnResolver resolver = new DefaultUrnResolver(hub);
         MatcherAssert.assertThat(
             resolver.authority(new Urn(namespace, "nss")),
             Matchers.equalTo(url)
+        );
+    }
+
+    /**
+     * DefaultUrnResolver can register namespaces for a given user.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void registersNamespacesForIdentity() throws Exception {
+        final String namespace = "beta";
+        final String url = "http://localhost/beta";
+        final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (1 line)
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
+        final Identity identity = new IdentityMocker().mock();
+        final UrnResolver resolver = new DefaultUrnResolver(hub);
+        resolver.register(identity, namespace, url);
+        resolver.register(new IdentityMocker().mock(), "x", "http://x");
+        MatcherAssert.assertThat(
+            resolver.registered(identity).size(),
+            Matchers.equalTo(1)
         );
     }
 

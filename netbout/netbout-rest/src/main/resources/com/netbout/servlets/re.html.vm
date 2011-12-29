@@ -8,7 +8,7 @@
     <body>
         <div id="bar">
             <a id="logo" href="http://www.netbout.com/">
-                <img src="http://img.netbout.com/logo.png"/>
+                <img src="http://img.netbout.com/clean-logo.png"/>
             </a>
         </div>
         <div id="content">

@@ -26,7 +26,7 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.bus.Bus;
+import com.netbout.hub.Hub;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
 import java.io.StringReader;
@@ -51,9 +51,9 @@ import org.xml.sax.InputSource;
 public final class LongStage {
 
     /**
-     * The bus to work with.
+     * The hub to work with.
      */
-    private transient Bus bus;
+    private transient Hub hub;
 
     /**
      * The bout.
@@ -74,13 +74,13 @@ public final class LongStage {
 
     /**
      * Private ctor.
-     * @param ibus The bus
+     * @param ihub The hub
      * @param bot Bout to work with
      * @param crds The coordinates
      */
-    public LongStage(final Bus ibus, final Bout bot,
+    public LongStage(final Hub ihub, final Bout bot,
         final StageCoordinates crds) {
-        this.bus = ibus;
+        this.hub = ihub;
         this.bout = bot;
         this.coords = crds;
     }
@@ -122,7 +122,7 @@ public final class LongStage {
      * @return The XML
      */
     private String xml() {
-        return this.bus.make("render-stage-xml")
+        return this.hub.make("render-stage-xml")
             .arg(this.bout.number())
             .arg(this.coords.stage())
             .arg(this.coords.place())

@@ -34,7 +34,7 @@ import com.netbout.utils.Promoter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -126,12 +126,14 @@ public final class HelperRs extends AbstractRs {
      * Get list of my namespaces.
      * @return The collection of them
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    @SuppressWarnings(
+        { "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap" }
+    )
     private Collection<Namespace> namespaces() {
         final Collection<Namespace> namespaces = new ArrayList<Namespace>();
-        final ConcurrentMap<String, String> map = this.hub().resolver()
+        final Map<String, String> map = this.hub().resolver()
             .registered(this.identity());
-        for (ConcurrentMap.Entry<String, String> entry : map.entrySet()) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
             namespaces.add(new Namespace(entry.getKey(), entry.getValue()));
         }
         return namespaces;
