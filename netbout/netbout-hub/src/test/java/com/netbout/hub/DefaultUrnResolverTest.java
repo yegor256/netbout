@@ -55,6 +55,7 @@ public final class DefaultUrnResolverTest {
         final List<String> names = new ArrayList<String>();
         names.add(namespace);
         final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(names, "get-all-namespaces")
             .doReturn(url.toString(), "get-namespace-template")
             .doReturn(new UrnMocker().mock(), "get-namespace-owner")
@@ -75,6 +76,7 @@ public final class DefaultUrnResolverTest {
         final String namespace = "beta";
         final String url = "http://localhost/beta";
         final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .mock();
         final Identity identity = new IdentityMocker().mock();

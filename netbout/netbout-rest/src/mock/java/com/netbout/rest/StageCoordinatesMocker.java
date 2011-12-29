@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.BusMocker;
+import com.netbout.hub.HubMocker;
 import com.netbout.spi.BoutMocker;
 
 /**
@@ -42,7 +42,7 @@ public final class StageCoordinatesMocker {
      */
     public StageCoordinates mock() {
         final StageCoordinates coords = new StageCoordinates();
-        coords.normalize(new BusMocker().mock(), new BoutMocker().mock());
+        coords.normalize(new HubMocker().mock(), new BoutMocker().mock());
         return coords;
     }
 

@@ -108,7 +108,7 @@ public final class BoutStylesheetRs extends AbstractRs {
         String xsl =
             "<stylesheet xmlns='http://www.w3.org/1999/XSL/Transform'/>";
         if (!this.stage.isEmpty()) {
-            xsl = this.bus().make("render-stage-xsl")
+            xsl = this.hub().make("render-stage-xsl")
                 .synchronously()
                 .arg(this.bout().number())
                 .arg(this.stage)

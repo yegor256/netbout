@@ -26,8 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.netbout.spi.Bout;
@@ -37,12 +35,11 @@ import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
-import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
 /**
  * Test case for {@link BoutStylesheetRs}.
@@ -50,15 +47,6 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext;
  * @version $Id$
  */
 public final class BoutStylesheetRsTest {
-
-    /**
-     * XPath context.
-     */
-    private static final SimpleNamespaceContext CONTEXT =
-        new SimpleNamespaceContext().withBinding(
-            "xsl",
-            "http://www.w3.org/1999/XSL/Transform"
-        );
 
     /**
      * XSL wrapper is renderable.
@@ -79,9 +67,8 @@ public final class BoutStylesheetRsTest {
         final String xsl = rest.boutXsl();
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(
-                "/xsl:stylesheet/xsl:include[contains(@href,'/xsl/bout.xsl')]",
-                this.CONTEXT
+            XhtmlMatchers.hasXPath(
+                "/xsl:stylesheet/xsl:include[contains(@href,'/xsl/bout.xsl')]"
             )
         );
         final String xpath = String.format(
@@ -91,7 +78,7 @@ public final class BoutStylesheetRsTest {
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(xpath, this.CONTEXT)
+            XhtmlMatchers.hasXPath(xpath)
         );
     }
 
@@ -105,16 +92,14 @@ public final class BoutStylesheetRsTest {
         final Identity identity = new IdentityMocker()
             .withBout(bout.number(), bout)
             .mock();
+        final String text = "some text in XSL format";
         final Hub hub = new HubMocker()
             .withIdentity(identity.name(), identity)
-            .mock();
-        final String text = "some text in XSL format";
-        final Bus bus = new BusMocker()
             .doReturn(text, "render-stage-xsl")
             .mock();
         final BoutStylesheetRs rest = new ResourceMocker()
             .withIdentity(identity)
-            .withDeps(bus, hub)
+            .withHub(hub)
             .mock(BoutStylesheetRs.class);
         final Urn stage = new UrnMocker().mock();
         rest.setBout(bout.number());

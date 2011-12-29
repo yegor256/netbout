@@ -28,7 +28,7 @@ package com.netbout.rest.jaxb;
 
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
-import com.netbout.bus.BusMocker;
+import com.netbout.hub.HubMocker;
 import com.netbout.rest.StageCoordinatesMocker;
 import com.netbout.spi.BoutMocker;
 import org.hamcrest.MatcherAssert;
@@ -49,7 +49,7 @@ public final class LongStageTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongStage obj = new LongStage(
-            new BusMocker().doReturn("<a>foo</a>", "render-stage-xml").mock(),
+            new HubMocker().doReturn("<a>foo</a>", "render-stage-xml").mock(),
             new BoutMocker().mock(),
             new StageCoordinatesMocker().mock()
         );

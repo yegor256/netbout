@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
@@ -62,11 +61,6 @@ public abstract class AbstractRs implements Resource {
      * Hub to work with.
      */
     private transient Hub ihub;
-
-    /**
-     * Bus to work with.
-     */
-    private transient Bus ibus;
 
     /**
      * List of known JAX-RS providers.
@@ -329,7 +323,6 @@ public abstract class AbstractRs implements Resource {
     @Context
     public final void setServletContext(final ServletContext context) {
         this.ihub = (Hub) context.getAttribute("com.netbout.rest.HUB");
-        this.ibus = (Bus) context.getAttribute("com.netbout.rest.BUS");
         Logger.debug(
             this,
             "#setServletContext(%[type]s): injected",
@@ -365,27 +358,11 @@ public abstract class AbstractRs implements Resource {
     }
 
     /**
-     * Get bus.
-     * @return The bus
-     */
-    protected final Bus bus() {
-        if (this.ibus == null) {
-            throw new IllegalStateException(
-                Logger.format(
-                    "%[type]s#bus was never injected by container",
-                    this
-                )
-            );
-        }
-        return this.ibus;
-    }
-
-    /**
      * Get hub.
      * @return The hub
      */
     protected final Hub hub() {
-        if (this.ibus == null) {
+        if (this.ihub == null) {
             throw new IllegalStateException(
                 Logger.format(
                     "%[type]s#hub was never injected by container",

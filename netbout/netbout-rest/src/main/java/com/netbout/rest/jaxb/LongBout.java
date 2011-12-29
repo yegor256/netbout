@@ -26,7 +26,7 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.bus.Bus;
+import com.netbout.hub.Hub;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
@@ -56,7 +56,7 @@ public final class LongBout {
     /**
      * The bus.
      */
-    private final transient Bus bus;
+    private final transient Hub hub;
 
     /**
      * The bout.
@@ -92,7 +92,7 @@ public final class LongBout {
 
     /**
      * Private ctor.
-     * @param ibus The bus
+     * @param ihub The hub
      * @param bot The bout
      * @param crds The coordinates of the stage to render
      * @param keyword Search keyword
@@ -100,9 +100,9 @@ public final class LongBout {
      * @param vwr The viewer
      * @checkstyle ParameterNumber (3 lines)
      */
-    public LongBout(final Bus ibus, final Bout bot, final StageCoordinates crds,
+    public LongBout(final Hub ihub, final Bout bot, final StageCoordinates crds,
         final String keyword, final UriBuilder bldr, final Identity vwr) {
-        this.bus = ibus;
+        this.hub = ihub;
         this.bout = bot;
         this.coords = crds;
         this.query = keyword;
@@ -151,7 +151,7 @@ public final class LongBout {
     public LongStage getStage() {
         LongStage stage = null;
         if (!this.coords.stage().isEmpty()) {
-            stage = new LongStage(this.bus, this.bout, this.coords);
+            stage = new LongStage(this.hub, this.bout, this.coords);
         }
         return stage;
     }

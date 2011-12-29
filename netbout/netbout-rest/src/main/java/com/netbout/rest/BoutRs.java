@@ -338,7 +338,7 @@ public final class BoutRs extends AbstractRs {
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private Page page() {
-        this.coords.normalize(this.bus(), this.bout());
+        this.coords.normalize(this.hub(), this.bout());
         final Page page = new PageBuilder()
             .schema("")
             .stylesheet(
@@ -353,7 +353,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .append(
                 new LongBout(
-                    this.bus(),
+                    this.hub(),
                     this.bout(),
                     this.coords,
                     this.query,

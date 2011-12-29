@@ -32,11 +32,9 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Default URN resolver.
@@ -53,10 +51,10 @@ final class DefaultUrnResolver implements UrnResolver {
 
     /**
      * Namespaces and related URL templates, allocated in slots.
-     * @checkstyle LineLength (2 lines)
      */
-    private final transient ConcurrentMap<Urn, ConcurrentMap<String, String>> slots =
-        new ConcurrentHashMap<Urn, ConcurrentMap<String, String>>();
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    private final transient Map<Urn, Map<String, String>> slots =
+        new ConcurrentHashMap<Urn, Map<String, String>>();
 
     /**
      * Public ctor.
@@ -116,10 +114,12 @@ final class DefaultUrnResolver implements UrnResolver {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     public Map<String, String> registered(final Identity owner) {
-        final Map<String, String> found = new HashMap<String, String>();
+        final Map<String, String> found =
+            new ConcurrentHashMap<String, String>();
         if (this.slots.containsKey(owner.name())) {
-            for (ConcurrentMap.Entry<String, String> entry
+            for (Map.Entry<String, String> entry
                 : this.slots.get(owner.name()).entrySet()) {
                 found.put(entry.getKey(), entry.getValue());
             }
@@ -176,7 +176,7 @@ final class DefaultUrnResolver implements UrnResolver {
         synchronized (this) {
             String template = null;
             final List<String> all = new ArrayList<String>();
-            for (ConcurrentMap<String, String> map : this.slots.values()) {
+            for (Map<String, String> map : this.slots.values()) {
                 if (map.containsKey(name)) {
                     template = map.get(name);
                     break;

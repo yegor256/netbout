@@ -44,6 +44,7 @@ import org.mockito.Mockito;
  * Test case of {@link HubBout}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (200 lines)
  */
 public final class HubBoutTest {
 
@@ -140,7 +141,9 @@ public final class HubBoutTest {
             )
             .withMessage(
                 new MessageDtMocker()
+                    // @checkstyle MagicNumber (1 line)
                     .withNumber(3L)
+                    // @checkstyle MagicNumber (1 line)
                     .withDate(new Date(3L))
                     .mock()
             )
@@ -155,6 +158,7 @@ public final class HubBoutTest {
         final List<Message> messages = bout.messages("");
         MatcherAssert.assertThat(
             messages.get(0).number(),
+            // @checkstyle MagicNumber (1 line)
             Matchers.equalTo(3L)
         );
     }
