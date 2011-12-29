@@ -126,7 +126,9 @@ public final class HelperRs extends AbstractRs {
      * Get list of my namespaces.
      * @return The collection of them
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    @SuppressWarnings(
+        { "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap" }
+    )
     private Collection<Namespace> namespaces() {
         final Collection<Namespace> namespaces = new ArrayList<Namespace>();
         final Map<String, String> map = this.hub().resolver()

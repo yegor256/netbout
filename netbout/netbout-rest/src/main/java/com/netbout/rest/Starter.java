@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
@@ -52,25 +51,15 @@ import javax.ws.rs.ext.Provider;
 public final class Starter implements ContextResolver<Starter> {
 
     /**
-     * Bus.
-     */
-    private final transient Bus bus = new DefaultBus();
-
-    /**
-     * Hub.
-     */
-    private final transient Hub hub = new DefaultHub(this.bus);
-
-    /**
      * Public ctor.
      * @param context Servlet context
      * @checkstyle ExecutableStatementCount (3 lines)
      */
     public Starter(@Context final ServletContext context) {
         final long start = System.currentTimeMillis();
-        context.setAttribute("com.netbout.rest.HUB", this.hub);
-        context.setAttribute("com.netbout.rest.BUS", this.bus);
-        this.start();
+        final Hub hub = new DefaultHub(new DefaultBus());
+        context.setAttribute("com.netbout.rest.HUB", hub);
+        this.start(hub);
         Logger.info(
             this,
             "#Starter(%[type]s): done in %dms",
@@ -89,36 +78,61 @@ public final class Starter implements ContextResolver<Starter> {
 
     /**
      * Start all.
+     * @param hub The hub to work with
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    private void start() {
-        final Promoter promoter = new Promoter(this.hub);
+    private void start(final Hub hub) {
+        final Promoter promoter = new Promoter(hub);
+        final Identity persister = this.persister(hub, promoter);
+        final List<Urn> helpers = hub.make("get-all-helpers")
+            .synchronously()
+            .asDefault(new ArrayList<Urn>())
+            .exec();
+        for (Urn name : helpers) {
+            if (name.equals(persister.name())) {
+                continue;
+            }
+            final URL url = hub.make("get-helper-url")
+                .synchronously()
+                .arg(name)
+                .exec();
+            try {
+                promoter.promote(persister.friend(name), url);
+            } catch (com.netbout.spi.UnreachableUrnException ex) {
+                Logger.error(
+                    this,
+                    "#start(): failed to create '%s' identity:\n%[exception]s",
+                    name,
+                    ex
+                );
+            }
+        }
+    }
+
+    /**
+     * Create persister's identity.
+     * @param hub The hub
+     * @param promoter The promoter
+     * @return The persister
+     */
+    private Identity persister(final Hub hub, final Promoter promoter) {
+        final Identity persister;
         try {
-            final Identity persister =
-                this.hub.identity(new Urn("netbout", "db"));
+            persister = hub.identity(new Urn("netbout", "db"));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalStateException(
+                "Failed to create starter's identity",
+                ex
+            );
+        }
+        try {
             promoter.promote(
                 persister,
                 new URL("file", "", "com.netbout.db")
             );
-            final List<Urn> helpers = this.bus.make("get-all-helpers")
-                .synchronously()
-                .asDefault(new ArrayList<Urn>())
-                .exec();
-            for (Urn name : helpers) {
-                if (name.equals(persister.name())) {
-                    continue;
-                }
-                final URL url = this.bus.make("get-helper-url")
-                    .synchronously()
-                    .arg(name)
-                    .exec();
-                promoter.promote(persister.friend(name), url);
-            }
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new IllegalStateException(ex);
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
+        return persister;
     }
 
 }

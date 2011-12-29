@@ -26,10 +26,10 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.ParticipantMocker;
+import com.rexsl.test.JaxbConverter;
+import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

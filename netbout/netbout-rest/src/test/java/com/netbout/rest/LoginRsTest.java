@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.netbout.rest.auth.RemoteIdentity;
@@ -38,7 +37,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.ws.rs.core.Response;
-import javax.xml.transform.Source;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -102,7 +100,9 @@ public final class LoginRsTest {
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) spy.fbauth(code).getEntity(), rest),
             Matchers.allOf(
-                XmlMatchers.hasXPath(String.format("/page/identity[name='%s']", name)),
+                XmlMatchers.hasXPath(
+                    String.format("/page/identity[name='%s']", name)
+                ),
                 XmlMatchers.hasXPath("/page/identity/aliases[count(alias) > 0]")
             )
         );

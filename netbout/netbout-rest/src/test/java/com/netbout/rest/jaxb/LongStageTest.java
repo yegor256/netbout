@@ -26,11 +26,11 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
 import com.netbout.hub.HubMocker;
 import com.netbout.rest.StageCoordinatesMocker;
 import com.netbout.spi.BoutMocker;
+import com.rexsl.test.JaxbConverter;
+import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

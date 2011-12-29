@@ -26,10 +26,9 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
-import com.netbout.spi.IdentityMocker;
-import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

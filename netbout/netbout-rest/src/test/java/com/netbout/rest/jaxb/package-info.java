@@ -24,42 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.jaxb;
-
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 /**
- * Test case for {@link Invitee}.
+ * RESTful interface, JAXB objects.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class InviteeTest {
-
-    /**
-     * Invitee can be converted to XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void convertsToXml() throws Exception {
-        final Invitee obj = new Invitee(
-            new IdentityMocker().mock(),
-            UriBuilder.fromUri("http://localhost")
-        );
-        MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/invitee/@href"),
-                XhtmlMatchers.hasXPath("/invitee/alias"),
-                XhtmlMatchers.hasXPath("/invitee/name"),
-                XhtmlMatchers.hasXPath("/invitee/photo")
-            )
-        );
-    }
-
-}
+package com.netbout.rest.jaxb;
