@@ -39,6 +39,7 @@ import com.netbout.spi.plain.PlainUrn;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Plain type builder.
@@ -86,7 +87,7 @@ public final class PlainBuilder {
             throw new IllegalArgumentException(
                 String.format(
                     "Can't convert '%s' (%[type]s) to Plain<?>",
-                    data.toString(),
+                    StringEscapeUtils.escapeJava(data.toString()),
                     data
                 )
             );
@@ -127,7 +128,7 @@ public final class PlainBuilder {
             throw new IllegalArgumentException(
                 String.format(
                     "Can't convert text '%s' to Plain<?>",
-                    text
+                    StringEscapeUtils.escapeJava(text)
                 )
             );
         }

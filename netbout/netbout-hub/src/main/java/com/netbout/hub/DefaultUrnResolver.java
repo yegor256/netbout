@@ -32,7 +32,9 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -45,20 +47,16 @@ import java.util.concurrent.ConcurrentMap;
 final class DefaultUrnResolver implements UrnResolver {
 
     /**
-     * Marker for URL template.
-     */
-    private static final String MARKER = "{nss}";
-
-    /**
      * The hub.
      */
     private final transient Hub hub;
 
     /**
-     * Namespaces and related URL templates.
+     * Namespaces and related URL templates, allocated in slots.
+     * @checkstyle LineLength (2 lines)
      */
-    private final transient ConcurrentMap<String, String> inamespaces =
-        new ConcurrentHashMap<String, String>();
+    private final transient ConcurrentMap<Urn, ConcurrentMap<String, String>> slots =
+        new ConcurrentHashMap<Urn, ConcurrentMap<String, String>>();
 
     /**
      * Public ctor.
@@ -66,8 +64,9 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     public DefaultUrnResolver(final Hub ihub) {
         this.hub = ihub;
-        this.inamespaces.put("void", "http://www.netbout.com/");
-        this.inamespaces.put("netbout", "http://www.netbout.com/nb");
+        this.initialize();
+        this.save(new Urn(), "void", "http://www.netbout.com/");
+        this.save(new Urn(), "netbout", "http://www.netbout.com/nb");
     }
 
     /**
@@ -79,13 +78,13 @@ final class DefaultUrnResolver implements UrnResolver {
         if (!namespace.matches("^[a-z]{1,31}$")) {
             throw new IllegalArgumentException(
                 String.format(
-                    "Namespace is not valid '%s'",
+                    "Namespace format is not valid '%s'",
                     namespace
                 )
             );
         }
         try {
-            new URL(template.replace(this.MARKER, "-"));
+            new URL(template.replace(UrnResolver.MARKER, "-"));
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(
                 String.format(
@@ -95,8 +94,8 @@ final class DefaultUrnResolver implements UrnResolver {
                 ex
             );
         }
-        this.namespaces().put(namespace, template);
-        this.hub.bus()
+        this.save(owner.name(), namespace, template);
+        this.hub
             .make("namespace-was-registered")
             .asap()
             .arg(owner.name())
@@ -106,11 +105,10 @@ final class DefaultUrnResolver implements UrnResolver {
             .exec();
         Logger.info(
             this,
-            "#register('%s', '%s', '%s'): namespace registered (%d in total)",
+            "#register('%s', '%s', '%s'): namespace registered",
             owner.name(),
             namespace,
-            template,
-            this.namespaces().size()
+            template
         );
     }
 
@@ -118,8 +116,15 @@ final class DefaultUrnResolver implements UrnResolver {
      * {@inheritDoc}
      */
     @Override
-    public ConcurrentMap<String, String> registered(final Identity owner) {
-        return this.inamespaces;
+    public Map<String, String> registered(final Identity owner) {
+        final Map<String, String> found = new HashMap<String, String>();
+        if (this.slots.containsKey(owner.name())) {
+            for (ConcurrentMap.Entry<String, String> entry
+                : this.slots.get(owner.name()).entrySet()) {
+                found.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return found;
     }
 
     /**
@@ -128,22 +133,11 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     @Override
     public URL authority(final Urn urn) throws UnreachableUrnException {
-        String url;
-        final String nid = urn.nid();
-        if (!this.namespaces().containsKey(nid)) {
-            throw new UnreachableUrnException(
-                urn,
-                Logger.format(
-                    "Namespace '%s' is not registered among %[list]s",
-                    nid,
-                    this.namespaces().keySet()
-                )
-            );
-        }
-        url = this.namespaces().get(nid).replace(this.MARKER, urn.nss());
         URL result;
         try {
-            result = new URL(url);
+            result = new URL(
+                this.load(urn.nid()).replace(UrnResolver.MARKER, urn.nss())
+            );
         } catch (java.net.MalformedURLException ex) {
             throw new UnreachableUrnException(urn, ex);
         }
@@ -157,41 +151,82 @@ final class DefaultUrnResolver implements UrnResolver {
     }
 
     /**
-     * Load namespaces and URLs from DB helper.
-     * @return The list of namespaces and templates
+     * Save data.
+     * @param urn The identity
+     * @param name Name of the namespace
+     * @param template The template
      */
-    private ConcurrentMap<String, String> namespaces() {
+    private void save(final Urn urn, final String name, final String template) {
         synchronized (this) {
-            if (this.inamespaces.size() <= 2) {
-                final List<String> names = this.hub.bus()
-                    .make("get-all-namespaces")
-                    .synchronously()
-                    .asDefault(new ArrayList<String>())
-                    .exec();
-                for (String name : names) {
-                    final String template = this.hub.bus()
-                        .make("get-namespace-template")
-                        .synchronously()
-                        .arg(name)
-                        .exec();
-                    final Urn owner = this.hub.bus()
-                        .make("get-namespace-owner")
-                        .synchronously()
-                        .arg(name)
-                        .exec();
-                    assert owner != null;
-                    this.inamespaces.put(name, template);
-                }
-                if (!names.isEmpty()) {
-                    Logger.info(
-                        this,
-                        "#load(): loaded %d namespaces: %[list]s",
-                        names.size(),
-                        names
-                    );
-                }
+            if (!this.slots.containsKey(urn)) {
+                this.slots.put(urn, new ConcurrentHashMap<String, String>());
             }
-            return this.inamespaces;
+            this.slots.get(urn).put(name, template);
+        }
+    }
+
+    /**
+     * Load template by namespace.
+     * @param name The namespace
+     * @return The template
+     * @throws UnreachableUrnException If can't find it
+     * @checkstyle RedundantThrows (3 lines)
+     */
+    private String load(final String name) throws UnreachableUrnException {
+        synchronized (this) {
+            String template = null;
+            final List<String> all = new ArrayList<String>();
+            for (ConcurrentMap<String, String> map : this.slots.values()) {
+                if (map.containsKey(name)) {
+                    template = map.get(name);
+                    break;
+                }
+                all.addAll(map.keySet());
+            }
+            if (template == null) {
+                throw new UnreachableUrnException(
+                    null,
+                    Logger.format(
+                        "Namespace '%s' is not registered among %[list]s",
+                        name,
+                        all
+                    )
+                );
+            }
+            return template;
+        }
+    }
+
+    /**
+     * Load all slots from persistence storage.
+     */
+    private void initialize() {
+        final List<String> names = this.hub
+            .make("get-all-namespaces")
+            .synchronously()
+            .asDefault(new ArrayList<String>())
+            .exec();
+        for (String name : names) {
+            final String template = this.hub
+                .make("get-namespace-template")
+                .synchronously()
+                .arg(name)
+                .exec();
+            final Urn owner = this.hub
+                .make("get-namespace-owner")
+                .synchronously()
+                .arg(name)
+                .exec();
+            assert owner != null;
+            this.save(owner, name, template);
+        }
+        if (!names.isEmpty()) {
+            Logger.info(
+                this,
+                "#initialize(): loaded %d namespaces: %[list]s",
+                names.size(),
+                names
+            );
         }
     }
 

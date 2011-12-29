@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
@@ -76,6 +77,28 @@ public final class HelperMocker {
                 }
             }
         ).when(this.helper).execute(Mockito.any(Token.class));
+        this.namedAs(new UrnMocker().mock());
+        this.withLocation("http://localhost/some-helper-URL");
+    }
+
+    /**
+     * With this name.
+     * @param name The name
+     * @return This object
+     */
+    public HelperMocker namedAs(final String name) {
+        Mockito.doReturn(Urn.create(name)).when(this.helper).name();
+        return this;
+    }
+
+    /**
+     * With this name.
+     * @param name The name
+     * @return This object
+     */
+    public HelperMocker namedAs(final Urn name) {
+        Mockito.doReturn(name).when(this.helper).name();
+        return this;
     }
 
     /**
@@ -86,6 +109,20 @@ public final class HelperMocker {
      */
     public HelperMocker doReturn(final Object value, final String mnemo) {
         this.ops.put(mnemo, value);
+        return this;
+    }
+
+    /**
+     * With this location.
+     * @param url The location
+     * @return This object
+     */
+    public HelperMocker withLocation(final String url) {
+        try {
+            Mockito.doReturn(new URL(url)).when(this.helper).location();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return this;
     }
 

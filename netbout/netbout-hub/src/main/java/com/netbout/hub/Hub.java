@@ -26,7 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
+import com.netbout.bus.TxBuilder;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
@@ -59,10 +59,11 @@ public interface Hub {
     UrnResolver resolver();
 
     /**
-     * Get bus.
-     * @return The bus
+     * Start new transaction.
+     * @param mnemo Transaction mnemo
+     * @return The transaction builder
      */
-    Bus bus();
+    TxBuilder make(final String mnemo);
 
     /**
      * Get manager of bouts.

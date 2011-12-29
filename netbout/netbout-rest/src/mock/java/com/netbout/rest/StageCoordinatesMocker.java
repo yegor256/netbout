@@ -24,49 +24,26 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.rest;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableUrnException;
-import com.netbout.spi.Urn;
-import java.net.URL;
-import java.util.Map;
+import com.netbout.bus.BusMocker;
+import com.netbout.spi.BoutMocker;
 
 /**
- * URN resolver.
- *
+ * Mocks class {@link StageCoordinates}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface UrnResolver {
+public final class StageCoordinatesMocker {
 
     /**
-     * Marker for URL template.
+     * Mock it.
+     * @return Coordinates
      */
-    String MARKER = "{nss}";
-
-    /**
-     * Register namespace.
-     * @param owner Who is registering
-     * @param namespace The namespace to register
-     * @param template URL template
-     */
-    void register(Identity owner, String namespace, String template);
-
-    /**
-     * Get all namespaces registered for the given identity.
-     * @param owner Who is asking
-     * @return The list of them, as a map
-     */
-    Map<String, String> registered(Identity owner);
-
-    /**
-     * Resolve URN to URL (get is authority).
-     * @param urn The URN
-     * @return The authority
-     * @throws UnreachableUrnException If we can't reach it
-     * @checkstyle RedundantThrows (2 lines)
-     */
-    URL authority(Urn urn) throws UnreachableUrnException;
+    public StageCoordinates mock() {
+        final StageCoordinates coords = new StageCoordinates();
+        coords.normalize(new BusMocker().mock(), new BoutMocker().mock());
+        return coords;
+    }
 
 }

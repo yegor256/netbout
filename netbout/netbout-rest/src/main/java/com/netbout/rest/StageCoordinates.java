@@ -48,11 +48,6 @@ public final class StageCoordinates {
     private static final String SEPARATOR = "::";
 
     /**
-     * Encoding to be used.
-     */
-    private static final String ENCODING = "UTF-8";
-
-    /**
      * List of all stages.
      */
     private transient Collection<Urn> stages;

@@ -84,7 +84,7 @@ public final class DefaultBoutMgr implements BoutMgr {
     public Long create() {
         BoutData data;
         synchronized (this.bouts) {
-            final Long number = this.hub.bus()
+            final Long number = this.hub
                 // @checkstyle MultipleStringLiterals (1 lines)
                 .make("get-next-bout-number")
                 .synchronously()
@@ -94,7 +94,7 @@ public final class DefaultBoutMgr implements BoutMgr {
             this.bouts.put(data.getNumber(), data);
         }
         data.setTitle("");
-        this.hub.bus().make("started-new-bout")
+        this.hub.make("started-new-bout")
             .asap()
             .arg(data.getNumber())
             // @checkstyle MultipleStringLiterals (1 lines)
@@ -125,7 +125,7 @@ public final class DefaultBoutMgr implements BoutMgr {
                 number
             );
         } else {
-            final Boolean exists = this.hub.bus()
+            final Boolean exists = this.hub
                 .make("check-bout-existence")
                 .synchronously()
                 .arg(number)

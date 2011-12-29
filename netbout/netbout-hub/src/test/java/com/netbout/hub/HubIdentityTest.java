@@ -26,14 +26,12 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -51,21 +49,24 @@ public final class HubIdentityTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @org.junit.Ignore
     public void sortsBoutsByRecentlyPostedMessages() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final Bout first = new BoutMocker().withNumber(1L).mock();
-        final Bout second = new BoutMocker()
-            .withNumber(2L)
-            .withMessage("some new message, \u0443\u0440\u0430!")
-            .mock();
         final List<Long> nums = new ArrayList<Long>();
+        final Bout first = new BoutMocker().mock();
         nums.add(first.number());
+        final Bout second = new BoutMocker().mock();
         nums.add(second.number());
-        final Bus bus = new BusMocker()
+        final Bout third = new BoutMocker().mock();
+        nums.add(third.number());
+        final Hub hub = new HubMocker()
             .doReturn(nums, "get-bouts-of-identity")
+            .doReturn(
+                Arrays.asList(new Long[]{1L}),
+                "get-bout-messages",
+                second.number()
+            )
             .mock();
-        final Hub hub = new HubMocker().withBus(bus).mock();
-        final Identity identity = new HubIdentity(hub, name);
+        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
         MatcherAssert.assertThat(
             identity.inbox("").get(0).number(),
             Matchers.equalTo(second.number())

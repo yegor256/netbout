@@ -37,7 +37,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.w3c.dom.Document;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.transform.XmlConverters;
@@ -75,23 +74,21 @@ public final class DefaultBoutMgrTest {
     @Test
     public void createsNewBout() throws Exception {
         final Long number = new Random().nextLong();
-        final Bus bus = new BusMocker()
+        final Hub hub = new HubMocker()
             .doReturn(number, "get-next-bout-number")
             .mock();
-        final Hub hub = new HubMocker().mock();
-        Mockito.doReturn(bus).when(hub).bus();
         final BoutMgr mgr = new DefaultBoutMgr(hub);
         final Long num = mgr.create();
         MatcherAssert.assertThat(num, Matchers.equalTo(number));
     }
 
     /**
-     * DefaultBoutMgr can create new bout on top of real bus.
+     * DefaultBoutMgr can create new bout on top of real hub.
      * @throws Exception If there is some problem inside
      */
     @Test
     @org.junit.Ignore
-    public void createsNewBoutWithRealBus() throws Exception {
+    public void createsNewBoutWithRealHub() throws Exception {
         final Bus bus = new BusMocker().mock();
         final BoutMgr mgr = new DefaultBoutMgr(new DefaultHub(bus));
         final Long first = mgr.create();

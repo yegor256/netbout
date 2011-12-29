@@ -243,7 +243,7 @@ public final class HubBout implements Bout, Comparable<Bout> {
             msg
         );
         message.text();
-        this.hub.bus().make("notify-bout-participants")
+        this.hub.make("notify-bout-participants")
             .arg(this.number())
             .arg(message.number())
             .asDefault(false)

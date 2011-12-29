@@ -52,4 +52,17 @@
         </xsl:choose>
     </xsl:template>
 
+    <xsl:template name="alias">
+        <xsl:param name="alias" as="xs:string"/>
+        <xsl:choose>
+            <xsl:when test="string-length($alias) &gt; 30">
+                <xsl:value-of select="substring($alias,0,27)"/>
+                <xsl:text>...</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$alias"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
 </xsl:stylesheet>

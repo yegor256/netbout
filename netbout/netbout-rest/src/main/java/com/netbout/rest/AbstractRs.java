@@ -42,6 +42,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Abstract RESTful resource.
@@ -206,7 +207,10 @@ public abstract class AbstractRs implements Resource {
         if (msg != null) {
             String decoded;
             try {
-                decoded = new String(new Base64().decode(msg), "UTF-8");
+                decoded = new String(
+                    new Base64().decode(msg),
+                    CharEncoding.UTF_8
+                );
             } catch (java.io.UnsupportedEncodingException ex) {
                 throw new IllegalArgumentException(ex);
             }

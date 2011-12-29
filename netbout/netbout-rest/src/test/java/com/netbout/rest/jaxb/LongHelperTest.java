@@ -24,49 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.rest.jaxb;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableUrnException;
-import com.netbout.spi.Urn;
-import java.net.URL;
-import java.util.Map;
+import com.rexsl.test.JaxbConverter;
+import com.rexsl.test.XhtmlMatchers;
+import com.netbout.spi.HelperMocker;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * URN resolver.
- *
+ * Test case for {@link LongHelper}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface UrnResolver {
+public final class LongHelperTest {
 
     /**
-     * Marker for URL template.
+     * LongHelper can be converted to XML.
+     * @throws Exception If there is some problem inside
      */
-    String MARKER = "{nss}";
-
-    /**
-     * Register namespace.
-     * @param owner Who is registering
-     * @param namespace The namespace to register
-     * @param template URL template
-     */
-    void register(Identity owner, String namespace, String template);
-
-    /**
-     * Get all namespaces registered for the given identity.
-     * @param owner Who is asking
-     * @return The list of them, as a map
-     */
-    Map<String, String> registered(Identity owner);
-
-    /**
-     * Resolve URN to URL (get is authority).
-     * @param urn The URN
-     * @return The authority
-     * @throws UnreachableUrnException If we can't reach it
-     * @checkstyle RedundantThrows (2 lines)
-     */
-    URL authority(Urn urn) throws UnreachableUrnException;
+    @Test
+    public void convertsToXml() throws Exception {
+        final LongHelper obj = new LongHelper(
+            new HelperMocker()
+                .withLocation("http://foo")
+                .namedAs("urn:test:foo")
+                .doReturn("test", "test-op")
+                .mock()
+        );
+        MatcherAssert.assertThat(
+            JaxbConverter.the(obj),
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("/identity[name='urn:test:foo']"),
+                XhtmlMatchers.hasXPath("/identity[@helper='true']"),
+                XhtmlMatchers.hasXPath("/identity[location='http://foo']"),
+                XhtmlMatchers.hasXPath("/identity/supports"),
+                XhtmlMatchers.hasXPath("//operation[.='test-op']")
+            )
+        );
+    }
 
 }

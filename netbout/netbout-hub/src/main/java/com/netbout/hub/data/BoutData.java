@@ -124,7 +124,7 @@ final class BoutData implements BoutDt {
             );
         }
         this.participants.remove(found);
-        this.hub.bus().make("removed-bout-participant")
+        this.hub.make("removed-bout-participant")
             .asap()
             .arg(this.number)
             .arg(identity)
@@ -138,7 +138,7 @@ final class BoutData implements BoutDt {
     @Override
     public String getTitle() {
         if (this.title == null) {
-            this.title = this.hub.bus().make("get-bout-title")
+            this.title = this.hub.make("get-bout-title")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -158,7 +158,7 @@ final class BoutData implements BoutDt {
     @Override
     public void setTitle(final String text) {
         this.title = text;
-        this.hub.bus().make("changed-bout-title")
+        this.hub.make("changed-bout-title")
             .asap()
             .arg(this.number)
             .arg(this.title)
@@ -180,7 +180,7 @@ final class BoutData implements BoutDt {
         final ParticipantDt data =
             new ParticipantData(this.hub, this.number, name);
         this.getParticipants().add(data);
-        this.hub.bus().make("added-bout-participant")
+        this.hub.make("added-bout-participant")
             .asap()
             .arg(this.number)
             .arg(data.getIdentity())
@@ -205,7 +205,7 @@ final class BoutData implements BoutDt {
         synchronized (this) {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantDt>();
-                final List<Urn> identities = this.hub.bus()
+                final List<Urn> identities = this.hub
                     .make("get-bout-participants")
                     .synchronously()
                     .arg(this.number)
@@ -232,7 +232,7 @@ final class BoutData implements BoutDt {
      */
     @Override
     public MessageDt addMessage() {
-        final Long num = this.hub.bus().make("create-bout-message")
+        final Long num = this.hub.make("create-bout-message")
             .synchronously()
             .arg(this.number)
             .asDefault(1L)
@@ -257,7 +257,7 @@ final class BoutData implements BoutDt {
         synchronized (this) {
             if (this.messages == null) {
                 this.messages = new CopyOnWriteArrayList<MessageDt>();
-                final List<Long> nums = this.hub.bus()
+                final List<Long> nums = this.hub
                     .make("get-bout-messages")
                     .synchronously()
                     .arg(this.number)

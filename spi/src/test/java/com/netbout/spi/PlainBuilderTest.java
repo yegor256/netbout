@@ -78,7 +78,7 @@ public final class PlainBuilderTest {
                 new Object[] {"\u043F\u0440\u0438\u0432\u0435\u0442"},
                 new Object[] {new Date()},
                 new Object[] {new Urn("urn:foo:test")},
-                new Object[] {new Urn("bar", "&^%$#@\u8514")},
+                new Object[] {new Urn("bar", "&^%$#@\u8514\u043F")},
                 new Object[] {new URL("http://localhost/test")},
                 new Object[] {new Date(Math.abs(random.nextLong()))},
                 new Object[] {true},
@@ -92,7 +92,7 @@ public final class PlainBuilderTest {
                 new Object[]{Arrays.asList(new Boolean[]{}), },
                 new Object[] {
                     Arrays.asList(
-                        new String[]{"some text", "another text;;;", }
+                        new String[]{"some text", "another text;;;\u043F", }
                     ),
                 },
                 new Object[] {Arrays.asList(new String[]{"\u043F\u0440"})},
