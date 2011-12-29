@@ -129,7 +129,6 @@ public final class HubBoutTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @org.junit.Ignore
     public void returnsMessagesInChronologicalOrder() throws Exception {
         final BoutDt data = this.boutDtMocker
             .but()

@@ -47,6 +47,7 @@ public final class HubIdentityTest {
     /**
      * HubIdentity can sort bouts before returning them back.
      * @throws Exception If there is some problem inside
+     * @todo #169 Doesn't work at the moment because Bus is not complete now
      */
     @Test
     @org.junit.Ignore

@@ -185,11 +185,11 @@ public final class HubBout implements Bout, Comparable<Bout> {
     public List<Message> messages(final String query) {
         final List<MessageDt> datas =
             new ArrayList<MessageDt>(this.data.getMessages());
-        Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
         for (MessageDt msg : datas) {
             messages.add(new HubMessage(this.hub, this.viewer, this, msg));
         }
+        Collections.sort(messages, Collections.reverseOrder());
         Logger.debug(
             this,
             "#messages('%s'): %d message(s) found",
