@@ -43,6 +43,7 @@ import org.junit.Test;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class DefaultUrnResolverTest {
 
     /**
@@ -95,8 +96,10 @@ public final class DefaultUrnResolverTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void loadsMultipleNamesspacesFromHub() throws Exception {
         final List<String> names = new ArrayList<String>();
+        // @checkstyle MagicNumber (2 lines)
         for (int num = 0; num < 5; num += 1) {
             names.add(RandomStringUtils.randomAlphabetic(10).toLowerCase());
         }
@@ -104,7 +107,7 @@ public final class DefaultUrnResolverTest {
         final Hub hub = new HubMocker()
             // @checkstyle MultipleStringLiterals (3 lines)
             .doReturn(names, "get-all-namespaces")
-            .doReturn(url.toString(), "get-namespace-template")
+            .doReturn(url, "get-namespace-template")
             .doReturn(new UrnMocker().mock(), "get-namespace-owner")
             .mock();
         final UrnResolver resolver = new DefaultUrnResolver(hub);

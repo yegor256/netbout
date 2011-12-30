@@ -62,7 +62,6 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     public DefaultUrnResolver(final Hub ihub) {
         this.hub = ihub;
-        this.initialize();
         this.save(new Urn(), "void", "http://www.netbout.com/");
         this.save(new Urn(), "netbout", "http://www.netbout.com/nb");
     }
@@ -116,6 +115,7 @@ final class DefaultUrnResolver implements UrnResolver {
     @Override
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     public Map<String, String> registered(final Identity owner) {
+        this.initialize();
         final Map<String, String> found =
             new ConcurrentHashMap<String, String>();
         if (this.slots.containsKey(owner.name())) {
@@ -186,10 +186,12 @@ final class DefaultUrnResolver implements UrnResolver {
      * Load template by namespace.
      * @param name The namespace
      * @return The template
-     * @throws NamespaceNotFoundException If can't find it
+     * @throws DefaultUrnResolver.NamespaceNotFoundException If can't find it
      */
-    private String load(final String name) throws NamespaceNotFoundException {
+    private String load(final String name)
+        throws DefaultUrnResolver.NamespaceNotFoundException {
         synchronized (this.slots) {
+            this.initialize();
             String template = null;
             final List<String> all = new ArrayList<String>();
             for (Map<String, String> map : this.slots.values()) {
@@ -216,34 +218,38 @@ final class DefaultUrnResolver implements UrnResolver {
      * Load all slots from persistence storage.
      */
     private void initialize() {
-        final long start = System.currentTimeMillis();
-        final List<String> names = this.hub
-            .make("get-all-namespaces")
-            .synchronously()
-            .asDefault(new ArrayList<String>())
-            .exec();
-        for (String name : names) {
-            final String template = this.hub
-                .make("get-namespace-template")
-                .synchronously()
-                .arg(name)
-                .exec();
-            final Urn owner = this.hub
-                .make("get-namespace-owner")
-                .synchronously()
-                .arg(name)
-                .exec();
-            assert owner != null;
-            this.save(owner, name, template);
-        }
-        if (!names.isEmpty()) {
-            Logger.info(
-                this,
-                "#initialize(): loaded %d namespaces in %dms: %[list]s",
-                names.size(),
-                System.currentTimeMillis() - start,
-                names
-            );
+        synchronized (this.slots) {
+            if (this.slots.size() <= 2) {
+                final long start = System.currentTimeMillis();
+                final List<String> names = this.hub
+                    .make("get-all-namespaces")
+                    .synchronously()
+                    .asDefault(new ArrayList<String>())
+                    .exec();
+                for (String name : names) {
+                    final String template = this.hub
+                        .make("get-namespace-template")
+                        .synchronously()
+                        .arg(name)
+                        .exec();
+                    final Urn owner = this.hub
+                        .make("get-namespace-owner")
+                        .synchronously()
+                        .arg(name)
+                        .exec();
+                    assert owner != null;
+                    this.save(owner, name, template);
+                }
+                if (!names.isEmpty()) {
+                    Logger.info(
+                        this,
+                        "#initialize(): loaded %d namespaces in %dms: %[list]s",
+                        names.size(),
+                        System.currentTimeMillis() - start,
+                        names
+                    );
+                }
+            }
         }
     }
 
