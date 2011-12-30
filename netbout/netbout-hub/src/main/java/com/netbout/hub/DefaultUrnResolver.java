@@ -133,11 +133,15 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     @Override
     public URL authority(final Urn urn) throws UnreachableUrnException {
+        String template;
+        try {
+            template = this.load(urn.nid());
+        } catch (NamespaceNotFoundException ex) {
+            throw new UnreachableUrnException(urn, ex);
+        }
         URL result;
         try {
-            result = new URL(
-                this.load(urn.nid()).replace(UrnResolver.MARKER, urn.nss())
-            );
+            result = new URL(template.replace(UrnResolver.MARKER, urn.nss()));
         } catch (java.net.MalformedURLException ex) {
             throw new UnreachableUrnException(urn, ex);
         }
@@ -157,7 +161,7 @@ final class DefaultUrnResolver implements UrnResolver {
      * @param template The template
      */
     private void save(final Urn urn, final String name, final String template) {
-        synchronized (this) {
+        synchronized (this.slots) {
             if (!this.slots.containsKey(urn)) {
                 this.slots.put(urn, new ConcurrentHashMap<String, String>());
             }
@@ -166,14 +170,26 @@ final class DefaultUrnResolver implements UrnResolver {
     }
 
     /**
+     * When namespace is not found.
+     */
+    private static final class NamespaceNotFoundException extends Exception {
+        /**
+         * Public ctor.
+         * @param desc Description of the problem
+         */
+        public NamespaceNotFoundException(final String desc) {
+            super(desc);
+        }
+    }
+
+    /**
      * Load template by namespace.
      * @param name The namespace
      * @return The template
-     * @throws UnreachableUrnException If can't find it
-     * @checkstyle RedundantThrows (3 lines)
+     * @throws NamespaceNotFoundException If can't find it
      */
-    private String load(final String name) throws UnreachableUrnException {
-        synchronized (this) {
+    private String load(final String name) throws NamespaceNotFoundException {
+        synchronized (this.slots) {
             String template = null;
             final List<String> all = new ArrayList<String>();
             for (Map<String, String> map : this.slots.values()) {
@@ -184,8 +200,7 @@ final class DefaultUrnResolver implements UrnResolver {
                 all.addAll(map.keySet());
             }
             if (template == null) {
-                throw new UnreachableUrnException(
-                    null,
+                throw new NamespaceNotFoundException(
                     Logger.format(
                         "Namespace '%s' is not registered among %[list]s",
                         name,
@@ -201,6 +216,7 @@ final class DefaultUrnResolver implements UrnResolver {
      * Load all slots from persistence storage.
      */
     private void initialize() {
+        final long start = System.currentTimeMillis();
         final List<String> names = this.hub
             .make("get-all-namespaces")
             .synchronously()
@@ -223,8 +239,9 @@ final class DefaultUrnResolver implements UrnResolver {
         if (!names.isEmpty()) {
             Logger.info(
                 this,
-                "#initialize(): loaded %d namespaces: %[list]s",
+                "#initialize(): loaded %d namespaces in %dms: %[list]s",
                 names.size(),
+                System.currentTimeMillis() - start,
                 names
             );
         }

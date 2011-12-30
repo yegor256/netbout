@@ -28,6 +28,7 @@
 body {
     background-color: #f3f3f1;
     min-height: 100%;
+    font-size: 7.8pt;
 }
 
 /* wrapper */
@@ -52,9 +53,28 @@ body {
     vertical-align: middle;
 }
 
+#logo {
+    width: 11.3em;
+    height: 2.7em;
+    margin-bottom: 2em;
+}
+
+#facebook {
+    width: 17.3em;
+    height: 2.8em;
+}
+
+/* error message to show */
+#error-message {
+    position: relative;
+    font-size: 1.4em;
+    color: red;
+    margin-top: 0.3em;
+}
+
 /* bottom right label about deployed version */
 #version {
-    font-size: 12px;
+    font-size: 1.2em;
     position: fixed;
     right: 0;
     bottom: 0;
