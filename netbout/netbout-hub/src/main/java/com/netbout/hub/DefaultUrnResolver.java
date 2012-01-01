@@ -50,6 +50,12 @@ final class DefaultUrnResolver implements UrnResolver {
     private final transient Hub hub;
 
     /**
+     * Loaded already from Hub.
+     * @see #initialize()
+     */
+    private transient boolean initialized;
+
+    /**
      * Namespaces and related URL templates, allocated in slots.
      */
     @SuppressWarnings("PMD.UseConcurrentHashMap")
@@ -219,7 +225,7 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     private void initialize() {
         synchronized (this.slots) {
-            if (this.slots.size() <= 2) {
+            if (!this.initialized) {
                 final long start = System.currentTimeMillis();
                 final List<String> names = this.hub
                     .make("get-all-namespaces")
@@ -240,6 +246,7 @@ final class DefaultUrnResolver implements UrnResolver {
                     assert owner != null;
                     this.save(owner, name, template);
                 }
+                this.initialized = true;
                 if (!names.isEmpty()) {
                     Logger.info(
                         this,

@@ -37,6 +37,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link DefaultUrnResolver}.
@@ -155,6 +156,9 @@ public final class DefaultUrnResolverTest {
             resolver.authority(new Urn(namespace, "")),
             Matchers.equalTo(url)
         );
+        resolver.authority(new Urn(namespace, ""));
+        // @checkstyle MultipleStringLiterals (1 line)
+        Mockito.verify(hmocker.mock()).make("get-all-namespaces");
     }
 
 }
