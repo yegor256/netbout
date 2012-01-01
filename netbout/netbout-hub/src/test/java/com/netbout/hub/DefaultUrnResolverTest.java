@@ -166,8 +166,10 @@ public final class DefaultUrnResolverTest {
             Matchers.equalTo(url)
         );
         resolver.authority(new Urn(namespace, ""));
+        resolver.authority(new Urn(namespace, "test"));
         // @checkstyle MultipleStringLiterals (1 line)
-        Mockito.verify(hmocker.mock()).make("get-all-namespaces");
+        Mockito.verify(hmocker.mock(), Mockito.times(2))
+            .make("get-all-namespaces");
     }
 
 }

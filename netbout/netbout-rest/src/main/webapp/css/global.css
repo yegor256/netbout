@@ -85,3 +85,23 @@ textarea {
     border: 0.071em solid #bfbcc1;
     overflow: hidden;
 }
+
+/* error message to show */
+#error-message {
+    position: relative;
+    font-size: 1.4em;
+    color: red;
+    margin-top: 0.3em;
+}
+
+/* bottom right label about deployed version */
+#version {
+    font-size: 1.2em;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    padding: 0.4em 0.8em;
+    background-color: #e4e5e3;
+    color: gray;
+}
+
