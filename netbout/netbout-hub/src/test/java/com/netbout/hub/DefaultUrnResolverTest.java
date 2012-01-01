@@ -43,6 +43,7 @@ import org.mockito.Mockito;
  * Test case of {@link DefaultUrnResolver}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class DefaultUrnResolverTest {
