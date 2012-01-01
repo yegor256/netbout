@@ -43,6 +43,7 @@ import org.mockito.Mockito;
  * Test case of {@link DefaultUrnResolver}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class DefaultUrnResolverTest {
@@ -144,6 +145,15 @@ public final class DefaultUrnResolverTest {
             .doReturn(new ArrayList<String>(), "get-all-namespaces");
         final UrnResolver resolver = new DefaultUrnResolver(hmocker.mock());
         final String namespace = "lazy";
+        try {
+            resolver.authority(new Urn(namespace, ""));
+            throw new AssertionError("we shouldn't reach this point");
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.containsString(namespace)
+            );
+        }
         final URL url = new URL("http://localhost/lazy");
         final List<String> names = new ArrayList<String>();
         names.add(namespace);
@@ -157,8 +167,10 @@ public final class DefaultUrnResolverTest {
             Matchers.equalTo(url)
         );
         resolver.authority(new Urn(namespace, ""));
+        resolver.authority(new Urn(namespace, "test"));
         // @checkstyle MultipleStringLiterals (1 line)
-        Mockito.verify(hmocker.mock()).make("get-all-namespaces");
+        Mockito.verify(hmocker.mock(), Mockito.times(2))
+            .make("get-all-namespaces");
     }
 
 }

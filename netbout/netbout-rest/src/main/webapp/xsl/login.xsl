@@ -41,6 +41,8 @@
     <xsl:template match="/">
         <html lang="en-US">
             <head>
+                <link href="/css/global.css" rel="stylesheet" type="text/css"
+                    media="all"></link>
                 <link href="/css/login.css" rel="stylesheet" type="text/css"
                     media="all"></link>
                 <link rel="icon" type="image/gif"
