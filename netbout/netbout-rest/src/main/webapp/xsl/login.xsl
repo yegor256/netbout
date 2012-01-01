@@ -57,18 +57,21 @@
                     </xsl:call-template>
                 </aside>
                 <div id="wrapper">
-                    <div id="content">
-                        <img src="http://img.netbout.com/logo.png"
-                            style="width: 113px; height: 27px; margin-bottom: 20px;" />
+                    <section id="content">
+                        <img src="http://img.netbout.com/logo.png" id="logo" />
                         <br/>
+                        <xsl:if test="/page/message != ''">
+                            <aside id="error-message">
+                                <xsl:value-of select="/page/message"/>
+                            </aside>
+                        </xsl:if>
                         <a>
                             <xsl:attribute name="href">
                                 <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
                             </xsl:attribute>
-                            <img src="http://img.netbout.com/facebook.png"
-                                style="width: 173px; height: 28px;"/>
+                            <img src="http://img.netbout.com/facebook.png" id="facebook"/>
                         </a>
-                    </div>
+                    </section>
                 </div>
             </body>
         </html>

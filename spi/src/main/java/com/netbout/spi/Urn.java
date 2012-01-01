@@ -238,10 +238,10 @@ public final class Urn implements Comparable {
                 "Empty URN can't have NSS"
             );
         }
-        if (!this.nid().matches("^[a-z]{0,31}$")) {
+        if (!this.nid().matches("^[a-z]{1,31}$")) {
             throw new IllegalArgumentException(
                 String.format(
-                    "NID '%s' can contain only letters",
+                    "NID '%s' can contain up to 31 low case letters",
                     this.nid()
                 )
             );
