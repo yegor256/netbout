@@ -144,6 +144,15 @@ public final class DefaultUrnResolverTest {
             .doReturn(new ArrayList<String>(), "get-all-namespaces");
         final UrnResolver resolver = new DefaultUrnResolver(hmocker.mock());
         final String namespace = "lazy";
+        try {
+            resolver.authority(new Urn(namespace, ""));
+            throw new AssertionError("we shouldn't reach this point");
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.containsString(namespace)
+            );
+        }
         final URL url = new URL("http://localhost/lazy");
         final List<String> names = new ArrayList<String>();
         names.add(namespace);
