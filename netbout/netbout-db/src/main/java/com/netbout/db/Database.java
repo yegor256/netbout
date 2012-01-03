@@ -46,70 +46,75 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Database {
+final class Database {
+
+    /**
+     * Singleton instance.
+     */
+    private static final Database INSTANCE = new Database();
 
     /**
      * Datasource to use.
      */
-    private static DataSource source;
+    private final transient DataSource source;
 
     /**
-     * Reconnect on class initialization.
+     * Private ctor.
      */
-    static {
+    private Database() {
+        this.source = this.datasource();
         try {
-            Database.reconnect();
+            this.update(this.connect());
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
     }
 
     /**
-     * Private ctor.
-     */
-    private Database() {
-        // intentionally empty
-    }
-
-    /**
-     * Read next bout number.
-     * @return Next bout number
+     * Convenient method to get a new JDBC connection.
+     * @return New JDBC connection
      * @throws SQLException If some SQL error
      */
     public static Connection connection() throws SQLException {
-        return Database.source.getConnection();
+        return Database.INSTANCE.connect();
     }
 
     /**
-     * Reconnect.
+     * Create JDBC connection.
+     * @return New JDBC connection
      * @throws SQLException If some SQL error
      */
-    public static void reconnect() throws SQLException {
-        Database.source = Database.datasource();
-        Database.update();
+    private Connection connect() throws SQLException {
+        return this.source.getConnection();
     }
 
     /**
      * Create and return JDBC data source.
      * @return The data source
      */
-    private static DataSource datasource() {
+    private DataSource datasource() {
         final PoolableConnectionFactory factory = new PoolableConnectionFactory(
-            Database.factory(),
+            this.factory(),
             new GenericObjectPool(null),
             null,
             "SELECT name FROM identity WHERE name = ''",
             false,
             true
         );
-        return new PoolingDataSource(factory.getPool());
+        final DataSource src = new PoolingDataSource(factory.getPool());
+        Logger.info(
+            this,
+            "#datasource(): created %[type]s",
+            src
+        );
+        return src;
     }
 
     /**
      * Create and return connection factory.
      * @return The connection factory
      */
-    private static ConnectionFactory factory() {
+    private ConnectionFactory factory() {
         final long start = System.currentTimeMillis();
         final String driver = Manifests.read("Netbout-JdbcDriver");
         try {
@@ -124,7 +129,7 @@ public final class Database {
             Manifests.read("Netbout-JdbcPassword")
         );
         Logger.info(
-            Database.class,
+            this,
             "#factory(): created with '%s' at '%s' [%dms]",
             driver,
             url,
@@ -135,23 +140,22 @@ public final class Database {
 
     /**
      * Update DB schema to the latest version.
+     * @param connection JDBC connection to use
      */
-    private static void update() {
+    private void update(final Connection connection) {
         final long start = System.currentTimeMillis();
         try {
             final Liquibase liquibase = new Liquibase(
                 "com/netbout/db/liquibase.xml",
                 new ClassLoaderResourceAccessor(),
-                new JdbcConnection(Database.source.getConnection())
+                new JdbcConnection(connection)
             );
             liquibase.update("netbout");
         } catch (liquibase.exception.LiquibaseException ex) {
             throw new IllegalStateException(ex);
-        } catch (SQLException ex) {
-            throw new IllegalStateException(ex);
         }
         Logger.info(
-            Database.class,
+            this,
             "#update(): updated DB schema [%dms]",
             System.currentTimeMillis() - start
         );
