@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
+import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
@@ -46,11 +46,6 @@ public final class StageCoordinates {
      * Separator between stage and place.
      */
     private static final String SEPARATOR = "::";
-
-    /**
-     * Encoding to be used.
-     */
-    private static final String ENCODING = "UTF-8";
 
     /**
      * List of all stages.
@@ -173,17 +168,17 @@ public final class StageCoordinates {
 
     /**
      * Normalize it according to the bout.
-     * @param bus The bus
+     * @param hub The hub
      * @param bout The bout
      */
-    public void normalize(final Bus bus, final Bout bout) {
+    public void normalize(final Hub hub, final Bout bout) {
         if (this.stages != null) {
             throw new IllegalStateException("Duplicate call to #normalize()");
         }
         this.stages = new ArrayList<Urn>();
         for (Participant dude : bout.participants()) {
             final Urn name = dude.identity().name();
-            final Boolean exists = bus.make("does-stage-exist")
+            final Boolean exists = hub.make("does-stage-exist")
                 .synchronously()
                 .arg(bout.number())
                 .arg(name)

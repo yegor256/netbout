@@ -61,11 +61,6 @@ import org.xmlmatchers.XmlMatchers;
 public final class ResourceMocker {
 
     /**
-     * Bus.
-     */
-    private transient Bus bus = new BusMocker().mock();
-
-    /**
      * Hub.
      */
     private transient Hub hub;
@@ -172,13 +167,11 @@ public final class ResourceMocker {
     }
 
     /**
-     * With these dependencies.
-     * @param ibus The bus
+     * With this hub.
      * @param ihub The hub
      * @return This object
      */
-    public ResourceMocker withDeps(final Bus ibus, final Hub ihub) {
-        this.bus = ibus;
+    public ResourceMocker withHub(final Hub ihub) {
         this.hub = ihub;
         return this;
     }
@@ -214,8 +207,6 @@ public final class ResourceMocker {
         final ServletContext context = Mockito.mock(ServletContext.class);
         Mockito.doReturn(this.hub).when(context)
             .getAttribute("com.netbout.rest.HUB");
-        Mockito.doReturn(this.bus).when(context)
-            .getAttribute("com.netbout.rest.BUS");
         rest.setServletContext(context);
         return (T) rest;
     }

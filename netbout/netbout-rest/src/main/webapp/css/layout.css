@@ -1,0 +1,156 @@
+/**
+ * Copyright (c) 2009-2011, netBout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+body {
+    font-size: 7.8pt; /* the same as 2.646mm */
+}
+
+/* top header */
+#cap {
+    /* IE hack, see http://www.jakpsatweb.cz/css/css-vertical-center-solution.html */
+    #position: relative;
+    /* other hacks, see http://css-tricks.com/snippets/css/css-box-shadow/ */
+    -moz-box-shadow: 0 0.1em #e4e5e3;
+    -webkit-box-shadow: 0 0.1em #e4e5e3;
+    -o-box-shadow: 0 0.1em #e4e5e3;
+    /* normal CSS3 code */
+    width: 100%;
+    position: relative;
+    background-color: #f3f3f1;
+    height: 6.9em;
+    box-shadow: 0 0.1em #e4e5e3;
+    display: table;
+    overflow: hidden;
+}
+
+/* wrapping element in DIV.CAP */
+#incap {
+    /* IE hack */
+    #position: absolute;
+    #top: 50%;
+    /* normal CSS3 code */
+    display: table-cell;
+    position: static;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* wrappind element inside the CAP, that contains two DIV's: #left and #right */
+#header {
+    /* IE hack */
+    #position: relative;
+    #top: -50%;
+    /* normal CSS3 code */
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    width: 90em;
+    line-height: 0;
+    color: #4b4250;
+}
+
+#left {
+    display: table-cell;
+    text-align: left;
+    vertical-align: middle;
+}
+
+#right {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+}
+
+#crumbs {
+    display: inline;
+    vertical-align: middle;
+}
+
+    #photo {
+        height: 2.6em;
+        width: 2.6em;
+        vertical-align: middle;
+        margin-right: 0.6em;
+        display: inline;
+    }
+
+    #crumbs ul {
+        margin: 0 !important;
+        display: inline;
+    }
+
+        #crumbs ul li {
+            list-style: none;
+            display: inline;
+            margin-right: 2.3em;
+        }
+
+        #crumbs ul li span {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        #crumbs ul li a {
+            color: #4b4250;
+        }
+
+#search {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+}
+
+    #search-input {
+        position: relative;
+        width: 16em;
+    }
+
+/* everything between header and footer */
+#content {
+    position: relative;
+    width: 90em;
+    margin-right: auto;
+    margin-left: auto;
+    clear: both;
+}
+
+    #content h1 {
+        position: relative;
+        padding-top: 4em;
+        margin-bottom: 0.5em;
+    }
+
+        #content h1 span.title {
+            font-size: 2.2em;
+            font-weight: bold;
+        }
+
+    #content p {
+        position: relative;
+        font-size: 1.4em;
+    }

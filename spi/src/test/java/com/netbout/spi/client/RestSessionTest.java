@@ -29,6 +29,13 @@
  */
 package com.netbout.spi.client;
 
+import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
+import com.rexsl.test.ContainerMocker;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -44,14 +51,28 @@ public final class RestSessionTest {
      */
     @Test
     public void performsAuthentication() throws Exception {
-        // final RestSession session = new RestSession(
-        //     new URI("http://www.netbout.com/some-context")
-        // );
-        // final Identity identity = session.authenticate(
-        //     new URI("http://www.netbout.com/anonymous"),
-        //     "foo",
-        //     "bar"
-        // );
+        final URI home = new ContainerMocker()
+            .returnHeader(RestSession.AUTH_HEADER, "abc")
+            .returnStatus(HttpURLConnection.HTTP_SEE_OTHER)
+            .mock()
+            .home();
+        final RestSession session = new RestSession(home);
+        final Identity identity = session.authenticate(new Urn(), "");
+        MatcherAssert.assertThat(identity, Matchers.notNullValue());
+    }
+
+    /**
+     * RestSession can throw exception if HTTP status is not valid.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = AssertionError.class)
+    public void throwsExceptionOnInvalidHttpStatusCode() throws Exception {
+        final URI home = new ContainerMocker()
+            .returnHeader(RestSession.AUTH_HEADER, "foo")
+            .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
+            .mock()
+            .home();
+        new RestSession(home).authenticate(new Urn(), "");
     }
 
 }

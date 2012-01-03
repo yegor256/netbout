@@ -44,7 +44,7 @@ import javax.ws.rs.core.UriBuilder
 ].each { path ->
     RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get()
+        .get('reading non-existing page')
         .assertStatus(HttpURLConnection.HTTP_NOT_FOUND)
         .assertXPath("/page/links/link[@rel='self']")
 }

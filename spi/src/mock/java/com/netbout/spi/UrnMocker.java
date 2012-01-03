@@ -29,7 +29,7 @@
  */
 package com.netbout.spi;
 
-import java.util.Random;
+import java.util.UUID;
 
 /**
  * Mocker of {@link Urn}.
@@ -39,30 +39,49 @@ import java.util.Random;
 public final class UrnMocker {
 
     /**
-     * Namespace.
+     * Namespace ID.
      */
-    private transient String namespace = "foo";
+    private transient String nid;
+
+    /**
+     * Nammespace specific string.
+     */
+    private transient String nss;
+
+    /**
+     * Public ctor.
+     */
+    public UrnMocker() {
+        this.nid = "foo";
+        this.nss = UUID.randomUUID().toString();
+    }
 
     /**
      * With this namespace.
      * @param name The namespace
      * @return This object
      */
-    public UrnMocker withNamespace(final String name) {
-        this.namespace = name;
+    public UrnMocker withNid(final String name) {
+        this.nid = name;
+        return this;
+    }
+
+    /**
+     * With this nss.
+     * @param text The nss
+     * @return This object
+     */
+    public UrnMocker withNss(final String text) {
+        this.nss = text;
         return this;
     }
 
     /**
      * Mock it.
      * @return Mocked URN
-     * @throws Exception If some problem inside
      */
-    public Urn mock() throws Exception {
-        return new Urn(
-            this.namespace,
-            String.valueOf(Math.abs(new Random().nextLong()))
-        );
+    public Urn mock() {
+        return new Urn(this.nid, this.nss);
     }
 
 }

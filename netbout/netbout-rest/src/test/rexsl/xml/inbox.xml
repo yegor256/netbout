@@ -41,6 +41,8 @@
         <link href="/xml/bout.xml" rel="start" />
     </links>
     <identity>
+        <alias>Willy III</alias>
+        <aliases/>
         <name>William.Shakespeare</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
     </identity>
@@ -51,10 +53,12 @@
             <title>PHP programming in NetBout project</title>
             <participants>
                 <participant>
+                    <alias>Johnny Depp</alias>
                     <identity>johnny</identity>
                     <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
                 </participant>
                 <participant>
+                    <alias>Javier Bardem</alias>
                     <identity>javier</identity>
                     <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
                 </participant>
@@ -66,14 +70,17 @@
             <title>some personal issues to discuss urgently</title>
             <participants>
                 <participant>
+                    <alias>Monica Belucci</alias>
                     <identity>Monica</identity>
                     <photo href="http://pixdaus.com/pics/1228335452nZgDtst.jpg" />
                 </participant>
                 <participant>
+                    <alias>John Turturro</alias>
                     <identity>john.turturro</identity>
                     <photo href="http://www.topnews.in/light/files/John-Turturro.jpg" />
                 </participant>
                 <participant>
+                    <alias>2Pac Shakur</alias>
                     <identity>2pac</identity>
                     <photo href="http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg" />
                 </participant>
@@ -85,14 +92,17 @@
             <title>how about joining my team next week?</title>
             <participants>
                 <participant>
+                    <alias>Jeff Bridges</alias>
                     <identity>jeff.bridges</identity>
                     <photo href="http://www.hellomagazine.com/imagenes/profiles/jeff-bridges/5406-jeff-bridges-profile.jpg" />
                 </participant>
                 <participant>
+                    <alias>Sarah Palin</alias>
                     <identity>Sarah.Palin</identity>
                     <photo href="http://www.dailypolitical.com/wp-content/uploads/2010/12/Sarah-Palin.jpg" />
                 </participant>
                 <participant>
+                    <alias>Al Pacino</alias>
                     <identity>al.pacino@gmail.com</identity>
                     <photo href="http://collider.com/wp-content/image-base/People/A/Al_Pacino/Al_Pacino%20(1).jpg" />
                 </participant>

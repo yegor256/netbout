@@ -41,6 +41,12 @@ import java.util.List;
 interface RestResponse {
 
     /**
+     * Fail this response with the given reason.
+     * @param reason The reason
+     */
+    void fail(String reason);
+
+    /**
      * This status code is expected (exception will be thrown if actual code
      * doesn't match).
      * @param code The code

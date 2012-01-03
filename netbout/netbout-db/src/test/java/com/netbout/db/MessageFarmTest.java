@@ -97,7 +97,7 @@ public final class MessageFarmTest {
     public void setsAndReadsMessageText() throws Exception {
         final Long message =
             new MessageRowMocker(new BoutRowMocker().mock()).mock();
-        final String text = "hello, dude! :)";
+        final String text = "\u043F\u0440\u0438\u0432\u0435\u0442";
         this.farm.changedMessageText(message, text);
         MatcherAssert.assertThat(
             this.farm.getMessageText(message),

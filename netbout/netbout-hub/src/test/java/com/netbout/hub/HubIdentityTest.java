@@ -26,6 +26,15 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.UrnMocker;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -36,12 +45,33 @@ import org.junit.Test;
 public final class HubIdentityTest {
 
     /**
-     * HubIdentity can...
+     * HubIdentity can sort bouts before returning them back.
      * @throws Exception If there is some problem inside
+     * @todo #169 Doesn't work at the moment because Bus is not complete now
      */
     @Test
-    public void toBeContinued() throws Exception {
-        // tbd...
+    @org.junit.Ignore
+    public void sortsBoutsByRecentlyPostedMessages() throws Exception {
+        final List<Long> nums = new ArrayList<Long>();
+        final Bout first = new BoutMocker().mock();
+        nums.add(first.number());
+        final Bout second = new BoutMocker().mock();
+        nums.add(second.number());
+        final Bout third = new BoutMocker().mock();
+        nums.add(third.number());
+        final Hub hub = new HubMocker()
+            .doReturn(nums, "get-bouts-of-identity")
+            .doReturn(
+                Arrays.asList(new Long[]{1L}),
+                "get-bout-messages",
+                second.number()
+            )
+            .mock();
+        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
+        MatcherAssert.assertThat(
+            identity.inbox("").get(0).number(),
+            Matchers.equalTo(second.number())
+        );
     }
 
 }

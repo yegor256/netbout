@@ -78,7 +78,9 @@ public final class DefaultHubTest {
      */
     @Test
     public void producesStatisticsAsXmlElement() throws Exception {
-        final Bus bus = new BusMocker().mock();
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
         final Hub hub = new DefaultHub(bus);
         final Document doc = DocumentBuilderFactory
             .newInstance()

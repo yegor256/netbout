@@ -26,14 +26,19 @@
  */
 package com.netbout.rest.auth;
 
+import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -67,7 +72,29 @@ public final class RemoteIdentity implements Identity {
     private final transient Set<String> ialiases = new HashSet<String>();
 
     /**
-     * Set authority.
+     * Problems occured during unmarshalling.
+     */
+    private final transient List<String> problems = new ArrayList<String>();
+
+    /**
+     * Find it in hub and return.
+     * @param hub The hub to find in
+     * @return The identity found
+     * @throws com.netbout.spi.UnreachableUrnException If can't find it
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    public Identity findIn(final Hub hub)
+        throws com.netbout.spi.UnreachableUrnException {
+        final Identity identity = hub.identity(this.iname);
+        for (String alias : this.aliases()) {
+            identity.alias(alias);
+        }
+        identity.setPhoto(this.photo());
+        return identity;
+    }
+
+    /**
+     * Set authority, method for JAXB unmarshaller.
      * @param url The name of it
      */
     @XmlElement
@@ -75,21 +102,36 @@ public final class RemoteIdentity implements Identity {
         try {
             this.iauthority = new URL(url);
         } catch (java.net.MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
+            this.problems.add(
+                String.format(
+                    "Invalid /identity/authority format: %s",
+                    ex.getMessage()
+                )
+            );
         }
     }
 
     /**
-     * Set identity name.
+     * Set identity name, method for JAXB unmarshaller.
      * @param name The name of it
      */
     @XmlElement
     public void setName(final String name) {
-        this.iname = Urn.create(name);
+        try {
+            this.iname = new Urn(name);
+        } catch (java.net.URISyntaxException ex) {
+            this.problems.add(
+                String.format(
+                    "Invalid /identity/name format at '%s': %s",
+                    name,
+                    ex.getMessage()
+                )
+            );
+        }
     }
 
     /**
-     * Set photo.
+     * Set photo, method for JAXB unmarshaller.
      * @param url The URL
      */
     @XmlElement(name = "photo")
@@ -97,17 +139,31 @@ public final class RemoteIdentity implements Identity {
         try {
             this.iphoto = new URL(url);
         } catch (java.net.MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
+            this.problems.add(
+                String.format(
+                    "Invalid /identity/photo format: %s",
+                    ex.getMessage()
+                )
+            );
         }
     }
 
     /**
-     * Set aliases.
+     * Set aliases, method for JAXB unmarshaller.
      * @param names List of them
      */
-    @XmlElement
-    public void setAliases(final List<String> names) {
+    public void setAliases(final Collection<String> names) {
         this.ialiases.addAll(names);
+    }
+
+    /**
+     * Get aliases, method for JAXB unmarshaller.
+     * @return List of aliases
+     */
+    @XmlElement(name = "alias")
+    @XmlElementWrapper(name = "aliases")
+    public Set<String> getAliases() {
+        return this.ialiases;
     }
 
     /**
@@ -115,9 +171,7 @@ public final class RemoteIdentity implements Identity {
      */
     @Override
     public URL authority() {
-        if (this.iauthority == null) {
-            throw new IllegalStateException("/page/identity/user missed");
-        }
+        this.validate();
         return this.iauthority;
     }
 
@@ -126,9 +180,7 @@ public final class RemoteIdentity implements Identity {
      */
     @Override
     public Urn name() {
-        if (this.iname == null) {
-            throw new IllegalStateException("/page/identity/name missed");
-        }
+        this.validate();
         return this.iname;
     }
 
@@ -137,9 +189,7 @@ public final class RemoteIdentity implements Identity {
      */
     @Override
     public URL photo() {
-        if (this.iphoto == null) {
-            throw new IllegalStateException("/page/identity/photo missed");
-        }
+        this.validate();
         return this.iphoto;
     }
 
@@ -213,6 +263,29 @@ public final class RemoteIdentity implements Identity {
     @Override
     public void alias(final String alias) {
         throw new UnsupportedOperationException("#alias()");
+    }
+
+    /**
+     * Validate and throw exception if there are some problems.
+     */
+    private void validate() {
+        if (this.iname == null) {
+            this.problems.add("/identity/name is absent");
+        }
+        if (this.iauthority == null) {
+            this.problems.add("/identity/authority is absent");
+        }
+        if (this.iphoto == null) {
+            this.problems.add("/identity/photo is absent");
+        }
+        if (!this.problems.isEmpty()) {
+            throw new IllegalStateException(
+                Logger.format(
+                    "/page/identity is not valid: %[list]s",
+                    this.problems
+                )
+            );
+        }
     }
 
 }

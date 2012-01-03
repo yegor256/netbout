@@ -33,6 +33,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -53,11 +54,6 @@ public final class Urn implements Comparable {
      * The prefix.
      */
     private static final String PREFIX = "urn";
-
-    /**
-     * Encoding.
-     */
-    private static final String ENCODING = "UTF-8";
 
     /**
      * The separator.
@@ -117,7 +113,7 @@ public final class Urn implements Comparable {
                     this.PREFIX,
                     this.SEP,
                     nid,
-                    URLEncoder.encode(nss, this.ENCODING)
+                    URLEncoder.encode(nss, CharEncoding.UTF_8)
                 )
             );
         } catch (java.io.UnsupportedEncodingException ex) {
@@ -211,7 +207,7 @@ public final class Urn implements Comparable {
      */
     public String nss() {
         try {
-            return URLDecoder.decode(this.segment(2), this.ENCODING);
+            return URLDecoder.decode(this.segment(2), CharEncoding.UTF_8);
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalStateException(ex);
         }
@@ -242,10 +238,10 @@ public final class Urn implements Comparable {
                 "Empty URN can't have NSS"
             );
         }
-        if (!this.nid().matches("^[a-z]{0,31}$")) {
+        if (!this.nid().matches("^[a-z]{1,31}$")) {
             throw new IllegalArgumentException(
                 String.format(
-                    "NID '%s' can contain only letters",
+                    "NID '%s' can contain up to 31 low case letters",
                     this.nid()
                 )
             );

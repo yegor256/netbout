@@ -50,7 +50,7 @@ public final class AliasFarmTest {
      */
     @Test
     public void addsAnAliasAndRetrievesItBack() throws Exception {
-        final String alias = "willy@example.com";
+        final String alias = "\u0443\u0440\u0430";
         final Urn identity = new IdentityRowMocker()
             .withAlias(alias)
             .mock();

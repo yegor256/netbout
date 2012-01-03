@@ -36,23 +36,47 @@
 
     <xsl:output method="xhtml"/>
 
-    <xsl:include href="/xsl/layout.xsl" />
+    <xsl:include href="/xsl/templates.xsl" />
 
-    <xsl:template name="head">
-        <title>
-            <xsl:text>login</xsl:text>
-        </title>
-    </xsl:template>
-
-    <xsl:template name="content">
-        <p>
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
-                </xsl:attribute>
-                <xsl:text>Login using your Facebook account</xsl:text>
-            </a>
-        </p>
+    <xsl:template match="/">
+        <html lang="en-US">
+            <head>
+                <link href="/css/global.css" rel="stylesheet" type="text/css"
+                    media="all"></link>
+                <link href="/css/login.css" rel="stylesheet" type="text/css"
+                    media="all"></link>
+                <link rel="icon" type="image/gif"
+                    href="http://img.netbout.com/favicon.ico"/>
+                <title>login</title>
+            </head>
+            <body>
+                <aside id="version">
+                    <xsl:text>r</xsl:text>
+                    <xsl:value-of select="/page/version/revision"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:call-template name="nano">
+                        <xsl:with-param name="nano" select="/page/@nano" />
+                    </xsl:call-template>
+                </aside>
+                <div id="wrapper">
+                    <section id="content">
+                        <img src="http://img.netbout.com/logo.png" id="logo" />
+                        <br/>
+                        <xsl:if test="/page/message != ''">
+                            <aside id="error-message">
+                                <xsl:value-of select="/page/message"/>
+                            </aside>
+                        </xsl:if>
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
+                            </xsl:attribute>
+                            <img src="http://img.netbout.com/facebook.png" id="facebook"/>
+                        </a>
+                    </section>
+                </div>
+            </body>
+        </html>
     </xsl:template>
 
 </xsl:stylesheet>

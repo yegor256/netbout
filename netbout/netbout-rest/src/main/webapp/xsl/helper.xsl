@@ -47,12 +47,14 @@
     <xsl:template name="content">
         <header>
             <h1>
-                <xsl:text>"</xsl:text>
-                <xsl:value-of select="/page/identity/name"/>
-                <xsl:text>"</xsl:text>
-                <xsl:if test="/page/identity/@helper='true'">
-                    <xsl:text> (helper)</xsl:text>
-                </xsl:if>
+                <span class="title">
+                    <xsl:text>"</xsl:text>
+                    <xsl:value-of select="/page/identity/name"/>
+                    <xsl:text>"</xsl:text>
+                    <xsl:if test="/page/identity/@helper='true'">
+                        <xsl:text> (helper)</xsl:text>
+                    </xsl:if>
+                </span>
             </h1>
         </header>
         <xsl:choose>
@@ -101,7 +103,7 @@
             <xsl:attribute name="action">
                 <xsl:value-of select="/page/links/link[@rel='namespaces']/@href"/>
             </xsl:attribute>
-            <textarea name="text" cols="40" rows="4">
+            <textarea name="text" cols="40" rows="5">
                 <xsl:for-each select="/page/namespaces/namespace">
                     <xsl:value-of select="name"/>
                     <xsl:text>=</xsl:text>

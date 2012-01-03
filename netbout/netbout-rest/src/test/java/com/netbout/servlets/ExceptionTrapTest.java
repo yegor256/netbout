@@ -27,6 +27,7 @@
 package com.netbout.servlets;
 
 import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServlet;
@@ -35,8 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.xmlmatchers.XmlMatchers;
-import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
 /**
  * Test case for {@link ExceptionTrap}.
@@ -66,13 +65,7 @@ public final class ExceptionTrapTest {
         servlet.service(request, response);
         MatcherAssert.assertThat(
             XhtmlConverter.the(writer.toString()),
-            XmlMatchers.hasXPath(
-                "//xhtml:p[contains(.,'code: a')]",
-                new SimpleNamespaceContext().withBinding(
-                    "xhtml",
-                    "http://www.w3.org/1999/xhtml"
-                )
-            )
+            XhtmlMatchers.hasXPath("//xhtml:p[contains(.,'code: a')]")
         );
     }
 

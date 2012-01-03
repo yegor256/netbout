@@ -57,7 +57,7 @@ public final class EmailFarmTest {
         Mockito.doReturn(bout).when(identity).bout(Mockito.anyLong());
         final EmailFarm farm = new EmailFarm();
         farm.init(identity);
-        farm.notifyBoutParticipants(bout.number(), 1L);
+        farm.notifyBoutParticipants(bout.number(), 0L);
     }
 
 }

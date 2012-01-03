@@ -53,7 +53,7 @@ final class FarmMocker implements IdentityAware {
     public URL mock() throws java.net.MalformedURLException {
         return new URL(
             "file",
-            "localhost",
+            "",
             this.getClass().getPackage().getName()
         );
     }

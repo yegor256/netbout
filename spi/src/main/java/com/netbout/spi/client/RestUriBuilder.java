@@ -58,18 +58,18 @@ public final class RestUriBuilder {
     public static UriBuilder from(final Bout bout) {
         if (!(bout instanceof RestBout)) {
             throw new IllegalArgumentException(
-                String.format(
+                Logger.format(
                     // @checkstyle LineLength (1 line)
-                    "RestUriBuilder#from(Bout) accepts only bouts from RestSession, while '%s' provided",
-                    bout.getClass().getName()
+                    "RestUriBuilder#from(Bout) accepts only bouts from RestSession, while '%[type]s' provided",
+                    bout
                 )
             );
         }
         final URI uri = ((RestBout) bout).uri();
         Logger.debug(
             RestUriBuilder.class,
-            "#from(%s): Bout URI '%s' found",
-            bout.getClass().getName(),
+            "#from(%[type]s): Bout URI '%s' found",
+            bout,
             uri
         );
         return UriBuilder.fromUri(uri);
@@ -83,18 +83,18 @@ public final class RestUriBuilder {
     public static UriBuilder from(final Identity identity) {
         if (!(identity instanceof RestIdentity)) {
             throw new IllegalArgumentException(
-                String.format(
+                Logger.format(
                     // @checkstyle LineLength (1 line)
-                    "RestUriBuilder#from(Identity) accepts only identities from RestSession, while '%s' provided",
-                    identity.getClass().getName()
+                    "RestUriBuilder#from(Identity) accepts only identities from RestSession, while '%[type]s' provided",
+                    identity
                 )
             );
         }
         final URI uri = ((RestIdentity) identity).uri();
         Logger.debug(
             RestUriBuilder.class,
-            "#from(%s): Identity URI '%s' found",
-            identity.getClass().getName(),
+            "#from(%[type]s): Identity URI '%s' found",
+            identity,
             uri
         );
         return UriBuilder.fromUri(uri);

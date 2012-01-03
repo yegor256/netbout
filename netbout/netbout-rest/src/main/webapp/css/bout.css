@@ -25,6 +25,67 @@
  * SUCH DAMAGE.
  */
 
+#top {
+    width: 70em;
+}
+
+h1 span.num {
+    font-size: 1.4em;
+    margin-right: 0.3em;
+}
+
+#invite-aside {
+    position: absolute;
+    top: 4em;
+    right: 0;
+    text-align: right;
+    background-color: white;
+    z-index: 10;
+}
+
+    #invite-aside input {
+        background-color: white;
+    }
+
+    #invite-aside ul {
+        padding-left: 2em;
+        padding-bottom: 2em;
+    }
+
+        #invite-aside ul li {
+            list-style: none;
+            margin-bottom: 0.3em;
+        }
+
+            #invite-aside ul li a {
+                font-size: 1.4em;
+                vertical-align: middle;
+            }
+
+            #invite-aside ul li img {
+                vertical-align: middle;
+                margin-left: 0.5em;
+                height: 2.6em;
+                width: 2.6em;
+                box-shadow: 0.1em 0.1em 0.1em gray;
+                -moz-box-shadow: 0.1em 0.1em 0.1em gray;
+                -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
+                -o-box-shadow: 0.1em 0.1em 0.1em gray;
+            }
+
+#options {
+    position: absolute;
+    top: 8em;
+    right: 0;
+    text-align: right;
+    background-color: white;
+    z-index: 5;
+}
+
+    #options span {
+        font-size: 1.4em;
+    }
+
 #holder {
     margin-top: 2em;
     margin-bottom: 2em;
@@ -48,21 +109,41 @@
 
 #post {
     margin-bottom: 2em;
+    margin-top: 2em;
 }
 
 .message {
-    border-top: 1px dotted gray;
-    padding-top: 1em;
-    margin-bottom: 1em;
+    margin-top: 4em;
     position: relative;
+    min-height: 6em;
 }
 
-    .message header {
-        position: relative;
-        height: 60px;
+    .message .left {
+        position: absolute;
+        left: 0;
+        top: 0;
     }
 
-        .message header img {
-            height: 50px;
-            margin-right: 1em;
+    .message .left img {
+        height: 5em;
+        width: 5em;
+        box-shadow: 0.1em 0.1em 0.1em gray;
+        -moz-box-shadow: 0.1em 0.1em 0.1em gray;
+        -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
+        -o-box-shadow: 0.1em 0.1em 0.1em gray;
+    }
+
+    .message .right {
+        margin-left: 7em;
+        position: relative;
+    }
+
+        .message .right .meta {
+            font-size: 1.4em;
+            color: gray;
         }
+
+        .message .right .text {
+            white-space: pre-line;
+        }
+

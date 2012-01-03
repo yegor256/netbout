@@ -30,7 +30,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.net.URL;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 /**
  * URN resolver.
@@ -39,6 +39,11 @@ import java.util.concurrent.ConcurrentMap;
  * @version $Id$
  */
 public interface UrnResolver {
+
+    /**
+     * Marker for URL template.
+     */
+    String MARKER = "{nss}";
 
     /**
      * Register namespace.
@@ -53,7 +58,7 @@ public interface UrnResolver {
      * @param owner Who is asking
      * @return The list of them, as a map
      */
-    ConcurrentMap<String, String> registered(Identity owner);
+    Map<String, String> registered(Identity owner);
 
     /**
      * Resolve URN to URL (get is authority).

@@ -29,15 +29,16 @@
  */
 package com.netbout.spi.client;
 
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.ymock.util.Logger;
+import com.rexsl.test.RestTester;
+import com.rexsl.test.TestClient;
+import com.rexsl.test.TestResponse;
 import java.net.URI;
+import java.net.URLEncoder;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
+import org.hamcrest.Matchers;
 
 /**
  * Client that loads XML through HTTP, using Jersey JAX-RS client.
@@ -45,12 +46,12 @@ import javax.ws.rs.core.UriBuilder;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class JerseyRestClient implements RestClient {
+final class RexslRestClient implements RestClient {
 
     /**
-     * Jersey web resource.
+     * Test client.
      */
-    private final transient WebResource resource;
+    private final transient TestClient client;
 
     /**
      * Auth token.
@@ -59,11 +60,13 @@ final class JerseyRestClient implements RestClient {
 
     /**
      * Pubic ctor.
-     * @param res The resource to work with
+     * @param clnt The client
      * @param tkn Auth token
      */
-    public JerseyRestClient(final WebResource res, final String tkn) {
-        this.resource = res;
+    public RexslRestClient(final TestClient clnt, final String tkn) {
+        this.client = clnt;
+        assert tkn != null : "authentication token is mandatory";
+        assert !tkn.isEmpty() : "token can't be empty";
         this.token = tkn;
     }
 
@@ -72,8 +75,12 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestClient queryParam(final String name, final String value) {
-        return new JerseyRestClient(
-            this.resource.queryParam(name, value),
+        final URI uri = UriBuilder
+            .fromUri(this.client.uri())
+            .queryParam(name, value)
+            .build();
+        return new RexslRestClient(
+            RestTester.start(uri),
             this.token
         );
     }
@@ -83,22 +90,15 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestResponse get(final String message) {
-        final long start = System.currentTimeMillis();
-        final ClientResponse response = this.resource
-            .accept(MediaType.APPLICATION_XML)
-            .cookie(this.cookie())
-            .get(ClientResponse.class);
-        Logger.info(
-            this,
-            "#GET(%s): \"%s\" [%d %s] in %dms (%s)",
-            this.resource.getURI().getPath(),
-            message,
-            response.getStatus(),
-            response.getClientResponseStatus().getReasonPhrase(),
-            System.currentTimeMillis() - start,
-            this.resource.getURI()
-        );
-        return new JerseyRestResponse(this, response);
+        final TestResponse response = this.client
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .header(
+                HttpHeaders.COOKIE,
+                new Cookie(RestSession.AUTH_COOKIE, this.token)
+            )
+            .get(message)
+            .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue());
+        return new RexslRestResponse(this, response);
     }
 
     /**
@@ -106,25 +106,24 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestResponse post(final String message, final String... params) {
-        final MultivaluedMap data = new MultivaluedMapImpl();
+        final StringBuilder data = new StringBuilder();
         for (int pos = 0; pos < params.length; pos += 2) {
-            data.add(params[pos], params[pos + 1]);
+            if (pos > 0) {
+                data.append("&");
+            }
+            data.append(URLEncoder.encode(params[pos]))
+                .append("=")
+                .append(URLEncoder.encode(params[pos + 1]));
         }
-        final long start = System.currentTimeMillis();
-        final ClientResponse response = this.resource
-            .cookie(this.cookie())
-            .post(ClientResponse.class, data);
-        Logger.info(
-            this,
-            "#POST(%s): \"%s\" [%d %s] in %dms (%s)",
-            this.resource.getURI().getPath(),
-            message,
-            response.getStatus(),
-            response.getClientResponseStatus().getReasonPhrase(),
-            System.currentTimeMillis() - start,
-            this.resource.getURI()
-        );
-        return new JerseyRestResponse(this, response);
+        final TestResponse response = this.client
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .header(
+                HttpHeaders.COOKIE,
+                new Cookie(RestSession.AUTH_COOKIE, this.token)
+            )
+            .post(message, data.toString())
+            .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue());
+        return new RexslRestResponse(this, response);
     }
 
     /**
@@ -132,7 +131,7 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestClient copy() {
-        return new JerseyRestClient(this.resource, this.token);
+        return new RexslRestClient(RestTester.start(this.uri()), this.token);
     }
 
     /**
@@ -140,7 +139,7 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestClient copy(final URI uri) {
-        return new JerseyRestClient(this.resource.uri(uri), this.token);
+        return new RexslRestClient(RestTester.start(uri), this.token);
     }
 
     /**
@@ -148,8 +147,8 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public RestClient copy(final String uri) {
-        return new JerseyRestClient(
-            this.resource.uri(UriBuilder.fromUri(uri).build()),
+        return new RexslRestClient(
+            RestTester.start(UriBuilder.fromUri(uri).build()),
             this.token
         );
     }
@@ -159,17 +158,10 @@ final class JerseyRestClient implements RestClient {
      */
     @Override
     public URI uri() {
-        return UriBuilder.fromUri(this.resource.getURI())
-            .queryParam("auth", this.token)
+        return UriBuilder
+            .fromUri(this.client.uri())
+            .queryParam(RestSession.AUTH_PARAM, this.token)
             .build();
-    }
-
-    /**
-     * Make cookie.
-     * @return The cookie
-     */
-    private Cookie cookie() {
-        return new Cookie("netbout", this.token);
     }
 
 }

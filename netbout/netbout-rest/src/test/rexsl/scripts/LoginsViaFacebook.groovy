@@ -39,15 +39,15 @@ import org.apache.http.client.utils.URLEncodedUtils
 
 RestTester.start(rexsl.home)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
+    .get('read home')
     .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
     .follow()
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
+    .get('read login page')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('/page/links/link[@rel="facebook"]')
-    .gpath
-    .links.link.find { it.@rel == 'facebook' }.@href.toURI()
+    .xpath('/page/links/link[@rel="facebook"]/@href')
+    .get(0)
 
 /**
 @todo #163 This mechanism doesn't work, because YMOCK can't properly

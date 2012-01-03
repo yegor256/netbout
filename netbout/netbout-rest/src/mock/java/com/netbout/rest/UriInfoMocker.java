@@ -55,43 +55,41 @@ import org.xmlmatchers.XmlMatchers;
 public final class UriInfoMocker {
 
     /**
-     * Request URI.
+     * The mock.
      */
-    private transient URI uri;
+    private final transient UriInfo info = Mockito.mock(UriInfo.class);
 
     /**
      * Public ctor.
-     * @throws Exception If something is wrong
      */
-    public UriInfoMocker() throws Exception {
-        this.uri = new URI("http://localhost:99/local");
+    public UriInfoMocker() {
+        this.withRequestUri(
+            UriBuilder.fromUri("http://localhost:99/local").build()
+        );
     }
 
     /**
      * With this request URI.
-     * @param ruri The URI
+     * @param uri The URI
      * @return This object
      */
-    public UriInfoMocker withRequestUri(final URI ruri) {
-        this.uri = ruri;
+    public UriInfoMocker withRequestUri(final URI uri) {
+        Mockito.doReturn(uri).when(this.info).getRequestUri();
+        Mockito.doReturn(UriBuilder.fromUri(uri))
+            .when(this.info).getBaseUriBuilder();
+        Mockito.doReturn(UriBuilder.fromUri(uri))
+            .when(this.info).getAbsolutePathBuilder();
+        Mockito.doReturn(uri).when(this.info).getAbsolutePath();
+        Mockito.doReturn(uri).when(this.info).getBaseUri();
         return this;
     }
 
     /**
      * Build an instance of provided class.
      * @return The resource just created
-     * @throws Exception If something is wrong
      */
-    public UriInfo mock() throws Exception {
-        final UriInfo info = Mockito.mock(UriInfo.class);
-        Mockito.doReturn(this.uri).when(info).getRequestUri();
-        Mockito.doReturn(UriBuilder.fromUri(this.uri))
-            .when(info).getBaseUriBuilder();
-        Mockito.doReturn(UriBuilder.fromUri(this.uri))
-            .when(info).getAbsolutePathBuilder();
-        Mockito.doReturn(this.uri).when(info).getAbsolutePath();
-        Mockito.doReturn(this.uri).when(info).getBaseUri();
-        return info;
+    public UriInfo mock() {
+        return this.info;
     }
 
 }

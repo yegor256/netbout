@@ -106,7 +106,7 @@ final class MessageData implements MessageDt {
     @Override
     public void setDate(final Date dte) {
         this.date = dte;
-        this.hub.bus().make("changed-message-date")
+        this.hub.make("changed-message-date")
             .asap()
             .arg(this.number)
             .arg(this.date)
@@ -125,7 +125,7 @@ final class MessageData implements MessageDt {
     @Override
     public Date getDate() {
         if (this.date == null) {
-            this.date = this.hub.bus().make("get-message-date")
+            this.date = this.hub.make("get-message-date")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -145,7 +145,7 @@ final class MessageData implements MessageDt {
     @Override
     public void setAuthor(final Urn idnt) {
         this.author = idnt;
-        this.hub.bus().make("changed-message-author")
+        this.hub.make("changed-message-author")
             .asap()
             .arg(this.number)
             .arg(this.author)
@@ -165,7 +165,7 @@ final class MessageData implements MessageDt {
     @Override
     public Urn getAuthor() {
         if (this.author == null) {
-            this.author = this.hub.bus().make("get-message-author")
+            this.author = this.hub.make("get-message-author")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -185,7 +185,7 @@ final class MessageData implements MessageDt {
     @Override
     public void setText(final String txt) {
         this.text = txt;
-        this.hub.bus().make("changed-message-text")
+        this.hub.make("changed-message-text")
             .asap()
             .arg(this.number)
             .arg(this.text)
@@ -205,7 +205,7 @@ final class MessageData implements MessageDt {
     @Override
     public String getText() {
         if (this.text == null) {
-            this.text = this.hub.bus().make("get-message-text")
+            this.text = this.hub.make("get-message-text")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -225,7 +225,7 @@ final class MessageData implements MessageDt {
     @Override
     public void addSeenBy(final Urn identity) {
         if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
-            this.hub.bus().make("message-was-seen")
+            this.hub.make("message-was-seen")
                 .asap()
                 .arg(this.number)
                 .arg(identity)
@@ -247,7 +247,7 @@ final class MessageData implements MessageDt {
     @Override
     public Boolean isSeenBy(final Urn identity) {
         if (!this.seenBy.containsKey(identity)) {
-            final Boolean status = this.hub.bus().make("was-message-seen")
+            final Boolean status = this.hub.make("was-message-seen")
                 .synchronously()
                 .arg(this.number)
                 .arg(identity)

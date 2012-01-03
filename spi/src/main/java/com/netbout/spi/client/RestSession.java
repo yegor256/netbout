@@ -31,15 +31,12 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.rexsl.test.RestTester;
 import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
+import org.hamcrest.Matchers;
 
 /**
  * Restful session.
@@ -50,14 +47,34 @@ import javax.ws.rs.core.UriBuilder;
 public final class RestSession {
 
     /**
-     * Home URI.
+     * Authentication header.
      */
-    private final transient URI home;
+    public static final String AUTH_HEADER = "Netbout-auth";
+
+    /**
+     * HTTP header with error message.
+     */
+    public static final String ERROR_HEADER = "Netbout-error";
+
+    /**
+     * Authentication query param.
+     */
+    public static final String AUTH_PARAM = "auth";
+
+    /**
+     * Name of the user authentication cookie.
+     */
+    public static final String AUTH_COOKIE = "netbout";
+
+    /**
+     * Name of the message transferring cookie.
+     */
+    public static final String MESSAGE_COOKIE = "netbout-msg";
 
     /**
      * Home URI.
      */
-    private final transient Client client;
+    private final transient URI home;
 
     /**
      * Public ctor.
@@ -73,10 +90,6 @@ public final class RestSession {
             );
         }
         this.home = UriBuilder.fromUri(uri).path("/").build();
-        final ClientConfig config = new DefaultClientConfig();
-        config.getProperties()
-            .put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        this.client = Client.create(config);
     }
 
     /**
@@ -87,8 +100,8 @@ public final class RestSession {
      */
     public Identity authenticate(final Urn iname, final String secret) {
         return new RestIdentity(
-            new JerseyRestClient(
-                this.client.resource(this.home),
+            new RexslRestClient(
+                RestTester.start(this.home),
                 this.fetch(iname, secret)
             )
         );
@@ -101,41 +114,24 @@ public final class RestSession {
      * @return The URL
      */
     private String fetch(final Urn identity, final String secret) {
-        final WebResource resource = this.client.resource(this.home)
+        final URI uri = UriBuilder.fromUri(this.home)
             .path("/auth")
             .queryParam("identity", identity.toString())
-            .queryParam("secret", secret);
-        final ClientResponse response = resource.get(ClientResponse.class);
-        if (response.getStatus() != HttpURLConnection.HTTP_SEE_OTHER) {
-            throw new IllegalArgumentException(
-                Logger.format(
-                    // @checkstyle LineLength (1 line)
-                    "Invalid HTTP status #%d at '%s' during authentication of '%s':\n%s",
-                    response.getStatus(),
-                    resource.getURI(),
-                    identity,
-                    new ClientResponseDecor(response)
-                )
-            );
-        }
-        final String token = response.getHeaders().getFirst("Netbout-auth");
-        if (token == null) {
-            throw new IllegalArgumentException(
-                Logger.format(
-                    // @checkstyle LineLength (1 line)
-                    "Authentication token not found in response header at '%s' during authentication of '%s':\n%s",
-                    resource.getURI(),
-                    identity,
-                    new ClientResponseDecor(response)
-                )
-            );
-        }
+            .queryParam("secret", secret)
+            .build();
+        final String token = RestTester.start(uri)
+            .get("authorization")
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+            .assertHeader(this.AUTH_HEADER, Matchers.notNullValue())
+            .assertHeader(this.AUTH_HEADER, Matchers.not(Matchers.empty()))
+            .getHeaders()
+            .getFirst(this.AUTH_HEADER);
         Logger.debug(
             this,
             "#fetch('%s', '%s'): '%s' authenticated us as '%s'",
             identity,
             secret,
-            resource.getURI(),
+            uri,
             token
         );
         return token;

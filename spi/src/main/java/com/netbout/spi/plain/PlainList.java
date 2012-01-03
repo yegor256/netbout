@@ -67,7 +67,7 @@ public final class PlainList<T> implements Plain<List<T>> {
      * @return Is it or not?
      */
     public static boolean isIt(final String text) {
-        return text.contains(PlainList.SEPARATOR);
+        return !text.isEmpty() && text.charAt(0) == '[';
     }
 
     /**
@@ -127,7 +127,10 @@ public final class PlainList<T> implements Plain<List<T>> {
      * @return Text
      */
     public static String pack(final List<String> group) {
-        return StringUtils.join(group, PlainList.SEPARATOR);
+        return String.format(
+            "[%s]",
+            StringUtils.join(group, PlainList.SEPARATOR)
+        );
     }
 
     /**
@@ -136,7 +139,10 @@ public final class PlainList<T> implements Plain<List<T>> {
      * @return Group
      */
     public static String[] unpack(final String text) {
-        return StringUtils.split(text, PlainList.SEPARATOR);
+        return StringUtils.split(
+            StringUtils.substring(text, 1, -1),
+            PlainList.SEPARATOR
+        );
     }
 
 }

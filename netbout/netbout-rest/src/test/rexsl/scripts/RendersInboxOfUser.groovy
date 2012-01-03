@@ -42,7 +42,7 @@ william.start()
 // validate content of the inbox
 RestTester.start(RestUriBuilder.from(william))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get()
+    .get('render inbox of a user')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
     .assertXPath('/page/identity/name')

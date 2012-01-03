@@ -45,6 +45,6 @@ bout.rename('Trying to render an empty stage')
 // not be rendered
 RestTester.start(RestUriBuilder.from(bout).queryParam('stage', 'urn:test:hh'))
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
-    .get()
+    .get('read')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('/xhtml:html[count(//xhtml:section[@id="stage"]) = 0]')

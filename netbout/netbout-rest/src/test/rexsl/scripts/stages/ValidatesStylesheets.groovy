@@ -42,12 +42,12 @@ bout.invite(jeff.friend(helper))
 
 // validate global bout XSL
 RestTester.start(RestUriBuilder.from(bout).path('/xsl/{stage}/wrapper.xsl').build(helper))
-    .get()
+    .get('read wrapper XSL')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('//xsl:include')
 
 // validate local stage-related XSL
 RestTester.start(RestUriBuilder.from(bout).path('/xsl/{stage}/stage.xsl').build(helper))
-    .get()
+    .get('read stage XSL')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('//xsl:template')

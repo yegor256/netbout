@@ -8,7 +8,7 @@
     <body>
         <div id="bar">
             <a id="logo" href="http://www.netbout.com/">
-                <img src="http://img.netbout.com/logo.png"/>
+                <img src="http://img.netbout.com/clean-logo.png"/>
             </a>
         </div>
         <div id="content">
@@ -22,9 +22,9 @@
                 to do something else.
             </p>
             <p>
-                code: <span class="tt">${code}</span>
-                message: <span class="tt">${message}</span>
-                request_uri: <span class="tt">${request_uri}</span>
+                code: <span class="tt">${code}</span><br/>
+                message: <span class="tt">${message}</span><br/>
+                request_uri: <span class="tt">${request_uri}</span><br/>
                 exception_type: <span class="tt">${exception_type}</span>
             </p>
             <pre>${stacktrace}</pre>

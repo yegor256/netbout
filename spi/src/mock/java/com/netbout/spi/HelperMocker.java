@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
@@ -41,7 +42,7 @@ import org.mockito.stubbing.Answer;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HelperMocker implements Answer {
+public final class HelperMocker {
 
     /**
      * Mocked helper.
@@ -58,21 +59,46 @@ public final class HelperMocker implements Answer {
      * Public ctor.
      */
     public HelperMocker() {
-        Mockito.doAnswer(this).when(this.helper)
-            .execute(Mockito.any(Token.class));
+        Mockito.doReturn(this.ops.keySet()).when(this.helper).supports();
+        Mockito.doAnswer(
+            new Answer() {
+                @Override
+                public Object answer(final InvocationOnMock invocation) {
+                    final Token token = (Token) invocation.getArguments()[0];
+                    final String mnemo = token.mnemo();
+                    if (HelperMocker.this.ops.containsKey(mnemo)) {
+                        token.result(
+                            PlainBuilder.fromObject(
+                                HelperMocker.this.ops.get(mnemo)
+                            )
+                        );
+                    }
+                    return true;
+                }
+            }
+        ).when(this.helper).execute(Mockito.any(Token.class));
+        this.namedAs(new UrnMocker().mock());
+        this.withLocation("http://localhost/some-helper-URL");
     }
 
     /**
-     * {@inheritDoc}
+     * With this name.
+     * @param name The name
+     * @return This object
      */
-    @Override
-    public Object answer(final InvocationOnMock invocation) {
-        final Token token = (Token) invocation.getArguments()[0];
-        final String mnemo = token.mnemo();
-        if (this.ops.containsKey(mnemo)) {
-            token.result(PlainBuilder.fromObject(this.ops.get(mnemo)));
-        }
-        return true;
+    public HelperMocker namedAs(final String name) {
+        Mockito.doReturn(Urn.create(name)).when(this.helper).name();
+        return this;
+    }
+
+    /**
+     * With this name.
+     * @param name The name
+     * @return This object
+     */
+    public HelperMocker namedAs(final Urn name) {
+        Mockito.doReturn(name).when(this.helper).name();
+        return this;
     }
 
     /**
@@ -87,11 +113,24 @@ public final class HelperMocker implements Answer {
     }
 
     /**
+     * With this location.
+     * @param url The location
+     * @return This object
+     */
+    public HelperMocker withLocation(final String url) {
+        try {
+            Mockito.doReturn(new URL(url)).when(this.helper).location();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        return this;
+    }
+
+    /**
      * Mock it.
      * @return This object
      */
     public Helper mock() {
-        Mockito.doReturn(this.ops.keySet()).when(this.helper).supports();
         return this.helper;
     }
 

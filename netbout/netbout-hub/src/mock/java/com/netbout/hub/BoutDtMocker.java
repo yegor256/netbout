@@ -26,11 +26,11 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.TxBuilder;
 import com.netbout.spi.Urn;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 import org.mockito.Mockito;
 
 /**
@@ -43,7 +43,7 @@ public final class BoutDtMocker {
     /**
      * The object.
      */
-    private final transient BoutDt bout = Mockito.mock(BoutDt.class);
+    private final transient BoutDt bout;
 
     /**
      * Participants.
@@ -52,8 +52,42 @@ public final class BoutDtMocker {
         new ArrayList<ParticipantDt>();
 
     /**
+     * Messages.
+     */
+    private final transient List<MessageDt> messages =
+        new ArrayList<MessageDt>();
+
+    /**
+     * Public ctor.
+     */
+    public BoutDtMocker() {
+        this(Mockito.mock(BoutDt.class));
+        this.withNumber(Math.abs(new Random().nextLong()));
+    }
+
+    /**
+     * Private copy ctor.
+     * @param mock The mock to use
+     */
+    private BoutDtMocker(final BoutDt mock) {
+        this.bout = mock;
+        Mockito.doReturn(this.participants).when(this.bout).getParticipants();
+        Mockito.doReturn(this.messages).when(this.bout).getMessages();
+    }
+
+    /**
+     * With this number.
+     * @param num The number
+     * @return This object
+     */
+    public BoutDtMocker withNumber(final Long num) {
+        Mockito.doReturn(num).when(this.bout).getNumber();
+        return this;
+    }
+
+    /**
      * With this participant on board.
-     * @param identity The participant
+     * @param participant The participant
      * @return This object
      */
     public BoutDtMocker withParticipant(final ParticipantDt participant) {
@@ -62,13 +96,31 @@ public final class BoutDtMocker {
     }
 
     /**
+     * With this message on board.
+     * @param msg The message
+     * @return This object
+     */
+    public BoutDtMocker withMessage(final MessageDt msg) {
+        this.messages.add(msg);
+        return this;
+    }
+
+    /**
+     * Copy it.
+     * @return New mocker
+     */
+    public BoutDtMocker but() {
+        final BoutDtMocker copy = new BoutDtMocker(this.bout);
+        copy.participants.addAll(this.participants);
+        copy.messages.addAll(this.messages);
+        return copy;
+    }
+
+    /**
      * Build it.
      * @return The bout
      */
     public BoutDt mock() {
-        Mockito.doReturn(this.participants).when(this.bout).getParticipants();
-        Mockito.doReturn(new ParticipantDtMocker().mock()).when(this.bout)
-            .addParticipant(Mockito.any(Urn.class));
         return this.bout;
     }
 

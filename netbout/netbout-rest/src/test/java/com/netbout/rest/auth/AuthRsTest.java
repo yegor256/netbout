@@ -34,12 +34,9 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.test.ContainerMocker;
 import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -66,12 +63,13 @@ public final class AuthRsTest {
                 Matchers.containsString(MediaType.APPLICATION_XML)
             )
             .returnBody(
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "<page><identity><authority>?</authority><name>%s</name><photo>%s</photo></identity></page>",
-                    iname,
-                    photo
-                )
+                // @checkstyle StringLiteralsConcatenation (6 lines)
+                "<page><identity>"
+                + "<aliases><alias>hello</alias></aliases>"
+                + "<authority>http://localhost</authority>"
+                + String.format("<name>%s</name>", iname)
+                + String.format("<photo>%s</photo>", photo)
+                + "</identity></page>"
             )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
@@ -81,7 +79,7 @@ public final class AuthRsTest {
             .mock();
         final AuthRs rest = new ResourceMocker()
             .withIdentity(identity)
-            .withNamespaceURL(this.normalize(container.home()))
+            .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
@@ -100,23 +98,9 @@ public final class AuthRsTest {
             .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
             .mock();
         final AuthRs rest = new ResourceMocker()
-            .withNamespaceURL(this.normalize(container.home()))
+            .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
         rest.auth(new Urn("foo", "test"), "");
-    }
-
-    /**
-     * It's a bug in ReXSL.
-     * @param uri The URI to normalize
-     * @return Normal URL
-     * @throws Exception If some problem
-     */
-    private URL normalize(final URI uri) throws Exception {
-        return UriBuilder
-            .fromUri(uri)
-            .path("/")
-            .build()
-            .toURL();
     }
 
 }

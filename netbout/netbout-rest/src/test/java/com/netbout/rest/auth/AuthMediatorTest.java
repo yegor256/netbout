@@ -28,14 +28,10 @@ package com.netbout.rest.auth;
 
 import com.netbout.hub.UrnResolver;
 import com.netbout.hub.UrnResolverMocker;
-import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.rexsl.test.ContainerMocker;
-import java.net.URI;
-import java.net.URL;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -62,38 +58,49 @@ public final class AuthMediatorTest {
                 Matchers.containsString(MediaType.APPLICATION_XML)
             )
             .returnBody(
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "<page><identity><authority>?</authority><name>%s</name><photo>%s</photo></identity></page>",
-                    iname,
-                    photo
-                )
+                // @checkstyle StringLiteralsConcatenation (6 lines)
+                "<page><identity>"
+                + "<aliases><alias>hello</alias></aliases>"
+                + "<authority>http://localhost</authority>"
+                + String.format("<name>%s</name>", iname)
+                + String.format("<photo>%s</photo>", photo)
+                + "</identity></page>"
             )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
         final UrnResolver resolver = new UrnResolverMocker()
-            .resolveAs(FacebookRs.NAMESPACE, this.normalize(container.home()))
+            .resolveAs(FacebookRs.NAMESPACE, container.home().toURL())
             .mock();
-        final Identity identity = new AuthMediator(resolver)
-            .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret");
+        final RemoteIdentity identity = new AuthMediator(resolver)
+            .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-1");
+        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(iname));
         MatcherAssert.assertThat(
-            identity.name(),
-            Matchers.equalTo(iname)
+            identity.photo().toString(),
+            Matchers.equalTo(photo)
+        );
+        MatcherAssert.assertThat(
+            identity.aliases().size(),
+            Matchers.equalTo(1)
         );
     }
 
     /**
-     * It's a bug in ReXSL.
-     * @param uri The URI to normalize
-     * @return Normal URL
-     * @throws Exception If some problem
+     * AuthMediator can handle broken input.
+     * @throws Exception If there is some problem inside
      */
-    private URL normalize(final URI uri) throws Exception {
-        return UriBuilder
-            .fromUri(uri)
-            .path("/")
-            .build()
-            .toURL();
+    @Test(expected = IllegalStateException.class)
+    public void throwsExceptionWithBrokenInput() throws Exception {
+        final ContainerMocker container = new ContainerMocker()
+            // @checkstyle LineLength (1 line)
+            .returnBody("<page><identity><name>urn:void:</name></identity></page>")
+            .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
+            .mock();
+        final UrnResolver resolver = new UrnResolverMocker()
+            .resolveAs(FacebookRs.NAMESPACE, container.home().toURL())
+            .mock();
+        final RemoteIdentity identity = new AuthMediator(resolver)
+            .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-2");
+        identity.name();
     }
 
 }

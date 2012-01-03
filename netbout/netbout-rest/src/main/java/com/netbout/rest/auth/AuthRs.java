@@ -32,6 +32,7 @@ import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
+import com.netbout.spi.client.RestSession;
 import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
 import javax.ws.rs.GET;
@@ -71,7 +72,7 @@ public final class AuthRs extends AbstractRs {
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())
-            .header("Netbout-auth", new Cryptor().encrypt(identity))
+            .header(RestSession.AUTH_HEADER, new Cryptor().encrypt(identity))
             .build();
     }
 
@@ -83,7 +84,7 @@ public final class AuthRs extends AbstractRs {
      */
     private Identity authenticate(final Urn iname,
         final String secret) {
-        Identity remote;
+        RemoteIdentity remote;
         try {
             remote = new AuthMediator(this.hub().resolver())
                 .authenticate(iname, secret);
@@ -93,14 +94,10 @@ public final class AuthRs extends AbstractRs {
         }
         Identity identity;
         try {
-            identity = this.hub().identity(iname);
+            identity = remote.findIn(this.hub());
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new LoginRequiredException(this, ex);
         }
-        for (String alias : remote.aliases()) {
-            identity.alias(alias);
-        }
-        identity.setPhoto(remote.photo());
         return identity;
     }
 

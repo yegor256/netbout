@@ -45,7 +45,7 @@ import java.util.List;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class HubBout implements Bout {
+public final class HubBout implements Bout, Comparable<Bout> {
 
     /**
      * The hub.
@@ -72,6 +72,20 @@ public final class HubBout implements Bout {
         this.hub = ihub;
         this.viewer = idnt;
         this.data = dat;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Bout bout) {
+        final List<Message> mine = this.messages("");
+        final List<Message> his = bout.messages("");
+        int result = 0;
+        if (!mine.isEmpty() && !his.isEmpty()) {
+            result = mine.get(0).date().compareTo(his.get(0).date());
+        }
+        return result;
     }
 
     /**
@@ -171,11 +185,11 @@ public final class HubBout implements Bout {
     public List<Message> messages(final String query) {
         final List<MessageDt> datas =
             new ArrayList<MessageDt>(this.data.getMessages());
-        Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
         for (MessageDt msg : datas) {
             messages.add(new HubMessage(this.hub, this.viewer, this, msg));
         }
+        Collections.sort(messages, Collections.reverseOrder());
         Logger.debug(
             this,
             "#messages('%s'): %d message(s) found",
@@ -229,7 +243,7 @@ public final class HubBout implements Bout {
             msg
         );
         message.text();
-        this.hub.bus().make("notify-bout-participants")
+        this.hub.make("notify-bout-participants")
             .arg(this.number())
             .arg(message.number())
             .asDefault(false)

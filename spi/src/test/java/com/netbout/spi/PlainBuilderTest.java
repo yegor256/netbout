@@ -75,9 +75,10 @@ public final class PlainBuilderTest {
                 new Object[] {""},
                 new Object[] {"a"},
                 new Object[] {"some text: 8(&^%$,:;,\"/\\+ "},
+                new Object[] {"\u043F\u0440\u0438\u0432\u0435\u0442"},
                 new Object[] {new Date()},
                 new Object[] {new Urn("urn:foo:test")},
-                new Object[] {new Urn("bar", "&^%$#@\u8514")},
+                new Object[] {new Urn("bar", "&^%$#@\u8514\u043F")},
                 new Object[] {new URL("http://localhost/test")},
                 new Object[] {new Date(Math.abs(random.nextLong()))},
                 new Object[] {true},
@@ -88,11 +89,14 @@ public final class PlainBuilderTest {
                     ),
                 },
                 new Object[]{Arrays.asList(new Boolean[]{true, false}), },
+                new Object[]{Arrays.asList(new Boolean[]{}), },
                 new Object[] {
                     Arrays.asList(
-                        new String[]{"some text", "another text;;;", }
+                        new String[]{"some text", "another text;;;\u043F", }
                     ),
                 },
+                new Object[] {Arrays.asList(new String[]{"\u043F\u0440"})},
+                new Object[] {Arrays.asList(new String[]{"\u043F", "\u0440"})},
             }
         );
     }
@@ -106,8 +110,8 @@ public final class PlainBuilderTest {
         final Plain<?> plain = PlainBuilder.fromObject(this.data);
         final String text = plain.toString();
         MatcherAssert.assertThat(
-            (Plain) PlainBuilder.fromText(text),
-            Matchers.equalTo((Plain) plain)
+            ((Plain) PlainBuilder.fromText(text)).value(),
+            Matchers.equalTo(((Plain) plain).value())
         );
     }
 

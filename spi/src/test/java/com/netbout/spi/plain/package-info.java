@@ -27,37 +27,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi.client;
-
-import com.sun.jersey.api.client.ClientResponse;
-import java.util.Formattable;
-import java.util.Formatter;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
- * Test case for {@link ClientResponseDecor}.
+ * Plain implementations, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ClientResponseDecorTest {
-
-    /**
-     * BoutMocker can assign title to the bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void canHaveATitleMocked() throws Exception {
-        final ClientResponse response = new ClientResponseMocker()
-            .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML)
-            .mock();
-        final Formattable decor = new ClientResponseDecor(response);
-        final Appendable dest = Mockito.mock(Appendable.class);
-        final Formatter fmt = new Formatter(dest);
-        decor.formatTo(fmt, 0, 0, 0);
-        Mockito.verify(dest).append("\tContent-Type: text/xml\n");
-    }
-
-}
+package com.netbout.spi.plain;

@@ -29,10 +29,9 @@ package com.netbout.db;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
-import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
 /**
  * Test case of {@link StatsFarm}.
@@ -59,7 +58,7 @@ public final class StatsFarmTest {
         final String xml = this.farm.renderStageXml(bout, identity.name(), "");
         MatcherAssert.assertThat(
             XhtmlConverter.the(xml),
-            XmlMatchers.hasXPath("/data/summary")
+            XhtmlMatchers.hasXPath("/data/summary")
         );
     }
 
@@ -76,11 +75,7 @@ public final class StatsFarmTest {
         final String xsl = this.farm.renderStageXsl(bout, identity.name());
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(
-                "/xsl:stylesheet",
-                new SimpleNamespaceContext()
-                    .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
-            )
+            XhtmlMatchers.hasXPath("/xsl:stylesheet")
         );
     }
 

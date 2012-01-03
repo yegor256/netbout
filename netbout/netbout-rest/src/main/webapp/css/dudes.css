@@ -28,20 +28,41 @@
 /* row of photos and names */
 .dudes {
     position: relative;
-    height: 75px;
+    height: 5em;
 }
 
     .dudes .dude {
         position: absolute;
-        font-size: 0.8em;
     }
 
         .dudes .dude img {
-            height: 50px;
+            height: 5em;
+            width: 5em;
             display: block;
+            box-shadow: 0.1em 0.1em 0.1em gray;
+            -moz-box-shadow: 0.1em 0.1em 0.1em gray;
+            -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
+            -o-box-shadow: 0.1em 0.1em 0.1em gray;
         }
 
-        .dudes .dude img.pending {
-            opacity : 0.4;
+            .dudes .dude img.pending {
+                opacity: 0.4;
+            }
+
+    .dudes .bar {
+        position: absolute;
+        top: 5em;
+        left: 0;
+        background-color: #f3f3f1;
+        box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
+        -moz-box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
+        -webkit-box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
+        -o-box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
+        padding: 0.3em 1em 0.3em 0.5em;
+        display: none;
+    }
+
+        .dudes .bar span {
+            font-size: 1.4em;
         }
 

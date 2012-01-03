@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.bus.TxBuilder;
 import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
@@ -94,8 +95,8 @@ public final class DefaultHub implements Hub {
      * {@inheritDoc}
      */
     @Override
-    public Bus bus() {
-        return this.ibus;
+    public TxBuilder make(final String mnemo) {
+        return this.ibus.make(mnemo);
     }
 
     /**
@@ -154,7 +155,7 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public void promote(final Identity identity, final Helper helper) {
-        this.bus().register(helper);
+        this.ibus.register(helper);
         Identity existing;
         try {
             existing = this.identity(identity.name());
@@ -165,12 +166,12 @@ public final class DefaultHub implements Hub {
         this.save(helper);
         Logger.info(
             this,
-            "#promote('%s', '%s'): replaced existing identity (%s)",
+            "#promote('%s', '%[type]s'): replaced existing identity (%[type]s)",
             identity.name(),
-            helper.getClass().getName(),
-            existing.getClass().getName()
+            helper,
+            existing
         );
-        this.bus().make("identity-promoted")
+        this.make("identity-promoted")
             .synchronously()
             .arg(identity.name())
             .arg(helper.location())
@@ -184,7 +185,7 @@ public final class DefaultHub implements Hub {
     @Override
     public Set<Identity> findByKeyword(final String keyword) {
         final Set<Identity> found = new HashSet<Identity>();
-        final List<Urn> names = this.bus()
+        final List<Urn> names = this
             .make("find-identities-by-keyword")
             .synchronously()
             .arg(keyword)
@@ -213,7 +214,7 @@ public final class DefaultHub implements Hub {
      */
     private void save(final Identity identity) {
         this.all.add(identity);
-        this.bus().make("identity-mentioned")
+        this.make("identity-mentioned")
             .synchronously()
             .arg(identity.name())
             .asDefault(true)

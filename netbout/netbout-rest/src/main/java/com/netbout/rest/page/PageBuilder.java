@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.page;
 
+import com.rexsl.core.Schema;
 import com.rexsl.core.Stylesheet;
-import com.rexsl.core.XmlSchema;
 import com.ymock.util.Logger;
 import java.net.URI;
 import java.util.ArrayList;
@@ -114,9 +114,9 @@ public final class PageBuilder {
         Logger.debug(
             PageBuilder.class,
             // @checkstyle LineLength (1 line)
-            "#build(%s): page of class %s created",
+            "#build(%s): page of class %[type]s created",
             base.getName(),
-            page.getClass().getName()
+            page
         );
         return page;
     }
@@ -172,7 +172,7 @@ public final class PageBuilder {
                 this.make(Stylesheet.class, this.xsl.toString(), file)
             );
             attribute.addAnnotation(
-                this.make(XmlSchema.class, this.xsd, file)
+                this.make(Schema.class, this.xsd, file)
             );
             for (Annotation existing : this.annotations(ctc, parent)) {
                 attribute.addAnnotation(existing);

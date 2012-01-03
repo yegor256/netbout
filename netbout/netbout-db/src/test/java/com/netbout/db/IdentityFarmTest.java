@@ -84,12 +84,14 @@ public final class IdentityFarmTest {
             .withAlias("martin.fowler@example.com")
             .withAlias("Martin Fowler")
             .withAlias("marty")
+            .withAlias("\u0443\u0440\u0430!")
             .mock();
         final String[] keywords = new String[] {
             "martin",
             "@example.com",
             "Fowler",
             "martin fowler",
+            "\u0443\u0440\u0430",
         };
         for (String keyword : keywords) {
             MatcherAssert.assertThat(
