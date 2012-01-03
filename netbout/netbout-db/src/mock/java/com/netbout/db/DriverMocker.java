@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import org.mockito.Mockito;
@@ -53,7 +54,6 @@ public final class DriverMocker {
             Mockito.doAnswer(
                 new Answer() {
                     public Object answer(final InvocationOnMock invocation) {
-                        System.out.println("eeee");
                         final String url =
                             (String) invocation.getArguments()[0];
                         return url.startsWith(String.format("jdbc:%s:", mnemo));
@@ -64,6 +64,26 @@ public final class DriverMocker {
             throw new IllegalArgumentException(ex);
         }
         Mockito.doReturn(true).when(this.driver).jdbcCompliant();
+        Mockito.doReturn(1).when(this.driver).getMajorVersion();
+        Mockito.doReturn(0).when(this.driver).getMinorVersion();
+        this.withConnection(new ConnectionMocker().mock());
+    }
+
+    /**
+     * With this connection on board.
+     * @param conn The connection
+     * @return This object
+     */
+    public DriverMocker withConnection(final Connection conn) {
+        try {
+            Mockito.doReturn(conn).when(this.driver).connect(
+                Mockito.anyString(),
+                Mockito.any(java.util.Properties.class)
+            );
+        } catch (java.sql.SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        return this;
     }
 
     /**
