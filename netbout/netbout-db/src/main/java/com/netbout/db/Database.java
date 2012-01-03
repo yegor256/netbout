@@ -61,7 +61,7 @@ final class Database {
     /**
      * Private ctor.
      */
-    private Database() {
+    protected Database() {
         this.source = this.datasource();
         try {
             this.update(this.connect());
@@ -84,7 +84,7 @@ final class Database {
      * @return New JDBC connection
      * @throws SQLException If some SQL error
      */
-    private Connection connect() throws SQLException {
+    protected Connection connect() throws SQLException {
         return this.source.getConnection();
     }
 

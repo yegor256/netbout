@@ -165,7 +165,7 @@
                         </xsl:attribute>
                     </xsl:if>
                 </input>
-                <input value="invite" type="submit" hidden="true"/>
+                <input value="invite" type="submit" style="display: none;"/>
             </form>
             <xsl:if test="/page/invitees">
                 <ul id="invite-list">

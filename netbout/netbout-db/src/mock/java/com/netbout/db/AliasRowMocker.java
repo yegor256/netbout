@@ -63,20 +63,22 @@ public final class AliasRowMocker {
      * With this name.
      * @param name The alias
      * @return This object
-     * @throws Exception If there is some problem inside
      */
-    public AliasRowMocker namedAs(final String name) throws Exception {
+    public AliasRowMocker namedAs(final String name) {
         this.alias = name;
         return this;
     }
 
     /**
      * Mock it and return its text.
-     * @throws Exception If there is some problem inside
      */
-    public String mock() throws Exception {
+    public String mock() {
         final AliasFarm afarm = new AliasFarm();
-        afarm.addedIdentityAlias(this.identity, this.alias);
+        try {
+            afarm.addedIdentityAlias(this.identity, this.alias);
+        } catch (java.sql.SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return this.alias;
     }
 

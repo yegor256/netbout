@@ -37,6 +37,8 @@
     <xsl:include href="/xsl/templates.xsl" />
 
     <xsl:template match="/">
+        <!-- see http://stackoverflow.com/questions/3387127 -->
+        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <xsl:apply-templates select="page" />
     </xsl:template>
 
@@ -149,7 +151,7 @@
                                 </xsl:attribute>
                             </xsl:if>
                         </input>
-                        <input value="" type="submit" hidden="true"/>
+                        <input value="" type="submit" style="display: none;"/>
                     </form>
                 </xsl:if>
             </div>

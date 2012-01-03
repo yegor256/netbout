@@ -46,21 +46,24 @@ public final class BoutRowMocker {
      * With this participant on board.
      * @param name The name
      * @return THis object
-     * @throws Exception If there is some problem inside
      */
-    public BoutRowMocker withParticipant(final Urn name) throws Exception {
+    public BoutRowMocker withParticipant(final Urn name) {
         this.participants.add(name);
         return this;
     }
 
     /**
      * Mock it and return its number.
-     * @throws Exception If there is some problem inside
      */
-    public Long mock() throws Exception {
+    public Long mock() {
         final BoutFarm farm = new BoutFarm();
-        final Long bout = farm.getNextBoutNumber();
-        farm.startedNewBout(bout);
+        Long bout;
+        try {
+            bout = farm.getNextBoutNumber();
+            farm.startedNewBout(bout);
+        } catch (java.sql.SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         for (Urn name : this.participants) {
             new ParticipantRowMocker(bout).namedAs(name).mock();
         }

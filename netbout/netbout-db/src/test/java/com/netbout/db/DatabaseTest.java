@@ -26,6 +26,9 @@
  */
 package com.netbout.db;
 
+import com.rexsl.core.Manifests;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -43,7 +46,14 @@ public final class DatabaseTest {
      */
     @Test
     public void canReconnectOnAlreadyClosedConnection() throws Exception {
-        // MatcherAssert.assertThat(aliases, Matchers.hasItem(alias));
+        Manifests.inject("Netbout-JdbcDriver", new DriverMocker("foo").mock());
+        Manifests.inject("Netbout-JdbcUrl", "jdbc:foo:");
+        final Database database = new Database();
+        final Connection conn = database.connect();
+        final PreparedStatement stmt = conn.prepareStatement(
+            "SELECT name FROM identity"
+        );
+        stmt.execute();
     }
 
 }

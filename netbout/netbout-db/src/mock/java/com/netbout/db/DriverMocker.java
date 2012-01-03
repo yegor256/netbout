@@ -26,71 +26,57 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
- * Mocker of {@code PARTICIPANT} row in a database.
+ * Mocker of {@code Driver}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ParticipantRowMocker {
+public final class DriverMocker {
 
     /**
-     * The bout it is related to.
+     * The mock.
      */
-    private final transient Long bout;
-
-    /**
-     * The name of it.
-     */
-    private transient Urn identity;
+    private final transient Driver driver = Mockito.mock(Driver.class);
 
     /**
      * Public ctor.
-     * @param number The bout
+     * @param mnemo Driver mnemo name
      */
-    public ParticipantRowMocker(final Long number) {
-        this.identity = new UrnMocker().mock();
-        this.bout = number;
-    }
-
-    /**
-     * With this name.
-     * @param name The name of participant
-     * @return This object
-     */
-    public ParticipantRowMocker namedAs(final String name) {
-        return this.namedAs(Urn.create(name));
-    }
-
-    /**
-     * With this name.
-     * @param name The name of participant
-     * @return This object
-     */
-    public ParticipantRowMocker namedAs(final Urn name) {
-        this.identity = name;
-        return this;
-    }
-
-    /**
-     * Mock it and return its name.
-     */
-    public Urn mock() {
-        final IdentityFarm ifarm = new IdentityFarm();
+    public DriverMocker(final String mnemo) {
         try {
-            ifarm.identityMentioned(this.identity);
+            Mockito.doAnswer(
+                new Answer() {
+                    public Object answer(final InvocationOnMock invocation) {
+                        System.out.println("eeee");
+                        final String url =
+                            (String) invocation.getArguments()[0];
+                        return url.startsWith(String.format("jdbc:%s:", mnemo));
+                    }
+                }
+            ).when(this.driver).acceptsURL(Mockito.anyString());
         } catch (java.sql.SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
-        final ParticipantFarm farm = new ParticipantFarm();
+        Mockito.doReturn(true).when(this.driver).jdbcCompliant();
+    }
+
+    /**
+     * Mock it and register in DriverManager.
+     * @return Driver class name
+     */
+    public String mock() {
         try {
-            farm.addedBoutParticipant(this.bout, this.identity);
+            DriverManager.registerDriver(this.driver);
         } catch (java.sql.SQLException ex) {
             throw new IllegalArgumentException(ex);
         }
-        return identity;
+        return this.driver.getClass().getName();
     }
 
 }
