@@ -51,7 +51,7 @@ final class Database {
     /**
      * Singleton instance.
      */
-    private static final Database INSTANCE = new Database();
+    private static final Database INSTANCE = new Database(true);
 
     /**
      * Datasource to use.
@@ -60,13 +60,16 @@ final class Database {
 
     /**
      * Private ctor.
+     * @param updt Shall we update database schema? (used in unit test)
      */
-    protected Database() {
+    protected Database(final boolean updt) {
         this.source = this.datasource();
-        try {
-            this.update(this.connect());
-        } catch (SQLException ex) {
-            throw new IllegalStateException(ex);
+        if (updt) {
+            try {
+                this.update(this.connect());
+            } catch (SQLException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
     }
 

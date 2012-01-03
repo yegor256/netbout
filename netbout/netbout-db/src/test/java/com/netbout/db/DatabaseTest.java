@@ -48,7 +48,7 @@ public final class DatabaseTest {
     public void canReconnectOnAlreadyClosedConnection() throws Exception {
         Manifests.inject("Netbout-JdbcDriver", new DriverMocker("foo").mock());
         Manifests.inject("Netbout-JdbcUrl", "jdbc:foo:");
-        final Database database = new Database();
+        final Database database = new Database(false);
         final Connection conn = database.connect();
         final PreparedStatement stmt = conn.prepareStatement(
             "SELECT name FROM identity"

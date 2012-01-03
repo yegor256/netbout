@@ -29,6 +29,8 @@ package com.netbout.db;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.DriverPropertyInfo;
+import java.util.Properties;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -54,12 +56,36 @@ public final class DriverMocker {
             Mockito.doAnswer(
                 new Answer() {
                     public Object answer(final InvocationOnMock invocation) {
+                        System.out.println("acceptsURL()");
                         final String url =
                             (String) invocation.getArguments()[0];
                         return url.startsWith(String.format("jdbc:%s:", mnemo));
                     }
                 }
             ).when(this.driver).acceptsURL(Mockito.anyString());
+            Mockito.doAnswer(
+                new Answer() {
+                    public Object answer(final InvocationOnMock invocation) {
+                        System.out.println("getPropertyInfo()");
+                        final Properties props =
+                            (Properties) invocation.getArguments()[0];
+                        final DriverPropertyInfo[] info =
+                            new DriverPropertyInfo[props.size()];
+                        int pos = 0;
+                        for (Object name : props.keySet()) {
+                            info[pos] = new DriverPropertyInfo(
+                                props.getProperty((String) name),
+                                ""
+                            );
+                            pos += 1;
+                        }
+                        return info;
+                    }
+                }
+            ).when(this.driver).getPropertyInfo(
+                Mockito.anyString(),
+                Mockito.any(java.util.Properties.class)
+            );
         } catch (java.sql.SQLException ex) {
             throw new IllegalArgumentException(ex);
         }

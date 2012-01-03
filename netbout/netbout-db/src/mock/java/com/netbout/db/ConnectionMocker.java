@@ -27,6 +27,10 @@
 package com.netbout.db;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -48,17 +52,20 @@ public final class ConnectionMocker {
      * Public ctor.
      */
     public ConnectionMocker() {
+        try {
+            Mockito.doReturn(this.meta()).when(this.connection).getMetaData();
+            final Statement stmt = Mockito.mock(Statement.class);
+            Mockito.doReturn(stmt).when(this.connection).createStatement();
+            final PreparedStatement pstmt =
+                Mockito.mock(PreparedStatement.class);
+            Mockito.doReturn(pstmt).when(this.connection)
+                .prepareStatement(Mockito.anyString());
+            final ResultSet set = Mockito.mock(ResultSet.class);
+            Mockito.doReturn(set).when(stmt).executeQuery(Mockito.anyString());
+        } catch (java.sql.SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
-
-    // /**
-    //  * With this connection on board.
-    //  * @param conn The connection
-    //  * @return This object
-    //  */
-    // public DriverMocker withConnection(final Connection conn) {
-    //     Mockito.doReturn(conn).when(this.driver).connect();
-    //     return this;
-    // }
 
     /**
      * Mock it.
@@ -66,6 +73,29 @@ public final class ConnectionMocker {
      */
     public Connection mock() {
         return this.connection;
+    }
+
+    /**
+     * Make database meta data.
+     * @return The data
+     */
+    private DatabaseMetaData meta() {
+        final DatabaseMetaData meta = Mockito.mock(DatabaseMetaData.class);
+        try {
+            Mockito.doReturn("mysql").when(meta).getDatabaseProductName();
+            Mockito.doReturn(this.connection).when(meta).getConnection();
+            Mockito.doReturn("jdbc:foo").when(meta).getURL();
+            Mockito.doReturn(Mockito.mock(ResultSet.class))
+                .when(meta).getTables(
+                    Mockito.anyString(),
+                    Mockito.anyString(),
+                    Mockito.anyString(),
+                    (String[]) Mockito.anyObject()
+                );
+        } catch (java.sql.SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        return meta;
     }
 
 }
