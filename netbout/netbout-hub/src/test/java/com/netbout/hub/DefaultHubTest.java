@@ -81,12 +81,12 @@ public final class DefaultHubTest {
         final Bus bus = new BusMocker()
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .mock();
-        final Hub hub = new DefaultHub(bus);
+        final HubStats stats = new DefaultHub(bus);
         final Document doc = DocumentBuilderFactory
             .newInstance()
             .newDocumentBuilder()
             .newDocument();
-        doc.appendChild(hub.stats(doc));
+        doc.appendChild(stats.stats(doc));
         MatcherAssert.assertThat(
             XmlConverters.the(doc),
             XmlMatchers.hasXPath("/hub")

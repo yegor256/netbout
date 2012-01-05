@@ -37,12 +37,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -112,9 +115,14 @@ public final class StatsFarm implements IdentityAware {
                 .newDocumentBuilder().newDocument();
             final Element root = doc.createElement("data");
             doc.appendChild(root);
-            final Element summary = doc.createElement("summary");
-            root.appendChild(summary);
-            summary.appendChild(doc.createTextNode(this.summary()));
+            final Element totals = doc.createElement("totals");
+            root.appendChild(totals);
+            for (Map.Entry<String, String> entry : this.totals().entrySet()) {
+                final Element total = doc.createElement("total");
+                total.setAttribute("table", entry.getKey());
+                total.appendChild(doc.createTextNode(entry.getValue()));
+                totals.appendChild(total);
+            }
             final Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer();
             final StringWriter writer = new StringWriter();
@@ -145,7 +153,8 @@ public final class StatsFarm implements IdentityAware {
         String xsl = null;
         if (this.identity.name().equals(stage)) {
             xsl = IOUtils.toString(
-                this.getClass().getResourceAsStream("stage.xsl")
+                this.getClass().getResourceAsStream("stage.xsl"),
+                CharEncoding.UTF_8
             );
             Logger.debug(
                 this,
@@ -158,19 +167,28 @@ public final class StatsFarm implements IdentityAware {
     }
 
     /**
-     * Build text summary.
-     * @return The summary
+     * Build a collection of totals.
+     * @return The totals
      * @throws SQLException If some SQL problem inside
      */
-    private String summary() throws SQLException {
-        final StringBuilder bldr = new StringBuilder();
-        bldr.append(
-            String.format(
-                "%s bouts total%n",
-                this.query("SELECT COUNT(*) FROM bout")
-            )
-        );
-        return bldr.toString();
+    private Map<String, String> totals() throws SQLException {
+        final Map<String, String> totals =
+            new ConcurrentHashMap<String, String>();
+        final String[] tables = new String[] {
+            "identity",
+            "bout",
+            "message",
+            "helper",
+            "alias",
+            "participant",
+        };
+        for (String table : tables) {
+            totals.put(
+                table,
+                this.query(String.format("SELECT COUNT(*) FROM %s", table))
+            );
+        }
+        return totals;
     }
 
     /**
@@ -189,10 +207,7 @@ public final class StatsFarm implements IdentityAware {
             try {
                 if (!rset.next()) {
                     throw new IllegalArgumentException(
-                        String.format(
-                            "Nothing for %s",
-                            sql
-                        )
+                        String.format("Nothing for %s", sql)
                     );
                 }
                 result = rset.getString(1);

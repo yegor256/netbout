@@ -53,6 +53,25 @@ public final class ConnectionMocker {
      */
     public ConnectionMocker() {
         try {
+            Mockito.doAnswer(
+                new Answer() {
+                    private boolean closed;
+                    public Object answer(final InvocationOnMock invocation) {
+                        // this.closed = !this.closed;
+                        // return this.closed;
+                        System.out.println("isClosed()");
+                        return false;
+                    }
+                }
+            ).when(this.connection).isClosed();
+            Mockito.doAnswer(
+                new Answer() {
+                    public Object answer(final InvocationOnMock invocation) {
+                        System.out.println("close()");
+                        return false;
+                    }
+                }
+            ).when(this.connection).close();
             Mockito.doReturn(this.meta()).when(this.connection).getMetaData();
             final Statement stmt = Mockito.mock(Statement.class);
             Mockito.doReturn(stmt).when(this.connection).createStatement();

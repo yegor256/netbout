@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,29 +23,25 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+/**
+ * Hub statistics.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
-    version="2.0" exclude-result-prefixes="xs">
+ */
+public interface HubStats {
 
-    <xsl:template match="stage" mode="head">
-        <!-- nothing -->
-    </xsl:template>
+    /**
+     * Create statistics in the given XML document and return their element.
+     * @param doc The document to work in
+     * @return The element just created
+     */
+    Element stats(Document doc);
 
-    <xsl:template match="stage">
-        <p style="white-space: pre-line;">
-            <xsl:for-each select="data/totals/total">
-                <xsl:value-of select="@table"/>
-                <xsl:text>: </xsl:text>
-                <xsl:value-of select="."/>
-                <xsl:text>&#13;</xsl:text>
-            </xsl:for-each>
-        </p>
-    </xsl:template>
-
-</xsl:stylesheet>
+}

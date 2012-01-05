@@ -26,11 +26,16 @@
  */
 package com.netbout.hub.hh;
 
+import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
+import com.netbout.hub.DefaultHub;
+import com.netbout.hub.HubStats;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -46,14 +51,19 @@ public final class StatsFarmTest {
      */
     @Test
     public void rendersStageXml() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final HubStats stats = new DefaultHub(bus);
         final StatsFarm farm = new StatsFarm();
+        farm.setHubStats(stats);
         final Identity identity = new IdentityMocker().mock();
         farm.init(identity);
         final String xml = farm.renderStageXml(1L, identity.name(), "");
         MatcherAssert.assertThat(
             XhtmlConverter.the(xml),
-            XhtmlMatchers.hasXPath("/identities")
-            // XmlMatchers.hasXPath("/hub/identities")
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("/hub/identities"),
+                XhtmlMatchers.hasXPath("/hub/manager/bouts")
+            )
         );
     }
 

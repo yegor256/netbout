@@ -49,28 +49,20 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 final class Database {
 
     /**
-     * Singleton instance.
+     * Singleton instance, lazy loaded in {@link #connection()}.
      */
-    private static final Database INSTANCE = new Database(true);
+    private static Database instance;
 
     /**
      * Datasource to use.
      */
-    private final transient DataSource source;
+    private final transient DataSource source = Database.datasource();
 
     /**
-     * Private ctor.
-     * @param updt Shall we update database schema? (used in unit test)
+     * Protected ctor.
      */
-    protected Database(final boolean updt) {
-        this.source = this.datasource();
-        if (updt) {
-            try {
-                this.update(this.connect());
-            } catch (SQLException ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
+    protected Database() {
+        // empty
     }
 
     /**
@@ -79,7 +71,17 @@ final class Database {
      * @throws SQLException If some SQL error
      */
     public static Connection connection() throws SQLException {
-        return Database.INSTANCE.connect();
+        synchronized (Database.class) {
+            if (Database.instance == null) {
+                Database.instance = new Database();
+                try {
+                    Database.update(Database.instance.connect());
+                } catch (SQLException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+            return Database.instance.connect();
+        }
     }
 
     /**
@@ -95,9 +97,9 @@ final class Database {
      * Create and return JDBC data source.
      * @return The data source
      */
-    private DataSource datasource() {
+    private static DataSource datasource() {
         final PoolableConnectionFactory factory = new PoolableConnectionFactory(
-            this.factory(),
+            Database.factory(),
             new GenericObjectPool(null),
             null,
             "SELECT name FROM identity WHERE name = ''",
@@ -106,7 +108,7 @@ final class Database {
         );
         final DataSource src = new PoolingDataSource(factory.getPool());
         Logger.info(
-            this,
+            Database.class,
             "#datasource(): created %[type]s",
             src
         );
@@ -117,7 +119,7 @@ final class Database {
      * Create and return connection factory.
      * @return The connection factory
      */
-    private ConnectionFactory factory() {
+    private static ConnectionFactory factory() {
         final long start = System.currentTimeMillis();
         final String driver = Manifests.read("Netbout-JdbcDriver");
         try {
@@ -132,7 +134,7 @@ final class Database {
             Manifests.read("Netbout-JdbcPassword")
         );
         Logger.info(
-            this,
+            Database.class,
             "#factory(): created with '%s' at '%s' [%dms]",
             driver,
             url,
@@ -145,7 +147,7 @@ final class Database {
      * Update DB schema to the latest version.
      * @param connection JDBC connection to use
      */
-    private void update(final Connection connection) {
+    private static void update(final Connection connection) {
         final long start = System.currentTimeMillis();
         try {
             final Liquibase liquibase = new Liquibase(
@@ -158,7 +160,7 @@ final class Database {
             throw new IllegalStateException(ex);
         }
         Logger.info(
-            this,
+            Database.class,
             "#update(): updated DB schema [%dms]",
             System.currentTimeMillis() - start
         );

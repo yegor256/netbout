@@ -32,8 +32,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.util.Set;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Hub.
@@ -70,13 +68,6 @@ public interface Hub {
      * @return The manager
      */
     BoutMgr manager();
-
-    /**
-     * Create statistics in the given XML document and return their element.
-     * @param doc The document to work in
-     * @return The element just created
-     */
-    Element stats(Document doc);
 
     /**
      * Promote existing identity to the helper.

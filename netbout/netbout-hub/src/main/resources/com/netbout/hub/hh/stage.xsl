@@ -39,19 +39,19 @@
     </xsl:template>
 
     <xsl:template match="stage">
-        <p>
+        <p style="white-space: pre-line;">
             <xsl:text>identities (</xsl:text>
-            <xsl:value-of select="count(catalog/identities/identity)"/>
+            <xsl:value-of select="count(hub/identities/identity)"/>
             <xsl:text>): </xsl:text>
-            <xsl:for-each select="catalog/identities/identity">
+            <xsl:for-each select="hub/identities/identity">
                 <xsl:if test="position() &gt; 1">
                     <xsl:text>, </xsl:text>
                 </xsl:if>
                 <xsl:value-of select="."/>
             </xsl:for-each>
-            <br/>
+            <xsl:text>&#13;</xsl:text>
             <xsl:text>total bouts: </xsl:text>
-            <xsl:value-of select="catalog/manager/total"/>
+            <xsl:value-of select="hub/manager/bouts"/>
         </p>
     </xsl:template>
 

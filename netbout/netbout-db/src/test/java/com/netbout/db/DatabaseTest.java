@@ -32,6 +32,7 @@ import java.sql.PreparedStatement;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link Database}.
@@ -48,12 +49,15 @@ public final class DatabaseTest {
     public void canReconnectOnAlreadyClosedConnection() throws Exception {
         Manifests.inject("Netbout-JdbcDriver", new DriverMocker("foo").mock());
         Manifests.inject("Netbout-JdbcUrl", "jdbc:foo:");
-        final Database database = new Database(false);
-        final Connection conn = database.connect();
-        final PreparedStatement stmt = conn.prepareStatement(
-            "SELECT name FROM identity"
-        );
-        stmt.execute();
+        final Database database = new Database();
+        for (int step = 0; step < 100; step += 1) {
+            final Connection conn = database.connect();
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT name FROM identity"
+            );
+            stmt.execute();
+            System.out.println("done: " + step);
+        }
     }
 
 }

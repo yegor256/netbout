@@ -32,13 +32,14 @@ import com.netbout.hub.BoutMgr;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
+import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
 import java.util.Random;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.transform.XmlConverters;
 
 /**
@@ -62,8 +63,8 @@ public final class DefaultBoutMgrTest {
             .newDocument();
         doc.appendChild(mgr.stats(doc));
         MatcherAssert.assertThat(
-            XmlConverters.the(doc),
-            XmlMatchers.hasXPath("/manager/total")
+            XhtmlConverter.the(doc),
+            XhtmlMatchers.hasXPath("/manager/total")
         );
     }
 

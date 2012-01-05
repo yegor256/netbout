@@ -42,6 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.UseConcurrentHashMap")
 final class DefaultUrnResolver implements UrnResolver {
 
     /**
@@ -58,7 +59,6 @@ final class DefaultUrnResolver implements UrnResolver {
     /**
      * Namespaces and related URL templates, allocated in slots.
      */
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final transient Map<Urn, Map<String, String>> slots =
         new ConcurrentHashMap<Urn, Map<String, String>>();
 
@@ -119,7 +119,6 @@ final class DefaultUrnResolver implements UrnResolver {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
     public Map<String, String> registered(final Identity owner) {
         this.initialize();
         final Map<String, String> found =
