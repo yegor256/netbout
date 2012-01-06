@@ -64,7 +64,7 @@ public final class DefaultBoutMgrTest {
         doc.appendChild(mgr.stats(doc));
         MatcherAssert.assertThat(
             XhtmlConverter.the(doc),
-            XhtmlMatchers.hasXPath("/manager/total")
+            XhtmlMatchers.hasXPath("/manager/bouts")
         );
     }
 

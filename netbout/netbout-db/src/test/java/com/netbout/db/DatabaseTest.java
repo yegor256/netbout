@@ -56,7 +56,8 @@ public final class DatabaseTest {
                 "SELECT name FROM identity"
             );
             stmt.execute();
-            System.out.println("done: " + step);
+            stmt.close();
+            conn.close();
         }
     }
 

@@ -85,13 +85,13 @@
                             <xsl:text>untitled</xsl:text>
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:if test="@seen &lt; @messages">
-                        <span class="red">
-                            <xsl:value-of select="@messages - @seen"/>
-                            <xsl:text> new</xsl:text>
-                        </span>
-                    </xsl:if>
                 </a>
+                <xsl:if test="@seen &lt; @messages">
+                    <span class="red">
+                        <xsl:value-of select="@messages - @seen"/>
+                        <xsl:text> new</xsl:text>
+                    </span>
+                </xsl:if>
             </div>
             <xsl:apply-templates select="participants" />
         </li>

@@ -130,7 +130,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <rexsl.version>0.2.7</rexsl.version>
+        <rexsl.version since="6 Jan 2012">0.2.9</rexsl.version>
     </properties>
 
     <repositories>
