@@ -53,14 +53,14 @@ import org.w3c.dom.Document;
 public final class StatsFarm implements IdentityAware {
 
     /**
-     * Me.
-     */
-    private transient Identity identity;
-
-    /**
      * Stats from Hub.
      */
     private static HubStats stats;
+
+    /**
+     * Me.
+     */
+    private transient Identity identity;
 
     /**
      * Set data provider.

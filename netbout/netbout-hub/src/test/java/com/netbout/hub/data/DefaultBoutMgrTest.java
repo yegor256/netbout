@@ -40,7 +40,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.xmlmatchers.transform.XmlConverters;
 
 /**
  * Test case of {@link DefaultBoutMgr}.

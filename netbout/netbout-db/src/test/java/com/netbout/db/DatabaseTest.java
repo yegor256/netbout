@@ -29,10 +29,7 @@ package com.netbout.db;
 import com.rexsl.core.Manifests;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link Database}.
@@ -44,20 +41,29 @@ public final class DatabaseTest {
     /**
      * Database can reconnect if connection is lost.
      * @throws Exception If there is some problem inside
+     * @todo #127 This test doesn't reproduce the problem still. I don't know
+     *  what to do here exactly. Looks like the problem is bigger than it looks.
      */
     @Test
     public void canReconnectOnAlreadyClosedConnection() throws Exception {
         Manifests.inject("Netbout-JdbcDriver", new DriverMocker("foo").mock());
         Manifests.inject("Netbout-JdbcUrl", "jdbc:foo:");
         final Database database = new Database();
+        // @checkstyle MagicNumber (1 line)
         for (int step = 0; step < 100; step += 1) {
             final Connection conn = database.connect();
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT name FROM identity"
-            );
-            stmt.execute();
-            stmt.close();
-            conn.close();
+            try {
+                final PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT name FROM identity"
+                );
+                try {
+                    stmt.execute();
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                conn.close();
+            }
         }
     }
 

@@ -171,6 +171,7 @@ public final class StatsFarm implements IdentityAware {
      * @return The totals
      * @throws SQLException If some SQL problem inside
      */
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     private Map<String, String> totals() throws SQLException {
         final Map<String, String> totals =
             new ConcurrentHashMap<String, String>();

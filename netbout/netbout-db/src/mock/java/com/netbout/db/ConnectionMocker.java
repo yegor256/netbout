@@ -55,11 +55,7 @@ public final class ConnectionMocker {
         try {
             Mockito.doAnswer(
                 new Answer() {
-                    private boolean closed;
                     public Object answer(final InvocationOnMock invocation) {
-                        // this.closed = !this.closed;
-                        // return this.closed;
-                        // System.out.println("isClosed()");
                         return false;
                     }
                 }
@@ -67,7 +63,6 @@ public final class ConnectionMocker {
             Mockito.doAnswer(
                 new Answer() {
                     public Object answer(final InvocationOnMock invocation) {
-                        // System.out.println("close()");
                         return false;
                     }
                 }

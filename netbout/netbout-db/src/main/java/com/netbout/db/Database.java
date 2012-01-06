@@ -30,12 +30,14 @@ import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DriverManagerConnectionFactory;
+import org.apache.commons.dbcp.DataSourceConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
@@ -45,6 +47,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class Database {
 
@@ -119,6 +122,7 @@ final class Database {
      * Create and return connection factory.
      * @return The connection factory
      */
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     private static ConnectionFactory factory() {
         final long start = System.currentTimeMillis();
         final String driver = Manifests.read("Netbout-JdbcDriver");
@@ -128,11 +132,21 @@ final class Database {
             throw new IllegalStateException(ex);
         }
         final String url = Manifests.read("Netbout-JdbcUrl");
-        final ConnectionFactory factory = new DriverManagerConnectionFactory(
-            url,
-            Manifests.read("Netbout-JdbcUser"),
-            Manifests.read("Netbout-JdbcPassword")
-        );
+        final Properties props = new Properties();
+        props.setProperty("url", url);
+        props.setProperty("username", Manifests.read("Netbout-JdbcUser"));
+        props.setProperty("password", Manifests.read("Netbout-JdbcPassword"));
+        props.setProperty("testWhileIdle", Boolean.TRUE.toString());
+        props.setProperty("testOnBorrow", Boolean.TRUE.toString());
+        ConnectionFactory factory;
+        try {
+            factory = new DataSourceConnectionFactory(
+                BasicDataSourceFactory.createDataSource(props)
+            );
+        // @checkstyle IllegalCatch (1 line)
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
         Logger.info(
             Database.class,
             "#factory(): created with '%s' at '%s' [%dms]",
