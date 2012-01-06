@@ -39,12 +39,12 @@
     </xsl:template>
 
     <xsl:template match="stage">
-        <p style="white-space: pre-line;">
+        <p>
             <xsl:for-each select="data/totals/total">
                 <xsl:value-of select="@table"/>
                 <xsl:text>: </xsl:text>
                 <xsl:value-of select="."/>
-                <xsl:text>&#13;</xsl:text>
+                <xsl:text>; </xsl:text>
             </xsl:for-each>
         </p>
     </xsl:template>

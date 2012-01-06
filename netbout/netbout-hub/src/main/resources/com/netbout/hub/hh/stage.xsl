@@ -39,7 +39,7 @@
     </xsl:template>
 
     <xsl:template match="stage">
-        <p style="white-space: pre-line;">
+        <p>
             <xsl:text>identities (</xsl:text>
             <xsl:value-of select="count(hub/identities/identity)"/>
             <xsl:text>): </xsl:text>
@@ -49,7 +49,8 @@
                 </xsl:if>
                 <xsl:value-of select="."/>
             </xsl:for-each>
-            <xsl:text>&#13;</xsl:text>
+        </p>
+        <p>
             <xsl:text>total bouts: </xsl:text>
             <xsl:value-of select="hub/manager/bouts"/>
         </p>
