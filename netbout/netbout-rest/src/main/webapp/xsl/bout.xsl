@@ -103,6 +103,7 @@
             <xsl:call-template name="rename" />
         </xsl:if>
         <xsl:call-template name="options" />
+        <xsl:call-template name="stages" />
         <xsl:if test="$participant/@confirmed = 'true'">
             <form id="post" method="post">
                 <xsl:attribute name="action">
@@ -112,7 +113,6 @@
                 <dl><input value="Post new message" type="submit" /></dl>
             </form>
         </xsl:if>
-        <xsl:call-template name="stages" />
         <xsl:apply-templates select="/page/bout/messages/message" />
     </xsl:template>
 

@@ -88,12 +88,10 @@
     <xsl:template name="header">
         <header id="header">
             <div id="left">
-                <a>
+                <a id="logo">
                     <xsl:attribute name="href">
                         <xsl:value-of select="links/link[@rel='home']/@href"/>
                     </xsl:attribute>
-                    <img src="http://img.netbout.com/logo.png"
-                        style="width: 11.3em; height: 2.7em;"/>
                 </a>
                 <form id="search" method="get" role="search">
                     <xsl:attribute name="action">

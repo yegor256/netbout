@@ -43,9 +43,13 @@ textarea {
     text-decoration: none;
 }
 
-a:hover {
+a {
     text-decoration: underline;
 }
+
+    a:hover {
+        text-decoration: underline;
+    }
 
 p {
     margin-top: 0.5em;
