@@ -69,7 +69,7 @@ public final class DefaultBoutMgr implements BoutMgr {
     @Override
     public Element stats(final Document doc) {
         final Element root = doc.createElement("manager");
-        final Element total = doc.createElement("total");
+        final Element total = doc.createElement("bouts");
         total.appendChild(
             doc.createTextNode(String.valueOf(this.bouts.size()))
         );

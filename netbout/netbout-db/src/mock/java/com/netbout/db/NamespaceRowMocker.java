@@ -56,9 +56,8 @@ public final class NamespaceRowMocker {
 
     /**
      * Public ctor.
-     * @throws Exception If there is some problem inside
      */
-    public NamespaceRowMocker() throws Exception {
+    public NamespaceRowMocker() {
         this.identity = new IdentityRowMocker().mock();
     }
 
@@ -66,9 +65,8 @@ public final class NamespaceRowMocker {
      * With this name.
      * @param nam The name
      * @return THis object
-     * @throws Exception If there is some problem inside
      */
-    public NamespaceRowMocker namedAs(final String nam) throws Exception {
+    public NamespaceRowMocker namedAs(final String nam) {
         this.name = nam;
         return this;
     }
@@ -76,10 +74,9 @@ public final class NamespaceRowMocker {
     /**
      * With this owner.
      * @param name The owner
-     * @return THis object
-     * @throws Exception If there is some problem inside
+     * @return This object
      */
-    public NamespaceRowMocker withOwner(final Urn name) throws Exception {
+    public NamespaceRowMocker withOwner(final Urn name) {
         this.identity = name;
         return this;
     }
@@ -88,20 +85,26 @@ public final class NamespaceRowMocker {
      * With this template.
      * @param name The name
      * @return THis object
-     * @throws Exception If there is some problem inside
      */
-    public NamespaceRowMocker withTemplate(final String name) throws Exception {
+    public NamespaceRowMocker withTemplate(final String name) {
         this.template = name;
         return this;
     }
 
     /**
      * Mock it and return its name.
-     * @throws Exception If there is some problem inside
      */
-    public String mock() throws Exception {
+    public String mock() {
         final NamespaceFarm farm = new NamespaceFarm();
-        farm.namespaceWasRegistered(this.identity, this.name, this.template);
+        try {
+            farm.namespaceWasRegistered(
+                this.identity,
+                this.name,
+                this.template
+            );
+        } catch (java.sql.SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return this.name;
     }
 

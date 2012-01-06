@@ -80,6 +80,31 @@ body {
     vertical-align: middle;
 }
 
+    #logo {
+        background-image: url('http://img.netbout.com/logo.png');
+        background-repeat: no-repeat;
+        width: 11.3em;
+        height: 2.7em;
+        margin-right: 2em;
+        display: inline-block;
+        vertical-align: middle;
+        text-decoration: none;
+    }
+
+    /* it is inside the #left sector */
+    #search {
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+    }
+
+        #search-input {
+            display: inline-block;
+            position: relative;
+            width: 16em;
+            vertical-align: middle;
+        }
+
 #right {
     display: table-cell;
     text-align: right;
@@ -117,18 +142,12 @@ body {
 
         #crumbs ul li a {
             color: #4b4250;
+            text-decoration: none;
         }
 
-#search {
-    display: inline-block;
-    vertical-align: middle;
-    position: relative;
-}
-
-    #search-input {
-        position: relative;
-        width: 16em;
-    }
+            #crumbs ul li a:hover {
+                text-decoration: underline;
+            }
 
 /* everything between header and footer */
 #content {

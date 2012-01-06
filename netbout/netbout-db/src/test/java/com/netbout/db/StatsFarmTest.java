@@ -31,6 +31,7 @@ import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -58,7 +59,10 @@ public final class StatsFarmTest {
         final String xml = this.farm.renderStageXml(bout, identity.name(), "");
         MatcherAssert.assertThat(
             XhtmlConverter.the(xml),
-            XhtmlMatchers.hasXPath("/data/summary")
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("/data/totals/total"),
+                XhtmlMatchers.hasXPath("//total[@table='identity']")
+            )
         );
     }
 

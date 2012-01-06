@@ -37,6 +37,8 @@
     <xsl:include href="/xsl/templates.xsl" />
 
     <xsl:template match="/">
+        <!-- see http://stackoverflow.com/questions/3387127 -->
+        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <xsl:apply-templates select="page" />
     </xsl:template>
 
@@ -86,13 +88,27 @@
     <xsl:template name="header">
         <header id="header">
             <div id="left">
-                <a>
+                <a id="logo">
                     <xsl:attribute name="href">
                         <xsl:value-of select="links/link[@rel='home']/@href"/>
                     </xsl:attribute>
-                    <img src="http://img.netbout.com/logo.png"
-                        style="width: 11.3em; height: 2.7em;"/>
                 </a>
+                <form id="search" method="get" role="search">
+                    <xsl:attribute name="action">
+                        <xsl:value-of select="/page/links/link[@rel='self']"/>
+                    </xsl:attribute>
+                    <input name="q" id="search-input" placeholder="Find..."
+                        autocomplete="off" size="10" maxlength="120" required="true">
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="/page/query"/>
+                        </xsl:attribute>
+                        <xsl:if test="/page/query != ''">
+                            <xsl:attribute name="autofocus">
+                                <xsl:text>true</xsl:text>
+                            </xsl:attribute>
+                        </xsl:if>
+                    </input>
+                </form>
             </div>
             <div id="right">
                 <xsl:if test="identity">
@@ -134,23 +150,6 @@
                             </li>
                         </ul>
                     </nav>
-                    <form id="search" method="get" role="search">
-                        <xsl:attribute name="action">
-                            <xsl:value-of select="/page/links/link[@rel='self']"/>
-                        </xsl:attribute>
-                        <input name="q" id="search-input" placeholder="Find..."
-                            autocomplete="off" size="10" maxlength="120" required="true">
-                            <xsl:attribute name="value">
-                                <xsl:value-of select="/page/query"/>
-                            </xsl:attribute>
-                            <xsl:if test="/page/query != ''">
-                                <xsl:attribute name="autofocus">
-                                    <xsl:text>true</xsl:text>
-                                </xsl:attribute>
-                            </xsl:if>
-                        </input>
-                        <input value="" type="submit" hidden="true"/>
-                    </form>
                 </xsl:if>
             </div>
         </header>

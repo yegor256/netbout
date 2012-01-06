@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.bus.Bus;
 import com.netbout.bus.TxBuilder;
 import com.netbout.hub.data.DefaultBoutMgr;
+import com.netbout.hub.hh.StatsFarm;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
@@ -50,7 +51,7 @@ import org.w3c.dom.Element;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class DefaultHub implements Hub {
+public final class DefaultHub implements Hub, HubStats {
 
     /**
      * The bus.
@@ -81,6 +82,7 @@ public final class DefaultHub implements Hub {
         this.ibus = bus;
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
+        StatsFarm.setHubStats(this);
     }
 
     /**

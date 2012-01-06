@@ -26,71 +26,45 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
+import com.rexsl.core.Manifests;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import org.junit.Test;
 
 /**
- * Mocker of {@code PARTICIPANT} row in a database.
+ * Test case of {@link Database}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ParticipantRowMocker {
+public final class DatabaseTest {
 
     /**
-     * The bout it is related to.
+     * Database can reconnect if connection is lost.
+     * @throws Exception If there is some problem inside
+     * @todo #127 This test doesn't reproduce the problem still. I don't know
+     *  what to do here exactly. Looks like the problem is bigger than it looks.
      */
-    private final transient Long bout;
-
-    /**
-     * The name of it.
-     */
-    private transient Urn identity;
-
-    /**
-     * Public ctor.
-     * @param number The bout
-     */
-    public ParticipantRowMocker(final Long number) {
-        this.identity = new UrnMocker().mock();
-        this.bout = number;
-    }
-
-    /**
-     * With this name.
-     * @param name The name of participant
-     * @return This object
-     */
-    public ParticipantRowMocker namedAs(final String name) {
-        return this.namedAs(Urn.create(name));
-    }
-
-    /**
-     * With this name.
-     * @param name The name of participant
-     * @return This object
-     */
-    public ParticipantRowMocker namedAs(final Urn name) {
-        this.identity = name;
-        return this;
-    }
-
-    /**
-     * Mock it and return its name.
-     */
-    public Urn mock() {
-        final IdentityFarm ifarm = new IdentityFarm();
-        try {
-            ifarm.identityMentioned(this.identity);
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
+    @Test
+    public void canReconnectOnAlreadyClosedConnection() throws Exception {
+        Manifests.inject("Netbout-JdbcDriver", new DriverMocker("foo").mock());
+        Manifests.inject("Netbout-JdbcUrl", "jdbc:foo:");
+        final Database database = new Database();
+        // @checkstyle MagicNumber (1 line)
+        for (int step = 0; step < 100; step += 1) {
+            final Connection conn = database.connect();
+            try {
+                final PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT name FROM identity"
+                );
+                try {
+                    stmt.execute();
+                } finally {
+                    stmt.close();
+                }
+            } finally {
+                conn.close();
+            }
         }
-        final ParticipantFarm farm = new ParticipantFarm();
-        try {
-            farm.addedBoutParticipant(this.bout, this.identity);
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        return identity;
     }
 
 }

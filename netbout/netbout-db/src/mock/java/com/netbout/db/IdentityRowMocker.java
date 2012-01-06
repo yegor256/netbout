@@ -52,9 +52,8 @@ public final class IdentityRowMocker {
 
     /**
      * Public ctor.
-     * @throws Exception If there is some problem inside
      */
-    public IdentityRowMocker() throws Exception {
+    public IdentityRowMocker() {
         this.identity = new UrnMocker().mock();
     }
 
@@ -62,19 +61,17 @@ public final class IdentityRowMocker {
      * With this name.
      * @param name The name
      * @return THis object
-     * @throws Exception If there is some problem inside
      */
-    public IdentityRowMocker namedAs(final String name) throws Exception {
-        return this.namedAs(new Urn(name));
+    public IdentityRowMocker namedAs(final String name) {
+        return this.namedAs(Urn.create(name));
     }
 
     /**
      * With this name.
      * @param name The name
      * @return THis object
-     * @throws Exception If there is some problem inside
      */
-    public IdentityRowMocker namedAs(final Urn name) throws Exception {
+    public IdentityRowMocker namedAs(final Urn name) {
         this.identity = name;
         return this;
     }
@@ -83,26 +80,33 @@ public final class IdentityRowMocker {
      * With this alias on board.
      * @param name The alias
      * @return THis object
-     * @throws Exception If there is some problem inside
      */
-    public IdentityRowMocker withAlias(final String name) throws Exception {
+    public IdentityRowMocker withAlias(final String name) {
         this.aliases.add(name);
         return this;
     }
 
     /**
      * Mock it and return its URN.
-     * @throws Exception If there is some problem inside
      */
-    public Urn mock() throws Exception {
+    public Urn mock() {
         final IdentityFarm farm = new IdentityFarm();
-        farm.identityMentioned(this.identity);
-        farm.changedIdentityPhoto(
-            this.identity,
-            new URL(
-                String.format("http://localhost/%d", new Random().nextLong())
-            )
-        );
+        try {
+            farm.identityMentioned(this.identity);
+            farm.changedIdentityPhoto(
+                this.identity,
+                new URL(
+                    String.format(
+                        "http://localhost/%d",
+                        new Random().nextLong()
+                    )
+                )
+            );
+        } catch (java.sql.SQLException ex) {
+            throw new IllegalArgumentException(ex);
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         for (String alias : this.aliases) {
             new AliasRowMocker(this.identity).namedAs(alias).mock();
         }

@@ -30,12 +30,14 @@ import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DriverManagerConnectionFactory;
+import org.apache.commons.dbcp.DataSourceConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
@@ -45,48 +47,53 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class Database {
+final class Database {
+
+    /**
+     * Singleton instance, lazy loaded in {@link #connection()}.
+     */
+    private static Database instance;
 
     /**
      * Datasource to use.
      */
-    private static DataSource source;
+    private final transient DataSource source = Database.datasource();
 
     /**
-     * Reconnect on class initialization.
+     * Protected ctor.
      */
-    static {
-        try {
-            Database.reconnect();
-        } catch (SQLException ex) {
-            throw new IllegalStateException(ex);
+    protected Database() {
+        // empty
+    }
+
+    /**
+     * Convenient method to get a new JDBC connection.
+     * @return New JDBC connection
+     * @throws SQLException If some SQL error
+     */
+    public static Connection connection() throws SQLException {
+        synchronized (Database.class) {
+            if (Database.instance == null) {
+                Database.instance = new Database();
+                try {
+                    Database.update(Database.instance.connect());
+                } catch (SQLException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+            return Database.instance.connect();
         }
     }
 
     /**
-     * Private ctor.
-     */
-    private Database() {
-        // intentionally empty
-    }
-
-    /**
-     * Read next bout number.
-     * @return Next bout number
+     * Create JDBC connection.
+     * @return New JDBC connection
      * @throws SQLException If some SQL error
      */
-    public static Connection connection() throws SQLException {
-        return Database.source.getConnection();
-    }
-
-    /**
-     * Reconnect.
-     * @throws SQLException If some SQL error
-     */
-    public static void reconnect() throws SQLException {
-        Database.source = Database.datasource();
-        Database.update();
+    protected Connection connect() throws SQLException {
+        return this.source.getConnection();
     }
 
     /**
@@ -102,13 +109,20 @@ public final class Database {
             false,
             true
         );
-        return new PoolingDataSource(factory.getPool());
+        final DataSource src = new PoolingDataSource(factory.getPool());
+        Logger.info(
+            Database.class,
+            "#datasource(): created %[type]s",
+            src
+        );
+        return src;
     }
 
     /**
      * Create and return connection factory.
      * @return The connection factory
      */
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     private static ConnectionFactory factory() {
         final long start = System.currentTimeMillis();
         final String driver = Manifests.read("Netbout-JdbcDriver");
@@ -118,11 +132,21 @@ public final class Database {
             throw new IllegalStateException(ex);
         }
         final String url = Manifests.read("Netbout-JdbcUrl");
-        final ConnectionFactory factory = new DriverManagerConnectionFactory(
-            url,
-            Manifests.read("Netbout-JdbcUser"),
-            Manifests.read("Netbout-JdbcPassword")
-        );
+        final Properties props = new Properties();
+        props.setProperty("url", url);
+        props.setProperty("username", Manifests.read("Netbout-JdbcUser"));
+        props.setProperty("password", Manifests.read("Netbout-JdbcPassword"));
+        props.setProperty("testWhileIdle", Boolean.TRUE.toString());
+        props.setProperty("testOnBorrow", Boolean.TRUE.toString());
+        ConnectionFactory factory;
+        try {
+            factory = new DataSourceConnectionFactory(
+                BasicDataSourceFactory.createDataSource(props)
+            );
+        // @checkstyle IllegalCatch (1 line)
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
         Logger.info(
             Database.class,
             "#factory(): created with '%s' at '%s' [%dms]",
@@ -135,19 +159,18 @@ public final class Database {
 
     /**
      * Update DB schema to the latest version.
+     * @param connection JDBC connection to use
      */
-    private static void update() {
+    private static void update(final Connection connection) {
         final long start = System.currentTimeMillis();
         try {
             final Liquibase liquibase = new Liquibase(
                 "com/netbout/db/liquibase.xml",
                 new ClassLoaderResourceAccessor(),
-                new JdbcConnection(Database.source.getConnection())
+                new JdbcConnection(connection)
             );
             liquibase.update("netbout");
         } catch (liquibase.exception.LiquibaseException ex) {
-            throw new IllegalStateException(ex);
-        } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
         Logger.info(

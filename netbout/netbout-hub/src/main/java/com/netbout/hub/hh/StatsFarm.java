@@ -26,6 +26,7 @@
  */
 package com.netbout.hub.hh;
 
+import com.netbout.hub.HubStats;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
@@ -39,6 +40,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.w3c.dom.Document;
 
 /**
@@ -51,9 +53,27 @@ import org.w3c.dom.Document;
 public final class StatsFarm implements IdentityAware {
 
     /**
+     * Stats from Hub.
+     */
+    private static HubStats stats;
+
+    /**
      * Me.
      */
     private transient Identity identity;
+
+    /**
+     * Set data provider.
+     * @param sts The stats
+     */
+    public static void setHubStats(final HubStats sts) {
+        StatsFarm.stats = sts;
+        Logger.debug(
+            StatsFarm.class,
+            "#setHubStats('%[type]s'): injected",
+            sts
+        );
+    }
 
     /**
      * {@inheritDoc}
@@ -101,12 +121,14 @@ public final class StatsFarm implements IdentityAware {
     @Operation("render-stage-xml")
     public String renderStageXml(final Long number, final Urn stage,
         final String place) throws Exception {
+        if (StatsFarm.stats == null) {
+            throw new IllegalArgumentException("HubStats was never injected");
+        }
         String xml = null;
         if (this.identity.name().equals(stage)) {
             final Document doc = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder().newDocument();
-            doc.appendChild(doc.createElement("identities"));
-            // doc.appendChild(this.hub.stats(doc));
+            doc.appendChild(StatsFarm.stats.stats(doc));
             final Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer();
             final StringWriter writer = new StringWriter();
@@ -137,7 +159,8 @@ public final class StatsFarm implements IdentityAware {
         String xsl = null;
         if (this.identity.name().equals(stage)) {
             xsl = IOUtils.toString(
-                this.getClass().getResourceAsStream("stage.xsl")
+                this.getClass().getResourceAsStream("stage.xsl"),
+                CharEncoding.UTF_8
             );
             Logger.debug(
                 this,

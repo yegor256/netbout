@@ -24,45 +24,24 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.db;
+package com.netbout.hub;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Date;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
- * Mocker of {@code MESSAGE} row in a database.
+ * Hub statistics.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MessageRowMocker {
+public interface HubStats {
 
     /**
-     * The bout it is related to.
+     * Create statistics in the given XML document and return their element.
+     * @param doc The document to work in
+     * @return The element just created
      */
-    private final transient Long bout;
-
-    /**
-     * Public ctor.
-     * @param number The bout
-     */
-    public MessageRowMocker(final Long number) {
-        this.bout = number;
-    }
-
-    /**
-     * Mock it and return its number.
-     */
-    public Long mock() {
-        final MessageFarm farm = new MessageFarm();
-        Long number;
-        try {
-            number = farm.createBoutMessage(this.bout);
-            farm.changedMessageDate(number, new Date());
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        return number;
-    }
+    Element stats(Document doc);
 
 }
