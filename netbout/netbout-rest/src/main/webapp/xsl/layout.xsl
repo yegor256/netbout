@@ -110,48 +110,46 @@
                     </input>
                 </form>
             </div>
-            <div id="right">
-                <xsl:if test="identity">
-                    <nav id="crumbs" role="navigation">
-                        <ul>
-                            <li>
-                                <img id="photo">
-                                    <xsl:attribute name="src">
-                                        <xsl:value-of select="identity/photo"/>
-                                    </xsl:attribute>
-                                </img>
-                                <span>
-                                    <xsl:call-template name="alias">
-                                        <xsl:with-param name="alias" select="identity/alias" />
-                                    </xsl:call-template>
+            <xsl:if test="identity">
+                <nav id="right" role="navigation">
+                    <ul>
+                        <li>
+                            <img id="photo">
+                                <xsl:attribute name="src">
+                                    <xsl:value-of select="identity/photo"/>
+                                </xsl:attribute>
+                            </img>
+                            <span>
+                                <xsl:call-template name="alias">
+                                    <xsl:with-param name="alias" select="identity/alias" />
+                                </xsl:call-template>
+                            </span>
+                            <xsl:if test="identity/@helper='true'">
+                                <span><xsl:text>&#160;(h)</xsl:text></span>
+                            </xsl:if>
+                        </li>
+                        <li>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="links/link[@rel='start']/@href"/>
+                                </xsl:attribute>
+                                <span><xsl:text>Start</xsl:text></span>
+                                <span class="red">
+                                    <xsl:text>+</xsl:text>
                                 </span>
-                                <xsl:if test="identity/@helper='true'">
-                                    <span><xsl:text> (helper)</xsl:text></span>
-                                </xsl:if>
-                            </li>
-                            <li>
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:value-of select="links/link[@rel='start']/@href"/>
-                                    </xsl:attribute>
-                                    <span><xsl:text>Start</xsl:text></span>
-                                    <span class="red">
-                                        <xsl:text>+</xsl:text>
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:value-of select="links/link[@rel='logout']/@href"/>
-                                    </xsl:attribute>
-                                    <span><xsl:text>Logout</xsl:text></span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </xsl:if>
-            </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="links/link[@rel='logout']/@href"/>
+                                </xsl:attribute>
+                                <span><xsl:text>Logout</xsl:text></span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </xsl:if>
         </header>
     </xsl:template>
 

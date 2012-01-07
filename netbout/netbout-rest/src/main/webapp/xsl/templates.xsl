@@ -55,8 +55,8 @@
     <xsl:template name="alias">
         <xsl:param name="alias" as="xs:string"/>
         <xsl:choose>
-            <xsl:when test="string-length($alias) &gt; 30">
-                <xsl:value-of select="substring($alias,0,27)"/>
+            <xsl:when test="string-length($alias) &gt; 25">
+                <xsl:value-of select="substring($alias,0,22)"/>
                 <xsl:text>...</xsl:text>
             </xsl:when>
             <xsl:otherwise>

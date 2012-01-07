@@ -26,7 +26,7 @@
  */
 
 body {
-    font-size: 7.8pt; /* the same as 2.646mm */
+    font-size: 10px; /* the same as 7.8pt or 2.646mm or 10px */
 }
 
 /* top header */
@@ -74,80 +74,75 @@ body {
     color: #4b4250;
 }
 
-#left {
-    display: table-cell;
-    text-align: left;
-    vertical-align: middle;
-}
-
-    #logo {
-        background-image: url('http://img.netbout.com/logo.png');
-        background-repeat: no-repeat;
-        width: 11.3em;
-        height: 2.7em;
-        margin-right: 2em;
-        display: inline-block;
+    #left {
+        display: table-cell;
+        text-align: left;
         vertical-align: middle;
-        text-decoration: none;
     }
 
-    /* it is inside the #left sector */
-    #search {
-        display: inline-block;
-        vertical-align: middle;
-        position: relative;
-    }
-
-        #search-input {
+        #logo {
+            background-image: url('http://img.netbout.com/white-logo.png');
+            background-repeat: no-repeat;
+            width: 11.3em;
+            height: 2.7em;
+            margin-right: 2em;
             display: inline-block;
-            position: relative;
-            width: 16em;
             vertical-align: middle;
-        }
-
-#right {
-    display: table-cell;
-    text-align: right;
-    vertical-align: middle;
-}
-
-#crumbs {
-    display: inline;
-    vertical-align: middle;
-}
-
-    #photo {
-        height: 2.6em;
-        width: 2.6em;
-        vertical-align: middle;
-        margin-right: 0.6em;
-        display: inline;
-    }
-
-    #crumbs ul {
-        margin: 0 !important;
-        display: inline;
-    }
-
-        #crumbs ul li {
-            list-style: none;
-            display: inline;
-            margin-right: 2.3em;
-        }
-
-        #crumbs ul li span {
-            font-size: 1.4em;
-            font-weight: bold;
-        }
-
-        #crumbs ul li a {
-            color: #4b4250;
             text-decoration: none;
         }
 
-            #crumbs ul li a:hover {
-                text-decoration: underline;
+        /* it is inside the #left sector */
+        #search {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+        }
+
+            #search-input {
+                display: inline-block;
+                position: relative;
+                width: 16em;
+                vertical-align: middle;
             }
+
+    #right {
+        display: table-cell;
+        text-align: right;
+        vertical-align: middle;
+    }
+
+        #photo {
+            height: 2.6em;
+            width: 2.6em;
+            vertical-align: middle;
+            margin-right: 0.6em;
+            display: inline;
+        }
+
+        #right ul {
+            margin: 0 !important;
+            display: inline;
+        }
+
+            #right ul li {
+                list-style: none;
+                display: inline;
+                margin-left: 2.3em;
+            }
+
+            #right ul li span {
+                font-size: 1.4em;
+                font-weight: bold;
+            }
+
+            #right ul li a {
+                color: #4b4250;
+                text-decoration: none;
+            }
+
+                #right ul li a:hover {
+                    text-decoration: underline;
+                }
 
 /* everything between header and footer */
 #content {
@@ -156,6 +151,7 @@ body {
     margin-right: auto;
     margin-left: auto;
     clear: both;
+    padding-bottom: 2em;
 }
 
     #content h1 {
