@@ -25,93 +25,112 @@
  * SUCH DAMAGE.
  */
 
-#top {
+/* header with title */
+#top1 {
     width: 70em;
+    position: relative;
 }
 
-h1 span.num {
-    font-size: 1.4em;
-    margin-right: 0.3em;
+    h1 span.num {
+        font-size: 1.4em;
+        margin-right: 0.3em;
+    }
+
+/* header with participants and options */
+#top2 {
+    position: relative;
 }
 
-#invite-aside {
-    position: absolute;
-    top: 4em;
-    right: 0;
-    text-align: right;
-    background-color: white;
-    z-index: 10;
-}
-
-    #invite-aside input {
+    /* invite sector */
+    #invite-aside {
+        position: absolute;
+        top: 0;
+        right: 0;
+        text-align: right;
         background-color: white;
+        z-index: 10;
     }
 
-    #invite-aside ul {
-        padding-left: 2em;
-        padding-bottom: 2em;
-    }
-
-        #invite-aside ul li {
-            list-style: none;
-            margin-bottom: 0.3em;
+        #invite-aside input {
+            background-color: white;
         }
 
-            #invite-aside ul li a {
-                font-size: 1.4em;
-                vertical-align: middle;
+        #invite-aside ul {
+            padding-left: 2em;
+            padding-bottom: 2em;
+        }
+
+            #invite-aside ul li {
+                list-style: none;
+                margin-bottom: 0.3em;
             }
 
-            #invite-aside ul li img {
-                vertical-align: middle;
-                margin-left: 0.5em;
-                height: 2.6em;
-                width: 2.6em;
-                box-shadow: 0.1em 0.1em 0.1em gray;
-                -moz-box-shadow: 0.1em 0.1em 0.1em gray;
-                -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
-                -o-box-shadow: 0.1em 0.1em 0.1em gray;
-            }
+                #invite-aside ul li a {
+                    font-size: 1.4em;
+                    vertical-align: middle;
+                }
 
-#options {
-    position: absolute;
-    top: 8em;
-    right: 0;
-    text-align: right;
-    background-color: white;
-    z-index: 5;
+                #invite-aside ul li img {
+                    vertical-align: middle;
+                    margin-left: 0.5em;
+                    height: 2.6em;
+                    width: 2.6em;
+                    box-shadow: 0.1em 0.1em 0.1em gray;
+                    -moz-box-shadow: 0.1em 0.1em 0.1em gray;
+                    -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
+                    -o-box-shadow: 0.1em 0.1em 0.1em gray;
+                }
+
+    /* options below invite sector */
+    #options {
+        position: absolute;
+        top: 4em;
+        right: 0;
+        text-align: right;
+        background-color: white;
+        z-index: 5;
+    }
+
+        #options span {
+            font-size: 1.4em;
+        }
+
+/* titles of the stages */
+#titles {
+    margin-top: 2em;
+    margin-left: 0;
+    padding-left: 0;
 }
 
-    #options span {
+    /* one title of a stage */
+    #titles li {
+        display: inline;
+        margin-right: 1em;
         font-size: 1.4em;
     }
 
-#holder {
-    margin-top: 2em;
-    margin-bottom: 2em;
-}
-
-    #titles{
-    }
-
-        #titles li{
-            display: inline;
-            margin-right: 1em;
+        /* active title of a stage */
+        #titles li.active {
+            font-weight: bold;
         }
 
-#stage{
-    border: 1px solid gray;
+/* stage itself */
+#stage {
     min-height: 3em;
     padding: 1em;
-    font-size: 0.8em;
-    background-color: #ddd;
+    font-size: 1em;
+    background-color: #f3f3f1;
+    border: 0.1em solid #e4e5e3;
+    box-shadow: 0 0.1em 0.1em #e4e5e3;
 }
 
+/* form to post a new message */
 #post {
     margin-bottom: 2em;
     margin-top: 2em;
 }
 
+/* one message */
 .message {
     margin-top: 4em;
     position: relative;

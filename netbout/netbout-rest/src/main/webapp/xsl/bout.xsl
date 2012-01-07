@@ -68,7 +68,7 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <header id="top">
+        <header id="top1">
             <h1>
                 <span class="num">
                     <xsl:text>#</xsl:text>
@@ -97,12 +97,14 @@
                 </span>
             </h1>
         </header>
-        <xsl:apply-templates select="/page/bout/participants" />
-        <xsl:if test="$participant/@confirmed = 'true'">
-            <xsl:call-template name="invite" />
-            <xsl:call-template name="rename" />
-        </xsl:if>
-        <xsl:call-template name="options" />
+        <header id="top2">
+            <xsl:apply-templates select="/page/bout/participants" />
+            <xsl:if test="$participant/@confirmed = 'true'">
+                <xsl:call-template name="invite" />
+                <xsl:call-template name="rename" />
+            </xsl:if>
+            <xsl:call-template name="options" />
+        </header>
         <xsl:call-template name="stages" />
         <xsl:if test="$participant/@confirmed = 'true'">
             <form id="post" method="post">
@@ -205,7 +207,6 @@
                     </xsl:attribute>
                 </xsl:if>
             </input>
-            <input value="rename" type="submit"/>
         </form>
     </xsl:template>
 
@@ -243,13 +244,13 @@
     </xsl:template>
 
     <xsl:template name="stages">
-        <xsl:if test="/page/bout/stages">
+        <xsl:if test="count(/page/bout/stages/stage) &gt; 0">
             <nav>
                 <ul id="titles">
                     <xsl:for-each select="/page/bout/stages/stage">
                         <xsl:choose>
                             <xsl:when test=". = /page/bout/stage/@name">
-                                <li active="true">
+                                <li class="active">
                                     <xsl:value-of select="."/>
                                 </li>
                             </xsl:when>
