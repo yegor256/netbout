@@ -26,28 +26,19 @@
  */
 package com.netbout.db;
 
-import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.apache.commons.dbcp.BasicDataSourceFactory;
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DataSourceConnectionFactory;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.pool.impl.GenericObjectPool;
 
 /**
  * Database-related utility class.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class Database {
 
@@ -59,7 +50,7 @@ final class Database {
     /**
      * Datasource to use.
      */
-    private final transient DataSource source = Database.datasource();
+    private final transient DataSource source = new DataSourceBuilder().build();
 
     /**
      * Protected ctor.
@@ -94,67 +85,6 @@ final class Database {
      */
     protected Connection connect() throws SQLException {
         return this.source.getConnection();
-    }
-
-    /**
-     * Create and return JDBC data source.
-     * @return The data source
-     */
-    private static DataSource datasource() {
-        final PoolableConnectionFactory factory = new PoolableConnectionFactory(
-            Database.factory(),
-            new GenericObjectPool(null),
-            null,
-            "SELECT name FROM identity WHERE name = ''",
-            false,
-            true
-        );
-        final DataSource src = new PoolingDataSource(factory.getPool());
-        Logger.info(
-            Database.class,
-            "#datasource(): created %[type]s",
-            src
-        );
-        return src;
-    }
-
-    /**
-     * Create and return connection factory.
-     * @return The connection factory
-     */
-    @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    private static ConnectionFactory factory() {
-        final long start = System.currentTimeMillis();
-        final String driver = Manifests.read("Netbout-JdbcDriver");
-        try {
-            Class.forName(driver);
-        } catch (ClassNotFoundException ex) {
-            throw new IllegalStateException(ex);
-        }
-        final String url = Manifests.read("Netbout-JdbcUrl");
-        final Properties props = new Properties();
-        props.setProperty("url", url);
-        props.setProperty("username", Manifests.read("Netbout-JdbcUser"));
-        props.setProperty("password", Manifests.read("Netbout-JdbcPassword"));
-        props.setProperty("testWhileIdle", Boolean.TRUE.toString());
-        props.setProperty("testOnBorrow", Boolean.TRUE.toString());
-        ConnectionFactory factory;
-        try {
-            factory = new DataSourceConnectionFactory(
-                BasicDataSourceFactory.createDataSource(props)
-            );
-        // @checkstyle IllegalCatch (1 line)
-        } catch (Exception ex) {
-            throw new IllegalStateException(ex);
-        }
-        Logger.info(
-            Database.class,
-            "#factory(): created with '%s' at '%s' [%dms]",
-            driver,
-            url,
-            System.currentTimeMillis() - start
-        );
-        return factory;
     }
 
     /**
