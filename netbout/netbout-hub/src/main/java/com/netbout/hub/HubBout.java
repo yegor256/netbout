@@ -190,13 +190,24 @@ public final class HubBout implements Bout, Comparable<Bout> {
             messages.add(new HubMessage(this.hub, this.viewer, this, msg));
         }
         Collections.sort(messages, Collections.reverseOrder());
+        final List<Message> result = new ArrayList<Message>();
+        try {
+            final Predicate predicate = new PredicateBuilder().parse(query);
+            for (Message msg : messages) {
+                if ((Boolean) predicate.evaluate(msg, result.size())) {
+                    result.add(msg);
+                }
+            }
+        } catch (com.netbout.hub.PredicateException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         Logger.debug(
             this,
             "#messages('%s'): %d message(s) found",
             query,
-            messages.size()
+            result.size()
         );
-        return messages;
+        return result;
     }
 
     /**

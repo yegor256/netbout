@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,39 +23,47 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.predicates;
+
+import com.netbout.hub.Predicate;
+import com.netbout.spi.Message;
+
+/**
+ * Text atom.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
-    version="2.0" exclude-result-prefixes="xs">
+ */
+public final class TextPred implements Predicate {
 
-    <xsl:output method="xhtml"/>
+    /**
+     * The value of it.
+     */
+    private final transient String text;
 
-    <xsl:include href="/xsl/layout.xsl" />
+    /**
+     * Public ctor.
+     * @param value The value of it
+     */
+    public TextPred(final String value) {
+        this.text = value;
+    }
 
-    <xsl:template name="head">
-        <title>
-            <xsl:value-of select="/page/error/code"/>
-            <xsl:text>: error</xsl:text>
-        </title>
-    </xsl:template>
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        return this.text;
+    }
 
-    <xsl:template name="content">
-        <p>
-            <span class="red">
-                <xsl:value-of select="/page/error/code"/>
-                <xsl:text>: </xsl:text>
-                <xsl:value-of select="/page/error/message"/>
-            </span>
-            <xsl:text>.
-                Maybe the page you're requesting is no longer available,
-                try to submit some other request.
-            </xsl:text>
-        </p>
-    </xsl:template>
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("\"%s\"", this.text.replace("\"", "\\\""));
+    }
 
-</xsl:stylesheet>
+}

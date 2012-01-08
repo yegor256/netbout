@@ -135,7 +135,7 @@
                     </b>
                     <xsl:text> at </xsl:text>
                     <xsl:value-of select="date"/>
-                    <span style="color: red;">
+                    <span class="red">
                         <xsl:if test="@seen = 'false'">
                             <xsl:text> new</xsl:text>
                         </xsl:if>

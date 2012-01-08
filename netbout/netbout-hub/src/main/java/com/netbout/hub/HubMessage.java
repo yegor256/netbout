@@ -121,7 +121,7 @@ final class HubMessage implements Message, Comparable<Message> {
         return this.hub.make("pre-render-message")
             .synchronously()
             .inBout(this.ibout)
-            .arg(this.bout())
+            .arg(this.bout().number())
             .arg(this.number())
             .arg(txt)
             .asDefault(txt)
