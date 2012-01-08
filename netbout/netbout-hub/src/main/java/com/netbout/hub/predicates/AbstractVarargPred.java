@@ -37,7 +37,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public abstract class VarargPred implements Predicate {
+public abstract class AbstractVarargPred implements Predicate {
 
     /**
      * Name of it.
@@ -55,7 +55,7 @@ public abstract class VarargPred implements Predicate {
      * @param nam The name of it
      * @param args Arguments/predicates
      */
-    public VarargPred(final String nam, final List<Predicate> args) {
+    public AbstractVarargPred(final String nam, final List<Predicate> args) {
         this.name = nam;
         this.arguments.addAll(args);
     }

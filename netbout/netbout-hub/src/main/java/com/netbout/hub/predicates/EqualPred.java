@@ -39,7 +39,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class EqualPred extends VarargPred {
+public final class EqualPred extends AbstractVarargPred {
 
     /**
      * Public ctor.

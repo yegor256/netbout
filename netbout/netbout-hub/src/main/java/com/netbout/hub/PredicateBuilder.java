@@ -28,10 +28,12 @@ package com.netbout.hub;
 
 import com.ymock.util.Logger;
 import java.util.List;
+import java.util.Map;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  * Builder of a predicate.
@@ -40,6 +42,19 @@ import org.antlr.runtime.TokenStream;
  * @version $Id$
  */
 public final class PredicateBuilder {
+
+    /**
+     * All functions and their classes.
+     */
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    private static final Map<String, String> FUNCS = ArrayUtils.toMap(
+        new String[][] {
+            {"and", "com.netbout.hub.predicates.logic.AndPred"},
+            {"or", "com.netbout.hub.predicates.logic.OrPred"},
+            {"matches", "com.netbout.hub.predicates.text.MatchesPred"},
+            {"equal", "com.netbout.hub.predicates.EqualPred"},
+        }
+    );
 
     /**
      * Build a predicate from a query string.
@@ -86,14 +101,22 @@ public final class PredicateBuilder {
     protected Predicate build(final String name, final List<Predicate> preds)
         throws PredicateException {
         Predicate predicate;
-        if ("and".equals(name)) {
-            predicate = new com.netbout.hub.predicates.logic.AndPred(preds);
-        } else if ("or".equals(name)) {
-            predicate = new com.netbout.hub.predicates.logic.OrPred(preds);
-        } else if ("matches".equals(name)) {
-            predicate = new com.netbout.hub.predicates.text.MatchesPred(preds);
-        } else if ("equal".equals(name)) {
-            predicate = new com.netbout.hub.predicates.EqualPred(preds);
+        if (this.FUNCS.containsKey(name)) {
+            try {
+                predicate = (Predicate) Class.forName(this.FUNCS.get(name))
+                    .getConstructor(List.class)
+                    .newInstance(preds);
+            } catch (ClassNotFoundException ex) {
+                throw new PredicateException(ex);
+            } catch (NoSuchMethodException ex) {
+                throw new PredicateException(ex);
+            } catch (InstantiationException ex) {
+                throw new PredicateException(ex);
+            } catch (IllegalAccessException ex) {
+                throw new PredicateException(ex);
+            } catch (java.lang.reflect.InvocationTargetException ex) {
+                throw new PredicateException(ex);
+            }
         } else {
             throw new PredicateException(
                 String.format("Unknown function '%s'", name)

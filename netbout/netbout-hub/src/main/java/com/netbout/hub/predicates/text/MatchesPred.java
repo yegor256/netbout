@@ -28,7 +28,7 @@ package com.netbout.hub.predicates.text;
 
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateException;
-import com.netbout.hub.predicates.VarargPred;
+import com.netbout.hub.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.List;
@@ -39,7 +39,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MatchesPred extends VarargPred {
+public final class MatchesPred extends AbstractVarargPred {
 
     /**
      * Public ctor.

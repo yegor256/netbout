@@ -50,8 +50,9 @@ public final class PredicateBuilderTest {
             "(and (equal 1 1) (or (matches $text $date)))",
             "just simple text: \u0435",
         };
+        final PredicateBuilder builder = new PredicateBuilder();
         for (String query : queries) {
-            new PredicateBuilder().parse(query);
+            builder.parse(query);
         }
     }
 

@@ -28,7 +28,7 @@ package com.netbout.hub.predicates.logic;
 
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateException;
-import com.netbout.hub.predicates.VarargPred;
+import com.netbout.hub.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
 import java.util.List;
 
@@ -38,7 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class OrPred extends VarargPred {
+public final class OrPred extends AbstractVarargPred {
 
     /**
      * Public ctor.
@@ -57,6 +57,9 @@ public final class OrPred extends VarargPred {
         boolean value = false;
         for (Predicate pred : this.args()) {
             value |= (Boolean) pred.evaluate(msg, pos);
+            if (value) {
+                break;
+            }
         }
         return value;
     }
