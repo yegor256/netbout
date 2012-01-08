@@ -158,7 +158,10 @@ final class RestIdentity implements Identity {
     @Override
     public Bout bout(final Long num) {
         final String href = this.client
-            .queryParam(this.QUERY_PARAM, String.format("bout:%s", num))
+            .queryParam(
+                this.QUERY_PARAM,
+                String.format("(equal $bout %d)", num)
+        )
             .get(String.format("reading href of bout #%d", num))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))

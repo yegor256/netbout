@@ -62,6 +62,10 @@ public final class VariablePred implements Predicate {
             value = pos;
         } else if ("text".equals(this.name)) {
             value = msg.text();
+        } else if ("bout".equals(this.name)) {
+            value = msg.bout().number();
+        } else if ("number".equals(this.name)) {
+            value = msg.number();
         } else if ("date".equals(this.name)) {
             value = msg.date();
         } else if ("author".equals(this.name)) {
