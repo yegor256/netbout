@@ -24,69 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates;
-
-import com.netbout.hub.Predicate;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
- * Variable arguments predicate.
+ * Text predicates, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public abstract class VarargPred implements Predicate {
-
-    /**
-     * Name of it.
-     */
-    private final transient String name;
-
-    /**
-     * Arguments.
-     */
-    private final transient List<Predicate> arguments =
-        new ArrayList<Predicate>();
-
-    /**
-     * Public ctor.
-     * @param nam The name of it
-     * @param args Arguments/predicates
-     */
-    public VarargPred(final String nam, final List<Predicate> args) {
-        this.name = nam;
-        this.arguments.addAll(args);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final String toString() {
-        return String.format(
-            "(%s %s)",
-            this.name,
-            StringUtils.join(this.args(), " ")
-        );
-    }
-
-    /**
-     * Get arguments.
-     * @return The arguments
-     */
-    protected final List<Predicate> args() {
-        return this.arguments;
-    }
-
-    /**
-     * Get argument by number.
-     * @param num The number
-     * @return The predicate/argument
-     */
-    protected final Predicate arg(final int num) {
-        return this.arguments.get(num);
-    }
-
-}
+package com.netbout.hub.predicates.text;

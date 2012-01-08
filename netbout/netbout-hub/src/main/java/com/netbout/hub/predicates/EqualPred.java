@@ -28,7 +28,6 @@ package com.netbout.hub.predicates;
 
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateException;
-import com.netbout.hub.predicates.VarargPred;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.ArrayList;

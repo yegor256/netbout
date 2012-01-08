@@ -26,12 +26,9 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link PredicateBuilder}.

@@ -58,19 +58,19 @@ public final class VariablePred implements Predicate {
     public Object evaluate(final Message msg, final int pos)
         throws PredicateException {
         Object value;
-        if ("pos".equals(name)) {
+        if ("pos".equals(this.name)) {
             value = pos;
-        } else if ("text".equals(name)) {
+        } else if ("text".equals(this.name)) {
             value = msg.text();
-        } else if ("date".equals(name)) {
+        } else if ("date".equals(this.name)) {
             value = msg.date();
-        } else if ("author".equals(name)) {
+        } else if ("author".equals(this.name)) {
             value = msg.author();
-        } else if ("seen".equals(name)) {
+        } else if ("seen".equals(this.name)) {
             value = msg.seen();
         } else {
             throw new PredicateException(
-                String.format("Unknown function '%s'", name)
+                String.format("Unknown function '%s'", this.name)
             );
         }
         return value;

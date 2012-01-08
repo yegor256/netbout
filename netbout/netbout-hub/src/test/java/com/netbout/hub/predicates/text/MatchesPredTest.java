@@ -24,69 +24,40 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates;
+package com.netbout.hub.predicates.text;
 
 import com.netbout.hub.Predicate;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import com.netbout.hub.predicates.TextPred;
+import com.netbout.spi.MessageMocker;
+import java.util.Arrays;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 /**
- * Variable arguments predicate.
- *
+ * Test case of {@link MatchesPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public abstract class VarargPred implements Predicate {
+public final class MatchesPredTest {
 
     /**
-     * Name of it.
+     * MatchesPred can match empty text.
+     * @throws Exception If there is some problem inside
      */
-    private final transient String name;
-
-    /**
-     * Arguments.
-     */
-    private final transient List<Predicate> arguments =
-        new ArrayList<Predicate>();
-
-    /**
-     * Public ctor.
-     * @param nam The name of it
-     * @param args Arguments/predicates
-     */
-    public VarargPred(final String nam, final List<Predicate> args) {
-        this.name = nam;
-        this.arguments.addAll(args);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final String toString() {
-        return String.format(
-            "(%s %s)",
-            this.name,
-            StringUtils.join(this.args(), " ")
+    @Test
+    public void positivelyMatchesEmptyText() throws Exception {
+        final Predicate pred = new MatchesPred(
+            Arrays.asList(
+                new Predicate[] {
+                    new TextPred(""),
+                    new TextPred("some text"),
+                }
+            )
         );
-    }
-
-    /**
-     * Get arguments.
-     * @return The arguments
-     */
-    protected final List<Predicate> args() {
-        return this.arguments;
-    }
-
-    /**
-     * Get argument by number.
-     * @param num The number
-     * @return The predicate/argument
-     */
-    protected final Predicate arg(final int num) {
-        return this.arguments.get(num);
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+        );
     }
 
 }

@@ -42,7 +42,7 @@ public final class AndPred extends VarargPred {
 
     /**
      * Public ctor.
-     * @param values Predicates
+     * @param args Arguments/predicates
      */
     public AndPred(final List<Predicate> args) {
         super("and", args);

@@ -71,6 +71,7 @@ public final class HubBoutTest {
     public void prepare() throws Exception {
         this.viewer = new IdentityMocker().mock();
         this.hub = new HubMocker()
+            .doReturn("some text", "pre-render-message")
             .withIdentity(this.viewer.name(), this.viewer)
             .mock();
         this.boutDtMocker = new BoutDtMocker()

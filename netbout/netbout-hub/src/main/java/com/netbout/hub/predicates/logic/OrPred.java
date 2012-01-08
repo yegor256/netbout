@@ -42,7 +42,7 @@ public final class OrPred extends VarargPred {
 
     /**
      * Public ctor.
-     * @param values Predicates
+     * @param args Arguments/predicates
      */
     public OrPred(final List<Predicate> args) {
         super("or", args);
