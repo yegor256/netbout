@@ -30,6 +30,8 @@ import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateException;
 import com.netbout.hub.predicates.VarargPred;
 import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,17 +56,24 @@ public final class EqualPred extends VarargPred {
     @Override
     public Object evaluate(final Message msg, final int pos)
         throws PredicateException {
-        Predicate pred = null;
-        boolean equal = true;
+        final List<Object> values = new ArrayList<Object>();
         for (Predicate arg : this.args()) {
-            if (pred != null) {
-                if (!pred.evaluate(msg, pos).equals(arg.evaluate(msg, pos))) {
-                    equal = false;
-                    break;
-                }
-            }
-            pred = arg;
+            values.add(arg.evaluate(msg, pos));
         }
+        boolean equal = true;
+        for (int num = 1; num < values.size(); num += 1) {
+            if (!values.get(num).toString()
+                .equals(values.get(num - 1).toString())) {
+                equal = false;
+                break;
+            }
+        }
+        Logger.debug(
+            this,
+            "#evaluate(): comparing %[list]s: %B",
+            values,
+            equal
+        );
         return equal;
     }
 

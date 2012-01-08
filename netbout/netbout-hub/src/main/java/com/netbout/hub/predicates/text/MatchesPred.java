@@ -30,6 +30,7 @@ import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateException;
 import com.netbout.hub.predicates.VarargPred;
 import com.netbout.spi.Message;
+import com.ymock.util.Logger;
 import java.util.List;
 
 /**
@@ -56,7 +57,15 @@ public final class MatchesPred extends VarargPred {
         throws PredicateException {
         final String text = (String) this.arg(0).evaluate(msg, pos);
         final String query = (String) this.arg(1).evaluate(msg, pos);
-        return text.contains(query);
+        final boolean result = text.contains(query);
+        Logger.debug(
+            this,
+            "#evaluate(): finding '%s' inside '%s': %B",
+            query,
+            text,
+            result
+        );
+        return result;
     }
 
 }

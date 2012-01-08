@@ -55,6 +55,7 @@ predicate returns [Predicate ret]
 atom returns [Predicate ret]
     :
     predicate
+    { $ret = $predicate.ret; }
     |
     VARIABLE
     { $ret = new VariablePred($VARIABLE.text); }

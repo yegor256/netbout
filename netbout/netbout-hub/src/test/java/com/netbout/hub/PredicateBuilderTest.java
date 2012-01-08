@@ -63,12 +63,11 @@ public final class PredicateBuilderTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @org.junit.Ignore
     public void buildsPredicateFromQuery() throws Exception {
         final PredicateBuilder builder = new PredicateBuilder();
         final String text = "\u043F\u0440\u0438\u0432\u0435";
         final Predicate pred = builder.parse(
-            String.format("(and (matches $text \"%s\") (equal $pos 0))", text)
+            String.format("(and (matches \"%s\" $text) (equal $pos 0))", text)
         );
         MatcherAssert.assertThat(
             "message found",
@@ -91,7 +90,6 @@ public final class PredicateBuilderTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @org.junit.Ignore
     public void buildsPredicateFromText() throws Exception {
         final PredicateBuilder builder = new PredicateBuilder();
         final String text = "\u043F\u0440\u0438\u0432\u0435\u0442";

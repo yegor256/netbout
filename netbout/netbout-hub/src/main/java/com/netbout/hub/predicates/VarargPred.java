@@ -29,6 +29,7 @@ package com.netbout.hub.predicates;
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateException;
 import com.netbout.spi.Message;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
@@ -48,7 +49,8 @@ public abstract class VarargPred implements Predicate {
     /**
      * Arguments.
      */
-    private final transient List<Predicate> arguments;
+    private final transient List<Predicate> arguments =
+        new ArrayList<Predicate>();
 
     /**
      * Public ctor.
@@ -57,7 +59,7 @@ public abstract class VarargPred implements Predicate {
      */
     public VarargPred(final String nam, final List<Predicate> args) {
         this.name = nam;
-        this.arguments = args;
+        this.arguments.addAll(args);
     }
 
     /**
@@ -68,7 +70,7 @@ public abstract class VarargPred implements Predicate {
         return String.format(
             "(%s %s)",
             this.name,
-            StringUtils.join(this.arguments, " ")
+            StringUtils.join(this.args(), " ")
         );
     }
 
