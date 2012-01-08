@@ -59,7 +59,9 @@ public final class InboxRs extends AbstractRs {
      */
     @QueryParam("q")
     public void setQuery(final String keyword) {
-        this.query = keyword;
+        if (keyword != null) {
+            this.query = keyword;
+        }
     }
 
     /**
