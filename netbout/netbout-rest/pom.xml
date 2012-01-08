@@ -68,13 +68,19 @@
         </dependency>
         <dependency>
             <groupId>com.woquo</groupId>
-            <artifactId>woquo-nebo</artifactId>
+            <artifactId>woquo-nebo-helper</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.woquo</groupId>
-            <artifactId>woquo-mentor</artifactId>
+            <artifactId>woquo-mentor-helper</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-board-helper</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
