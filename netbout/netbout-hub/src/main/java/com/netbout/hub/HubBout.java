@@ -194,7 +194,8 @@ public final class HubBout implements Bout, Comparable<Bout> {
         try {
             final Predicate predicate = new PredicateBuilder().parse(query);
             for (Message msg : messages) {
-                if ((Boolean) predicate.evaluate(msg, result.size())) {
+                if (query.isEmpty()
+                    || (Boolean) predicate.evaluate(msg, result.size())) {
                     result.add(msg);
                 }
             }

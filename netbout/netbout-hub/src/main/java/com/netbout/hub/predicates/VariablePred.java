@@ -76,7 +76,7 @@ public final class VariablePred implements Predicate {
             value = msg.seen();
         } else {
             throw new PredicateException(
-                String.format("Unknown function '%s'", this.name)
+                String.format("Unknown variable '$%s'", this.name)
             );
         }
         return value;
