@@ -163,6 +163,8 @@ public final class Urn implements Comparable {
         boolean equals = false;
         if (obj instanceof Urn) {
             equals = this.uri.equals(((Urn) obj).uri);
+        } else if (obj instanceof String) {
+            equals = this.uri.toString().equals((String) obj);
         } else if (obj instanceof URI) {
             equals = this.uri.equals((URI) obj);
         }
