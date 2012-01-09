@@ -62,14 +62,19 @@ public final class IdentityFarm {
         final List<Urn> names = new ArrayList<Urn>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                // @checkstyle LineLength (1 line)
-                "SELECT identity.name FROM identity LEFT JOIN alias ON alias.identity = identity.name WHERE UCASE(identity.name) LIKE ? OR UCASE(alias.name) LIKE ? GROUP BY identity.name LIMIT 10"
+                // @checkstyle StringLiteralsConcatenation (6 lines)
+                "SELECT identity.name FROM identity "
+                + "LEFT JOIN alias ON alias.identity = identity.name "
+                + "WHERE identity.name = ? OR "
+                + "UCASE(alias.name) LIKE ? "
+                + "GROUP BY identity.name "
+                + "LIMIT 10"
             );
             final String matcher = String.format(
                 "%%%s%%",
                 keyword.toUpperCase(Locale.ENGLISH)
             );
-            stmt.setString(1, matcher);
+            stmt.setString(1, keyword.toUpperCase(Locale.ENGLISH));
             stmt.setString(2, matcher);
             final ResultSet rset = stmt.executeQuery();
             try {
