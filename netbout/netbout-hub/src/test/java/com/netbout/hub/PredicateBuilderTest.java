@@ -48,6 +48,7 @@ public final class PredicateBuilderTest {
             "it's my story: \"\n\t\r \u0435\"",
             "(and 1)",
             "(and (equal 1 1) (or (matches $text $date)))",
+            "(equal $bout.title \"test\")",
             "just simple text: \u0435",
         };
         final PredicateBuilder builder = new PredicateBuilder();

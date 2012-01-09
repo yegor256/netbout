@@ -36,6 +36,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
+import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +117,7 @@ public final class BoutRs extends AbstractRs {
      * Set filtering keyword.
      * @param keyword The query
      */
-    @QueryParam("q")
+    @QueryParam(RestSession.QUERY_PARAM)
     public void setQuery(final String keyword) {
         if (keyword != null) {
             this.query = keyword;

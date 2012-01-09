@@ -68,7 +68,7 @@ atom returns [Predicate ret]
     ;
 
 NAME: ( 'a' .. 'z' | '-' )*;
-VARIABLE : '$' ( 'a' .. 'z' )+
+VARIABLE : '$' ( 'a' .. 'z' ) ( 'a' .. 'z' | '.' )+
     { setText(getText().substring(1)); }
     ;
 TEXT : '"' ('\\"' | ~'"')* '"'

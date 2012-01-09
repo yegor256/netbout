@@ -73,7 +73,7 @@ public final class NsPred extends AbstractVarargPred {
     public Object evaluate(final Message msg, final int pos)
         throws PredicateException {
         final String namespace = (String) this.arg(0).evaluate(msg, pos);
-        final String text = (String) this.arg(1).evaluate(msg, pos);
+        final String text = msg.text();
         boolean result = false;
         if (!text.isEmpty() && text.charAt(0) == '<') {
             Document doc;

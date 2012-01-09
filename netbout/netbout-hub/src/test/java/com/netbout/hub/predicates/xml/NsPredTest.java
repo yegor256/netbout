@@ -47,16 +47,14 @@ public final class NsPredTest {
     @Test
     public void positivelyMatchesXmlDocument() throws Exception {
         final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new TextPred("foo"),
-                    new TextPred("<a xmlns='foo'/>"),
-                }
-            )
+            Arrays.asList(new Predicate[] {new TextPred("foo")})
         );
         MatcherAssert.assertThat(
             "matched",
-            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+            (Boolean) pred.evaluate(
+                new MessageMocker().withText("<a xmlns='foo'/>").mock(),
+                0
+            )
         );
     }
 
@@ -67,16 +65,14 @@ public final class NsPredTest {
     @Test
     public void negativelyMatchesNonXmlDocument() throws Exception {
         final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new TextPred("some-namespace"),
-                    new TextPred("some text, which is not an XML doc"),
-                }
-            )
+            Arrays.asList(new Predicate[] {new TextPred("some-namespace")})
         );
         MatcherAssert.assertThat(
             "not matched",
-            !(Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+            !(Boolean) pred.evaluate(
+                new MessageMocker().withText("some non-XML text").mock(),
+                0
+            )
         );
     }
 
