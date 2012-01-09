@@ -60,6 +60,15 @@ final class Database {
     }
 
     /**
+     * Drop all connections.
+     */
+    public static void drop() {
+        synchronized (Database.class) {
+            Database.instance = null;
+        }
+    }
+
+    /**
      * Convenient method to get a new JDBC connection.
      * @return New JDBC connection
      * @throws SQLException If some SQL error

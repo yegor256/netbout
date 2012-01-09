@@ -63,6 +63,7 @@ public final class DatabaseTest {
     @After
     public void revert() throws Exception {
         Manifests.revert(this.snapshot);
+        Database.drop();
     }
 
     /**
