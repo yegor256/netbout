@@ -61,7 +61,7 @@ public final class TalksWithPred extends AbstractVarargPred {
         final Bout bout = msg.bout();
         boolean found = false;
         for (Participant dude : bout.participants()) {
-            if (dude.identity().name().toString().equals(name)) {
+            if (dude.identity().name().equals(name)) {
                 found = true;
                 break;
             }
