@@ -29,6 +29,8 @@ package com.netbout.db;
 import com.rexsl.core.Manifests;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -39,6 +41,31 @@ import org.junit.Test;
 public final class DatabaseTest {
 
     /**
+     * Snapshot of Manifests.
+     */
+    private transient byte[] snapshot;
+
+    /**
+     * Prepare manifests.
+     * @throws Exception If there is some problem inside
+     */
+    @Before
+    public void prepare() throws Exception {
+        this.snapshot = Manifests.snapshot();
+        Manifests.inject("Netbout-JdbcDriver", new DriverMocker("foo").mock());
+        Manifests.inject("Netbout-JdbcUrl", "jdbc:foo:");
+    }
+
+    /**
+     * Prepare manifests.
+     * @throws Exception If there is some problem inside
+     */
+    @After
+    public void revert() throws Exception {
+        Manifests.revert(this.snapshot);
+    }
+
+    /**
      * Database can reconnect if connection is lost.
      * @throws Exception If there is some problem inside
      * @todo #127 This test doesn't reproduce the problem still. I don't know
@@ -46,8 +73,6 @@ public final class DatabaseTest {
      */
     @Test
     public void canReconnectOnAlreadyClosedConnection() throws Exception {
-        Manifests.inject("Netbout-JdbcDriver", new DriverMocker("foo").mock());
-        Manifests.inject("Netbout-JdbcUrl", "jdbc:foo:");
         final Database database = new Database();
         // @checkstyle MagicNumber (1 line)
         for (int step = 0; step < 100; step += 1) {
