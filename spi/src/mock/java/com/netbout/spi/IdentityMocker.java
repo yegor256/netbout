@@ -32,6 +32,7 @@ package com.netbout.spi;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -59,9 +60,15 @@ public final class IdentityMocker {
     private final Set<String> aliases = new HashSet<String>();
 
     /**
-     * Inbox.
+     * All bouts.
      */
     private final Map<Long, Bout> bouts = new ConcurrentHashMap<Long, Bout>();
+
+    /**
+     * Inboxes.
+     */
+    private final Map<String, Long[]> inboxes =
+        new ConcurrentHashMap<String, Long[]>();
 
     /**
      * Public ctor.
@@ -183,6 +190,28 @@ public final class IdentityMocker {
      */
     public IdentityMocker withBout(final Long num, final Bout bout) {
         this.bouts.put(num, bout);
+        return this;
+    }
+
+    /**
+     * With this inbox.
+     * @param query The query
+     * @param nums List of bout numbers to return
+     * @return This object
+     */
+    public IdentityMocker withInbox(final String query, final Long[] nums) {
+        Mockito.doAnswer(
+            new Answer() {
+                @Override
+                public Object answer(final InvocationOnMock invocation) {
+                    final List<Bout> inbox = new ArrayList<Bout>();
+                    for (Long num : nums) {
+                        inbox.add(IdentityMocker.this.bouts.get(num));
+                    }
+                    return inbox;
+                }
+            }
+        ).when(this.identity).inbox(query);
         return this;
     }
 

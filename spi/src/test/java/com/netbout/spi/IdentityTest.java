@@ -111,4 +111,26 @@ public final class IdentityTest {
         MatcherAssert.assertThat(identity.bout(number), Matchers.equalTo(bout));
     }
 
+    /**
+     * IdentityMocker can mock inbox response.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void mocksDifferentInboxQueries() throws Exception {
+        final String query = "some query";
+        final Identity identity = new IdentityMocker()
+            .withBout(1L, new BoutMocker().mock())
+            .withBout(2L, new BoutMocker().mock())
+            .withInbox(query, new Long[] {1L})
+            .mock();
+        MatcherAssert.assertThat(
+            identity.inbox(query).size(),
+            Matchers.equalTo(1)
+        );
+        MatcherAssert.assertThat(
+            identity.inbox("").size(),
+            Matchers.equalTo(2)
+        );
+    }
+
 }
