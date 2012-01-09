@@ -71,8 +71,12 @@ NAME: ( 'a' .. 'z' | '-' )*;
 VARIABLE : '$' ( 'a' .. 'z' ) ( 'a' .. 'z' | '.' )+
     { setText(getText().substring(1)); }
     ;
-TEXT : '"' ('\\"' | ~'"')* '"'
+TEXT :
+    '"' ('\\"' | ~'"')* '"'
     { setText(getText().substring(1, getText().length() - 1).replace("\\\"", "\"")); }
+    |
+    '\'' ('\\\'' | ~'\'')* '\''
+    { setText(getText().substring(1, getText().length() - 1).replace("\\'", "'")); }
     ;
 NUMBER: ( '0' .. '9' )+;
 SPACE

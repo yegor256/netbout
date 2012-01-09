@@ -55,6 +55,22 @@ public final class InboxRs extends AbstractRs {
     private transient String query = "";
 
     /**
+     * Group name, if provided.
+     */
+    private transient String group = "";
+
+    /**
+     * Set group name.
+     * @param name The name of the group to show
+     */
+    @QueryParam("g")
+    public void setGroup(final String name) {
+        if (name != null) {
+            this.group = name;
+        }
+    }
+
+    /**
      * Set filtering keyword.
      * @param keyword The query
      */
@@ -75,13 +91,15 @@ public final class InboxRs extends AbstractRs {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
         for (Bout bout : identity.inbox(this.query)) {
-            bouts.add(
-                new ShortBout(
-                    bout,
-                    this.base().path(String.format("/%d", bout.number())),
-                    identity
-                )
-            );
+            if (this.group(bout).equals(this.group)) {
+                bouts.add(
+                    new ShortBout(
+                        bout,
+                        this.base().path(String.format("/%d", bout.number())),
+                        identity
+                    )
+                );
+            }
         }
         return new PageBuilder()
             .schema("")
@@ -103,6 +121,24 @@ public final class InboxRs extends AbstractRs {
     @Path("/s")
     @GET
     public Response start() {
+        final Identity identity = this.identity();
+        final Bout bout = identity.start();
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(identity)
+            .entity(String.format("bout #%d created", bout.number()))
+            .status(Response.Status.SEE_OTHER)
+            .location(this.base().path("/{num}").build(bout.number()))
+            .header("Bout-number", bout.number())
+            .build();
+    }
+
+    /**
+     * Calculate group of the bout.
+     * @return The JAX-RS response
+     */
+    private String group() {
         final Identity identity = this.identity();
         final Bout bout = identity.start();
         return new PageBuilder()

@@ -50,10 +50,12 @@ public final class PredicateBuilder {
     private static final Map<String, String> FUNCS = ArrayUtils.toMap(
         new String[][] {
             {"and", "com.netbout.hub.predicates.logic.AndPred"},
-            {"equal", "com.netbout.hub.predicates.EqualPred"},
+            {"equal", "com.netbout.hub.predicates.math.EqualPred"},
+            {"less-than", "com.netbout.hub.predicates.math.LessThanPred"},
             {"matches", "com.netbout.hub.predicates.text.MatchesPred"},
             {"ns", "com.netbout.hub.predicates.xml.NsPred"},
             {"or", "com.netbout.hub.predicates.logic.OrPred"},
+            {"talks-with", "com.netbout.hub.predicates.TalksWithPred"},
         }
     );
 

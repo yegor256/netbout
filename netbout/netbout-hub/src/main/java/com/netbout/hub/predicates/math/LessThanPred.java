@@ -24,29 +24,29 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates;
+package com.netbout.hub.predicates.math;
 
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateException;
+import com.netbout.hub.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * All arguments should be equal to each other.
+ * First argument is less than the second.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class EqualPred extends AbstractVarargPred {
+public final class LessThanPred extends AbstractVarargPred {
 
     /**
      * Public ctor.
      * @param args The arguments
      */
-    public EqualPred(final List<Predicate> args) {
-        super("equal", args);
+    public LessThanPred(final List<Predicate> args) {
+        super("less-than", args);
     }
 
     /**
@@ -55,25 +55,21 @@ public final class EqualPred extends AbstractVarargPred {
     @Override
     public Object evaluate(final Message msg, final int pos)
         throws PredicateException {
-        final List<Object> values = new ArrayList<Object>();
-        for (Predicate arg : this.args()) {
-            values.add(arg.evaluate(msg, pos));
-        }
-        boolean equal = true;
-        for (int num = 1; num < values.size(); num += 1) {
-            if (!values.get(num).toString()
-                .equals(values.get(num - 1).toString())) {
-                equal = false;
-                break;
-            }
-        }
+        final Long left = Long.valueOf(
+            this.arg(0).evaluate(msg, pos).toString()
+        );
+        final Long right = Long.valueOf(
+            this.arg(1).evaluate(msg, pos).toString()
+        );
+        final boolean less = left < right;
         Logger.debug(
             this,
-            "#evaluate(): comparing %[list]s: %B",
-            values,
-            equal
+            "#evaluate(): comparing %d with %d: %B",
+            left,
+            right,
+            less
         );
-        return equal;
+        return less;
     }
 
 }
