@@ -87,7 +87,10 @@ public final class IdentityTest {
         final Identity identity = new IdentityMocker().mock();
         final Bout bout = identity.start();
         MatcherAssert.assertThat(bout, Matchers.notNullValue());
-        MatcherAssert.assertThat(identity.bout(1L), Matchers.notNullValue());
+        MatcherAssert.assertThat(
+            identity.bout(bout.number()),
+            Matchers.notNullValue()
+        );
     }
 
     /**
