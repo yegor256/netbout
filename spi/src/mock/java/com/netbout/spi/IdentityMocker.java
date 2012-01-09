@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
@@ -86,7 +87,9 @@ public final class IdentityMocker {
             new Answer() {
                 @Override
                 public Object answer(final InvocationOnMock invocation) {
-                    return IdentityMocker.this.bouts.values();
+                    return new ArrayList<Bout>(
+                        IdentityMocker.this.bouts.values()
+                    );
                 }
             }
         ).when(this.identity).inbox(Mockito.anyString());

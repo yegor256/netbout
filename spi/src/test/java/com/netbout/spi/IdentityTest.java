@@ -91,6 +91,10 @@ public final class IdentityTest {
             identity.bout(bout.number()),
             Matchers.notNullValue()
         );
+        MatcherAssert.assertThat(
+            identity.inbox("").size(),
+            Matchers.equalTo(2)
+        );
     }
 
     /**
