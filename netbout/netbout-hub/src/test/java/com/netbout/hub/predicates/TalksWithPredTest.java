@@ -27,7 +27,6 @@
 package com.netbout.hub.predicates;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.predicates.TextPred;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.MessageMocker;
