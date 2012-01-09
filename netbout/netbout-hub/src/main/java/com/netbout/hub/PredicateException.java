@@ -50,4 +50,13 @@ public final class PredicateException extends Exception {
         super(cause);
     }
 
+    /**
+     * Public ctor.
+     * @param query The query that cause this problem
+     * @param thr The cause of it
+     */
+    public PredicateException(final String query, final Throwable thr) {
+        super(query, thr);
+    }
+
 }

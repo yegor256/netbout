@@ -73,7 +73,7 @@ public final class PredicateBuilder {
             try {
                 predicate = parser.query();
             } catch (org.antlr.runtime.RecognitionException ex) {
-                throw new PredicateException(ex);
+                throw new PredicateException(query, ex);
             }
             Logger.debug(
                 this,
