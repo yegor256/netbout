@@ -93,4 +93,19 @@ public final class BoutTest {
         );
     }
 
+    /**
+     * BoutMocker can return given message on pre-defined query.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void mocksMessageByQueryText() throws Exception {
+        final Bout bout = new BoutMocker()
+            .messageOn("foo", "hello!")
+            .mock();
+        MatcherAssert.assertThat(
+            bout.messages("foo is inside").get(0).text(),
+            Matchers.containsString("hello")
+        );
+    }
+
 }
