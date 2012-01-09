@@ -125,13 +125,16 @@ public final class BoutMocker {
      * @return This object
      */
     public BoutMocker withParticipant(final String name) {
-        this.participants.add(
-            new ParticipantMocker()
-                .inBout(this.bout)
-                .withIdentity(new IdentityMocker().namedAs(name).mock())
-                .mock()
-        );
-        return this;
+        return this.withParticipant(new IdentityMocker().namedAs(name).mock());
+    }
+
+    /**
+     * With this participant, by its name.
+     * @param The name of it
+     * @return This object
+     */
+    public BoutMocker withParticipant(final Urn name) {
+        return this.withParticipant(new IdentityMocker().namedAs(name).mock());
     }
 
     /**

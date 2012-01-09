@@ -28,6 +28,16 @@ package com.netbout.bus;
 
 import com.netbout.bus.cache.EmptyTokenCache;
 import com.netbout.spi.Helper;
+import com.ymock.util.Logger;
+import org.quartz.DisallowConcurrentExecution;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.Scheduler;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
 
 /**
  * Default implementation of {@link Bus}.
@@ -46,6 +56,22 @@ public final class DefaultBus implements Bus {
     );
 
     /**
+     * Quartz scheduler.
+     */
+    private final transient Scheduler scheduler;
+
+    /**
+     * Public ctor.
+     */
+    public DefaultBus() {
+        try {
+            this.scheduler = StdSchedulerFactory.getDefaultScheduler();
+        } catch (org.quartz.SchedulerException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -59,6 +85,73 @@ public final class DefaultBus implements Bus {
     @Override
     public void register(final Helper helper) {
         this.controller.register(helper);
+        synchronized (this.scheduler) {
+            try {
+                if (this.scheduler.isInStandbyMode()) {
+                    this.addRoutine();
+                    this.scheduler.start();
+                    Logger.info(
+                        this,
+                        "#register(%s): Quartz started",
+                        helper.name()
+                    );
+                }
+            } catch (org.quartz.SchedulerException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+    }
+
+    /**
+     * Add routine mechanism.
+     * @throws org.quartz.SchedulerException If some problem
+     * @checkstyle RedundantThrows (2 lines)
+     */
+    private void addRoutine() throws org.quartz.SchedulerException {
+        final JobDataMap data = new JobDataMap();
+        data.put(DefaultBus.RoutineJob.KEY, this);
+        this.scheduler.scheduleJob(
+            JobBuilder
+                .newJob(DefaultBus.RoutineJob.class)
+                .withIdentity("routine-bus-job")
+                .usingJobData(data)
+                .build(),
+            TriggerBuilder
+                .newTrigger()
+                .startNow()
+                .withSchedule(
+                    SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInMinutes(1)
+                        .repeatForever()
+                )
+                .build()
+        );
+    }
+
+    /**
+     * Routine job.
+     */
+    @DisallowConcurrentExecution
+    public static final class RoutineJob implements Job {
+        /**
+         * Key in context.
+         */
+        public static final String KEY = "bus";
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void execute(final JobExecutionContext context) {
+            final long start = System.currentTimeMillis();
+            final Bus bus = (Bus) context.getMergedJobDataMap().get(this.KEY);
+            bus.make("routine").asDefault(false).exec();
+            Logger.debug(
+                this,
+                "#execute(%[type]s): routine job done in %dms",
+                context,
+                System.currentTimeMillis() - start
+            );
+        }
     }
 
 }

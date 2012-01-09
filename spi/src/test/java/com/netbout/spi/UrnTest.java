@@ -119,6 +119,17 @@ public final class UrnTest {
     }
 
     /**
+     * Urn can be tested for equivalence with string.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void comparesForEquivalenceWithString() throws Exception {
+        final String text = "urn:foo:some-text-as-text";
+        final Urn first = new Urn(text);
+        MatcherAssert.assertThat(first.equals(text), Matchers.is(true));
+    }
+
+    /**
      * Urn can be converted to string.
      * @throws Exception If there is some problem inside
      */
