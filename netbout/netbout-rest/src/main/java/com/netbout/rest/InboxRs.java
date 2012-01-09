@@ -32,6 +32,7 @@ import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;
@@ -57,9 +58,11 @@ public final class InboxRs extends AbstractRs {
      * Set filtering keyword.
      * @param keyword The query
      */
-    @QueryParam("q")
+    @QueryParam(RestSession.QUERY_PARAM)
     public void setQuery(final String keyword) {
-        this.query = keyword;
+        if (keyword != null) {
+            this.query = keyword;
+        }
     }
 
     /**

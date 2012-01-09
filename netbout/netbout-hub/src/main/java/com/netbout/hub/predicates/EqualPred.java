@@ -23,25 +23,57 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.predicates;
+
+import com.netbout.hub.Predicate;
+import com.netbout.hub.PredicateException;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * All arguments should be equal to each other.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class EqualPred extends AbstractVarargPred {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * Public ctor.
+     * @param args The arguments
+     */
+    public EqualPred(final List<Predicate> args) {
+        super("equal", args);
+    }
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Message msg, final int pos)
+        throws PredicateException {
+        final List<Object> values = new ArrayList<Object>();
+        for (Predicate arg : this.args()) {
+            values.add(arg.evaluate(msg, pos));
+        }
+        boolean equal = true;
+        for (int num = 1; num < values.size(); num += 1) {
+            if (!values.get(num).toString()
+                .equals(values.get(num - 1).toString())) {
+                equal = false;
+                break;
+            }
+        }
+        Logger.debug(
+            this,
+            "#evaluate(): comparing %[list]s: %B",
+            values,
+            equal
+        );
+        return equal;
+    }
 
-def bout = jeff.start()
-bout.post('hi there')
-def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(0))
-
+}

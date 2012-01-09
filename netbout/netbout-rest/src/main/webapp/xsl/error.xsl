@@ -47,7 +47,7 @@
 
     <xsl:template name="content">
         <p>
-            <span style="color: red;">
+            <span class="red">
                 <xsl:value-of select="/page/error/code"/>
                 <xsl:text>: </xsl:text>
                 <xsl:value-of select="/page/error/message"/>

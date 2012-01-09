@@ -172,6 +172,7 @@ final class RestBout implements Bout {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
         final RestResponse response = this.client
+            .queryParam(RestSession.QUERY_PARAM, query)
             .get("reading numbers of bout messages");
         final List<String> nums = response
             .assertStatus(HttpURLConnection.HTTP_OK)

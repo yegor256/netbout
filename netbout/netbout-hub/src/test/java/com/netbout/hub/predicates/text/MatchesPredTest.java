@@ -23,25 +23,41 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.hub.predicates.text;
+
+import com.netbout.hub.Predicate;
+import com.netbout.hub.predicates.TextPred;
+import com.netbout.spi.MessageMocker;
+import java.util.Arrays;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+
+/**
+ * Test case of {@link MatchesPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class MatchesPredTest {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * MatchesPred can match empty text.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void positivelyMatchesEmptyText() throws Exception {
+        final Predicate pred = new MatchesPred(
+            Arrays.asList(
+                new Predicate[] {
+                    new TextPred(""),
+                    new TextPred("some text"),
+                }
+            )
+        );
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+        );
+    }
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
-
-def bout = jeff.start()
-bout.post('hi there')
-def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(0))
-
+}

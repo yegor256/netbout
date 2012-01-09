@@ -42,6 +42,7 @@ def mandy = new RestSession(rexsl.home).authenticate(new Urn('urn:test:mandy'), 
 def bob = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bob'), '')
 
 def bout = mandy.start()
+bout.post('hi everybody!')
 bout.rename('Some test conversation between Jeff and Walter, \u0443\u0440\u0430!')
 def number = bout.number()
 bout.invite(bob)

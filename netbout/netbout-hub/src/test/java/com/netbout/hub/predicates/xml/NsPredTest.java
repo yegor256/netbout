@@ -23,25 +23,57 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.hub.predicates.xml;
+
+import com.netbout.hub.Predicate;
+import com.netbout.hub.predicates.TextPred;
+import com.netbout.spi.MessageMocker;
+import java.util.Arrays;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+
+/**
+ * Test case of {@link NsPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class NsPredTest {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * NsPred can match an XML document.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void positivelyMatchesXmlDocument() throws Exception {
+        final Predicate pred = new NsPred(
+            Arrays.asList(new Predicate[] {new TextPred("foo")})
+        );
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(
+                new MessageMocker().withText("<a xmlns='foo'/>").mock(),
+                0
+            )
+        );
+    }
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
+    /**
+     * NsPred can match an XML document.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void negativelyMatchesNonXmlDocument() throws Exception {
+        final Predicate pred = new NsPred(
+            Arrays.asList(new Predicate[] {new TextPred("some-namespace")})
+        );
+        MatcherAssert.assertThat(
+            "not matched",
+            !(Boolean) pred.evaluate(
+                new MessageMocker().withText("some non-XML text").mock(),
+                0
+            )
+        );
+    }
 
-def bout = jeff.start()
-bout.post('hi there')
-def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(0))
-
+}

@@ -36,6 +36,7 @@ import com.netbout.spi.plain.PlainLong;
 import com.netbout.spi.plain.PlainString;
 import com.netbout.spi.plain.PlainURL;
 import com.netbout.spi.plain.PlainUrn;
+import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -126,7 +127,7 @@ public final class PlainBuilder {
             result = (Plain) PlainString.valueOf(text);
         } else {
             throw new IllegalArgumentException(
-                String.format(
+                Logger.format(
                     "Can't convert text '%s' to Plain<?>",
                     StringEscapeUtils.escapeJava(text)
                 )

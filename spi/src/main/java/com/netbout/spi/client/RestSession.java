@@ -72,6 +72,11 @@ public final class RestSession {
     public static final String MESSAGE_COOKIE = "netbout-msg";
 
     /**
+     * Query param to search INBOX.
+     */
+    public static final String QUERY_PARAM = "q";
+
+    /**
      * Home URI.
      */
     private final transient URI home;

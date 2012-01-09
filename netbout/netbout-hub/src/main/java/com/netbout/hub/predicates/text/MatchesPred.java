@@ -23,25 +23,49 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.predicates.text;
+
+import com.netbout.hub.Predicate;
+import com.netbout.hub.PredicateException;
+import com.netbout.hub.predicates.AbstractVarargPred;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.List;
+
+/**
+ * Matches text against search string.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class MatchesPred extends AbstractVarargPred {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * Public ctor.
+     * @param args The arguments
+     */
+    public MatchesPred(final List<Predicate> args) {
+        super("matches", args);
+    }
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Message msg, final int pos)
+        throws PredicateException {
+        final String query = (String) this.arg(0).evaluate(msg, pos);
+        final String text = (String) this.arg(1).evaluate(msg, pos);
+        final boolean result = text.contains(query);
+        Logger.debug(
+            this,
+            "#evaluate(): finding '%s' inside '%s': %B",
+            query,
+            text,
+            result
+        );
+        return result;
+    }
 
-def bout = jeff.start()
-bout.post('hi there')
-def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(0))
-
+}

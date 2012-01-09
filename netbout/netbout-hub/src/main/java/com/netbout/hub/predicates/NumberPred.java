@@ -23,25 +23,47 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.predicates;
+
+import com.netbout.hub.Predicate;
+import com.netbout.spi.Message;
+
+/**
+ * Number atom.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class NumberPred implements Predicate {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * The value of it.
+     */
+    private final transient Long number;
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
+    /**
+     * Public ctor.
+     * @param value The value of it
+     */
+    public NumberPred(final Long value) {
+        this.number = value;
+    }
 
-def bout = jeff.start()
-bout.post('hi there')
-def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(0))
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        return this.number;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("%d", this.number);
+    }
+
+}

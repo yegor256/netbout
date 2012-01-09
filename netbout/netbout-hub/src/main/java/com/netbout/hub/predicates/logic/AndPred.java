@@ -23,25 +23,45 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.predicates.logic;
+
+import com.netbout.hub.Predicate;
+import com.netbout.hub.PredicateException;
+import com.netbout.hub.predicates.AbstractVarargPred;
+import com.netbout.spi.Message;
+import java.util.List;
+
+/**
+ * Logical AND.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class AndPred extends AbstractVarargPred {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * Public ctor.
+     * @param args Arguments/predicates
+     */
+    public AndPred(final List<Predicate> args) {
+        super("and", args);
+    }
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean evaluate(final Message msg, final int pos)
+        throws PredicateException {
+        boolean value = true;
+        for (Predicate pred : this.args()) {
+            value &= (Boolean) pred.evaluate(msg, pos);
+            if (!value) {
+                break;
+            }
+        }
+        return value;
+    }
 
-def bout = jeff.start()
-bout.post('hi there')
-def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(0))
-
+}

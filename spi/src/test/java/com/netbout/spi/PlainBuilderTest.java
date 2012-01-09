@@ -115,4 +115,40 @@ public final class PlainBuilderTest {
         );
     }
 
+    /**
+     * PlainBuilder throws exception when type is unknown.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsOnIllegalInputType() throws Exception {
+        PlainBuilder.fromObject(new BoutMocker().mock());
+    }
+
+    /**
+     * PlainBuilder throws exception on NULL input.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsOnNullInput() throws Exception {
+        PlainBuilder.fromObject(null);
+    }
+
+    /**
+     * PlainBuilder throws exception when text is invalid.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsOnIllegalInputText() throws Exception {
+        PlainBuilder.fromText("---");
+    }
+
+    /**
+     * PlainBuilder throws exception when text is empty.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsOnEmptyInputText() throws Exception {
+        PlainBuilder.fromText("");
+    }
+
 }

@@ -85,7 +85,7 @@
                     <xsl:attribute name="action">
                         <xsl:value-of select="/page/links/link[@rel='promote']/@href"/>
                     </xsl:attribute>
-                    <input name="url" type="url" autocomplete="off">
+                    <input name="url" type="url" size="50" autocomplete="off">
                         <xsl:attribute name="value">
                             <xsl:value-of select="/page/identity/location"/>
                         </xsl:attribute>
@@ -96,7 +96,7 @@
         </xsl:choose>
         <p>
             <xsl:text>Namespaces registered for you (</xsl:text>
-            <span class="tt"><xsl:text>&lt;namespace&gt; ":" &lt;URL template&gt;</xsl:text></span>
+            <span class="tt"><xsl:text>&lt;namespace&gt; "=" &lt;URL template&gt;</xsl:text></span>
             <xsl:text> per line):</xsl:text>
         </p>
         <form method="post">

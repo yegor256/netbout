@@ -65,7 +65,8 @@ public final class BoutMocker {
      * Public ctor.
      */
     public BoutMocker() {
-        Mockito.doReturn(this.messages).when(this.bout).messages("");
+        Mockito.doReturn(this.messages).when(this.bout)
+            .messages(Mockito.anyString());
         Mockito.doReturn(this.participants).when(this.bout).participants();
         try {
             Mockito.doAnswer(
@@ -81,7 +82,6 @@ public final class BoutMocker {
         }
         this.titledAs("some random text");
         this.withNumber(Math.abs(new Random().nextLong()));
-        this.withMessage("some test message");
     }
 
     /**
@@ -154,6 +154,9 @@ public final class BoutMocker {
      * @return Mocked bout
      */
     public Bout mock() {
+        if (this.messages.isEmpty()) {
+            this.withMessage("\u043F\u0440\u0438\u0432\u0435\u0442");
+        }
         return this.bout;
     }
 

@@ -24,44 +24,70 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.hub.predicates;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
+import com.netbout.hub.Predicate;
+import com.netbout.hub.PredicateException;
 import com.netbout.spi.Message;
-import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
- * Test case of {@link HubMessage}.
+ * Variable.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubMessageTest {
+public final class VariablePred implements Predicate {
 
     /**
-     * HubMessage can "wrap" MessageDt class.
-     * @throws Exception If there is some problem inside
+     * The value of it.
      */
-    @Test
-    public void wrapsMessageDtDataProperties() throws Exception {
-        final Hub hub = new HubMocker()
-            .doReturn("some text", "pre-render-message")
-            .mock();
-        final Identity viewer = new IdentityMocker().mock();
-        final Bout bout = new BoutMocker().mock();
-        final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(hub, viewer, bout, data);
-        msg.number();
-        Mockito.verify(data).getNumber();
-        msg.author();
-        Mockito.verify(data).getAuthor();
-        msg.text();
-        Mockito.verify(data).getText();
-        msg.date();
-        Mockito.verify(data).getDate();
+    private final transient String name;
+
+    /**
+     * Public ctor.
+     * @param value The value of it
+     */
+    public VariablePred(final String value) {
+        this.name = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Message msg, final int pos)
+        throws PredicateException {
+        Object value;
+        if ("pos".equals(this.name)) {
+            value = pos;
+        } else if ("text".equals(this.name)) {
+            value = msg.text();
+        } else if ("bout.number".equals(this.name)) {
+            value = msg.bout().number();
+        } else if ("bout.title".equals(this.name)) {
+            value = msg.bout().title();
+        } else if ("number".equals(this.name)) {
+            value = msg.number();
+        } else if ("date".equals(this.name)) {
+            value = msg.date();
+        } else if ("author".equals(this.name)) {
+            value = msg.author();
+        } else if ("seen".equals(this.name)) {
+            value = msg.seen();
+        } else {
+            throw new PredicateException(
+                String.format("Unknown variable '$%s'", this.name)
+            );
+        }
+        return value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("$%s", this.name);
     }
 
 }

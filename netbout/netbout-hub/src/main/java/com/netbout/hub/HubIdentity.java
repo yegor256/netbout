@@ -183,22 +183,28 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public List<Bout> inbox(final String query) {
-        final List<Bout> list = new ArrayList<Bout>();
+        final List<Bout> bouts = new ArrayList<Bout>();
         for (Long num : this.myBouts()) {
             try {
-                list.add(this.bout(num));
+                bouts.add(this.bout(num));
             } catch (com.netbout.spi.BoutNotFoundException ex) {
                 throw new IllegalStateException(ex);
             }
         }
-        Collections.sort(list, Collections.reverseOrder());
+        Collections.sort(bouts, Collections.reverseOrder());
+        final List<Bout> result = new ArrayList<Bout>();
+        for (Bout bout : bouts) {
+            if (query.isEmpty() || !bout.messages(query).isEmpty()) {
+                result.add(bout);
+            }
+        }
         Logger.debug(
             this,
             "#inbox('%s'): %d bouts found",
             query,
-            list.size()
+            result.size()
         );
-        return list;
+        return result;
     }
 
     /**

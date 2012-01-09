@@ -23,25 +23,70 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.predicates;
+
+import com.netbout.hub.Predicate;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
+
+/**
+ * Variable arguments predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public abstract class AbstractVarargPred implements Predicate {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * Name of it.
+     */
+    private final transient String name;
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
+    /**
+     * Arguments.
+     */
+    private final transient List<Predicate> arguments =
+        new ArrayList<Predicate>();
 
-def bout = jeff.start()
-bout.post('hi there')
-def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(0))
+    /**
+     * Public ctor.
+     * @param nam The name of it
+     * @param args Arguments/predicates
+     */
+    public AbstractVarargPred(final String nam, final List<Predicate> args) {
+        this.name = nam;
+        this.arguments.addAll(args);
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String toString() {
+        return String.format(
+            "(%s %s)",
+            this.name,
+            StringUtils.join(this.args(), " ")
+        );
+    }
+
+    /**
+     * Get arguments.
+     * @return The arguments
+     */
+    protected final List<Predicate> args() {
+        return this.arguments;
+    }
+
+    /**
+     * Get argument by number.
+     * @param num The number
+     * @return The predicate/argument
+     */
+    protected final Predicate arg(final int num) {
+        return this.arguments.get(num);
+    }
+
+}

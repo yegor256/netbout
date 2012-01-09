@@ -117,7 +117,15 @@ final class HubMessage implements Message, Comparable<Message> {
     @Override
     public String text() {
         this.data.addSeenBy(this.viewer.name());
-        return this.data.getText();
+        final String txt = this.data.getText();
+        return this.hub.make("pre-render-message")
+            .synchronously()
+            .inBout(this.ibout)
+            .arg(this.bout().number())
+            .arg(this.number())
+            .arg(txt)
+            .asDefault(txt)
+            .exec();
     }
 
     /**

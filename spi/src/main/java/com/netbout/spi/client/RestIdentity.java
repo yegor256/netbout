@@ -50,11 +50,6 @@ import java.util.Set;
 final class RestIdentity implements Identity {
 
     /**
-     * Query param to search INBOX.
-     */
-    private static final transient String QUERY_PARAM = "q";
-
-    /**
      * Rest client.
      */
     private final transient RestClient client;
@@ -140,7 +135,7 @@ final class RestIdentity implements Identity {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Bout> inbox(final String query) {
         final List<String> hrefs = this.client
-            .queryParam(this.QUERY_PARAM, query)
+            .queryParam(RestSession.QUERY_PARAM, query)
             .get(String.format("reading bouts in the inbox '%s'", query))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bouts")
@@ -158,7 +153,10 @@ final class RestIdentity implements Identity {
     @Override
     public Bout bout(final Long num) {
         final String href = this.client
-            .queryParam(this.QUERY_PARAM, String.format("bout:%s", num))
+            .queryParam(
+                RestSession.QUERY_PARAM,
+                String.format("(equal $bout.number %d)", num)
+        )
             .get(String.format("reading href of bout #%d", num))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))
