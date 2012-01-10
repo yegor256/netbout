@@ -78,8 +78,12 @@ final class RestBout implements Bout {
         final String query = "(equal $pos 0)";
         final List<Message> mine = this.messages(query);
         final List<Message> his = bout.messages(query);
-        int result = 0;
-        if (!mine.isEmpty() && !his.isEmpty()) {
+        int result;
+        if (mine.isEmpty()) {
+            result = -1;
+        } else if (his.isEmpty()) {
+            result = 1;
+        } else {
             result = mine.get(0).date().compareTo(his.get(0).date());
         }
         return result;
