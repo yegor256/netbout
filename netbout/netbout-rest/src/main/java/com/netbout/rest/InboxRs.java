@@ -55,20 +55,9 @@ public final class InboxRs extends AbstractRs {
     private transient String query = "";
 
     /**
-     * Group name, if provided.
+     * Time threshold.
      */
-    private transient String group = "";
-
-    /**
-     * Set group name.
-     * @param name The name of the group to show
-     */
-    @QueryParam("g")
-    public void setGroup(final String name) {
-        if (name != null) {
-            this.group = name;
-        }
-    }
+    private transient Date threshold;
 
     /**
      * Set filtering keyword.
@@ -82,6 +71,17 @@ public final class InboxRs extends AbstractRs {
     }
 
     /**
+     * Set time threshold.
+     * @param date The date
+     */
+    @QueryParam("t")
+    public void setThreshold(final String date) {
+        if (date != null) {
+            this.threshold = new Date(Long.valueOf(date));
+        }
+    }
+
+    /**
      * Get inbox.
      * @return The JAX-RS response
      */
@@ -90,7 +90,9 @@ public final class InboxRs extends AbstractRs {
     public Response inbox() {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
-        for (Bout bout : identity.inbox(this.query)) {
+        final List<Period> periods = new ArrayList<Period>();
+        for (Bout bout : identity.inbox(this.queryWithThreshold())) {
+            final int delta = bout.compareTo();
             if (this.group(bout).equals(this.group)) {
                 bouts.add(
                     new ShortBout(
@@ -108,6 +110,7 @@ public final class InboxRs extends AbstractRs {
             .init(this)
             .append(new JaxbBundle("query", this.query))
             .append(JaxbGroup.build(bouts, "bouts"))
+            .append(JaxbGroup.build(periods, "periods"))
             .link("friends", this.base().path("/f"))
             .link("helper", this.base().path("/h"))
             .authenticated(identity)
@@ -132,6 +135,15 @@ public final class InboxRs extends AbstractRs {
             .location(this.base().path("/{num}").build(bout.number()))
             .header("Bout-number", bout.number())
             .build();
+    }
+
+    /**
+     * Create query with threshold.
+     * @return The query
+     */
+    private String queryWithThreshold() {
+        // todo
+        return this.query;
     }
 
     /**

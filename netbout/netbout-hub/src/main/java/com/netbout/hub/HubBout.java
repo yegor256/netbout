@@ -45,7 +45,7 @@ import java.util.List;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class HubBout implements Bout, Comparable<Bout> {
+public final class HubBout implements Bout {
 
     /**
      * The hub.
@@ -79,8 +79,9 @@ public final class HubBout implements Bout, Comparable<Bout> {
      */
     @Override
     public int compareTo(final Bout bout) {
-        final List<Message> mine = this.messages("");
-        final List<Message> his = bout.messages("");
+        final String query = "(equal $pos 0)";
+        final List<Message> mine = this.messages(query);
+        final List<Message> his = bout.messages(query);
         int result = 0;
         if (!mine.isEmpty() && !his.isEmpty()) {
             result = mine.get(0).date().compareTo(his.get(0).date());
