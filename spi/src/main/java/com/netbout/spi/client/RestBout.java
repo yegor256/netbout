@@ -74,6 +74,21 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public int compareTo(final Bout bout) {
+        final String query = "(equal $pos 0)";
+        final List<Message> mine = this.messages(query);
+        final List<Message> his = bout.messages(query);
+        int result = 0;
+        if (!mine.isEmpty() && !his.isEmpty()) {
+            result = mine.get(0).date().compareTo(his.get(0).date());
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long number() {
         final String num = this.client
             .get("reading bout number")

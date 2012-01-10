@@ -68,6 +68,14 @@ final class RestMessage implements Message {
      * {@inheritDoc}
      */
     @Override
+    public int compareTo(final Message msg) {
+        return this.date().compareTo(msg.date());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Bout bout() {
         return new RestBout(this.client.copy());
     }

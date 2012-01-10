@@ -38,7 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bout {
+public interface Bout extends Comparable<Bout> {
 
     /**
      * Get its unique number.
