@@ -89,7 +89,7 @@ public final class Period {
     public String toString() {
         return String.format(
             "%d-%d",
-            this.start().getTime()
+            this.start().getTime(),
             this.finish().getTime()
         );
     }

@@ -195,8 +195,7 @@ public final class InboxRs extends AbstractRs {
     private String fullQuery() {
         String original;
         if (!this.query.isEmpty() && this.query.charAt(0) == '(') {
-            original = this.query
-            );
+            original = this.query;
         } else {
             original = String.format("(matches '%s' $text)", this.query);
         }
