@@ -26,19 +26,23 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.Link;
 import com.netbout.rest.jaxb.ShortBout;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of user's inbox.
@@ -50,14 +54,19 @@ import javax.ws.rs.core.Response;
 public final class InboxRs extends AbstractRs {
 
     /**
+     * Threshold param.
+     */
+    private static final String PERIOD_PARAM = "p";
+
+    /**
      * Query to filter messages with.
      */
     private transient String query = "";
 
     /**
-     * Time threshold.
+     * Viewpoint to use.
      */
-    private transient Date threshold;
+    private transient String viewpoint;
 
     /**
      * Set filtering keyword.
@@ -71,13 +80,13 @@ public final class InboxRs extends AbstractRs {
     }
 
     /**
-     * Set time threshold.
-     * @param date The date
+     * Set viewpoint.
+     * @param vpnt The viewpoint
      */
-    @QueryParam("t")
-    public void setThreshold(final String date) {
-        if (date != null) {
-            this.threshold = new Date(Long.valueOf(date));
+    @QueryParam(InboxRs.PERIOD_PARAM)
+    public void setViewpoint(final String vpnt) {
+        if (vpnt != null) {
+            this.viewpoint = vpnt;
         }
     }
 
@@ -90,10 +99,28 @@ public final class InboxRs extends AbstractRs {
     public Response inbox() {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
-        final List<Period> periods = new ArrayList<Period>();
-        for (Bout bout : identity.inbox(this.queryWithThreshold())) {
-            final int delta = bout.compareTo();
-            if (this.group(bout).equals(this.group)) {
+        final List<Link> periods = new ArrayList<Link>();
+        final UriBuilder base = this.base()
+            .queryParam(RestSession.QUERY_PARAM, this.query);
+        Period period;
+        if (this.viewpoint == null) {
+            period = new Period();
+        } else {
+            period = Period.valueOf(this.viewpoint);
+            periods.add(new Link("newest", base));
+        }
+        int counter = 0;
+        int pos = 0;
+        final List<Bout> inbox = identity.inbox(this.fullQuery());
+        for (Bout bout : inbox) {
+            pos += 1;
+            if (counter > 2) {
+                break;
+            }
+            if (period.add(this.date(bout))) {
+                if (counter > 0) {
+                    continue;
+                }
                 bouts.add(
                     new ShortBout(
                         bout,
@@ -101,7 +128,30 @@ public final class InboxRs extends AbstractRs {
                         identity
                     )
                 );
+                continue;
             }
+            periods.add(
+                new Link(
+                    "more",
+                    period.title(),
+                    base.queryParam(InboxRs.PERIOD_PARAM, period)
+                )
+            );
+            period = period.next();
+            counter += 1;
+        }
+        if (!period.isEmpty()) {
+            periods.add(
+                new Link(
+                    "earliest",
+                    String.format(
+                        "%s (%d more)",
+                        period.title(),
+                        inbox.size() - pos
+                    ),
+                    base.queryParam(InboxRs.PERIOD_PARAM, period)
+                )
+            );
         }
         return new PageBuilder()
             .schema("")
@@ -109,6 +159,7 @@ public final class InboxRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .append(new JaxbBundle("query", this.query))
+            .append(new JaxbBundle("period", period.title()))
             .append(JaxbGroup.build(bouts, "bouts"))
             .append(JaxbGroup.build(periods, "periods"))
             .link("friends", this.base().path("/f"))
@@ -138,30 +189,39 @@ public final class InboxRs extends AbstractRs {
     }
 
     /**
-     * Create query with threshold.
+     * Create query with period.
      * @return The query
      */
-    private String queryWithThreshold() {
-        // todo
-        return this.query;
+    private String fullQuery() {
+        String original;
+        if (!this.query.isEmpty() && this.query.charAt(0) == '(') {
+            original = this.query
+            );
+        } else {
+            original = String.format("(matches '%s' $text)", this.query);
+        }
+        return String.format(
+            "(and (greater-than $date '%s') (matches '%s' $text))",
+            this.period.start(),
+            original
+        );
     }
 
     /**
-     * Calculate group of the bout.
-     * @return The JAX-RS response
+     * Calculate date of the bout.
+     * @param bout The bout
+     * @return Recent date in it
      */
-    private String group() {
-        final Identity identity = this.identity();
-        final Bout bout = identity.start();
-        return new PageBuilder()
-            .build(AbstractPage.class)
-            .init(this)
-            .authenticated(identity)
-            .entity(String.format("bout #%d created", bout.number()))
-            .status(Response.Status.SEE_OTHER)
-            .location(this.base().path("/{num}").build(bout.number()))
-            .header("Bout-number", bout.number())
-            .build();
+    private Date date(final Bout bout) {
+        final String query = "(equal $pos 0)";
+        final List<Message> msgs = bout.messages(query);
+        Date date;
+        if (msgs.isEmpty()) {
+            date = bout.date();
+        } else {
+            date = max(bout.date(), msgs.get(0).date());
+        }
+        return date;
     }
 
 }

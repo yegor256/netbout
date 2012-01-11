@@ -88,12 +88,17 @@ public final class NamespaceFarm {
                 } else {
                     final PreparedStatement istmt = conn.prepareStatement(
                         // @checkstyle LineLength (1 line)
-                        "INSERT INTO namespace (name, identity, template) VALUES (?, ?, ?)"
+                        "INSERT INTO namespace (name, identity, template, date) VALUES (?, ?, ?, ?)"
                     );
                     istmt.setString(1, name);
                     istmt.setString(2, owner.toString());
                     // @checkstyle MagicNumber (1 line)
                     istmt.setString(3, template);
+                    istmt.setDate(
+                        // @checkstyle MagicNumber (1 line)
+                        4,
+                        new java.sql.Date(System.currentTimeMillis())
+                    );
                     istmt.executeUpdate();
                     Logger.debug(
                         this,

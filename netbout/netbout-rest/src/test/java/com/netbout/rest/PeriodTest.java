@@ -24,53 +24,33 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.jaxb;
+package com.netbout.rest;
 
-import java.net.URI;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Time period.
- *
+ * Test case for {@link Period}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "period")
-@XmlAccessorType(XmlAccessType.NONE)
-public final class Period {
+public final class PeriodTest {
 
     /**
-     * The query.
+     * Period can accept dates and return title.
+     * @throws Exception If there is some problem inside
      */
-    private final transient URI href;
-
-    /**
-     * Public ctor for JAXB.
-     */
-    public Period() {
-        throw new IllegalStateException("This ctor should never be called");
-    }
-
-    /**
-     * Public ctor.
-     * @param uri Its href
-     */
-    public Period(final String name, final URI uri) {
-        this(name, uri, MediaType.TEXT_XML);
-    }
-
-    /**
-     * HREF of the link.
-     * @return The url
-     */
-    @XmlAttribute
-    public URI getHref() {
-        return this.href;
+    @Test
+    public void concumesDatesAndReturnsTitle() throws Exception {
+        final Period period = new Period();
+        period.add(Date.parse("2008-08-24"));
+        period.add(Date.parse("2008-08-22"));
+        MatcherAssert.assertThat(
+            period.title(),
+            Matchers.equalTo("August 2008")
+        );
     }
 
 }

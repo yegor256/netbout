@@ -50,6 +50,11 @@ public final class Link {
     private final transient String rel;
 
     /**
+     * Optional label.
+     */
+    private final transient String label;
+
+    /**
      * The URI.
      */
     private final transient URI href;
@@ -68,44 +73,72 @@ public final class Link {
 
     /**
      * Public ctor.
-     * @param name The "rel" of it
+     * @param rname The "rel" of it
      * @param uri The href
      */
-    public Link(final String name, final URI uri) {
-        this(name, uri, MediaType.TEXT_XML);
+    public Link(final String rname, final URI uri) {
+        this(rname, "", uri, MediaType.TEXT_XML);
     }
 
     /**
      * Public ctor.
-     * @param name The "rel" of it
+     * @param rname The "rel" of it
      * @param builder URI builder
      */
-    public Link(final String name, final UriBuilder builder) {
-        this(name, builder.build(), MediaType.TEXT_XML);
+    public Link(final String rname, final UriBuilder builder) {
+        this(rname, "", builder.build(), MediaType.TEXT_XML);
     }
 
     /**
      * Public ctor.
-     * @param name The "rel" of it
+     * @param rname The "rel" of it
+     * @param name The label of it
+     * @param builder URI builder
+     */
+    public Link(final String rname, final String name,
+        final UriBuilder builder) {
+        this(rname, name, builder.build(), MediaType.TEXT_XML);
+    }
+
+    /**
+     * Public ctor.
+     * @param rname The "rel" of it
+     * @param name The label of it
      * @param uri The href
      * @param tpe Media type of destination
      */
-    public Link(final String name, final URI uri, final String tpe) {
+    public Link(final String rname, final String name, final URI uri,
+        final String tpe) {
+        assert rname != null;
         assert name != null;
         assert uri != null;
         assert tpe != null;
-        this.rel = name;
+        this.rel = rname;
+        this.label = name;
         this.href = uri;
         this.type = tpe;
     }
 
     /**
      * REL of the link.
-     * @return The url
+     * @return The name
      */
     @XmlAttribute
     public String getRel() {
         return this.rel;
+    }
+
+    /**
+     * Label of the link.
+     * @return The label
+     */
+    @XmlAttribute
+    public String getLabel() {
+        String text = null;
+        if (!this.label.isEmpty()) {
+            text = this.label;
+        }
+        return text;
     }
 
     /**

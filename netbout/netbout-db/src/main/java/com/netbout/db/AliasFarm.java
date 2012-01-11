@@ -59,10 +59,12 @@ public final class AliasFarm {
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO alias (identity, name) VALUES (?, ?)"
+                "INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)"
             );
             stmt.setString(1, identity.toString());
             stmt.setString(2, alias);
+            // @checkstyle MagicNumber (1 line)
+            stmt.setDate(3, new java.sql.Date(System.currentTimeMillis()));
             stmt.execute();
         } finally {
             conn.close();

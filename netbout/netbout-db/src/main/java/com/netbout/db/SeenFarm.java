@@ -57,10 +57,12 @@ public final class SeenFarm {
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO seen (message, identity) VALUES (?, ?)"
+                "INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)"
             );
             stmt.setLong(1, msg);
             stmt.setString(2, identity.toString());
+            // @checkstyle MagicNumber (1 line)
+            stmt.setDate(3, new java.sql.Date(System.currentTimeMillis()));
             stmt.execute();
         } finally {
             conn.close();

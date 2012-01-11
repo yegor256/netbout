@@ -98,10 +98,13 @@ public final class ParticipantFarm {
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO participant (bout, identity) VALUES (?, ?)"
+                // @checkstyle LineLength (1 line)
+                "INSERT INTO participant (bout, identity, date) VALUES (?, ?, ?)"
             );
             stmt.setLong(1, bout);
             stmt.setString(2, identity.toString());
+            // @checkstyle MagicNumber (1 line)
+            stmt.setDate(3, new java.sql.Date(System.currentTimeMillis()));
             stmt.execute();
         } finally {
             conn.close();

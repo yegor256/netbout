@@ -49,6 +49,7 @@ public final class LinkTest {
     public void convertsToXml() throws Exception {
         final Link obj = new Link(
             "foo",
+            "some label",
             UriBuilder.fromUri("http://bar").build(),
             MediaType.TEXT_XML
         );
@@ -57,8 +58,25 @@ public final class LinkTest {
             Matchers.allOf(
                 XhtmlMatchers.hasXPath("/link[@rel='foo']"),
                 XhtmlMatchers.hasXPath("/link[@href='http://bar']"),
-                XhtmlMatchers.hasXPath("/link[@type='text/xml']")
+                XhtmlMatchers.hasXPath("/link[@type='text/xml']"),
+                XhtmlMatchers.hasXPath("/link[@label='some label']")
             )
+        );
+    }
+
+    /**
+     * Link can hide an empty label.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void hidesEmptyLabel() throws Exception {
+        final Link obj = new Link(
+            "some rel name",
+            UriBuilder.fromUri("http://foo").build()
+        );
+        MatcherAssert.assertThat(
+            JaxbConverter.the(obj),
+            XhtmlMatchers.hasXPath("/link[not(@label)]")
         );
     }
 

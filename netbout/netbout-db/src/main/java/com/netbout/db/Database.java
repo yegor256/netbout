@@ -62,6 +62,7 @@ final class Database {
     /**
      * Drop all connections.
      */
+    @SuppressWarnings("PMD.NullAssignment")
     public static void drop() {
         synchronized (Database.class) {
             Database.instance = null;
