@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,6 +45,12 @@ public interface BoutDt {
      * @return The number
      */
     Long getNumber();
+
+    /**
+     * Get date of creation.
+     * @return The date
+     */
+    Date getDate();
 
     /**
      * Get title.

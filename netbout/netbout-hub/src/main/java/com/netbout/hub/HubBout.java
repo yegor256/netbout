@@ -109,6 +109,14 @@ public final class HubBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public Date date() {
+        return this.data.getDate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void confirm() {
         this.data.confirm(this.viewer.name());
     }
