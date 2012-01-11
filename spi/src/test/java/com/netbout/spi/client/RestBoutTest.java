@@ -27,88 +27,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.client;
 
-import java.util.Collection;
+import com.netbout.spi.Bout;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Bout, a conversation room.
- *
+ * Test case for {@link RestBout}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public interface Bout extends Comparable<Bout> {
+public final class RestBoutTest {
 
     /**
-     * Get its unique number.
-     * @return The number of the bout
+     * RestBout can fetch a date of the bout.
+     * @throws Exception If there is some problem inside
      */
-    Long number();
-
-    /**
-     * When it was created.
-     * @return The date of creation
-     */
-    Date date();
-
-    /**
-     * Get its title.
-     * @return The title of the bout
-     */
-    String title();
-
-    /**
-     * Set its title.
-     * @param text The title of the bout
-     */
-    void rename(String text);
-
-    /**
-     * Get all its participants.
-     * @return The list of them
-     */
-    Collection<Participant> participants();
-
-    /**
-     * Confirm participantion in this bout.
-     */
-    void confirm();
-
-    /**
-     * Leave this bout.
-     */
-    void leave();
-
-    /**
-     * Invite new participant.
-     * @param identity Identity of the participant
-     * @return This new participant
-     */
-    Participant invite(Identity identity);
-
-    /**
-     * Get ordered list of all messages of the bout.
-     * @param query Search query, if necessary
-     * @return The list of them
-     */
-    List<Message> messages(String query);
-
-    /**
-     * Find message by ID.
-     * @param number Number of the message to get
-     * @return The message
-     * @throws MessageNotFoundException If not found
-     */
-    Message message(Long number) throws MessageNotFoundException;
-
-    /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @return The message just posted
-     */
-    Message post(String text);
+    @Test
+    public void fetchesDateOfBout() throws Exception {
+        final Date date = new Date();
+        final String text =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH)
+                .format(date);
+        final RestClient client = new RestClientMocker()
+            .onXPath("/page/bout/date/text()", text)
+            .mock();
+        final Bout bout = new RestBout(client);
+        MatcherAssert.assertThat(bout.date(), Matchers.equalTo(date));
+    }
 
 }
