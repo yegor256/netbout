@@ -62,6 +62,16 @@ public final class BoutTest {
     }
 
     /**
+     * BoutMocker sets date automatically.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void setsBoutDateByDefault() throws Exception {
+        final Bout bout = new BoutMocker().mock();
+        MatcherAssert.assertThat(bout.date(), Matchers.notNullValue());
+    }
+
+    /**
      * BoutMocker can add messages to bout by default.
      * @throws Exception If there is some problem inside
      */

@@ -31,6 +31,7 @@ package com.netbout.spi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import org.hamcrest.Matchers;
@@ -83,6 +84,7 @@ public final class BoutMocker {
         }
         this.titledAs("some random text");
         this.withNumber(Math.abs(new Random().nextLong()));
+        this.withDate(new Date());
     }
 
     /**
@@ -102,6 +104,16 @@ public final class BoutMocker {
      */
     public BoutMocker withNumber(final Long num) {
         Mockito.doReturn(num).when(this.bout).number();
+        return this;
+    }
+
+    /**
+     * With this date.
+     * @param The date
+     * @return This object
+     */
+    public BoutMocker withDate(final Date date) {
+        Mockito.doReturn(date).when(this.bout).date();
         return this;
     }
 
