@@ -52,6 +52,7 @@ public final class PredicateBuilderTest {
             "(equal $bout.title 'test')",
             "(talks-with 'abc')",
             "(less-than 5 6)",
+            "(greater-than 'test-1' \"test-2\")",
             "just simple text: \u0435",
         };
         final PredicateBuilder builder = new PredicateBuilder();
