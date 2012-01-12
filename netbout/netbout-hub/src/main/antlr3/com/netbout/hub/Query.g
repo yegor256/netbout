@@ -18,14 +18,14 @@ grammar Query;
 @lexer::members {
     @Override
     public void emitErrorMessage(String msg) {
-        throw new IllegalArgumentException(msg);
+        throw new PredicateException(msg);
     }
 }
 
 @parser::members {
     @Override
     public void emitErrorMessage(String msg) {
-        throw new IllegalArgumentException(msg);
+        throw new PredicateException(msg);
     }
 }
 
@@ -48,9 +48,6 @@ predicate returns [Predicate ret]
     ')'
     { $ret = new PredicateBuilder().build($NAME.text, atoms); }
     ;
-    catch [PredicateException ex] {
-        throw new RecognitionException();
-    }
 
 atom returns [Predicate ret]
     :

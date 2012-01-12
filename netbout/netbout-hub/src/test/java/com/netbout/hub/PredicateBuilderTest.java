@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.spi.MessageMocker;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -56,6 +57,31 @@ public final class PredicateBuilderTest {
         final PredicateBuilder builder = new PredicateBuilder();
         for (String query : queries) {
             builder.parse(query);
+        }
+    }
+
+    /**
+     * PredicateBuilder can parse invalid format and throw exception.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void parsesInvalidQueriesAndThrowsExceptions() throws Exception {
+        final String[] queries = new String[] {
+            "(--)",
+            "(\n\t\r \u0435\")",
+            "(unknown-function 1 2 3)",
+        };
+        final PredicateBuilder builder = new PredicateBuilder();
+        for (String query : queries) {
+            try {
+                builder.parse(query);
+                throw new IllegalArgumentException("should fail here");
+            } catch (PredicateException ex) {
+                MatcherAssert.assertThat(
+                    ex.getMessage(),
+                    Matchers.containsString(query)
+                );
+            }
         }
     }
 

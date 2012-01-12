@@ -27,7 +27,6 @@
 package com.netbout.hub.predicates.math;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
 import com.netbout.hub.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
@@ -54,8 +53,7 @@ public final class EqualPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos)
-        throws PredicateException {
+    public Object evaluate(final Message msg, final int pos) {
         final List<Object> values = new ArrayList<Object>();
         for (Predicate arg : this.args()) {
             values.add(arg.evaluate(msg, pos));

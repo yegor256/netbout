@@ -41,8 +41,7 @@ public interface Predicate {
      * @param msg The message
      * @param pos Its position in the list
      * @return Result of it
-     * @throws PredicateException If some problem inside
      */
-    Object evaluate(Message msg, int pos) throws PredicateException;
+    Object evaluate(Message msg, int pos);
 
 }

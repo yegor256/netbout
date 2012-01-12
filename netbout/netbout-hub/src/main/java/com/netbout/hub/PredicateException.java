@@ -32,7 +32,7 @@ package com.netbout.hub;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PredicateException extends Exception {
+public final class PredicateException extends RuntimeException {
 
     /**
      * Public ctor.

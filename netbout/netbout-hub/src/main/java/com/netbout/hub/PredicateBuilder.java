@@ -63,9 +63,8 @@ public final class PredicateBuilder {
      * Build a predicate from a query string.
      * @param query The query
      * @return The predicate
-     * @throws PredicateException If some problem
      */
-    public Predicate parse(final String query) throws PredicateException {
+    public Predicate parse(final String query) {
         Predicate predicate;
         if (!query.isEmpty() && query.charAt(0) == '(') {
             final CharStream input = new ANTLRStringStream(query);
@@ -75,6 +74,8 @@ public final class PredicateBuilder {
             try {
                 predicate = parser.query();
             } catch (org.antlr.runtime.RecognitionException ex) {
+                throw new PredicateException(query, ex);
+            } catch (PredicateException ex) {
                 throw new PredicateException(query, ex);
             }
             Logger.debug(
@@ -99,10 +100,8 @@ public final class PredicateBuilder {
      * @param name Its name
      * @param preds List of arguments
      * @return The predicate
-     * @throws PredicateException If some problem
      */
-    protected Predicate build(final String name, final List<Predicate> preds)
-        throws PredicateException {
+    protected Predicate build(final String name, final List<Predicate> preds) {
         Predicate predicate;
         if (this.FUNCS.containsKey(name)) {
             try {

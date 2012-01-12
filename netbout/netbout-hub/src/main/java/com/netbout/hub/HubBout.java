@@ -200,16 +200,12 @@ public final class HubBout implements Bout {
         }
         Collections.sort(messages, Collections.reverseOrder());
         final List<Message> result = new ArrayList<Message>();
-        try {
-            final Predicate predicate = new PredicateBuilder().parse(query);
-            for (Message msg : messages) {
-                if (query.isEmpty()
-                    || (Boolean) predicate.evaluate(msg, result.size())) {
-                    result.add(msg);
-                }
+        final Predicate predicate = new PredicateBuilder().parse(query);
+        for (Message msg : messages) {
+            if (query.isEmpty()
+                || (Boolean) predicate.evaluate(msg, result.size())) {
+                result.add(msg);
             }
-        } catch (com.netbout.hub.PredicateException ex) {
-            throw new IllegalArgumentException(ex);
         }
         Logger.debug(
             this,
