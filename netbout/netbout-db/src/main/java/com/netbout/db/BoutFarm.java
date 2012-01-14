@@ -34,6 +34,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +63,7 @@ public final class BoutFarm {
                 "INSERT INTO bout (date) VALUES (?)",
                 Statement.RETURN_GENERATED_KEYS
             );
-            stmt.setDate(1, new java.sql.Date(System.currentTimeMillis()));
+            stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
             stmt.execute();
             final ResultSet rset = stmt.getGeneratedKeys();
             try {

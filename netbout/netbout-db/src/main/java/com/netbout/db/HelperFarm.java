@@ -35,6 +35,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,10 +121,10 @@ public final class HelperFarm {
                     );
                     istmt.setString(1, name.toString());
                     istmt.setString(2, url.toString());
-                    istmt.setDate(
+                    istmt.setTimestamp(
                         // @checkstyle MagicNumber (1 line)
                         3,
-                        new java.sql.Date(System.currentTimeMillis())
+                        new Timestamp(System.currentTimeMillis())
                     );
                     istmt.executeUpdate();
                     Logger.debug(

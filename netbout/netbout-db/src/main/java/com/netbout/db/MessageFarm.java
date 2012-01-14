@@ -35,6 +35,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -183,7 +184,7 @@ public final class MessageFarm {
             final PreparedStatement stmt = conn.prepareStatement(
                 "UPDATE message SET date = ? WHERE number = ?"
             );
-            stmt.setTimestamp(1, new java.sql.Timestamp(date.getTime()));
+            stmt.setTimestamp(1, new Timestamp(date.getTime()));
             stmt.setLong(2, number);
             final int updated = stmt.executeUpdate();
             if (updated != 1) {
