@@ -76,13 +76,13 @@ public final class InboxRsTest {
             ResourceMocker.the((Page) response.getEntity(), rest),
             Matchers.allOf(
                 XmlMatchers.hasXPath("/page[total=20]"),
-                XmlMatchers.hasXPath("/page/bouts[count(bout)=3]"),
+                XmlMatchers.hasXPath("/page/bouts[count(bout)=5]"),
                 XmlMatchers.hasXPath("/page/bouts/bout[number=20]"),
                 XmlMatchers.hasXPath("/page/periods[count(link)=2]"),
                 XmlMatchers.hasXPath("/page/periods/link[@rel='more']"),
                 XmlMatchers.hasXPath("/page/periods/link[@rel='earliest']"),
-                XmlMatchers.hasXPath("//link[@rel='more' and contains(@label,'(3)')]"),
-                XmlMatchers.hasXPath("//link[@rel='earliest' and contains(@label,'(14)')]")
+                XmlMatchers.hasXPath("//link[@rel='more' and contains(@label,'(6)')]"),
+                XmlMatchers.hasXPath("//link[@rel='earliest' and contains(@label,'(10)')]")
             )
         );
     }

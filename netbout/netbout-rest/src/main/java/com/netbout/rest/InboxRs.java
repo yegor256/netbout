@@ -64,11 +64,6 @@ public final class InboxRs extends AbstractRs {
     private static final String PERIOD_PARAM = "p";
 
     /**
-     * How many slides to show, including the current one?
-     */
-    private static final int MAX_SLIDES = 3;
-
-    /**
      * Query to filter messages with.
      */
     private transient String query = "";
@@ -163,17 +158,19 @@ public final class InboxRs extends AbstractRs {
      * @return The query
      */
     private String fullQuery(final Period period) {
-        String original;
+        String original = "";
         if (!this.query.isEmpty() && this.query.charAt(0) == '(') {
             original = this.query;
         } else {
-            original = String.format(
-                "(matches '%s' $text)",
-                this.query.replace("'", "\\'")
-            );
+            if (!this.query.isEmpty()) {
+                original = String.format(
+                    "(matches '%s' $text)",
+                    this.query.replace("'", "\\'")
+                );
+            }
         }
         return String.format(
-            "(and (not (greater-than $date '%s')) %s)",
+            "(and (not (less-than $date '%s')) %s)",
             ISODateTimeFormat.dateTime().print(
                 new DateTime(period.newest().getTime())
             ),

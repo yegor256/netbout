@@ -73,7 +73,7 @@ final class Period {
      * Public ctor.
      */
     public Period() {
-        this(new Date(), 5L * 24 * 60 * 60 * 1000);
+        this(new Date(), 12L * 30 * 24 * 60 * 60 * 1000);
     }
 
     /**
@@ -93,8 +93,8 @@ final class Period {
      */
     public static Period valueOf(final String text) {
         Period period;
-        if (text != null && text.matches("^\\d+\\-\\d+$")) {
-            final String[] parts = text.split("-");
+        if (text != null && text.matches("^\\d+t\\d+$")) {
+            final String[] parts = text.split("t");
             period = new Period(
                 new Date(Long.valueOf(parts[0])),
                 Long.valueOf(parts[1])
@@ -111,7 +111,7 @@ final class Period {
     @Override
     public String toString() {
         return String.format(
-            "%d-%d",
+            "%dt%d",
             this.start.getTime(),
             this.limit
         );
@@ -135,8 +135,8 @@ final class Period {
      *  the next one
      */
     public boolean fits(final Date date) {
-        final boolean offlimit = date.after(
-            new Date(this.start.getTime() + this.limit)
+        final boolean offlimit = date.before(
+            new Date(this.start.getTime() - this.limit)
         );
         final boolean overflow = this.dates.size() >= this.MAX
             && (this.dates.last().getTime() - this.dates.first().getTime()) > 1000 * 60L;
@@ -178,6 +178,16 @@ final class Period {
      *  one size bigger
      */
     public Period next(final Date date) {
+        if (date.after(this.start)) {
+            throw new IllegalArgumentException(
+                "NEXT should be older than START"
+            );
+        }
+        if (!this.dates.isEmpty() && date.after(this.dates.first())) {
+            throw new IllegalArgumentException(
+                "NEXT should be older than any other date"
+            );
+        }
         return new Period(date, this.limit * 2);
     }
 

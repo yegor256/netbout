@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -38,6 +39,18 @@ import org.junit.Test;
  * @version $Id$
  */
 public final class PeriodTest {
+
+    /**
+     * Period can accept dates and return title.
+     * @throws Exception If there is some problem inside
+     */
+    @BeforeClass
+    public static void currentDateIsCorrect() throws Exception {
+        MatcherAssert.assertThat(
+            "current date is configured correctly on this machine",
+            new Date().after(PeriodTest.date("2012-01-01"))
+        );
+    }
 
     /**
      * Period can accept dates and return title.
@@ -62,9 +75,31 @@ public final class PeriodTest {
         final Period period = new Period();
         final Period next = period.next(this.date("2008-05-13"));
         MatcherAssert.assertThat(
-            "is older than finish",
+            "next period is older",
             next.newest().before(period.newest())
         );
+    }
+
+    /**
+     * Period throws exception if next period is newer.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsWhenNextIsNewerThanCurrent() throws Exception {
+        new Period()
+            .next(this.date("2000-05-13"))
+            .next(this.date("2001-01-24"));
+    }
+
+    /**
+     * Period throws exception if a date is not following existing dates.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsWhenNewDateIsNotInARow() throws Exception {
+        new Period()
+            .next(this.date("2001-01-18"))
+            .add(this.date("2004-01-17"));
     }
 
     /**
@@ -108,6 +143,24 @@ public final class PeriodTest {
     }
 
     /**
+     * Period can reject a date when it is overflowed.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void rejectsDateOnOverflow() throws Exception {
+        final Period period = new Period().next(this.date("2011-05-01"));
+        for (int day = 5; day > 0; day -= 1) {
+            final Date date = this.date(String.format("2011-03-%02d", day));
+            MatcherAssert.assertThat("fits in", period.fits(date));
+            period.add(date);
+        }
+        MatcherAssert.assertThat(
+            "overflow detected",
+            !period.fits(this.date("2011-04-01"))
+        );
+    }
+
+    /**
      * Period can understand NULL gracefully.
      * @throws Exception If there is some problem inside
      */
@@ -122,7 +175,7 @@ public final class PeriodTest {
      * @return The date
      * @throws java.text.ParseException If failed to parse
      */
-    private Date date(final String text) throws java.text.ParseException {
+    private static Date date(final String text) throws java.text.ParseException {
         return new SimpleDateFormat("yyyy-MM-dd").parse(text);
     }
 
