@@ -79,14 +79,7 @@ public final class HubBout implements Bout {
      */
     @Override
     public int compareTo(final Bout bout) {
-        final String query = "(equal $pos 0)";
-        final List<Message> mine = this.messages(query);
-        final List<Message> his = bout.messages(query);
-        int result = this.date().compareTo(bout.date());
-        if (!mine.isEmpty() && !his.isEmpty()) {
-            result = mine.get(0).date().compareTo(his.get(0).date());
-        }
-        return result;
+        return HubBout.recent(this).compareTo(HubBout.recent(bout));
     }
 
     /**
@@ -279,6 +272,23 @@ public final class HubBout implements Bout {
             }
         }
         throw new IllegalStateException("Can't find myself in participants");
+    }
+
+    /**
+     * Maximum date of a bout.
+     * @param bout The bout to work with
+     * @return Its recent date
+     */
+    private static Date recent(final Bout bout) {
+        final List<Message> msgs = bout.messages("(equal $pos 0)");
+        Date recent = bout.date();
+        if (!msgs.isEmpty()) {
+            final Date mdate = msgs.get(0).date();
+            if (mdate.after(recent)) {
+                recent = mdate;
+            }
+        }
+        return recent;
     }
 
 }
