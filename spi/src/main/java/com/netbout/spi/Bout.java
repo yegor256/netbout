@@ -108,7 +108,8 @@ public interface Bout extends Comparable<Bout> {
      * Post a new message.
      * @param text The text of the new message
      * @return The message just posted
+     * @throws MessagePostException If can't post it for some reason
      */
-    Message post(String text);
+    Message post(String text) throws MessagePostException;
 
 }
