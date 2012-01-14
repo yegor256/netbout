@@ -136,13 +136,23 @@ final class Period {
      */
     public boolean fits(final Date date) {
         final boolean offlimit = date.after(
-            new Date(this.start.getTime() - this.limit)
+            new Date(this.start.getTime() + this.limit)
         );
         final boolean overflow = this.dates.size() >= this.MAX
             && (this.dates.last().getTime() - this.dates.first().getTime()) > 1000 * 60L;
-        return !overflow
+        final boolean fits = !overflow
             && !date.after(this.start)
             && (this.dates.size() < this.MIN || !offlimit);
+        Logger.debug(
+            this,
+            "#fits(%s): offlimit=%B, overflow=%B, size=%d -> %B",
+            date,
+            offlimit,
+            overflow,
+            this.dates.size(),
+            fits
+        );
+        return fits;
     }
 
     /**

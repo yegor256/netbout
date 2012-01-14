@@ -85,7 +85,7 @@ public final class PeriodsBuilderTest {
     @Test
     @org.junit.Ignore
     public void returnsOneLinkForTwoGroups() throws Exception {
-        for (int day = 1; day <= 5; day += 1) {
+        for (int day = 5; day > 0; day -= 1) {
             MatcherAssert.assertThat(
                 "should be visible",
                 this.builder.show(this.date(String.format("2008-08-%02d", day)))
@@ -106,7 +106,8 @@ public final class PeriodsBuilderTest {
         MatcherAssert.assertThat(
             builder.links().get(0),
             Matchers.allOf(
-                Matchers.hasProperty("rel", Matchers.equalTo("more"))
+                Matchers.hasProperty("rel", Matchers.equalTo("more")),
+                Matchers.hasProperty("label", Matchers.containsString("(1)"))
             )
         );
     }
@@ -117,7 +118,7 @@ public final class PeriodsBuilderTest {
      */
     @Test
     public void returnsTwoLinksForThreeGroups() throws Exception {
-        for (int day = 1; day < 10; day += 1) {
+        for (int day = 10; day > 0; day -= 1) {
             this.builder.show(this.date(String.format("2008-07-%02d", day)));
             MatcherAssert.assertThat("still have space", this.builder.more(1));
         }
@@ -129,7 +130,8 @@ public final class PeriodsBuilderTest {
         MatcherAssert.assertThat(
             builder.links().get(1),
             Matchers.allOf(
-                Matchers.hasProperty("rel", Matchers.equalTo("earliest"))
+                Matchers.hasProperty("rel", Matchers.equalTo("earliest")),
+                Matchers.hasProperty("label", Matchers.containsString("(40)"))
             )
         );
     }
