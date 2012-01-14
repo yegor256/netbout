@@ -54,6 +54,7 @@ public final class MessageMocker {
         this.withAuthor(new UrnMocker().mock());
         this.withText("some text");
         this.withDate(new Date());
+        this.inBout(new BoutMocker().withMessage(this.message).mock());
     }
 
     /**

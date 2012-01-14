@@ -167,6 +167,7 @@ public final class UrnTest {
                 Urn.create(urn.toString()),
                 Matchers.equalTo(urn)
             );
+            MatcherAssert.assertThat("is valid", Urn.isValid(urn.toString()));
         }
     }
 

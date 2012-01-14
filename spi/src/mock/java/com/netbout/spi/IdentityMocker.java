@@ -31,12 +31,15 @@ package com.netbout.spi;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -62,7 +65,8 @@ public final class IdentityMocker {
     /**
      * All bouts.
      */
-    private final Map<Long, Bout> bouts = new ConcurrentHashMap<Long, Bout>();
+    private final SortedMap<Long, Bout> bouts =
+        new ConcurrentSkipListMap<Long, Bout>();
 
     /**
      * Inboxes.
@@ -94,9 +98,11 @@ public final class IdentityMocker {
             new Answer() {
                 @Override
                 public Object answer(final InvocationOnMock invocation) {
-                    return new ArrayList<Bout>(
+                    final List<Bout> inbox = new ArrayList<Bout>(
                         IdentityMocker.this.bouts.values()
                     );
+                    Collections.reverse(inbox);
+                    return inbox;
                 }
             }
         ).when(this.identity).inbox(Mockito.anyString());

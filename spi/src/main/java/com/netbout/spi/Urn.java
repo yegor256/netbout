@@ -180,6 +180,21 @@ public final class Urn implements Comparable {
     }
 
     /**
+     * Is it URN?
+     * @param text The text to validate
+     * @return Yes of no
+     */
+    public static boolean isValid(final String text) {
+        boolean valid = true;
+        try {
+            new Urn(text);
+        } catch (URISyntaxException ex) {
+            valid = false;
+        }
+        return valid;
+    }
+
+    /**
      * Is it empty?
      * @return Yes of no
      */

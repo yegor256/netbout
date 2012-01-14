@@ -123,12 +123,21 @@ public final class BoutMocker {
      * @return This object
      */
     public BoutMocker withMessage(final String text) {
-        this.messages.add(
+        return this.withMessage(
             new MessageMocker()
                 .inBout(this.bout)
                 .withText(text)
                 .mock()
         );
+    }
+
+    /**
+     * With this message.
+     * @param msg The message
+     * @return This object
+     */
+    public BoutMocker withMessage(final Message msg) {
+        this.messages.add(msg);
         return this;
     }
 

@@ -133,4 +133,22 @@ public final class IdentityTest {
         );
     }
 
+    /**
+     * IdentityMocker can sort bouts by number.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void sortsBoutByNumber() throws Exception {
+        final Long num = Math.abs(new Random().nextLong());
+        final Identity identity = new IdentityMocker()
+            .withBout(num, new BoutMocker().withNumber(num).mock())
+            .withBout(num + 1, new BoutMocker().withNumber(num + 1).mock())
+            .withBout(num - 1, new BoutMocker().withNumber(num - 1).mock())
+            .mock();
+        MatcherAssert.assertThat(
+            identity.inbox("").get(0).number(),
+            Matchers.equalTo(num + 1)
+        );
+    }
+
 }
