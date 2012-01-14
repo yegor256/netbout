@@ -26,6 +26,14 @@
  */
 package com.netbout.rest;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.MessageMocker;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -45,11 +53,37 @@ public final class InboxRsTest {
      */
     @Test
     public void rendersInboxFrontPage() throws Exception {
-        final InboxRs rest = new ResourceMocker().mock(InboxRs.class);
-        final Response response = rest.inbox();
+        final IdentityMocker imocker = new IdentityMocker();
+        final Calendar cal = new GregorianCalendar();
+        for (long num = 20; num > 0; num -= 1) {
+            cal.add(Calendar.MONTH, -1);
+            final Date date = cal.getTime();
+            imocker.withBout(
+                num,
+                new BoutMocker()
+                    .withNumber(num)
+                    .withDate(date)
+                    .withMessage(new MessageMocker().withDate(date).mock())
+                    .mock()
+            );
+        }
+        final InboxRs rest = new ResourceMocker()
+            .withIdentity(imocker.mock())
+            .mock(InboxRs.class);
+        // rest.setViewpoint(new Period());
+        final Response response = rest.inbox(null);
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/bouts")
+            Matchers.allOf(
+                XmlMatchers.hasXPath("/page[total=20]"),
+                XmlMatchers.hasXPath("/page/bouts[count(bout)=3]"),
+                XmlMatchers.hasXPath("/page/bouts/bout[number=20]"),
+                XmlMatchers.hasXPath("/page/periods[count(link)=2]"),
+                XmlMatchers.hasXPath("/page/periods/link[@rel='more']"),
+                XmlMatchers.hasXPath("/page/periods/link[@rel='earliest']"),
+                XmlMatchers.hasXPath("//link[@rel='more' and contains(@label,'(3)')]"),
+                XmlMatchers.hasXPath("//link[@rel='earliest' and contains(@label,'(14)')]")
+            )
         );
     }
 

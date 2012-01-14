@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -44,13 +45,85 @@ public final class PeriodTest {
      */
     @Test
     public void concumesDatesAndReturnsTitle() throws Exception {
+        final Period period = new Period().next(this.date("2008-08-24"));
+        period.add(this.date("2008-08-22"));
+        // MatcherAssert.assertThat(
+        //     period.title(),
+        //     Matchers.equalTo("August 2008")
+        // );
+    }
+
+    /**
+     * Period can create its next one.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void nextPeriodIsEarlierThanCurrentOne() throws Exception {
         final Period period = new Period();
-        period.add(Date.parse("2008-08-24"));
-        period.add(Date.parse("2008-08-22"));
+        final Period next = period.next(this.date("2008-05-13"));
         MatcherAssert.assertThat(
-            period.title(),
-            Matchers.equalTo("August 2008")
+            "is older than finish",
+            next.newest().before(period.newest())
         );
+    }
+
+    /**
+     * Period can be serialized to string and back.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void serializesToStringAndBack() throws Exception {
+        final Period period = new Period();
+        final String text = period.toString();
+        MatcherAssert.assertThat(
+            Period.valueOf(text),
+            Matchers.equalTo(period)
+        );
+    }
+
+    /**
+     * Period can add a date which is the same as newest.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void addsNewestTwice() throws Exception {
+        final Period period = new Period();
+        MatcherAssert.assertThat(
+            "newest fits in",
+            period.fits(period.newest())
+        );
+    }
+
+    /**
+     * Period can fit new dates correctly.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void fitsNewDatesCorrectly() throws Exception {
+        final Period period = new Period().next(this.date("2011-03-20"));
+        MatcherAssert.assertThat(
+            "new date fits in",
+            period.fits(this.date("2011-03-18"))
+        );
+    }
+
+    /**
+     * Period can understand NULL gracefully.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void revertsFromNull() throws Exception {
+        final Period period = Period.valueOf(null);
+    }
+
+    /**
+     * String to date.
+     * @param text The text
+     * @return The date
+     * @throws java.text.ParseException If failed to parse
+     */
+    private Date date(final String text) throws java.text.ParseException {
+        return new SimpleDateFormat("yyyy-MM-dd").parse(text);
     }
 
 }

@@ -26,9 +26,15 @@
  */
 package com.netbout.rest;
 
+import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import org.joda.time.Interval;
 
 /**
  * Period.
@@ -36,62 +42,48 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Period {
+final class Period {
+
+    /**
+     * Maximum number of items to show, no matter what.
+     */
+    private static final int MAX = 5;
+
+    /**
+     * Minimum number of items to show, no matter what.
+     */
+    private static final int MIN = 3;
 
     /**
      * Add dates in it.
      */
-    private final transient Set<Date> dates = new TreeSet<Date>();
+    private final transient SortedSet<Date> dates = new TreeSet<Date>();
+
+    /**
+     * Start of the period, the newest date.
+     */
+    private final transient Date start;
+
+    /**
+     * Maximum distance between dates, in milliseconds.
+     */
+    private final transient long limit;
 
     /**
      * Public ctor.
      */
     public Period() {
-        final Date today = new Date();
-        this.dates.add(today);
-        this.dates.add(new Date(today.getTime() + 5 * 24 * 60 * 60 * 1000));
+        this(new Date(), 5L * 24 * 60 * 60 * 1000);
     }
 
     /**
-     * Add new date to it.
-     * @param date The date
-     * @return Whether it is accepted in this period ({@code TRUE}) or
-     *  this period is full and we should use {@link #next()} in order to get
-     *  the next one
+     * Public ctor.
+     * @param from When to start
+     * @param lmt The limit
      */
-    public boolean add(final Date date) {
-        this.dates.add(date);
-        return this.dates.size() < 20;
-    }
-
-    /**
-     * Get next period.
-     * @return The period, which goes right after this one and is
-     *  one size bigger
-     */
-    public Period next() {
-        final Period next = new Period();
-        next.add(new Date(this.finish().getTime() + 1));
-        next.add(
-            new Date(
-                this.finish().getTime()
-                + (this.finish().getTime() - this.start().getTime()) * 2
-            )
-        );
-        return next;
-    }
-
-    /**
-     * Convert it to string.
-     * @return Text presentation of this period
-     */
-    @Override
-    public String toString() {
-        return String.format(
-            "%d-%d",
-            this.start().getTime(),
-            this.finish().getTime()
-        );
+    private Period(final Date from, final long lmt) {
+        this.start = from;
+        this.limit = lmt;
     }
 
     /**
@@ -100,11 +92,91 @@ public final class Period {
      * @return The period discovered
      */
     public static Period valueOf(final String text) {
-        final String[] parts = text.split("-");
-        final Period period = new Period();
-        period.add(new Date(Long.valueOf(parts[0])));
-        period.add(new Date(Long.valueOf(parts[1])));
+        Period period;
+        if (text != null && text.matches("^\\d+\\-\\d+$")) {
+            final String[] parts = text.split("-");
+            period = new Period(
+                new Date(Long.valueOf(parts[0])),
+                Long.valueOf(parts[1])
+            );
+        } else {
+            period = new Period();
+        }
         return period;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format(
+            "%d-%d",
+            this.start.getTime(),
+            this.limit
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof Period)
+            && ((Period) obj).start.equals(this.start)
+            && ((Period) obj).limit == this.limit;
+    }
+
+    /**
+     * This date fits into this period?
+     * @param date The date
+     * @return Whether it can be accepted in this period ({@code TRUE}) or
+     *  this period is full and we should use {@link #next()} in order to get
+     *  the next one
+     */
+    public boolean fits(final Date date) {
+        final boolean offlimit = date.after(
+            new Date(this.start.getTime() - this.limit)
+        );
+        final boolean overflow = this.dates.size() >= this.MAX
+            && (this.dates.last().getTime() - this.dates.first().getTime()) > 1000 * 60L;
+        return !overflow
+            && !date.after(this.start)
+            && (this.dates.size() < this.MIN || !offlimit);
+    }
+
+    /**
+     * Add new date to it.
+     * @param date The date
+     */
+    public void add(final Date date) {
+        if (!this.fits(date)) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Can't add %s, call #fits() first",
+                    date
+                )
+            );
+        }
+        this.dates.add(date);
+    }
+
+    /**
+     * Get next period.
+     * @param date This date should start the new one
+     * @return The period, which goes right after this one and is
+     *  one size bigger
+     */
+    public Period next(final Date date) {
+        return new Period(date, this.limit * 2);
+    }
+
+    /**
+     * Newest date.
+     * @return The date
+     */
+    public Date newest() {
+        return this.start;
     }
 
     /**
@@ -112,20 +184,27 @@ public final class Period {
      * @return Text presentation of this period
      */
     public String title() {
-    }
-
-    /**
-     * Start of the period.
-     * @return Start date
-     */
-    public Date start() {
-    }
-
-    /**
-     * Finish of the period.
-     * @return Finish date
-     */
-    public Date finish() {
+        final org.joda.time.Period distance = new Interval(
+            this.start.getTime(),
+            new Date().getTime()
+        ).toPeriod();
+        String title;
+        if (distance.getYears() > 0) {
+            title = String.format("%d years", distance.getYears());
+        } else if (distance.getMonths() > 0) {
+            title = String.format("%d months", distance.getMonths());
+        } else if (distance.getWeeks() > 0) {
+            title = String.format("%d weeks", distance.getWeeks());
+        } else if (distance.getDays() > 0) {
+            title = String.format("%d days", distance.getDays());
+        } else if (distance.getHours() > 0) {
+            title = String.format("%d hours", distance.getHours());
+        } else if (distance.getMinutes() > 0) {
+            title = String.format("%d mins", distance.getMinutes());
+        } else {
+            title = String.format("%d secs", distance.getSeconds());
+        }
+        return String.format("%s ago", title);
     }
 
 }
