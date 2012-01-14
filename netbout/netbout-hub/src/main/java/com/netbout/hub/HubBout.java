@@ -279,7 +279,7 @@ public final class HubBout implements Bout {
      * @param bout The bout to work with
      * @return Its recent date
      */
-    private static Date recent(final Bout bout) {
+    protected static Date recent(final Bout bout) {
         final List<Message> msgs = bout.messages("(equal $pos 0)");
         Date recent = bout.date();
         if (!msgs.isEmpty()) {

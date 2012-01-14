@@ -97,7 +97,7 @@ final class StubMessage implements Message {
      */
     @Override
     public Date date() {
-        return this.ibout.date();
+        return HubBout.recent(this.ibout);
     }
 
     /**

@@ -79,7 +79,7 @@ public final class HubIdentityTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void findsBoutsWithouMessages() throws Exception {
+    public void findsBoutsWithoutMessages() throws Exception {
         final List<Long> nums = new ArrayList<Long>();
         final Bout bout = new BoutMocker().mock();
         nums.add(bout.number());

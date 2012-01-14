@@ -169,13 +169,19 @@ public final class InboxRs extends AbstractRs {
                 );
             }
         }
-        return String.format(
-            "(and (not (less-than $date '%s')) %s)",
+        final String text = String.format(
+            "(and (not (greater-than $date '%s')) %s)",
             ISODateTimeFormat.dateTime().print(
                 new DateTime(period.newest().getTime())
             ),
             original
         );
+        Logger.debug(
+            this,
+            "#fullQuery(): '%s'",
+            text
+        );
+        return text;
     }
 
     /**
@@ -184,19 +190,12 @@ public final class InboxRs extends AbstractRs {
      * @return Recent date in it
      */
     private Date date(final Bout bout) {
-        final String query = "(equal $pos 0)";
-        final List<Message> msgs = bout.messages(query);
+        final List<Message> msgs = bout.messages("(equal $pos 0)");
         Date date;
         if (msgs.isEmpty()) {
             date = bout.date();
         } else {
-            final Date first = bout.date();
-            final Date second = msgs.get(0).date();
-            if (first.after(second)) {
-                date = first;
-            } else {
-                date = second;
-            }
+            date = msgs.get(0).date();
         }
         return date;
     }

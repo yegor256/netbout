@@ -74,6 +74,9 @@
                                 <xsl:value-of select="@href"/>
                             </xsl:attribute>
                             <xsl:value-of select="@label" />
+                            <xsl:if test="@rel='earliest'">
+                                <xsl:text>...</xsl:text>
+                            </xsl:if>
                         </a>
                     </li>
                 </xsl:for-each>
