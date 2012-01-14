@@ -82,7 +82,7 @@ public final class HubBout implements Bout {
         final String query = "(equal $pos 0)";
         final List<Message> mine = this.messages(query);
         final List<Message> his = bout.messages(query);
-        int result = 0;
+        int result = this.date().compareTo(bout.date());
         if (!mine.isEmpty() && !his.isEmpty()) {
             result = mine.get(0).date().compareTo(his.get(0).date());
         }
