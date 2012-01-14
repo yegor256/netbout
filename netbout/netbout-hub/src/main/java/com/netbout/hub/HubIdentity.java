@@ -193,8 +193,18 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         }
         Collections.sort(bouts, Collections.reverseOrder());
         final List<Bout> result = new ArrayList<Bout>();
+        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
         for (Bout bout : bouts) {
-            if (query.isEmpty() || !bout.messages(query).isEmpty()) {
+            boolean matches = false;
+            if (!bout.messages(query).isEmpty()) {
+                matches = true;
+            } else {
+                matches = (Boolean) predicate.evaluate(
+                    new StubMessage(bout),
+                    0
+                );
+            }
+            if (matches) {
                 result.add(bout);
             }
         }

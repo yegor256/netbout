@@ -74,4 +74,24 @@ public final class HubIdentityTest {
         );
     }
 
+    /**
+     * HubIdentity can find bouts by predicate, even without messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsBoutsWithouMessages() throws Exception {
+        final List<Long> nums = new ArrayList<Long>();
+        final Bout bout = new BoutMocker().mock();
+        nums.add(bout.number());
+        final Hub hub = new HubMocker()
+            .doReturn(nums, "get-bouts-of-identity")
+            .doReturn(new ArrayList<Long>(), "get-bout-messages")
+            .mock();
+        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
+        MatcherAssert.assertThat(
+            identity.inbox("(matches '' $text)").size(),
+            Matchers.equalTo(1)
+        );
+    }
+
 }
