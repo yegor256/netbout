@@ -34,6 +34,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,12 +89,17 @@ public final class NamespaceFarm {
                 } else {
                     final PreparedStatement istmt = conn.prepareStatement(
                         // @checkstyle LineLength (1 line)
-                        "INSERT INTO namespace (name, identity, template) VALUES (?, ?, ?)"
+                        "INSERT INTO namespace (name, identity, template, date) VALUES (?, ?, ?, ?)"
                     );
                     istmt.setString(1, name);
                     istmt.setString(2, owner.toString());
                     // @checkstyle MagicNumber (1 line)
                     istmt.setString(3, template);
+                    istmt.setTimestamp(
+                        // @checkstyle MagicNumber (1 line)
+                        4,
+                        new Timestamp(System.currentTimeMillis())
+                    );
                     istmt.executeUpdate();
                     Logger.debug(
                         this,

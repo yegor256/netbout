@@ -45,7 +45,7 @@ import java.util.List;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class HubBout implements Bout, Comparable<Bout> {
+public final class HubBout implements Bout {
 
     /**
      * The hub.
@@ -79,13 +79,7 @@ public final class HubBout implements Bout, Comparable<Bout> {
      */
     @Override
     public int compareTo(final Bout bout) {
-        final List<Message> mine = this.messages("");
-        final List<Message> his = bout.messages("");
-        int result = 0;
-        if (!mine.isEmpty() && !his.isEmpty()) {
-            result = mine.get(0).date().compareTo(his.get(0).date());
-        }
-        return result;
+        return HubBout.recent(this).compareTo(HubBout.recent(bout));
     }
 
     /**
@@ -102,6 +96,14 @@ public final class HubBout implements Bout, Comparable<Bout> {
     @Override
     public String title() {
         return this.data.getTitle();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date date() {
+        return this.data.getDate();
     }
 
     /**
@@ -191,16 +193,12 @@ public final class HubBout implements Bout, Comparable<Bout> {
         }
         Collections.sort(messages, Collections.reverseOrder());
         final List<Message> result = new ArrayList<Message>();
-        try {
-            final Predicate predicate = new PredicateBuilder().parse(query);
-            for (Message msg : messages) {
-                if (query.isEmpty()
-                    || (Boolean) predicate.evaluate(msg, result.size())) {
-                    result.add(msg);
-                }
+        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
+        for (Message msg : messages) {
+            if (query.isEmpty()
+                || (Boolean) predicate.evaluate(msg, result.size())) {
+                result.add(msg);
             }
-        } catch (com.netbout.hub.PredicateException ex) {
-            throw new IllegalArgumentException(ex);
         }
         Logger.debug(
             this,
@@ -274,6 +272,23 @@ public final class HubBout implements Bout, Comparable<Bout> {
             }
         }
         throw new IllegalStateException("Can't find myself in participants");
+    }
+
+    /**
+     * Maximum date of a bout.
+     * @param bout The bout to work with
+     * @return Its recent date
+     */
+    protected static Date recent(final Bout bout) {
+        final List<Message> msgs = bout.messages("(equal $pos 0)");
+        Date recent = bout.date();
+        if (!msgs.isEmpty()) {
+            final Date mdate = msgs.get(0).date();
+            if (mdate.after(recent)) {
+                recent = mdate;
+            }
+        }
+        return recent;
     }
 
 }

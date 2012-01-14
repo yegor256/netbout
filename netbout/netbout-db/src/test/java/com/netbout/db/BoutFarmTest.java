@@ -96,6 +96,20 @@ public final class BoutFarmTest {
     }
 
     /**
+     * BoutFarm can set and read bout date.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void readsBoutCreationDate() throws Exception {
+        final Long num = this.farm.getNextBoutNumber();
+        this.farm.startedNewBout(num);
+        MatcherAssert.assertThat(
+            this.farm.getBoutDate(num),
+            Matchers.notNullValue()
+        );
+    }
+
+    /**
      * Check bout existence.
      * @throws Exception If there is some problem inside
      */

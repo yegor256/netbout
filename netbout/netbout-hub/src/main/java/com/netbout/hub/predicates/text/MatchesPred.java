@@ -27,7 +27,6 @@
 package com.netbout.hub.predicates.text;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
 import com.netbout.hub.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
@@ -53,8 +52,7 @@ public final class MatchesPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos)
-        throws PredicateException {
+    public Object evaluate(final Message msg, final int pos) {
         final String query = (String) this.arg(0).evaluate(msg, pos);
         final String text = (String) this.arg(1).evaluate(msg, pos);
         final boolean result = text.contains(query);

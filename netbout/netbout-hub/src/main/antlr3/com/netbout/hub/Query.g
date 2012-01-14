@@ -18,14 +18,18 @@ grammar Query;
 @lexer::members {
     @Override
     public void emitErrorMessage(String msg) {
-        throw new IllegalArgumentException(msg);
+        throw new PredicateException(msg);
     }
 }
 
 @parser::members {
+    private transient PredicateBuilder builder;
     @Override
     public void emitErrorMessage(String msg) {
-        throw new IllegalArgumentException(msg);
+        throw new PredicateException(msg);
+    }
+    public void setPredicateBuilder(final PredicateBuilder bldr) {
+        this.builder = bldr;
     }
 }
 
@@ -46,11 +50,8 @@ predicate returns [Predicate ret]
         { atoms.add($atom.ret); }
     )*
     ')'
-    { $ret = new PredicateBuilder().build($NAME.text, atoms); }
+    { $ret = this.builder.build($NAME.text, atoms); }
     ;
-    catch [PredicateException ex] {
-        throw new RecognitionException();
-    }
 
 atom returns [Predicate ret]
     :
@@ -67,14 +68,36 @@ atom returns [Predicate ret]
     { $ret = new NumberPred(Long.valueOf($NUMBER.text)); }
     ;
 
-NAME: ( 'a' .. 'z' | '-' )*;
-VARIABLE : '$' ( 'a' .. 'z' ) ( 'a' .. 'z' | '.' )+
-    { setText(getText().substring(1)); }
+NAME:
+    LETTER ( LETTER | '-' )*
+    |
+    'urn:' ( LETTER | '-' )+ ':' ( LETTER | '-' | ':' | DIGIT )+
     ;
-TEXT : '"' ('\\"' | ~'"')* '"'
-    { setText(getText().substring(1, getText().length() - 1).replace("\\\"", "\"")); }
+
+VARIABLE :
+    '$' LETTER ( LETTER | '.' )+
+    { this.setText(getText().substring(1)); }
     ;
-NUMBER: ( '0' .. '9' )+;
+
+TEXT :
+    '"' ('\\"' | ~'"')* '"'
+    { this.setText(this.getText().substring(1, this.getText().length() - 1).replace("\\\"", "\"")); }
+    |
+    '\'' ('\\\'' | ~'\'')* '\''
+    { this.setText(this.getText().substring(1, this.getText().length() - 1).replace("\\'", "'")); }
+    ;
+
+NUMBER:
+    DIGIT+
+    ;
+
+fragment LETTER:
+    ( 'a' .. 'z' )
+    ;
+fragment DIGIT:
+    ( '0' .. '9' )
+    ;
+
 SPACE
     :
     ( ' ' | '\t' | '\n' | '\r' )+

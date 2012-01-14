@@ -32,13 +32,18 @@ import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import com.netbout.spi.client.RestSession;
+import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * RESTful front of user's inbox.
@@ -48,6 +53,11 @@ import javax.ws.rs.core.Response;
  */
 @Path("/")
 public final class InboxRs extends AbstractRs {
+
+    /**
+     * Threshold param.
+     */
+    private static final String PERIOD_PARAM = "p";
 
     /**
      * Query to filter messages with.
@@ -67,21 +77,40 @@ public final class InboxRs extends AbstractRs {
 
     /**
      * Get inbox.
+     * @param view Which period to view
      * @return The JAX-RS response
      */
     @GET
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Response inbox() {
+    public Response inbox(@QueryParam(InboxRs.PERIOD_PARAM) final String view) {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
-        for (Bout bout : identity.inbox(this.query)) {
-            bouts.add(
-                new ShortBout(
-                    bout,
-                    this.base().path(String.format("/%d", bout.number())),
-                    identity
-                )
-            );
+        final Period period = Period.valueOf(view);
+        List<Bout> inbox;
+        if (view == null) {
+            inbox = identity.inbox(this.query);
+        } else {
+            inbox = identity.inbox(this.fullQuery(period));
+        }
+        final PeriodsBuilder periods = new PeriodsBuilder(
+            period,
+            this.base().clone().queryParam(RestSession.QUERY_PARAM, this.query)
+        ).setQueryParam(InboxRs.PERIOD_PARAM);
+        for (Bout bout : inbox) {
+            if (periods.show(this.date(bout))) {
+                bouts.add(
+                    new ShortBout(
+                        bout,
+                        this.base().path(
+                            String.format("/%d", bout.number())
+                        ),
+                        identity
+                    )
+                );
+            }
+            if (!periods.more(inbox.size())) {
+                break;
+            }
         }
         return new PageBuilder()
             .schema("")
@@ -89,7 +118,10 @@ public final class InboxRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .append(new JaxbBundle("query", this.query))
+            .append(new JaxbBundle("view", view))
+            .append(new JaxbBundle("total", Integer.toString(inbox.size())))
             .append(JaxbGroup.build(bouts, "bouts"))
+            .append(JaxbGroup.build(periods.links(), "periods"))
             .link("friends", this.base().path("/f"))
             .link("helper", this.base().path("/h"))
             .authenticated(identity)
@@ -114,6 +146,54 @@ public final class InboxRs extends AbstractRs {
             .location(this.base().path("/{num}").build(bout.number()))
             .header("Bout-number", bout.number())
             .build();
+    }
+
+    /**
+     * Create query with period.
+     * @param period The period
+     * @return The query
+     */
+    private String fullQuery(final Period period) {
+        String original = "";
+        if (!this.query.isEmpty() && this.query.charAt(0) == '(') {
+            original = this.query;
+        } else {
+            if (!this.query.isEmpty()) {
+                original = String.format(
+                    "(matches '%s' $text)",
+                    this.query.replace("'", "\\'")
+                );
+            }
+        }
+        final String text = String.format(
+            "(and (not (greater-than $date '%s')) %s)",
+            ISODateTimeFormat.dateTime().print(
+                new DateTime(period.newest().getTime())
+            ),
+            original
+        );
+        Logger.debug(
+            this,
+            "#fullQuery(): '%s'",
+            text
+        );
+        return text;
+    }
+
+    /**
+     * Calculate date of the bout.
+     * @param bout The bout
+     * @return Recent date in it
+     */
+    private Date date(final Bout bout) {
+        final List<Message> msgs = bout.messages("(equal $pos 0)");
+        Date date;
+        if (msgs.isEmpty()) {
+            date = bout.date();
+        } else {
+            date = msgs.get(0).date();
+        }
+        return date;
     }
 
 }

@@ -30,10 +30,19 @@
 package com.netbout.spi;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link Identity}.
@@ -54,6 +63,18 @@ public final class IdentityMocker {
     private final Set<String> aliases = new HashSet<String>();
 
     /**
+     * All bouts.
+     */
+    private final SortedMap<Long, Bout> bouts =
+        new ConcurrentSkipListMap<Long, Bout>();
+
+    /**
+     * Inboxes.
+     */
+    private final Map<String, Long[]> inboxes =
+        new ConcurrentHashMap<String, Long[]>();
+
+    /**
      * Public ctor.
      */
     public IdentityMocker() {
@@ -62,10 +83,39 @@ public final class IdentityMocker {
         this.belongsTo("http://localhost/some-authority");
         this.withPhoto("http://localhost/unknown.png");
         Mockito.doReturn(this.aliases).when(this.identity).aliases();
-        Mockito.doReturn(new BoutMocker().mock()).when(this.identity).start();
+        Mockito.doAnswer(
+            new Answer() {
+                @Override
+                public Object answer(final InvocationOnMock invocation) {
+                    final Long num = Math.abs(new Random().nextLong());
+                    final Bout bout = new BoutMocker().withNumber(num).mock();
+                    IdentityMocker.this.withBout(num, bout);
+                    return bout;
+                }
+            }
+        ).when(this.identity).start();
+        Mockito.doAnswer(
+            new Answer() {
+                @Override
+                public Object answer(final InvocationOnMock invocation) {
+                    final List<Bout> inbox = new ArrayList<Bout>(
+                        IdentityMocker.this.bouts.values()
+                    );
+                    Collections.reverse(inbox);
+                    return inbox;
+                }
+            }
+        ).when(this.identity).inbox(Mockito.anyString());
         try {
-            Mockito.doReturn(new BoutMocker().mock()).when(this.identity)
-                .bout(Mockito.any(Long.class));
+            Mockito.doAnswer(
+                new Answer() {
+                    @Override
+                    public Object answer(final InvocationOnMock invocation) {
+                        final Long num = (Long) invocation.getArguments()[0];
+                        return IdentityMocker.this.bouts.get(num);
+                    }
+                }
+            ).when(this.identity).bout(Mockito.anyLong());
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -145,11 +195,29 @@ public final class IdentityMocker {
      * @throws BoutNotFoundException If some problem
      */
     public IdentityMocker withBout(final Long num, final Bout bout) {
-        try {
-            Mockito.doReturn(bout).when(this.identity).bout(num);
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        this.bouts.put(num, bout);
+        return this;
+    }
+
+    /**
+     * With this inbox.
+     * @param query The query
+     * @param nums List of bout numbers to return
+     * @return This object
+     */
+    public IdentityMocker withInbox(final String query, final Long[] nums) {
+        Mockito.doAnswer(
+            new Answer() {
+                @Override
+                public Object answer(final InvocationOnMock invocation) {
+                    final List<Bout> inbox = new ArrayList<Bout>();
+                    for (Long num : nums) {
+                        inbox.add(IdentityMocker.this.bouts.get(num));
+                    }
+                    return inbox;
+                }
+            }
+        ).when(this.identity).inbox(query);
         return this;
     }
 
@@ -158,6 +226,10 @@ public final class IdentityMocker {
      * @return Mocked identity
      */
     public Identity mock() {
+        if (this.bouts.isEmpty()) {
+            final Long num = Math.abs(new Random().nextLong());
+            this.withBout(num, new BoutMocker().withNumber(num).mock());
+        }
         return this.identity;
     }
 

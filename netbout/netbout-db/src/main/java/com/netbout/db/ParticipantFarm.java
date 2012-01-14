@@ -34,6 +34,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,10 +99,13 @@ public final class ParticipantFarm {
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO participant (bout, identity) VALUES (?, ?)"
+                // @checkstyle LineLength (1 line)
+                "INSERT INTO participant (bout, identity, date) VALUES (?, ?, ?)"
             );
             stmt.setLong(1, bout);
             stmt.setString(2, identity.toString());
+            // @checkstyle MagicNumber (1 line)
+            stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
             stmt.execute();
         } finally {
             conn.close();

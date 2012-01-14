@@ -27,7 +27,7 @@
 package com.netbout.hub.predicates.text;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.predicates.TextPred;
+import com.netbout.hub.PredicateMocker;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
@@ -49,8 +49,8 @@ public final class MatchesPredTest {
         final Predicate pred = new MatchesPred(
             Arrays.asList(
                 new Predicate[] {
-                    new TextPred(""),
-                    new TextPred("some text"),
+                    new PredicateMocker().doReturn("").mock(),
+                    new PredicateMocker().doReturn("some text").mock(),
                 }
             )
         );

@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,13 +39,20 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bout {
+@SuppressWarnings("PMD.TooManyMethods")
+public interface Bout extends Comparable<Bout> {
 
     /**
      * Get its unique number.
      * @return The number of the bout
      */
     Long number();
+
+    /**
+     * When it was created.
+     * @return The date of creation
+     */
+    Date date();
 
     /**
      * Get its title.

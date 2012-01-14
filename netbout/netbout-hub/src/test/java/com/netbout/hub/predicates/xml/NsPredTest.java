@@ -27,7 +27,7 @@
 package com.netbout.hub.predicates.xml;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.predicates.TextPred;
+import com.netbout.hub.PredicateMocker;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
@@ -47,7 +47,11 @@ public final class NsPredTest {
     @Test
     public void positivelyMatchesXmlDocument() throws Exception {
         final Predicate pred = new NsPred(
-            Arrays.asList(new Predicate[] {new TextPred("foo")})
+            Arrays.asList(
+                new Predicate[] {
+                    new PredicateMocker().doReturn("foo").mock(),
+                }
+            )
         );
         MatcherAssert.assertThat(
             "matched",
@@ -65,7 +69,11 @@ public final class NsPredTest {
     @Test
     public void negativelyMatchesNonXmlDocument() throws Exception {
         final Predicate pred = new NsPred(
-            Arrays.asList(new Predicate[] {new TextPred("some-namespace")})
+            Arrays.asList(
+                new Predicate[] {
+                    new PredicateMocker().doReturn("some-namespace").mock(),
+                }
+            )
         );
         MatcherAssert.assertThat(
             "not matched",

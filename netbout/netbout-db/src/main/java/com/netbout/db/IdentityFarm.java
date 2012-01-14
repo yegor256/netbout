@@ -32,6 +32,7 @@ import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -206,10 +207,13 @@ public final class IdentityFarm {
             try {
                 if (!rset.next()) {
                     final PreparedStatement istmt = conn.prepareStatement(
-                        "INSERT INTO identity (name, photo) VALUES (?, ?)"
+                        // @checkstyle LineLength (1 line)
+                        "INSERT INTO identity (name, photo, date) VALUES (?, ?, ?)"
                     );
                     istmt.setString(1, name.toString());
                     istmt.setString(2, "http://img.netbout.com/unknown.png");
+                    // @checkstyle MagicNumber (1 line)
+                    istmt.setDate(3, new Date(System.currentTimeMillis()));
                     istmt.executeUpdate();
                     Logger.debug(
                         this,

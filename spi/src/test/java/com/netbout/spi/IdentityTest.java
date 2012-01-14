@@ -87,7 +87,14 @@ public final class IdentityTest {
         final Identity identity = new IdentityMocker().mock();
         final Bout bout = identity.start();
         MatcherAssert.assertThat(bout, Matchers.notNullValue());
-        MatcherAssert.assertThat(identity.bout(1L), Matchers.notNullValue());
+        MatcherAssert.assertThat(
+            identity.bout(bout.number()),
+            Matchers.notNullValue()
+        );
+        MatcherAssert.assertThat(
+            identity.inbox("").size(),
+            Matchers.equalTo(2)
+        );
     }
 
     /**
@@ -102,6 +109,46 @@ public final class IdentityTest {
             .withBout(number, bout)
             .mock();
         MatcherAssert.assertThat(identity.bout(number), Matchers.equalTo(bout));
+    }
+
+    /**
+     * IdentityMocker can mock inbox response.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void mocksDifferentInboxQueries() throws Exception {
+        final String query = "some query";
+        final Identity identity = new IdentityMocker()
+            .withBout(1L, new BoutMocker().mock())
+            .withBout(2L, new BoutMocker().mock())
+            .withInbox(query, new Long[] {1L})
+            .mock();
+        MatcherAssert.assertThat(
+            identity.inbox(query).size(),
+            Matchers.equalTo(1)
+        );
+        MatcherAssert.assertThat(
+            identity.inbox("").size(),
+            Matchers.equalTo(2)
+        );
+    }
+
+    /**
+     * IdentityMocker can sort bouts by number.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void sortsBoutByNumber() throws Exception {
+        final Long num = Math.abs(new Random().nextLong());
+        final Identity identity = new IdentityMocker()
+            .withBout(num, new BoutMocker().withNumber(num).mock())
+            .withBout(num + 1, new BoutMocker().withNumber(num + 1).mock())
+            .withBout(num - 1, new BoutMocker().withNumber(num - 1).mock())
+            .mock();
+        MatcherAssert.assertThat(
+            identity.inbox("").get(0).number(),
+            Matchers.equalTo(num + 1)
+        );
     }
 
 }

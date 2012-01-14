@@ -32,7 +32,7 @@ package com.netbout.hub;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PredicateException extends Exception {
+public final class PredicateException extends RuntimeException {
 
     /**
      * Public ctor.
@@ -48,6 +48,15 @@ public final class PredicateException extends Exception {
      */
     public PredicateException(final String cause) {
         super(cause);
+    }
+
+    /**
+     * Public ctor.
+     * @param query The query that cause this problem
+     * @param thr The cause of it
+     */
+    public PredicateException(final String query, final Throwable thr) {
+        super(query, thr);
     }
 
 }

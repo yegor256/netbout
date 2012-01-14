@@ -27,7 +27,6 @@
 package com.netbout.hub.predicates;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
@@ -54,8 +53,7 @@ public final class TalksWithPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos)
-        throws PredicateException {
+    public Object evaluate(final Message msg, final int pos) {
         final String name = (String) this.arg(0).evaluate(msg, pos);
         final Bout bout = msg.bout();
         boolean found = false;

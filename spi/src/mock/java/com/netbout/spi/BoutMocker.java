@@ -31,8 +31,10 @@ package com.netbout.spi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import org.hamcrest.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -82,6 +84,7 @@ public final class BoutMocker {
         }
         this.titledAs("some random text");
         this.withNumber(Math.abs(new Random().nextLong()));
+        this.withDate(new Date());
     }
 
     /**
@@ -105,16 +108,56 @@ public final class BoutMocker {
     }
 
     /**
+     * With this date.
+     * @param The date
+     * @return This object
+     */
+    public BoutMocker withDate(final Date date) {
+        Mockito.doReturn(date).when(this.bout).date();
+        return this;
+    }
+
+    /**
      * With this message.
-     * @param The text
+     * @param text The text
      * @return This object
      */
     public BoutMocker withMessage(final String text) {
-        this.messages.add(
+        return this.withMessage(
             new MessageMocker()
                 .inBout(this.bout)
                 .withText(text)
                 .mock()
+        );
+    }
+
+    /**
+     * With this message.
+     * @param msg The message
+     * @return This object
+     */
+    public BoutMocker withMessage(final Message msg) {
+        this.messages.add(msg);
+        return this;
+    }
+
+    /**
+     * With this message on this string in request.
+     * @param mask The mask to find in query
+     * @param text The text
+     * @return This object
+     */
+    public BoutMocker messageOn(final String mask, final String text) {
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    final List<Message> msgs = new ArrayList<Message>();
+                    msgs.add(new MessageMocker().withText(text).mock());
+                    return msgs;
+                }
+            }
+        ).when(this.bout).messages(
+            Mockito.argThat(Matchers.containsString(mask))
         );
         return this;
     }

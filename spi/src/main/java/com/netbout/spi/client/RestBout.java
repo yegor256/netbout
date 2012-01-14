@@ -38,7 +38,10 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * The bout.
@@ -74,6 +77,25 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public int compareTo(final Bout bout) {
+        final String query = "(equal $pos 0)";
+        final List<Message> mine = this.messages(query);
+        final List<Message> his = bout.messages(query);
+        int result;
+        if (mine.isEmpty()) {
+            result = -1;
+        } else if (his.isEmpty()) {
+            result = 1;
+        } else {
+            result = mine.get(0).date().compareTo(his.get(0).date());
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long number() {
         final String num = this.client
             .get("reading bout number")
@@ -82,6 +104,24 @@ final class RestBout implements Bout {
             .xpath("/page/bout/number/text()")
             .get(0);
         return Long.valueOf(num);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date date() {
+        final String date = this.client
+            .get("reading bout creation date")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/bout/date")
+            .xpath("/page/bout/date/text()")
+            .get(0);
+        return ISODateTimeFormat
+            .dateTime()
+            .withZone(DateTimeZone.UTC)
+            .parseDateTime(date)
+            .toDate();
     }
 
     /**

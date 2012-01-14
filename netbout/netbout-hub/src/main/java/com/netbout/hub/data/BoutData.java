@@ -35,6 +35,7 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -60,6 +61,11 @@ final class BoutData implements BoutDt {
      * The title.
      */
     private transient String title;
+
+    /**
+     * The date.
+     */
+    private transient Date date;
 
     /**
      * Collection of participants.
@@ -136,20 +142,44 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public String getTitle() {
-        if (this.title == null) {
-            this.title = this.hub.make("get-bout-title")
-                .synchronously()
-                .arg(this.number)
-                .exec();
-            Logger.debug(
-                this,
-                "#getTitle(): title '%s' loaded for bout #%d",
-                this.title,
-                this.number
-            );
+    public Date getDate() {
+        synchronized (this) {
+            if (this.date == null) {
+                this.date = this.hub.make("get-bout-date")
+                    .synchronously()
+                    .arg(this.number)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#getDate(): date '%s' loaded for bout #%d",
+                    this.date,
+                    this.number
+                );
+            }
+            return this.date;
         }
-        return this.title;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTitle() {
+        synchronized (this) {
+            if (this.title == null) {
+                this.title = this.hub.make("get-bout-title")
+                    .synchronously()
+                    .arg(this.number)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#getTitle(): title '%s' loaded for bout #%d",
+                    this.title,
+                    this.number
+                );
+            }
+            return this.title;
+        }
     }
 
     /**
@@ -157,19 +187,21 @@ final class BoutData implements BoutDt {
      */
     @Override
     public void setTitle(final String text) {
-        this.title = text;
-        this.hub.make("changed-bout-title")
-            .asap()
-            .arg(this.number)
-            .arg(this.title)
-            .asDefault(true)
-            .exec();
-        Logger.debug(
-            this,
-            "#setTitle('%s'): set for bout #%d",
-            this.title,
-            this.number
-        );
+        synchronized (this) {
+            this.title = text;
+            this.hub.make("changed-bout-title")
+                .asap()
+                .arg(this.number)
+                .arg(this.title)
+                .asDefault(true)
+                .exec();
+            Logger.debug(
+                this,
+                "#setTitle('%s'): set for bout #%d",
+                this.title,
+                this.number
+            );
+        }
     }
 
     /**

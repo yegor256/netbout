@@ -62,7 +62,7 @@ public final class NsPred extends AbstractVarargPred {
             this.FACTORY.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             this.FACTORY.setNamespaceAware(true);
         } catch (javax.xml.parsers.ParserConfigurationException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new PredicateException(ex);
         }
     }
 
@@ -70,8 +70,7 @@ public final class NsPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos)
-        throws PredicateException {
+    public Object evaluate(final Message msg, final int pos) {
         final String namespace = (String) this.arg(0).evaluate(msg, pos);
         final String text = msg.text();
         boolean result = false;

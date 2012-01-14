@@ -54,6 +54,7 @@
         </title>
         <link href="/css/inbox.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/periods.css" rel="stylesheet" type="text/css"></link>
     </xsl:template>
 
     <xsl:template name="content">
@@ -61,6 +62,23 @@
             <ul class="bouts">
                 <xsl:for-each select="/page/bouts/bout">
                     <xsl:apply-templates select="." />
+                </xsl:for-each>
+            </ul>
+        </nav>
+        <nav>
+            <ul id="periods">
+                <xsl:for-each select="/page/periods/link">
+                    <li>
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="@href"/>
+                            </xsl:attribute>
+                            <xsl:value-of select="@label" />
+                            <xsl:if test="@rel='earliest'">
+                                <xsl:text>...</xsl:text>
+                            </xsl:if>
+                        </a>
+                    </li>
                 </xsl:for-each>
             </ul>
         </nav>

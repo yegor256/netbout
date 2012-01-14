@@ -27,7 +27,6 @@
 package com.netbout.hub.predicates.logic;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
 import com.netbout.hub.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
 import java.util.List;
@@ -52,8 +51,7 @@ public final class AndPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Boolean evaluate(final Message msg, final int pos)
-        throws PredicateException {
+    public Boolean evaluate(final Message msg, final int pos) {
         boolean value = true;
         for (Predicate pred : this.args()) {
             value &= (Boolean) pred.evaluate(msg, pos);

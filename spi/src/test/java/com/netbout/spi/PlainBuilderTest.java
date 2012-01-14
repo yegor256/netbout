@@ -95,6 +95,11 @@ public final class PlainBuilderTest {
                         new String[]{"some text", "another text;;;\u043F", }
                     ),
                 },
+                new Object[] {
+                    Arrays.asList(
+                        new Object[]{"\u043F\u0440\u0440", 1L, Boolean.TRUE}
+                    ),
+                },
                 new Object[] {Arrays.asList(new String[]{"\u043F\u0440"})},
                 new Object[] {Arrays.asList(new String[]{"\u043F", "\u0440"})},
             }

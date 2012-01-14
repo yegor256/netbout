@@ -37,7 +37,7 @@ import java.util.Date;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class HubMessage implements Message, Comparable<Message> {
+final class HubMessage implements Message {
 
     /**
      * The hub.

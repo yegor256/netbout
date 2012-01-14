@@ -55,8 +55,7 @@ public final class VariablePred implements Predicate {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos)
-        throws PredicateException {
+    public Object evaluate(final Message msg, final int pos) {
         Object value;
         if ("pos".equals(this.name)) {
             value = pos;

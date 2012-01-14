@@ -24,56 +24,42 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates;
+package com.netbout.hub.predicates.math;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
-import com.netbout.spi.Message;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.List;
+import com.netbout.hub.PredicateMocker;
+import com.netbout.spi.MessageMocker;
+import java.util.Arrays;
+import java.util.Random;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 /**
- * All arguments should be equal to each other.
- *
+ * Test case of {@link LessThanPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class EqualPred extends AbstractVarargPred {
+public final class LessThanPredTest {
 
     /**
-     * Public ctor.
-     * @param args The arguments
+     * LessThanPred can compare two numbers.
+     * @throws Exception If there is some problem inside
      */
-    public EqualPred(final List<Predicate> args) {
-        super("equal", args);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object evaluate(final Message msg, final int pos)
-        throws PredicateException {
-        final List<Object> values = new ArrayList<Object>();
-        for (Predicate arg : this.args()) {
-            values.add(arg.evaluate(msg, pos));
-        }
-        boolean equal = true;
-        for (int num = 1; num < values.size(); num += 1) {
-            if (!values.get(num).toString()
-                .equals(values.get(num - 1).toString())) {
-                equal = false;
-                break;
-            }
-        }
-        Logger.debug(
-            this,
-            "#evaluate(): comparing %[list]s: %B",
-            values,
-            equal
+    @Test
+    public void comparesTwoIntegerNumbers() throws Exception {
+        final Long num = new Random().nextLong();
+        final Predicate pred = new LessThanPred(
+            Arrays.asList(
+                new Predicate[] {
+                    new PredicateMocker().doReturn(num - 1L).mock(),
+                    new PredicateMocker().doReturn(num).mock(),
+                }
+            )
         );
-        return equal;
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+        );
     }
 
 }

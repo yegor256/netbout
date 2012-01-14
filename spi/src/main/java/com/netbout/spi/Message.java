@@ -37,7 +37,7 @@ import java.util.Date;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Message {
+public interface Message extends Comparable<Message> {
 
     /**
      * Where this message is published.

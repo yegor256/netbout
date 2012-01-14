@@ -104,6 +104,15 @@ public final class ShortBout {
     }
 
     /**
+     * JAXB related method, to return the date of the bout.
+     * @return The number
+     */
+    @XmlElement
+    public java.util.Date getDate() {
+        return this.bout.date();
+    }
+
+    /**
      * JAXB related method, to return the title of the bout.
      * @return The title
      */
