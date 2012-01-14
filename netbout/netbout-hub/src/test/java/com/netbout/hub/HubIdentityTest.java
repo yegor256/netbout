@@ -60,6 +60,7 @@ public final class HubIdentityTest {
         final Bout third = new BoutMocker().mock();
         nums.add(third.number());
         final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (4 lines)
             .doReturn(nums, "get-bouts-of-identity")
             .doReturn(
                 Arrays.asList(new Long[]{1L}),
@@ -84,6 +85,7 @@ public final class HubIdentityTest {
         final Bout bout = new BoutMocker().mock();
         nums.add(bout.number());
         final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (2 lines)
             .doReturn(nums, "get-bouts-of-identity")
             .doReturn(new ArrayList<Long>(), "get-bout-messages")
             .mock();

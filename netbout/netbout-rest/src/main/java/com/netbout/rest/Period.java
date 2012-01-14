@@ -27,11 +27,7 @@
 package com.netbout.rest;
 
 import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.joda.time.Interval;
@@ -47,12 +43,22 @@ final class Period {
     /**
      * Maximum number of items to show, no matter what.
      */
-    private static final int MAX = 5;
+    public static final int MAX = 5;
 
     /**
      * Minimum number of items to show, no matter what.
      */
-    private static final int MIN = 3;
+    public static final int MIN = 3;
+
+    /**
+     * Default limit, in milliseconds.
+     */
+    public static final long DEFAULT_LIMIT = 12L * 30 * 24 * 60 * 60 * 1000;
+
+    /**
+     * Duration in milliseconds, which we never break.
+     */
+    public static final long UNBREAKEN = 1000 * 60L;
 
     /**
      * Add dates in it.
@@ -67,13 +73,13 @@ final class Period {
     /**
      * Maximum distance between dates, in milliseconds.
      */
-    private final transient long limit;
+    private final transient Long limit;
 
     /**
      * Public ctor.
      */
     public Period() {
-        this(new Date(), 12L * 30 * 24 * 60 * 60 * 1000);
+        this(new Date(), Period.DEFAULT_LIMIT);
     }
 
     /**
@@ -124,7 +130,15 @@ final class Period {
     public boolean equals(final Object obj) {
         return (obj instanceof Period)
             && ((Period) obj).start.equals(this.start)
-            && ((Period) obj).limit == this.limit;
+            && ((Period) obj).limit.equals(this.limit);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.start.hashCode() + this.limit.hashCode();
     }
 
     /**
@@ -139,7 +153,8 @@ final class Period {
             new Date(this.start.getTime() - this.limit)
         );
         final boolean overflow = this.dates.size() >= this.MAX
-            && (this.dates.last().getTime() - this.dates.first().getTime()) > 1000 * 60L;
+            && (this.dates.last().getTime() - this.dates.first().getTime())
+                > this.UNBREAKEN;
         final boolean fits = !overflow
             && !date.after(this.start)
             && (this.dates.size() < this.MIN || !offlimit);

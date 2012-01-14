@@ -91,8 +91,13 @@ NUMBER:
     DIGIT+
     ;
 
-fragment LETTER: ( 'a' .. 'z' );
-fragment DIGIT: ( '0' .. '9' );
+fragment LETTER:
+    ( 'a' .. 'z' )
+    ;
+fragment DIGIT:
+    ( '0' .. '9' )
+    ;
+
 SPACE
     :
     ( ' ' | '\t' | '\n' | '\r' )+

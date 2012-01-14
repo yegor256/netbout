@@ -27,19 +27,11 @@
 package com.netbout.rest;
 
 import com.netbout.rest.jaxb.Link;
-import com.netbout.rest.jaxb.ShortBout;
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.JaxbGroup;
-import com.netbout.rest.page.PageBuilder;
 import com.ymock.util.Logger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 import java.util.List;
 import javax.ws.rs.core.UriBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Groups dates together.
@@ -54,7 +46,17 @@ final class PeriodsBuilder {
     /**
      * How many links to show.
      */
-    private static final int MAX_LINKS = 2;
+    public static final int MAX_LINKS = 2;
+
+    /**
+     * REL for "more" link.
+     */
+    public static final String REL_MORE = "more";
+
+    /**
+     * REL for "earliest" link.
+     */
+    public static final String REL_EARLIEST = "earliest";
 
     /**
      * List of links to build.
@@ -74,7 +76,7 @@ final class PeriodsBuilder {
     /**
      * Base URI.
      */
-    private transient UriBuilder base;
+    private final transient UriBuilder base;
 
     /**
      * Position of the recently added date.
@@ -129,7 +131,8 @@ final class PeriodsBuilder {
             }
         } else {
             if (this.slide > 0) {
-                this.periods.add(this.link("more"));
+                this.total -= 1;
+                this.periods.add(this.link(this.REL_MORE));
             }
             this.period = this.period.next(date);
             this.slide += 1;
@@ -154,9 +157,9 @@ final class PeriodsBuilder {
      */
     public boolean more(final int size) {
         boolean more = true;
-        if (slide >= this.MAX_LINKS) {
+        if (this.slide >= this.MAX_LINKS) {
             this.total = size - this.position + 1;
-            this.periods.add(this.link("earliest"));
+            this.periods.add(this.link(this.REL_EARLIEST));
             more = false;
         }
         Logger.debug(
@@ -175,8 +178,8 @@ final class PeriodsBuilder {
      * @return Links
      */
     public List<Link> links() {
-        if (this.slide > 0 && slide < this.MAX_LINKS) {
-            this.periods.add(this.link("more"));
+        if (this.slide > 0 && this.slide < this.MAX_LINKS) {
+            this.periods.add(this.link(this.REL_MORE));
         }
         return this.periods;
     }

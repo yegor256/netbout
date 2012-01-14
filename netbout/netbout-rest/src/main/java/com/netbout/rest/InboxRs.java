@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.jaxb.Link;
 import com.netbout.rest.jaxb.ShortBout;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
@@ -36,16 +35,13 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.client.RestSession;
 import com.ymock.util.Logger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -89,7 +85,7 @@ public final class InboxRs extends AbstractRs {
     public Response inbox(@QueryParam(InboxRs.PERIOD_PARAM) final String view) {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
-        Period period = Period.valueOf(view);
+        final Period period = Period.valueOf(view);
         List<Bout> inbox;
         if (view == null) {
             inbox = identity.inbox(this.query);

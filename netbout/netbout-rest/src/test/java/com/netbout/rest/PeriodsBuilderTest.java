@@ -28,6 +28,8 @@ package com.netbout.rest;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Random;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -73,7 +75,7 @@ public final class PeriodsBuilderTest {
         );
         MatcherAssert.assertThat(
             "is empty, since no slides should be linked",
-            builder.links().isEmpty()
+            this.builder.links().isEmpty()
         );
     }
 
@@ -83,7 +85,7 @@ public final class PeriodsBuilderTest {
      */
     @Test
     public void returnsOneLinkForTwoGroups() throws Exception {
-        for (int day = 5; day > 0; day -= 1) {
+        for (int day = Period.MAX; day > 0; day -= 1) {
             MatcherAssert.assertThat(
                 "should be visible",
                 this.builder.show(this.date(String.format("2008-08-%02d", day)))
@@ -102,8 +104,9 @@ public final class PeriodsBuilderTest {
             this.builder.more(1)
         );
         MatcherAssert.assertThat(
-            builder.links().get(0),
+            this.builder.links().get(0),
             Matchers.allOf(
+                // @checkstyle MultipleStringLiterals (2 lines)
                 Matchers.hasProperty("rel", Matchers.equalTo("more")),
                 Matchers.hasProperty("label", Matchers.containsString("(1)"))
             )
@@ -116,7 +119,7 @@ public final class PeriodsBuilderTest {
      */
     @Test
     public void returnsTwoLinksForThreeGroups() throws Exception {
-        for (int day = 10; day > 0; day -= 1) {
+        for (int day = Period.MAX * 2; day > 0; day -= 1) {
             this.builder.show(this.date(String.format("2008-07-%02d", day)));
             MatcherAssert.assertThat("still have space", this.builder.more(1));
         }
@@ -124,12 +127,19 @@ public final class PeriodsBuilderTest {
             "it shouldn't be visible",
             !this.builder.show(this.date("2004-01-01"))
         );
-        MatcherAssert.assertThat("that's it", !this.builder.more(50));
+        final int total = Period.MAX * 2 + Math.abs(new Random().nextInt());
+        MatcherAssert.assertThat("that's it", !this.builder.more(total));
         MatcherAssert.assertThat(
-            builder.links().get(1),
+            this.builder.links().get(PeriodsBuilder.MAX_LINKS - 1),
             Matchers.allOf(
+                // @checkstyle MultipleStringLiterals (2 lines)
                 Matchers.hasProperty("rel", Matchers.equalTo("earliest")),
-                Matchers.hasProperty("label", Matchers.containsString("(40)"))
+                Matchers.hasProperty(
+                    "label",
+                    Matchers.containsString(
+                        String.format("(%d)", total - Period.MAX * 2)
+                    )
+                )
             )
         );
     }
@@ -141,7 +151,7 @@ public final class PeriodsBuilderTest {
      * @throws java.text.ParseException If failed to parse
      */
     private Date date(final String text) throws java.text.ParseException {
-        return new SimpleDateFormat("yyyy-MM-dd").parse(text);
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(text);
     }
 
 }

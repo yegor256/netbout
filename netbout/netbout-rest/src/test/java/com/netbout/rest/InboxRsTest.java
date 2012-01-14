@@ -26,9 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.MessageMocker;
 import java.util.Calendar;
@@ -52,10 +50,12 @@ public final class InboxRsTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void rendersInboxFrontPage() throws Exception {
         final IdentityMocker imocker = new IdentityMocker();
         final Calendar cal = new GregorianCalendar();
-        for (long num = 20; num > 0; num -= 1) {
+        final int total = Period.MAX * 2 + 1;
+        for (long num = total; num > 0; num -= 1) {
             cal.add(Calendar.MONTH, -1);
             final Date date = cal.getTime();
             imocker.withBout(
@@ -70,19 +70,37 @@ public final class InboxRsTest {
         final InboxRs rest = new ResourceMocker()
             .withIdentity(imocker.mock())
             .mock(InboxRs.class);
-        // rest.setViewpoint(new Period());
         final Response response = rest.inbox(null);
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
             Matchers.allOf(
-                XmlMatchers.hasXPath("/page[total=20]"),
-                XmlMatchers.hasXPath("/page/bouts[count(bout)=5]"),
-                XmlMatchers.hasXPath("/page/bouts/bout[number=20]"),
-                XmlMatchers.hasXPath("/page/periods[count(link)=2]"),
+                XmlMatchers.hasXPath(String.format("/page[total=%d]", total)),
+                XmlMatchers.hasXPath(
+                    String.format("/page/bouts[count(bout)=%d]", Period.MAX)
+                ),
+                XmlMatchers.hasXPath(
+                    String.format("/page/bouts/bout[number=%d]", total)
+                ),
+                XmlMatchers.hasXPath(
+                    String.format(
+                        "/page/periods[count(link)=%d]",
+                        PeriodsBuilder.MAX_LINKS
+                    )
+                ),
                 XmlMatchers.hasXPath("/page/periods/link[@rel='more']"),
                 XmlMatchers.hasXPath("/page/periods/link[@rel='earliest']"),
-                XmlMatchers.hasXPath("//link[@rel='more' and contains(@label,'(6)')]"),
-                XmlMatchers.hasXPath("//link[@rel='earliest' and contains(@label,'(10)')]")
+                XmlMatchers.hasXPath(
+                    String.format(
+                        "//link[@rel='more' and contains(@label,'(%d)')]",
+                        Period.MAX
+                    )
+                ),
+                XmlMatchers.hasXPath(
+                    String.format(
+                        "//link[@rel='earliest' and contains(@label,'(%d)')]",
+                        total - (Period.MAX * 2)
+                    )
+                )
             )
         );
     }

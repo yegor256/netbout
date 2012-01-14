@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.BeforeClass;
@@ -38,6 +39,7 @@ import org.junit.Test;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class PeriodTest {
 
     /**
@@ -149,7 +151,7 @@ public final class PeriodTest {
     @Test
     public void rejectsDateOnOverflow() throws Exception {
         final Period period = new Period().next(this.date("2011-05-01"));
-        for (int day = 5; day > 0; day -= 1) {
+        for (int day = Period.MAX; day > 0; day -= 1) {
             final Date date = this.date(String.format("2011-03-%02d", day));
             MatcherAssert.assertThat("fits in", period.fits(date));
             period.add(date);
@@ -167,6 +169,7 @@ public final class PeriodTest {
     @Test
     public void revertsFromNull() throws Exception {
         final Period period = Period.valueOf(null);
+        MatcherAssert.assertThat(period, Matchers.notNullValue());
     }
 
     /**
@@ -175,8 +178,9 @@ public final class PeriodTest {
      * @return The date
      * @throws java.text.ParseException If failed to parse
      */
-    private static Date date(final String text) throws java.text.ParseException {
-        return new SimpleDateFormat("yyyy-MM-dd").parse(text);
+    private static Date date(final String text)
+        throws java.text.ParseException {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(text);
     }
 
 }

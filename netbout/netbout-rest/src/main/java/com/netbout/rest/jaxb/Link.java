@@ -106,6 +106,7 @@ public final class Link {
      * @param name The label of it
      * @param uri The href
      * @param tpe Media type of destination
+     * @checkstyle ParameterNumber (3 lines)
      */
     public Link(final String rname, final String name, final URI uri,
         final String tpe) {
