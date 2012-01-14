@@ -133,7 +133,7 @@ final class PeriodsBuilder {
             }
             this.period = this.period.next(date);
             this.slide += 1;
-            this.total = 0;
+            this.total = 1;
         }
         this.period.add(date);
         Logger.debug(

@@ -62,7 +62,6 @@ public final class PeriodsBuilderTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @org.junit.Ignore
     public void returnsEmptySetOfLinksForSmallGroup() throws Exception {
         MatcherAssert.assertThat(
             "this date should be visible to users",
@@ -83,7 +82,6 @@ public final class PeriodsBuilderTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @org.junit.Ignore
     public void returnsOneLinkForTwoGroups() throws Exception {
         for (int day = 5; day > 0; day -= 1) {
             MatcherAssert.assertThat(
