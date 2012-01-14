@@ -24,63 +24,46 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.hub.predicates;
 
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateMocker;
 import com.netbout.spi.MessageMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link NsPred}.
+ * Test case of {@link CustomPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPredTest {
+public final class CustomPredTest {
 
     /**
-     * NsPred can match an XML document.
+     * CustomPred can match through Hub.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void positivelyMatchesXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("foo").mock(),
-                }
-            )
+    public void positivelyMatchesThroughHub() throws Exception {
+        final String result = "some text to return";
+        final Urn name = new UrnMocker().mock();
+        final Hub hub = new HubMocker()
+            .doReturn(result, "evaluate-predicate")
+            .mock();
+        final Predicate pred = new CustomPred(
+            hub,
+            name,
+            Arrays.asList(new Predicate[] {new PredicateMocker().mock()})
         );
         MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MessageMocker().withText("<a xmlns='foo'/>").mock(),
-                0
-            )
-        );
-    }
-
-    /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("some-namespace").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some non-XML text").mock(),
-                0
-            )
+            (String) pred.evaluate(new MessageMocker().mock(), 0),
+            Matchers.equalTo(result)
         );
     }
 

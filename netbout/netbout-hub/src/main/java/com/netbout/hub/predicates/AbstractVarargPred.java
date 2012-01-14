@@ -42,7 +42,7 @@ public abstract class AbstractVarargPred implements Predicate {
     /**
      * Name of it.
      */
-    private final transient String name;
+    private final transient String iname;
 
     /**
      * Arguments.
@@ -52,11 +52,11 @@ public abstract class AbstractVarargPred implements Predicate {
 
     /**
      * Public ctor.
-     * @param nam The name of it
+     * @param name The name of it
      * @param args Arguments/predicates
      */
-    public AbstractVarargPred(final String nam, final List<Predicate> args) {
-        this.name = nam;
+    public AbstractVarargPred(final String name, final List<Predicate> args) {
+        this.iname = name;
         this.arguments.addAll(args);
     }
 
@@ -67,7 +67,7 @@ public abstract class AbstractVarargPred implements Predicate {
     public final String toString() {
         return String.format(
             "(%s %s)",
-            this.name,
+            this.iname,
             StringUtils.join(this.args(), " ")
         );
     }
@@ -78,6 +78,14 @@ public abstract class AbstractVarargPred implements Predicate {
      */
     protected final List<Predicate> args() {
         return this.arguments;
+    }
+
+    /**
+     * Get its name.
+     * @return The name
+     */
+    protected final String name() {
+        return this.iname;
     }
 
     /**

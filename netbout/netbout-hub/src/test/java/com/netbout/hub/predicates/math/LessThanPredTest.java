@@ -24,63 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.hub.predicates.math;
 
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateMocker;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 /**
- * Test case of {@link NsPred}.
+ * Test case of {@link LessThanPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPredTest {
+public final class LessThanPredTest {
 
     /**
-     * NsPred can match an XML document.
+     * LessThanPred can compare two numbers.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void positivelyMatchesXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
+    public void comparesTwoIntegerNumbers() throws Exception {
+        final Long num = new Random().nextLong();
+        final Predicate pred = new LessThanPred(
             Arrays.asList(
                 new Predicate[] {
-                    new PredicateMocker().doReturn("foo").mock(),
+                    new PredicateMocker().doReturn(num - 1L).mock(),
+                    new PredicateMocker().doReturn(num).mock(),
                 }
             )
         );
         MatcherAssert.assertThat(
             "matched",
-            (Boolean) pred.evaluate(
-                new MessageMocker().withText("<a xmlns='foo'/>").mock(),
-                0
-            )
-        );
-    }
-
-    /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("some-namespace").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some non-XML text").mock(),
-                0
-            )
+            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
         );
     }
 

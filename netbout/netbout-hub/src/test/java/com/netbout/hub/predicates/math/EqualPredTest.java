@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.hub.predicates.math;
 
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateMocker;
@@ -32,55 +32,35 @@ import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Test case of {@link NsPred}.
+ * Test case of {@link EqualPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPredTest {
+public final class EqualPredTest {
 
     /**
-     * NsPred can match an XML document.
+     * EqualPred can compare three objects.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void positivelyMatchesXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
+    public void comparesThreeObjects() throws Exception {
+        final Object result = Mockito.mock(Object.class);
+        Mockito.doReturn("some text").when(result).toString();
+        final Predicate pred = new EqualPred(
             Arrays.asList(
                 new Predicate[] {
-                    new PredicateMocker().doReturn("foo").mock(),
+                    new PredicateMocker().doReturn(result).mock(),
+                    new PredicateMocker().doReturn(result).mock(),
+                    new PredicateMocker().doReturn(result).mock(),
                 }
             )
         );
         MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MessageMocker().withText("<a xmlns='foo'/>").mock(),
-                0
-            )
-        );
-    }
-
-    /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("some-namespace").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some non-XML text").mock(),
-                0
-            )
+            "they are equal",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
         );
     }
 

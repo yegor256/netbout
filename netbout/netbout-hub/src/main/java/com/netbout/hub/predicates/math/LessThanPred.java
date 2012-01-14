@@ -53,18 +53,14 @@ public final class LessThanPred extends AbstractVarargPred {
      */
     @Override
     public Object evaluate(final Message msg, final int pos) {
-        final Long left = Long.valueOf(
-            this.arg(0).evaluate(msg, pos).toString()
-        );
-        final Long right = Long.valueOf(
-            this.arg(1).evaluate(msg, pos).toString()
-        );
-        final boolean less = left < right;
+        final boolean equal = (Boolean) new EqualPred(this.args())
+            .evaluate(msg, pos);
+        final boolean greater = (Boolean) new GreaterThanPred(this.args())
+            .evaluate(msg, pos);
+        final boolean less = !equal && !greater;
         Logger.debug(
             this,
-            "#evaluate(): comparing %d with %d: %B",
-            left,
-            right,
+            "#evaluate(): %B",
             less
         );
         return less;

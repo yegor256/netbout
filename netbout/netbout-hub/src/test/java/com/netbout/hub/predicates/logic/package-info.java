@@ -24,57 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.math;
-
-import com.netbout.hub.Predicate;
-import com.netbout.hub.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
-import com.ymock.util.Logger;
-import java.util.Date;
-import java.util.List;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
- * First argument is greater than the second.
+ * Logic predicates, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class GreaterThanPred extends AbstractVarargPred {
-
-    /**
-     * Public ctor.
-     * @param args The arguments
-     */
-    public GreaterThanPred(final List<Predicate> args) {
-        super("greater-than", args);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object evaluate(final Message msg, final int pos) {
-        final Object left = this.arg(0).evaluate(msg, pos);
-        final String right = this.arg(1).evaluate(msg, pos).toString();
-        boolean greater;
-        if (left instanceof Date) {
-            greater = ((Date) left).after(
-                ISODateTimeFormat.dateTime().parseDateTime(right).toDate()
-            );
-        } else if (left instanceof Long) {
-            greater = ((Long) left) > Long.valueOf(right);
-        } else {
-            greater = left.toString().compareTo(right) > 0;
-        }
-        Logger.debug(
-            this,
-            "#evaluate(): is %[type]s > '%s': %B",
-            left,
-            right,
-            greater
-        );
-        return greater;
-    }
-
-}
+package com.netbout.hub.predicates.logic;

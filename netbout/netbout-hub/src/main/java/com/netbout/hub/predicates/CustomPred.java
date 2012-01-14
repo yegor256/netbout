@@ -24,64 +24,65 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.hub.predicates;
 
+import com.netbout.hub.Hub;
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateMocker;
-import com.netbout.spi.MessageMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Test case of {@link NsPred}.
+ * Call predicate by name in Hub.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPredTest {
+public final class CustomPred extends AbstractVarargPred {
 
     /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
+     * Hub to work with.
      */
-    @Test
-    public void positivelyMatchesXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("foo").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MessageMocker().withText("<a xmlns='foo'/>").mock(),
-                0
-            )
-        );
+    private final transient Hub ihub;
+
+    /**
+     * Public ctor.
+     * @param hub The hub to work with
+     * @param name Name of the predicate
+     * @param args The arguments
+     */
+    public CustomPred(final Hub hub, final Urn name,
+        final List<Predicate> args) {
+        super(name.toString(), args);
+        this.ihub = hub;
     }
 
     /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("some-namespace").mock(),
-                }
-            )
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final List<Object> values = new ArrayList<Object>();
+        for (Predicate pred : this.args()) {
+            values.add(pred.evaluate(msg, pos));
+        }
+        final Object result = this.ihub.make("evaluate-predicate")
+            .inBout(msg.bout())
+            .arg(msg.bout().number())
+            .arg(msg.number())
+            .arg(this.name())
+            .arg(values)
+            .asDefault(false)
+            .exec();
+        Logger.debug(
+            this,
+            "#evaluate(): evaluated '%s': %[type]s",
+            this.name(),
+            result
         );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some non-XML text").mock(),
-                0
-            )
-        );
+        return result;
     }
 
 }

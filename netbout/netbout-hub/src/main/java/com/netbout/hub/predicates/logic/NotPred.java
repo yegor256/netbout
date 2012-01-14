@@ -24,64 +24,35 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.hub.predicates.logic;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateMocker;
-import com.netbout.spi.MessageMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import com.netbout.hub.predicates.AbstractVarargPred;
+import com.netbout.spi.Message;
+import java.util.List;
 
 /**
- * Test case of {@link NsPred}.
+ * Logical NOT.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPredTest {
+public final class NotPred extends AbstractVarargPred {
 
     /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
+     * Public ctor.
+     * @param args Arguments/predicates
      */
-    @Test
-    public void positivelyMatchesXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("foo").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MessageMocker().withText("<a xmlns='foo'/>").mock(),
-                0
-            )
-        );
+    public NotPred(final List<Predicate> args) {
+        super("not", args);
     }
 
     /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("some-namespace").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some non-XML text").mock(),
-                0
-            )
-        );
+    @Override
+    public Boolean evaluate(final Message msg, final int pos) {
+        return !(Boolean) this.arg(0).evaluate(msg, pos);
     }
 
 }

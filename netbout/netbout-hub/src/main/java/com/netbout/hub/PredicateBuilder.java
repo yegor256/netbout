@@ -26,6 +26,8 @@
  */
 package com.netbout.hub;
 
+import com.netbout.hub.predicates.CustomPred;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.List;
 import java.util.Map;
@@ -54,11 +56,25 @@ public final class PredicateBuilder {
             {"greater-than", "com.netbout.hub.predicates.math.GreaterThanPred"},
             {"less-than", "com.netbout.hub.predicates.math.LessThanPred"},
             {"matches", "com.netbout.hub.predicates.text.MatchesPred"},
+            {"not", "com.netbout.hub.predicates.logic.NotPred"},
             {"ns", "com.netbout.hub.predicates.xml.NsPred"},
             {"or", "com.netbout.hub.predicates.logic.OrPred"},
             {"talks-with", "com.netbout.hub.predicates.TalksWithPred"},
         }
     );
+
+    /**
+     * Hub to find custom predicates.
+     */
+    private final transient Hub ihub;
+
+    /**
+     * Public ctor.
+     * @param hub The hub to work with
+     */
+    public PredicateBuilder(final Hub hub) {
+        this.ihub = hub;
+    }
 
     /**
      * Build a predicate from a query string.
@@ -72,6 +88,7 @@ public final class PredicateBuilder {
             final QueryLexer lexer = new QueryLexer(input);
             final TokenStream tokens = new CommonTokenStream(lexer);
             final QueryParser parser = new QueryParser(tokens);
+            parser.setPredicateBuilder(this);
             try {
                 predicate = parser.query();
             } catch (org.antlr.runtime.RecognitionException ex) {
@@ -120,6 +137,8 @@ public final class PredicateBuilder {
             } catch (java.lang.reflect.InvocationTargetException ex) {
                 throw new PredicateException(ex);
             }
+        } else if (Urn.isValid(name)) {
+            predicate = new CustomPred(this.ihub, Urn.create(name), preds);
         } else {
             throw new PredicateException(
                 String.format("Unknown function '%s'", name)

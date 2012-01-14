@@ -27,11 +27,14 @@
 package com.netbout.hub.predicates.math;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.predicates.NumberPred;
+import com.netbout.hub.PredicateMocker;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 
 /**
@@ -51,13 +54,38 @@ public final class GreaterThanPredTest {
         final Predicate pred = new GreaterThanPred(
             Arrays.asList(
                 new Predicate[] {
-                    new NumberPred(num + 1L),
-                    new NumberPred(num),
+                    new PredicateMocker().doReturn(num + 1L).mock(),
+                    new PredicateMocker().doReturn(num).mock(),
                 }
             )
         );
         MatcherAssert.assertThat(
             "matched",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+        );
+    }
+
+    /**
+     * GreaterThanPred can compare two dates.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void comparesTwoDates() throws Exception {
+        final Date date = new Date();
+        final Predicate pred = new GreaterThanPred(
+            Arrays.asList(
+                new Predicate[] {
+                    new PredicateMocker().doReturn(date).mock(),
+                    new PredicateMocker().doReturn(
+                        ISODateTimeFormat.dateTime().print(
+                            new DateTime(date.getTime() - 1)
+                        )
+                    ).mock(),
+                }
+            )
+        );
+        MatcherAssert.assertThat(
+            "left date is bigger than the right one",
             (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
         );
     }

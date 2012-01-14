@@ -23,9 +23,13 @@ grammar Query;
 }
 
 @parser::members {
+    private transient PredicateBuilder builder;
     @Override
     public void emitErrorMessage(String msg) {
         throw new PredicateException(msg);
+    }
+    public void setPredicateBuilder(final PredicateBuilder bldr) {
+        this.builder = bldr;
     }
 }
 
@@ -46,7 +50,7 @@ predicate returns [Predicate ret]
         { atoms.add($atom.ret); }
     )*
     ')'
-    { $ret = new PredicateBuilder().build($NAME.text, atoms); }
+    { $ret = this.builder.build($NAME.text, atoms); }
     ;
 
 atom returns [Predicate ret]
@@ -64,18 +68,31 @@ atom returns [Predicate ret]
     { $ret = new NumberPred(Long.valueOf($NUMBER.text)); }
     ;
 
-NAME: ( 'a' .. 'z' | '-' )*;
-VARIABLE : '$' ( 'a' .. 'z' ) ( 'a' .. 'z' | '.' )+
-    { setText(getText().substring(1)); }
+NAME:
+    LETTER ( LETTER | '-' )*
+    |
+    'urn:' ( LETTER | '-' )+ ':' ( LETTER | '-' | ':' | DIGIT )+
     ;
+
+VARIABLE :
+    '$' LETTER ( LETTER | '.' )+
+    { this.setText(getText().substring(1)); }
+    ;
+
 TEXT :
     '"' ('\\"' | ~'"')* '"'
-    { setText(getText().substring(1, getText().length() - 1).replace("\\\"", "\"")); }
+    { this.setText(this.getText().substring(1, this.getText().length() - 1).replace("\\\"", "\"")); }
     |
     '\'' ('\\\'' | ~'\'')* '\''
-    { setText(getText().substring(1, getText().length() - 1).replace("\\'", "'")); }
+    { this.setText(this.getText().substring(1, this.getText().length() - 1).replace("\\'", "'")); }
     ;
-NUMBER: ( '0' .. '9' )+;
+
+NUMBER:
+    DIGIT+
+    ;
+
+fragment LETTER: ( 'a' .. 'z' );
+fragment DIGIT: ( '0' .. '9' );
 SPACE
     :
     ( ' ' | '\t' | '\n' | '\r' )+

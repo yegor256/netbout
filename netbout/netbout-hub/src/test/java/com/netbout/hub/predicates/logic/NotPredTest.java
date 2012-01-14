@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.hub.predicates.logic;
 
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateMocker;
@@ -34,53 +34,28 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 /**
- * Test case of {@link NsPred}.
+ * Test case of {@link NotPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPredTest {
+public final class NotPredTest {
 
     /**
-     * NsPred can match an XML document.
+     * NotPred can reverse a boolean predicate.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void positivelyMatchesXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
+    public void reversesBooleanPredicate() throws Exception {
+        final Predicate pred = new NotPred(
             Arrays.asList(
                 new Predicate[] {
-                    new PredicateMocker().doReturn("foo").mock(),
+                    new PredicateMocker().mock(),
                 }
             )
         );
         MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MessageMocker().withText("<a xmlns='foo'/>").mock(),
-                0
-            )
-        );
-    }
-
-    /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("some-namespace").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some non-XML text").mock(),
-                0
-            )
+            "reversed",
+            !(Boolean) pred.evaluate(new MessageMocker().mock(), 0)
         );
     }
 

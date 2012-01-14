@@ -24,64 +24,47 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.hub;
 
-import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateMocker;
-import com.netbout.spi.MessageMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import com.netbout.spi.Message;
+import org.mockito.Mockito;
 
 /**
- * Test case of {@link NsPred}.
+ * Mocker of {@link Predicate}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPredTest {
+public final class PredicateMocker {
 
     /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
+     * The object.
      */
-    @Test
-    public void positivelyMatchesXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("foo").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MessageMocker().withText("<a xmlns='foo'/>").mock(),
-                0
-            )
-        );
+    private final transient Predicate predicate = Mockito.mock(Predicate.class);
+
+    /**
+     * Public ctor.
+     */
+    public PredicateMocker() {
+        this.doReturn(Boolean.TRUE);
     }
 
     /**
-     * NsPred can match an XML document.
-     * @throws Exception If there is some problem inside
+     * Return this object as {@code evaluate()} result.
+     * @param ret What to return
+     * @return This object
      */
-    @Test
-    public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("some-namespace").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some non-XML text").mock(),
-                0
-            )
-        );
+    public PredicateMocker doReturn(final Object ret) {
+        Mockito.doReturn(ret).when(this.predicate)
+            .evaluate(Mockito.any(Message.class), Mockito.anyInt());
+        return this;
+    }
+
+    /**
+     * Build it.
+     * @return The predicate
+     */
+    public Predicate mock() {
+        return this.predicate;
     }
 
 }

@@ -200,7 +200,7 @@ public final class HubBout implements Bout {
         }
         Collections.sort(messages, Collections.reverseOrder());
         final List<Message> result = new ArrayList<Message>();
-        final Predicate predicate = new PredicateBuilder().parse(query);
+        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
         for (Message msg : messages) {
             if (query.isEmpty()
                 || (Boolean) predicate.evaluate(msg, result.size())) {
