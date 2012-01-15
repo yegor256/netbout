@@ -64,6 +64,14 @@ final class Utc {
      */
     public static void setTimestamp(final PreparedStatement stmt, final int pos,
         final Date date) throws SQLException {
+        if (date.after(new Date())) {
+            throw new IllegalStateException(
+                String.format(
+                    "Date '%s' is in the future, can't save it to DB",
+                    date
+                )
+            );
+        }
         stmt.setTimestamp(pos, new Timestamp(date.getTime()), Utc.CALENDAR);
     }
 
@@ -87,7 +95,18 @@ final class Utc {
      */
     public static Date getTimestamp(final ResultSet rset, final int pos)
         throws SQLException {
-        return new Date(rset.getTimestamp(pos, Utc.CALENDAR).getTime());
+        final Date date = new Date(
+            rset.getTimestamp(pos, Utc.CALENDAR).getTime()
+        );
+        if (date.after(new Date())) {
+            throw new IllegalStateException(
+                String.format(
+                    "Date '%s' is in the future, can't retrieve it from DB",
+                    date
+                )
+            );
+        }
+        return date;
     }
 
 }

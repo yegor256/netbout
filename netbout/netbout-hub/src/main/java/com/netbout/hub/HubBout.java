@@ -285,9 +285,19 @@ public final class HubBout implements Bout {
         Date recent = bout.date();
         if (!msgs.isEmpty()) {
             final Date mdate = msgs.get(0).date();
-            if (mdate.after(recent)) {
-                recent = mdate;
+            if (mdate.before(recent)) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        // @checkstyle LineLength (1 line)
+                        "Message #%d in bout #%d created on '%s', which before bout was created '%s', how come?",
+                        msgs.get(0).number(),
+                        bout.number(),
+                        mdate,
+                        recent
+                    )
+                );
             }
+            recent = mdate;
         }
         return recent;
     }
