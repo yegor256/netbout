@@ -72,7 +72,7 @@ public final class CustomPred extends AbstractVarargPred {
             .inBout(msg.bout())
             .arg(msg.bout().number())
             .arg(msg.number())
-            .arg(this.name())
+            .arg(Urn.create(this.name()))
             .arg(values)
             .asDefault(false)
             .exec();

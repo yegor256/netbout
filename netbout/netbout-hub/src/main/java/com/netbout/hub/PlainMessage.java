@@ -24,82 +24,96 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.bumper;
+package com.netbout.hub;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.IdentityAware;
-import com.netbout.spi.cpa.Operation;
-import java.net.URI;
-import java.util.List;
-import javax.ws.rs.core.UriBuilder;
+import com.netbout.spi.Message;
+import java.util.Date;
 
 /**
- * Bumper farm.
+ * Plain message, created on-fly when predicate returns String.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see HubBout#messages(String)
  */
-@Farm
-public final class BumperFarmMocker implements IdentityAware {
+final class PlainMessage implements Message {
 
     /**
-     * Local host URI builder.
+     * The bout where this message is located.
      */
-    private static transient UriBuilder home;
+    private final transient Bout ibout;
 
     /**
-     * Me.
+     * Content of it.
      */
-    private transient Identity identity;
+    private final transient String content;
 
     /**
-     * Set home.
-     * @param uri The URI of home
+     * Public ctor.
+     * @param bout The bout where this message is located
+     * @param txt The content
      */
-    public static void setHome(final URI uri) {
-        BumperFarmMocker.home = UriBuilder.fromUri(uri);
+    public PlainMessage(final Bout bout, final String txt) {
+        this.ibout = bout;
+        this.content = txt;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void init(final Identity idnt) {
-        this.identity = idnt;
+    public int compareTo(final Message msg) {
+        return this.date().compareTo(msg.date());
     }
 
     /**
-     * Resolve namespace.
-     * @param namespace The namespace
-     * @param Its URI
+     * {@inheritDoc}
      */
-    @Operation("resolve-xml-namespace")
-    public String resolveXmlNamespace(final String namespace) {
-        String uri = null;
-        if ("/bumper/ns".equals(namespace)) {
-            uri = this.home.clone().path("/bumper/ns.xsd").build().toString();
-        }
-        return uri;
+    @Override
+    public Bout bout() {
+        return this.ibout;
     }
 
     /**
-     * Evaluate predicate.
-     * @param bout Number of bout
-     * @param msg Number of message
-     * @param name Name of predicate
-     * @param args Arguments
-     * @return Value or NULL if name is unknown for us
+     * {@inheritDoc}
      */
-    @Operation("evaluate-predicate")
-    public String evaluatePredicate(final Long bout, final Long msg,
-        final Urn name, final List args) {
-        String response = null;
-        if ("urn:test:bumper:what-is-your-name".equals(name.toString())) {
-            response = "bumper";
-        }
-        return response;
+    @Override
+    public Long number() {
+        return 0L;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity author() {
+        return this.ibout.participants().iterator().next().identity();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String text() {
+        return this.content;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date date() {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean seen() {
+        return true;
     }
 
 }

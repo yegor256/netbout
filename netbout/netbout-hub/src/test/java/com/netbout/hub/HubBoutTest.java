@@ -163,4 +163,23 @@ public final class HubBoutTest {
         );
     }
 
+    /**
+     * HubBout can return a plain message after a custom predicate.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void returnsPlainMessage() throws Exception {
+        final Bout bout = new HubBout(
+            new HubMocker()
+                .doReturn("plain text", "evaluate-predicate")
+                .mock(),
+            this.viewer,
+            this.boutDtMocker.mock()
+        );
+        MatcherAssert.assertThat(
+            bout.messages("(urn:test:predicate)").get(0).text(),
+            Matchers.equalTo("plain text")
+        );
+    }
+
 }

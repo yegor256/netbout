@@ -46,3 +46,11 @@ bout.post("""<?xml version='1.0'?>
         xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
         xsi:schemaLocation='/bumper/ns ${xsd}' />
 """)
+MatcherAssert.assertThat(
+    bout.messages('(ns "/bumper/ns")').size(),
+    Matchers.equalTo(1)
+)
+MatcherAssert.assertThat(
+    bout.messages('(urn:test:bumper:what-is-your-name)').get(0).text(),
+    Matchers.equalTo('bumper')
+)

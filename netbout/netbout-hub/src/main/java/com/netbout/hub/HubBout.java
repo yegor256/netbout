@@ -196,9 +196,34 @@ public final class HubBout implements Bout {
         final List<Message> result = new ArrayList<Message>();
         final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
         for (Message msg : messages) {
-            if (query.isEmpty()
-                || (Boolean) predicate.evaluate(msg, result.size())) {
+            boolean visible = true;
+            if (!query.isEmpty()) {
+                final Object response = predicate.evaluate(msg, result.size());
+                if (response instanceof Boolean) {
+                    visible = (Boolean) response;
+                } else if (response instanceof String) {
+                    result.add(new PlainMessage(this, (String) response));
+                    break;
+                } else {
+                    throw new IllegalArgumentException(
+                        Logger.format(
+                            "Can't understand %[type]s response from '%s'",
+                            response,
+                            query
+                        )
+                    );
+                }
+            }
+            if (visible) {
                 result.add(msg);
+            }
+        }
+        if (messages.isEmpty()) {
+            final Object response = predicate.evaluate(
+                new PlainMessage(this, ""), 0
+            );
+            if (response instanceof String) {
+                result.add(new PlainMessage(this, (String) response));
             }
         }
         Logger.debug(

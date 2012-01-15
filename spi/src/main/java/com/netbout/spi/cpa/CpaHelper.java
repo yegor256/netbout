@@ -227,10 +227,11 @@ public final class CpaHelper implements Helper {
             new OpDiscoverer(this).discover(url);
         Logger.info(
             this,
-            "#init('%s'): %d operations discovered [%dms]",
+            "#init('%s'): %d operations discovered in %dms: %[list]s",
             url,
             found.size(),
-            System.currentTimeMillis() - start
+            System.currentTimeMillis() - start,
+            found
         );
         return found;
     }
