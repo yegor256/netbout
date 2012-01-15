@@ -231,7 +231,7 @@ public final class CpaHelper implements Helper {
             url,
             found.size(),
             System.currentTimeMillis() - start,
-            found
+            found.keySet()
         );
         return found;
     }
