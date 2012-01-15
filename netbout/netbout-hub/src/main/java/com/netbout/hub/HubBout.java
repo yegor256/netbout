@@ -45,6 +45,7 @@ import java.util.List;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public final class HubBout implements Bout {
@@ -193,39 +194,7 @@ public final class HubBout implements Bout {
             messages.add(new HubMessage(this.hub, this.viewer, this, msg));
         }
         Collections.sort(messages, Collections.reverseOrder());
-        final List<Message> result = new ArrayList<Message>();
-        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
-        for (Message msg : messages) {
-            boolean visible = true;
-            if (!query.isEmpty()) {
-                final Object response = predicate.evaluate(msg, result.size());
-                if (response instanceof Boolean) {
-                    visible = (Boolean) response;
-                } else if (response instanceof String) {
-                    result.add(new PlainMessage(this, (String) response));
-                    break;
-                } else {
-                    throw new IllegalArgumentException(
-                        Logger.format(
-                            "Can't understand %[type]s response from '%s'",
-                            response,
-                            query
-                        )
-                    );
-                }
-            }
-            if (visible) {
-                result.add(msg);
-            }
-        }
-        if (messages.isEmpty()) {
-            final Object response = predicate.evaluate(
-                new PlainMessage(this, ""), 0
-            );
-            if (response instanceof String) {
-                result.add(new PlainMessage(this, (String) response));
-            }
-        }
+        final List<Message> result = this.filter(messages, query);
         Logger.debug(
             this,
             "#messages('%s'): %d message(s) found",
@@ -321,6 +290,51 @@ public final class HubBout implements Bout {
             }
         }
         return recent;
+    }
+
+    /**
+     * Filter list of messages with a predicate.
+     * @param list The list to filter
+     * @param query The query
+     * @return New list of them
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public List<Message> filter(final List<Message> list,
+        final String query) {
+        final List<Message> result = new ArrayList<Message>();
+        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
+        for (Message msg : list) {
+            boolean visible = true;
+            if (!query.isEmpty()) {
+                final Object response = predicate.evaluate(msg, result.size());
+                if (response instanceof Boolean) {
+                    visible = (Boolean) response;
+                } else if (response instanceof String) {
+                    result.add(new PlainMessage(this, (String) response));
+                    break;
+                } else {
+                    throw new IllegalArgumentException(
+                        Logger.format(
+                            "Can't understand %[type]s response from '%s'",
+                            response,
+                            query
+                        )
+                    );
+                }
+            }
+            if (visible) {
+                result.add(msg);
+            }
+        }
+        if (list.isEmpty()) {
+            final Object response = predicate.evaluate(
+                new PlainMessage(this, ""), 0
+            );
+            if (response instanceof String) {
+                result.add(new PlainMessage(this, (String) response));
+            }
+        }
+        return result;
     }
 
 }

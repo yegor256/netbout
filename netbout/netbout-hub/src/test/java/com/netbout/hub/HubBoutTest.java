@@ -178,7 +178,7 @@ public final class HubBoutTest {
         );
         MatcherAssert.assertThat(
             bout.messages("(urn:test:predicate)").get(0).text(),
-            Matchers.equalTo("plain text")
+            Matchers.startsWith("plain")
         );
     }
 

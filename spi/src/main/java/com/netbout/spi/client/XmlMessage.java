@@ -121,7 +121,7 @@ final class XmlMessage implements Message {
         return ISODateTimeFormat
             .dateTime()
             .withZone(DateTimeZone.UTC)
-            .parseDateTime(this.byPath("/text/text()"))
+            .parseDateTime(this.byPath("/date/text()"))
             .toDate();
     }
 
