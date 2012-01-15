@@ -110,6 +110,11 @@ public final class DomText {
      * @throws DomValidationException If some problem inside
      */
     public String namespace() throws DomValidationException {
+        if (!this.isXml()) {
+            throw new IllegalArgumentException(
+                "it's not an XML, can't get namespace"
+            );
+        }
         return this.dom().getDocumentElement().getNamespaceURI();
     }
 
@@ -119,29 +124,31 @@ public final class DomText {
      * @throws DomValidationException If some problem inside
      */
     public void validate(final Hub hub) throws DomValidationException {
-        final String namespace = this.namespace();
-        final String uri = hub.make("resolve-xml-namespace")
-            .arg(namespace)
-            .asDefault("")
-            .exec();
-        if (uri.isEmpty()) {
-            throw new DomValidationException(
-                String.format(
-                    "Namespace '%s' is not supported by helpers",
-                    namespace
-                )
-            );
-        }
-        final String schema = this.schema(namespace);
-        if (!uri.equals(schema)) {
-            throw new DomValidationException(
-                String.format(
-                    "XML Schema for namespace '%s' should be '%s' (not '%s')",
-                    namespace,
-                    uri,
-                    schema
-                )
-            );
+        if (this.isXml()) {
+            final String namespace = this.namespace();
+            final String uri = hub.make("resolve-xml-namespace")
+                .arg(namespace)
+                .asDefault("")
+                .exec();
+            if (uri.isEmpty()) {
+                throw new DomValidationException(
+                    String.format(
+                        "Namespace '%s' is not supported by helpers",
+                        namespace
+                    )
+                );
+            }
+            final String schema = this.schema(namespace);
+            if (!uri.equals(schema)) {
+                throw new DomValidationException(
+                    String.format(
+                        "Schema for namespace '%s' should be '%s' (not '%s')",
+                        namespace,
+                        uri,
+                        schema
+                    )
+                );
+            }
         }
     }
 

@@ -27,15 +27,8 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.SimpleTimeZone;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -110,43 +103,6 @@ public final class MessageFarmTest {
             this.farm.getMessageText(message),
             Matchers.equalTo(text)
         );
-    }
-
-    /**
-     * MessageFarm can set and read message date, with different timezone.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void setsAndReadsDateWithDifferentTimezone() throws Exception {
-        final Long message =
-            new MessageRowMocker(new BoutRowMocker().mock()).mock();
-        final Date date = new Date();
-        this.farm.changedMessageDate(message, date);
-        final Connection conn = Database.connection();
-        String saved;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT date FROM message WHERE number = ?"
-            );
-            stmt.setLong(1, message);
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (!rset.next()) {
-                    throw new IllegalStateException();
-                }
-                saved = rset.getString(1);
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        final DateFormat fmt = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss.S", Locale.ENGLISH
-        );
-        fmt.setTimeZone(new SimpleTimeZone(0, "UTC"));
-        final Date absolute = fmt.parse(saved);
-        MatcherAssert.assertThat(absolute, Matchers.equalTo(date));
     }
 
 }

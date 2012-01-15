@@ -170,7 +170,12 @@ public final class BoutRs extends AbstractRs {
                 "Form param 'text' missed"
             );
         }
-        final Message msg = bout.post(text);
+        Message msg;
+        try {
+            msg = bout.post(text);
+        } catch (com.netbout.spi.MessagePostException ex) {
+            throw new ForwardException(this, this.self(""), ex);
+        }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
