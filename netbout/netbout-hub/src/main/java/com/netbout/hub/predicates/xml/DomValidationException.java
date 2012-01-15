@@ -24,65 +24,30 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates;
-
-import com.netbout.hub.Hub;
-import com.netbout.hub.Predicate;
-import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.List;
+package com.netbout.hub.predicates.xml;
 
 /**
- * Call predicate by name in Hub.
+ * DOM validation failure.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CustomPred extends AbstractVarargPred {
-
-    /**
-     * Hub to work with.
-     */
-    private final transient Hub ihub;
+public final class DomValidationException extends Exception {
 
     /**
      * Public ctor.
-     * @param hub The hub to work with
-     * @param name Name of the predicate
-     * @param args The arguments
+     * @param cause The cause
      */
-    public CustomPred(final Hub hub, final Urn name,
-        final List<Predicate> args) {
-        super(name.toString(), args);
-        this.ihub = hub;
+    public DomValidationException(final String cause) {
+        super(cause);
     }
 
     /**
-     * {@inheritDoc}
+     * Public ctor.
+     * @param cause The cause
      */
-    @Override
-    public Object evaluate(final Message msg, final int pos) {
-        final List<Object> values = new ArrayList<Object>();
-        for (Predicate pred : this.args()) {
-            values.add(pred.evaluate(msg, pos));
-        }
-        final Object result = this.ihub.make("evaluate-predicate")
-            .inBout(msg.bout())
-            .arg(msg.bout().number())
-            .arg(msg.number())
-            .arg(Urn.create(this.name()))
-            .arg(values)
-            .asDefault(false)
-            .exec();
-        Logger.debug(
-            this,
-            "#evaluate(): evaluated '%s': %[type]s",
-            this.name(),
-            result
-        );
-        return result;
+    public DomValidationException(final Throwable cause) {
+        super(cause);
     }
 
 }

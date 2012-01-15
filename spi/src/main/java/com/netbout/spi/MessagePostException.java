@@ -29,87 +29,29 @@
  */
 package com.netbout.spi;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
 /**
- * Bout, a conversation room.
+ * Thowable when message can't be posted.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see Bout#post(String)
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public interface Bout extends Comparable<Bout> {
+public final class MessagePostException extends Exception {
 
     /**
-     * Get its unique number.
-     * @return The number of the bout
+     * Public ctor.
+     * @param cause The cause of the problem
      */
-    Long number();
+    public MessagePostException(final String cause) {
+        super(cause);
+    }
 
     /**
-     * When it was created.
-     * @return The date of creation
+     * Public ctor.
+     * @param cause The cause of the problem
      */
-    Date date();
-
-    /**
-     * Get its title.
-     * @return The title of the bout
-     */
-    String title();
-
-    /**
-     * Set its title.
-     * @param text The title of the bout
-     */
-    void rename(String text);
-
-    /**
-     * Get all its participants.
-     * @return The list of them
-     */
-    Collection<Participant> participants();
-
-    /**
-     * Confirm participantion in this bout.
-     */
-    void confirm();
-
-    /**
-     * Leave this bout.
-     */
-    void leave();
-
-    /**
-     * Invite new participant.
-     * @param identity Identity of the participant
-     * @return This new participant
-     */
-    Participant invite(Identity identity);
-
-    /**
-     * Get ordered list of all messages of the bout.
-     * @param query Search query, if necessary
-     * @return The list of them
-     */
-    List<Message> messages(String query);
-
-    /**
-     * Find message by ID.
-     * @param number Number of the message to get
-     * @return The message
-     * @throws MessageNotFoundException If not found
-     */
-    Message message(Long number) throws MessageNotFoundException;
-
-    /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @return The message just posted
-     * @throws MessagePostException If can't post it for some reason
-     */
-    Message post(String text) throws MessagePostException;
+    public MessagePostException(final Throwable cause) {
+        super(cause);
+    }
 
 }

@@ -33,23 +33,27 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
-import java.net.HttpURLConnection;
 import java.util.Date;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
- * The message.
+ * The message, without direct connection to REST.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class RestMessage implements Message {
+final class XmlMessage implements Message {
 
     /**
      * Rest client.
      */
     private final transient RestClient client;
+
+    /**
+     * Rest response.
+     */
+    private final transient RestResponse response;
 
     /**
      * Number of the message.
@@ -58,11 +62,14 @@ final class RestMessage implements Message {
 
     /**
      * Public ctor.
-     * @param clnt Rest client
+     * @param clnt REST client
+     * @param resp REST response
      * @param number Number of the message
      */
-    public RestMessage(final RestClient clnt, final Long number) {
+    public XmlMessage(final RestClient clnt, final RestResponse resp,
+        final Long number) {
         this.client = clnt;
+        this.response = resp;
         this.num = number;
     }
 
@@ -95,7 +102,7 @@ final class RestMessage implements Message {
      */
     @Override
     public Identity author() {
-        return new Friend(Urn.create(this.bySuffix("/author/text()")));
+        return new Friend(Urn.create(this.byPath("/author/text()")));
     }
 
     /**
@@ -103,7 +110,7 @@ final class RestMessage implements Message {
      */
     @Override
     public String text() {
-        return this.bySuffix("/text/text()");
+        return this.byPath("/text/text()");
     }
 
     /**
@@ -114,7 +121,7 @@ final class RestMessage implements Message {
         return ISODateTimeFormat
             .dateTime()
             .withZone(DateTimeZone.UTC)
-            .parseDateTime(this.bySuffix("/date/text()"))
+            .parseDateTime(this.byPath("/date/text()"))
             .toDate();
     }
 
@@ -123,36 +130,22 @@ final class RestMessage implements Message {
      */
     @Override
     public Boolean seen() {
-        return Boolean.valueOf(this.bySuffix("/@seen"));
+        return Boolean.valueOf(this.byPath("/@seen"));
     }
 
     /**
-     * Fetch by XPath suffix.
-     * @param suffix The suffix of XPath
+     * Fetch by XPath.
+     * @param path The path
      * @return The value found
      */
-    public String bySuffix(final String suffix) {
-        return this.client
-            .queryParam(
-                RestSession.QUERY_PARAM,
-                String.format("(equal $number %d)", this.num)
-        )
-            .get(String.format("reading %s of a message", suffix))
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath(
-                String.format(
-                    "/page/bout/messages/message[number='%d']",
-                    this.num
-                )
+    public String byPath(final String path) {
+        return this.response.xpath(
+            String.format(
+                "/page/bout/messages/message[number='%d']%s",
+                this.num,
+                path
             )
-            .xpath(
-                String.format(
-                    "/page/bout/messages/message[number='%d']%s",
-                    this.num,
-                    suffix
-                )
-            )
-            .get(0);
+        ).get(0);
     }
 
 }

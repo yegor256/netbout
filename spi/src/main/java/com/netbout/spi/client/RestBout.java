@@ -220,7 +220,13 @@ final class RestBout implements Bout {
             .xpath("/page/bout/messages/message/number/text()");
         final List<Message> msgs = new ArrayList<Message>();
         for (String num : nums) {
-            msgs.add(new RestMessage(this.client.copy(), Long.valueOf(num)));
+            msgs.add(
+                new XmlMessage(
+                    this.client.copy(),
+                    response,
+                    Long.valueOf(num)
+                )
+            );
         }
         return msgs;
     }

@@ -26,10 +26,12 @@
  */
 package com.netbout.hub;
 
+import com.netbout.hub.predicates.xml.DomText;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageNotFoundException;
+import com.netbout.spi.MessagePostException;
 import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -43,6 +45,7 @@ import java.util.List;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public final class HubBout implements Bout {
@@ -138,7 +141,6 @@ public final class HubBout implements Bout {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Participant invite(final Identity friend) {
@@ -192,14 +194,7 @@ public final class HubBout implements Bout {
             messages.add(new HubMessage(this.hub, this.viewer, this, msg));
         }
         Collections.sort(messages, Collections.reverseOrder());
-        final List<Message> result = new ArrayList<Message>();
-        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
-        for (Message msg : messages) {
-            if (query.isEmpty()
-                || (Boolean) predicate.evaluate(msg, result.size())) {
-                result.add(msg);
-            }
-        }
+        final List<Message> result = this.filter(messages, query);
         Logger.debug(
             this,
             "#messages('%s'): %d message(s) found",
@@ -231,11 +226,17 @@ public final class HubBout implements Bout {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Message post(final String text) {
+    public Message post(final String text) throws MessagePostException {
         if (!this.confirmed()) {
             throw new IllegalStateException("You can't post until you join");
+        }
+        try {
+            new DomText(text).validate(this.hub);
+        } catch (com.netbout.hub.predicates.xml.DomValidationException ex) {
+            throw new MessagePostException(ex);
         }
         final MessageDt msg = this.data.addMessage();
         msg.setDate(new Date());
@@ -289,6 +290,51 @@ public final class HubBout implements Bout {
             }
         }
         return recent;
+    }
+
+    /**
+     * Filter list of messages with a predicate.
+     * @param list The list to filter
+     * @param query The query
+     * @return New list of them
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public List<Message> filter(final List<Message> list,
+        final String query) {
+        final List<Message> result = new ArrayList<Message>();
+        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
+        for (Message msg : list) {
+            boolean visible = true;
+            if (!query.isEmpty()) {
+                final Object response = predicate.evaluate(msg, result.size());
+                if (response instanceof Boolean) {
+                    visible = (Boolean) response;
+                } else if (response instanceof String) {
+                    result.add(new PlainMessage(this, (String) response));
+                    break;
+                } else {
+                    throw new IllegalArgumentException(
+                        Logger.format(
+                            "Can't understand %[type]s response from '%s'",
+                            response,
+                            query
+                        )
+                    );
+                }
+            }
+            if (visible) {
+                result.add(msg);
+            }
+        }
+        if (list.isEmpty()) {
+            final Object response = predicate.evaluate(
+                new PlainMessage(this, ""), 0
+            );
+            if (response instanceof String) {
+                result.add(new PlainMessage(this, (String) response));
+            }
+        }
+        return result;
     }
 
 }

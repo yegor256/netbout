@@ -32,6 +32,7 @@ import com.netbout.spi.MessageMocker;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Random;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -56,7 +57,7 @@ public final class InboxRsTest {
         final Calendar cal = new GregorianCalendar();
         final int total = Period.MAX * 2 + 1;
         for (long num = total; num > 0; num -= 1) {
-            cal.add(Calendar.MONTH, -1);
+            cal.add(Calendar.MILLISECOND, -Math.abs(new Random().nextInt()));
             final Date date = cal.getTime();
             imocker.withBout(
                 num,

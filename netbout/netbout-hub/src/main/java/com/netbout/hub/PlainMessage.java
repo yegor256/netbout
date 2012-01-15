@@ -24,65 +24,96 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates;
+package com.netbout.hub;
 
-import com.netbout.hub.Hub;
-import com.netbout.hub.Predicate;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 /**
- * Call predicate by name in Hub.
+ * Plain message, created on-fly when predicate returns String.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see HubBout#messages(String)
  */
-public final class CustomPred extends AbstractVarargPred {
+final class PlainMessage implements Message {
 
     /**
-     * Hub to work with.
+     * The bout where this message is located.
      */
-    private final transient Hub ihub;
+    private final transient Bout ibout;
+
+    /**
+     * Content of it.
+     */
+    private final transient String content;
 
     /**
      * Public ctor.
-     * @param hub The hub to work with
-     * @param name Name of the predicate
-     * @param args The arguments
+     * @param bout The bout where this message is located
+     * @param txt The content
      */
-    public CustomPred(final Hub hub, final Urn name,
-        final List<Predicate> args) {
-        super(name.toString(), args);
-        this.ihub = hub;
+    public PlainMessage(final Bout bout, final String txt) {
+        this.ibout = bout;
+        this.content = txt;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
-        final List<Object> values = new ArrayList<Object>();
-        for (Predicate pred : this.args()) {
-            values.add(pred.evaluate(msg, pos));
-        }
-        final Object result = this.ihub.make("evaluate-predicate")
-            .inBout(msg.bout())
-            .arg(msg.bout().number())
-            .arg(msg.number())
-            .arg(Urn.create(this.name()))
-            .arg(values)
-            .asDefault(false)
-            .exec();
-        Logger.debug(
-            this,
-            "#evaluate(): evaluated '%s': %[type]s",
-            this.name(),
-            result
-        );
-        return result;
+    public int compareTo(final Message msg) {
+        return this.date().compareTo(msg.date());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout bout() {
+        return this.ibout;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long number() {
+        return 0L;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity author() {
+        return this.ibout.participants().iterator().next().identity();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String text() {
+        return this.content;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date date() {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean seen() {
+        return true;
     }
 
 }

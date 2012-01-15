@@ -24,65 +24,44 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates;
+package com.netbout.hub.predicates.xml;
 
-import com.netbout.hub.Hub;
-import com.netbout.hub.Predicate;
-import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import javax.xml.namespace.NamespaceContext;
 
 /**
- * Call predicate by name in Hub.
+ * DOM namespace context.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CustomPred extends AbstractVarargPred {
+final class DomContext implements NamespaceContext {
 
     /**
-     * Hub to work with.
+     * {@inheritDoc}
      */
-    private final transient Hub ihub;
-
-    /**
-     * Public ctor.
-     * @param hub The hub to work with
-     * @param name Name of the predicate
-     * @param args The arguments
-     */
-    public CustomPred(final Hub hub, final Urn name,
-        final List<Predicate> args) {
-        super(name.toString(), args);
-        this.ihub = hub;
+    @Override
+    public String getNamespaceURI(final String prefix) {
+        if ("xsi".equals(prefix)) {
+            return "http://www.w3.org/2001/XMLSchema-instance";
+        }
+        throw new IllegalArgumentException(prefix);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
-        final List<Object> values = new ArrayList<Object>();
-        for (Predicate pred : this.args()) {
-            values.add(pred.evaluate(msg, pos));
-        }
-        final Object result = this.ihub.make("evaluate-predicate")
-            .inBout(msg.bout())
-            .arg(msg.bout().number())
-            .arg(msg.number())
-            .arg(Urn.create(this.name()))
-            .arg(values)
-            .asDefault(false)
-            .exec();
-        Logger.debug(
-            this,
-            "#evaluate(): evaluated '%s': %[type]s",
-            this.name(),
-            result
-        );
-        return result;
+    public String getPrefix(final String uri) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator getPrefixes(final String uri) {
+        throw new UnsupportedOperationException();
     }
 
 }

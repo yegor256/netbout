@@ -34,7 +34,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +104,7 @@ public final class ParticipantFarm {
             stmt.setLong(1, bout);
             stmt.setString(2, identity.toString());
             // @checkstyle MagicNumber (1 line)
-            stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            Utc.setTimestamp(stmt, 3);
             stmt.execute();
         } finally {
             conn.close();

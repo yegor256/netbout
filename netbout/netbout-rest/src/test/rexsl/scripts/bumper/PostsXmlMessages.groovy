@@ -23,59 +23,34 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.hub.predicates.xml;
-
-import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
-import com.netbout.hub.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
-import com.ymock.util.Logger;
-import java.util.List;
-
-/**
- * Namespace predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPred extends AbstractVarargPred {
+package com.netbout.rest.rexsl.bumper
 
-    /**
-     * Public ctor.
-     * @param args The arguments
-     */
-    public NsPred(final List<Predicate> args) {
-        super("ns", args);
-    }
+import com.netbout.spi.Urn
+import com.netbout.spi.client.RestSession
+import javax.ws.rs.core.UriBuilder
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object evaluate(final Message msg, final int pos) {
-        final String namespace = (String) this.arg(0).evaluate(msg, pos);
-        final DomText text = new DomText(msg.text());
-        boolean result = false;
-        if (text.isXml()) {
-            String uri;
-            try {
-                uri = text.namespace();
-            } catch (DomValidationException ex) {
-                throw new PredicateException(ex);
-            }
-            result = namespace.equals(uri);
-            Logger.debug(
-                this,
-                // @checkstyle LineLength (1 line)
-                "#evaluate(): namespace '%s' required, '%s' found inside '%s': %B",
-                namespace,
-                uri,
-                text,
-                result
-            );
-        }
-        return result;
-    }
+def paul = new RestSession(rexsl.home).authenticate(new Urn('urn:test:paul'), '')
+def xsd = UriBuilder.fromUri(rexsl.home).path('/bumper/ns.xsd').build()
 
-}
+def bout = paul.start()
+bout.rename('Posting XML messages to bumper')
+bout.invite(paul.friend(new Urn('urn:test:bumper')))
+bout.post("""<?xml version='1.0'?>
+    <bump xmlns='/bumper/ns'
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xsi:schemaLocation='/bumper/ns ${xsd}' />
+""")
+MatcherAssert.assertThat(
+    bout.messages('(ns "/bumper/ns")').size(),
+    Matchers.equalTo(1)
+)
+MatcherAssert.assertThat(
+    bout.messages('(urn:test:bumper:what-is-your-name)').get(0).text(),
+    Matchers.equalTo('bumper')
+)

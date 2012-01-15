@@ -34,7 +34,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +64,7 @@ public final class AliasFarm {
             stmt.setString(1, identity.toString());
             stmt.setString(2, alias);
             // @checkstyle MagicNumber (1 line)
-            stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            Utc.setTimestamp(stmt, 3);
             stmt.execute();
         } finally {
             conn.close();
