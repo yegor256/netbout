@@ -26,28 +26,42 @@
  */
 package com.netbout.hub.predicates.xml;
 
+import java.util.Iterator;
+import javax.xml.namespace.NamespaceContext;
+
 /**
- * DOM validation failure.
+ * DOM namespace context.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DomValidationException extends Exception {
+final class DomContext implements NamespaceContext {
 
     /**
-     * Public ctor.
-     * @param cause The cause
+     * {@inheritDoc}
      */
-    public DomValidationException(final String cause) {
-        super(cause);
+    @Override
+    public String getNamespaceURI(final String prefix) {
+        if ("xsi".equals(prefix)) {
+            return "http://www.w3.org/2001/XMLSchema-instance";
+        }
+        throw new IllegalArgumentException(prefix);
     }
 
     /**
-     * Public ctor.
-     * @param cause The cause
+     * {@inheritDoc}
      */
-    public DomValidationException(final Throwable cause) {
-        super(cause);
+    @Override
+    public String getPrefix(final String uri) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator getPrefixes(final String uri) {
+        throw new UnsupportedOperationException();
     }
 
 }

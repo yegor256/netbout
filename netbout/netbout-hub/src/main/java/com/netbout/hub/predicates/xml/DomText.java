@@ -35,6 +35,8 @@ import com.ymock.util.Logger;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.w3c.dom.Document;
@@ -122,7 +124,30 @@ public final class DomText {
      * @throws DomValidationException If some problem inside
      */
     public void validate(final Hub hub) throws DomValidationException {
-        this.dom();
+        final String namespace = this.namespace();
+        final String uri = hub.make("resolve-xml-namespace")
+            .arg(namespace)
+            .asDefault("")
+            .exec();
+        if (uri.isEmpty()) {
+            throw new DomValidationException(
+                String.format(
+                    "Namespace '%s' is not supported by helpers",
+                    namespace
+                )
+            );
+        }
+        final String schema = this.schema(namespace);
+        if (!uri.equals(schema)) {
+            throw new DomValidationException(
+                String.format(
+                    "XML Schema for namespace '%s' should be '%s' (not '%s')",
+                    namespace,
+                    uri,
+                    schema
+                )
+            );
+        }
     }
 
     /**
@@ -150,6 +175,44 @@ public final class DomText {
             }
             return this.document;
         }
+    }
+
+    /**
+     * URI of the schema.
+     * @param namespace The namespace we're looking for
+     * @return The URI
+     * @throws DomValidationException If some problem inside
+     */
+    public String schema(final String namespace) throws DomValidationException {
+        final XPath xpath = XPathFactory.newInstance().newXPath();
+        xpath.setNamespaceContext(new DomContext());
+        String location;
+        try {
+            location = xpath.evaluate("/*/@xsi:schemaLocation", this.dom());
+        } catch (javax.xml.xpath.XPathExpressionException ex) {
+            throw new DomValidationException(ex);
+        }
+        final String[] parts = location.replaceAll("[\t\n\r ]+", " ")
+            .trim()
+            .split(" ");
+        if (parts.length != 2) {
+            throw new DomValidationException(
+                String.format(
+                    "Just two parts are expected in schemaLocation: '%s'",
+                    location
+                )
+            );
+        }
+        if (!parts[0].equals(namespace)) {
+            throw new DomValidationException(
+                String.format(
+                    "Namespace '%s' should have a URL in schemaLocation '%s'",
+                    namespace,
+                    location
+                )
+            );
+        }
+        return parts[1];
     }
 
 }

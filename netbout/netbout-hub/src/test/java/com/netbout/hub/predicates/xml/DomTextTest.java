@@ -103,7 +103,9 @@ public final class DomTextTest {
      */
     @Test
     public void validatesCorrectDocument() throws Exception {
-        final Hub hub = new HubMocker().mock();
+        final Hub hub = new HubMocker()
+            .doReturn(this.xsd, "resolve-xml-namespace")
+            .mock();
         new DomText(this.xml).validate(hub);
     }
 
