@@ -102,7 +102,7 @@ public final class UtcTest {
         }
         MatcherAssert.assertThat(
             saved,
-            Matchers.equalTo("2008-05-24 10:06:07.0")
+            Matchers.startsWith("2008-05-24 10:06:07")
         );
     }
 
@@ -120,7 +120,7 @@ public final class UtcTest {
             final PreparedStatement ustmt = conn.prepareStatement(
                 "UPDATE message SET date = ? WHERE number = ?"
             );
-            ustmt.setString(1, "2005-02-02 10:07:08");
+            ustmt.setString(1, "2005-02-02 10:07:08.000");
             ustmt.setLong(2, message);
             ustmt.executeUpdate();
             final PreparedStatement rstmt = conn.prepareStatement(
@@ -144,7 +144,7 @@ public final class UtcTest {
         );
         MatcherAssert.assertThat(
             this.fmt.format(loaded),
-            Matchers.equalTo("2005-02-02 07:07:08.000")
+            Matchers.startsWith("2005-02-02 07:07:08")
         );
     }
 
@@ -179,7 +179,10 @@ public final class UtcTest {
         }
         this.fmt.setTimeZone(TimeZone.getTimeZone("GMT"));
         final Date absolute = this.fmt.parse(saved);
-        MatcherAssert.assertThat(absolute, Matchers.equalTo(date));
+        MatcherAssert.assertThat(
+            absolute.toString(),
+            Matchers.equalTo(date.toString())
+        );
     }
 
 }
