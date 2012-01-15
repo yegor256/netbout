@@ -32,10 +32,12 @@ import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -44,6 +46,107 @@ import org.junit.Test;
  * @version $Id$
  */
 public final class UtcTest {
+
+    /**
+     * Format to use in tests.
+     */
+    private transient DateFormat fmt;
+
+    /**
+     * Prepare this test case.
+     * @throws Exception If there is some problem inside
+     */
+    @Before
+    public void prepare() throws Exception {
+        this.fmt = new SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH
+        );
+    }
+
+    /**
+     * Utc can save date to prepared statement.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void savesDateWithUtcTimezone() throws Exception {
+        final Long message =
+            new MessageRowMocker(new BoutRowMocker().mock()).mock();
+        this.fmt.setCalendar(
+            new GregorianCalendar(TimeZone.getTimeZone("GMT-5"))
+        );
+        final Date date = this.fmt.parse("2008-05-24 05:06:07.000");
+        final Connection conn = Database.connection();
+        String saved;
+        try {
+            final PreparedStatement ustmt = conn.prepareStatement(
+                "UPDATE message SET date = ? WHERE number = ? "
+            );
+            Utc.setTimestamp(ustmt, 1, date);
+            ustmt.setLong(2, message);
+            ustmt.executeUpdate();
+            final PreparedStatement rstmt = conn.prepareStatement(
+                "SELECT date FROM message WHERE number = ? "
+            );
+            rstmt.setLong(1, message);
+            final ResultSet rset = rstmt.executeQuery();
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException();
+                }
+                saved = rset.getString(1);
+            } finally {
+                rset.close();
+            }
+        } finally {
+            conn.close();
+        }
+        MatcherAssert.assertThat(
+            saved,
+            Matchers.startsWith("2008-05-24 10:06:07")
+        );
+    }
+
+    /**
+     * Utc can load date from result set.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void loadsDateWithUtcTimezone() throws Exception {
+        final Long message =
+            new MessageRowMocker(new BoutRowMocker().mock()).mock();
+        final Connection conn = Database.connection();
+        Date loaded;
+        try {
+            final PreparedStatement ustmt = conn.prepareStatement(
+                "UPDATE message SET date = ? WHERE number = ?"
+            );
+            ustmt.setString(1, "2005-02-02 10:07:08.000");
+            ustmt.setLong(2, message);
+            ustmt.executeUpdate();
+            final PreparedStatement rstmt = conn.prepareStatement(
+                "SELECT  date FROM message WHERE number = ?"
+            );
+            rstmt.setLong(1, message);
+            final ResultSet rset = rstmt.executeQuery();
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException();
+                }
+                loaded = Utc.getTimestamp(rset, 1);
+            } finally {
+                rset.close();
+            }
+        } finally {
+            conn.close();
+        }
+        this.fmt.setCalendar(
+            new GregorianCalendar(TimeZone.getTimeZone("GMT-3"))
+        );
+        MatcherAssert.assertThat(
+            this.fmt.format(loaded),
+            Matchers.startsWith("2005-02-02 07:07:08")
+        );
+    }
 
     /**
      * Utc can set and read message date, with different timezone.
@@ -74,12 +177,12 @@ public final class UtcTest {
         } finally {
             conn.close();
         }
-        final DateFormat fmt = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH
+        this.fmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+        final Date absolute = this.fmt.parse(saved);
+        MatcherAssert.assertThat(
+            absolute.toString(),
+            Matchers.equalTo(date.toString())
         );
-        fmt.setTimeZone(new SimpleTimeZone(0, "UTC"));
-        final Date absolute = fmt.parse(saved);
-        MatcherAssert.assertThat(absolute, Matchers.equalTo(date));
     }
 
 }

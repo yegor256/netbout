@@ -182,6 +182,10 @@ public final class InboxRs extends AbstractRs {
 
     /**
      * Calculate date of the bout.
+     *
+     * <p>Here we assume that all dates are reverse-ordered in the bout and
+     * every message is older than a bout.
+     *
      * @param bout The bout
      * @return Recent date in it
      */

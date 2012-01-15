@@ -117,7 +117,7 @@ public final class LoginRs extends AbstractRs {
                 "Set-Cookie",
                 String.format(
                     // @checkstyle LineLength (1 line)
-                    "netbout=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
+                    "netbout=deleted;Domain=%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
                     this.base().build().getHost(),
                     this.httpServletRequest().getContextPath()
                 )

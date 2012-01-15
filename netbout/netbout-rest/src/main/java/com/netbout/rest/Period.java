@@ -178,7 +178,7 @@ final class Period {
         if (!this.fits(date)) {
             throw new IllegalArgumentException(
                 String.format(
-                    "Can't add %s, call #fits() first",
+                    "Can't add '%s', call #fits() first",
                     date
                 )
             );
@@ -205,9 +205,10 @@ final class Period {
         if (!this.dates.isEmpty() && date.after(this.dates.first())) {
             throw new IllegalArgumentException(
                 String.format(
-                    "NEXT '%s' should be older than '%s'",
+                    "NEXT '%s' should be older than '%s' (among %d dates)",
                     date,
-                    this.dates.first()
+                    this.dates.first(),
+                    this.dates.size()
                 )
             );
         }
