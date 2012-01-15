@@ -56,9 +56,10 @@ final class Utc {
     }
 
     /**
-     * Convert date to timestamp.
+     * Convert date to timestamp and save to the statement.
+     * @param stmt The statement
+     * @param pos Position in the statement
      * @param date The date
-     * @return The timestamp
      * @throws SQLException If some SQL problem inside
      */
     public static void setTimestamp(final PreparedStatement stmt, final int pos,
@@ -67,9 +68,21 @@ final class Utc {
     }
 
     /**
-     * Get list of numbers of all bout messages.
-     * @param bout The bout where it happened
-     * @return List of numbers
+     * Save current date to the statement.
+     * @param stmt The statement
+     * @param pos Position in the statement
+     * @throws SQLException If some SQL problem inside
+     */
+    public static void setTimestamp(final PreparedStatement stmt, final int pos)
+        throws SQLException {
+        Utc.setTimestamp(stmt, pos, new Date());
+    }
+
+    /**
+     * Retrieve timestamp from the result set.
+     * @param rset The result set
+     * @param pos Position in the result set
+     * @return The date
      * @throws SQLException If some SQL problem inside
      */
     public static Date getTimestamp(final ResultSet rset, final int pos)

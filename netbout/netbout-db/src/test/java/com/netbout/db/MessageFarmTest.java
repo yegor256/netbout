@@ -117,7 +117,7 @@ public final class MessageFarmTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void setsAndReadsMessageDateWithDifferentTimezone() throws Exception {
+    public void setsAndReadsDateWithDifferentTimezone() throws Exception {
         final Long message =
             new MessageRowMocker(new BoutRowMocker().mock()).mock();
         final Date date = new Date();
@@ -131,7 +131,9 @@ public final class MessageFarmTest {
             stmt.setLong(1, message);
             final ResultSet rset = stmt.executeQuery();
             try {
-                MatcherAssert.assertThat("has one row", rset.next());
+                if (!rset.next()) {
+                    throw new IllegalStateException();
+                }
                 saved = rset.getString(1);
             } finally {
                 rset.close();

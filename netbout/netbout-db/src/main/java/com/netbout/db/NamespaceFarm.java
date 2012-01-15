@@ -34,7 +34,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,11 +94,8 @@ public final class NamespaceFarm {
                     istmt.setString(2, owner.toString());
                     // @checkstyle MagicNumber (1 line)
                     istmt.setString(3, template);
-                    istmt.setTimestamp(
-                        // @checkstyle MagicNumber (1 line)
-                        4,
-                        new Timestamp(System.currentTimeMillis())
-                    );
+                    // @checkstyle MagicNumber (1 line)
+                    Utc.setTimestamp(istmt, 4);
                     istmt.executeUpdate();
                     Logger.debug(
                         this,
