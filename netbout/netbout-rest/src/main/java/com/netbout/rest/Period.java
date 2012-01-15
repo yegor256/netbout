@@ -195,12 +195,20 @@ final class Period {
     public Period next(final Date date) {
         if (date.after(this.start)) {
             throw new IllegalArgumentException(
-                "NEXT should be older than START"
+                String.format(
+                    "NEXT '%s' should be older than START '%s'",
+                    date,
+                    this.start
+                )
             );
         }
         if (!this.dates.isEmpty() && date.after(this.dates.first())) {
             throw new IllegalArgumentException(
-                "NEXT should be older than any other date"
+                String.format(
+                    "NEXT '%s' should be older than '%s'",
+                    date,
+                    this.dates.first()
+                )
             );
         }
         return new Period(date, this.limit * 2);

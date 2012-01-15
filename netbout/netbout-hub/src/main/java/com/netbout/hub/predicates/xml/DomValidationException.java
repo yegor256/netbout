@@ -26,56 +26,20 @@
  */
 package com.netbout.hub.predicates.xml;
 
-import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
-import com.netbout.hub.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
-import com.ymock.util.Logger;
-import java.util.List;
-
 /**
- * Namespace predicate.
+ * DOM validation failure.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPred extends AbstractVarargPred {
+public final class DomValidationException extends Exception {
 
     /**
      * Public ctor.
-     * @param args The arguments
+     * @param cause The cause
      */
-    public NsPred(final List<Predicate> args) {
-        super("ns", args);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object evaluate(final Message msg, final int pos) {
-        final String namespace = (String) this.arg(0).evaluate(msg, pos);
-        final DomText text = new DomText(msg.text());
-        boolean result = false;
-        if (text.isXml()) {
-            String uri;
-            try {
-                uri = text.namespace();
-            } catch (DomValidationException ex) {
-                throw new PredicateException(ex);
-            }
-            result = namespace.equals(uri);
-            Logger.debug(
-                this,
-                // @checkstyle LineLength (1 line)
-                "#evaluate(): namespace '%s' required, '%s' found inside '%s': %B",
-                namespace,
-                uri,
-                text,
-                result
-            );
-        }
-        return result;
+    public DomValidationException(final String cause) {
+        super(cause);
     }
 
 }

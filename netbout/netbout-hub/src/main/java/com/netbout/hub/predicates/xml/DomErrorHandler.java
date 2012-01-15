@@ -26,56 +26,63 @@
  */
 package com.netbout.hub.predicates.xml;
 
-import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
-import com.netbout.hub.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
-import com.ymock.util.Logger;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXParseException;
 
 /**
- * Namespace predicate.
+ * Handler of validation errors.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPred extends AbstractVarargPred {
+final class DomErrorHandler implements ErrorHandler {
 
     /**
-     * Public ctor.
-     * @param args The arguments
+     * List of exceptions registered.
      */
-    public NsPred(final List<Predicate> args) {
-        super("ns", args);
+    private final List<Exception> errors =
+        new CopyOnWriteArrayList<Exception>();
+
+    /**
+     * Is it empty?
+     * @return Is it?
+     */
+    public boolean isEmpty() {
+        return this.errors.isEmpty();
+    }
+
+    /**
+     * All found exceptions.
+     * @return List of them
+     */
+    public List<Exception> exceptions() {
+        return this.errors;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
-        final String namespace = (String) this.arg(0).evaluate(msg, pos);
-        final DomText text = new DomText(msg.text());
-        boolean result = false;
-        if (text.isXml()) {
-            String uri;
-            try {
-                uri = text.namespace();
-            } catch (DomValidationException ex) {
-                throw new PredicateException(ex);
-            }
-            result = namespace.equals(uri);
-            Logger.debug(
-                this,
-                // @checkstyle LineLength (1 line)
-                "#evaluate(): namespace '%s' required, '%s' found inside '%s': %B",
-                namespace,
-                uri,
-                text,
-                result
-            );
-        }
-        return result;
+    public void error(final SAXParseException err) {
+        this.errors.add(err);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void fatalError(final SAXParseException err) {
+        this.errors.add(err);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void warning(final SAXParseException err) {
+        this.errors.add(err);
     }
 
 }

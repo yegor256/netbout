@@ -26,27 +26,30 @@
  */
 package com.netbout.hub.predicates.xml;
 
-import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateMocker;
-import com.netbout.spi.MessageMocker;
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
 import com.rexsl.test.ContainerMocker;
-import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test case of {@link NsPred}.
+ * Test case of {@link DomText}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPredTest {
+public final class DomTextTest {
 
     /**
      * URL of XSD schema.
      */
     private transient String xsd;
+
+    /**
+     * Valid XML document.
+     */
+    private transient String xml;
 
     /**
      * Prepare a provider of XSD schema.
@@ -66,55 +69,52 @@ public final class NsPredTest {
             .home()
             .toURL()
             .toString();
+        this.xml = "<root xmlns='foo'"
+            + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
+            + String.format(" xsi:schemaLocation='foo %s'", this.xsd)
+            + "/>";
     }
 
     /**
-     * NsPred can match an XML document.
+     * DomText can detect an XML document.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void positivelyMatchesXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("foo").mock(),
-                }
-            )
-        );
+        MatcherAssert.assertThat("it's an XML", new DomText("<root/>").isXml());
+        MatcherAssert.assertThat("it's not", !new DomText("test").isXml());
+    }
+
+    /**
+     * DomText can detect a namespace of XML document.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void detectsNamespaceOfXmlDocument() throws Exception {
         MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MessageMocker().withText(
-                    "<root xmlns='foo'"
-                    + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
-                    + String.format(" xsi:schemaLocation='foo %s'", this.xsd)
-                    + "/>"
-                ).mock(),
-                0
-            )
+            new DomText(this.xml).namespace(),
+            Matchers.equalTo("foo")
         );
     }
 
     /**
-     * NsPred can match an XML document.
+     * DomText can validate a document through helpers.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("some-namespace").mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some non-XML text").mock(),
-                0
-            )
-        );
+    public void validatesCorrectDocument() throws Exception {
+        final Hub hub = new HubMocker().mock();
+        new DomText(this.xml).validate(hub);
+    }
+
+    /**
+     * DomText throws exception for invalid document.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = DomValidationException.class)
+    public void validatesIncorrectDocument() throws Exception {
+        final Hub hub = new HubMocker().mock();
+        new DomText("<some-document/>").validate(hub);
     }
 
 }

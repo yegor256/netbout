@@ -26,10 +26,12 @@
  */
 package com.netbout.hub;
 
+import com.netbout.hub.predicates.xml.DomText;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageNotFoundException;
+import com.netbout.spi.MessagePostException;
 import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -138,7 +140,6 @@ public final class HubBout implements Bout {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Participant invite(final Identity friend) {
@@ -231,11 +232,17 @@ public final class HubBout implements Bout {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Message post(final String text) {
+    public Message post(final String text) throws MessagePostException {
         if (!this.confirmed()) {
             throw new IllegalStateException("You can't post until you join");
+        }
+        try {
+            new DomText(text).validate(this.hub);
+        } catch (com.netbout.hub.predicates.xml.DomValidationException ex) {
+            throw new MessagePostException(ex);
         }
         final MessageDt msg = this.data.addMessage();
         msg.setDate(new Date());

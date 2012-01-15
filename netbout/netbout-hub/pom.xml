@@ -86,6 +86,20 @@
             <artifactId>ymock-util</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version>${rexsl.version}</version>
+            <classifier>mock</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Embedded Java Servlet Container, for tests only. -->
+            <groupId>com.sun.grizzly</groupId>
+            <artifactId>grizzly-servlet-webserver</artifactId>
+            <version>1.9.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.xmlmatchers</groupId>
             <artifactId>xml-matchers</artifactId>
         </dependency>
