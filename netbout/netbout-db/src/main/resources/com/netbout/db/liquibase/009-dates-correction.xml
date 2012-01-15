@@ -35,19 +35,17 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <!--
-    @see http://liquibase.jira.com/browse/CORE-1073
-    -->
-    <!-- <includeAll path="liquibase" relativeToChangelogFile="true" /> -->
-
-    <include file="liquibase/001-basics.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/002-seen.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/003-alias.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/004-helper.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/005-namespace.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/006-void-identity.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/007-system-namespaces.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/008-creation-dates.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/009-dates-correction.xml" relativeToChangelogFile="true" />
+    <changeSet id="1" author="yegor">
+        <comment>
+            Bout creation dates where set wrongly in the previous
+            changeset. Bouts can't be younger than their messages. Now we
+            are setting creation dates to the past, in order to resolve
+            this "time difference" problem.
+        </comment>
+        <update tableName="bout">
+            <column name="date" value="2011-08-01"/>
+            <where>date='2012-01-11'</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
