@@ -152,7 +152,7 @@ public final class MessageFarm {
                         )
                     );
                 }
-                date = new Date(rset.getTimestamp(1).getTime());
+                date = Utc.getTimestamp(rset, 1);
             } finally {
                 rset.close();
             }
@@ -184,7 +184,7 @@ public final class MessageFarm {
             final PreparedStatement stmt = conn.prepareStatement(
                 "UPDATE message SET date = ? WHERE number = ?"
             );
-            stmt.setTimestamp(1, new Timestamp(date.getTime()));
+            Utc.setTimestamp(stmt, 1, date);
             stmt.setLong(2, number);
             final int updated = stmt.executeUpdate();
             if (updated != 1) {
