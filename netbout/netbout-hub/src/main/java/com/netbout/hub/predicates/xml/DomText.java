@@ -27,12 +27,7 @@
 package com.netbout.hub.predicates.xml;
 
 import com.netbout.hub.Hub;
-import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
-import com.netbout.hub.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
-import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -160,7 +155,7 @@ public final class DomText {
             if (this.document == null) {
                 try {
                     this.document = this.builder.parse(
-                        IOUtils.toInputStream(text, CharEncoding.UTF_8)
+                        IOUtils.toInputStream(this.text, CharEncoding.UTF_8)
                     );
                 } catch (java.io.IOException ex) {
                     throw new IllegalArgumentException(ex);
@@ -192,9 +187,10 @@ public final class DomText {
         } catch (javax.xml.xpath.XPathExpressionException ex) {
             throw new DomValidationException(ex);
         }
-        final String[] parts = location.replaceAll("[\t\n\r ]+", " ")
+        final String space = " ";
+        final String[] parts = location.replaceAll("[\t\n\r ]+", space)
             .trim()
-            .split(" ");
+            .split(space);
         if (parts.length != 2) {
             throw new DomValidationException(
                 String.format(

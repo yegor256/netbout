@@ -42,7 +42,7 @@ final class DomErrorHandler implements ErrorHandler {
     /**
      * List of exceptions registered.
      */
-    private final List<Exception> errors =
+    private final transient List<Exception> errors =
         new CopyOnWriteArrayList<Exception>();
 
     /**

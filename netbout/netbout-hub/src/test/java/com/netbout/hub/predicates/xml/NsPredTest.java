@@ -57,6 +57,7 @@ public final class NsPredTest {
         this.xsd = new ContainerMocker()
             .expectMethod(Matchers.equalTo("GET"))
             .returnBody(
+                // @checkstyle StringLiteralsConcatenation (3 lines)
                 "<schema xmlns='http://www.w3.org/2001/XMLSchema'"
                 + " xmlns:foo='foo' targetNamespace='foo'>"
                 + "<element name='root'/></schema>"
@@ -85,6 +86,7 @@ public final class NsPredTest {
             "matched",
             (Boolean) pred.evaluate(
                 new MessageMocker().withText(
+                    // @checkstyle StringLiteralsConcatenation (4 lines)
                     "<root xmlns='foo'"
                     + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
                     + String.format(" xsi:schemaLocation='foo %s'", this.xsd)
