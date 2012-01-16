@@ -214,6 +214,15 @@ public final class Urn implements Comparable {
     }
 
     /**
+     * Does it match the pattern?
+     * @param pattern The pattern to match
+     * @return Yes of no
+     */
+    public boolean matches(final String pattern) {
+        return this.matches(Urn.create(pattern));
+    }
+
+    /**
      * Is it empty?
      * @return Yes of no
      */
