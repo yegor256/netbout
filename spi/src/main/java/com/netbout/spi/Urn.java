@@ -43,6 +43,7 @@ import org.apache.commons.lang.StringUtils;
  * @version $Id$
  * @see <a href="http://tools.ietf.org/html/rfc2141">RFC2141</a>
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class Urn implements Comparable {
 
     /**
@@ -64,7 +65,8 @@ public final class Urn implements Comparable {
      * Validating regular expr.
      */
     private static final String REGEX =
-        "^urn:[a-z]{1,31}:([\\w()+,\\-.:=@;$_!*']|%[0-9a-fA-F]{2})*$";
+        // @checkstyle LineLength (1 line)
+        "^urn:[a-z]{1,31}(:([\\w,\\-\\+\\*\\.@]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+=([\\w+\\-]|%[0-9a-fA-F]{2})+(&[a-z]+=([\\w+\\-]|%[0-9a-fA-F]{2})+)*)?$";
 
     /**
      * The URI.
@@ -195,6 +197,33 @@ public final class Urn implements Comparable {
     }
 
     /**
+     * Does it match the pattern?
+     * @param pattern The pattern to match
+     * @return Yes of no
+     */
+    public boolean matches(final Urn pattern) {
+        boolean matches = false;
+        if (this.equals(pattern)) {
+            matches = true;
+        } else if (pattern.toString().endsWith("*")) {
+            final String body = pattern.toString().substring(
+                0,  pattern.toString().length() - 1
+            );
+            matches = this.uri.toString().startsWith(body);
+        }
+        return matches;
+    }
+
+    /**
+     * Does it match the pattern?
+     * @param pattern The pattern to match
+     * @return Yes of no
+     */
+    public boolean matches(final String pattern) {
+        return this.matches(Urn.create(pattern));
+    }
+
+    /**
      * Is it empty?
      * @return Yes of no
      */
@@ -228,6 +257,34 @@ public final class Urn implements Comparable {
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * Get query param by name.
+     * @param name Name of parameter
+     * @return The value of it
+     */
+    public String param(final String name) {
+        final String[] sectors = StringUtils.split(this.toString(), '?');
+        if (sectors.length != 2) {
+            throw new IllegalArgumentException(
+                String.format("Query part not found in '%s'", this)
+            );
+        }
+        final String[] parts = StringUtils.split(sectors[1], '&');
+        String found = null;
+        for (String part : parts) {
+            final String[] pair = StringUtils.split(part, '=');
+            if (pair[0].equals(name)) {
+                found = pair[1];
+            }
+        }
+        if (found == null) {
+            throw new IllegalArgumentException(
+                String.format("Param '%s' not found in '%s'", name, this)
+            );
+        }
+        return found;
     }
 
     /**
