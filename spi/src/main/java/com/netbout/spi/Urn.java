@@ -65,7 +65,8 @@ public final class Urn implements Comparable {
      * Validating regular expr.
      */
     private static final String REGEX =
-        "^urn:[a-z]{1,31}:([\\w()+,\\-.:=@;$_!*']|%[0-9a-fA-F]{2})*$";
+        // @checkstyle LineLength (1 line)
+        "^urn:[a-z]{1,31}(:([\\w,\\-\\+\\*\\.@]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+=([\\w+\\-]|%[0-9a-fA-F]{2})+(&[a-z]+=([\\w+\\-]|%[0-9a-fA-F]{2})+)*)?$";
 
     /**
      * The URI.
@@ -256,6 +257,34 @@ public final class Urn implements Comparable {
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * Get query param by name.
+     * @param name Name of parameter
+     * @return The value of it
+     */
+    public String param(final String name) {
+        final String[] sectors = StringUtils.split(this.toString(), '?');
+        if (sectors.length != 2) {
+            throw new IllegalArgumentException(
+                String.format("Query part not found in '%s'", this)
+            );
+        }
+        final String[] parts = StringUtils.split(sectors[1], '&');
+        String found = null;
+        for (String part : parts) {
+            final String[] pair = StringUtils.split(part, '=');
+            if (pair[0].equals(name)) {
+                found = pair[1];
+            }
+        }
+        if (found == null) {
+            throw new IllegalArgumentException(
+                String.format("Param '%s' not found in '%s'", name, this)
+            );
+        }
+        return found;
     }
 
     /**
