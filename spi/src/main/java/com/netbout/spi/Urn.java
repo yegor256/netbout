@@ -43,6 +43,7 @@ import org.apache.commons.lang.StringUtils;
  * @version $Id$
  * @see <a href="http://tools.ietf.org/html/rfc2141">RFC2141</a>
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class Urn implements Comparable {
 
     /**
@@ -192,6 +193,24 @@ public final class Urn implements Comparable {
             valid = false;
         }
         return valid;
+    }
+
+    /**
+     * Does it match the pattern?
+     * @param pattern The pattern to match
+     * @return Yes of no
+     */
+    public boolean matches(final Urn pattern) {
+        boolean matches = false;
+        if (this.equals(pattern)) {
+            matches = true;
+        } else if (pattern.toString().endsWith("*")) {
+            final String body = pattern.toString().substring(
+                0,  pattern.toString().length() - 1
+            );
+            matches = this.uri.toString().startsWith(body);
+        }
+        return matches;
     }
 
     /**

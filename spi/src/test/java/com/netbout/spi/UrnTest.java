@@ -226,4 +226,16 @@ public final class UrnTest {
         new Urn("urn:void:it-is-impossible-to-have-any-NSS-here");
     }
 
+    /**
+     * Urn can match a pattern.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void matchesPatternWithAnotherUrn() throws Exception {
+        MatcherAssert.assertThat(
+            "matches",
+            new Urn("urn:test:file").matches(new Urn("urn:test:*"))
+        );
+    }
+
 }
