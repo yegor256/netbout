@@ -32,7 +32,6 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -50,11 +49,16 @@ public final class MessageDataTest {
     @Test
     public void savesSeenByFlag() throws Exception {
         final Hub hub = new HubMocker().mock();
-        final MessageData data = new MessageData(hub, 1L);
+        final MessageData data = new MessageData(hub, new Random().nextLong());
         final Urn identity = new UrnMocker().mock();
         data.addSeenBy(identity);
         Mockito.verify(hub).make("was-message-seen");
+        // @checkstyle MultipleStringLiterals (1 line)
         Mockito.verify(hub).make("message-was-seen");
+        Mockito.reset(hub);
+        MatcherAssert.assertThat("was seen", data.isSeenBy(identity));
+        // @checkstyle MultipleStringLiterals (1 line)
+        Mockito.verify(hub, Mockito.times(0)).make("message-was-seen");
     }
 
 }
