@@ -224,7 +224,7 @@ final class MessageData implements MessageDt {
      */
     @Override
     public void addSeenBy(final Urn identity) {
-        if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
+        if (!this.isSeenBy(identity)) {
             this.hub.make("message-was-seen")
                 .asap()
                 .arg(this.number)

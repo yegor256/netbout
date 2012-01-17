@@ -28,8 +28,10 @@ package com.netbout.rest;
 
 import com.ymock.util.Logger;
 import java.util.Date;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.apache.commons.lang.ArrayUtils;
 import org.joda.time.Interval;
 
 /**
@@ -234,21 +236,56 @@ final class Period {
         ).toPeriod();
         String title;
         if (distance.getYears() > 0) {
-            title = String.format("%d years", distance.getYears());
+            title = this.plural("year", distance.getYears());
         } else if (distance.getMonths() > 0) {
-            title = String.format("%d months", distance.getMonths());
+            title = this.plural("month", distance.getMonths());
         } else if (distance.getWeeks() > 0) {
-            title = String.format("%d weeks", distance.getWeeks());
+            title = this.plural("week", distance.getWeeks());
         } else if (distance.getDays() > 0) {
-            title = String.format("%d days", distance.getDays());
+            title = this.plural("day", distance.getDays());
         } else if (distance.getHours() > 0) {
-            title = String.format("%d hours", distance.getHours());
+            title = this.plural("hour", distance.getHours());
         } else if (distance.getMinutes() > 0) {
-            title = String.format("%d mins", distance.getMinutes());
+            title = this.plural("minute", distance.getMinutes());
         } else {
-            title = String.format("%d secs", distance.getSeconds());
+            title = "a few seconds";
         }
         return String.format("%s ago", title);
+    }
+
+    /**
+     * Create a plural form of the noun.
+     * @param noun The noun
+     * @param num How many of them
+     * @return The text
+     */
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    private String plural(final String noun, final int num) {
+        final Map<String, String> digits = ArrayUtils.toMap(
+            new String[][] {
+                // @checkstyle MagicNumber (50 lines)
+                {"1", "a"},
+                {"2", "two"},
+                {"3", "three"},
+                {"4", "four"},
+                {"5", "five"},
+                {"6", "six"},
+                {"7", "seven"},
+                {"8", "eight"},
+                {"9", "nine"},
+            }
+        );
+        String count = Integer.toString(num);
+        if (digits.containsKey(count)) {
+            count = digits.get(count);
+        }
+        return String.format(
+            "%s %s%s",
+            count,
+            noun,
+            // @checkstyle AvoidInlineConditionals (1 line)
+            num == 1 ? "" : "s"
+        );
     }
 
 }

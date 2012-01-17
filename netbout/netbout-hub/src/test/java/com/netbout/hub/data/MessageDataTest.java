@@ -24,18 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.hub.data;
 
-/* periods */
-#periods {
-    margin-top: 4em;
-    margin-left: 0;
-    padding-left: 0;
-    list-style: none;
-}
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import java.util.Random;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+import org.mockito.Mockito;
 
-    /* one period */
-    #periods li {
-        display: inline;
-        margin-right: 1em;
-        font-size: 1.8em;
+/**
+ * Test case of {@link MessageData}.
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ */
+public final class MessageDataTest {
+
+    /**
+     * MessageDate can set seen-by status flag.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void savesSeenByFlag() throws Exception {
+        final Hub hub = new HubMocker().mock();
+        final MessageData data = new MessageData(hub, new Random().nextLong());
+        final Urn identity = new UrnMocker().mock();
+        data.addSeenBy(identity);
+        Mockito.verify(hub).make("was-message-seen");
+        // @checkstyle MultipleStringLiterals (1 line)
+        Mockito.verify(hub).make("message-was-seen");
+        Mockito.reset(hub);
+        MatcherAssert.assertThat("was seen", data.isSeenBy(identity));
+        // @checkstyle MultipleStringLiterals (1 line)
+        Mockito.verify(hub, Mockito.times(0)).make("message-was-seen");
     }
+
+}
