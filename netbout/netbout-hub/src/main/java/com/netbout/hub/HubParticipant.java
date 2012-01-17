@@ -78,6 +78,14 @@ public final class HubParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return this.data.getIdentity().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Bout bout() {
         return this.ibout;
     }

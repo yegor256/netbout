@@ -134,7 +134,13 @@ public final class HubBout implements Bout {
     @Override
     public void rename(final String text) {
         if (!this.confirmed()) {
-            throw new IllegalStateException("You can't rename until you join");
+            throw new IllegalStateException(
+                String.format(
+                    "You '%s' can't rename bout #%d until you join",
+                    this.viewer,
+                    this.number()
+                )
+            );
         }
         this.data.setTitle(text);
     }
@@ -145,7 +151,14 @@ public final class HubBout implements Bout {
     @Override
     public Participant invite(final Identity friend) {
         if (!this.confirmed()) {
-            throw new IllegalStateException("You can't invite until you join");
+            throw new IllegalStateException(
+                String.format(
+                    "You '%s' can't invite %s until you join bout #%d",
+                    this.viewer,
+                    friend,
+                    this.number()
+                )
+            );
         }
         final ParticipantDt dude = this.data.addParticipant(friend.name());
         Logger.debug(
@@ -231,7 +244,13 @@ public final class HubBout implements Bout {
     @Override
     public Message post(final String text) throws MessagePostException {
         if (!this.confirmed()) {
-            throw new IllegalStateException("You can't post until you join");
+            throw new IllegalStateException(
+                String.format(
+                    "You '%s' can't post to bout #%d until you join",
+                    this.viewer,
+                    this.number()
+                )
+            );
         }
         try {
             new DomText(text).validate(this.hub);
@@ -272,7 +291,14 @@ public final class HubBout implements Bout {
                 return dude.confirmed();
             }
         }
-        throw new IllegalStateException("Can't find myself in participants");
+        throw new IllegalStateException(
+            Logger.format(
+                "Can't find myself ('%s') among %d participants: %[list]s",
+                this.viewer,
+                this.participants().size(),
+                this.participants()
+            )
+        );
     }
 
     /**

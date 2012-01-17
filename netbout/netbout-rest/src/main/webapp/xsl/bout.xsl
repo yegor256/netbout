@@ -121,6 +121,10 @@
     <xsl:template match="message">
         <xsl:variable name="msg" select="."/>
         <article class="message">
+            <xsl:attribute name="id">
+                <xsl:text>msg</xsl:text>
+                <xsl:value-of select="$msg/number"/>
+            </xsl:attribute>
             <aside class="left">
                 <img class="photo">
                     <xsl:attribute name="src">
@@ -142,7 +146,9 @@
                     </span>
                 </header>
                 <p class="text">
-                    <xsl:value-of select="text"/>
+                    <xsl:call-template name="meta-format">
+                        <xsl:with-param name="text" select="text" />
+                    </xsl:call-template>
                 </p>
             </div>
         </article>

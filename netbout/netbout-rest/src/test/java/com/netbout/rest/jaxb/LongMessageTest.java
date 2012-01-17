@@ -47,14 +47,14 @@ public final class LongMessageTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongMessage obj = new LongMessage(
-            new MessageMocker().mock()
+            new MessageMocker().withText("<>").mock()
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),
             Matchers.allOf(
                 XhtmlMatchers.hasXPath("/message/number"),
                 XhtmlMatchers.hasXPath("/message/author"),
-                XhtmlMatchers.hasXPath("/message/text"),
+                XhtmlMatchers.hasXPath("/message/text[.='&lt;&gt;']"),
                 XhtmlMatchers.hasXPath("/message/date"),
                 XhtmlMatchers.hasXPath("/message/@seen")
             )
