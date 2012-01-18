@@ -30,22 +30,19 @@
 package com.netbout.rest.rexsl.xhtml
 
 import com.rexsl.test.XhtmlConverter
+import com.rexsl.test.XhtmlMatchers
 import org.hamcrest.MatcherAssert
-import org.xmlmatchers.XmlMatchers
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+import org.hamcrest.Matchers
 
-[
-    '//xhtml:article[@class="message"]',
-    '//xhtml:section[@id="stage"]',
-    '//xhtml:title',
-    '//xhtml:aside[@id="version" and contains(.,"r555") and contains(.,"56ms")]',
-].each { xpath ->
-    MatcherAssert.assertThat(
-        XhtmlConverter.the(rexsl.document),
-        XmlMatchers.hasXPath(
-            xpath,
-            new SimpleNamespaceContext()
-            .withBinding('xhtml', 'http://www.w3.org/1999/xhtml')
-        )
+MatcherAssert.assertThat(
+    XhtmlConverter.the(rexsl.document),
+    Matchers.allOf(
+        XhtmlMatchers.hasXPath('//xhtml:article[@class="message"]'),
+        XhtmlMatchers.hasXPath('//xhtml:section[@id="stage"]'),
+        XhtmlMatchers.hasXPath('//xhtml:title'),
+        XhtmlMatchers.hasXPath('//xhtml:aside[@id="version"]'),
+        XhtmlMatchers.hasXPath('//xhtml:aside[contains(.,"r555")]'),
+        XhtmlMatchers.hasXPath('//xhtml:aside[contains(.,"56ms")]'),
+/*        XhtmlMatchers.hasXPath('//xhtml:article[@id="msg3"]//p[@class="text"]/a[@href="http://example.com"]')*/
     )
-}
+)

@@ -96,4 +96,19 @@ public final class HubIdentityTest {
         );
     }
 
+    /**
+     * HubIdentity can start a new bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void startsNewBoutAndRenamesIt() throws Exception {
+        final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (2 lines)
+            .doReturn(new ArrayList<Long>(), "get-bouts-of-identity")
+            .mock();
+        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
+        final Bout bout = identity.start();
+        bout.rename("how it works?");
+    }
+
 }

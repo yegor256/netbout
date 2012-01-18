@@ -86,6 +86,10 @@
 
     <xsl:template match="bout">
         <li class="bout">
+            <xsl:attribute name="id">
+                <xsl:text>bout</xsl:text>
+                <xsl:value-of select="number"/>
+            </xsl:attribute>
             <div class="header">
                 <span class="num">
                     <xsl:text>#</xsl:text>

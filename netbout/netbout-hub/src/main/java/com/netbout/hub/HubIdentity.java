@@ -94,6 +94,14 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return this.iname.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int compareTo(final Identity identity) {
         return this.iname.compareTo(identity.name());
     }

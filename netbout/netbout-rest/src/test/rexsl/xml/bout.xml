@@ -95,6 +95,7 @@
         </participants>
         <messages>
             <message seen="true">
+                <number>1</number>
                 <author>depp</author>
                 <text>
                     I think that this subject should be discussed in
@@ -103,19 +104,21 @@
                 <date></date>
             </message>
             <message seen="true">
+                <number>2</number>
                 <author>javier@gmail.com</author>
                 <text>
                     Yeah, I agree, let's talk about it today!
                 </text>
             </message>
             <message seen="true">
+                <number>3</number>
                 <author>john.turturro</author>
                 <text>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    It's [a link](http://example.com)
                 </text>
             </message>
             <message>
+                <number>4</number>
                 <author>2pac</author>
                 <text>
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.

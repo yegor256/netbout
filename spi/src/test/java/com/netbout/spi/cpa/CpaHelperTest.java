@@ -31,6 +31,7 @@ package com.netbout.spi.cpa;
 
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Plain;
 import com.netbout.spi.Token;
 import com.netbout.spi.TokenMocker;
@@ -62,7 +63,7 @@ public final class CpaHelperTest {
      */
     @Before
     public void prepare() throws Exception {
-        final Identity identity = Mockito.mock(Identity.class);
+        final Identity identity = new IdentityMocker().mock();
         this.helper = new CpaHelper(identity, new FarmMocker().mock());
     }
 
@@ -139,6 +140,19 @@ public final class CpaHelperTest {
             .mock();
         this.helper.execute(token);
         Mockito.verify(token).result(new PlainString(text));
+    }
+
+    /**
+     * CpaHelper can be compared with identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void comparesWithIdentityForEquality() throws Exception {
+        final Identity identity = new IdentityMocker().mock();
+        MatcherAssert.assertThat(
+            new CpaHelper(identity, new FarmMocker().mock()),
+            Matchers.equalTo(identity)
+        );
     }
 
     /**

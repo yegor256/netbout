@@ -67,6 +67,18 @@ public final class HubMocker {
         ).when(this.hub).make(Mockito.anyString());
         this.withUrnResolver(new UrnResolverMocker().mock());
         this.withBoutMgr(new BoutMgrMocker().mock());
+        try {
+            Mockito.doAnswer(
+                new Answer() {
+                    public Object answer(final InvocationOnMock invocation) {
+                        final Urn name = (Urn) invocation.getArguments()[0];
+                        return new IdentityMocker().namedAs(name).mock();
+                    }
+                }
+            ).when(this.hub).identity(Mockito.any(Urn.class));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**
