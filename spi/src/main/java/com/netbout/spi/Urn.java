@@ -66,7 +66,7 @@ public final class Urn implements Comparable {
      */
     private static final String REGEX =
         // @checkstyle LineLength (1 line)
-        "^urn:[a-z]{1,31}(:([\\w,\\-\\+\\*\\.@]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+=([\\w+\\-]|%[0-9a-fA-F]{2})+(&[a-z]+=([\\w+\\-]|%[0-9a-fA-F]{2})+)*)?$";
+        "^urn:[a-z]{1,31}(:([\\w,\\-\\+\\*\\.@/]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+=([\\w+\\-]|%[0-9a-fA-F]{2})+(&[a-z]+=([\\w+\\-]|%[0-9a-fA-F]{2})+)*)?$";
 
     /**
      * The URI.
@@ -284,7 +284,11 @@ public final class Urn implements Comparable {
                 String.format("Param '%s' not found in '%s'", name, this)
             );
         }
-        return found;
+        try {
+            return URLDecoder.decode(found, CharEncoding.UTF_8);
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**

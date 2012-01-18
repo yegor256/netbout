@@ -48,9 +48,9 @@ public final class UrnTest {
      */
     @Test
     public void instantiatesFromText() throws Exception {
-        final Urn urn = new Urn("urn:netbout:jeff-lebowski");
+        final Urn urn = new Urn("urn:netbout:jeff%20lebowski");
         MatcherAssert.assertThat(urn.nid(), Matchers.equalTo("netbout"));
-        MatcherAssert.assertThat(urn.nss(), Matchers.equalTo("jeff-lebowski"));
+        MatcherAssert.assertThat(urn.nss(), Matchers.equalTo("jeff lebowski"));
     }
 
     /**
@@ -162,6 +162,7 @@ public final class UrnTest {
             "urn:a:?alpha=50",
             "urn:a:?alpha=50&beta=u%20-works-fine",
             "urn:verylongnamespaceid:",
+            "urn:a:b/c/d",
         };
         for (String text : texts) {
             final Urn urn = Urn.create(text);
@@ -248,8 +249,8 @@ public final class UrnTest {
     @Test
     public void retrievesParamsByName() throws Exception {
         MatcherAssert.assertThat(
-            new Urn("urn:test:x?a=some-value").param("a"),
-            Matchers.equalTo("some-value")
+            new Urn("urn:test:x?a=some%20value").param("a"),
+            Matchers.equalTo("some value")
         );
     }
 
