@@ -54,7 +54,7 @@ public final class LongMessageTest {
             Matchers.allOf(
                 XhtmlMatchers.hasXPath("/message/number"),
                 XhtmlMatchers.hasXPath("/message/author"),
-                XhtmlMatchers.hasXPath("/message/text[.='&lt;&gt;']"),
+                XhtmlMatchers.hasXPath("/message/text[.='<>']"),
                 XhtmlMatchers.hasXPath("/message/date"),
                 XhtmlMatchers.hasXPath("/message/@seen")
             )

@@ -105,10 +105,8 @@ public final class HubIdentityTest {
         final Hub hub = new HubMocker()
             // @checkstyle MultipleStringLiterals (2 lines)
             .doReturn(new ArrayList<Long>(), "get-bouts-of-identity")
-            // .doReturn(new ArrayList<Long>(), "get-bout-messages")
             .mock();
-        // final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
-        final Identity identity = new HubIdentity(hub, new com.netbout.spi.Urn("urn:test:daddy"));
+        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
         final Bout bout = identity.start();
         bout.rename("how it works?");
     }

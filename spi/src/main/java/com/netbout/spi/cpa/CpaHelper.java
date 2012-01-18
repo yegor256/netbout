@@ -132,6 +132,23 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof Identity)
+            && ((Identity) obj).name().equals(this.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.name().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public URL authority() {
         return this.identity.authority();
     }
