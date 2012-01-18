@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link BoutDt}.
@@ -73,6 +75,18 @@ public final class BoutDtMocker {
         this.bout = mock;
         Mockito.doReturn(this.participants).when(this.bout).getParticipants();
         Mockito.doReturn(this.messages).when(this.bout).getMessages();
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    final Urn name = (Urn) invocation.getArguments()[0];
+                    final ParticipantDt dude = new ParticipantDtMocker()
+                        .withIdentity(name)
+                        .mock();
+                    BoutDtMocker.this.withParticipant(dude);
+                    return dude;
+                }
+            }
+        ).when(this.bout).addParticipant(Mockito.any(Urn.class));
     }
 
     /**

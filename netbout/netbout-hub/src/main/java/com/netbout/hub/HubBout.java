@@ -187,9 +187,10 @@ public final class HubBout implements Bout {
         }
         Logger.debug(
             this,
-            "#participants(): %d participant(s) found in bout #%d",
+            "#participants(): %d participant(s) found in bout #%d: %[list]s",
             participants.size(),
-            this.number()
+            this.number(),
+            participants
         );
         return participants;
     }
@@ -287,7 +288,7 @@ public final class HubBout implements Bout {
      */
     private boolean confirmed() {
         for (Participant dude : this.participants()) {
-            if (dude.identity().equals(this.viewer)) {
+            if (dude.identity().name().equals(this.viewer.name())) {
                 return dude.confirmed();
             }
         }
