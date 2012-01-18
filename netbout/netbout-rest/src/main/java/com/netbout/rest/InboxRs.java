@@ -90,7 +90,7 @@ public final class InboxRs extends AbstractRs {
         if (view == null) {
             inbox = identity.inbox(this.query);
         } else {
-            inbox = identity.inbox(this.fullQuery(period));
+            inbox = identity.inbox(PeriodsBuilder.format(this.query, period));
         }
         final PeriodsBuilder periods = new PeriodsBuilder(
             period,
@@ -146,38 +146,6 @@ public final class InboxRs extends AbstractRs {
             .location(this.base().path("/{num}").build(bout.number()))
             .header("Bout-number", bout.number())
             .build();
-    }
-
-    /**
-     * Create query with period.
-     * @param period The period
-     * @return The query
-     */
-    private String fullQuery(final Period period) {
-        String original = "";
-        if (!this.query.isEmpty() && this.query.charAt(0) == '(') {
-            original = this.query;
-        } else {
-            if (!this.query.isEmpty()) {
-                original = String.format(
-                    "(matches '%s' $text)",
-                    this.query.replace("'", "\\'")
-                );
-            }
-        }
-        final String text = String.format(
-            "(and (not (greater-than $date '%s')) %s)",
-            ISODateTimeFormat.dateTime().print(
-                new DateTime(period.newest().getTime())
-            ),
-            original
-        );
-        Logger.debug(
-            this,
-            "#fullQuery(): '%s'",
-            text
-        );
-        return text;
     }
 
     /**

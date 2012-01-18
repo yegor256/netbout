@@ -56,7 +56,8 @@ public final class LongBoutTest {
             new StageCoordinatesMocker().mock(),
             "some keyword",
             UriBuilder.fromUri("http://localhost"),
-            new IdentityMocker().mock()
+            new IdentityMocker().mock(),
+            null
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),

@@ -40,7 +40,7 @@ import org.joda.time.Interval;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Period {
+public final class Period {
 
     /**
      * Maximum number of items to show, no matter what.

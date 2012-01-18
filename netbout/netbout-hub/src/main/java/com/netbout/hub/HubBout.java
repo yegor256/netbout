@@ -244,6 +244,9 @@ public final class HubBout implements Bout {
      */
     @Override
     public Message post(final String text) throws MessagePostException {
+        if (text.isEmpty()) {
+            throw new MessagePostException("some message content is required");
+        }
         if (!this.confirmed()) {
             throw new IllegalStateException(
                 String.format(
