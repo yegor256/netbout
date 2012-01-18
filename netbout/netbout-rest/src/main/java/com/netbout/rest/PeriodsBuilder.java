@@ -188,6 +188,7 @@ public final class PeriodsBuilder {
 
     /**
      * Create query with period.
+     * @param query Original query
      * @param period The period
      * @return The query
      */

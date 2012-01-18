@@ -259,6 +259,11 @@ public final class HubBout implements Bout {
         try {
             new DomText(text).validate(this.hub);
         } catch (com.netbout.hub.predicates.xml.DomValidationException ex) {
+            Logger.warn(
+                this,
+                "#post('%s'): %[exception]s",
+                ex
+            );
             throw new MessagePostException(ex);
         }
         final MessageDt msg = this.data.addMessage();

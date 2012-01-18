@@ -112,6 +112,7 @@ public final class LongBout {
      * @param keyword Search keyword
      * @param bldr The builder of URIs
      * @param vwr The viewer
+     * @param period Which period to view
      * @checkstyle ParameterNumber (3 lines)
      */
     public LongBout(final Hub ihub, final Bout bot, final StageCoordinates crds,
@@ -212,7 +213,9 @@ public final class LongBout {
     /**
      * Private ctor.
      * @param view Which period to view
+     * @return The list of messages
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<LongMessage> load(final String view) {
         final Period period = Period.valueOf(view);
         List<Message> discussion;
@@ -227,17 +230,17 @@ public final class LongBout {
             period,
             this.builder.clone().queryParam(RestSession.QUERY_PARAM, this.query)
         ).setQueryParam(BoutRs.PERIOD_PARAM);
-        final List<LongMessage> messages = new ArrayList<LongMessage>();
+        final List<LongMessage> msgs = new ArrayList<LongMessage>();
         for (Message msg : discussion) {
             if (pbld.show(msg.date())) {
-                messages.add(new LongMessage(msg));
+                msgs.add(new LongMessage(msg));
             }
             if (!pbld.more(discussion.size())) {
                 break;
             }
         }
         this.periods.addAll(pbld.links());
-        return messages;
+        return msgs;
     }
 
 }

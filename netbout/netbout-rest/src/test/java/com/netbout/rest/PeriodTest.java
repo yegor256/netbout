@@ -110,7 +110,7 @@ public final class PeriodTest {
      */
     @Test
     public void serializesToStringAndBack() throws Exception {
-        final Period period = new Period();
+        final Period period = new Period().next(this.date("2007-04-14"));
         final String text = period.toString();
         MatcherAssert.assertThat(
             Period.valueOf(text),

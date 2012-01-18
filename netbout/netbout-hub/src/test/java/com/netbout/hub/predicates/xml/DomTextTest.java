@@ -58,7 +58,7 @@ public final class DomTextTest {
     @Before
     public void prepareXsd() throws Exception {
         final String schema =
-            // @checkstyle StringLiteralsConcatenation (3 lines)
+            // @checkstyle StringLiteralsConcatenation (10 lines)
             "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'"
             + " xmlns:p='foo' targetNamespace='foo'"
             + " elementFormDefault='qualified'>"
@@ -82,7 +82,6 @@ public final class DomTextTest {
             + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
             + String.format(" xsi:schemaLocation='foo %s'", this.xsd)
             + "><alpha>xxx</alpha></root>";
-        System.out.println(this.xml);
     }
 
     /**

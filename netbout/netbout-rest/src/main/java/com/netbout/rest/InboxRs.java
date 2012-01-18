@@ -34,7 +34,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.client.RestSession;
-import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,8 +41,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * RESTful front of user's inbox.
