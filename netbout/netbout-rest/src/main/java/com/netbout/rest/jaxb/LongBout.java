@@ -55,6 +55,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "bout")
 @XmlAccessorType(XmlAccessType.NONE)
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class LongBout {
 
     /**
@@ -151,7 +152,6 @@ public final class LongBout {
      */
     @XmlElement(name = "stage")
     @XmlElementWrapper(name = "stages")
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
         for (Urn identity : this.coords.all()) {
@@ -179,7 +179,6 @@ public final class LongBout {
      */
     @XmlElement(name = "message")
     @XmlElementWrapper(name = "messages")
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<LongMessage> getMessages() {
         return this.messages;
     }
@@ -190,7 +189,6 @@ public final class LongBout {
      */
     @XmlElement(name = "participant")
     @XmlElementWrapper(name = "participants")
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
@@ -215,7 +213,6 @@ public final class LongBout {
      * @param view Which period to view
      * @return The list of messages
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<LongMessage> load(final String view) {
         final Period period = Period.valueOf(view);
         List<Message> discussion;
