@@ -44,7 +44,7 @@ bout.invite(paul.friend(new Urn('urn:test:bumper')))
 bout.post("""<?xml version='1.0'?>
     <bump xmlns='/bumper/ns'
         xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-        xsi:schemaLocation='/bumper/ns ${xsd}' />
+        xsi:schemaLocation='/bumper/ns ${xsd}' ><text>hello, dude!</text></bump>
 """)
 MatcherAssert.assertThat(
     bout.messages('(ns "/bumper/ns")').size(),

@@ -72,9 +72,14 @@ public final class BumperRsMocker {
         // @checkstyle StringLiteralsConcatenation (3 lines)
         return "<?xml version='1.0'?><xs:schema"
             + " xmlns:xs='http://www.w3.org/2001/XMLSchema'"
-            + " xmlns:b='/bumper/ns'"
+            + " xmlns='/bumper/ns' elementFormDefault='qualified'"
             + " targetNamespace='/bumper/ns'>"
-            + "<xs:element name='bump' type='xs:string'/>"
+            + "<xs:element name='bump' type='bump'/>"
+            + "<xs:complexType name='bump'>"
+            + "<xs:sequence>"
+            + "<xs:element name='text' type='xs:string'/>"
+            + "</xs:sequence>"
+            + "</xs:complexType>"
             + "</xs:schema>";
     }
 
