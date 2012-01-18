@@ -40,7 +40,7 @@ import org.joda.time.Interval;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Period {
+public final class Period {
 
     /**
      * Maximum number of items to show, no matter what.
@@ -68,7 +68,7 @@ final class Period {
     private final transient SortedSet<Date> dates = new TreeSet<Date>();
 
     /**
-     * Start of the period, the newest date.
+     * Start of the period, the newest date, or NULL if it's NOW.
      */
     private final transient Date start;
 
@@ -81,7 +81,7 @@ final class Period {
      * Public ctor.
      */
     public Period() {
-        this(new Date(), Period.DEFAULT_LIMIT);
+        this(null, Period.DEFAULT_LIMIT);
     }
 
     /**
@@ -120,7 +120,7 @@ final class Period {
     public String toString() {
         return String.format(
             "%dt%d",
-            this.start.getTime(),
+            this.newest().getTime(),
             this.limit
         );
     }
@@ -131,7 +131,7 @@ final class Period {
     @Override
     public boolean equals(final Object obj) {
         return (obj instanceof Period)
-            && ((Period) obj).start.equals(this.start)
+            && ((Period) obj).newest().equals(this.newest())
             && ((Period) obj).limit.equals(this.limit);
     }
 
@@ -140,7 +140,7 @@ final class Period {
      */
     @Override
     public int hashCode() {
-        return this.start.hashCode() + this.limit.hashCode();
+        return this.newest().hashCode() + this.limit.hashCode();
     }
 
     /**
@@ -152,13 +152,13 @@ final class Period {
      */
     public boolean fits(final Date date) {
         final boolean offlimit = date.before(
-            new Date(this.start.getTime() - this.limit)
+            new Date(this.newest().getTime() - this.limit)
         );
         final boolean overflow = this.dates.size() >= this.MAX
             && (this.dates.last().getTime() - this.dates.first().getTime())
                 > this.UNBREAKEN;
         final boolean fits = !overflow
-            && !date.after(this.start)
+            && !date.after(this.newest())
             && (this.dates.size() < this.MIN || !offlimit);
         Logger.debug(
             this,
@@ -195,12 +195,12 @@ final class Period {
      *  one size bigger
      */
     public Period next(final Date date) {
-        if (date.after(this.start)) {
+        if (date.after(this.newest())) {
             throw new IllegalArgumentException(
                 String.format(
                     "NEXT '%s' should be older than START '%s'",
                     date,
-                    this.start
+                    this.newest()
                 )
             );
         }
@@ -222,7 +222,13 @@ final class Period {
      * @return The date
      */
     public Date newest() {
-        return this.start;
+        Date newest;
+        if (this.start == null) {
+            newest = new Date();
+        } else {
+            newest = this.start;
+        }
+        return newest;
     }
 
     /**
@@ -231,7 +237,7 @@ final class Period {
      */
     public String title() {
         final org.joda.time.Period distance = new Interval(
-            this.start.getTime(),
+            this.newest().getTime(),
             new Date().getTime()
         ).toPeriod();
         String title;

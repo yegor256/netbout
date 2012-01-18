@@ -57,14 +57,21 @@ public final class DomTextTest {
      */
     @Before
     public void prepareXsd() throws Exception {
+        final String schema =
+            // @checkstyle StringLiteralsConcatenation (10 lines)
+            "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'"
+            + " xmlns:p='foo' targetNamespace='foo'"
+            + " elementFormDefault='qualified'>"
+            + "<xs:element name='root' type='p:main'/>"
+            + "<xs:complexType name='main'>"
+            + "<xs:sequence>"
+            + "<xs:element name='alpha' type='xs:string' />"
+            + "</xs:sequence>"
+            + "</xs:complexType>"
+            + "</xs:schema>";
         this.xsd = new ContainerMocker()
             .expectMethod(Matchers.equalTo("GET"))
-            .returnBody(
-                // @checkstyle StringLiteralsConcatenation (3 lines)
-                "<schema xmlns='http://www.w3.org/2001/XMLSchema'"
-                + " xmlns:foo='foo' targetNamespace='foo'>"
-                + "<element name='root'/></schema>"
-            )
+            .returnBody(schema)
             .returnHeader("Content-Type", "application/xml")
             .mock()
             .home()
@@ -74,7 +81,7 @@ public final class DomTextTest {
         this.xml = "<root xmlns='foo'"
             + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
             + String.format(" xsi:schemaLocation='foo %s'", this.xsd)
-            + "/>";
+            + "><alpha>xxx</alpha></root>";
     }
 
     /**

@@ -63,6 +63,11 @@ import javax.ws.rs.core.UriBuilder;
 public final class BoutRs extends AbstractRs {
 
     /**
+     * Threshold param.
+     */
+    public static final String PERIOD_PARAM = "p";
+
+    /**
      * Number of the bout.
      */
     private transient Long number;
@@ -83,12 +88,28 @@ public final class BoutRs extends AbstractRs {
     private transient StageCoordinates coords = new StageCoordinates();
 
     /**
+     * The period we're looking at.
+     */
+    private transient String view;
+
+    /**
      * Set number of bout.
      * @param num The number
      */
     @PathParam("num")
     public void setNumber(final Long num) {
         this.number = num;
+    }
+
+    /**
+     * Set period to view.
+     * @param name The name of it
+     */
+    @QueryParam(BoutRs.PERIOD_PARAM)
+    public void setPeriod(final String name) {
+        if (name != null) {
+            this.view = name;
+        }
     }
 
     /**
@@ -366,7 +387,8 @@ public final class BoutRs extends AbstractRs {
                     this.coords,
                     this.query,
                     this.self(""),
-                    this.identity()
+                    this.identity(),
+                    this.view
                 )
             )
             .append(new JaxbBundle("query", this.query))

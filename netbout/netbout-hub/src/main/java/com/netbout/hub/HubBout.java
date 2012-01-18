@@ -244,6 +244,9 @@ public final class HubBout implements Bout {
      */
     @Override
     public Message post(final String text) throws MessagePostException {
+        if (text.isEmpty()) {
+            throw new MessagePostException("some message content is required");
+        }
         if (!this.confirmed()) {
             throw new IllegalStateException(
                 String.format(
@@ -256,6 +259,11 @@ public final class HubBout implements Bout {
         try {
             new DomText(text).validate(this.hub);
         } catch (com.netbout.hub.predicates.xml.DomValidationException ex) {
+            Logger.warn(
+                this,
+                "#post('%s'): %[exception]s",
+                ex
+            );
             throw new MessagePostException(ex);
         }
         final MessageDt msg = this.data.addMessage();

@@ -62,7 +62,7 @@
                 </aside>
                 <div id="wrapper">
                     <section id="content">
-                        <img src="http://img.netbout.com/logo.png" id="logo" />
+                        <img src="http://img.netbout.com/logo-white.png" id="logo" />
                         <br/>
                         <xsl:if test="/page/message != ''">
                             <aside id="error-message">

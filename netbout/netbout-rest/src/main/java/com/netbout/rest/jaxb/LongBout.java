@@ -27,12 +27,16 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
+import com.netbout.rest.BoutRs;
+import com.netbout.rest.Period;
+import com.netbout.rest.PeriodsBuilder;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
+import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,6 +55,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "bout")
 @XmlAccessorType(XmlAccessType.NONE)
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class LongBout {
 
     /**
@@ -84,6 +89,16 @@ public final class LongBout {
     private final transient Identity viewer;
 
     /**
+     * The messages loaded.
+     */
+    private final transient List<LongMessage> messages;
+
+    /**
+     * Periods to show.
+     */
+    private final transient Collection<Link> periods = new ArrayList<Link>();
+
+    /**
      * Public ctor for JAXB.
      */
     public LongBout() {
@@ -98,16 +113,19 @@ public final class LongBout {
      * @param keyword Search keyword
      * @param bldr The builder of URIs
      * @param vwr The viewer
+     * @param period Which period to view
      * @checkstyle ParameterNumber (3 lines)
      */
     public LongBout(final Hub ihub, final Bout bot, final StageCoordinates crds,
-        final String keyword, final UriBuilder bldr, final Identity vwr) {
+        final String keyword, final UriBuilder bldr, final Identity vwr,
+        final String period) {
         this.hub = ihub;
         this.bout = bot;
         this.coords = crds;
         this.query = keyword;
         this.builder = bldr;
         this.viewer = vwr;
+        this.messages = this.load(period);
     }
 
     /**
@@ -134,7 +152,6 @@ public final class LongBout {
      */
     @XmlElement(name = "stage")
     @XmlElementWrapper(name = "stages")
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
         for (Urn identity : this.coords.all()) {
@@ -162,13 +179,8 @@ public final class LongBout {
      */
     @XmlElement(name = "message")
     @XmlElementWrapper(name = "messages")
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<LongMessage> getMessages() {
-        final List<LongMessage> messages = new ArrayList<LongMessage>();
-        for (Message msg : this.bout.messages(this.query)) {
-            messages.add(new LongMessage(msg));
-        }
-        return messages;
+        return this.messages;
     }
 
     /**
@@ -177,7 +189,6 @@ public final class LongBout {
      */
     @XmlElement(name = "participant")
     @XmlElementWrapper(name = "participants")
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
@@ -185,6 +196,48 @@ public final class LongBout {
             dudes.add(new LongParticipant(dude, this.builder, this.viewer));
         }
         return dudes;
+    }
+
+    /**
+     * List of periods.
+     * @return The list
+     */
+    @XmlElement(name = "link")
+    @XmlElementWrapper(name = "periods")
+    public Collection<Link> getPeriods() {
+        return this.periods;
+    }
+
+    /**
+     * Private ctor.
+     * @param view Which period to view
+     * @return The list of messages
+     */
+    public List<LongMessage> load(final String view) {
+        final Period period = Period.valueOf(view);
+        List<Message> discussion;
+        if (view == null) {
+            discussion = this.bout.messages(this.query);
+        } else {
+            discussion = this.bout.messages(
+                PeriodsBuilder.format(this.query, period)
+            );
+        }
+        final PeriodsBuilder pbld = new PeriodsBuilder(
+            period,
+            this.builder.clone().queryParam(RestSession.QUERY_PARAM, this.query)
+        ).setQueryParam(BoutRs.PERIOD_PARAM);
+        final List<LongMessage> msgs = new ArrayList<LongMessage>();
+        for (Message msg : discussion) {
+            if (pbld.show(msg.date())) {
+                msgs.add(new LongMessage(msg));
+            }
+            if (!pbld.more(discussion.size())) {
+                break;
+            }
+        }
+        this.periods.addAll(pbld.links());
+        return msgs;
     }
 
 }

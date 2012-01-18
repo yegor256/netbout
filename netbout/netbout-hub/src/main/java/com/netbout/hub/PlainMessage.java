@@ -51,6 +51,11 @@ final class PlainMessage implements Message {
     private final transient String content;
 
     /**
+     * Date of message creation.
+     */
+    private final transient Date created = new Date();
+
+    /**
      * Public ctor.
      * @param bout The bout where this message is located
      * @param txt The content
@@ -105,7 +110,7 @@ final class PlainMessage implements Message {
      */
     @Override
     public Date date() {
-        return new Date();
+        return this.created;
     }
 
     /**
