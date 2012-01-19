@@ -164,9 +164,7 @@
                     </span>
                 </header>
                 <p class="text">
-                    <xsl:call-template name="meta-format">
-                        <xsl:with-param name="text" select="render" />
-                    </xsl:call-template>
+                    <xsl:value-of select="render" disable-output-escaping="yes" />
                 </p>
             </div>
         </article>

@@ -57,9 +57,7 @@ public final class VariablePred implements Predicate {
     @Override
     public Object evaluate(final Message msg, final int pos) {
         Object value;
-        if ("pos".equals(this.name)) {
-            value = pos;
-        } else if ("text".equals(this.name)) {
+        if ("text".equals(this.name)) {
             value = msg.text();
         } else if ("bout.number".equals(this.name)) {
             value = msg.bout().number();

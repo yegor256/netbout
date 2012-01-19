@@ -65,17 +65,4 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template name="meta-format">
-        <xsl:param name="text" as="xs:string"/>
-        <xsl:variable name="text">
-            <!--
-            When Safari and Chrome will support this, we will use this technique.
-            In The mean time we do this formatting on the server.
-            -->
-            <!-- <xsl:value-of select="replace($text, '\[(.*?\)]\(http://.*?\)', '&lt;a href=&quot;$2&quot;&gt;$1&lt;/a&gt;')"/> -->
-            <xsl:value-of select="$text"/>
-        </xsl:variable>
-        <xsl:value-of select="$text"/>
-    </xsl:template>
-
 </xsl:stylesheet>

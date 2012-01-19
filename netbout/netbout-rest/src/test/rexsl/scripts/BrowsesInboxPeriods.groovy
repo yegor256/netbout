@@ -27,44 +27,35 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.bootstrap
+package com.netbout.rest.rexsl.scripts
 
-import com.netbout.db.Database
-import com.rexsl.core.Manifests
-import com.ymock.util.Logger
+import com.netbout.spi.Urn
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import com.rexsl.test.RestTester
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
 
-def driver = 'com.mysql.jdbc.Driver'
-def url = 'jdbc:mysql://test-db.netbout.com:3306/netbout-test?useUnicode=true&characterEncoding=utf-8'
-def user = 'netbout-test'
-def password = 'secret'
+def leon = new RestSession(rexsl.home).authenticate(new Urn('urn:test:leon'), '')
 
-def urlFile = new File(rexsl.basedir, 'jdbc.txt')
-if (urlFile.exists()) {
-    url = urlFile.text
-}
-
-Manifests.inject('Netbout-JdbcDriver', driver)
-Manifests.inject('Netbout-JdbcUrl', url)
-Manifests.inject('Netbout-JdbcUser', user)
-Manifests.inject('Netbout-JdbcPassword', password)
-
-def conn = Database.connection()
-def line = new StringBuilder()
-def queries = []
-new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text ->
-    if (text.startsWith('--')) {
-        return
-    }
-    line.append(text)
-    if (text.trim().endsWith(';')) {
-        queries.add(line.toString())
-        line.setLength(0)
-    }
-}
-queries.each { query ->
-    def stmt = conn.createStatement()
-    stmt.execute(query)
-    Logger.debug(this, 'SQL executed: %s', query)
-}
-conn.close()
-Logger.info(this, 'Test database is ready at %s', url)
+RestTester.start(RestUriBuilder.from(leon))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read first inbox page, with many bouts')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('/page/identity[name="urn:test:leon"]')
+    .assertXPath('/page/bouts[count(bout) > 2]')
+    .assertXPath('/page/periods/link[@rel="more"]')
+    .assertXPath('/page/periods/link[@rel="earliest"]')
+    .rel('/page/periods/link[@rel="more"]/@href')
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read second page of inbox')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('//bouts[count(bout) > 1]')
+    .assertXPath('/page/view[. != ""]')
+    .assertXPath('//link[@rel="more"]')
+    .rel('//link[@rel="more"]/@href')
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read third page of inbox')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('//bouts[count(bout) > 0]')
+    .assertXPath('//view[. != ""]')

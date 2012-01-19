@@ -23,48 +23,48 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.hub.predicates;
+
+import com.netbout.hub.Predicate;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.List;
+
+/**
+ * The message is at this position.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.bootstrap
+public final class PosPred extends AbstractVarargPred {
 
-import com.netbout.db.Database
-import com.rexsl.core.Manifests
-import com.ymock.util.Logger
-
-def driver = 'com.mysql.jdbc.Driver'
-def url = 'jdbc:mysql://test-db.netbout.com:3306/netbout-test?useUnicode=true&characterEncoding=utf-8'
-def user = 'netbout-test'
-def password = 'secret'
-
-def urlFile = new File(rexsl.basedir, 'jdbc.txt')
-if (urlFile.exists()) {
-    url = urlFile.text
-}
-
-Manifests.inject('Netbout-JdbcDriver', driver)
-Manifests.inject('Netbout-JdbcUrl', url)
-Manifests.inject('Netbout-JdbcUser', user)
-Manifests.inject('Netbout-JdbcPassword', password)
-
-def conn = Database.connection()
-def line = new StringBuilder()
-def queries = []
-new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text ->
-    if (text.startsWith('--')) {
-        return
+    /**
+     * Public ctor.
+     * @param args The arguments
+     */
+    public PosPred(final List<Predicate> args) {
+        super("pos", args);
     }
-    line.append(text)
-    if (text.trim().endsWith(';')) {
-        queries.add(line.toString())
-        line.setLength(0)
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final int required = Integer.valueOf(
+            this.arg(0).evaluate(msg, pos).toString()
+        );
+        final boolean matches = pos == required;
+        Logger.debug(
+            this,
+            "#evaluate(): message #%d is at position #%d, required #%d: %B",
+            msg.number(),
+            pos,
+            required,
+            matches
+        );
+        return matches;
     }
+
 }
-queries.each { query ->
-    def stmt = conn.createStatement()
-    stmt.execute(query)
-    Logger.debug(this, 'SQL executed: %s', query)
-}
-conn.close()
-Logger.info(this, 'Test database is ready at %s', url)

@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.period;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -86,7 +86,7 @@ public final class PeriodTest {
      * Period throws exception if next period is newer.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = PeriodViolationException.class)
     public void throwsWhenNextIsNewerThanCurrent() throws Exception {
         new Period()
             .next(this.date("2000-05-13"))
@@ -97,7 +97,7 @@ public final class PeriodTest {
      * Period throws exception if a date is not following existing dates.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = PeriodViolationException.class)
     public void throwsWhenNewDateIsNotInARow() throws Exception {
         new Period()
             .next(this.date("2001-01-18"))

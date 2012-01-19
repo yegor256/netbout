@@ -28,9 +28,9 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
 import com.netbout.rest.BoutRs;
-import com.netbout.rest.Period;
-import com.netbout.rest.PeriodsBuilder;
 import com.netbout.rest.StageCoordinates;
+import com.netbout.rest.period.Period;
+import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -219,9 +219,7 @@ public final class LongBout {
         if (view == null) {
             discussion = this.bout.messages(this.query);
         } else {
-            discussion = this.bout.messages(
-                PeriodsBuilder.format(this.query, period)
-            );
+            discussion = this.bout.messages(period.query(this.query));
         }
         final PeriodsBuilder pbld = new PeriodsBuilder(
             period,
@@ -229,7 +227,16 @@ public final class LongBout {
         ).setQueryParam(BoutRs.PERIOD_PARAM);
         final List<LongMessage> msgs = new ArrayList<LongMessage>();
         for (Message msg : discussion) {
-            if (pbld.show(msg.date())) {
+            boolean show;
+            try {
+                show = pbld.show(msg.date());
+            } catch (com.netbout.rest.period.PeriodViolationException ex) {
+                throw new IllegalStateException(
+                    String.format("Invalid date of message #%d", msg.number()),
+                    ex
+                );
+            }
+            if (show) {
                 msgs.add(new LongMessage(this.hub, this.bout, msg));
             }
             if (!pbld.more(discussion.size())) {

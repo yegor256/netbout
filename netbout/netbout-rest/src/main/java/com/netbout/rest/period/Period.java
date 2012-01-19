@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.period;
 
 import com.ymock.util.Logger;
 import java.util.Date;
@@ -32,7 +32,9 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.apache.commons.lang.ArrayUtils;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Period.
@@ -40,6 +42,7 @@ import org.joda.time.Interval;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class Period {
 
     /**
@@ -149,8 +152,19 @@ public final class Period {
      * @return Whether it can be accepted in this period ({@code TRUE}) or
      *  this period is full and we should use {@link #next()} in order to get
      *  the next one
+     * @throws PeriodViolationException If this date is out of this period
      */
-    public boolean fits(final Date date) {
+    public boolean fits(final Date date) throws PeriodViolationException {
+        if (date.after(this.newest())) {
+            throw new PeriodViolationException(
+                String.format(
+                    "New date '%s' can't be newer than START '%s' in '%s'",
+                    date,
+                    this.newest(),
+                    this
+                )
+            );
+        }
         final boolean offlimit = date.before(
             new Date(this.newest().getTime() - this.limit)
         );
@@ -175,8 +189,9 @@ public final class Period {
     /**
      * Add new date to it.
      * @param date The date
+     * @throws PeriodViolationException If this new date is against the rules
      */
-    public void add(final Date date) {
+    public void add(final Date date) throws PeriodViolationException {
         if (!this.fits(date)) {
             throw new IllegalArgumentException(
                 String.format(
@@ -193,24 +208,29 @@ public final class Period {
      * @param date This date should start the new one
      * @return The period, which goes right after this one and is
      *  one size bigger
+     * @throws PeriodViolationException If this new date is against the rules
      */
-    public Period next(final Date date) {
+    public Period next(final Date date) throws PeriodViolationException {
         if (date.after(this.newest())) {
-            throw new IllegalArgumentException(
+            throw new PeriodViolationException(
                 String.format(
-                    "NEXT '%s' should be older than START '%s'",
+                    "NEXT #%d '%s' should be older than START '%s' in '%s'",
+                    this.dates.size(),
                     date,
-                    this.newest()
+                    this.newest(),
+                    this
                 )
             );
         }
         if (!this.dates.isEmpty() && date.after(this.dates.first())) {
-            throw new IllegalArgumentException(
+            throw new PeriodViolationException(
                 String.format(
-                    "NEXT '%s' should be older than '%s' (among %d dates)",
+                    // @checkstyle LineLength (1 line)
+                    "NEXT '%s' should be older than '%s' (among %d dates) in '%s'",
                     date,
                     this.dates.first(),
-                    this.dates.size()
+                    this.dates.size(),
+                    this
                 )
             );
         }
@@ -229,6 +249,40 @@ public final class Period {
             newest = this.start;
         }
         return newest;
+    }
+
+    /**
+     * Create query from this period.
+     * @param query Original query
+     * @return The query
+     */
+    public String query(final String query) {
+        String original = "";
+        if (!query.isEmpty() && query.charAt(0) == '(') {
+            original = query;
+        } else {
+            if (!query.isEmpty()) {
+                original = String.format(
+                    " (matches '%s' $text)",
+                    query.replace("'", "\\'")
+                );
+            }
+        }
+        final String text = String.format(
+            "(and (not (greater-than $date '%s'))%s)",
+            ISODateTimeFormat.dateTime().print(
+                new DateTime(this.newest().getTime())
+            ),
+            original
+        );
+        Logger.debug(
+            this,
+            "#format(%s, %s): '%s'",
+            query,
+            this,
+            text
+        );
+        return text;
     }
 
     /**
@@ -269,7 +323,6 @@ public final class Period {
     private String plural(final String noun, final int num) {
         final Map<String, String> digits = ArrayUtils.toMap(
             new String[][] {
-                // @checkstyle MagicNumber (50 lines)
                 {"1", "a"},
                 {"2", "two"},
                 {"3", "three"},

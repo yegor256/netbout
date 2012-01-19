@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.period;
 
 import com.netbout.rest.jaxb.Link;
 import com.ymock.util.Logger;
@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ws.rs.core.UriBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Groups dates together.
@@ -119,8 +117,9 @@ public final class PeriodsBuilder {
      * Shall we show this date?
      * @param date The date to show
      * @return Shall we?
+     * @throws PeriodViolationException If this date violates the rules
      */
-    public boolean show(final Date date) {
+    public boolean show(final Date date) throws PeriodViolationException {
         if (this.slide >= this.MAX_LINKS) {
             throw new IllegalArgumentException("don't forget to call #more()");
         }
@@ -134,9 +133,21 @@ public final class PeriodsBuilder {
         } else {
             if (this.slide > 0) {
                 this.total -= 1;
-                this.periods.add(this.link(this.REL_MORE));
+                this.periods.add(this.link(this.REL_MORE, this.period.title()));
             }
-            this.period = this.period.next(date);
+            try {
+                this.period = this.period.next(date);
+            } catch (PeriodViolationException ex) {
+                throw new PeriodViolationException(
+                    String.format(
+                        "pos=%d, total=%d, slide=%d",
+                        this.position,
+                        this.total,
+                        this.slide
+                    ),
+                    ex
+                );
+            }
             this.slide += 1;
             this.total = 1;
         }
@@ -161,7 +172,7 @@ public final class PeriodsBuilder {
         boolean more = true;
         if (this.slide >= this.MAX_LINKS) {
             this.total = size - this.position + 1;
-            this.periods.add(this.link(this.REL_EARLIEST));
+            this.periods.add(this.link(this.REL_EARLIEST, "earlier"));
             more = false;
         }
         Logger.debug(
@@ -181,57 +192,23 @@ public final class PeriodsBuilder {
      */
     public List<Link> links() {
         if (this.slide > 0 && this.slide < this.MAX_LINKS) {
-            this.periods.add(this.link(this.REL_MORE));
+            this.periods.add(this.link(this.REL_MORE, this.period.title()));
         }
         return this.periods;
     }
 
     /**
-     * Create query with period.
-     * @param query Original query
-     * @param period The period
-     * @return The query
-     */
-    public static String format(final String query, final Period period) {
-        String original = "";
-        if (!query.isEmpty() && query.charAt(0) == '(') {
-            original = query;
-        } else {
-            if (!query.isEmpty()) {
-                original = String.format(
-                    "(matches '%s' $text)",
-                    query.replace("'", "\\'")
-                );
-            }
-        }
-        final String text = String.format(
-            "(and (not (greater-than $date '%s')) %s)",
-            ISODateTimeFormat.dateTime().print(
-                new DateTime(period.newest().getTime())
-            ),
-            original
-        );
-        Logger.debug(
-            PeriodsBuilder.class,
-            "#format(%s, %s): '%s'",
-            query,
-            period,
-            text
-        );
-        return text;
-    }
-
-    /**
      * Build link to period.
      * @param name Name of this link
+     * @param title The title of it
      * @return The link
      */
-    private Link link(final String name) {
+    private Link link(final String name, final String title) {
         return new Link(
             name,
             String.format(
                 "%s (%d)",
-                this.period.title(),
+                title,
                 this.total
             ),
             this.base.clone().queryParam(this.param, this.period)

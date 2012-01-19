@@ -114,7 +114,7 @@ public final class LongMessage {
     @XmlElement
     public String getRender() {
         final String txt = this.getText();
-        return this.hub.make("pre-render-message")
+        final String render = this.hub.make("pre-render-message")
             .synchronously()
             .inBout(this.bout)
             .arg(this.bout.number())
@@ -122,6 +122,7 @@ public final class LongMessage {
             .arg(txt)
             .asDefault(txt)
             .exec();
+        return LongMessage.formatted(render);
     }
 
     /**
@@ -140,6 +141,21 @@ public final class LongMessage {
     @XmlAttribute
     public Boolean getSeen() {
         return this.message.seen();
+    }
+
+    /**
+     * Format the text.
+     * @param text The text to format
+     * @return Formatted text
+     */
+    public static String formatted(final String text) {
+        return text
+            .replaceAll(
+                "\\[(.*?)\\]\\((http://[\\w\\-_@/\\+\\.%#!=\\?]+)\\)",
+                "<a href='$2'>$1</a>"
+        )
+            .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
+            .replaceAll("_(.*?)_", "<i>$1</i>");
     }
 
 }
