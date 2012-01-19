@@ -134,7 +134,7 @@ public final class PeriodsBuilder {
         } else {
             if (this.slide > 0) {
                 this.total -= 1;
-                this.periods.add(this.link(this.REL_MORE));
+                this.periods.add(this.link(this.REL_MORE, this.period.title()));
             }
             this.period = this.period.next(date);
             this.slide += 1;
@@ -161,7 +161,7 @@ public final class PeriodsBuilder {
         boolean more = true;
         if (this.slide >= this.MAX_LINKS) {
             this.total = size - this.position + 1;
-            this.periods.add(this.link(this.REL_EARLIEST));
+            this.periods.add(this.link(this.REL_EARLIEST, "earlier"));
             more = false;
         }
         Logger.debug(
@@ -224,14 +224,15 @@ public final class PeriodsBuilder {
     /**
      * Build link to period.
      * @param name Name of this link
+     * @param title The title of it
      * @return The link
      */
-    private Link link(final String name) {
+    private Link link(final String name, final String title) {
         return new Link(
             name,
             String.format(
                 "%s (%d)",
-                this.period.title(),
+                title,
                 this.total
             ),
             this.base.clone().queryParam(this.param, this.period)
