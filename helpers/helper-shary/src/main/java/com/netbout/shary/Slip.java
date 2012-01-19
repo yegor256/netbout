@@ -59,18 +59,28 @@ public final class Slip {
     /**
      * Author of the document.
      */
-    private transient Urn author;
+    private transient String author;
 
     /**
      * Render it for a reader.
      * @return The text
      */
     public String render() {
-        return String.format(
-            "%s shared a document with us: \"%s\"",
-            this.author,
-            this.uri
-        );
+        String text;
+        if (this.allow) {
+            text = String.format(
+                "%s shared a document with us: \"%s\"",
+                this.author,
+                this.title()
+            );
+        } else {
+            text = String.format(
+                "%s decided not to share a document with us any more: \"%s\"",
+                this.author,
+                this.title()
+            );
+        }
+        return text;
     }
 
     /**
@@ -97,6 +107,14 @@ public final class Slip {
      */
     @XmlElement(name = "author", namespace = Slip.NAMESPACE)
     public String getAuthor() {
+        return this.uri.toString();
+    }
+
+    /**
+     * Get title of the document to show to everybody.
+     * @return Title of it
+     */
+    public String title() {
         return this.uri.toString();
     }
 

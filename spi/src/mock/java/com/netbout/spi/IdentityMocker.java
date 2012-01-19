@@ -112,7 +112,13 @@ public final class IdentityMocker {
                     @Override
                     public Object answer(final InvocationOnMock invocation) {
                         final Long num = (Long) invocation.getArguments()[0];
-                        return IdentityMocker.this.bouts.get(num);
+                        final Bout bout = IdentityMocker.this.bouts.get(num);
+                        if (bout == null) {
+                            throw new IllegalArgumentException(
+                                "call #withBout() first on IdentityMocker"
+                            );
+                        }
+                        return bout;
                     }
                 }
             ).when(this.identity).bout(Mockito.anyLong());
