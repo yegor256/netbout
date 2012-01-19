@@ -152,8 +152,18 @@ public final class Period {
      * @return Whether it can be accepted in this period ({@code TRUE}) or
      *  this period is full and we should use {@link #next()} in order to get
      *  the next one
+     * @throws PeriodViolationException If this date is out of this period
      */
-    public boolean fits(final Date date) {
+    public boolean fits(final Date date) throws PeriodViolationException {
+        if (date.after(this.newest())) {
+            throw new PeriodViolationException(
+                String.format(
+                    "New date '%s' can't be newer than START '%s'",
+                    date,
+                    this.newest()
+                )
+            );
+        }
         final boolean offlimit = date.before(
             new Date(this.newest().getTime() - this.limit)
         );
