@@ -165,7 +165,7 @@
                 </header>
                 <p class="text">
                     <xsl:call-template name="meta-format">
-                        <xsl:with-param name="text" select="text" />
+                        <xsl:with-param name="text" select="render" />
                     </xsl:call-template>
                 </p>
             </div>

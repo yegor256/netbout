@@ -26,6 +26,8 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.hub.Hub;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -45,6 +47,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 public final class LongMessage {
 
     /**
+     * The bus.
+     */
+    private final transient Hub hub;
+
+    /**
+     * The bout.
+     */
+    private final transient Bout bout;
+
+    /**
      * The message.
      */
     private transient Message message;
@@ -58,9 +70,13 @@ public final class LongMessage {
 
     /**
      * Private ctor.
+     * @param ihub The hub
+     * @param ibout The bout
      * @param msg The message
      */
-    public LongMessage(final Message msg) {
+    public LongMessage(final Hub ihub, final Bout ibout, final Message msg) {
+        this.hub = ihub;
+        this.bout = ibout;
         this.message = msg;
     }
 
@@ -89,6 +105,23 @@ public final class LongMessage {
     @XmlElement
     public String getText() {
         return this.message.text();
+    }
+
+    /**
+     * Get its text for rendering.
+     * @return The text
+     */
+    @XmlElement
+    public String getRender() {
+        final String txt = this.getText();
+        return this.hub.make("pre-render-message")
+            .synchronously()
+            .inBout(this.bout)
+            .arg(this.bout.number())
+            .arg(this.message.number())
+            .arg(txt)
+            .asDefault(txt)
+            .exec();
     }
 
     /**
