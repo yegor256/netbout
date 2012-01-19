@@ -307,24 +307,9 @@ public final class BoutRs extends AbstractRs {
     @Path("/kickoff")
     @GET
     public Response kickoff(@QueryParam("name") final String name) {
-        boolean done = false;
-        for (Participant dude : this.bout().participants()) {
-            if (dude.identity().name().equals(name)) {
-                dude.kickOff();
-                done = true;
-                break;
-            }
-        }
-        if (!done) {
-            throw new ForwardException(
-                this,
-                this.self(""),
-                String.format(
-                    "Participant '%s' not found in bout, can't kick off",
-                    name
-                )
-            );
-        }
+        NetboutUtils.participantOf(
+            this.identity().friend(name), this.bout()
+        ).kickOff();
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

@@ -74,4 +74,18 @@ public final class NetboutUtilsTest {
         );
     }
 
+    /**
+     * NetboutUtils can check for participation.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void checksForParticipationInBout() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final Bout bout = new BoutMocker().withParticipant(name).mock();
+        MatcherAssert.assertThat(
+            "he is in!",
+            NetboutUtils.participatesIn(name, bout)
+        );
+    }
+
 }
