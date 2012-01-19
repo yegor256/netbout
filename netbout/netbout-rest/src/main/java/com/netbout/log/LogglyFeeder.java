@@ -34,6 +34,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Log appender, for over-HTTP events.
@@ -80,7 +81,7 @@ public final class LogglyFeeder implements Feeder {
             throw new IOException(ex);
         }
         conn.setRequestProperty(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN);
-        IOUtils.write(text, conn.getOutputStream());
+        IOUtils.write(text, conn.getOutputStream(), CharEncoding.UTF_8);
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
             throw new IOException(
                 String.format(
