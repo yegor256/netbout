@@ -160,6 +160,7 @@ public final class UrnTest {
             "urn:foo:some%20text%20with%20spaces",
             "urn:a:",
             "urn:a:?alpha=50",
+            "urn:woquo:ns:pa/procure/BalanceRecord?name=*",
             "urn:a:?alpha=50&beta=u%20-works-fine",
             "urn:verylongnamespaceid:",
             "urn:a:?alpha=50*",
