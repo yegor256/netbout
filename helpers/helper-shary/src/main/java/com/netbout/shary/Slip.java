@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "beginner", namespace = Slip.NAMESPACE)
+@XmlType(name = "slip", namespace = Slip.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
 public final class Slip {
 
@@ -54,12 +54,31 @@ public final class Slip {
     /**
      * URI of the document to share.
      */
-    private transient URI uri;
+    private transient String uri;
 
     /**
      * Author of the document.
      */
     private transient String author;
+
+    /**
+     * Public ctor, for JAXB.
+     */
+    public Slip() {
+        // empty
+    }
+
+    /**
+     * Public ctor.
+     * @param flag Allow of disallow?
+     * @param addr The address of the document
+     * @param name The author
+     */
+    public Slip(final boolean flag, final String addr, final String name) {
+        this.allow = flag;
+        this.uri = addr;
+        this.author = name;
+    }
 
     /**
      * Render it for a reader.
@@ -97,8 +116,8 @@ public final class Slip {
      * @return The URI of the document
      */
     @XmlElement(name = "uri", namespace = Slip.NAMESPACE)
-    public String getURI() {
-        return this.uri.toString();
+    public String getUri() {
+        return this.uri;
     }
 
     /**
@@ -107,7 +126,7 @@ public final class Slip {
      */
     @XmlElement(name = "author", namespace = Slip.NAMESPACE)
     public String getAuthor() {
-        return this.uri.toString();
+        return this.author;
     }
 
     /**
@@ -115,7 +134,7 @@ public final class Slip {
      * @return Title of it
      */
     public String title() {
-        return this.uri.toString();
+        return this.uri;
     }
 
 }

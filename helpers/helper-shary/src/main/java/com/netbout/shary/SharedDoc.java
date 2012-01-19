@@ -26,54 +26,48 @@
  */
 package com.netbout.shary;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.IdentityAware;
-import com.netbout.spi.cpa.Operation;
-import com.woquo.netbout.Jaxb;
-import com.ymock.util.Logger;
-import java.io.StringWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Render farm.
+ * Shared document.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Farm
-public final class RenderFarm {
+@XmlType(name = "doc")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class SharedDoc {
 
     /**
-     * Pre-render message in a bout.
-     * @param number Bout where it is happening
-     * @param msg Number of the message
-     * @param text The text to pre-render
-     * @return New text or NULL
+     * Media type of document.
      */
-    @Operation("pre-render-message")
-    public String preRenderMessage(final Long number, final Long msg,
-        final String text) {
-        String result = null;
-        if (Jaxb.inNs(text, Slip.NAMESPACE)) {
-            result = Jaxb.parse(text, Slip.class).render();
-        }
-        return result;
+    private final transient String type;
+
+    /**
+     * Public ctor, for JAXB.
+     */
+    public SharedDoc() {
+        throw new IllegalStateException("invalid call");
+    }
+
+    /**
+     * Public ctor.
+     * @param tpe The type
+     */
+    public SharedDoc(final String tpe) {
+        this.type = tpe;
+    }
+
+    /**
+     * Get media type of document.
+     * @return The type of it
+     */
+    @XmlElement
+    public String getType() {
+        return this.type;
     }
 
 }

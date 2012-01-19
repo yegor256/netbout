@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -23,57 +24,41 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.shary;
-
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.IdentityAware;
-import com.netbout.spi.cpa.Operation;
-import com.woquo.netbout.Jaxb;
-import com.ymock.util.Logger;
-import java.io.StringWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-/**
- * Render farm.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-@Farm
-public final class RenderFarm {
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-    /**
-     * Pre-render message in a bout.
-     * @param number Bout where it is happening
-     * @param msg Number of the message
-     * @param text The text to pre-render
-     * @return New text or NULL
-     */
-    @Operation("pre-render-message")
-    public String preRenderMessage(final Long number, final Long msg,
-        final String text) {
-        String result = null;
-        if (Jaxb.inNs(text, Slip.NAMESPACE)) {
-            result = Jaxb.parse(text, Slip.class).render();
-        }
-        return result;
-    }
+    <xsl:template match="stage" mode="head">
+        <!-- nothing -->
+    </xsl:template>
 
-}
+    <xsl:template match="stage">
+        <ul>
+            <xsl:for-each select="data/docs/doc">
+                <li>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="link[@rel='load']/@href"/>
+                        </xsl:attribute>
+                        <xsl:value-of select="title"/>
+                    </a>
+                    <xsl:value-of select="type"/>
+                    <xsl:value-of select="author"/>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="link[@rel='unshare']/@href"/>
+                        </xsl:attribute>
+                        <xsl:text>unshare</xsl:text>
+                    </a>
+                </li>
+            </xsl:for-each>
+        </ul>
+    </xsl:template>
+
+</xsl:stylesheet>
