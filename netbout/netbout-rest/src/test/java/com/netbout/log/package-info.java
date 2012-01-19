@@ -24,23 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.log;
-
-import java.io.IOException;
 
 /**
- * Feeder of events to the cloud.
+ * Logging through HTTP, in production, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Feeder {
-
-    /**
-     * Send this text to the cloud right now (wait as much as necessary).
-     * @param text The text to send
-     * @throws IOException If failed
-     */
-    void feed(String text) throws IOException;
-
-}
+package com.netbout.log;

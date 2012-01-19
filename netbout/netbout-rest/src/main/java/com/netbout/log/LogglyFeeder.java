@@ -26,17 +26,13 @@
  */
 package com.netbout.log;
 
-import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Log appender, for over-HTTP events.
@@ -52,18 +48,6 @@ public final class LogglyFeeder implements Feeder {
     private transient String key;
 
     /**
-     * Queue of messages to send to server.
-     */
-    private transient Queue<String> messages =
-        new ConcurrentLinkedQueue<String>();
-
-    /**
-     * Public ctor.
-     */
-    public LogglyAppender() {
-    }
-
-    /**
      * Set option {@code key}.
      * @param name The key
      */
@@ -75,52 +59,7 @@ public final class LogglyFeeder implements Feeder {
      * {@inheritDoc}
      */
     @Override
-    public boolean requiresLayout() {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() {
-        // empty
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void append(final LoggingEvent event) {
-        this.messages.offer(this.getLayout().format(event));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("PMD.SystemPrintln")
-    public void append(final LoggingEvent event) {
-        final String text = this.getLayout().format(event);
-        try {
-            this.send(text);
-        } catch (java.io.IOException ex) {
-            System.out.println(
-                Logger.format(
-                    "%sfailed to report to LOGGLY because of \n%[exception]s",
-                    text,
-                    ex
-                )
-            );
-        }
-    }
-
-    /**
-     * Send this text to loggly.com.
-     * @param text The text to send
-     * @throws IOException If failed
-     */
-    public void send(final String text) throws IOException {
+    public void feed(final String text) throws IOException {
         URL url;
         try {
             url = UriBuilder.fromUri("https://logs.loggly.com/inputs/")

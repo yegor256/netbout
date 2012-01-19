@@ -35,7 +35,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
-import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
@@ -307,9 +306,13 @@ public final class BoutRs extends AbstractRs {
     @Path("/kickoff")
     @GET
     public Response kickoff(@QueryParam("name") final String name) {
-        NetboutUtils.participantOf(
-            this.identity().friend(name), this.bout()
-        ).kickOff();
+        Identity friend;
+        try {
+            friend = this.identity().friend(Urn.create(name));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new ForwardException(this, this.base(), ex);
+        }
+        NetboutUtils.participantOf(friend, this.bout()).kickOff();
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

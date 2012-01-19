@@ -27,8 +27,9 @@
 package com.netbout.log;
 
 import com.ymock.util.Logger;
-import java.io.IOException;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -38,6 +39,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.DoNotUseThreads")
 public final class CloudAppender extends AppenderSkeleton implements Runnable {
 
     /**
@@ -52,10 +54,11 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     private transient Feeder feeder;
 
     /**
-     * Public ctor.
+     * Is is empty?
+     * @return TRUE if there are no more messages to report
      */
-    public CloudAppender() {
-        new Thread(this).start();
+    public boolean isEmpty() {
+        return this.messages.peek() == null;
     }
 
     /**
@@ -63,7 +66,11 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
      * @param fdr The feeder to use
      */
     public void setFeeder(final Feeder fdr) {
+        if (this.feeder != null) {
+            throw new IllegalArgumentException("call #setFeeder() only once");
+        }
         this.feeder = fdr;
+        new Thread(this).start();
     }
 
     /**
@@ -96,18 +103,25 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     @Override
     @SuppressWarnings("PMD.SystemPrintln")
     public void run() {
-        final String text = this.messages.poll();
-        if (text != null) {
+        while (true) {
+            final String text = this.messages.poll();
+            if (text != null) {
+                try {
+                    this.feeder.feed(text);
+                } catch (java.io.IOException ex) {
+                    System.out.println(
+                        Logger.format(
+                            "%sfailed to report because of \n%[exception]s",
+                            text,
+                            ex
+                        )
+                    );
+                }
+            }
             try {
-                this.feeder.feed(text);
-            } catch (java.io.IOException ex) {
-                System.out.println(
-                    Logger.format(
-                        "%sfailed to report because of \n%[exception]s",
-                        text,
-                        ex
-                    )
-                );
+                TimeUnit.SECONDS.sleep(1L);
+            } catch (InterruptedException ex) {
+                continue;
             }
         }
     }

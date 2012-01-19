@@ -26,21 +26,48 @@
  */
 package com.netbout.log;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import org.apache.log4j.Level;
+import org.apache.log4j.SimpleLayout;
+import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.spi.RootLogger;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Feeder of events to the cloud.
- *
+ * Test case for {@link CloudAppender}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Feeder {
+public final class CloudAppenderTest {
 
     /**
-     * Send this text to the cloud right now (wait as much as necessary).
-     * @param text The text to send
-     * @throws IOException If failed
+     * CloudAppender can send messages in background.
+     * @throws Exception If there is some problem inside
      */
-    void feed(String text) throws IOException;
+    @Test
+    public void sendsMessagesInBackground() throws Exception {
+        final CloudAppender appender = new CloudAppender();
+        appender.setLayout(new SimpleLayout());
+        final Feeder feeder = Mockito.mock(Feeder.class);
+        appender.setFeeder(feeder);
+        final LoggingEvent event = new LoggingEvent(
+            this.getClass().getName(),
+            new RootLogger(Level.DEBUG),
+            Level.DEBUG,
+            "some text to log",
+            new IllegalArgumentException()
+        );
+        appender.append(event);
+        final long start = System.currentTimeMillis();
+        while (!appender.isEmpty()) {
+            TimeUnit.SECONDS.sleep(1L);
+            if (System.currentTimeMillis() - start
+                > TimeUnit.MINUTES.toMillis(1L)) {
+                throw new IllegalStateException("waiting for too long");
+            }
+        }
+        Mockito.verify(feeder).feed("DEBUG - some text to log\n");
+    }
 
 }
