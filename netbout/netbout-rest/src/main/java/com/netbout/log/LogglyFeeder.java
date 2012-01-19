@@ -29,6 +29,7 @@ package com.netbout.log;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
@@ -70,6 +71,8 @@ public final class LogglyFeeder implements Feeder {
             throw new IOException(ex);
         }
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setConnectTimeout((int) TimeUnit.MINUTES.toMillis(1L));
+        conn.setReadTimeout((int) TimeUnit.MINUTES.toMillis(1L));
         conn.setDoOutput(true);
         try {
             conn.setRequestMethod("POST");
