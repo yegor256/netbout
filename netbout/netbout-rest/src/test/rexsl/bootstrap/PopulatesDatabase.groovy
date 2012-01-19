@@ -52,7 +52,7 @@ def conn = Database.connection()
 def line = new StringBuilder()
 def queries = []
 new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text ->
-    if (text.startsWith('#')) {
+    if (text.startsWith('--')) {
         return
     }
     line.append(text)
