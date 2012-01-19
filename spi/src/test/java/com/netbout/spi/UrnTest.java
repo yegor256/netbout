@@ -162,6 +162,7 @@ public final class UrnTest {
             "urn:a:?alpha=50",
             "urn:a:?alpha=50&beta=u%20-works-fine",
             "urn:verylongnamespaceid:",
+            "urn:a:?alpha=50*",
             "urn:a:b/c/d",
         };
         for (String text : texts) {
@@ -187,6 +188,7 @@ public final class UrnTest {
             "urn:incorrect namespace name with spaces:test",
             "urn:abc+foo:test-me",
             "urn:test:?abc?",
+            "urn:test:?abc=incorrect*value",
             "urn:incorrect%20namespace:",
             "urn:verylongnameofanamespaceverylongnameofanamespace:",
             "urn:test:spaces are not allowed here",
