@@ -158,9 +158,10 @@ public final class Period {
         if (date.after(this.newest())) {
             throw new PeriodViolationException(
                 String.format(
-                    "New date '%s' can't be newer than START '%s'",
+                    "New date '%s' can't be newer than START '%s' in '%s'",
                     date,
-                    this.newest()
+                    this.newest(),
+                    this
                 )
             );
         }
@@ -188,11 +189,11 @@ public final class Period {
     /**
      * Add new date to it.
      * @param date The date
-     * @throws PeriodViolationException If this date is out of this period
+     * @throws PeriodViolationException If this new date is against the rules
      */
     public void add(final Date date) throws PeriodViolationException {
         if (!this.fits(date)) {
-            throw new PeriodViolationException(
+            throw new IllegalArgumentException(
                 String.format(
                     "Can't add '%s', call #fits() first",
                     date
@@ -213,20 +214,23 @@ public final class Period {
         if (date.after(this.newest())) {
             throw new PeriodViolationException(
                 String.format(
-                    "NEXT #%d '%s' should be older than START '%s'",
+                    "NEXT #%d '%s' should be older than START '%s' in '%s'",
                     this.dates.size(),
                     date,
-                    this.newest()
+                    this.newest(),
+                    this
                 )
             );
         }
         if (!this.dates.isEmpty() && date.after(this.dates.first())) {
             throw new PeriodViolationException(
                 String.format(
-                    "NEXT '%s' should be older than '%s' (among %d dates)",
+                    // @checkstyle LineLength (1 line)
+                    "NEXT '%s' should be older than '%s' (among %d dates) in '%s'",
                     date,
                     this.dates.first(),
-                    this.dates.size()
+                    this.dates.size(),
+                    this
                 )
             );
         }
