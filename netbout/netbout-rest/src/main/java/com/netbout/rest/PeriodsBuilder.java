@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ws.rs.core.UriBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Groups dates together.
@@ -184,41 +182,6 @@ public final class PeriodsBuilder {
             this.periods.add(this.link(this.REL_MORE, this.period.title()));
         }
         return this.periods;
-    }
-
-    /**
-     * Create query with period.
-     * @param query Original query
-     * @param period The period
-     * @return The query
-     */
-    public static String format(final String query, final Period period) {
-        String original = "";
-        if (!query.isEmpty() && query.charAt(0) == '(') {
-            original = query;
-        } else {
-            if (!query.isEmpty()) {
-                original = String.format(
-                    " (matches '%s' $text)",
-                    query.replace("'", "\\'")
-                );
-            }
-        }
-        final String text = String.format(
-            "(and (not (greater-than $date '%s'))%s)",
-            ISODateTimeFormat.dateTime().print(
-                new DateTime(period.newest().getTime())
-            ),
-            original
-        );
-        Logger.debug(
-            PeriodsBuilder.class,
-            "#format(%s, %s): '%s'",
-            query,
-            period,
-            text
-        );
-        return text;
     }
 
     /**

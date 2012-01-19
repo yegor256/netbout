@@ -32,7 +32,9 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.apache.commons.lang.ArrayUtils;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Period.
@@ -40,6 +42,7 @@ import org.joda.time.Interval;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class Period {
 
     /**
@@ -230,6 +233,40 @@ public final class Period {
             newest = this.start;
         }
         return newest;
+    }
+
+    /**
+     * Create query from this period.
+     * @param query Original query
+     * @return The query
+     */
+    public String query(final String query) {
+        String original = "";
+        if (!query.isEmpty() && query.charAt(0) == '(') {
+            original = query;
+        } else {
+            if (!query.isEmpty()) {
+                original = String.format(
+                    " (matches '%s' $text)",
+                    query.replace("'", "\\'")
+                );
+            }
+        }
+        final String text = String.format(
+            "(and (not (greater-than $date '%s'))%s)",
+            ISODateTimeFormat.dateTime().print(
+                new DateTime(this.newest().getTime())
+            ),
+            original
+        );
+        Logger.debug(
+            this,
+            "#format(%s, %s): '%s'",
+            query,
+            this,
+            text
+        );
+        return text;
     }
 
     /**

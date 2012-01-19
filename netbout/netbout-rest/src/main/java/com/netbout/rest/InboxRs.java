@@ -86,7 +86,7 @@ public final class InboxRs extends AbstractRs {
         if (view == null) {
             inbox = identity.inbox(this.query);
         } else {
-            inbox = identity.inbox(PeriodsBuilder.format(this.query, period));
+            inbox = identity.inbox(period.query(this.query));
         }
         final PeriodsBuilder periods = new PeriodsBuilder(
             period,

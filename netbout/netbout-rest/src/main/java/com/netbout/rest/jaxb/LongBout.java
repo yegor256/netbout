@@ -219,9 +219,7 @@ public final class LongBout {
         if (view == null) {
             discussion = this.bout.messages(this.query);
         } else {
-            discussion = this.bout.messages(
-                PeriodsBuilder.format(this.query, period)
-            );
+            discussion = this.bout.messages(period.query(this.query));
         }
         final PeriodsBuilder pbld = new PeriodsBuilder(
             period,
