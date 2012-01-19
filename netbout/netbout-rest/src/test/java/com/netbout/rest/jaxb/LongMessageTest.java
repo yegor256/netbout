@@ -31,6 +31,8 @@ import com.netbout.spi.BoutMocker;
 import com.netbout.spi.MessageMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
+import java.util.Map;
+import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -64,6 +66,33 @@ public final class LongMessageTest {
                 XhtmlMatchers.hasXPath("/message/@seen")
             )
         );
+    }
+
+    /**
+     * LongMessage can convert meta-commands to HTML formatting.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsMetaCommandsToHtmlFormatting() throws Exception {
+        final Map<String, String> texts = ArrayUtils.toMap(
+            new String[][] {
+                {"this is **bold** text", "this is <b>bold</b> text"},
+                {"this is _italic_ text", "this is <i>italic</i> text"},
+                {"a [link](http://foo.com) here", "a <a href='http://foo.com'>link</a> here"},
+            }
+        );
+        for (Map.Entry<String, String> entry : texts.entrySet()) {
+            final LongMessage msg = new LongMessage(
+                new HubMocker().doReturn(entry.getKey(), "pre-render-message")
+                    .mock(),
+                new BoutMocker().mock(),
+                new MessageMocker().withText(entry.getKey()).mock()
+            );
+            MatcherAssert.assertThat(
+                msg.getRender(),
+                Matchers.equalTo(entry.getValue())
+            );
+        }
     }
 
 }

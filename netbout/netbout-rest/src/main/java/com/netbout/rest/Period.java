@@ -269,7 +269,6 @@ public final class Period {
     private String plural(final String noun, final int num) {
         final Map<String, String> digits = ArrayUtils.toMap(
             new String[][] {
-                // @checkstyle MagicNumber (50 lines)
                 {"1", "a"},
                 {"2", "two"},
                 {"3", "three"},
