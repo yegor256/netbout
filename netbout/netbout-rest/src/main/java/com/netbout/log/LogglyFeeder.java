@@ -28,42 +28,47 @@ package com.netbout.log;
 
 import com.ymock.util.Logger;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * Log appender, for cloud loggers.
+ * Log appender, for over-HTTP events.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CloudAppender extends AppenderSkeleton implements Runnable {
+public final class LogglyFeeder implements Feeder {
+
+    /**
+     * The access key.
+     */
+    private transient String key;
 
     /**
      * Queue of messages to send to server.
      */
-    private final transient Queue<String> messages =
+    private transient Queue<String> messages =
         new ConcurrentLinkedQueue<String>();
-
-    /**
-     * The feeder.
-     */
-    private transient Feeder feeder;
 
     /**
      * Public ctor.
      */
-    public CloudAppender() {
-        new Thread(this).start();
+    public LogglyAppender() {
     }
 
     /**
-     * Set feeder, option {@code feeder} in config.
-     * @param fdr The feeder to use
+     * Set option {@code key}.
+     * @param name The key
      */
-    public void setFeeder(final Feeder fdr) {
-        this.feeder = fdr;
+    public void setKey(final String name) {
+        this.key = name;
     }
 
     /**
@@ -95,20 +100,53 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
      */
     @Override
     @SuppressWarnings("PMD.SystemPrintln")
-    public void run() {
-        final String text = this.messages.poll();
-        if (text != null) {
-            try {
-                this.feeder.feed(text);
-            } catch (java.io.IOException ex) {
-                System.out.println(
-                    Logger.format(
-                        "%sfailed to report because of \n%[exception]s",
-                        text,
-                        ex
-                    )
-                );
-            }
+    public void append(final LoggingEvent event) {
+        final String text = this.getLayout().format(event);
+        try {
+            this.send(text);
+        } catch (java.io.IOException ex) {
+            System.out.println(
+                Logger.format(
+                    "%sfailed to report to LOGGLY because of \n%[exception]s",
+                    text,
+                    ex
+                )
+            );
+        }
+    }
+
+    /**
+     * Send this text to loggly.com.
+     * @param text The text to send
+     * @throws IOException If failed
+     */
+    public void send(final String text) throws IOException {
+        URL url;
+        try {
+            url = UriBuilder.fromUri("https://logs.loggly.com/inputs/")
+                .path("/{key}")
+                .build(this.key)
+                .toURL();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IOException(ex);
+        }
+        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        try {
+            conn.setRequestMethod("POST");
+        } catch (java.net.ProtocolException ex) {
+            throw new IOException(ex);
+        }
+        conn.setRequestProperty(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN);
+        IOUtils.write(text, conn.getOutputStream());
+        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            throw new IOException(
+                String.format(
+                    "Invalid response code #%d from %s",
+                    conn.getResponseCode(),
+                    url
+                )
+            );
         }
     }
 
