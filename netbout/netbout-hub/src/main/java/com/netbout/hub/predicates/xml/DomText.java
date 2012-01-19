@@ -126,6 +126,11 @@ public final class DomText {
     public void validate(final Hub hub) throws DomValidationException {
         if (this.isXml()) {
             final String namespace = this.namespace();
+            if (namespace.isEmpty()) {
+                throw new DomValidationException(
+                    "Root element should belong to some namespace"
+                );
+            }
             final String uri = hub.make("resolve-xml-namespace")
                 .arg(namespace)
                 .asDefault("")
