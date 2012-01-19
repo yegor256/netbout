@@ -42,4 +42,13 @@ public final class PeriodViolationException extends Exception {
         super(cause);
     }
 
+    /**
+     * Public ctor.
+     * @param cause Cause of it
+     * @param exc Parent exception
+     */
+    public PeriodViolationException(final String cause, final Throwable exc) {
+        super(cause, exc);
+    }
+
 }

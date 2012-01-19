@@ -135,7 +135,19 @@ public final class PeriodsBuilder {
                 this.total -= 1;
                 this.periods.add(this.link(this.REL_MORE, this.period.title()));
             }
-            this.period = this.period.next(date);
+            try {
+                this.period = this.period.next(date);
+            } catch (PeriodViolationException ex) {
+                throw new PeriodViolationException(
+                    String.format(
+                        "pos=%d, total=%d, slide=%d",
+                        this.position,
+                        this.total,
+                        this.slide
+                    ),
+                    ex
+                );
+            }
             this.slide += 1;
             this.total = 1;
         }
