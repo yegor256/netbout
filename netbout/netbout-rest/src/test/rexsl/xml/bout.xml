@@ -101,6 +101,10 @@
                     I think that this subject should be discussed in
                     this bout. What do you think, guys?...
                 </text>
+                <render>
+                    I think that this subject should be discussed in
+                    this bout. What do you think, guys?...
+                </render>
                 <date></date>
             </message>
             <message seen="true">
@@ -109,6 +113,7 @@
                 <text>
                     Yeah, I agree, let's talk about it today!
                 </text>
+                <render></render>
             </message>
             <message seen="true">
                 <number>3</number>
@@ -116,6 +121,7 @@
                 <text>
                     It's [a link](http://example.com)
                 </text>
+                <render></render>
             </message>
             <message>
                 <number>4</number>
@@ -123,6 +129,7 @@
                 <text>
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                 </text>
+                <render></render>
             </message>
         </messages>
     </bout>

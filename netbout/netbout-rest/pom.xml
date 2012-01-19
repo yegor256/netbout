@@ -219,16 +219,8 @@
             <version since="10 Nov 2011">1.6.9</version>
         </dependency>
         <dependency>
-            <!--
-            Apache Xerces is a JAXP implementation of DOM.
-            In order to replace a default implementation
-            provided by JDK with Xerces we are using text files inside
-            "src/main/resources/META-INF/services" directory.
-            -->
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <version since="9 Mar 2011">2.9.1</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

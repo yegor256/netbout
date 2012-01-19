@@ -51,7 +51,7 @@ public final class LongBoutTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongBout obj = new LongBout(
-            new HubMocker().mock(),
+            new HubMocker().doReturn("", "pre-render-message").mock(),
             new BoutMocker().titledAs("foo").mock(),
             new StageCoordinatesMocker().mock(),
             "some keyword",

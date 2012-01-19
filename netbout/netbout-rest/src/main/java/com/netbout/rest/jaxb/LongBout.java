@@ -230,7 +230,7 @@ public final class LongBout {
         final List<LongMessage> msgs = new ArrayList<LongMessage>();
         for (Message msg : discussion) {
             if (pbld.show(msg.date())) {
-                msgs.add(new LongMessage(msg));
+                msgs.add(new LongMessage(this.hub, this.bout, msg));
             }
             if (!pbld.more(discussion.size())) {
                 break;

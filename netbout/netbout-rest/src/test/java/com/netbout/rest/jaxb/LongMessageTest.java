@@ -26,6 +26,8 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.hub.HubMocker;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.MessageMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
@@ -47,6 +49,8 @@ public final class LongMessageTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongMessage obj = new LongMessage(
+            new HubMocker().doReturn("hello", "pre-render-message").mock(),
+            new BoutMocker().mock(),
             new MessageMocker().withText("<>").mock()
         );
         MatcherAssert.assertThat(
@@ -55,6 +59,7 @@ public final class LongMessageTest {
                 XhtmlMatchers.hasXPath("/message/number"),
                 XhtmlMatchers.hasXPath("/message/author"),
                 XhtmlMatchers.hasXPath("/message/text[.='<>']"),
+                XhtmlMatchers.hasXPath("/message/render[.='hello']"),
                 XhtmlMatchers.hasXPath("/message/date"),
                 XhtmlMatchers.hasXPath("/message/@seen")
             )

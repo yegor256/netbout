@@ -262,6 +262,7 @@ public final class HubBout implements Bout {
             Logger.warn(
                 this,
                 "#post('%s'): %[exception]s",
+                text,
                 ex
             );
             throw new MessagePostException(ex);

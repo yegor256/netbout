@@ -63,18 +63,45 @@ public final class BumperRsMocker {
 
     /**
      * XSD page.
+     * @param info Meta information
      * @return The XSD
      */
     @GET
     @Path("/ns.xsd")
     @Produces(MediaType.TEXT_XML)
-    public String xsd() {
+    public String xsd(@Context final UriInfo info) {
+        // @checkstyle StringLiteralsConcatenation (3 lines)
+        return "<?xml version='1.0'?><xs:schema"
+            + " xmlns:xs='http://www.w3.org/2001/XMLSchema'"
+            + " xmlns:b='/bumper/ns' elementFormDefault='qualified'"
+            + " targetNamespace='/bumper/ns'>"
+            + String.format(
+                "<xs:include schemaLocation='%s' />",
+                info.getBaseUriBuilder().path("/bumper/child.xsd").build()
+            )
+            + "<xs:element name='bump' type='b:bump'/>"
+            + "</xs:schema>";
+    }
+
+    /**
+     * Child schema.
+     * @return The XSD
+     */
+    @GET
+    @Path("/child.xsd")
+    @Produces(MediaType.TEXT_XML)
+    public String child() {
         // @checkstyle StringLiteralsConcatenation (3 lines)
         return "<?xml version='1.0'?><xs:schema"
             + " xmlns:xs='http://www.w3.org/2001/XMLSchema'"
             + " xmlns:b='/bumper/ns'"
             + " targetNamespace='/bumper/ns'>"
-            + "<xs:element name='bump' type='xs:string'/>"
+            + "<xs:complexType name='bump'>"
+            + "<xs:sequence>"
+            + "<xs:element name='text' type='xs:string' form='qualified'"
+            + " minOccurs='0' maxOccurs='unbounded'/>"
+            + "</xs:sequence>"
+            + "</xs:complexType>"
             + "</xs:schema>";
     }
 

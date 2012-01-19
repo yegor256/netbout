@@ -117,15 +117,7 @@ final class HubMessage implements Message {
     @Override
     public String text() {
         this.data.addSeenBy(this.viewer.name());
-        final String txt = this.data.getText();
-        return this.hub.make("pre-render-message")
-            .synchronously()
-            .inBout(this.ibout)
-            .arg(this.bout().number())
-            .arg(this.number())
-            .arg(txt)
-            .asDefault(txt)
-            .exec();
+        return this.data.getText();
     }
 
     /**
