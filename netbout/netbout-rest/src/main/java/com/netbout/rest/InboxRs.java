@@ -155,7 +155,7 @@ public final class InboxRs extends AbstractRs {
      * @return Recent date in it
      */
     private Date date(final Bout bout) {
-        final List<Message> msgs = bout.messages("(equal $pos 0)");
+        final List<Message> msgs = bout.messages("(pos 0)");
         Date date;
         if (msgs.isEmpty()) {
             date = bout.date();

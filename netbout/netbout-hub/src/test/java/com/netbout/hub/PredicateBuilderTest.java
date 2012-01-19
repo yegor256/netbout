@@ -100,7 +100,7 @@ public final class PredicateBuilderTest {
             new PredicateBuilder(new HubMocker().mock());
         final String text = "\u043F\u0440\u0438\u0432\u0435";
         final Predicate pred = builder.parse(
-            String.format("(and (matches \"%s\" $text) (equal $pos 0))", text)
+            String.format("(and (matches \"%s\" $text) (pos 0))", text)
         );
         MatcherAssert.assertThat(
             "message found",

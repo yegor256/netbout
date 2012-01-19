@@ -181,7 +181,7 @@ public final class PeriodsBuilder {
      */
     public List<Link> links() {
         if (this.slide > 0 && this.slide < this.MAX_LINKS) {
-            this.periods.add(this.link(this.REL_MORE));
+            this.periods.add(this.link(this.REL_MORE, this.period.title()));
         }
         return this.periods;
     }
@@ -199,13 +199,13 @@ public final class PeriodsBuilder {
         } else {
             if (!query.isEmpty()) {
                 original = String.format(
-                    "(matches '%s' $text)",
+                    " (matches '%s' $text)",
                     query.replace("'", "\\'")
                 );
             }
         }
         final String text = String.format(
-            "(and (not (greater-than $date '%s')) %s)",
+            "(and (not (greater-than $date '%s'))%s)",
             ISODateTimeFormat.dateTime().print(
                 new DateTime(period.newest().getTime())
             ),

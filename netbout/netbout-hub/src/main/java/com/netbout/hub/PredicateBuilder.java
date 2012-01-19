@@ -59,6 +59,7 @@ public final class PredicateBuilder {
             {"not", "com.netbout.hub.predicates.logic.NotPred"},
             {"ns", "com.netbout.hub.predicates.xml.NsPred"},
             {"or", "com.netbout.hub.predicates.logic.OrPred"},
+            {"pos", "com.netbout.hub.predicates.PosPred"},
             {"talks-with", "com.netbout.hub.predicates.TalksWithPred"},
         }
     );

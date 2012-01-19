@@ -198,7 +198,8 @@ public final class Period {
         if (date.after(this.newest())) {
             throw new IllegalArgumentException(
                 String.format(
-                    "NEXT '%s' should be older than START '%s'",
+                    "NEXT #%d '%s' should be older than START '%s'",
+                    this.dates.size(),
                     date,
                     this.newest()
                 )

@@ -27,28 +27,24 @@
 package com.netbout.hub.predicates;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
 import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.List;
 
 /**
- * Variable.
+ * The message is at this position.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VariablePred implements Predicate {
-
-    /**
-     * The value of it.
-     */
-    private final transient String name;
+public final class PosPred extends AbstractVarargPred {
 
     /**
      * Public ctor.
-     * @param value The value of it
+     * @param args The arguments
      */
-    public VariablePred(final String value) {
-        this.name = value;
+    public PosPred(final List<Predicate> args) {
+        super("pos", args);
     }
 
     /**
@@ -56,35 +52,19 @@ public final class VariablePred implements Predicate {
      */
     @Override
     public Object evaluate(final Message msg, final int pos) {
-        Object value;
-        if ("text".equals(this.name)) {
-            value = msg.text();
-        } else if ("bout.number".equals(this.name)) {
-            value = msg.bout().number();
-        } else if ("bout.title".equals(this.name)) {
-            value = msg.bout().title();
-        } else if ("number".equals(this.name)) {
-            value = msg.number();
-        } else if ("date".equals(this.name)) {
-            value = msg.date();
-        } else if ("author".equals(this.name)) {
-            value = msg.author();
-        } else if ("seen".equals(this.name)) {
-            value = msg.seen();
-        } else {
-            throw new PredicateException(
-                String.format("Unknown variable '$%s'", this.name)
-            );
-        }
-        return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("$%s", this.name);
+        final int required = Integer.valueOf(
+            this.arg(0).evaluate(msg, pos).toString()
+        );
+        final boolean matches = pos == required;
+        Logger.debug(
+            this,
+            "#evaluate(): message #%d is at position #%d, required #%d: %B",
+            msg.number(),
+            pos,
+            required,
+            matches
+        );
+        return matches;
     }
 
 }

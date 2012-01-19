@@ -27,64 +27,33 @@
 package com.netbout.hub.predicates;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
-import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
+import java.util.Arrays;
+import java.util.Random;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 /**
- * Variable.
- *
+ * Test case of {@link PosPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VariablePred implements Predicate {
+public final class PosPredTest {
 
     /**
-     * The value of it.
+     * PosPred can match a message with required position.
+     * @throws Exception If there is some problem inside
      */
-    private final transient String name;
-
-    /**
-     * Public ctor.
-     * @param value The value of it
-     */
-    public VariablePred(final String value) {
-        this.name = value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object evaluate(final Message msg, final int pos) {
-        Object value;
-        if ("text".equals(this.name)) {
-            value = msg.text();
-        } else if ("bout.number".equals(this.name)) {
-            value = msg.bout().number();
-        } else if ("bout.title".equals(this.name)) {
-            value = msg.bout().title();
-        } else if ("number".equals(this.name)) {
-            value = msg.number();
-        } else if ("date".equals(this.name)) {
-            value = msg.date();
-        } else if ("author".equals(this.name)) {
-            value = msg.author();
-        } else if ("seen".equals(this.name)) {
-            value = msg.seen();
-        } else {
-            throw new PredicateException(
-                String.format("Unknown variable '$%s'", this.name)
-            );
-        }
-        return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("$%s", this.name);
+    @Test
+    public void positivelyMatchesMessageAtPosition() throws Exception {
+        final int pos = Math.abs(new Random().nextInt());
+        final Predicate pred = new PosPred(
+            Arrays.asList(new Predicate[] {new NumberPred(new Long(pos))})
+        );
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), pos)
+        );
     }
 
 }
