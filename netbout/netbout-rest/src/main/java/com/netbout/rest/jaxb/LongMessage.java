@@ -153,7 +153,7 @@ public final class LongMessage {
             .replaceAll(
                 "\\[(.*?)\\]\\((http://[\\w\\-_@/\\+\\.%#!=\\?]+)\\)",
                 "<a href='$2'>$1</a>"
-            )
+        )
             .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
             .replaceAll("_(.*?)_", "<i>$1</i>");
     }

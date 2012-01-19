@@ -32,10 +32,9 @@ import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -94,13 +93,11 @@ public final class InboxRs extends AbstractRs {
             this.base().clone().queryParam(RestSession.QUERY_PARAM, this.query)
         ).setQueryParam(InboxRs.PERIOD_PARAM);
         for (Bout bout : inbox) {
-            if (periods.show(this.date(bout))) {
+            if (periods.show(NetboutUtils.dateOf(bout))) {
                 bouts.add(
                     new ShortBout(
                         bout,
-                        this.base().path(
-                            String.format("/%d", bout.number())
-                        ),
+                        this.base().path(String.format("/%d", bout.number())),
                         identity
                     )
                 );
@@ -143,26 +140,6 @@ public final class InboxRs extends AbstractRs {
             .location(this.base().path("/{num}").build(bout.number()))
             .header("Bout-number", bout.number())
             .build();
-    }
-
-    /**
-     * Calculate date of the bout.
-     *
-     * <p>Here we assume that all dates are reverse-ordered in the bout and
-     * every message is older than a bout.
-     *
-     * @param bout The bout
-     * @return Recent date in it
-     */
-    private Date date(final Bout bout) {
-        final List<Message> msgs = bout.messages("(pos 0)");
-        Date date;
-        if (msgs.isEmpty()) {
-            date = bout.date();
-        } else {
-            date = msgs.get(0).date();
-        }
-        return date;
     }
 
 }

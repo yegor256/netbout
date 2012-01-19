@@ -32,6 +32,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.MessagePostException;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public final class HubBout implements Bout {
      */
     @Override
     public int compareTo(final Bout bout) {
-        return HubBout.recent(this).compareTo(HubBout.recent(bout));
+        return NetboutUtils.dateOf(this).compareTo(NetboutUtils.dateOf(bout));
     }
 
     /**
@@ -133,7 +134,7 @@ public final class HubBout implements Bout {
      */
     @Override
     public void rename(final String text) {
-        if (!this.confirmed()) {
+        if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
             throw new IllegalStateException(
                 String.format(
                     "You '%s' can't rename bout #%d until you join",
@@ -150,7 +151,7 @@ public final class HubBout implements Bout {
      */
     @Override
     public Participant invite(final Identity friend) {
-        if (!this.confirmed()) {
+        if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
             throw new IllegalStateException(
                 String.format(
                     "You '%s' can't invite %s until you join bout #%d",
@@ -247,7 +248,7 @@ public final class HubBout implements Bout {
         if (text.isEmpty()) {
             throw new MessagePostException("some message content is required");
         }
-        if (!this.confirmed()) {
+        if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
             throw new IllegalStateException(
                 String.format(
                     "You '%s' can't post to bout #%d until you join",
@@ -289,53 +290,6 @@ public final class HubBout implements Bout {
             .asDefault(false)
             .exec();
         return message;
-    }
-
-    /**
-     * This identity has confirmed participation?
-     * @return Is it?
-     */
-    private boolean confirmed() {
-        for (Participant dude : this.participants()) {
-            if (dude.identity().name().equals(this.viewer.name())) {
-                return dude.confirmed();
-            }
-        }
-        throw new IllegalStateException(
-            Logger.format(
-                "Can't find myself ('%s') among %d participants: %[list]s",
-                this.viewer,
-                this.participants().size(),
-                this.participants()
-            )
-        );
-    }
-
-    /**
-     * Maximum date of a bout.
-     * @param bout The bout to work with
-     * @return Its recent date
-     */
-    protected static Date recent(final Bout bout) {
-        final List<Message> msgs = bout.messages("(pos 0)");
-        Date recent = bout.date();
-        if (!msgs.isEmpty()) {
-            final Date mdate = msgs.get(0).date();
-            if (mdate.before(recent)) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        // @checkstyle LineLength (1 line)
-                        "Message #%d in bout #%d created on '%s', which before bout was created '%s', how come?",
-                        msgs.get(0).number(),
-                        bout.number(),
-                        mdate,
-                        recent
-                    )
-                );
-            }
-            recent = mdate;
-        }
-        return recent;
     }
 
     /**

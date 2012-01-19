@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import java.util.Date;
 
 /**
@@ -97,7 +98,7 @@ final class StubMessage implements Message {
      */
     @Override
     public Date date() {
-        return HubBout.recent(this.ibout);
+        return NetboutUtils.dateOf(this.ibout);
     }
 
     /**

@@ -34,6 +34,7 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
@@ -349,24 +350,12 @@ public final class BoutRs extends AbstractRs {
     }
 
     /**
-     * Get me as a participant.
-     * @return The participant
-     */
-    private Participant participant() {
-        for (Participant participant : this.bout().participants()) {
-            if (participant.identity().equals(this.identity())) {
-                return participant;
-            }
-        }
-        throw new IllegalStateException("Can't find myself in the bout");
-    }
-
-    /**
      * Main page.
      * @return The page
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private Page page() {
+        final Identity myself = this.identity();
         this.coords.normalize(this.hub(), this.bout());
         final Page page = new PageBuilder()
             .schema("")
@@ -387,7 +376,7 @@ public final class BoutRs extends AbstractRs {
                     this.coords,
                     this.query,
                     this.self(""),
-                    this.identity(),
+                    myself,
                     this.view
                 )
             )
@@ -395,13 +384,13 @@ public final class BoutRs extends AbstractRs {
             .link("leave", this.self("/leave"));
         if (this.mask != null) {
             final List<Invitee> invitees = new ArrayList<Invitee>();
-            for (Identity identity : this.identity().friends(this.mask)) {
-                invitees.add(new Invitee(identity, this.self("")));
+            for (Identity friend : myself.friends(this.mask)) {
+                invitees.add(new Invitee(friend, this.self("")));
             }
             page.append(new JaxbBundle("mask", this.mask))
                 .append(JaxbGroup.build(invitees, "invitees"));
         }
-        if (this.participant().confirmed()) {
+        if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
             page.link("post", this.self("/p"))
                 .link("rename", this.self("/r"));
         } else {

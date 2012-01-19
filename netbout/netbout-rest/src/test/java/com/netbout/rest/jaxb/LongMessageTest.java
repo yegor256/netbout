@@ -51,6 +51,7 @@ public final class LongMessageTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongMessage obj = new LongMessage(
+            // @checkstyle MultipleStringLiterals (1 line)
             new HubMocker().doReturn("hello", "pre-render-message").mock(),
             new BoutMocker().mock(),
             new MessageMocker().withText("<>").mock()
@@ -73,16 +74,23 @@ public final class LongMessageTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings({
+        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap"
+    })
     public void convertsMetaCommandsToHtmlFormatting() throws Exception {
         final Map<String, String> texts = ArrayUtils.toMap(
             new String[][] {
                 {"this is **bold** text", "this is <b>bold</b> text"},
                 {"this is _italic_ text", "this is <i>italic</i> text"},
-                {"a [link](http://foo.com) here", "a <a href='http://foo.com'>link</a> here"},
+                {
+                    "a [link](http://foo.com) here",
+                    "a <a href='http://foo.com'>link</a> here",
+                },
             }
         );
         for (Map.Entry<String, String> entry : texts.entrySet()) {
             final LongMessage msg = new LongMessage(
+                // @checkstyle MultipleStringLiterals (1 line)
                 new HubMocker().doReturn(entry.getKey(), "pre-render-message")
                     .mock(),
                 new BoutMocker().mock(),
