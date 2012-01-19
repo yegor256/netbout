@@ -227,7 +227,16 @@ public final class LongBout {
         ).setQueryParam(BoutRs.PERIOD_PARAM);
         final List<LongMessage> msgs = new ArrayList<LongMessage>();
         for (Message msg : discussion) {
-            if (pbld.show(msg.date())) {
+            boolean show;
+            try {
+                show = pbld.show(msg.date());
+            } catch (com.netbout.rest.period.PeriodViolationException ex) {
+                throw new IllegalStateException(
+                    String.format("Invalid date of message #%d", msg.number()),
+                    ex
+                );
+            }
+            if (show) {
                 msgs.add(new LongMessage(this.hub, this.bout, msg));
             }
             if (!pbld.more(discussion.size())) {

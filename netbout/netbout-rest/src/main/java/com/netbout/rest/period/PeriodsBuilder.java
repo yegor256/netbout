@@ -117,8 +117,9 @@ public final class PeriodsBuilder {
      * Shall we show this date?
      * @param date The date to show
      * @return Shall we?
+     * @throws PeriodViolationException If this date violates the rules
      */
-    public boolean show(final Date date) {
+    public boolean show(final Date date) throws PeriodViolationException {
         if (this.slide >= this.MAX_LINKS) {
             throw new IllegalArgumentException("don't forget to call #more()");
         }

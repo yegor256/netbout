@@ -95,7 +95,16 @@ public final class InboxRs extends AbstractRs {
             this.base().clone().queryParam(RestSession.QUERY_PARAM, this.query)
         ).setQueryParam(InboxRs.PERIOD_PARAM);
         for (Bout bout : inbox) {
-            if (periods.show(NetboutUtils.dateOf(bout))) {
+            boolean show;
+            try {
+                show = periods.show(NetboutUtils.dateOf(bout));
+            } catch (com.netbout.rest.period.PeriodViolationException ex) {
+                throw new IllegalStateException(
+                    String.format("Invalid date of bout #%d", bout.number()),
+                    ex
+                );
+            }
+            if (show) {
                 bouts.add(
                     new ShortBout(
                         bout,

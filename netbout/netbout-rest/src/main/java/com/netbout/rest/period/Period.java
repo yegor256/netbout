@@ -178,10 +178,11 @@ public final class Period {
     /**
      * Add new date to it.
      * @param date The date
+     * @throws PeriodViolationException If this date is out of this period
      */
-    public void add(final Date date) {
+    public void add(final Date date) throws PeriodViolationException {
         if (!this.fits(date)) {
-            throw new IllegalArgumentException(
+            throw new PeriodViolationException(
                 String.format(
                     "Can't add '%s', call #fits() first",
                     date
@@ -196,10 +197,11 @@ public final class Period {
      * @param date This date should start the new one
      * @return The period, which goes right after this one and is
      *  one size bigger
+     * @throws PeriodViolationException If this new date is against the rules
      */
-    public Period next(final Date date) {
+    public Period next(final Date date) throws PeriodViolationException {
         if (date.after(this.newest())) {
-            throw new IllegalArgumentException(
+            throw new PeriodViolationException(
                 String.format(
                     "NEXT #%d '%s' should be older than START '%s'",
                     this.dates.size(),
@@ -209,7 +211,7 @@ public final class Period {
             );
         }
         if (!this.dates.isEmpty() && date.after(this.dates.first())) {
-            throw new IllegalArgumentException(
+            throw new PeriodViolationException(
                 String.format(
                     "NEXT '%s' should be older than '%s' (among %d dates)",
                     date,
