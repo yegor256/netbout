@@ -26,6 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.period.Period;
+import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.MessageMocker;

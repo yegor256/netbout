@@ -30,6 +30,8 @@ import com.netbout.rest.jaxb.ShortBout;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.rest.period.Period;
+import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;

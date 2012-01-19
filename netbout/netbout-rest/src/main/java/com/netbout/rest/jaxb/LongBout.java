@@ -28,9 +28,9 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
 import com.netbout.rest.BoutRs;
-import com.netbout.rest.Period;
-import com.netbout.rest.PeriodsBuilder;
 import com.netbout.rest.StageCoordinates;
+import com.netbout.rest.period.Period;
+import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
