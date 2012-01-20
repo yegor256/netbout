@@ -24,50 +24,23 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.bumper;
+package com.netbout.log;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
+import java.io.IOException;
 
 /**
- * Static resources of the bumper.
+ * Feeder of events to the cloud.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/bumper")
-public final class BumperRsMocker {
+public interface Feeder {
 
     /**
-     * Static resource.
-     * @param info Request information
-     * @param name Its name
-     * @return Content of it
+     * Send this text to the cloud right now (wait as much as necessary).
+     * @param text The text to send
+     * @throws IOException If failed
      */
-    @GET
-    @Path("/{name}")
-    @Produces(MediaType.APPLICATION_XML)
-    public String resource(@Context final UriInfo info,
-        @PathParam("name") final String name) {
-        BumperFarmMocker.setBaseUri(info.getBaseUri());
-        String text;
-        try {
-            text = IOUtils.toString(
-                this.getClass().getResourceAsStream(name),
-                CharEncoding.UTF_8
-            );
-        } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        return text.replace("${home}", info.getBaseUri().toString());
-    }
+    void feed(String text) throws IOException;
 
 }

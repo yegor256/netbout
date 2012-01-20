@@ -24,96 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.shary;
 
-/* all elements */
-a,
-img,
-body,
-input,
-h1,
-h2,
-h3,
-textarea {
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    font-size: 1em;
-    font-weight: normal;
-    color: #211922;
-    padding: 0;
-    margin: 0;
-    border: 0;
-    text-decoration: none;
-}
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
-/* any link */
-a {
-    text-decoration: underline;
-}
+/**
+ * Shared document.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ */
+@XmlType(name = "doc")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class SharedDoc {
 
-    /* any link with a mouse over it */
-    a:hover {
-        text-decoration: underline;
+    /**
+     * Media type of document.
+     */
+    private final transient String type;
+
+    /**
+     * Public ctor, for JAXB.
+     */
+    public SharedDoc() {
+        throw new IllegalStateException("invalid call");
     }
 
-/* any paragraph */
-p {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
-
-/* any list */
-ul,
-ol {
-    margin-left: 2em;
-}
-
-/* fixed font */
-.tt {
-    font-family: 'Courier New', monospace;
-}
-
-/* red text marker */
-.red {
-    color: #f24a40;
-    padding-left: 0.2em;
-}
-
-/* any input field */
-input {
-    font-size: 1.4em;
-    border: 0.071em solid #bfbcc1;
-    background-color: white;
-    padding: 0.5em 0.71em; /* multiply by FONT-SIZE = 1em */
-}
-
-    /* any submit button */
-    input[type="submit"] {
-        background-color: #f3f3f1;
+    /**
+     * Public ctor.
+     * @param tpe The type
+     */
+    public SharedDoc(final String tpe) {
+        this.type = tpe;
     }
 
-/* any text aread */
-textarea {
-    font-size: 1.4em;
-    padding: 1em;
-    border: 0.071em solid #bfbcc1;
-    overflow: hidden;
-}
+    /**
+     * Get media type of document.
+     * @return The type of it
+     */
+    @XmlElement
+    public String getType() {
+        return this.type;
+    }
 
-/* error message to show */
-#error-message {
-    position: relative;
-    font-size: 1.4em;
-    color: red;
-    margin-top: 0.3em;
 }
-
-/* bottom right label about deployed version */
-#version {
-    font-size: 1.2em;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    padding: 0.4em 0.8em;
-    background-color: #e4e5e3;
-    color: gray;
-}
-

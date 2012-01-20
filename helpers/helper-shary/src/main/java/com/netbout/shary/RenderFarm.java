@@ -24,50 +24,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.bumper;
+package com.netbout.shary;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
+import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.Operation;
+import com.woquo.netbout.Jaxb;
 
 /**
- * Static resources of the bumper.
+ * Render farm.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/bumper")
-public final class BumperRsMocker {
+@Farm
+public final class RenderFarm {
 
     /**
-     * Static resource.
-     * @param info Request information
-     * @param name Its name
-     * @return Content of it
+     * Pre-render message in a bout.
+     * @param number Bout where it is happening
+     * @param msg Number of the message
+     * @param text The text to pre-render
+     * @return New text or NULL
      */
-    @GET
-    @Path("/{name}")
-    @Produces(MediaType.APPLICATION_XML)
-    public String resource(@Context final UriInfo info,
-        @PathParam("name") final String name) {
-        BumperFarmMocker.setBaseUri(info.getBaseUri());
-        String text;
-        try {
-            text = IOUtils.toString(
-                this.getClass().getResourceAsStream(name),
-                CharEncoding.UTF_8
-            );
-        } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
+    @Operation("pre-render-message")
+    public String preRenderMessage(final Long number, final Long msg,
+        final String text) {
+        String result = null;
+        if (Jaxb.inNs(text, Slip.NAMESPACE)) {
+            result = Jaxb.parse(text, Slip.class).render();
         }
-        return text.replace("${home}", info.getBaseUri().toString());
+        return result;
     }
 
 }

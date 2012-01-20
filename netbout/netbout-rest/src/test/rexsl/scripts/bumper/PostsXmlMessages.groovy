@@ -31,24 +31,35 @@ package com.netbout.rest.rexsl.bumper
 
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import com.rexsl.test.RestTester
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 def paul = new RestSession(rexsl.home).authenticate(new Urn('urn:test:paul'), '')
-def xsd = UriBuilder.fromUri(rexsl.home).path('/bumper/ns.xsd').build()
 
 def bout = paul.start()
 bout.rename('Posting XML messages to bumper')
 bout.invite(paul.friend(new Urn('urn:test:bumper')))
-bout.post("""<?xml version='1.0'?>
-    <bump xmlns='/bumper/ns'
-        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-        xsi:schemaLocation='/bumper/ns ${xsd}' >
-        <text>hello, dude!</text>
-        <text>hello again!</text>
-    </bump>
-""")
+
+def xsd = UriBuilder.fromUri(rexsl.home).path('/bumper/ns.xsd').build()
+RestTester.start(RestUriBuilder.from(bout).path('/s'))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .post(
+        'post message to the bumper',
+        'data=' + URLEncoder.encode(
+            """<bump xmlns='/bumper/ns'
+                xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                xsi:schemaLocation='/bumper/ns ${xsd}' >
+                <text>hello, dude!</text>
+                <text>hello again!</text>
+            </bump>"""
+        )
+    )
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 MatcherAssert.assertThat(
     bout.messages('(ns "/bumper/ns")').size(),
     Matchers.equalTo(1)

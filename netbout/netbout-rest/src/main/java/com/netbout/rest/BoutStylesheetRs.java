@@ -94,6 +94,14 @@ public final class BoutStylesheetRs extends AbstractRs {
                     .build(this.bout().number(), this.stage)
             )
         );
+        context.put(
+            "stageHome",
+            TextUtils.ucode(
+                this.base()
+                    .path("/{bout}/s/")
+                    .build(this.bout().number())
+            )
+        );
         return TextUtils.format("com/netbout/rest/wrapper.xsl.vm", context);
     }
 

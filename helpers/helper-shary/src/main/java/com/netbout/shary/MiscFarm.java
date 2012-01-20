@@ -24,32 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.bumper;
+package com.netbout.shary;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import java.net.URI;
-import java.net.URL;
-import java.util.List;
-import javax.ws.rs.core.UriBuilder;
 
 /**
- * Bumper farm.
+ * Miscellaneous operations.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@woquo.com)
  * @version $Id$
  */
 @Farm
-public final class BumperFarmMocker implements IdentityAware {
-
-    /**
-     * URL of XSD.
-     */
-    private static URL home;
+public final class MiscFarm implements IdentityAware {
 
     /**
      * Me.
@@ -57,57 +47,11 @@ public final class BumperFarmMocker implements IdentityAware {
     private transient Identity identity;
 
     /**
-     * Inform about base URI.
-     */
-    public static void setBaseUri(final URI uri) {
-        try {
-            BumperFarmMocker.home = UriBuilder.fromUri(uri)
-                .path("/bumper/ns.xsd")
-                .build()
-                .toURL();
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public void init(final Identity idnt) {
         this.identity = idnt;
-    }
-
-    /**
-     * Resolve namespace.
-     * @param namespace The namespace
-     * @return Its URI
-     */
-    @Operation("resolve-xml-namespace")
-    public URL resolveXmlNamespace(final String namespace) {
-        URL url = null;
-        if ("/bumper/ns".equals(namespace)) {
-            url = BumperFarmMocker.home;
-        }
-        return url;
-    }
-
-    /**
-     * Evaluate predicate.
-     * @param bout Number of bout
-     * @param msg Number of message
-     * @param name Name of predicate
-     * @param args Arguments
-     * @return Value or NULL if name is unknown for us
-     */
-    @Operation("evaluate-predicate")
-    public String evaluatePredicate(final Long bout, final Long msg,
-        final Urn name, final List args) {
-        String response = null;
-        if ("urn:test:bumper:what-is-your-name".equals(name.toString())) {
-            response = "bumper";
-        }
-        return response;
     }
 
     /**

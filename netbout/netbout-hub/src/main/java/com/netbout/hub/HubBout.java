@@ -170,6 +170,11 @@ public final class HubBout implements Bout {
         if (friend instanceof InvitationSensitive) {
             ((InvitationSensitive) friend).invited(this);
         }
+        this.hub.make("just-invited")
+            .inBout(this)
+            .arg(this.number())
+            .asDefault(false)
+            .exec();
         return new HubParticipant(this.hub, this, dude, this.data);
     }
 

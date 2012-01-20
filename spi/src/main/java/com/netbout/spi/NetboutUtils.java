@@ -106,4 +106,23 @@ public final class NetboutUtils {
         return found;
     }
 
+    /**
+     * Checks whether this person participates in the bout.
+     * @param name Name of the person
+     * @param bout Where to find
+     * @return He is in?
+     */
+    public static boolean participatesIn(final Urn name,
+        final Bout bout) {
+        final Collection<Participant> participants = bout.participants();
+        boolean found = false;
+        for (Participant participant : participants) {
+            if (participant.identity().name().equals(name)) {
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
 }

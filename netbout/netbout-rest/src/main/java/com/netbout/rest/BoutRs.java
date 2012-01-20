@@ -35,7 +35,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
-import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
@@ -67,6 +66,16 @@ public final class BoutRs extends AbstractRs {
      * Threshold param.
      */
     public static final String PERIOD_PARAM = "p";
+
+    /**
+     * Place changing param.
+     */
+    public static final String PLACE_PARAM = "place";
+
+    /**
+     * Stage changing param.
+     */
+    public static final String STAGE_PARAM = "stage";
 
     /**
      * Number of the bout.
@@ -117,7 +126,7 @@ public final class BoutRs extends AbstractRs {
      * Set stage, if it's selected.
      * @param name The name of it
      */
-    @QueryParam("stage")
+    @QueryParam(BoutRs.STAGE_PARAM)
     public void setStage(final Urn name) {
         if (name != null) {
             this.coords.setStage(name);
@@ -128,7 +137,7 @@ public final class BoutRs extends AbstractRs {
      * Set stage place.
      * @param place The place name
      */
-    @QueryParam("place")
+    @QueryParam(BoutRs.PLACE_PARAM)
     public void setPlace(final String place) {
         if (place != null) {
             this.coords.setPlace(place);
@@ -307,24 +316,13 @@ public final class BoutRs extends AbstractRs {
     @Path("/kickoff")
     @GET
     public Response kickoff(@QueryParam("name") final String name) {
-        boolean done = false;
-        for (Participant dude : this.bout().participants()) {
-            if (dude.identity().name().equals(name)) {
-                dude.kickOff();
-                done = true;
-                break;
-            }
+        Identity friend;
+        try {
+            friend = this.identity().friend(Urn.create(name));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new ForwardException(this, this.base(), ex);
         }
-        if (!done) {
-            throw new ForwardException(
-                this,
-                this.self(""),
-                String.format(
-                    "Participant '%s' not found in bout, can't kick off",
-                    name
-                )
-            );
-        }
+        NetboutUtils.participantOf(friend, this.bout()).kickOff();
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
@@ -332,6 +330,15 @@ public final class BoutRs extends AbstractRs {
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
             .build();
+    }
+
+    /**
+     * Stage dispatcher.
+     * @return The stage RS resource
+     */
+    @Path("/s")
+    public StageRs stageDispatcher() {
+        return new StageRs(this.bout(), this.coords).duplicate(this);
     }
 
     /**
