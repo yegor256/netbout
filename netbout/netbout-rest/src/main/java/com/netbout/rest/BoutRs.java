@@ -68,6 +68,16 @@ public final class BoutRs extends AbstractRs {
     public static final String PERIOD_PARAM = "p";
 
     /**
+     * Place changing param.
+     */
+    public static final String PLACE_PARAM = "place";
+
+    /**
+     * Stage changing param.
+     */
+    public static final String STAGE_PARAM = "stage";
+
+    /**
      * Number of the bout.
      */
     private transient Long number;
@@ -116,7 +126,7 @@ public final class BoutRs extends AbstractRs {
      * Set stage, if it's selected.
      * @param name The name of it
      */
-    @QueryParam("stage")
+    @QueryParam(BoutRs.STAGE_PARAM)
     public void setStage(final Urn name) {
         if (name != null) {
             this.coords.setStage(name);
@@ -127,7 +137,7 @@ public final class BoutRs extends AbstractRs {
      * Set stage place.
      * @param place The place name
      */
-    @QueryParam("place")
+    @QueryParam(BoutRs.PLACE_PARAM)
     public void setPlace(final String place) {
         if (place != null) {
             this.coords.setPlace(place);

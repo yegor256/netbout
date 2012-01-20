@@ -34,24 +34,11 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import com.woquo.netbout.Jaxb;
-import com.ymock.util.Logger;
-import java.io.StringWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Stage farm.
@@ -99,6 +86,9 @@ public final class StageFarm implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("render-stage-xml")
+    @SuppressWarnings({
+        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap"
+    })
     public String renderStageXml(final Long number, final Urn stage,
         final String place) throws Exception {
         String xml = null;
@@ -112,7 +102,6 @@ public final class StageFarm implements IdentityAware {
                 new HashMap<String, SharedDoc>();
             for (Message msg : inbox) {
                 final Slip slip = Jaxb.parse(msg.text(), Slip.class);
-                System.out.println(msg.text());
                 if (docs.containsKey(slip.getUri())) {
                     continue;
                 }

@@ -90,4 +90,48 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-XSD-resource-directory</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.directory}/classes/com/netbout/shary" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.sun.tools.jxc.maven2</groupId>
+                <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>com/netbout/shary/Slip.java</include>
+                            </includes>
+                            <schemas>
+                                 <schema>
+                                     <namespace>urn:netbout:ns:shary/Slip</namespace>
+                                     <file>com/netbout/shary/Slip.xsd</file>
+                                 </schema>
+                            </schemas>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

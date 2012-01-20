@@ -111,20 +111,25 @@ public final class StageRs extends AbstractRs {
     @POST
     public Response post(final String body) {
         this.coords.normalize(this.hub(), this.bout);
-        this.hub().make("stage-post-request")
+        final String dest = this.hub().make("stage-post-request")
+            .synchronously()
             .inBout(this.bout)
             .arg(this.bout.number())
             .arg(this.coords.stage())
             .arg(this.coords.place())
             .arg(body)
-            .asDefault(false)
+            .asDefault("")
             .exec();
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.base().path("/{num}").build(this.bout.number()))
+            .location(
+                this.base().path("/{num}")
+                    .queryParam(BoutRs.PLACE_PARAM, dest)
+                    .build(this.bout.number())
+            )
             .build();
     }
 

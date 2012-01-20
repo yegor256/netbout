@@ -130,6 +130,10 @@
     margin-top: 2em;
 }
 
+    #post textarea {
+        width: 62.29em; /* multiply by 1.4 = 90em - (1.4 * 2) = 87.2em */
+    }
+
 /* one message */
 .message {
     margin-top: 4em;

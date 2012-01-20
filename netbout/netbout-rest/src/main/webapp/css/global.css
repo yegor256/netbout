@@ -93,7 +93,6 @@ input {
 /* any text aread */
 textarea {
     font-size: 1.4em;
-    width: 62.29em; /* multiply by 1.4 = 90em - (1.4 * 2) = 87.2em */
     padding: 1em;
     border: 0.071em solid #bfbcc1;
     overflow: hidden;

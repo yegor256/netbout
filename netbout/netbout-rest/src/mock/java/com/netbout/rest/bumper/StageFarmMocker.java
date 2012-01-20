@@ -82,11 +82,13 @@ public final class StageFarmMocker implements IdentityAware {
      * @param stage Name of stage to render
      * @param place The place in the stage to render
      * @param body Body of POST request
+     * @return New place in this stage
      * @throws Exception If some problem inside
      */
     @Operation("stage-post-request")
-    public void stagePostRequest(final Long number, final Urn stage,
+    public String stagePostRequest(final Long number, final Urn stage,
         final String place, final String body) {
+        String dest = null;
         if (this.identity.name().equals(stage)) {
             if (body.isEmpty()) {
                 throw new IllegalArgumentException("body can't be empty");
@@ -105,7 +107,9 @@ public final class StageFarmMocker implements IdentityAware {
             } catch (java.io.UnsupportedEncodingException ex) {
                 throw new IllegalArgumentException(ex);
             }
+            dest = "";
         }
+        return dest;
     }
 
     /**

@@ -480,6 +480,20 @@
                         <target>1.6</target>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version since="2 Dec 2011">1.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.sun.tools.jxc.maven2</groupId>
+                    <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+                    <version since="16 Jan 2012">1.2</version>
+                    <configuration>
+                        <destdir>${project.build.directory}/classes</destdir>
+                        <srcdir>${project.build.sourceDirectory}</srcdir>
+                        <verbose>false</verbose>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

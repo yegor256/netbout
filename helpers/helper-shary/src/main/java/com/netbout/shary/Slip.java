@@ -44,7 +44,7 @@ public final class Slip {
     /**
      * Namespace.
      */
-    public static final String NAMESPACE = "urn:woquo:shary:Slip";
+    public static final String NAMESPACE = "urn:netbout:ns:shary/Slip";
 
     /**
      * Is it an allowing slip or declining?
@@ -107,7 +107,7 @@ public final class Slip {
      * @return Author allowed to see the document?
      */
     @XmlElement(name = "allow", namespace = Slip.NAMESPACE)
-    public boolean getAllow() {
+    public boolean isAllow() {
         return this.allow;
     }
 

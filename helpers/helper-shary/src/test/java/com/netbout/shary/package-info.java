@@ -24,48 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.shary;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlType;
 
 /**
- * Stage.
+ * Shary helper, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "data")
-@XmlAccessorType(XmlAccessType.NONE)
-public final class Stage {
-
-    /**
-     * List of documents in it.
-     */
-    private final transient Collection<SharedDoc> docs =
-        new ArrayList<SharedDoc>();
-
-    /**
-     * Get list of docs (for JAXB).
-     * @return The list of them
-     */
-    @XmlElement(name = "doc")
-    @XmlElementWrapper(name = "docs")
-    public Collection<SharedDoc> getDocs() {
-        return this.docs;
-    }
-
-    /**
-     * Add new documents.
-     * @param documents The docs to add
-     */
-    public void add(final Collection<SharedDoc> documents) {
-        this.docs.addAll(documents);
-    }
-
-}
+package com.netbout.shary;
