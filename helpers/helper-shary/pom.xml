@@ -43,6 +43,13 @@
     <packaging>jar</packaging>
     <name>helper-shary</name>
 
+    <repositories>
+        <repository>
+            <id>woquo.s3</id>
+            <url>s3://repo.woquo.com/snapshot</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.netbout.spi</groupId>
