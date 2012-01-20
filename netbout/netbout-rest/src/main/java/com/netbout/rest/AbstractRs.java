@@ -331,6 +331,27 @@ public abstract class AbstractRs implements Resource {
     }
 
     /**
+     * Initialize all fields from another resource.
+     * @param res The parent resource
+     * @return This object
+     * @param <T> The type of it
+     */
+    public final <T> T duplicate(final Resource res) {
+        this.ihub = ((AbstractRs) res).hub();
+        this.setProviders(res.providers());
+        this.setHttpHeaders(res.httpHeaders());
+        this.setUriInfo(res.uriInfo());
+        this.setHttpServletRequest(res.httpServletRequest());
+        this.setMessage(res.message());
+        if (((AbstractRs) res).addAuthToURIs) {
+            this.setAuth(((AbstractRs) res).icookie);
+        } else {
+            this.setCookie(((AbstractRs) res).icookie);
+        }
+        return (T) this;
+    }
+
+    /**
      * Get current user identity, or throws {@link LoginRequiredException} if
      * no user is logged in at the moment.
      * @return The identity

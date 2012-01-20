@@ -32,8 +32,12 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.List;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * The stage.
@@ -58,6 +62,21 @@ public final class StageFarmMocker implements IdentityAware {
     }
 
     /**
+     * Does this stage exist in the bout?
+     * @param number Bout where it is happening
+     * @param stage Name of stage to render
+     * @return Does it?
+     */
+    @Operation("does-stage-exist")
+    public Boolean doesStageExist(final Long number, final Urn stage) {
+        Boolean exists = null;
+        if (this.identity.name().equals(stage)) {
+            exists = Boolean.TRUE;
+        }
+        return exists;
+    }
+
+    /**
      * Process POST request of the stage.
      * @param number Bout where it is happening
      * @param stage Name of stage to render
@@ -69,11 +88,21 @@ public final class StageFarmMocker implements IdentityAware {
     public void stagePostRequest(final Long number, final Urn stage,
         final String place, final String body) {
         if (this.identity.name().equals(stage)) {
+            if (body.isEmpty()) {
+                throw new IllegalArgumentException("body can't be empty");
+            }
             try {
-                this.identity.bout(number).post(body);
+                this.identity.bout(number).post(
+                    URLDecoder.decode(
+                        body.substring("data=".length()),
+                        CharEncoding.UTF_8
+                    )
+                );
             } catch (com.netbout.spi.BoutNotFoundException ex) {
                 throw new IllegalArgumentException(ex);
             } catch (com.netbout.spi.MessagePostException ex) {
+                throw new IllegalArgumentException(ex);
+            } catch (java.io.UnsupportedEncodingException ex) {
                 throw new IllegalArgumentException(ex);
             }
         }
@@ -109,7 +138,7 @@ public final class StageFarmMocker implements IdentityAware {
         throws Exception {
         String xsl = null;
         if (this.identity.name().equals(stage)) {
-            xsl = "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'/>";
+            xsl = this.res("bumper.xsl");
         }
         return xsl;
     }
@@ -126,42 +155,29 @@ public final class StageFarmMocker implements IdentityAware {
      */
     @Operation("render-stage-resource")
     public String renderStageResource(final Long number, final Urn stage,
-        final String base, final String path)
+        final URL base, final String path)
         throws Exception {
         String response = null;
         if (this.identity.name().equals(stage)) {
-            if ("/ns.xsd".equals(path)) {
-                // @checkstyle StringLiteralsConcatenation (3 lines)
-                response = "Content-Type: application/xml\n\n"
-                    + "<?xml version='1.0'?><xs:schema"
-                    + " xmlns:xs='http://www.w3.org/2001/XMLSchema'"
-                    + " xmlns:b='/bumper/ns' elementFormDefault='qualified'"
-                    + " targetNamespace='/bumper/ns'>"
-                    + String.format(
-                        "<xs:include schemaLocation='%s' />",
-                        UriBuilder.fromUri(base)
-                            .path("/bumper/child.xsd")
-                            .build()
-                    )
-                    + "<xs:element name='bump' type='b:bump'/>"
-                    + "</xs:schema>";
-            } else if ("/child.xsd".equals(path)) {
-                // @checkstyle StringLiteralsConcatenation (3 lines)
-                response = "Content-Type: application/xml\n\n"
-                    + "<?xml version='1.0'?><xs:schema"
-                    + " xmlns:xs='http://www.w3.org/2001/XMLSchema'"
-                    + " xmlns:b='/bumper/ns'"
-                    + " targetNamespace='/bumper/ns'>"
-                    + "<xs:complexType name='bump'>"
-                    + "<xs:sequence>"
-                    + "<xs:element name='text' type='xs:string' form='qualified'"
-                    + " minOccurs='0' maxOccurs='unbounded'/>"
-                    + "</xs:sequence>"
-                    + "</xs:complexType>"
-                    + "</xs:schema>";
-            }
+            response = this.res(path);
         }
         return response;
+    }
+
+    /**
+     * Local test resource.
+     * @param name The name of it (inside
+     *  {@code src/test/resources/com/netbout/rest/bumper})
+     */
+    private String res(final String name) {
+        try {
+            return IOUtils.toString(
+                this.getClass().getResourceAsStream(name),
+                CharEncoding.UTF_8
+            );
+        } catch (java.io.IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
 }

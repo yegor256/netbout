@@ -54,14 +54,6 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     private transient Feeder feeder;
 
     /**
-     * Is is empty?
-     * @return TRUE if there are no more messages to report
-     */
-    public boolean isEmpty() {
-        return this.messages.peek() == null;
-    }
-
-    /**
      * Set feeder, option {@code feeder} in config.
      * @param fdr The feeder to use
      */
@@ -94,7 +86,9 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
      */
     @Override
     public void append(final LoggingEvent event) {
-        this.messages.offer(this.getLayout().format(event));
+        synchronized (this.messages) {
+            this.messages.offer(this.getLayout().format(event));
+        }
     }
 
     /**
@@ -111,7 +105,7 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
                 } catch (java.io.IOException ex) {
                     System.out.println(
                         Logger.format(
-                            "%sfailed to report because of \n%[exception]s",
+                            "%sfailed to report because of %[exception]s",
                             text,
                             ex
                         )

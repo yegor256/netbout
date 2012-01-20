@@ -4,6 +4,9 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
+    <xsl:variable name="stage-home-uri">
+        <xsl:text>${stageHome}</xsl:text>
+    </xsl:variable>
     <xsl:include href="${boutXsl}" />
     <xsl:include href="${stageXsl}" />
 </xsl:stylesheet>

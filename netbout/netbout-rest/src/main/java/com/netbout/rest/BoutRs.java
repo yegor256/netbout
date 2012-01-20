@@ -323,6 +323,15 @@ public final class BoutRs extends AbstractRs {
     }
 
     /**
+     * Stage dispatcher.
+     * @return The stage RS resource
+     */
+    @Path("/s")
+    public StageRs stageDispatcher() {
+        return new StageRs(this.bout(), this.coords).duplicate(this);
+    }
+
+    /**
      * Get bout.
      * @return The bout
      */

@@ -28,6 +28,7 @@ package com.netbout.hub.predicates.xml;
 
 import com.netbout.hub.Hub;
 import com.ymock.util.Logger;
+import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -131,11 +132,18 @@ public final class DomText {
                     "Root element should belong to some namespace"
                 );
             }
-            final String uri = hub.make("resolve-xml-namespace")
+            URL def;
+            try {
+                def = new URL("http://localhost");
+            } catch (java.net.MalformedURLException ex) {
+                throw new IllegalStateException();
+            }
+            final URL url = hub.make("resolve-xml-namespace")
+                .synchronously()
                 .arg(namespace)
-                .asDefault("")
+                .asDefault(def)
                 .exec();
-            if (uri.isEmpty()) {
+            if (url.equals(def)) {
                 throw new DomValidationException(
                     String.format(
                         "Namespace '%s' is not supported by helpers",
@@ -144,12 +152,12 @@ public final class DomText {
                 );
             }
             final String schema = this.schema(namespace);
-            if (!uri.equals(schema)) {
+            if (!url.toString().equals(schema)) {
                 throw new DomValidationException(
                     String.format(
                         "Schema for namespace '%s' should be '%s' (not '%s')",
                         namespace,
-                        uri,
+                        url,
                         schema
                     )
                 );

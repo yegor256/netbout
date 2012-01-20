@@ -23,48 +23,51 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest.bumper;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
+
+/**
+ * Static resources of the bumper.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.bumper
+@Path("/bumper")
+public final class BumperRsMocker {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
-import com.rexsl.test.RestTester
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.UriBuilder
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * Static resource.
+     * @param info Request information
+     * @param name Its name
+     * @return Content of it
+     */
+    @GET
+    @Path("/{name}")
+    @Produces(MediaType.APPLICATION_XML)
+    public String resource(@Context final UriInfo info,
+        @PathParam("name") final String name) {
+        BumperFarmMocker.setBaseUri(info.getBaseUri());
+        String text;
+        try {
+            text = IOUtils.toString(
+                this.getClass().getResourceAsStream(name),
+                CharEncoding.UTF_8
+            );
+        } catch (java.io.IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        return text.replace("${home}", info.getBaseUri().toString());
+    }
 
-def paul = new RestSession(rexsl.home).authenticate(new Urn('urn:test:paul'), '')
-
-def bout = paul.start()
-bout.rename('Posting XML messages to bumper')
-bout.invite(paul.friend(new Urn('urn:test:bumper')))
-
-def xsd = UriBuilder.fromUri(rexsl.home).path('/bumper/ns.xsd').build()
-RestTester.start(RestUriBuilder.from(bout).path('/s'))
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .post(
-        'post message to the bumper',
-        'data=' + URLEncoder.encode(
-            """<bump xmlns='/bumper/ns'
-                xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-                xsi:schemaLocation='/bumper/ns ${xsd}' >
-                <text>hello, dude!</text>
-                <text>hello again!</text>
-            </bump>"""
-        )
-    )
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-MatcherAssert.assertThat(
-    bout.messages('(ns "/bumper/ns")').size(),
-    Matchers.equalTo(1)
-)
-MatcherAssert.assertThat(
-    bout.messages('(urn:test:bumper:what-is-your-name)').get(0).text(),
-    Matchers.equalTo('bumper')
-)
+}

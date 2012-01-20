@@ -29,6 +29,7 @@ package com.netbout.hub.predicates.xml;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.rexsl.test.ContainerMocker;
+import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -44,7 +45,7 @@ public final class DomTextTest {
     /**
      * URL of XSD schema.
      */
-    private transient String xsd;
+    private transient URL xsd;
 
     /**
      * Valid XML document.
@@ -69,14 +70,16 @@ public final class DomTextTest {
             + "</xs:sequence>"
             + "</xs:complexType>"
             + "</xs:schema>";
-        this.xsd = new ContainerMocker()
-            .expectMethod(Matchers.equalTo("GET"))
-            .returnBody(schema)
-            .returnHeader("Content-Type", "application/xml")
-            .mock()
-            .home()
-            .toURL()
-            .toString();
+        this.xsd = new URL(
+            new ContainerMocker()
+                .expectMethod(Matchers.equalTo("GET"))
+                .returnBody(schema)
+                .returnHeader("Content-Type", "application/xml")
+                .mock()
+                .home()
+                .toURL()
+                .toString()
+        );
         // @checkstyle StringLiteralsConcatenation (4 lines)
         this.xml = "<root xmlns='foo'"
             + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"

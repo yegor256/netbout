@@ -26,12 +26,14 @@
  */
 package com.netbout.rest.bumper;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import javax.ws.rs.core.UriBuilder;
 
@@ -45,9 +47,9 @@ import javax.ws.rs.core.UriBuilder;
 public final class BumperFarmMocker implements IdentityAware {
 
     /**
-     * Local host URI builder.
+     * URL of XSD.
      */
-    private static transient UriBuilder home;
+    private static URL home;
 
     /**
      * Me.
@@ -55,11 +57,17 @@ public final class BumperFarmMocker implements IdentityAware {
     private transient Identity identity;
 
     /**
-     * Set home.
-     * @param uri The URI of home
+     * Inform about base URI.
      */
-    public static void setHome(final URI uri) {
-        BumperFarmMocker.home = UriBuilder.fromUri(uri);
+    public static void setBaseUri(final URI uri) {
+        try {
+            BumperFarmMocker.home = UriBuilder.fromUri(uri)
+                .path("/bumper/ns.xsd")
+                .build()
+                .toURL();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**
@@ -73,15 +81,15 @@ public final class BumperFarmMocker implements IdentityAware {
     /**
      * Resolve namespace.
      * @param namespace The namespace
-     * @param Its URI
+     * @return Its URI
      */
     @Operation("resolve-xml-namespace")
-    public String resolveXmlNamespace(final String namespace) {
-        String uri = null;
+    public URL resolveXmlNamespace(final String namespace) {
+        URL url = null;
         if ("/bumper/ns".equals(namespace)) {
-            uri = this.home.clone().path("/bumper/ns.xsd").build().toString();
+            url = BumperFarmMocker.home;
         }
-        return uri;
+        return url;
     }
 
     /**
@@ -100,6 +108,21 @@ public final class BumperFarmMocker implements IdentityAware {
             response = "bumper";
         }
         return response;
+    }
+
+    /**
+     * Somebody was just invited to the bout.
+     * @param number Bout where it is happening
+     */
+    @Operation("just-invited")
+    public void justInvited(final Long number) {
+        Bout bout;
+        try {
+            bout = this.identity.bout(number);
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        bout.confirm();
     }
 
 }

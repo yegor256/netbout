@@ -86,7 +86,7 @@ public final class PlainBuilder {
             result = (Plain) new PlainList((List) data);
         } else {
             throw new IllegalArgumentException(
-                String.format(
+                Logger.format(
                     "Can't convert '%s' (%[type]s) to Plain<?>",
                     StringEscapeUtils.escapeJava(data.toString()),
                     data

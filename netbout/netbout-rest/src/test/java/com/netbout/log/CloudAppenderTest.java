@@ -33,6 +33,8 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.RootLogger;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Test case for {@link CloudAppender}.
@@ -50,6 +52,16 @@ public final class CloudAppenderTest {
         final CloudAppender appender = new CloudAppender();
         appender.setLayout(new SimpleLayout());
         final Feeder feeder = Mockito.mock(Feeder.class);
+        final StringBuilder builder = new StringBuilder();
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    final String text = (String) invocation.getArguments()[0];
+                    builder.append(text);
+                    return null;
+                }
+            }
+        ).when(feeder).feed(Mockito.anyString());
         appender.setFeeder(feeder);
         final LoggingEvent event = new LoggingEvent(
             this.getClass().getName(),
@@ -60,7 +72,7 @@ public final class CloudAppenderTest {
         );
         appender.append(event);
         final long start = System.currentTimeMillis();
-        while (!appender.isEmpty()) {
+        while (builder.length() == 0) {
             TimeUnit.SECONDS.sleep(1L);
             if (System.currentTimeMillis() - start
                 > TimeUnit.MINUTES.toMillis(1L)) {
