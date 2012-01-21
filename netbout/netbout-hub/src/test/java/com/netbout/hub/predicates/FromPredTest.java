@@ -29,7 +29,6 @@ package com.netbout.hub.predicates;
 import com.netbout.hub.Predicate;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
@@ -46,17 +45,16 @@ public final class FromPredTest {
      */
     @Test
     public void positivelyMatchesMessageAtPosition() throws Exception {
-        final int pos = Math.abs(new Random().nextInt());
         final Predicate pred = new FromPred(
-            Arrays.asList(new Predicate[] {new NumberPred(new Long(pos))})
-        );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(new MessageMocker().mock(), pos)
+            Arrays.asList(new Predicate[] {new NumberPred(1L)})
         );
         MatcherAssert.assertThat(
             "not matched",
-            !(Boolean) pred.evaluate(new MessageMocker().mock(), pos - 1)
+            !(Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+        );
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), 1)
         );
     }
 

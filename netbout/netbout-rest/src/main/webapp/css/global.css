@@ -75,7 +75,7 @@ pre {
 
 /* fixed block */
 .fixed {
-
+    white-space: pre;
 }
 
 /* red text marker */

@@ -40,6 +40,11 @@ import java.util.List;
 public final class FromPred extends AbstractVarargPred {
 
     /**
+     * Counter.
+     */
+    private transient int counter;
+
+    /**
      * Public ctor.
      * @param args The arguments
      */
@@ -55,7 +60,11 @@ public final class FromPred extends AbstractVarargPred {
         final int from = Integer.valueOf(
             this.arg(0).evaluate(msg, pos).toString()
         );
-        final boolean matches = pos >= from;
+        boolean matches;
+        synchronized (this) {
+            matches = this.counter >= from;
+            this.counter += 1;
+        }
         Logger.debug(
             this,
             "#evaluate(): pos is #%d, from is #%d: %B",
