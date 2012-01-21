@@ -67,7 +67,8 @@ ol {
 }
 
 /* fixed font */
-.tt {
+.tt,
+pre {
     font-family: 'Courier New', monospace;
 }
 
