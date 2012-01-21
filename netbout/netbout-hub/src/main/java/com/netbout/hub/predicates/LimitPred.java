@@ -40,6 +40,11 @@ import java.util.List;
 public final class LimitPred extends AbstractVarargPred {
 
     /**
+     * How many we already allowed to go?
+     */
+    private transient int passed;
+
+    /**
      * Public ctor.
      * @param args The arguments
      */
@@ -55,12 +60,19 @@ public final class LimitPred extends AbstractVarargPred {
         final int limit = Integer.valueOf(
             this.arg(0).evaluate(msg, pos).toString()
         );
-        final boolean matches = pos < limit;
+        boolean matches;
+        synchronized (this) {
+            matches = this.passed < limit;
+            if (matches) {
+                this.passed += 1;
+            }
+        }
         Logger.debug(
             this,
-            "#evaluate(): total number is #%d, limit is #%d: %B",
-            msg.number(),
+            "#evaluate(.., %d): %d already passed, limit is #%d: %B",
             pos,
+            msg.number(),
+            this.passed,
             limit,
             matches
         );

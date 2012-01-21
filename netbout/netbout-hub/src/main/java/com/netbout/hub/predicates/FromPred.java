@@ -40,9 +40,9 @@ import java.util.List;
 public final class FromPred extends AbstractVarargPred {
 
     /**
-     * Counter.
+     * How many we already disallowed to go?
      */
-    private transient int counter;
+    private transient int blocked;
 
     /**
      * Public ctor.
@@ -62,14 +62,17 @@ public final class FromPred extends AbstractVarargPred {
         );
         boolean matches;
         synchronized (this) {
-            matches = this.counter >= from;
-            this.counter += 1;
+            matches = this.blocked >= from;
+            if (!matches) {
+                this.blocked += 1;
+            }
         }
         Logger.debug(
             this,
-            "#evaluate(): pos is #%d, from is #%d: %B",
-            msg.number(),
+            "#evaluate(.., %d): %d blocked already, 'from' is #%d: %B",
             pos,
+            msg.number(),
+            this.blocked,
             from,
             matches
         );

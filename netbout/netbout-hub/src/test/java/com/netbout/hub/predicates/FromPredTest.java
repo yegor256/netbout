@@ -70,8 +70,9 @@ public final class FromPredTest {
     public void selectsPortionOfMessages() throws Exception {
         final int total = 10;
         final int from = 3;
+        final int limit = total - from - 1;
         final Predicate pred = new PredicateBuilder(new HubMocker().mock())
-            .parse(String.format("(and (from %d))", from));
+            .parse(String.format("(and (from %d) (limit %d))", from, limit));
         int count = 0;
         final Message msg = new MessageMocker().mock();
         for (int pos = 0; pos < total; pos += 1) {
@@ -79,7 +80,7 @@ public final class FromPredTest {
                 count += 1;
             }
         }
-        MatcherAssert.assertThat(count, Matchers.equalTo(total - from));
+        MatcherAssert.assertThat(count, Matchers.equalTo(limit));
     }
 
 }
