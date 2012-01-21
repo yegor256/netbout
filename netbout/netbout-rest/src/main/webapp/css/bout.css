@@ -168,5 +168,6 @@
 
         .message .right .text {
             white-space: pre-line;
+            font-size: 1.4em;
         }
 

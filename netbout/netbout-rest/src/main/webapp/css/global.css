@@ -68,8 +68,14 @@ ol {
 
 /* fixed font */
 .tt,
+.fixed,
 pre {
     font-family: 'Courier New', monospace;
+}
+
+/* fixed block */
+.fixed {
+
 }
 
 /* red text marker */

@@ -27,44 +27,37 @@
 package com.netbout.hub.predicates;
 
 import com.netbout.hub.Predicate;
-import com.netbout.spi.Message;
-import com.ymock.util.Logger;
-import java.util.List;
+import com.netbout.spi.MessageMocker;
+import java.util.Arrays;
+import java.util.Random;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 /**
- * We have this number of elements in the result list, not more.
- *
+ * Test case of {@link FromPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LimitPred extends AbstractVarargPred {
+public final class FromPredTest {
 
     /**
-     * Public ctor.
-     * @param args The arguments
+     * FromPred can match a message with required position.
+     * @throws Exception If there is some problem inside
      */
-    public LimitPred(final List<Predicate> args) {
-        super("limit", args);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object evaluate(final Message msg, final int pos) {
-        final int limit = Integer.valueOf(
-            this.arg(0).evaluate(msg, pos).toString()
+    @Test
+    public void positivelyMatchesMessageAtPosition() throws Exception {
+        final int pos = Math.abs(new Random().nextInt());
+        final Predicate pred = new FromPred(
+            Arrays.asList(new Predicate[] {new NumberPred(new Long(pos))})
         );
-        final boolean matches = pos < limit;
-        Logger.debug(
-            this,
-            "#evaluate(): total number is #%d, limit is #%d: %B",
-            msg.number(),
-            pos,
-            limit,
-            matches
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), pos)
         );
-        return matches;
+        MatcherAssert.assertThat(
+            "not matched",
+            !(Boolean) pred.evaluate(new MessageMocker().mock(), pos - 1)
+        );
     }
 
 }

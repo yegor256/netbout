@@ -53,6 +53,7 @@ public final class PredicateBuilder {
         new String[][] {
             {"and", "com.netbout.hub.predicates.logic.AndPred"},
             {"equal", "com.netbout.hub.predicates.math.EqualPred"},
+            {"from", "com.netbout.hub.predicates.FromPred"},
             {"greater-than", "com.netbout.hub.predicates.math.GreaterThanPred"},
             {"less-than", "com.netbout.hub.predicates.math.LessThanPred"},
             {"limit", "com.netbout.hub.predicates.LimitPred"},

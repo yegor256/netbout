@@ -32,19 +32,19 @@ import com.ymock.util.Logger;
 import java.util.List;
 
 /**
- * We have this number of elements in the result list, not more.
+ * Show the message if its position is bigger or equal than this one.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LimitPred extends AbstractVarargPred {
+public final class FromPred extends AbstractVarargPred {
 
     /**
      * Public ctor.
      * @param args The arguments
      */
-    public LimitPred(final List<Predicate> args) {
-        super("limit", args);
+    public FromPred(final List<Predicate> args) {
+        super("from", args);
     }
 
     /**
@@ -52,16 +52,16 @@ public final class LimitPred extends AbstractVarargPred {
      */
     @Override
     public Object evaluate(final Message msg, final int pos) {
-        final int limit = Integer.valueOf(
+        final int from = Integer.valueOf(
             this.arg(0).evaluate(msg, pos).toString()
         );
-        final boolean matches = pos < limit;
+        final boolean matches = pos >= from;
         Logger.debug(
             this,
-            "#evaluate(): total number is #%d, limit is #%d: %B",
+            "#evaluate(): pos is #%d, from is #%d: %B",
             msg.number(),
             pos,
-            limit,
+            from,
             matches
         );
         return matches;
