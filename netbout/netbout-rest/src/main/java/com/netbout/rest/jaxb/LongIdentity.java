@@ -27,7 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
-import com.netbout.utils.AliasBuilder;
+import com.netbout.spi.NetboutUtils;
 import java.net.URL;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -90,7 +90,7 @@ public class LongIdentity {
      */
     @XmlElement
     public final String getAlias() {
-        return new AliasBuilder(this.person).build();
+        return NetboutUtils.aliasOf(this.person);
     }
 
     /**

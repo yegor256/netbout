@@ -27,7 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
-import com.netbout.utils.AliasBuilder;
+import com.netbout.spi.NetboutUtils;
 import java.net.URL;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -92,7 +92,7 @@ public final class Invitee {
      */
     @XmlElement
     public String getAlias() {
-        return new AliasBuilder(this.identity).build();
+        return NetboutUtils.aliasOf(this.identity);
     }
 
     /**

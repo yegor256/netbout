@@ -27,8 +27,8 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
-import com.netbout.utils.AliasBuilder;
 import java.net.URL;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -112,7 +112,7 @@ public final class LongParticipant {
      */
     @XmlElement
     public String getAlias() {
-        return new AliasBuilder(this.participant.identity()).build();
+        return NetboutUtils.aliasOf(this.participant.identity());
     }
 
     /**
