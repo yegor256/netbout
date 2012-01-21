@@ -55,6 +55,7 @@ public final class PredicateBuilder {
             {"equal", "com.netbout.hub.predicates.math.EqualPred"},
             {"greater-than", "com.netbout.hub.predicates.math.GreaterThanPred"},
             {"less-than", "com.netbout.hub.predicates.math.LessThanPred"},
+            {"limit", "com.netbout.hub.predicates.LimitPred"},
             {"matches", "com.netbout.hub.predicates.text.MatchesPred"},
             {"not", "com.netbout.hub.predicates.logic.NotPred"},
             {"ns", "com.netbout.hub.predicates.xml.NsPred"},

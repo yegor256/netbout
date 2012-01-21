@@ -53,6 +53,7 @@ public final class PredicateBuilderTest {
             "(urn:test:some-custom-predicate)",
             "(talks-with 'abc')",
             "(not (less-than 5 6))",
+            "(and (ns 'test-me') (limit 2))",
             "(greater-than 'test-1' \"test-2\")",
             "just simple text: \u0435",
         };
