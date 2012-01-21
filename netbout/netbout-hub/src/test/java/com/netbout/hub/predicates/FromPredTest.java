@@ -26,10 +26,14 @@
  */
 package com.netbout.hub.predicates;
 
+import com.netbout.hub.HubMocker;
 import com.netbout.hub.Predicate;
+import com.netbout.hub.PredicateBuilder;
+import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -56,6 +60,26 @@ public final class FromPredTest {
             "matched",
             (Boolean) pred.evaluate(new MessageMocker().mock(), 1)
         );
+    }
+
+    /**
+     * FromPred can let us select all messages after certain point.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void selectsPortionOfMessages() throws Exception {
+        final int total = 10;
+        final int from = 3;
+        final Predicate pred = new PredicateBuilder(new HubMocker().mock())
+            .parse(String.format("(and (from %d))", from));
+        int count = 0;
+        final Message msg = new MessageMocker().mock();
+        for (int pos = 0; pos < total; pos += 1) {
+            if ((Boolean) pred.evaluate(msg, pos)) {
+                count += 1;
+            }
+        }
+        MatcherAssert.assertThat(count, Matchers.equalTo(total - from));
     }
 
 }
