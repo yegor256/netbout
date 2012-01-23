@@ -57,6 +57,7 @@ public final class Stage {
      */
     @XmlElement(name = "total")
     @XmlElementWrapper(name = "totals")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Total> getTotals() throws SQLException {
         final Collection<Total> totals = new ArrayList<Total>();
         final String[] tables = new String[] {
