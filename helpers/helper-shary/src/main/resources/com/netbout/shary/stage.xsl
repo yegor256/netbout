@@ -32,6 +32,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:nb="http://www.netbout.com"
+    xmlns:s="urn:netbout:ns:shary/stage"
     version="2.0" exclude-result-prefixes="xs">
 
     <xsl:template match="stage" mode="head">
@@ -39,32 +40,42 @@
     </xsl:template>
 
     <xsl:template match="stage">
-        <ul>
-            <xsl:for-each select="data/docs/doc">
-                <li>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="link[@rel='load']/@href"/>
-                        </xsl:attribute>
-                        <xsl:value-of select="title"/>
-                    </a>
-                    <xsl:value-of select="type"/>
-                    <xsl:value-of select="author"/>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="link[@rel='unshare']/@href"/>
-                        </xsl:attribute>
-                        <xsl:text>unshare</xsl:text>
-                    </a>
-                </li>
-            </xsl:for-each>
-        </ul>
+        <xsl:choose>
+            <xsl:when test="s:data/s:docs[count(s:doc) &gt; 0]">
+                <ul>
+                    <xsl:for-each select="data/docs/doc">
+                        <li>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="link[@rel='load']/@href"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="title"/>
+                            </a>
+                            <xsl:value-of select="type"/>
+                            <xsl:value-of select="author"/>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="link[@rel='unshare']/@href"/>
+                                </xsl:attribute>
+                                <xsl:text>unshare</xsl:text>
+                            </a>
+                        </li>
+                    </xsl:for-each>
+                </ul>
+            </xsl:when>
+            <xsl:otherwise>
+                <p>
+                    <xsl:text>No documents have been shared yet.</xsl:text>
+                </p>
+            </xsl:otherwise>
+        </xsl:choose>
         <form method="post">
             <xsl:attribute name="action">
                 <xsl:value-of select="$stage-home-uri"/>
             </xsl:attribute>
-            <input name="uri" size="40" maxlength="500"/>
-            <input value="Share" type="submit"/>
+            Name: <input name="name" size="20" maxlength="500"/>
+            URI: <input name="uri" size="70" maxlength="500"/>
+            <input value="Share it" type="submit"/>
         </form>
     </xsl:template>
 

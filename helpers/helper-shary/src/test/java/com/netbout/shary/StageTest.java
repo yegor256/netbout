@@ -51,7 +51,13 @@ public final class StageTest {
         docs.add(new SharedDoc("foo", "text/plain"));
         stage.add(docs);
         final String xml = Jaxb.format(stage);
-        MatcherAssert.assertThat(xml, Matchers.containsString("<docs"));
+        MatcherAssert.assertThat(
+            xml,
+            Matchers.allOf(
+                Matchers.containsString(Stage.NAMESPACE),
+                Matchers.containsString("<docs")
+            )
+        );
     }
 
 }

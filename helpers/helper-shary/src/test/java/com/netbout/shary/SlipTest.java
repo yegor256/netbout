@@ -26,6 +26,9 @@
  */
 package com.netbout.shary;
 
+import com.woquo.netbout.Jaxb;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -34,6 +37,23 @@ import org.junit.Test;
  * @version $Id$
  */
 public final class SlipTest {
+
+    /**
+     * Stage can be converted to XML.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void marshallsToXml() throws Exception {
+        final Slip slip = new Slip(true, "uri", "author", "name");
+        final String xml = Jaxb.format(slip);
+        MatcherAssert.assertThat(
+            xml,
+            Matchers.allOf(
+                Matchers.containsString("<slip"),
+                Matchers.containsString(Slip.NAMESPACE)
+            )
+        );
+    }
 
     /**
      * Slip can be unmarshalled from XML.

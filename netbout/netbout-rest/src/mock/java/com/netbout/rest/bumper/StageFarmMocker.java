@@ -79,6 +79,7 @@ public final class StageFarmMocker implements IdentityAware {
     /**
      * Process POST request of the stage.
      * @param number Bout where it is happening
+     * @param author Who is posting
      * @param stage Name of stage to render
      * @param place The place in the stage to render
      * @param body Body of POST request
@@ -86,27 +87,20 @@ public final class StageFarmMocker implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("stage-post-request")
-    public String stagePostRequest(final Long number, final Urn stage,
-        final String place, final String body) {
+    public String stagePostRequest(final Long number,
+        final Urn author, final Urn stage,
+        final String place, final String body) throws Exception {
         String dest = null;
         if (this.identity.name().equals(stage)) {
             if (body.isEmpty()) {
                 throw new IllegalArgumentException("body can't be empty");
             }
-            try {
-                this.identity.bout(number).post(
-                    URLDecoder.decode(
-                        body.substring("data=".length()),
-                        CharEncoding.UTF_8
-                    )
-                );
-            } catch (com.netbout.spi.BoutNotFoundException ex) {
-                throw new IllegalArgumentException(ex);
-            } catch (com.netbout.spi.MessagePostException ex) {
-                throw new IllegalArgumentException(ex);
-            } catch (java.io.UnsupportedEncodingException ex) {
-                throw new IllegalArgumentException(ex);
-            }
+            this.identity.bout(number).post(
+                URLDecoder.decode(
+                    body.substring("data=".length()),
+                    CharEncoding.UTF_8
+                )
+            );
             dest = "";
         }
         return dest;
@@ -150,6 +144,7 @@ public final class StageFarmMocker implements IdentityAware {
     /**
      * Get XML of the stage.
      * @param number Bout where it is happening
+     * @param author Who is posting
      * @param stage Name of stage to render
      * @param base Base URI of the stage, e.g.
      *  "http://www.netbout.com/123/urn:test:shary/"
@@ -158,7 +153,8 @@ public final class StageFarmMocker implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("render-stage-resource")
-    public String renderStageResource(final Long number, final Urn stage,
+    public String renderStageResource(final Long number, final Urn author,
+        final Urn stage,
         final URL base, final String path)
         throws Exception {
         String response = null;
