@@ -27,6 +27,7 @@
 package com.netbout.log;
 
 import java.io.IOException;
+import org.apache.log4j.spi.OptionHandler;
 
 /**
  * Feeder of events to the cloud.
@@ -34,7 +35,7 @@ import java.io.IOException;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Feeder {
+public interface Feeder extends OptionHandler {
 
     /**
      * Send this text to the cloud right now (wait as much as necessary).

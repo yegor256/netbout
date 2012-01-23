@@ -29,7 +29,6 @@ package com.netbout.log;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -83,7 +82,7 @@ public final class LogglyFeeder implements Feeder {
         }
         conn.setRequestProperty(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN);
         IOUtils.write(
-            URLEncoder.encode(text, CharEncoding.UTF_8),
+            text,
             conn.getOutputStream(),
             CharEncoding.UTF_8
         );
@@ -96,6 +95,14 @@ public final class LogglyFeeder implements Feeder {
                 )
             );
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void activateOptions() {
+        // empty
     }
 
 }
