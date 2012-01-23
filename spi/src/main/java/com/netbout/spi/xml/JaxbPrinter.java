@@ -65,7 +65,7 @@ public final class JaxbPrinter {
      * @return The document
      */
     public String print() {
-        return new DomPrinter(JaxbPrinter.marshall(this.object)).print();
+        return this.print("");
     }
 
     /**
@@ -79,12 +79,14 @@ public final class JaxbPrinter {
         final Urn required = Urn.create(
             String.format("%s%s", namespace, suffix)
         );
-        DomParser.rename(
-            dom,
-            dom.getDocumentElement(),
-            namespace,
-            required
-        );
+        if (!namespace.equals(required)) {
+            DomParser.rename(
+                dom,
+                dom.getDocumentElement(),
+                namespace,
+                required
+            );
+        }
         final SchemaLocation schema = (SchemaLocation) this.object.getClass()
             .getAnnotation(SchemaLocation.class);
         URL location;
