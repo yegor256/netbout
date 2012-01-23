@@ -263,6 +263,8 @@ public final class BoutRs extends AbstractRs {
             bout.invite(this.identity().friend(name));
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new ForwardException(this, this.self(""), ex);
+        } catch (com.netbout.spi.DuplicateInvitationException ex) {
+            throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
             .build(AbstractPage.class)
