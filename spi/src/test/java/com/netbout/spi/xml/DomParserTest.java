@@ -29,8 +29,11 @@
  */
 package com.netbout.spi.xml;
 
+import com.netbout.spi.Urn;
+import com.rexsl.test.ContainerMocker;
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
+import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -58,7 +61,7 @@ public final class DomParserTest {
     }
 
     /**
-     * Jaxb can detect namespace.
+     * DomParser can detect namespaces.
      * @throws Exception If some problem inside
      */
     @Test
@@ -70,6 +73,65 @@ public final class DomParserTest {
             parser.parse().getDocumentElement().getNamespaceURI(),
             Matchers.equalTo("foo")
         );
+    }
+
+    /**
+     * DomParser can detect namespace in {@code belongsTo()} call.
+     * @throws Exception If some problem inside
+     */
+    @Test
+    public void detectsNamespaceWIthBelongsToMethod() throws Exception {
+        MatcherAssert.assertThat(
+            "this XML document belongs to the namespace mentioned",
+            new DomParser("<foo:x xmlns:foo='urn:test:foo'/>").belongsTo(
+                new Urn("urn:test:foo")
+            )
+        );
+    }
+
+    /**
+     * DomParser can validate a document against its schema.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void validatesCorrectDocument() throws Exception {
+        final String schema =
+            // @checkstyle StringLiteralsConcatenation (10 lines)
+            "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'"
+            + " xmlns:p='foo' targetNamespace='foo'"
+            + " elementFormDefault='qualified'>"
+            + "<xs:element name='root' type='p:main'/>"
+            + "<xs:complexType name='main'>"
+            + "<xs:sequence>"
+            + "<xs:element name='alpha' type='xs:string' />"
+            + "</xs:sequence>"
+            + "</xs:complexType>"
+            + "</xs:schema>";
+        final URL xsd = new URL(
+            new ContainerMocker()
+                .expectMethod(Matchers.equalTo("GET"))
+                .returnBody(schema)
+                .returnHeader("Content-Type", "application/xml")
+                .mock()
+                .home()
+                .toURL()
+                .toString()
+        );
+        // @checkstyle StringLiteralsConcatenation (4 lines)
+        final String xml = "<root xmlns='foo'"
+            + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
+            + String.format(" xsi:schemaLocation='foo %s'", xsd)
+            + "><alpha>xxx</alpha></root>";
+        new DomParser(xml).validate();
+    }
+
+    /**
+     * DomParser throws exception for invalid document.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = DomValidationException.class)
+    public void validatesIncorrectDocument() throws Exception {
+        new DomParser("<some-document/>").validate();
     }
 
 }

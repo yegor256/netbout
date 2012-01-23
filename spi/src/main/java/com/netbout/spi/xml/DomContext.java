@@ -29,37 +29,42 @@
  */
 package com.netbout.spi.xml;
 
-import com.rexsl.test.XhtmlConverter;
-import com.rexsl.test.XhtmlMatchers;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.util.Iterator;
+import javax.xml.namespace.NamespaceContext;
 
 /**
- * Test case for {@link DomPrinter}.
+ * DOM namespace context.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DomPrinterTest {
+final class DomContext implements NamespaceContext {
 
     /**
-     * DomPrinter can print DOM tree.
-     * @throws Exception If some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void printsDomTreeAsXmlDocument() throws Exception {
-        final Document dom = DomParser.factory()
-            .newDocumentBuilder()
-            .newDocument();
-        final Element root = dom.createElement("test");
-        dom.appendChild(root);
-        root.appendChild(dom.createTextNode("works"));
-        final DomPrinter printer = new DomPrinter(dom);
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(printer.print()),
-            XhtmlMatchers.hasXPath("/test[.='works']")
-        );
+    @Override
+    public String getNamespaceURI(final String prefix) {
+        if ("xsi".equals(prefix)) {
+            return "http://www.w3.org/2001/XMLSchema-instance";
+        }
+        throw new IllegalArgumentException(prefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getPrefix(final String uri) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator getPrefixes(final String uri) {
+        throw new UnsupportedOperationException();
     }
 
 }

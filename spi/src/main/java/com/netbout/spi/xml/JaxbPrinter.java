@@ -84,7 +84,7 @@ public final class JaxbPrinter {
                 DomParser.rename(
                     dom,
                     dom.getDocumentElement(),
-                    namespace,
+                    namespace.toString(),
                     required
                 );
             }
@@ -132,7 +132,7 @@ public final class JaxbPrinter {
         }
         Document dom;
         try {
-            dom = DomParser.FACTORY.newDocumentBuilder().newDocument();
+            dom = DomParser.factory().newDocumentBuilder().newDocument();
         } catch (javax.xml.parsers.ParserConfigurationException ex) {
             throw new IllegalStateException(ex);
         }

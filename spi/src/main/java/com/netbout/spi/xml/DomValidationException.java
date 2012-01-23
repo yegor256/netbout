@@ -29,37 +29,28 @@
  */
 package com.netbout.spi.xml;
 
-import com.rexsl.test.XhtmlConverter;
-import com.rexsl.test.XhtmlMatchers;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 /**
- * Test case for {@link DomPrinter}.
+ * DOM validation failure.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DomPrinterTest {
+public final class DomValidationException extends Exception {
 
     /**
-     * DomPrinter can print DOM tree.
-     * @throws Exception If some problem inside
+     * Public ctor.
+     * @param cause The cause
      */
-    @Test
-    public void printsDomTreeAsXmlDocument() throws Exception {
-        final Document dom = DomParser.factory()
-            .newDocumentBuilder()
-            .newDocument();
-        final Element root = dom.createElement("test");
-        dom.appendChild(root);
-        root.appendChild(dom.createTextNode("works"));
-        final DomPrinter printer = new DomPrinter(dom);
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(printer.print()),
-            XhtmlMatchers.hasXPath("/test[.='works']")
-        );
+    public DomValidationException(final String cause) {
+        super(cause);
+    }
+
+    /**
+     * Public ctor.
+     * @param cause The cause
+     */
+    public DomValidationException(final Throwable cause) {
+        super(cause);
     }
 
 }

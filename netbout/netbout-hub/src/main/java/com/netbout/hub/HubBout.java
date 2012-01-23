@@ -35,6 +35,7 @@ import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.MessagePostException;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.xml.DomParser;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -275,17 +276,7 @@ public final class HubBout implements Bout {
                 )
             );
         }
-        try {
-            new DomText(text).validate(this.hub);
-        } catch (com.netbout.hub.predicates.xml.DomValidationException ex) {
-            Logger.warn(
-                this,
-                "#post('%s'): %[exception]s",
-                text,
-                ex
-            );
-            throw new MessagePostException(ex);
-        }
+        this.validate(text);
         final Long duplicate = this.hub.make("pre-post-ignore-duplicate")
             .synchronously()
             .inBout(this)
@@ -376,6 +367,59 @@ public final class HubBout implements Bout {
             }
         }
         return result;
+    }
+
+    /**
+     * Validate incoming text and throw exception if not valid.
+     * @param text The text to validate
+     * @throws MessagePostException If failed to validate
+     */
+    private void validate(final String text) throws MessagePostException {
+        final DomParser parser = new DomParser(text);
+        try {
+            parser.validate();
+        } catch (com.netbout.spi.xml.DomValidationException ex) {
+            Logger.warn(
+                this,
+                "#post('%s'): %[exception]s",
+                text,
+                ex
+            );
+            throw new MessagePostException(ex);
+        }
+        if (parser.isXml()) {
+            final Urn namespace = parser.namespace();
+            URL def;
+            try {
+                def = new URL("http://localhost");
+            } catch (java.net.MalformedURLException ex) {
+                throw new IllegalStateException();
+            }
+            final URL url = hub.make("resolve-xml-namespace")
+                .synchronously()
+                .arg(namespace)
+                .asDefault(def)
+                .exec();
+            if (url.equals(def)) {
+                throw new DomValidationException(
+                    String.format(
+                        "Namespace '%s' is not supported by helpers",
+                        namespace
+                    )
+                );
+            }
+            final URL schema = parser.schemaLocation(namespace);
+            if (!url.equals(schema)) {
+                throw new DomValidationException(
+                    String.format(
+                        "Schema for namespace '%s' should be '%s' (not '%s')",
+                        namespace,
+                        url,
+                        schema
+                    )
+                );
+            }
+        }
     }
 
 }

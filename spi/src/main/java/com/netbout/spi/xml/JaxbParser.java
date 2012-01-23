@@ -64,16 +64,7 @@ public final class JaxbParser {
      * @param <T> Type of input
      */
     public <T> boolean has(final Class<? extends T> type) {
-        boolean has = false;
-        if (this.xml != null && !this.xml.isEmpty()
-            && this.xml.charAt(0) == '<') {
-            final String namespace = new DomParser(this.xml).parse()
-                .getDocumentElement()
-                .getNamespaceURI();
-            has = namespace != null
-                && this.matches(this.namespace(type), Urn.create(namespace));
-        }
-        return has;
+        return new DomParser(this.xml).belongsTo(this.namespace(type));
     }
 
     /**
@@ -119,16 +110,8 @@ public final class JaxbParser {
     private static Document clear(final Document dom, final Class type) {
         final Urn required = JaxbParser.namespace(type);
         if (required != null) {
-            Urn actual;
-            try {
-                actual = new Urn(dom.getDocumentElement().getNamespaceURI());
-            } catch (java.net.URISyntaxException ex) {
-                throw new IllegalArgumentException(
-                    "Invalid format of namespace in incoming document",
-                    ex
-                );
-            }
-            if (!JaxbParser.matches(required, actual)) {
+            final String actual = dom.getDocumentElement().getNamespaceURI();
+            if (!DomParser.matches(required, actual)) {
                 throw new IllegalArgumentException(
                     String.format(
                         "Actual namespace is '%s' while '%s' is required",
@@ -178,22 +161,6 @@ public final class JaxbParser {
             }
         }
         return namespace;
-    }
-
-    /**
-     * Actual namespace matches the canonical one.
-     * @param canonical The namespace as it should be, without a suffix
-     * @param actual The actual namespace
-     * @return Actual is a variation of a canonical one
-     */
-    private static boolean matches(final Urn canonical, final Urn actual) {
-        boolean matches = false;
-        if (canonical != null && actual != null) {
-            matches = actual.toString().matches(
-                String.format("^\\Q%s\\E(\\?.*)?$", canonical.toString())
-            );
-        }
-        return matches;
     }
 
 }

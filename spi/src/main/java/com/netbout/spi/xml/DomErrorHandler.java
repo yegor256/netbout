@@ -29,37 +29,63 @@
  */
 package com.netbout.spi.xml;
 
-import com.rexsl.test.XhtmlConverter;
-import com.rexsl.test.XhtmlMatchers;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXParseException;
 
 /**
- * Test case for {@link DomPrinter}.
+ * Handler of validation errors.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DomPrinterTest {
+final class DomErrorHandler implements ErrorHandler {
 
     /**
-     * DomPrinter can print DOM tree.
-     * @throws Exception If some problem inside
+     * List of exceptions registered.
      */
-    @Test
-    public void printsDomTreeAsXmlDocument() throws Exception {
-        final Document dom = DomParser.factory()
-            .newDocumentBuilder()
-            .newDocument();
-        final Element root = dom.createElement("test");
-        dom.appendChild(root);
-        root.appendChild(dom.createTextNode("works"));
-        final DomPrinter printer = new DomPrinter(dom);
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(printer.print()),
-            XhtmlMatchers.hasXPath("/test[.='works']")
-        );
+    private final transient List<Exception> errors =
+        new CopyOnWriteArrayList<Exception>();
+
+    /**
+     * Is it empty?
+     * @return Is it?
+     */
+    public boolean isEmpty() {
+        return this.errors.isEmpty();
+    }
+
+    /**
+     * All found exceptions.
+     * @return List of them
+     */
+    public List<Exception> exceptions() {
+        return this.errors;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void error(final SAXParseException err) {
+        this.errors.add(err);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void fatalError(final SAXParseException err) {
+        this.errors.add(err);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void warning(final SAXParseException err) {
+        this.errors.add(err);
     }
 
 }
