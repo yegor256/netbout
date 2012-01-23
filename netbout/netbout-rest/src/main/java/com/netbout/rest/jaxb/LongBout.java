@@ -35,7 +35,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
 import java.util.Collection;

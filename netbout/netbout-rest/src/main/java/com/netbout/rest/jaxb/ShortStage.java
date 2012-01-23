@@ -64,8 +64,7 @@ public final class ShortStage {
 
     /**
      * Private ctor.
-     * @param name The identity
-     * @param nickname The alias to show
+     * @param stage The identity
      * @param bldr URI builder
      */
     public ShortStage(final Identity stage, final UriBuilder bldr) {

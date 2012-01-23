@@ -103,13 +103,13 @@ public final class StageRs extends AbstractRs {
             );
         }
         Response resp;
-        if (response.equals("home")) {
+        if ("home".equals(response)) {
             resp = new PageBuilder()
                 .build(AbstractPage.class)
                 .init(this)
                 .authenticated(this.identity())
                 .status(Response.Status.SEE_OTHER)
-                .location(this.base().path("/{num}").build(this.bout.number()))
+                .location(this.base().path("/{bout}").build(this.bout.number()))
                 .build();
         } else if (response.startsWith("through")) {
             resp = new PageBuilder()

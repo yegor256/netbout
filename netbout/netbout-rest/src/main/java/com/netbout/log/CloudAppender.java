@@ -56,7 +56,7 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     /**
      * The thread.
      */
-    private volatile transient Thread thread;
+    private transient volatile Thread thread;
 
     /**
      * Set feeder, option {@code feeder} in config.
