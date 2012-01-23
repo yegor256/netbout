@@ -34,11 +34,14 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import com.woquo.netbout.Jaxb;
+import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -96,31 +99,8 @@ public final class StageFarm implements IdentityAware {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             final Bout bout = this.identity.bout(number);
-            final List<Message> inbox = bout.messages(
-                String.format("(ns '%s')", Slip.NAMESPACE)
-            );
             final Stage data = new Stage();
-            final Map<String, SharedDoc> docs =
-                new HashMap<String, SharedDoc>();
-            final Set<String> stops = new HashSet<String>();
-            for (Message msg : inbox) {
-                final Slip slip = Jaxb.parse(msg.text(), Slip.class);
-                if (!slip.isAllow()) {
-                    stops.add(slip.getName());
-                    continue;
-                }
-                if (stops.contains(slip.getName())) {
-                    continue;
-                }
-                if (docs.containsKey(slip.getName())) {
-                    continue;
-                }
-                docs.put(
-                    slip.getName(),
-                    new SharedDoc(slip.getName(), slip.getType())
-                );
-            }
-            data.add(docs.values());
+            data.add(this.attachLinks(this.documents(bout)));
             xml = Jaxb.format(data);
         }
         return xml;
@@ -151,6 +131,56 @@ public final class StageFarm implements IdentityAware {
     }
 
     /**
+     * Process document requests.
+     * @param number Bout where it is happening
+     * @param author Who is posting
+     * @param stage Name of stage to render
+     * @param base Base URI of the stage, e.g. "http://www.netbout.com/123/s/"
+     * @param path Relative path inside this URI, e.g. "/test.xsd"
+     * @return HTTP response full body
+     * @throws Exception If some problem inside
+     */
+    @Operation("render-stage-resource")
+    public String renderStageResource(final Long number, final Urn author,
+        final Urn stage, final URL base, final String path)
+        throws Exception {
+        String response = null;
+        if (this.identity.name().equals(stage)) {
+            final String[] parts = path.split(":", 2);
+            final Bout bout = this.identity.bout(number);
+            final Collection<SharedDoc> docs = this.documents(bout);
+            SharedDoc found = null;
+            for (SharedDoc doc : docs) {
+                if (doc.getName().equals(parts[1])) {
+                    found = doc;
+                    break;
+                }
+            }
+            if (found == null) {
+                throw new IllegalArgumentException(
+                    String.format("Document '%s' not found", parts[1])
+                );
+            }
+            if ("/load".equals(parts[0])) {
+                response = String.format("through %s", found.getUri());
+            } else if ("/un".equals(parts[0])) {
+                this.identity.bout(number).post(
+                    Jaxb.format(
+                        new Slip(
+                            false,
+                            "",
+                            author.toString(),
+                            found.getName()
+                        )
+                    )
+                );
+                response = "home";
+            }
+        }
+        return response;
+    }
+
+    /**
      * Get XML of the stage.
      * @param number Bout where it is happening
      * @param stage Name of stage to render
@@ -178,6 +208,59 @@ public final class StageFarm implements IdentityAware {
      */
     private Slip parse(final Urn author, final String body) {
         return new Slip(true, "URI", author.toString(), "new document.txt");
+    }
+
+    /**
+     * Attach links to all documents.
+     * @param docs The documents
+     * @return The same array of them
+     */
+    private Collection<SharedDoc> attachLinks(
+        final Collection<SharedDoc> docs) {
+        for (SharedDoc doc : docs) {
+            doc.add(
+                new Link(
+                    "load",
+                    UriBuilder.fromPath("/load:{name}").build(doc.getName())
+                )
+            );
+            doc.add(
+                new Link(
+                    "unshare",
+                    UriBuilder.fromPath("/un:{name}").build(doc.getName())
+                )
+            );
+        }
+        return docs;
+    }
+
+    /**
+     * Load all documents from the bout.
+     * @param bout The bout to work with
+     * @return The list of them
+     */
+    private Collection<SharedDoc> documents(final Bout bout) {
+        final List<Message> inbox = bout.messages(
+            String.format("(ns '%s')", Slip.NAMESPACE)
+        );
+        final Map<String, SharedDoc> docs =
+            new HashMap<String, SharedDoc>();
+        final Set<String> stops = new HashSet<String>();
+        for (Message msg : inbox) {
+            final Slip slip = Jaxb.parse(msg.text(), Slip.class);
+            if (!slip.isAllow()) {
+                stops.add(slip.getName());
+                continue;
+            }
+            if (stops.contains(slip.getName())) {
+                continue;
+            }
+            if (docs.containsKey(slip.getName())) {
+                continue;
+            }
+            docs.put(slip.getName(), new SharedDoc(slip));
+        }
+        return docs.values();
     }
 
 }

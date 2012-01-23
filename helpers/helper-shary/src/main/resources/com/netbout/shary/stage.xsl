@@ -47,18 +47,25 @@
                         <li>
                             <a>
                                 <xsl:attribute name="href">
+                                    <xsl:value-of select="$stage-home-uri"/>
                                     <xsl:value-of select="link[@rel='load']/@href"/>
                                 </xsl:attribute>
-                                <xsl:value-of select="title"/>
+                                <xsl:attribute name="type">
+                                    <xsl:value-of select="type"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="name"/>
                             </a>
-                            <xsl:value-of select="type"/>
+                            <xsl:text> shared by </xsl:text>
                             <xsl:value-of select="author"/>
+                            <xsl:text> (</xsl:text>
                             <a>
                                 <xsl:attribute name="href">
+                                    <xsl:value-of select="$stage-home-uri"/>
                                     <xsl:value-of select="link[@rel='unshare']/@href"/>
                                 </xsl:attribute>
                                 <xsl:text>unshare</xsl:text>
                             </a>
+                            <xsl:text>)</xsl:text>
                         </li>
                     </xsl:for-each>
                 </ul>
@@ -73,8 +80,8 @@
             <xsl:attribute name="action">
                 <xsl:value-of select="$stage-home-uri"/>
             </xsl:attribute>
-            Name: <input name="name" size="20" maxlength="500"/>
-            URI: <input name="uri" size="70" maxlength="500"/>
+            Name: <input name="name" size="22" maxlength="500"/>
+            URI: <input name="uri" size="68" maxlength="500"/>
             <input value="Share it" type="submit"/>
         </form>
     </xsl:template>

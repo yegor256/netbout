@@ -26,91 +26,67 @@
  */
 package com.netbout.shary;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.net.URI;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Shared document.
+ * HATEOAS link.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "doc", namespace = Stage.NAMESPACE)
+@XmlRootElement(name = "link", namespace = Slip.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
-public final class SharedDoc {
+public final class Link {
 
     /**
-     * The slip of it.
+     * Rel name.
      */
-    private final transient Slip slip;
+    private final transient String rel;
 
     /**
-     * Links.
+     * The URI.
      */
-    private final transient Collection<Link> links = new ArrayList<Link>();
+    private final transient URI href;
 
     /**
-     * Public ctor, for JAXB.
+     * Public ctor for JAXB.
      */
-    public SharedDoc() {
-        throw new IllegalStateException("invalid call");
+    public Link() {
+        throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
      * Public ctor.
-     * @param slp The slip of it
+     * @param name The "rel" of it
+     * @param uri The href
      */
-    public SharedDoc(final Slip slp) {
-        this.slip = slp;
+    public Link(final String name, final URI uri) {
+        this.rel = name;
+        this.href = uri;
     }
 
     /**
-     * Get name of the document.
+     * REL of the link.
      * @return The name
      */
-    @XmlElement(name = "name", namespace = Stage.NAMESPACE)
-    public String getName() {
-        return this.slip.getName();
+    @XmlAttribute
+    public String getRel() {
+        return this.rel;
     }
 
     /**
-     * Get media type of document.
-     * @return The type of it
+     * HREF of the link.
+     * @return The url
      */
-    @XmlElement(name = "type", namespace = Stage.NAMESPACE)
-    public String getType() {
-        return this.slip.getType();
-    }
-
-    /**
-     * Get links.
-     * @return The links
-     */
-    @XmlElement(name = "link", namespace = Stage.NAMESPACE)
-    @XmlElementWrapper(name = "links", namespace = Stage.NAMESPACE)
-    public Collection<Link> getLinks() {
-        return this.links;
-    }
-
-    /**
-     * Add new link.
-     * @param link The link to add
-     */
-    public void add(final Link link) {
-        this.links.add(link);
-    }
-
-    /**
-     * Get URI of the document.
-     * @return The URI of it
-     */
-    public String getUri() {
-        return this.slip.getUri();
+    @XmlAttribute
+    public URI getHref() {
+        return this.href;
     }
 
 }

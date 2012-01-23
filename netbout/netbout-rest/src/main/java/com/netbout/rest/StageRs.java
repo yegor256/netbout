@@ -101,7 +101,27 @@ public final class StageRs extends AbstractRs {
                 String.format("resource '%s' not found", path)
             );
         }
-        return StageRs.build(response);
+        Response resp;
+        if (response.equals("home")) {
+            resp = new PageBuilder()
+                .build(AbstractPage.class)
+                .init(this)
+                .authenticated(this.identity())
+                .status(Response.Status.SEE_OTHER)
+                .location(this.base().path("/{num}").build(this.bout.number())
+                .build();
+        } else if (response.startsWith("through")) {
+            resp = new PageBuilder()
+                .build(AbstractPage.class)
+                .init(this)
+                .authenticated(this.identity())
+                .status(Response.Status.SEE_OTHER)
+                .location(response.substring("through ".length()))
+                .build();
+        } else {
+            resp = StageRs.build(response);
+        }
+        return resp;
     }
 
     /**

@@ -48,7 +48,8 @@ public final class StageTest {
     public void marshallsToXml() throws Exception {
         final Stage stage = new Stage();
         final Collection<SharedDoc> docs = new ArrayList<SharedDoc>();
-        docs.add(new SharedDoc("foo", "text/plain"));
+        final Slip slip = new Slip(true, "uri", "author", "name");
+        docs.add(new SharedDoc(slip));
         stage.add(docs);
         final String xml = Jaxb.format(stage);
         MatcherAssert.assertThat(
