@@ -26,7 +26,7 @@
  */
 package com.netbout.shary;
 
-import com.woquo.netbout.Jaxb;
+import com.netbout.spi.xml.JaxbPrinter;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.hamcrest.MatcherAssert;
@@ -51,7 +51,7 @@ public final class StageTest {
         final Slip slip = new Slip(true, "uri", "author", "name");
         docs.add(new SharedDoc(slip));
         stage.add(docs);
-        final String xml = Jaxb.format(stage);
+        final String xml = new JaxbPrinter(stage).print();
         MatcherAssert.assertThat(
             xml,
             Matchers.allOf(

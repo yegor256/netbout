@@ -26,7 +26,7 @@
  */
 package com.netbout.shary;
 
-import com.woquo.netbout.Jaxb;
+import com.netbout.spi.xml.JaxbPrinter;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public final class SlipTest {
     @Test
     public void marshallsToXml() throws Exception {
         final Slip slip = new Slip(true, "uri", "author", "name");
-        final String xml = Jaxb.format(slip);
+        final String xml = new JaxbPrinter(slip).print();
         MatcherAssert.assertThat(
             xml,
             Matchers.allOf(

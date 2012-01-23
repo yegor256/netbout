@@ -26,6 +26,7 @@
  */
 package com.netbout.shary;
 
+import com.netbout.spi.xml.SchemaLocation;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "data", namespace = Stage.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
+@SchemaLocation("http://www.netbout.com/ns/shary/stage")
 public final class Stage {
 
     /**

@@ -33,7 +33,8 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import com.woquo.netbout.Jaxb;
+import com.netbout.spi.xml.JaxbParser;
+import com.netbout.spi.xml.JaxbPrinter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -101,7 +102,7 @@ public final class StageFarm implements IdentityAware {
             final Bout bout = this.identity.bout(number);
             final Stage data = new Stage();
             data.add(this.attachLinks(this.documents(bout)));
-            xml = Jaxb.format(data);
+            xml = new JaxbPrinter(data).print();
         }
         return xml;
     }
@@ -123,7 +124,7 @@ public final class StageFarm implements IdentityAware {
         String dest = null;
         if (this.identity.name().equals(stage)) {
             this.identity.bout(number).post(
-                Jaxb.format(this.parse(author, body))
+                new JaxbPrinter(this.parse(author, body)).print()
             );
             dest = "";
         }
@@ -165,14 +166,14 @@ public final class StageFarm implements IdentityAware {
                 response = String.format("through %s", found.getUri());
             } else if ("/un".equals(parts[0])) {
                 this.identity.bout(number).post(
-                    Jaxb.format(
+                    new JaxbPrinter(
                         new Slip(
                             false,
                             "",
                             author.toString(),
                             found.getName()
                         )
-                    )
+                    ).print()
                 );
                 response = "home";
             }
@@ -247,7 +248,7 @@ public final class StageFarm implements IdentityAware {
             new HashMap<String, SharedDoc>();
         final Set<String> stops = new HashSet<String>();
         for (Message msg : inbox) {
-            final Slip slip = Jaxb.parse(msg.text(), Slip.class);
+            final Slip slip = new JaxbParser(msg.text()).parse(Slip.class);
             if (!slip.isAllow()) {
                 stops.add(slip.getName());
                 continue;

@@ -26,6 +26,7 @@
  */
 package com.netbout.shary;
 
+import com.netbout.spi.xml.SchemaLocation;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -39,6 +40,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "slip", namespace = Slip.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
+@SchemaLocation("http://www.netbout.com/ns/shary/Slip")
 public final class Slip {
 
     /**
