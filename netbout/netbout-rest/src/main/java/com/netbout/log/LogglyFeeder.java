@@ -45,16 +45,20 @@ import org.apache.commons.lang.CharEncoding;
 public final class LogglyFeeder implements Feeder {
 
     /**
-     * The access key.
+     * The URL to post to.
      */
-    private transient String key;
+    private transient URL url;
 
     /**
-     * Set option {@code key}.
-     * @param name The key
+     * Set option {@code url}.
+     * @param addr The URL
      */
-    public void setKey(final String name) {
-        this.key = name;
+    public void setUrl(final String addr) {
+        try {
+            this.url = new URL(addr);
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**
@@ -62,16 +66,26 @@ public final class LogglyFeeder implements Feeder {
      */
     @Override
     public void feed(final String text) throws IOException {
-        URL url;
-        try {
-            url = UriBuilder.fromUri("https://logs.loggly.com/inputs/")
-                .path("/{key}")
-                .build(this.key)
-                .toURL();
-        } catch (java.net.MalformedURLException ex) {
-            throw new IOException(ex);
+        for (String line : text.split("\n")) {
+            this.post(line);
         }
-        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void activateOptions() {
+        // empty
+    }
+
+    /**
+     * POST one line of text.
+     * @param text The text to post
+     */
+    private void post(final String text) throws IOException {
+        final HttpURLConnection conn =
+            (HttpURLConnection) this.url.openConnection();
         conn.setConnectTimeout((int) TimeUnit.MINUTES.toMillis(1L));
         conn.setReadTimeout((int) TimeUnit.MINUTES.toMillis(1L));
         conn.setDoOutput(true);
@@ -95,14 +109,6 @@ public final class LogglyFeeder implements Feeder {
                 )
             );
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void activateOptions() {
-        // empty
     }
 
 }
