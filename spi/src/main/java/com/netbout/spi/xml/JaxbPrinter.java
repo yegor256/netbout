@@ -136,21 +136,17 @@ public final class JaxbPrinter {
         } catch (javax.xml.parsers.ParserConfigurationException ex) {
             throw new IllegalStateException(ex);
         }
-        JaxbParser.namespace(obj.getClass());
+        final Urn namespace = JaxbParser.namespace(obj.getClass());
+        final XmlType annot = (XmlType) obj.getClass()
+            .getAnnotation(XmlType.class);
+        QName qname;
+        if (namespace == null) {
+            qname = new QName("", annot.name());
+        } else {
+            qname = new QName(namespace.toString(), annot.name());
+        }
         try {
-            mrsh.marshal(
-                new JAXBElement(
-                    new QName(
-                        ((XmlType) obj.getClass().getAnnotation(XmlType.class))
-                            .namespace(),
-                        ((XmlType) obj.getClass().getAnnotation(XmlType.class))
-                            .name()
-                    ),
-                    obj.getClass(),
-                    obj
-                ),
-                dom
-            );
+            mrsh.marshal(new JAXBElement(qname, obj.getClass(), obj), dom);
         } catch (javax.xml.bind.JAXBException ex) {
             throw new IllegalArgumentException(ex);
         }
