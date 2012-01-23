@@ -151,7 +151,7 @@ public final class LongMessage {
     public static String formatted(final String text) {
         return text
             .replaceAll(
-                "\\[(.*?)\\]\\((http://[\\w\\-_@/\\+\\.%#!=\\?]+)\\)",
+                "\\[(.*?)\\]\\((http://.*?)\\)",
                 "<a href='$2'>$1</a>"
         )
             .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
