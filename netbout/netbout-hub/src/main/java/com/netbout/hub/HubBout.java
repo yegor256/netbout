@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.hub.predicates.xml.DomText;
 import com.netbout.spi.Bout;
+import com.netbout.spi.DuplicateInvitationException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageNotFoundException;
@@ -148,14 +149,25 @@ public final class HubBout implements Bout {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Participant invite(final Identity friend) {
+    public Participant invite(final Identity friend)
+        throws DuplicateInvitationException {
         if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
             throw new IllegalStateException(
                 String.format(
                     "You '%s' can't invite %s until you join bout #%d",
                     this.viewer,
+                    friend,
+                    this.number()
+                )
+            );
+        }
+        if (NetboutUtils.participatesIn(friend.name(), this)) {
+            throw new DuplicateInvitationException(
+                String.format(
+                    "Identity '%s' has already been invited to bout #%d",
                     friend,
                     this.number()
                 )
