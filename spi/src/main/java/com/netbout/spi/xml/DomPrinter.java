@@ -29,26 +29,12 @@
  */
 package com.netbout.spi.xml;
 
-import com.netbout.spi.Urn;
 import java.io.StringWriter;
-import java.net.URL;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Converts a DOM object to XML.
@@ -57,6 +43,12 @@ import org.w3c.dom.NodeList;
  * @version $Id$
  */
 public final class DomPrinter {
+
+    /**
+     * Transformer factory.
+     */
+    public static final TransformerFactory FACTORY =
+        TransformerFactory.newInstance();
 
     /**
      * The DOM element to work with.
@@ -86,7 +78,7 @@ public final class DomPrinter {
     public String print() {
         final StringWriter writer = new StringWriter();
         try {
-            TransformerFactory.newInstance().newTransformer().transform(
+            this.FACTORY.newTransformer().transform(
                 new DOMSource(this.element),
                 new StreamResult(writer)
             );

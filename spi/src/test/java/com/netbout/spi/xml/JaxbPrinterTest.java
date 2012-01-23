@@ -29,9 +29,6 @@
  */
 package com.netbout.spi.xml;
 
-import com.rexsl.test.XhtmlMatchers;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

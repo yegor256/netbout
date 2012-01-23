@@ -30,23 +30,10 @@
 package com.netbout.spi.xml;
 
 import com.netbout.spi.Urn;
-import java.io.StringWriter;
-import java.net.URL;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -61,7 +48,7 @@ public final class DomParser {
     /**
      * DOM factory.
      */
-    protected static final DocumentBuilderFactory FACTORY =
+    public static final DocumentBuilderFactory FACTORY =
         DocumentBuilderFactory.newInstance();
 
     /**
@@ -86,13 +73,14 @@ public final class DomParser {
 
     /**
      * Parse the text and return an object.
+     * @return The DOM tree object
      */
     public Document parse() {
         Document dom;
         try {
             dom = this.FACTORY
                 .newDocumentBuilder()
-                .parse(IOUtils.toInputStream(xml, CharEncoding.UTF_8));
+                .parse(IOUtils.toInputStream(this.xml, CharEncoding.UTF_8));
         } catch (java.io.IOException ex) {
             throw new IllegalArgumentException(ex);
         } catch (org.xml.sax.SAXException ex) {

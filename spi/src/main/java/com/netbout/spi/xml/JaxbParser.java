@@ -30,25 +30,11 @@
 package com.netbout.spi.xml;
 
 import com.netbout.spi.Urn;
-import java.io.StringWriter;
-import java.net.URL;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Parses text and builds JAXB-annotated object.
@@ -75,6 +61,7 @@ public final class JaxbParser {
      * Do this text has this object?
      * @param type The type I'm expecting
      * @return Do we have this object inside?
+     * @param <T> Type of input
      */
     public <T> boolean has(final Class<? extends T> type) {
         boolean has = false;
@@ -91,7 +78,9 @@ public final class JaxbParser {
 
     /**
      * Parse the text and return an object.
-     * @param type The type I'm expecting
+     * @param type The type expected
+     * @param <T> Type to be returned
+     * @return The object just unmarshalled
      */
     public <T> T parse(final Class<? extends T> type) {
         JAXBContext ctx;
@@ -128,7 +117,7 @@ public final class JaxbParser {
      * @return The same document
      */
     private static Document clear(final Document dom, final Class type) {
-        Urn required = JaxbParser.namespace(type);
+        final Urn required = JaxbParser.namespace(type);
         if (required != null) {
             Urn actual;
             try {

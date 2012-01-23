@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.xml;
 
-import java.net.URI;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

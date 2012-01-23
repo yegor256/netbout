@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
  * @version $Id$
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target(ElementType.TYPE)
 public @interface SchemaLocation {
 
     /**
