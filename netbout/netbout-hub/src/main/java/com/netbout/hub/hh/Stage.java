@@ -24,24 +24,56 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.hub.hh;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import com.netbout.hub.DefaultHub;
+import java.util.Collection;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Hub statistics.
+ * The stage to render with JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface HubStats {
+@XmlType(name = "data")
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlSeeAlso(DefaultHub.class)
+public final class Stage {
 
     /**
-     * Create statistics in the given XML document and return their element.
-     * @param doc The document to work in
-     * @return The element just created
+     * Collection of objects.
      */
-    Element stats(Document doc);
+    private final transient Collection stats;
+
+    /**
+     * Public ctor, for JAXB.
+     */
+    public Stage() {
+        throw new IllegalStateException("illegal call");
+    }
+
+    /**
+     * Public ctor.
+     * @param list The list of them
+     */
+    public Stage(final Collection list) {
+        this.stats = list;
+    }
+
+    /**
+     * Collection of totals.
+     * @return The totals
+     */
+    @XmlElement(name = "stat")
+    @XmlElementWrapper(name = "stats")
+    public Collection getStats() {
+        return this.stats;
+    }
 
 }
