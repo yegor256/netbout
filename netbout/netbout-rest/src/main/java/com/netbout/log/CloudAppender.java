@@ -56,7 +56,7 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     /**
      * The thread.
      */
-    private transient volatile Thread thread;
+    private transient Thread thread;
 
     /**
      * Set feeder, option {@code feeder} in config.
@@ -91,6 +91,7 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.NullAssignment")
     public void close() {
         this.thread = null;
     }
@@ -112,7 +113,12 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     @SuppressWarnings("PMD.SystemPrintln")
     public void run() {
         System.out.println("CloudAppender started to work...");
-        while (this.thread != null) {
+        while (true) {
+            synchronized (this) {
+                if (this.thread == null) {
+                    break;
+                }
+            }
             final String text = this.messages.poll();
             if (text != null) {
                 try {
