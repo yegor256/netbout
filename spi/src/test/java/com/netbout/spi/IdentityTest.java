@@ -54,6 +54,20 @@ public final class IdentityTest {
     }
 
     /**
+     * IdentityMocker can assign an alias to identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void canHaveAnAliasMocked() throws Exception {
+        final String alias = "some alias";
+        final Identity identity = new IdentityMocker().withAlias(alias).mock();
+        MatcherAssert.assertThat(
+            NetboutUtils.aliasOf(identity),
+            Matchers.equalTo(alias)
+        );
+    }
+
+    /**
      * IdentityMocker can assign user to identity.
      * @throws Exception If there is some problem inside
      */

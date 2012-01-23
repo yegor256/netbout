@@ -79,7 +79,6 @@ public final class IdentityMocker {
      */
     public IdentityMocker() {
         this.namedAs(new UrnMocker().mock());
-        this.withAlias("test identity alias set by IdentityMocker");
         this.belongsTo("http://localhost/set-by-IdentityMocker");
         this.withPhoto("http://localhost/set-by-IdentityMocker.png");
         Mockito.doAnswer(
@@ -242,6 +241,9 @@ public final class IdentityMocker {
         if (this.bouts.isEmpty()) {
             final Long num = Math.abs(new Random().nextLong());
             this.withBout(num, new BoutMocker().withNumber(num).mock());
+        }
+        if (this.aliases.isEmpty()) {
+            this.withAlias("test identity alias set by IdentityMocker");
         }
         return this.identity;
     }
