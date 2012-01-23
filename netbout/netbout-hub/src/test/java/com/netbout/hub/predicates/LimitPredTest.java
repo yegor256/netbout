@@ -24,24 +24,38 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.log;
+package com.netbout.hub.predicates;
 
-import java.io.IOException;
-import org.apache.log4j.spi.OptionHandler;
+import com.netbout.hub.Predicate;
+import com.netbout.spi.MessageMocker;
+import java.util.Arrays;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 /**
- * Feeder of events to the cloud.
- *
+ * Test case of {@link LimitPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Feeder extends OptionHandler {
+public final class LimitPredTest {
 
     /**
-     * Send this text to the cloud right now (wait as much as necessary).
-     * @param text The text to send
-     * @throws IOException If failed
+     * LimitPred can match a message with required position.
+     * @throws Exception If there is some problem inside
      */
-    void feed(String text) throws IOException;
+    @Test
+    public void positivelyMatchesMessageAtPosition() throws Exception {
+        final Predicate pred = new LimitPred(
+            Arrays.asList(new Predicate[] {new NumberPred(1L)})
+        );
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+        );
+        MatcherAssert.assertThat(
+            "not matched",
+            !(Boolean) pred.evaluate(new MessageMocker().mock(), 1)
+        );
+    }
 
 }

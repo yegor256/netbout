@@ -32,6 +32,7 @@ package com.netbout.spi;
 import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -47,6 +48,22 @@ public final class NetboutUtils {
      */
     private NetboutUtils() {
         // empty
+    }
+
+    /**
+     * Get alias of identity.
+     * @param identity The identity
+     * @return The alias
+     */
+    public static String aliasOf(final Identity identity) {
+        final Iterator<String> iter = identity.aliases().iterator();
+        String alias;
+        if (iter.hasNext()) {
+            alias = iter.next();
+        } else {
+            alias = identity.name().toString();
+        }
+        return alias;
     }
 
     /**

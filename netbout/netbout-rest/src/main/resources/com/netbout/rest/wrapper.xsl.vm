@@ -5,7 +5,10 @@
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
     <xsl:variable name="stage-home-uri">
-        <xsl:text>${stageHome}</xsl:text>
+        <xsl:text>${boutHome}s/</xsl:text>
+    </xsl:variable>
+    <xsl:variable name="bout-home-uri">
+        <xsl:text>${boutHome}</xsl:text>
     </xsl:variable>
     <xsl:include href="${boutXsl}" />
     <xsl:include href="${stageXsl}" />

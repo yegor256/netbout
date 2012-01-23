@@ -24,45 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.log;
 
-import com.netbout.spi.Identity;
-import java.util.Iterator;
+import com.rexsl.test.ContainerMocker;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Gets alias from identity.
- *
+ * Test case for {@link LogglyFeeder}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasBuilder {
+public final class LogglyFeederTest {
 
     /**
-     * The identity.
+     * LogglyFeeder can send messages to LOGGLY.COM.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Identity identity;
-
-    /**
-     * Private ctor.
-     * @param idnt The identity
-     */
-    public AliasBuilder(final Identity idnt) {
-        this.identity = idnt;
-    }
-
-    /**
-     * Get alias.
-     * @return The alias
-     */
-    public String build() {
-        final Iterator<String> iter = this.identity.aliases().iterator();
-        String alias;
-        if (iter.hasNext()) {
-            alias = iter.next();
-        } else {
-            alias = this.identity.name().toString();
-        }
-        return alias;
+    @Test
+    public void sendsMessagesToCloud() throws Exception {
+        final String message = "hi there!";
+        final ContainerMocker container = new ContainerMocker()
+            .expectMethod(Matchers.equalTo("POST"))
+            // .expectBody(Matchers.equalTo(message))
+            .expectHeader(
+                HttpHeaders.CONTENT_TYPE,
+                Matchers.equalTo(MediaType.TEXT_PLAIN)
+            )
+            .returnBody("posted")
+            .mock();
+        final LogglyFeeder feeder = new LogglyFeeder();
+        feeder.setUrl(container.home().toString());
+        feeder.activateOptions();
+        feeder.feed(message);
     }
 
 }

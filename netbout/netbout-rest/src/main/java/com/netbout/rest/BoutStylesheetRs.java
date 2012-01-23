@@ -95,10 +95,12 @@ public final class BoutStylesheetRs extends AbstractRs {
             )
         );
         context.put(
-            "stageHome",
+            "boutHome",
             TextUtils.ucode(
-                this.base()
-                    .path("/{bout}/s/")
+                this.uriInfo()
+                    .getBaseUriBuilder()
+                    .clone()
+                    .path("/{bout}/")
                     .build(this.bout().number())
             )
         );

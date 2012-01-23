@@ -247,6 +247,7 @@ public final class HubBout implements Bout {
     /**
      * {@inheritDoc}
      * @checkstyle RedundantThrows (4 lines)
+     * @checkstyle ExecutableStatementCount (80 lines)
      */
     @Override
     public Message post(final String text) throws MessagePostException {
@@ -273,27 +274,50 @@ public final class HubBout implements Bout {
             );
             throw new MessagePostException(ex);
         }
-        final MessageDt msg = this.data.addMessage();
-        msg.setDate(new Date());
-        msg.setAuthor(this.viewer.name());
-        msg.setText(text);
-        Logger.debug(
-            this,
-            "#post('%s'): message posted",
-            text
-        );
-        final Message message = new HubMessage(
-            this.hub,
-            this.viewer,
-            this,
-            msg
-        );
-        message.text();
-        this.hub.make("notify-bout-participants")
+        final Long duplicate = this.hub.make("pre-post-ignore-duplicate")
+            .synchronously()
+            .inBout(this)
             .arg(this.number())
-            .arg(message.number())
-            .asDefault(false)
+            .arg(text)
+            .asDefault(0L)
             .exec();
+        Message message;
+        if (duplicate == 0L) {
+            final MessageDt msg = this.data.addMessage();
+            msg.setDate(new Date());
+            msg.setAuthor(this.viewer.name());
+            msg.setText(text);
+            Logger.debug(
+                this,
+                "#post('%s'): message posted",
+                text
+            );
+            message = new HubMessage(
+                this.hub,
+                this.viewer,
+                this,
+                msg
+            );
+            message.text();
+            this.hub.make("notify-bout-participants")
+                .inBout(this)
+                .arg(this.number())
+                .arg(message.number())
+                .asDefault(false)
+                .exec();
+        } else {
+            try {
+                message = this.message(duplicate);
+            } catch (com.netbout.spi.MessageNotFoundException ex) {
+                throw new MessagePostException(
+                    String.format(
+                        "duplicate found at msg #%d, but it's absent",
+                        duplicate
+                    ),
+                    ex
+                );
+            }
+        }
         return message;
     }
 

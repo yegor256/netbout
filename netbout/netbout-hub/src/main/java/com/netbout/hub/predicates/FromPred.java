@@ -24,24 +24,59 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.log;
+package com.netbout.hub.predicates;
 
-import java.io.IOException;
-import org.apache.log4j.spi.OptionHandler;
+import com.netbout.hub.Predicate;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.List;
 
 /**
- * Feeder of events to the cloud.
+ * Show the message if its position is bigger or equal than this one.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Feeder extends OptionHandler {
+public final class FromPred extends AbstractVarargPred {
 
     /**
-     * Send this text to the cloud right now (wait as much as necessary).
-     * @param text The text to send
-     * @throws IOException If failed
+     * How many we already disallowed to go?
      */
-    void feed(String text) throws IOException;
+    private transient int blocked;
+
+    /**
+     * Public ctor.
+     * @param args The arguments
+     */
+    public FromPred(final List<Predicate> args) {
+        super("from", args);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final int from = Integer.valueOf(
+            this.arg(0).evaluate(msg, pos).toString()
+        );
+        boolean matches;
+        synchronized (this) {
+            matches = this.blocked >= from;
+            if (!matches) {
+                this.blocked += 1;
+            }
+        }
+        Logger.debug(
+            this,
+            "#evaluate(.., %d): %d blocked already, 'from' is #%d: %B",
+            pos,
+            msg.number(),
+            this.blocked,
+            from,
+            matches
+        );
+        return matches;
+    }
 
 }

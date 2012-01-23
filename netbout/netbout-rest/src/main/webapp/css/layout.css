@@ -167,5 +167,10 @@ body {
 
     #content p {
         position: relative;
-        font-size: 1.4em;
     }
+
+#plain p,
+#plain ul,
+#plain ol {
+    font-size: 1.4em;
+}

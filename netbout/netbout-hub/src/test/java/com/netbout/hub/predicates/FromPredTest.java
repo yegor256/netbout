@@ -24,56 +24,63 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.auth;
+package com.netbout.hub.predicates;
 
-import com.netbout.rest.ForwardException;
-import com.netbout.rest.Page;
-import com.netbout.rest.ResourceMocker;
-import com.netbout.spi.Urn;
-import com.netbout.utils.Cipher;
-import javax.ws.rs.core.Response;
+import com.netbout.hub.HubMocker;
+import com.netbout.hub.Predicate;
+import com.netbout.hub.PredicateBuilder;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
+import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
 
 /**
- * Test case for {@link NbRs}.
+ * Test case of {@link FromPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NbRsTest {
+public final class FromPredTest {
 
     /**
-     * NbRs can authenticate identity by user name, identity, and secret.
+     * FromPred can match a message with required position.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void authenticatesByNamesAndSecret() throws Exception {
-        final Urn iname = new Urn("netbout", "hh");
-        final NbRs rest = new ResourceMocker().mock(NbRs.class);
-        final String secret = new Cipher().encrypt(iname.toString());
-        final Response response = rest.auth(iname, secret);
+    public void positivelyMatchesMessageAtPosition() throws Exception {
+        final Predicate pred = new FromPred(
+            Arrays.asList(new Predicate[] {new NumberPred(1L)})
+        );
         MatcherAssert.assertThat(
-            ResourceMocker.the((Page) response.getEntity(), rest),
-            Matchers.allOf(
-                XmlMatchers.hasXPath("//identity[alias='hh']"),
-                XmlMatchers.hasXPath("//identity[name='urn:netbout:hh']"),
-                XmlMatchers.hasXPath(
-                    "//identity[authority='http://www.netbout.com/nb']"
-                )
-            )
+            "not matched",
+            !(Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+        );
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(new MessageMocker().mock(), 1)
         );
     }
 
     /**
-     * NbRs can restrict access if secret code is wrong.
+     * FromPred can let us select all messages after certain point.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = ForwardException.class)
-    public void doesntAuthenticateWithIncorrectSecret() throws Exception {
-        final NbRs rest = new ResourceMocker().mock(NbRs.class);
-        rest.auth(Urn.create("urn:foo:name"), "incorrect-secret-code");
+    @Test
+    public void selectsPortionOfMessages() throws Exception {
+        final int total = 10;
+        final int from = 3;
+        final int limit = total - from - 1;
+        final Predicate pred = new PredicateBuilder(new HubMocker().mock())
+            .parse(String.format("(and (from %d) (limit %d))", from, limit));
+        int count = 0;
+        final Message msg = new MessageMocker().mock();
+        for (int pos = 0; pos < total; pos += 1) {
+            if ((Boolean) pred.evaluate(msg, pos)) {
+                count += 1;
+            }
+        }
+        MatcherAssert.assertThat(count, Matchers.equalTo(limit));
     }
 
 }

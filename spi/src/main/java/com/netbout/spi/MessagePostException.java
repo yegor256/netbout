@@ -54,4 +54,13 @@ public final class MessagePostException extends Exception {
         super(cause);
     }
 
+    /**
+     * Public ctor.
+     * @param desc Description of the problem
+     * @param cause The cause of the problem
+     */
+    public MessagePostException(final String desc, final Throwable cause) {
+        super(desc, cause);
+    }
+
 }

@@ -111,8 +111,10 @@ public final class LongStage {
     @XmlAnyElement(lax = true)
     @XmlMixed
     public Element getContent() throws Exception {
-        return DocumentBuilderFactory.newInstance()
-            .newDocumentBuilder()
+        final DocumentBuilderFactory factory =
+            DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        return factory.newDocumentBuilder()
             .parse(new InputSource(new StringReader(this.xml())))
             .getDocumentElement();
     }

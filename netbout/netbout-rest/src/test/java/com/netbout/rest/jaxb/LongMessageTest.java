@@ -86,6 +86,10 @@ public final class LongMessageTest {
                     "a [link](http://foo.com) here",
                     "a <a href='http://foo.com'>link</a> here",
                 },
+                {
+                    "[\u0443\u0440\u0430!](http://a.com/\u0443)",
+                    "<a href='http://a.com/\u0443'>\u0443\u0440\u0430!</a>",
+                },
             }
         );
         for (Map.Entry<String, String> entry : texts.entrySet()) {

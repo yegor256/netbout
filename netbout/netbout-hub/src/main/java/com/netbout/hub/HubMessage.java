@@ -87,6 +87,14 @@ final class HubMessage implements Message {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return String.format("msg#%d", this.number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Bout bout() {
         return this.ibout;
     }

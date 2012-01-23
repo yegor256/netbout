@@ -24,24 +24,59 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.log;
+package com.netbout.hub.predicates;
 
-import java.io.IOException;
-import org.apache.log4j.spi.OptionHandler;
+import com.netbout.hub.Predicate;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.List;
 
 /**
- * Feeder of events to the cloud.
+ * We have this number of elements in the result list, not more.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Feeder extends OptionHandler {
+public final class LimitPred extends AbstractVarargPred {
 
     /**
-     * Send this text to the cloud right now (wait as much as necessary).
-     * @param text The text to send
-     * @throws IOException If failed
+     * How many we already allowed to go?
      */
-    void feed(String text) throws IOException;
+    private transient int passed;
+
+    /**
+     * Public ctor.
+     * @param args The arguments
+     */
+    public LimitPred(final List<Predicate> args) {
+        super("limit", args);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final int limit = Integer.valueOf(
+            this.arg(0).evaluate(msg, pos).toString()
+        );
+        boolean matches;
+        synchronized (this) {
+            matches = this.passed < limit;
+            if (matches) {
+                this.passed += 1;
+            }
+        }
+        Logger.debug(
+            this,
+            "#evaluate(.., %d): %d already passed, limit is #%d: %B",
+            pos,
+            msg.number(),
+            this.passed,
+            limit,
+            matches
+        );
+        return matches;
+    }
 
 }
