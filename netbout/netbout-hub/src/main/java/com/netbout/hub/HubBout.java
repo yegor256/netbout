@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.hub.predicates.xml.DomText;
 import com.netbout.spi.Bout;
 import com.netbout.spi.DuplicateInvitationException;
 import com.netbout.spi.Identity;
@@ -35,8 +34,10 @@ import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.MessagePostException;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
 import com.ymock.util.Logger;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -373,6 +374,7 @@ public final class HubBout implements Bout {
      * Validate incoming text and throw exception if not valid.
      * @param text The text to validate
      * @throws MessagePostException If failed to validate
+     * @checkstyle RedundantThrows (3 lines)
      */
     private void validate(final String text) throws MessagePostException {
         final DomParser parser = new DomParser(text);
@@ -388,29 +390,39 @@ public final class HubBout implements Bout {
             throw new MessagePostException(ex);
         }
         if (parser.isXml()) {
-            final Urn namespace = parser.namespace();
+            Urn namespace;
+            try {
+                namespace = parser.namespace();
+            } catch (com.netbout.spi.xml.DomValidationException ex) {
+                throw new MessagePostException(ex);
+            }
             URL def;
             try {
                 def = new URL("http://localhost");
             } catch (java.net.MalformedURLException ex) {
                 throw new IllegalStateException();
             }
-            final URL url = hub.make("resolve-xml-namespace")
+            final URL url = this.hub.make("resolve-xml-namespace")
                 .synchronously()
                 .arg(namespace)
                 .asDefault(def)
                 .exec();
             if (url.equals(def)) {
-                throw new DomValidationException(
+                throw new MessagePostException(
                     String.format(
                         "Namespace '%s' is not supported by helpers",
                         namespace
                     )
                 );
             }
-            final URL schema = parser.schemaLocation(namespace);
+            URL schema;
+            try {
+                schema = parser.schemaLocation(namespace);
+            } catch (com.netbout.spi.xml.DomValidationException ex) {
+                throw new MessagePostException(ex);
+            }
             if (!url.equals(schema)) {
-                throw new DomValidationException(
+                throw new MessagePostException(
                     String.format(
                         "Schema for namespace '%s' should be '%s' (not '%s')",
                         namespace,

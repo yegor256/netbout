@@ -59,7 +59,7 @@ public final class NsPredTest {
             .returnBody(
                 // @checkstyle StringLiteralsConcatenation (3 lines)
                 "<schema xmlns='http://www.w3.org/2001/XMLSchema'"
-                + " xmlns:foo='foo' targetNamespace='foo'>"
+                + " xmlns:foo='urn:test:foo' targetNamespace='urn:test:foo'>"
                 + "<element name='root'/></schema>"
             )
             .returnHeader("Content-Type", "application/xml")
@@ -78,7 +78,7 @@ public final class NsPredTest {
         final Predicate pred = new NsPred(
             Arrays.asList(
                 new Predicate[] {
-                    new PredicateMocker().doReturn("foo").mock(),
+                    new PredicateMocker().doReturn("urn:test:foo").mock(),
                 }
             )
         );
@@ -86,10 +86,13 @@ public final class NsPredTest {
             "matched",
             (Boolean) pred.evaluate(
                 new MessageMocker().withText(
-                    // @checkstyle StringLiteralsConcatenation (4 lines)
-                    "<root xmlns='foo'"
+                    // @checkstyle StringLiteralsConcatenation (7 lines)
+                    "<root xmlns='urn:test:foo'"
                     + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
-                    + String.format(" xsi:schemaLocation='foo %s'", this.xsd)
+                    + String.format(
+                        " xsi:schemaLocation='urn:test:foo %s'",
+                        this.xsd
+                    )
                     + "/>"
                 ).mock(),
                 0
@@ -106,7 +109,7 @@ public final class NsPredTest {
         final Predicate pred = new NsPred(
             Arrays.asList(
                 new Predicate[] {
-                    new PredicateMocker().doReturn("some-namespace").mock(),
+                    new PredicateMocker().doReturn("urn:test:different").mock(),
                 }
             )
         );
