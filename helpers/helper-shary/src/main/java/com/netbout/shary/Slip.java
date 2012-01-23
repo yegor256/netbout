@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "slip", namespace = Slip.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
-@SchemaLocation("http://www.netbout.com/ns/shary/Slip")
+@SchemaLocation("http://www.netbout.com/ns/shary/Slip.xsd")
 public final class Slip {
 
     /**

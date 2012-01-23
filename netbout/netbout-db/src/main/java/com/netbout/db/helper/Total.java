@@ -24,93 +24,67 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.shary;
+package com.netbout.db.helper;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
- * Shared document.
+ * One total summary in stage.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "doc")
+@XmlType(name = "total")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class SharedDoc {
+public final class Total {
 
     /**
-     * The slip of it.
+     * The name.
      */
-    private final transient Slip slip;
+    private final transient String table;
 
     /**
-     * Links.
+     * The name.
      */
-    private final transient Collection<Link> links = new ArrayList<Link>();
+    private final transient Long count;
 
     /**
      * Public ctor, for JAXB.
      */
-    public SharedDoc() {
-        throw new IllegalStateException("invalid call");
+    public Total() {
+        throw new IllegalArgumentException("illegal call");
     }
 
     /**
-     * Public ctor.
-     * @param slp The slip of it
+     * Public ctor, for JAXB.
+     * @param tbl Name of table
+     * @param cnt Count of rows in it
      */
-    public SharedDoc(final Slip slp) {
-        this.slip = slp;
+    public Total(final String tbl, final Long cnt) {
+        this.table = tbl;
+        this.count = cnt;
     }
 
     /**
-     * Get name of the document.
-     * @return The name
+     * Get name of table.
+     * @return The name of it
      */
-    @XmlElement(name = "name")
-    public String getName() {
-        return this.slip.getName();
+    @XmlAttribute
+    public String getTable() {
+        return this.table;
     }
 
     /**
-     * Get media type of document.
-     * @return The type of it
+     * Get count.
+     * @return The count
      */
-    @XmlElement(name = "type")
-    public String getType() {
-        return this.slip.getType();
-    }
-
-    /**
-     * Get links.
-     * @return The links
-     */
-    @XmlElement(name = "link")
-    @XmlElementWrapper(name = "links")
-    public Collection<Link> getLinks() {
-        return this.links;
-    }
-
-    /**
-     * Add new link.
-     * @param link The link to add
-     */
-    public void add(final Link link) {
-        this.links.add(link);
-    }
-
-    /**
-     * Get URI of the document.
-     * @return The URI of it
-     */
-    public String getUri() {
-        return this.slip.getUri();
+    @XmlValue
+    public Long getCount() {
+        return this.count;
     }
 
 }

@@ -24,13 +24,14 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.db;
+package com.netbout.db.helper;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
+import com.netbout.spi.xml.JaxbPrinter;
 import com.ymock.util.Logger;
 import java.io.StringWriter;
 import java.sql.Connection;
@@ -69,11 +70,6 @@ public final class StatsFarm implements IdentityAware {
     @Override
     public void init(final Identity idnt) {
         this.identity = idnt;
-        Logger.debug(
-            this,
-            "#init('%s'): injected",
-            this.identity.name()
-        );
     }
 
     /**
@@ -88,13 +84,6 @@ public final class StatsFarm implements IdentityAware {
         if (this.identity.name().equals(stage)) {
             exists = Boolean.TRUE;
         }
-        Logger.debug(
-            this,
-            "#doesStageExist(#%d, '%s'): %B returned",
-            number,
-            stage,
-            exists
-        );
         return exists;
     }
 
@@ -111,31 +100,7 @@ public final class StatsFarm implements IdentityAware {
         final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
-            final Document doc = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder().newDocument();
-            final Element root = doc.createElement("data");
-            doc.appendChild(root);
-            final Element totals = doc.createElement("totals");
-            root.appendChild(totals);
-            for (Map.Entry<String, String> entry : this.totals().entrySet()) {
-                final Element total = doc.createElement("total");
-                total.setAttribute("table", entry.getKey());
-                total.appendChild(doc.createTextNode(entry.getValue()));
-                totals.appendChild(total);
-            }
-            final Transformer transformer = TransformerFactory.newInstance()
-                .newTransformer();
-            final StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(doc), new StreamResult(writer));
-            xml = writer.toString();
-            Logger.debug(
-                this,
-                "#renderStageXml(#%d, '%s', '%s'): %d chars delivered",
-                number,
-                stage,
-                place,
-                xml.length()
-            );
+            xml = new JaxbPrinter(new Stage()).print();
         }
         return xml;
     }
@@ -156,76 +121,8 @@ public final class StatsFarm implements IdentityAware {
                 this.getClass().getResourceAsStream("stage.xsl"),
                 CharEncoding.UTF_8
             );
-            Logger.debug(
-                this,
-                "#renderStageXsl('%s'): %d chars delivered",
-                stage,
-                xsl.length()
-            );
         }
         return xsl;
-    }
-
-    /**
-     * Build a collection of totals.
-     * @return The totals
-     * @throws SQLException If some SQL problem inside
-     */
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
-    private Map<String, String> totals() throws SQLException {
-        final Map<String, String> totals =
-            new ConcurrentHashMap<String, String>();
-        final String[] tables = new String[] {
-            "identity",
-            "bout",
-            "message",
-            "helper",
-            "alias",
-            "participant",
-        };
-        for (String table : tables) {
-            totals.put(
-                table,
-                this.query(String.format("SELECT COUNT(*) FROM %s", table))
-            );
-        }
-        return totals;
-    }
-
-    /**
-     * Build text summary.
-     * @param sql SQL query with single expected result
-     * @return The result
-     * @throws SQLException If some SQL problem inside
-     */
-    private String query(final String sql) throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        String result;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(sql);
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (!rset.next()) {
-                    throw new IllegalArgumentException(
-                        String.format("Nothing for %s", sql)
-                    );
-                }
-                result = rset.getString(1);
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#query('%s'): retrieved %s [%dms]",
-            sql,
-            result,
-            System.currentTimeMillis() - start
-        );
-        return result;
     }
 
 }

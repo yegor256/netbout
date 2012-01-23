@@ -133,11 +133,13 @@ public final class JaxbPrinter {
         } catch (javax.xml.parsers.ParserConfigurationException ex) {
             throw new IllegalStateException(ex);
         }
+        JaxbParser.namespace(obj.getClass());
         try {
             mrsh.marshal(
                 new JAXBElement(
                     new QName(
-                        JaxbParser.namespace(obj.getClass()).toString(),
+                        ((XmlType) obj.getClass().getAnnotation(XmlType.class))
+                            .namespace(),
                         ((XmlType) obj.getClass().getAnnotation(XmlType.class))
                             .name()
                     ),

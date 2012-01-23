@@ -40,7 +40,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Database {
+public final class Database {
 
     /**
      * Singleton instance, lazy loaded in {@link #connection()}.

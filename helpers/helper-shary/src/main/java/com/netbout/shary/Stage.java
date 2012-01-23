@@ -41,15 +41,9 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "data", namespace = Stage.NAMESPACE)
+@XmlType(name = "data")
 @XmlAccessorType(XmlAccessType.NONE)
-@SchemaLocation("http://www.netbout.com/ns/shary/stage")
 public final class Stage {
-
-    /**
-     * Namespace.
-     */
-    public static final String NAMESPACE = "urn:netbout:ns:shary/stage";
 
     /**
      * List of documents in it.
@@ -61,8 +55,8 @@ public final class Stage {
      * Get list of docs (for JAXB).
      * @return The list of them
      */
-    @XmlElement(name = "doc", namespace = Stage.NAMESPACE)
-    @XmlElementWrapper(name = "docs", namespace = Stage.NAMESPACE)
+    @XmlElement(name = "doc")
+    @XmlElementWrapper(name = "docs")
     public Collection<SharedDoc> getDocs() {
         return this.docs;
     }
