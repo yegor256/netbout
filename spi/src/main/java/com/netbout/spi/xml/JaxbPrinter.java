@@ -75,15 +75,14 @@ public final class JaxbPrinter {
      */
     public String print(final String suffix) {
         final Document dom = JaxbPrinter.marshall(this.object);
-        final XmlType annot =
-            (XmlType) this.object.getClass().getAnnotation(XmlType.class);
+        final Urn namespace = JaxbParser.namespace(this.object.getClass());
         final Urn required = Urn.create(
-            String.format("%s%s", annot.namespace(), suffix)
+            String.format("%s%s", namespace, suffix)
         );
         DomParser.rename(
             dom,
             dom.getDocumentElement(),
-            Urn.create(annot.namespace()),
+            namespace,
             required
         );
         final SchemaLocation schema = (SchemaLocation) this.object.getClass()
@@ -126,15 +125,6 @@ public final class JaxbPrinter {
         } catch (javax.xml.bind.JAXBException ex) {
             throw new IllegalStateException(ex);
         }
-        final XmlType annot = obj.getClass().getAnnotation(XmlType.class);
-        if (annot == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Object of type '%s' is not @XmlType annotated entity",
-                    obj.getClass().getName()
-                )
-            );
-        }
         Document dom;
         try {
             dom = DomParser.FACTORY.newDocumentBuilder().newDocument();
@@ -144,7 +134,11 @@ public final class JaxbPrinter {
         try {
             mrsh.marshal(
                 new JAXBElement(
-                    new QName(annot.namespace(), annot.name()),
+                    new QName(
+                        JaxbParser.namespace(obj.getClass()).toString(),
+                        ((XmlType) obj.getClass().getAnnotation(XmlType.class))
+                            .name()
+                    ),
                     obj.getClass(),
                     obj
                 ),

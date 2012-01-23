@@ -79,14 +79,15 @@ public final class Slip {
      * Public ctor.
      * @param flag Allow of disallow?
      * @param addr The address of the document
-     * @param name The author
+     * @param who The author
      * @param title The title of the document
+     * @checkstyle ParameterNumber (3 lines)
      */
     public Slip(final boolean flag, final String addr, final String who,
         final String title) {
         this.allow = flag;
         this.uri = addr;
-        this.author = name;
+        this.author = who;
         this.name = title;
     }
 

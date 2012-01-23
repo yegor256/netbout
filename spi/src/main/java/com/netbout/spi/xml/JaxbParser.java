@@ -152,7 +152,8 @@ public final class JaxbParser {
      * @param type The type to get annotation from
      * @return The namespace of it
      */
-    private static Urn namespace(final Class type) {
+    @SuppressWarnings("PMD.DefaultPackage")
+    static Urn namespace(final Class type) {
         final XmlType annot = (XmlType) type.getAnnotation(XmlType.class);
         if (annot == null) {
             throw new IllegalArgumentException(

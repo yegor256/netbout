@@ -34,6 +34,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -108,7 +109,7 @@ public final class StageRs extends AbstractRs {
                 .init(this)
                 .authenticated(this.identity())
                 .status(Response.Status.SEE_OTHER)
-                .location(this.base().path("/{num}").build(this.bout.number())
+                .location(this.base().path("/{num}").build(this.bout.number()))
                 .build();
         } else if (response.startsWith("through")) {
             resp = new PageBuilder()
@@ -116,7 +117,10 @@ public final class StageRs extends AbstractRs {
                 .init(this)
                 .authenticated(this.identity())
                 .status(Response.Status.SEE_OTHER)
-                .location(response.substring("through ".length()))
+                .location(
+                    UriBuilder.fromUri(response.substring("through ".length()))
+                        .build()
+                )
                 .build();
         } else {
             resp = StageRs.build(response);

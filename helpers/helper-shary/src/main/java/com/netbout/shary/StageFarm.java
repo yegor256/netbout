@@ -51,6 +51,7 @@ import org.apache.commons.lang.CharEncoding;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Farm
 public final class StageFarm implements IdentityAware {
@@ -116,6 +117,7 @@ public final class StageFarm implements IdentityAware {
      * @param body Body of POST request
      * @return New place in this stage
      * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (5 lines)
      */
     @Operation("stage-post-request")
     public String stagePostRequest(final Long number, final Urn author,
@@ -140,6 +142,7 @@ public final class StageFarm implements IdentityAware {
      * @param path Relative path inside this URI, e.g. "/test.xsd"
      * @return HTTP response full body
      * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (5 lines)
      */
     @Operation("render-stage-resource")
     public String renderStageResource(final Long number, final Urn author,
