@@ -27,6 +27,8 @@
 package com.netbout.shary;
 
 import com.netbout.spi.xml.JaxbPrinter;
+import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.hamcrest.MatcherAssert;
@@ -53,10 +55,9 @@ public final class StageTest {
         stage.add(docs);
         final String xml = new JaxbPrinter(stage).print();
         MatcherAssert.assertThat(
-            xml,
+            XhtmlConverter.the(xml),
             Matchers.allOf(
-                Matchers.containsString(Stage.NAMESPACE),
-                Matchers.containsString("<docs")
+                XhtmlMatchers.hasXPath("/data/docs/doc[name='name']")
             )
         );
     }

@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlRootElement(name = "link", namespace = Slip.NAMESPACE)
+@XmlRootElement(name = "link")
 @XmlAccessorType(XmlAccessType.NONE)
 public final class Link {
 

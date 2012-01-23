@@ -54,6 +54,9 @@ import org.apache.commons.lang.CharEncoding;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Farm
+@SuppressWarnings({
+    "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap"
+})
 public final class StageFarm implements IdentityAware {
 
     /**
@@ -93,9 +96,6 @@ public final class StageFarm implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("render-stage-xml")
-    @SuppressWarnings({
-        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap"
-    })
     public String renderStageXml(final Long number, final Urn stage,
         final String place) throws Exception {
         String xml = null;
@@ -211,6 +211,7 @@ public final class StageFarm implements IdentityAware {
      * @return The slip
      */
     private Slip parse(final Urn author, final String body) {
+        assert body != null;
         return new Slip(true, "URI", author.toString(), "new document.txt");
     }
 

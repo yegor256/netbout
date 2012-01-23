@@ -26,7 +26,6 @@
  */
 package com.netbout.shary;
 
-import com.netbout.spi.xml.SchemaLocation;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
