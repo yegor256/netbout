@@ -59,6 +59,13 @@
                 </li>
             </xsl:for-each>
         </ul>
+        <form method="post">
+            <xsl:attribute name="action">
+                <xsl:value-of select="$stage-home-uri"/>
+            </xsl:attribute>
+            <input name="uri" size="40" maxlength="500"/>
+            <input value="Share" type="submit"/>
+        </form>
     </xsl:template>
 
 </xsl:stylesheet>

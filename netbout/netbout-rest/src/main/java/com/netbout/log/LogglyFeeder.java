@@ -32,7 +32,6 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -82,6 +81,7 @@ public final class LogglyFeeder implements Feeder {
     /**
      * POST one line of text.
      * @param text The text to post
+     * @throws IOException If failed to post
      */
     private void post(final String text) throws IOException {
         final HttpURLConnection conn =
@@ -105,7 +105,7 @@ public final class LogglyFeeder implements Feeder {
                 String.format(
                     "Invalid response code #%d from %s",
                     conn.getResponseCode(),
-                    url
+                    this.url
                 )
             );
         }
