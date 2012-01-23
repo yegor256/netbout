@@ -33,6 +33,7 @@ import com.netbout.spi.Urn;
 import com.netbout.utils.Cipher;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.xmlmatchers.XmlMatchers;
 
@@ -50,18 +51,16 @@ public final class NbRsTest {
     @Test
     public void authenticatesByNamesAndSecret() throws Exception {
         final Urn iname = new Urn("netbout", "hh");
-        final String uname = "http://www.netbout.com/nb";
-        final NbRs rest = new ResourceMocker()
-            .mock(NbRs.class);
+        final NbRs rest = new ResourceMocker().mock(NbRs.class);
         final String secret = new Cipher().encrypt(iname.toString());
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
-            XmlMatchers.hasXPath(
-                String.format(
-                    "/page/identity[name='%s' and authority='%s']",
-                    iname,
-                    uname
+            Matchers.allOf(
+                XmlMatchers.hasXPath("//identity[alias='hh']"),
+                XmlMatchers.hasXPath("//identity[name='urn:netbout:hh']"),
+                XmlMatchers.hasXPath(
+                    "//identity[authority='http://www.netbout.com/nb']"
                 )
             )
         );

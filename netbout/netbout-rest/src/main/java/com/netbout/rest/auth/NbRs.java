@@ -113,8 +113,9 @@ public final class NbRs extends AbstractRs {
         } catch (com.netbout.utils.DecryptionException ex) {
             throw new LoginRequiredException(this, ex);
         }
+        ResolvedIdentity identity;
         try {
-            return new ResolvedIdentity(
+            identity = new ResolvedIdentity(
                 new URL("http://www.netbout.com/nb"),
                 iname,
                 new URL(
@@ -127,6 +128,8 @@ public final class NbRs extends AbstractRs {
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(ex);
         }
+        identity.addAlias(iname.nss());
+        return identity;
     }
 
 }
