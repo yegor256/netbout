@@ -76,36 +76,39 @@ public final class JaxbPrinter {
     public String print(final String suffix) {
         final Document dom = JaxbPrinter.marshall(this.object);
         final Urn namespace = JaxbParser.namespace(this.object.getClass());
-        final Urn required = Urn.create(
-            String.format("%s%s", namespace, suffix)
-        );
-        if (!namespace.equals(required)) {
-            DomParser.rename(
-                dom,
-                dom.getDocumentElement(),
-                namespace,
-                required
+        if (namespace != null) {
+            final Urn required = Urn.create(
+                String.format("%s%s", namespace, suffix)
+            );
+            if (!namespace.equals(required)) {
+                DomParser.rename(
+                    dom,
+                    dom.getDocumentElement(),
+                    namespace,
+                    required
+                );
+            }
+            final SchemaLocation schema = (SchemaLocation) this.object
+                .getClass()
+                .getAnnotation(SchemaLocation.class);
+            URL location;
+            try {
+                location = new URL(schema.value());
+            } catch (java.net.MalformedURLException ex) {
+                throw new IllegalStateException(
+                    Logger.format(
+                        "Invalid URL '%s' for schemaLocation in %[type]s",
+                        schema.value(),
+                        this.object
+                    )
+                );
+            }
+            dom.getDocumentElement().setAttributeNS(
+                "http://www.w3.org/2001/XMLSchema-instance",
+                "xsi:schemaLocation",
+                String.format("%s %s", required, location)
             );
         }
-        final SchemaLocation schema = (SchemaLocation) this.object.getClass()
-            .getAnnotation(SchemaLocation.class);
-        URL location;
-        try {
-            location = new URL(schema.value());
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalStateException(
-                Logger.format(
-                    "Invalid URL '%s' for schemaLocation in %[type]s",
-                    schema.value(),
-                    this.object
-                )
-            );
-        }
-        dom.getDocumentElement().setAttributeNS(
-            "http://www.w3.org/2001/XMLSchema-instance",
-            "xsi:schemaLocation",
-            String.format("%s %s", required, location)
-        );
         return new DomPrinter(dom).print();
     }
 
