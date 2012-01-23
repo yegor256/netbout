@@ -26,64 +26,32 @@
  */
 package com.netbout.shary;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import com.woquo.netbout.Jaxb;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Shared document.
- *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * Test case for {@link Stage}.
+ * @author Yegor Bugayenko (yegor@woquo.com)
  * @version $Id$
  */
-@XmlType(name = "doc", namespace = Stage.NAMESPACE)
-@XmlAccessorType(XmlAccessType.NONE)
-public final class SharedDoc {
+public final class StageTest {
 
     /**
-     * Name of it.
+     * Stage can be converted to XML.
+     * @throws Exception If there is some problem inside
      */
-    private final transient String name;
-
-    /**
-     * Media type of document.
-     */
-    private final transient String type;
-
-    /**
-     * Public ctor, for JAXB.
-     */
-    public SharedDoc() {
-        throw new IllegalStateException("invalid call");
-    }
-
-    /**
-     * Public ctor.
-     * @param nam The name of it
-     * @param tpe The type
-     */
-    public SharedDoc(final String nam, final String tpe) {
-        this.name = nam;
-        this.type = tpe;
-    }
-
-    /**
-     * Get name of the document.
-     * @return The name
-     */
-    @XmlElement(name = "name", namespace = Stage.NAMESPACE)
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Get media type of document.
-     * @return The type of it
-     */
-    @XmlElement(name = "type", namespace = Stage.NAMESPACE)
-    public String getType() {
-        return this.type;
+    @Test
+    public void marshallsToXml() throws Exception {
+        final Stage stage = new Stage();
+        final Collection<SharedDoc> docs = new ArrayList<SharedDoc>();
+        docs.add(new SharedDoc("foo", "text/plain"));
+        stage.add(docs);
+        final String xml = Jaxb.format(stage);
+        MatcherAssert.assertThat(xml, Matchers.containsString("<docs"));
     }
 
 }

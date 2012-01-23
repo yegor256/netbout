@@ -35,8 +35,10 @@ import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import com.woquo.netbout.Jaxb;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -100,12 +102,23 @@ public final class StageFarm implements IdentityAware {
             final Stage data = new Stage();
             final Map<String, SharedDoc> docs =
                 new HashMap<String, SharedDoc>();
+            final Set<String> stops = new HashSet<String>();
             for (Message msg : inbox) {
                 final Slip slip = Jaxb.parse(msg.text(), Slip.class);
-                if (docs.containsKey(slip.getUri())) {
+                if (!slip.isAllow()) {
+                    stops.add(slip.getName());
                     continue;
                 }
-                docs.put(slip.getUri(), new SharedDoc("text/plain"));
+                if (stops.contains(slip.getName())) {
+                    continue;
+                }
+                if (docs.containsKey(slip.getName())) {
+                    continue;
+                }
+                docs.put(
+                    slip.getName(),
+                    new SharedDoc(slip.getName(), slip.getType())
+                );
             }
             data.add(docs.values());
             xml = Jaxb.format(data);

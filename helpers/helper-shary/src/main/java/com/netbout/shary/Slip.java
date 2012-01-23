@@ -52,6 +52,11 @@ public final class Slip {
     private transient boolean allow;
 
     /**
+     * Title of the document.
+     */
+    private transient String name;
+
+    /**
      * URI of the document to share.
      */
     private transient String uri;
@@ -73,11 +78,14 @@ public final class Slip {
      * @param flag Allow of disallow?
      * @param addr The address of the document
      * @param name The author
+     * @param title The title of the document
      */
-    public Slip(final boolean flag, final String addr, final String name) {
+    public Slip(final boolean flag, final String addr, final String who,
+        final String title) {
         this.allow = flag;
         this.uri = addr;
         this.author = name;
+        this.name = title;
     }
 
     /**
@@ -88,15 +96,15 @@ public final class Slip {
         String text;
         if (this.allow) {
             text = String.format(
-                "%s shared a document with us: \"%s\"",
-                this.author,
-                this.title()
+                "%s shared **\"%s\"** document with us.",
+                this.name,
+                this.author
             );
         } else {
             text = String.format(
-                "%s decided not to share a document with us any more: \"%s\"",
-                this.author,
-                this.title()
+                "%s decided not to share \"%s\" with us any more.",
+                this.name,
+                this.author
             );
         }
         return text;
@@ -131,10 +139,19 @@ public final class Slip {
 
     /**
      * Get title of the document to show to everybody.
-     * @return Title of it
+     * @return The name of it (unique in the bout)
      */
-    public String title() {
-        return this.uri;
+    @XmlElement(name = "name", namespace = Slip.NAMESPACE)
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Calculate and return type of document to share.
+     * @return The media type of it
+     */
+    public String getType() {
+        return "text/plain";
     }
 
 }

@@ -53,7 +53,7 @@ public final class StageFarmTest {
     public void rendersStageXml() throws Exception {
         final StageFarm farm = new StageFarm();
         final Urn name = new UrnMocker().mock();
-        final Slip slip = new Slip(true, "s3:...", "John");
+        final Slip slip = new Slip(true, "s3:...", "John", "foo.txt");
         final Bout bout = new BoutMocker()
             .withMessage(Jaxb.format(slip))
             .mock();
