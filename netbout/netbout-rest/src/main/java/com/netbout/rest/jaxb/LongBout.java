@@ -154,7 +154,7 @@ public final class LongBout {
     @XmlElementWrapper(name = "stages")
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
-        for (Urn identity : this.coords.all()) {
+        for (Identity identity : this.coords.all()) {
             stages.add(new ShortStage(identity, this.builder.clone()));
         }
         return stages;

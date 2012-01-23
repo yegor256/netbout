@@ -26,7 +26,8 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.spi.Urn;
+import com.netbout.spi.Identity;
+import com.netbout.spi.NetboutUtils;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -47,7 +48,7 @@ public final class ShortStage {
     /**
      * The name of the identity.
      */
-    private transient Urn identity;
+    private transient Identity identity;
 
     /**
      * URI builder.
@@ -64,10 +65,11 @@ public final class ShortStage {
     /**
      * Private ctor.
      * @param name The identity
+     * @param nickname The alias to show
      * @param bldr URI builder
      */
-    public ShortStage(final Urn name, final UriBuilder bldr) {
-        this.identity = name;
+    public ShortStage(final Identity stage, final UriBuilder bldr) {
+        this.identity = stage;
         this.builder = bldr;
     }
 
@@ -78,9 +80,18 @@ public final class ShortStage {
     @XmlAttribute
     public String getHref() {
         return this.builder
-            .queryParam("stage", this.identity)
+            .queryParam("stage", this.identity.name())
             .build()
             .toString();
+    }
+
+    /**
+     * Alias of the stage.
+     * @return The alias
+     */
+    @XmlAttribute
+    public String getAlias() {
+        return NetboutUtils.aliasOf(this.identity);
     }
 
     /**
@@ -89,7 +100,7 @@ public final class ShortStage {
      */
     @XmlValue
     public String getName() {
-        return this.identity.toString();
+        return this.identity.name().toString();
     }
 
 }
