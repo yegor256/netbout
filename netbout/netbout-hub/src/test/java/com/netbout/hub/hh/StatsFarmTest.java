@@ -55,7 +55,9 @@ public final class StatsFarmTest {
         farm.addStats(new DefaultHub(bus));
         final Identity identity = new IdentityMocker().mock();
         farm.init(identity);
-        final String xml = farm.renderStageXml(1L, identity.name(), "");
+        final String xml = farm.renderStageXml(
+            1L, identity.name(), identity.name(), ""
+        );
         MatcherAssert.assertThat(
             XhtmlConverter.the(xml),
             Matchers.allOf(

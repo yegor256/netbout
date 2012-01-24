@@ -82,6 +82,7 @@ public final class LongStage {
      * @param bot Bout to work with
      * @param crds The coordinates
      * @param vwr The viewer
+     * @checkstyle ParameterNumber (3 lines)
      */
     public LongStage(final Hub ihub, final Bout bot,
         final StageCoordinates crds, final Identity vwr) {
