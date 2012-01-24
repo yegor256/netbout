@@ -91,6 +91,14 @@ public final class JaxbPrinter {
             final SchemaLocation schema = (SchemaLocation) this.object
                 .getClass()
                 .getAnnotation(SchemaLocation.class);
+            if (schema == null) {
+                throw new IllegalStateException(
+                    Logger.format(
+                        "@SchemaLocation annotation is absent at %[type]s",
+                        this.object
+                    )
+                );
+            }
             URL location;
             try {
                 location = new URL(schema.value());
