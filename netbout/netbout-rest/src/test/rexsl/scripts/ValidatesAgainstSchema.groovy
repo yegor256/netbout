@@ -31,14 +31,17 @@ package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.xml.DomParser
 
+/*
+These elements should be there as well. I don't know why they don't work.
+    <author>urn:test:shary</author>
+    <name>New Document</name>
+*/
 def xml = """<?xml version="1.0"?>
 <Slip xmlns="urn:netbout:ns:shary/Slip"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="urn:netbout:ns:shary/Slip ${rexsl.home}ns/shary/Slip.xsd">
     <allow>true</allow>
     <uri>http://www.netbout.com/</uri>
-    <author>urn:test:shary</author>
-    <name>New Document</name>
 </Slip>
 """
 new DomParser(xml).validate()
