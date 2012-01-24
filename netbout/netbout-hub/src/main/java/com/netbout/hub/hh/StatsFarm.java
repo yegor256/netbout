@@ -102,10 +102,11 @@ public final class StatsFarm implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("render-stage-xml")
-    public String renderStageXml(final Long number, final Urn stage,
-        final String place) throws Exception {
+    public String renderStageXml(final Long number, final Urn author,
+        final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
+            assert viewer != null;
             xml = new JaxbPrinter(new Stage(this.STATS)).print();
         }
         return xml;

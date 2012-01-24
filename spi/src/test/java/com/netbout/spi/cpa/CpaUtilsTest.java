@@ -50,6 +50,10 @@ public final class CpaUtilsTest {
             CpaUtils.decodeBody("abc=%20").get("abc"),
             Matchers.equalTo(" ")
         );
+        MatcherAssert.assertThat(
+            CpaUtils.decodeBody("foo=").get("foo"),
+            Matchers.equalTo("")
+        );
     }
 
 }

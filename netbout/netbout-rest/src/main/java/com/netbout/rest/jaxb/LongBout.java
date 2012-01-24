@@ -167,7 +167,12 @@ public final class LongBout {
     public LongStage getStage() {
         LongStage stage = null;
         if (!this.coords.stage().isEmpty()) {
-            stage = new LongStage(this.hub, this.bout, this.coords);
+            stage = new LongStage(
+                this.hub,
+                this.bout,
+                this.coords,
+                this.viewer
+            );
         }
         return stage;
     }

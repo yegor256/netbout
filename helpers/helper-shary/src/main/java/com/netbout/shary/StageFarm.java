@@ -91,19 +91,21 @@ public final class StageFarm implements IdentityAware {
     /**
      * Get XML of the stage.
      * @param number Bout where it is happening
+     * @param author Who is viewing this stage now
      * @param stage Name of stage to render
      * @param place The place in the stage to render
      * @return The XML document
      * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("render-stage-xml")
-    public String renderStageXml(final Long number, final Urn stage,
-        final String place) throws Exception {
+    public String renderStageXml(final Long number, final Urn author,
+        final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             final Bout bout = this.identity.bout(number);
             final Stage data = new Stage();
-            data.add(this.attachLinks(this.documents(bout)));
+            data.add(this.attachLinks(author, this.documents(bout)));
             xml = new JaxbPrinter(data).print();
         }
         return xml;
@@ -243,10 +245,11 @@ public final class StageFarm implements IdentityAware {
 
     /**
      * Attach links to all documents.
+     * @param viewer Who is viewing
      * @param docs The documents
      * @return The same array of them
      */
-    private static Collection<SharedDoc> attachLinks(
+    private Collection<SharedDoc> attachLinks(final Urn viewer,
         final Collection<SharedDoc> docs) {
         for (SharedDoc doc : docs) {
             doc.add(
@@ -255,12 +258,14 @@ public final class StageFarm implements IdentityAware {
                     UriBuilder.fromPath("load:{name}").build(doc.getName())
                 )
             );
-            doc.add(
-                new Link(
-                    "unshare",
-                    UriBuilder.fromPath("un:{name}").build(doc.getName())
-                )
-            );
+            if (doc.getAuthor().equals(viewer.toString())) {
+                doc.add(
+                    new Link(
+                        "unshare",
+                        UriBuilder.fromPath("un:{name}").build(doc.getName())
+                    )
+                );
+            }
         }
         return docs;
     }

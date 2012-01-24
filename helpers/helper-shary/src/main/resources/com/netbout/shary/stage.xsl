@@ -96,15 +96,17 @@
             <br/>
             <xsl:text> shared by </xsl:text>
             <xsl:value-of select="author"/>
-            <xsl:text> (</xsl:text>
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="$stage-home-uri"/>
-                    <xsl:value-of select="links/link[@rel='unshare']/@href"/>
-                </xsl:attribute>
-                <xsl:text>unshare</xsl:text>
-            </a>
-            <xsl:text>)</xsl:text>
+            <xsl:if test="links/link[@rel='unshare']">
+                <xsl:text> (</xsl:text>
+                <a>
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="$stage-home-uri"/>
+                        <xsl:value-of select="links/link[@rel='unshare']/@href"/>
+                    </xsl:attribute>
+                    <xsl:text>unshare</xsl:text>
+                </a>
+                <xsl:text>)</xsl:text>
+            </xsl:if>
         </p>
     </xsl:template>
 

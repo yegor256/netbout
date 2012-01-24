@@ -57,8 +57,14 @@ public final class CpaUtils {
     public static Map<String, String> decodeBody(final String body) {
         final Map<String, String> args = new HashMap<String, String>();
         for (String pair : body.split("&")) {
-            final String[] parts = pair.split("=");
-            args.put(URLDecoder.decode(parts[0]), URLDecoder.decode(parts[1]));
+            final String[] parts = pair.split("=", 2);
+            String value;
+            if (parts.length == 1) {
+                value = "";
+            } else {
+                value = URLDecoder.decode(parts[1]);
+            }
+            args.put(URLDecoder.decode(parts[0]), value);
         }
         return args;
     }

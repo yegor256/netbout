@@ -115,8 +115,8 @@ public final class StageFarmMocker implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("render-stage-xml")
-    public String renderStageXml(final Long number, final Urn stage,
-        final String place) throws Exception {
+    public String renderStageXml(final Long number, final Urn viewer,
+        final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             xml = "<data/>";
