@@ -23,45 +23,22 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.shary;
-
-import com.netbout.spi.xml.JaxbPrinter;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
-/**
- * Test case for {@link Slip}.
- * @author Yegor Bugayenko (yegor@woquo.com)
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class SlipTest {
+package com.netbout.rest.rexsl.scripts
 
-    /**
-     * Stage can be converted to XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void marshallsToXml() throws Exception {
-        final Slip slip = new Slip(true, "uri", "author", "name");
-        final String xml = new JaxbPrinter(slip).print();
-        MatcherAssert.assertThat(
-            xml,
-            Matchers.allOf(
-                Matchers.containsString("<Slip"),
-                Matchers.containsString(Slip.NAMESPACE)
-            )
-        );
-    }
+import com.netbout.spi.xml.DomParser
 
-    /**
-     * Slip can be unmarshalled from XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void unmarshallsFromXml() throws Exception {
-        // todo
-    }
-
-}
+def xml = """<?xml version="1.0"?>
+<Slip xmlns="urn:netbout:ns:shary/Slip"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:netbout:ns:shary/Slip ${rexsl.home}ns/shary/Slip.xsd">
+    <allow>true</allow>
+    <uri>http://www.netbout.com/</uri>
+    <author>urn:test:shary</author>
+    <name>New Document</name>
+</Slip>
+"""
+new DomParser(xml).validate()

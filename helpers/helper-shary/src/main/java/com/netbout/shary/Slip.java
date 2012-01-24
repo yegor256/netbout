@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "slip", namespace = Slip.NAMESPACE)
+@XmlType(name = "Slip", namespace = Slip.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
 @SchemaLocation("http://www.netbout.com/ns/shary/Slip.xsd")
 public final class Slip {
