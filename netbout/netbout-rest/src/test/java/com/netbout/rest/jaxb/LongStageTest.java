@@ -29,6 +29,7 @@ package com.netbout.rest.jaxb;
 import com.netbout.hub.HubMocker;
 import com.netbout.rest.StageCoordinatesMocker;
 import com.netbout.spi.BoutMocker;
+import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
@@ -51,7 +52,8 @@ public final class LongStageTest {
         final LongStage obj = new LongStage(
             new HubMocker().doReturn("<a>foo</a>", "render-stage-xml").mock(),
             new BoutMocker().mock(),
-            new StageCoordinatesMocker().mock()
+            new StageCoordinatesMocker().mock(),
+            new IdentityMocker().mock()
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),

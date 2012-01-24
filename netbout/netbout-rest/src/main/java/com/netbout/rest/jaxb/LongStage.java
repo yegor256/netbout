@@ -29,6 +29,7 @@ package com.netbout.rest.jaxb;
 import com.netbout.hub.Hub;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.xml.DomParser;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -64,6 +65,11 @@ public final class LongStage {
     private transient StageCoordinates coords;
 
     /**
+     * Who is viewing.
+     */
+    private transient Identity viewer;
+
+    /**
      * Public ctor for JAXB.
      */
     public LongStage() {
@@ -75,12 +81,15 @@ public final class LongStage {
      * @param ihub The hub
      * @param bot Bout to work with
      * @param crds The coordinates
+     * @param vwr The viewer
+     * @checkstyle ParameterNumber (3 lines)
      */
     public LongStage(final Hub ihub, final Bout bot,
-        final StageCoordinates crds) {
+        final StageCoordinates crds, final Identity vwr) {
         this.hub = ihub;
         this.bout = bot;
         this.coords = crds;
+        this.viewer = vwr;
     }
 
     /**
@@ -119,6 +128,7 @@ public final class LongStage {
     private String xml() {
         return this.hub.make("render-stage-xml")
             .arg(this.bout.number())
+            .arg(this.viewer.name())
             .arg(this.coords.stage())
             .arg(this.coords.place())
             .noCache()

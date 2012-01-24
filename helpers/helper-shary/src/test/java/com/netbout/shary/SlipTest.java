@@ -26,6 +26,7 @@
  */
 package com.netbout.shary;
 
+import com.netbout.spi.xml.JaxbParser;
 import com.netbout.spi.xml.JaxbPrinter;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -61,7 +62,18 @@ public final class SlipTest {
      */
     @Test
     public void unmarshallsFromXml() throws Exception {
-        // todo
+        final Slip slip = new JaxbParser(
+            String.format(
+                "<Slip xmlns='%s'><allow>true</allow></Slip>",
+                Slip.NAMESPACE
+            )
+        ).parse(Slip.class);
+        MatcherAssert.assertThat(
+            slip,
+            Matchers.allOf(
+                Matchers.hasProperty("allow", Matchers.equalTo(true))
+            )
+        );
     }
 
 }

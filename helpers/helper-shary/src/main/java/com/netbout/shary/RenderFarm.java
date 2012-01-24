@@ -26,7 +26,9 @@
  */
 package com.netbout.shary;
 
+import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import com.netbout.spi.xml.JaxbParser;
 
@@ -37,7 +39,20 @@ import com.netbout.spi.xml.JaxbParser;
  * @version $Id$
  */
 @Farm
-public final class RenderFarm {
+public final class RenderFarm implements IdentityAware {
+
+    /**
+     * Me.
+     */
+    private transient Identity identity;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(final Identity idnt) {
+        this.identity = idnt;
+    }
 
     /**
      * Pre-render message in a bout.
@@ -52,7 +67,7 @@ public final class RenderFarm {
         String result = null;
         final JaxbParser parser = new JaxbParser(text);
         if (parser.has(Slip.class)) {
-            result = parser.parse(Slip.class).render();
+            result = parser.parse(Slip.class).render(this.identity);
         }
         return result;
     }

@@ -30,6 +30,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
+import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -90,22 +91,44 @@ public final class StageFarm implements IdentityAware {
     /**
      * Get XML of the stage.
      * @param number Bout where it is happening
+     * @param author Who is viewing this stage now
      * @param stage Name of stage to render
      * @param place The place in the stage to render
      * @return The XML document
      * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("render-stage-xml")
-    public String renderStageXml(final Long number, final Urn stage,
-        final String place) throws Exception {
+    public String renderStageXml(final Long number, final Urn author,
+        final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             final Bout bout = this.identity.bout(number);
-            final Stage data = new Stage();
-            data.add(this.attachLinks(this.documents(bout)));
+            final Stage data = new Stage(place);
+            data.add(this.attachLinks(author, this.documents(bout)));
             xml = new JaxbPrinter(data).print();
         }
         return xml;
+    }
+
+    /**
+     * Resolve namespace.
+     * @param namespace The namespace
+     * @return Its URL
+     * @throws Exception If some problem inside
+     */
+    @Operation("resolve-xml-namespace")
+    public URL resolveXmlNamespace(final Urn namespace) throws Exception {
+        URL url = null;
+        if (namespace.equals(Urn.create("urn:netbout:ns:shary/Slip"))) {
+            url = new URL(
+                namespace.toString().replaceAll(
+                    "urn:netbout:ns:(.*)",
+                    "http://www.netbout.com/ns/$1.xsd"
+                )
+            );
+        }
+        return url;
     }
 
     /**
@@ -125,10 +148,15 @@ public final class StageFarm implements IdentityAware {
         throws Exception {
         String dest = null;
         if (this.identity.name().equals(stage)) {
-            this.identity.bout(number).post(
-                new JaxbPrinter(this.parse(author, body)).print()
-            );
-            dest = "";
+            final Slip slip = this.slip(author, body);
+            if (slip.getName().isEmpty() || slip.getUri().isEmpty()) {
+                dest = "empty-args";
+            } else if (slip.getUri().matches("^http://.*$")) {
+                dest = "";
+                this.identity.bout(number).post(new JaxbPrinter(slip).print());
+            } else {
+                dest = "illegal-uri";
+            }
         }
         return dest;
     }
@@ -210,31 +238,39 @@ public final class StageFarm implements IdentityAware {
      * @param body The body
      * @return The slip
      */
-    private Slip parse(final Urn author, final String body) {
-        assert body != null;
-        return new Slip(true, "URI", author.toString(), "new document.txt");
+    private static Slip slip(final Urn author, final String body) {
+        final Map<String, String> args = CpaUtils.decodeBody(body);
+        return new Slip(
+            true,
+            args.get("uri"),
+            author.toString(),
+            args.get("name")
+        );
     }
 
     /**
      * Attach links to all documents.
+     * @param viewer Who is viewing
      * @param docs The documents
      * @return The same array of them
      */
-    private Collection<SharedDoc> attachLinks(
+    private Collection<SharedDoc> attachLinks(final Urn viewer,
         final Collection<SharedDoc> docs) {
         for (SharedDoc doc : docs) {
             doc.add(
                 new Link(
                     "load",
-                    UriBuilder.fromPath("/load:{name}").build(doc.getName())
+                    UriBuilder.fromPath("load:{name}").build(doc.getName())
                 )
             );
-            doc.add(
-                new Link(
-                    "unshare",
-                    UriBuilder.fromPath("/un:{name}").build(doc.getName())
-                )
-            );
+            if (doc.getAuthor().equals(viewer.toString())) {
+                doc.add(
+                    new Link(
+                        "unshare",
+                        UriBuilder.fromPath("un:{name}").build(doc.getName())
+                    )
+                );
+            }
         }
         return docs;
     }
@@ -244,7 +280,7 @@ public final class StageFarm implements IdentityAware {
      * @param bout The bout to work with
      * @return The list of them
      */
-    private Collection<SharedDoc> documents(final Bout bout) {
+    private static Collection<SharedDoc> documents(final Bout bout) {
         final List<Message> inbox = bout.messages(
             String.format("(ns '%s')", Slip.NAMESPACE)
         );

@@ -32,6 +32,7 @@ package com.netbout.spi.cpa;
 import com.netbout.spi.PlainBuilder;
 import com.netbout.spi.Token;
 import com.netbout.spi.plain.PlainVoid;
+import com.ymock.util.Logger;
 import java.lang.reflect.Method;
 
 /**
@@ -77,19 +78,30 @@ final class HelpTarget {
      * @param token The token
      */
     public void execute(final Token token) {
+        final Object[] params = this.converted(
+            token,
+            this.method.getParameterTypes()
+        );
         Object result;
         try {
-            result = this.method.invoke(
-                this.farm,
-                this.converted(
-                    token,
-                    this.method.getParameterTypes()
-                )
-            );
+            result = this.method.invoke(this.farm, params);
         } catch (IllegalAccessException ex) {
-            throw new IllegalStateException(ex);
+            throw new IllegalStateException(
+                String.format(
+                    "Failed to access \"%s\"",
+                    this.method.toGenericString()
+                ),
+                ex
+            );
         } catch (java.lang.reflect.InvocationTargetException ex) {
-            throw new IllegalStateException(ex);
+            throw new IllegalStateException(
+                Logger.format(
+                    "Failed to call \"%s\" with %[list]s",
+                    this.method.toGenericString(),
+                    this.typesOf(params)
+                ),
+                ex
+            );
         }
         if (this.method.getReturnType().equals(Void.TYPE)) {
             token.result(new PlainVoid());
@@ -104,12 +116,25 @@ final class HelpTarget {
      * @param types Expected types for every one of them
      * @return Array of properly typed args
      */
-    public Object[] converted(final Token token, final Class[] types) {
+    private static Object[] converted(final Token token, final Class[] types) {
         final Object[] converted = new Object[types.length];
         for (int pos = 0; pos < types.length; pos += 1) {
             converted[pos] = token.arg(pos).value();
         }
         return converted;
+    }
+
+    /**
+     * Extract types of objects into array.
+     * @param objects Objects
+     * @return Array of their types
+     */
+    private static Class[] typesOf(final Object[] objects) {
+        final Class[] types = new Class[objects.length];
+        for (int pos = 0; pos < objects.length; pos += 1) {
+            types[pos] = objects[pos].getClass();
+        }
+        return types;
     }
 
 }

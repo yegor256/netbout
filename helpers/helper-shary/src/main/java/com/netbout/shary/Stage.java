@@ -51,6 +51,35 @@ public final class Stage {
         new ArrayList<SharedDoc>();
 
     /**
+     * The place.
+     */
+    private final transient String place;
+
+    /**
+     * Public ctor, for JAXB.
+     */
+    public Stage() {
+        throw new IllegalStateException("illegal call");
+    }
+
+    /**
+     * Public ctor.
+     * @param txt The place
+     */
+    public Stage(final String txt) {
+        this.place = txt;
+    }
+
+    /**
+     * Get place.
+     * @return The place
+     */
+    @XmlElement(name = "place")
+    public String getPlace() {
+        return this.place;
+    }
+
+    /**
      * Get list of docs (for JAXB).
      * @return The list of them
      */
