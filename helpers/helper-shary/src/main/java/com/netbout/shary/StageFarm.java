@@ -115,11 +115,11 @@ public final class StageFarm implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("resolve-xml-namespace")
-    public URL resolveXmlNamespace(final String namespace) throws Exception {
+    public URL resolveXmlNamespace(final Urn namespace) throws Exception {
         URL url = null;
-        if (namespace.matches("urn:netbout:ns:shary/Slip")) {
+        if (namespace.equals(Urn.create("urn:netbout:ns:shary/Slip"))) {
             url = new URL(
-                namespace.replaceAll(
+                namespace.toString().replaceAll(
                     "urn:netbout:ns:(.*)",
                     "http://www.netbout.com/ns/$1.xsd"
                 )
