@@ -96,6 +96,7 @@ body {
             display: inline-block;
             vertical-align: middle;
             position: relative;
+            font-size: 1.4em;
         }
 
             #search-input {
@@ -166,6 +167,7 @@ body {
         }
 
     #content p,
+    #content form,
     #content ul,
     #content ol {
         position: relative;

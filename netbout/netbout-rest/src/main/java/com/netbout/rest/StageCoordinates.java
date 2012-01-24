@@ -77,11 +77,25 @@ public final class StageCoordinates {
     }
 
     /**
+     * Create and return a new object, which is a copy of this one.
+     * @return New coordinates object
+     */
+    public StageCoordinates copy() {
+        final StageCoordinates coords = new StageCoordinates();
+        coords.stages = new HashSet<Identity>(this.stages);
+        coords.istage = this.istage;
+        coords.iplace = this.iplace;
+        return coords;
+    }
+
+    /**
      * Set stage.
      * @param name The name of it
+     * @return This object
      */
-    public void setStage(final Urn name) {
+    public StageCoordinates setStage(final Urn name) {
         this.istage = name;
+        return this;
     }
 
     /**
@@ -100,9 +114,11 @@ public final class StageCoordinates {
     /**
      * Set stage place.
      * @param place The place name
+     * @return This object
      */
-    public void setPlace(final String place) {
+    public StageCoordinates setPlace(final String place) {
         this.iplace = place;
+        return this;
     }
 
     /**

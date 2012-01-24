@@ -28,6 +28,8 @@ package com.netbout.shary;
 
 import com.netbout.spi.xml.JaxbParser;
 import com.netbout.spi.xml.JaxbPrinter;
+import java.util.Map;
+import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -40,7 +42,7 @@ import org.junit.Test;
 public final class SlipTest {
 
     /**
-     * Stage can be converted to XML.
+     * Slip can be converted to XML.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -74,6 +76,37 @@ public final class SlipTest {
                 Matchers.hasProperty("allow", Matchers.equalTo(true))
             )
         );
+    }
+
+    /**
+     * Slip can understand media type of the URI.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings({
+        "PMD.UseConcurrentHashMap", "PMD.AvoidInstantiatingObjectsInLoops"
+    })
+    public void understandsMediaTypeOfUri() throws Exception {
+        final Map<String, String> types = ArrayUtils.toMap(
+            new String[][] {
+                {"test.pdf", "application/pdf"},
+                {"http://localhost/test.txt", "text/plain"},
+                {"s3:/abc.cde/myfile.zip", "application/x-zip-compressed"},
+                // {"ftp://example.com/data.mp3", "audio/mpeg"},
+                {"http://google.com/image.png", "image/png"},
+                {"http://example.com/test.doc", "application/msword"},
+                {"http://example.com/test.xls", "application/excel"},
+                // { "http://example.com/test.mp4", "video/mp4"},
+                {"http://example.com/test.mpeg", "video/mpeg"},
+                {"http://example.com/test", "application/octet-stream"},
+            }
+        );
+        for (Map.Entry<String, String> entry : types.entrySet()) {
+            MatcherAssert.assertThat(
+                new Slip(true, entry.getKey(), "urn:test:john", "document"),
+                Matchers.hasProperty("type", Matchers.equalTo(entry.getValue()))
+            );
+        }
     }
 
 }

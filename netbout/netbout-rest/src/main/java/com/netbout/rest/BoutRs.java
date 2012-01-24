@@ -179,10 +179,29 @@ public final class BoutRs extends AbstractRs {
      */
     @GET
     public Response front() {
-        return this.page()
-            .authenticated(this.identity())
-            .cookie(this.stageCookie())
-            .build();
+        final Response.ResponseBuilder resp =
+            this.page().authenticated(this.identity());
+        final String place = this.hub().make("post-render-change-place")
+            .inBout(this.bout())
+            .arg(this.bout().number())
+            .arg(this.identity().name())
+            .arg(this.coords.stage())
+            .arg(this.coords.place())
+            .noCache()
+            .asDefault(this.coords.place())
+            .exec();
+        final NewCookie cookie = new NewCookie(
+            "netbout-stage",
+            this.coords.copy().setPlace(place).toString(),
+            this.self("").build().getPath(),
+            this.base().build().getHost(),
+            Integer.valueOf(Manifests.read("Netbout-Revision")),
+            "Netbout.com stage information",
+            // @checkstyle MagicNumber (1 line)
+            60 * 60 * 24 * 90,
+            false
+        );
+        return resp.cookie(cookie).build();
     }
 
     /**
@@ -418,24 +437,6 @@ public final class BoutRs extends AbstractRs {
             // @checkstyle MultipleStringLiterals (1 line)
             .path(String.format("/%d", this.bout().number()))
             .path(path);
-    }
-
-    /**
-     * Create cookie for stage.
-     * @return The cookie
-     */
-    private NewCookie stageCookie() {
-        return new NewCookie(
-            "netbout-stage",
-            this.coords.toString(),
-            this.self("").build().getPath(),
-            this.base().build().getHost(),
-            Integer.valueOf(Manifests.read("Netbout-Revision")),
-            "Netbout.com stage information",
-            // @checkstyle MagicNumber (1 line)
-            60 * 60 * 24 * 90,
-            false
-        );
     }
 
 }

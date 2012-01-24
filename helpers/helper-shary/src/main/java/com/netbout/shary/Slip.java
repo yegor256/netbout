@@ -30,6 +30,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.SchemaLocation;
+import eu.medsea.mimeutil.MimeUtil2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -198,7 +199,13 @@ public final class Slip {
      * @return The media type of it
      */
     public String getType() {
-        return "text/plain";
+        final MimeUtil2 util = new MimeUtil2();
+        util.registerMimeDetector(
+            "eu.medsea.mimeutil.detector.ExtensionMimeDetector"
+        );
+        return util.getMostSpecificMimeType(
+            util.getMimeTypes(this.uri)
+        ).toString();
     }
 
 }

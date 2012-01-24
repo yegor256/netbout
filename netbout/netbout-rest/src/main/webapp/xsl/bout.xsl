@@ -266,7 +266,7 @@
     </xsl:template>
 
     <xsl:template name="stages">
-        <xsl:if test="count(/page/bout/stages/stage) &gt; 0">
+        <xsl:if test="count(/page/bout/stages/stage) &gt; 1">
             <nav>
                 <ul id="titles">
                     <xsl:for-each select="/page/bout/stages/stage">

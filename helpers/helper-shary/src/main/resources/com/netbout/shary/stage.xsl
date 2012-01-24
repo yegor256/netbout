@@ -49,7 +49,7 @@
                         <xsl:for-each select="data/docs/doc[position() mod 4 = 1]">
                             <tr>
                                 <xsl:for-each select=".|following-sibling::doc[position() &lt; 4]">
-                                    <td>
+                                    <td style="vertical-align: top;">
                                         <xsl:apply-templates select="."/>
                                     </td>
                                 </xsl:for-each>
@@ -83,8 +83,29 @@
 
     <xsl:template match="doc">
         <p>
-            <img src="http://img.netbout.com/shary/doc.png"
-                style="width: 2.5em; height: 2.5em;"/>
+            <img style="width: 2.5em; height: 2.5em;">
+                <xsl:attribute name="src">
+                    <xsl:text>http://img.netbout.com/shary/</xsl:text>
+                    <xsl:choose>
+                        <xsl:when test="substring(type, 0, 6) = 'text/'">
+                            <xsl:text>text</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="substring(type, 0, 7) = 'image/'">
+                            <xsl:text>image</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="type = 'application/pdf'">
+                            <xsl:text>pdf</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="type = 'application/x-zip-compressed'">
+                            <xsl:text>zip</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>binary</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:text>.png</xsl:text>
+                </xsl:attribute>
+            </img>
             <br/>
             <a>
                 <xsl:attribute name="href">
@@ -97,8 +118,8 @@
                 <xsl:value-of select="name"/>
             </a>
             <br/>
-            <xsl:text> shared by </xsl:text>
-            <xsl:value-of select="author"/>
+            <xsl:text> by </xsl:text>
+            <xsl:value-of select="alias"/>
             <xsl:if test="links/link[@rel='unshare']">
                 <xsl:text> (</xsl:text>
                 <a>
@@ -106,7 +127,7 @@
                         <xsl:value-of select="$stage-home-uri"/>
                         <xsl:value-of select="links/link[@rel='unshare']/@href"/>
                     </xsl:attribute>
-                    <xsl:text>unshare</xsl:text>
+                    <xsl:text>delete</xsl:text>
                 </a>
                 <xsl:text>)</xsl:text>
             </xsl:if>
