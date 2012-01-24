@@ -154,8 +154,7 @@ public final class StageFarmMocker implements IdentityAware {
      */
     @Operation("render-stage-resource")
     public String renderStageResource(final Long number, final Urn author,
-        final Urn stage,
-        final URL base, final String path)
+        final Urn stage, final URL base, final String path)
         throws Exception {
         String response = null;
         if (this.identity.name().equals(stage)) {
