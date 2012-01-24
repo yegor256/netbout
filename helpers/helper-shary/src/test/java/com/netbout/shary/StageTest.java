@@ -48,7 +48,7 @@ public final class StageTest {
      */
     @Test
     public void marshallsToXml() throws Exception {
-        final Stage stage = new Stage();
+        final Stage stage = new Stage("");
         final Collection<SharedDoc> docs = new ArrayList<SharedDoc>();
         final Slip slip = new Slip(true, "uri", "author", "name");
         docs.add(new SharedDoc(slip));

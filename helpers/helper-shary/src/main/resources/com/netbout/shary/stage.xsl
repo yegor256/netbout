@@ -68,6 +68,9 @@
                 </p>
             </xsl:otherwise>
         </xsl:choose>
+        <xsl:if test="data/place != ''">
+            <xsl:apply-templates select="data/place"/>
+        </xsl:if>
         <form method="post">
             <xsl:attribute name="action">
                 <xsl:value-of select="$stage-home-uri"/>
@@ -118,6 +121,22 @@
                 <xsl:with-param name="rest" select="$rest - 1" />
             </xsl:call-template>
         </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="place">
+        <p class="red">
+            <xsl:choose>
+                <xsl:when test=".='empty-args'">
+                    <xsl:text>Both 'name' and 'URI' should be provided.</xsl:text>
+                </xsl:when>
+                <xsl:when test=".='illegal-uri'">
+                    <xsl:text>Format of URI is not recognized, try again.</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>Unknown error.</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </p>
     </xsl:template>
 
 </xsl:stylesheet>

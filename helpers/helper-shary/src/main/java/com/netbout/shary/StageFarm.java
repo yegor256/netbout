@@ -104,7 +104,7 @@ public final class StageFarm implements IdentityAware {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             final Bout bout = this.identity.bout(number);
-            final Stage data = new Stage();
+            final Stage data = new Stage(place);
             data.add(this.attachLinks(author, this.documents(bout)));
             xml = new JaxbPrinter(data).print();
         }
@@ -148,10 +148,15 @@ public final class StageFarm implements IdentityAware {
         throws Exception {
         String dest = null;
         if (this.identity.name().equals(stage)) {
-            this.identity.bout(number).post(
-                new JaxbPrinter(this.parse(author, body)).print()
-            );
-            dest = "";
+            final Slip slip = this.slip(author, body);
+            if (slip.getName().isEmpty() || slip.getUri().isEmpty()) {
+                dest = "empty-args";
+            } else if (slip.getUri().matches("^http://.*$")) {
+                dest = "";
+                this.identity.bout(number).post(new JaxbPrinter(slip).print());
+            } else {
+                dest = "invalid-uri";
+            }
         }
         return dest;
     }
@@ -233,7 +238,7 @@ public final class StageFarm implements IdentityAware {
      * @param body The body
      * @return The slip
      */
-    private static Slip parse(final Urn author, final String body) {
+    private static Slip slip(final Urn author, final String body) {
         final Map<String, String> args = CpaUtils.decodeBody(body);
         return new Slip(
             true,
