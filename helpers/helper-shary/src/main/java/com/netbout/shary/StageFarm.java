@@ -30,6 +30,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
+import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -230,9 +231,14 @@ public final class StageFarm implements IdentityAware {
      * @param body The body
      * @return The slip
      */
-    private Slip parse(final Urn author, final String body) {
-        assert body != null;
-        return new Slip(true, "URI", author.toString(), "new document.txt");
+    private static Slip parse(final Urn author, final String body) {
+        final Map<String, String> args = CpaUtils.decodeBody(body);
+        return new Slip(
+            true,
+            args.get("uri"),
+            author.toString(),
+            args.get("name")
+        );
     }
 
     /**
@@ -240,19 +246,19 @@ public final class StageFarm implements IdentityAware {
      * @param docs The documents
      * @return The same array of them
      */
-    private Collection<SharedDoc> attachLinks(
+    private static Collection<SharedDoc> attachLinks(
         final Collection<SharedDoc> docs) {
         for (SharedDoc doc : docs) {
             doc.add(
                 new Link(
                     "load",
-                    UriBuilder.fromPath("/load:{name}").build(doc.getName())
+                    UriBuilder.fromPath("load:{name}").build(doc.getName())
                 )
             );
             doc.add(
                 new Link(
                     "unshare",
-                    UriBuilder.fromPath("/un:{name}").build(doc.getName())
+                    UriBuilder.fromPath("un:{name}").build(doc.getName())
                 )
             );
         }
@@ -264,7 +270,7 @@ public final class StageFarm implements IdentityAware {
      * @param bout The bout to work with
      * @return The list of them
      */
-    private Collection<SharedDoc> documents(final Bout bout) {
+    private static Collection<SharedDoc> documents(final Bout bout) {
         final List<Message> inbox = bout.messages(
             String.format("(ns '%s')", Slip.NAMESPACE)
         );
