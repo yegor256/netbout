@@ -14,9 +14,18 @@
 
     <xsl:template match="/">
         <html style="padding: 20px;">
-            <div style="border: 1px solid gray; width: 800px;">
-                <xsl:apply-templates select="/page/stage"/>
-            </div>
+            <head>
+                <link href="http://www.netbout.com/css/global.css" rel="stylesheet" type="text/css"/>
+                <link href="http://www.netbout.com/css/layout.css" rel="stylesheet" type="text/css"/>
+                <link href="http://www.netbout.com/css/bout.css" rel="stylesheet" type="text/css"/>
+            </head>
+            <body>
+                <section id="content">
+                    <div id="stage">
+                        <xsl:apply-templates select="/page/stage"/>
+                    </div>
+                </section>
+            </body>
         </html>
     </xsl:template>
 

@@ -12,8 +12,135 @@
                         <link href="/load:new%20document.txt" rel="load"/>
                         <link href="/un:new%20document.txt" rel="unshare"/>
                     </links>
-                    <name>new document.txt</name>
+                    <name>new document</name>
                     <type>text/plain</type>
+                    <author>John Doe</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>very long document name, very long document name, very long document name</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Very Long Name of AuthorVery Long Name of AuthorVery Long Name of Author</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
+                </doc>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>some other document</name>
+                    <type>text/plain</type>
+                    <author>Peter</author>
                 </doc>
             </docs>
         </data>

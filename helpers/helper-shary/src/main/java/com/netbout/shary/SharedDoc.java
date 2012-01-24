@@ -88,6 +88,15 @@ public final class SharedDoc {
     }
 
     /**
+     * Get author's name.
+     * @return The author of it
+     */
+    @XmlElement(name = "author")
+    public String getAuthor() {
+        return this.slip.getAuthor();
+    }
+
+    /**
      * Get links.
      * @return The links
      */
