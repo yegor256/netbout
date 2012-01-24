@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.hub.HubMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
@@ -60,6 +61,13 @@ public final class BoutRsTest {
         Mockito.doReturn(bout).when(identity).bout(Mockito.any(Long.class));
         final BoutRs rest = new ResourceMocker()
             .withIdentity(identity)
+            .withHub(
+                new HubMocker()
+                    .doReturn("", "pre-render-message")
+                    .doReturn("", "post-render-change-place")
+                    .withIdentity(identity.name(), identity)
+                    .mock()
+            )
             .mock(BoutRs.class);
         rest.setNumber(bout.number());
         final Response response = rest.front();
