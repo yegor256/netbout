@@ -90,27 +90,31 @@ public final class DomParser {
      * @throws DomValidationException If it's not valid
      */
     public void validate() throws DomValidationException {
-        final DocumentBuilderFactory factory = DomParser.factory();
-        factory.setValidating(true);
-        DocumentBuilder builder;
-        try {
-            builder = factory.newDocumentBuilder();
-        } catch (javax.xml.parsers.ParserConfigurationException ex) {
-            throw new IllegalStateException(ex);
-        }
-        final DomErrorHandler handler = new DomErrorHandler();
-        builder.setErrorHandler(handler);
-        try {
-            builder.parse(IOUtils.toInputStream(this.xml, CharEncoding.UTF_8));
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        } catch (org.xml.sax.SAXException ex) {
-            throw new IllegalStateException(ex);
-        }
-        if (!handler.isEmpty()) {
-            throw new DomValidationException(
-                Logger.format("%[list]s", handler.exceptions())
-            );
+        if (this.isXml()) {
+            final DocumentBuilderFactory factory = DomParser.factory();
+            factory.setValidating(true);
+            DocumentBuilder builder;
+            try {
+                builder = factory.newDocumentBuilder();
+            } catch (javax.xml.parsers.ParserConfigurationException ex) {
+                throw new IllegalStateException(ex);
+            }
+            final DomErrorHandler handler = new DomErrorHandler();
+            builder.setErrorHandler(handler);
+            try {
+                builder.parse(
+                    IOUtils.toInputStream(this.xml, CharEncoding.UTF_8)
+                );
+            } catch (java.io.IOException ex) {
+                throw new IllegalStateException(ex);
+            } catch (org.xml.sax.SAXException ex) {
+                throw new IllegalStateException(ex);
+            }
+            if (!handler.isEmpty()) {
+                throw new DomValidationException(
+                    Logger.format("%[list]s", handler.exceptions())
+                );
+            }
         }
     }
 

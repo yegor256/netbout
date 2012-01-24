@@ -29,44 +29,40 @@
  */
 package com.netbout.spi.xml;
 
-import com.rexsl.test.XhtmlConverter;
-import com.rexsl.test.XhtmlMatchers;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Test case for {@link JaxbPrinter}.
+ * Foo class, to test JAXB utility classes.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class JaxbPrinterTest {
+@XmlType(name = "foo")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class FooMocker {
 
     /**
-     * JaxbPrinter can print JAXB-annotated object.
-     * @throws Exception If some problem inside
+     * Name.
      */
-    @Test
-    public void printsJaxbAsXmlDocument() throws Exception {
-        final TokenMocker token = new TokenMocker();
-        final JaxbPrinter printer = new JaxbPrinter(token);
-        MatcherAssert.assertThat(
-            printer.print(),
-            Matchers.containsString("foo")
-        );
+    private transient String name = "John Doe";
+
+    /**
+     * Get its name.
+     * @return The name
+     */
+    @XmlElement
+    public String getName() {
+        return this.name;
     }
 
     /**
-     * JaxbPrinter can print plain JAXB-annotated object, without namespaces.
-     * @throws Exception If some problem inside
+     * Set "name" element.
+     * @param txt The name
      */
-    @Test
-    public void printsJaxbAsXmlDocumentWithoutSchema() throws Exception {
-        final JaxbPrinter printer = new JaxbPrinter(new FooMocker());
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(printer.print()),
-            XhtmlMatchers.hasXPath("/foo/name")
-        );
+    public void setName(final String txt) {
+        this.name = txt;
     }
 
 }

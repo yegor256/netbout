@@ -134,4 +134,15 @@ public final class DomParserTest {
         new DomParser("<some-document/>").validate();
     }
 
+    /**
+     * DomParser can allow non-XML documents to go.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void validatesNonXmlDocuments() throws Exception {
+        new DomParser(null).validate();
+        new DomParser("").validate();
+        new DomParser("some text").validate();
+    }
+
 }

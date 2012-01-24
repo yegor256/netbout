@@ -66,6 +66,26 @@ public final class JaxbParserTest {
     }
 
     /**
+     * JaxbParser can parse XML and return an object, without schemas.
+     * @throws Exception If some problem inside
+     */
+    @Test
+    public void parsesTextAndReturnsObjectWithoutSchema() throws Exception {
+        final String name = "Peter";
+        final JaxbParser parser = new JaxbParser(
+            String.format("<foo><name>%s</name></foo>", name)
+        );
+        MatcherAssert.assertThat(
+            parser.parse(FooMocker.class),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(FooMocker.class),
+                Matchers.hasProperty("name", Matchers.equalTo(name))
+            )
+        );
+    }
+
+    /**
      * Jaxb can detect namespace.
      * @throws Exception If some problem inside
      */
