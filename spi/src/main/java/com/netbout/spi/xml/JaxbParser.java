@@ -32,7 +32,6 @@ package com.netbout.spi.xml;
 import com.netbout.spi.Urn;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.transform.dom.DOMSource;
 import org.w3c.dom.Document;
 
@@ -64,7 +63,7 @@ public final class JaxbParser {
      * @param <T> Type of input
      */
     public <T> boolean has(final Class<? extends T> type) {
-        return new DomParser(this.xml).belongsTo(this.namespace(type));
+        return new DomParser(this.xml).belongsTo(JaxbPrinter.namespace(type));
     }
 
     /**
@@ -108,8 +107,8 @@ public final class JaxbParser {
      * @return The same document
      */
     private static Document clear(final Document dom, final Class type) {
-        final Urn required = JaxbParser.namespace(type);
-        if (required != null) {
+        final Urn required = JaxbPrinter.namespace(type);
+        if (!required.isEmpty()) {
             final String actual = dom.getDocumentElement().getNamespaceURI();
             if (!DomParser.matches(required, actual)) {
                 throw new IllegalArgumentException(
@@ -128,39 +127,6 @@ public final class JaxbParser {
             );
         }
         return dom;
-    }
-
-    /**
-     * Get namespace of the class.
-     * @param type The type to get annotation from
-     * @return The namespace of it
-     */
-    @SuppressWarnings("PMD.DefaultPackage")
-    static Urn namespace(final Class type) {
-        final XmlType annot = (XmlType) type.getAnnotation(XmlType.class);
-        if (annot == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Object of type '%s' is not @XmlType annotated entity",
-                    type.getName()
-                )
-            );
-        }
-        Urn namespace = null;
-        if (!"##default".equals(annot.namespace())) {
-            try {
-                namespace = new Urn(annot.namespace());
-            } catch (java.net.URISyntaxException ex) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "Invalid format of namespace in %s",
-                        type.getName()
-                    ),
-                    ex
-                );
-            }
-        }
-        return namespace;
     }
 
 }

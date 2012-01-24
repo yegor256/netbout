@@ -266,7 +266,7 @@ public final class DomParser {
      */
     static boolean matches(final Urn canonical, final String actual) {
         boolean matches = false;
-        if (canonical != null && actual != null) {
+        if (!canonical.isEmpty() && actual != null) {
             matches = actual.matches(
                 String.format("^\\Q%s\\E(\\?.*)?$", canonical.toString())
             );
