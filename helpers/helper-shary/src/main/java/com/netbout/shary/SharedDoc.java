@@ -50,6 +50,11 @@ public final class SharedDoc {
     private final transient Slip slip;
 
     /**
+     * The alias of the author.
+     */
+    private transient String alias;
+
+    /**
      * Links.
      */
     private final transient Collection<Link> links = new ArrayList<Link>();
@@ -94,6 +99,23 @@ public final class SharedDoc {
     @XmlElement(name = "author")
     public String getAuthor() {
         return this.slip.getAuthor();
+    }
+
+    /**
+     * Get author's alias.
+     * @return The alias of it
+     */
+    public String getAlias() {
+        return this.alias;
+    }
+
+    /**
+     * Set author's alias.
+     * @param txt The alias of it
+     */
+    @XmlElement(name = "alias")
+    public void setAlias(final String txt) {
+        this.alias = txt;
     }
 
     /**

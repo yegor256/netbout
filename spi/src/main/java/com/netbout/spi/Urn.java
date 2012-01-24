@@ -37,7 +37,7 @@ import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Universal resource locator (URN).
+ * Universal resource locator (URN), immutable and of cource thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

@@ -49,7 +49,7 @@
                         <xsl:for-each select="data/docs/doc[position() mod 4 = 1]">
                             <tr>
                                 <xsl:for-each select=".|following-sibling::doc[position() &lt; 4]">
-                                    <td>
+                                    <td style="vertical-align: top;">
                                         <xsl:apply-templates select="."/>
                                     </td>
                                 </xsl:for-each>
@@ -118,8 +118,8 @@
                 <xsl:value-of select="name"/>
             </a>
             <br/>
-            <xsl:text> shared by </xsl:text>
-            <xsl:value-of select="author"/>
+            <xsl:text> by </xsl:text>
+            <xsl:value-of select="alias"/>
             <xsl:if test="links/link[@rel='unshare']">
                 <xsl:text> (</xsl:text>
                 <a>
@@ -127,7 +127,7 @@
                         <xsl:value-of select="$stage-home-uri"/>
                         <xsl:value-of select="links/link[@rel='unshare']/@href"/>
                     </xsl:attribute>
-                    <xsl:text>unshare</xsl:text>
+                    <xsl:text>delete</xsl:text>
                 </a>
                 <xsl:text>)</xsl:text>
             </xsl:if>

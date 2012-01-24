@@ -29,6 +29,7 @@ package com.netbout.shary;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
@@ -56,7 +57,9 @@ import org.apache.commons.lang.CharEncoding;
  */
 @Farm
 @SuppressWarnings({
-    "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap"
+    "PMD.AvoidInstantiatingObjectsInLoops",
+    "PMD.UseConcurrentHashMap",
+    "PMD.TooManyMethods"
 })
 public final class StageFarm implements IdentityAware {
 
@@ -105,7 +108,7 @@ public final class StageFarm implements IdentityAware {
         if (this.identity.name().equals(stage)) {
             final Bout bout = this.identity.bout(number);
             final Stage data = new Stage(place);
-            data.add(this.attachLinks(author, this.documents(bout)));
+            data.add(this.extend(author, this.documents(bout)));
             xml = new JaxbPrinter(data).print();
         }
         return xml;
@@ -157,6 +160,27 @@ public final class StageFarm implements IdentityAware {
             } else {
                 dest = "illegal-uri";
             }
+        }
+        return dest;
+    }
+
+    /**
+     * Change place after rendering, if necessary.
+     * @param number Bout where it is happening
+     * @param author Author of the message
+     * @param stage Name of stage to render
+     * @param place The place in the stage to render
+     * @return New place in this stage
+     * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (5 lines)
+     */
+    @Operation("post-render-change-place")
+    public String postRenderChangePlace(final Long number, final Urn author,
+        final Urn stage, final String place)
+        throws Exception {
+        String dest = null;
+        if (this.identity.name().equals(stage)) {
+            dest = "";
         }
         return dest;
     }
@@ -254,7 +278,7 @@ public final class StageFarm implements IdentityAware {
      * @param docs The documents
      * @return The same array of them
      */
-    private Collection<SharedDoc> attachLinks(final Urn viewer,
+    private Collection<SharedDoc> extend(final Urn viewer,
         final Collection<SharedDoc> docs) {
         for (SharedDoc doc : docs) {
             doc.add(
@@ -270,6 +294,15 @@ public final class StageFarm implements IdentityAware {
                         UriBuilder.fromPath("un:{name}").build(doc.getName())
                     )
                 );
+            }
+            try {
+                doc.setAlias(
+                    NetboutUtils.aliasOf(
+                        this.identity.friend(Urn.create(doc.getAuthor()))
+                    )
+                );
+            } catch (com.netbout.spi.UnreachableUrnException ex) {
+                doc.setAlias("somebody");
             }
         }
         return docs;
