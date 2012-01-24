@@ -83,8 +83,29 @@
 
     <xsl:template match="doc">
         <p>
-            <img src="http://img.netbout.com/shary/doc.png"
-                style="width: 2.5em; height: 2.5em;"/>
+            <img style="width: 2.5em; height: 2.5em;">
+                <xsl:attribute name="src">
+                    <xsl:text>http://img.netbout.com/shary/</xsl:text>
+                    <xsl:choose>
+                        <xsl:when test="substring(type, 0, 6) = 'text/'">
+                            <xsl:text>text</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="substring(type, 0, 7) = 'image/'">
+                            <xsl:text>image</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="type = 'application/pdf'">
+                            <xsl:text>pdf</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="type = 'application/x-zip-compressed'">
+                            <xsl:text>zip</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>binary</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:text>.png</xsl:text>
+                </xsl:attribute>
+            </img>
             <br/>
             <a>
                 <xsl:attribute name="href">

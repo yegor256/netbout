@@ -14,7 +14,7 @@
                         <link href="/un:new%20document.txt" rel="unshare"/>
                     </links>
                     <name>new document</name>
-                    <type>text/plain</type>
+                    <type>application/pdf</type>
                     <author>John Doe</author>
                 </doc>
                 <doc>
@@ -32,7 +32,7 @@
                         <link href="/un:new%20document.txt" rel="unshare"/>
                     </links>
                     <name>some other document</name>
-                    <type>text/plain</type>
+                    <type>application/x-zip-compressed</type>
                     <author>Peter</author>
                 </doc>
                 <doc>
@@ -41,7 +41,7 @@
                         <link href="/un:new%20document.txt" rel="unshare"/>
                     </links>
                     <name>very long document name, very long document name, very long document name</name>
-                    <type>text/plain</type>
+                    <type>application/octet-stream</type>
                     <author>Peter</author>
                 </doc>
                 <doc>
@@ -59,61 +59,7 @@
                         <link href="/un:new%20document.txt" rel="unshare"/>
                     </links>
                     <name>some other document</name>
-                    <type>text/plain</type>
-                    <author>Peter</author>
-                </doc>
-                <doc>
-                    <links>
-                        <link href="/load:new%20document.txt" rel="load"/>
-                        <link href="/un:new%20document.txt" rel="unshare"/>
-                    </links>
-                    <name>some other document</name>
-                    <type>text/plain</type>
-                    <author>Peter</author>
-                </doc>
-                <doc>
-                    <links>
-                        <link href="/load:new%20document.txt" rel="load"/>
-                        <link href="/un:new%20document.txt" rel="unshare"/>
-                    </links>
-                    <name>some other document</name>
-                    <type>text/plain</type>
-                    <author>Peter</author>
-                </doc>
-                <doc>
-                    <links>
-                        <link href="/load:new%20document.txt" rel="load"/>
-                        <link href="/un:new%20document.txt" rel="unshare"/>
-                    </links>
-                    <name>some other document</name>
-                    <type>text/plain</type>
-                    <author>Peter</author>
-                </doc>
-                <doc>
-                    <links>
-                        <link href="/load:new%20document.txt" rel="load"/>
-                        <link href="/un:new%20document.txt" rel="unshare"/>
-                    </links>
-                    <name>some other document</name>
-                    <type>text/plain</type>
-                    <author>Peter</author>
-                </doc>
-                <doc>
-                    <links>
-                        <link href="/load:new%20document.txt" rel="load"/>
-                        <link href="/un:new%20document.txt" rel="unshare"/>
-                    </links>
-                    <name>some other document</name>
-                    <type>text/plain</type>
-                    <author>Peter</author>
-                </doc>
-                <doc>
-                    <links>
-                        <link href="/load:new%20document.txt" rel="load"/>
-                        <link href="/un:new%20document.txt" rel="unshare"/>
-                    </links>
-                    <name>some other document</name>
-                    <type>text/plain</type>
+                    <type>image/png</type>
                     <author>Peter</author>
                 </doc>
                 <doc>
