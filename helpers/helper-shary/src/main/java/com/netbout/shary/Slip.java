@@ -26,6 +26,9 @@
  */
 package com.netbout.shary;
 
+import com.netbout.spi.Identity;
+import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Urn;
 import com.netbout.spi.xml.SchemaLocation;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -93,20 +96,29 @@ public final class Slip {
 
     /**
      * Render it for a reader.
+     * @param viewer Who is viewing
      * @return The text
      */
-    public String render() {
+    public String render(final Identity viewer) {
+        String alias;
+        try {
+            alias = NetboutUtils.aliasOf(
+                viewer.friend(Urn.create(this.author))
+            );
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            alias = "someone";
+        }
         String text;
         if (this.allow) {
             text = String.format(
                 "%s shared **\"%s\"** with us.",
-                this.author,
+                alias,
                 this.name
             );
         } else {
             text = String.format(
                 "%s decided not to share \"%s\" with us any more.",
-                this.author,
+                alias,
                 this.name
             );
         }
