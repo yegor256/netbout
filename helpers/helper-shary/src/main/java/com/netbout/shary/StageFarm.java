@@ -109,6 +109,26 @@ public final class StageFarm implements IdentityAware {
     }
 
     /**
+     * Resolve namespace.
+     * @param namespace The namespace
+     * @return Its URL
+     * @throws Exception If some problem inside
+     */
+    @Operation("resolve-xml-namespace")
+    public URL resolveXmlNamespace(final String namespace) throws Exception {
+        URL url = null;
+        if (namespace.matches("urn:netbout:ns:shary/Slip")) {
+            url = new URL(
+                namespace.replaceAll(
+                    "urn:netbout:ns:(.*)",
+                    "http://www.netbout.com/ns/$1.xsd"
+                )
+            );
+        }
+        return url;
+    }
+
+    /**
      * Process POST request of the stage.
      * @param number Bout where it is happening
      * @param author Author of the message

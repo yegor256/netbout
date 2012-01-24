@@ -117,36 +117,68 @@ public final class Slip {
      * Get allowing flag.
      * @return Author allowed to see the document?
      */
-    @XmlElement(name = "allow", namespace = Slip.NAMESPACE)
     public boolean isAllow() {
         return this.allow;
+    }
+
+    /**
+     * Set allowing flag.
+     * @param flag The flag
+     */
+    @XmlElement(name = "allow", namespace = Slip.NAMESPACE)
+    public void setAllow(final boolean flag) {
+        this.allow = flag;
     }
 
     /**
      * Get URI.
      * @return The URI of the document
      */
-    @XmlElement(name = "uri", namespace = Slip.NAMESPACE)
     public String getUri() {
         return this.uri;
+    }
+
+    /**
+     * Set URI.
+     * @param addr The URI of the document
+     */
+    @XmlElement(name = "uri", namespace = Slip.NAMESPACE)
+    public void setUri(final String addr) {
+        this.uri = addr;
     }
 
     /**
      * Get author's name.
      * @return The URN of the author
      */
-    @XmlElement(name = "author", namespace = Slip.NAMESPACE)
     public String getAuthor() {
         return this.author;
+    }
+
+    /**
+     * Get author's name.
+     * @param urn The URN of the author
+     */
+    @XmlElement(name = "author", namespace = Slip.NAMESPACE)
+    public void setAuthor(final String urn) {
+        this.author = urn;
     }
 
     /**
      * Get title of the document to show to everybody.
      * @return The name of it (unique in the bout)
      */
-    @XmlElement(name = "name", namespace = Slip.NAMESPACE)
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * Get title of the document to show to everybody.
+     * @param txt The name of it (unique in the bout)
+     */
+    @XmlElement(name = "name", namespace = Slip.NAMESPACE)
+    public void setName(final String txt) {
+        this.name = txt;
     }
 
     /**
