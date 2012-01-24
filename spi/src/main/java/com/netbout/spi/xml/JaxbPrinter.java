@@ -74,9 +74,9 @@ public final class JaxbPrinter {
      * @return The document
      */
     public String print(final String suffix) {
-        final Document dom = JaxbPrinter.marshall(this.object);
-        final Urn namespace = JaxbParser.namespace(this.object.getClass());
-        if (namespace != null) {
+        final Document dom = this.marshall();
+        final Urn namespace = this.namespace(this.object.getClass());
+        if (!namespace.isEmpty()) {
             final Urn required = Urn.create(
                 String.format("%s%s", namespace, suffix)
             );
@@ -91,6 +91,14 @@ public final class JaxbPrinter {
             final SchemaLocation schema = (SchemaLocation) this.object
                 .getClass()
                 .getAnnotation(SchemaLocation.class);
+            if (schema == null) {
+                throw new IllegalStateException(
+                    Logger.format(
+                        "@SchemaLocation annotation is absent at %[type]s",
+                        this.object
+                    )
+                );
+            }
             URL location;
             try {
                 location = new URL(schema.value());
@@ -114,13 +122,12 @@ public final class JaxbPrinter {
 
     /**
      * Convert object to DOM document.
-     * @param obj The object to convert
      * @return The document
      */
-    private static Document marshall(final Object obj) {
+    private Document marshall() {
         JAXBContext ctx;
         try {
-            ctx = JAXBContext.newInstance(obj.getClass());
+            ctx = JAXBContext.newInstance(this.object.getClass());
         } catch (javax.xml.bind.JAXBException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -136,21 +143,59 @@ public final class JaxbPrinter {
         } catch (javax.xml.parsers.ParserConfigurationException ex) {
             throw new IllegalStateException(ex);
         }
-        final Urn namespace = JaxbParser.namespace(obj.getClass());
-        final XmlType annot = (XmlType) obj.getClass()
+        final Urn namespace = this.namespace(this.object.getClass());
+        final XmlType annot = (XmlType) this.object.getClass()
             .getAnnotation(XmlType.class);
         QName qname;
-        if (namespace == null) {
+        if (namespace.isEmpty()) {
             qname = new QName("", annot.name());
         } else {
             qname = new QName(namespace.toString(), annot.name());
         }
         try {
-            mrsh.marshal(new JAXBElement(qname, obj.getClass(), obj), dom);
+            mrsh.marshal(
+                new JAXBElement(qname, this.object.getClass(), this.object),
+                dom
+            );
         } catch (javax.xml.bind.JAXBException ex) {
             throw new IllegalArgumentException(ex);
         }
         return dom;
+    }
+
+    /**
+     * Get namespace of this object (it has to be static becuase it works
+     * with Class, not an Object and is used from other classes in this form).
+     * @param type The type
+     * @return The namespace of it
+     */
+    public static Urn namespace(final Class type) {
+        final XmlType annot = (XmlType) type.getAnnotation(XmlType.class);
+        if (annot == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Object of type '%s' is not @XmlType annotated entity",
+                    type.getName()
+                )
+            );
+        }
+        Urn namespace;
+        if ("##default".equals(annot.namespace())) {
+            namespace = new Urn();
+        } else {
+            try {
+                namespace = new Urn(annot.namespace());
+            } catch (java.net.URISyntaxException ex) {
+                throw new IllegalArgumentException(
+                    Logger.format(
+                        "Invalid format of namespace in '%s'",
+                        type.getName()
+                    ),
+                    ex
+                );
+            }
+        }
+        return namespace;
     }
 
 }

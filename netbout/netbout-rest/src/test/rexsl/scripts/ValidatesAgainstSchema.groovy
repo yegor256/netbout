@@ -23,35 +23,25 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
  */
+package com.netbout.rest.rexsl.scripts
 
-ul.bouts {
-    margin: 0 !important;
-    padding: 0 !important;
-    font-size: 1em !important;
-}
+import com.netbout.spi.xml.DomParser
 
-li.bout {
-    clear: both;
-    margin-top: 4em;
-    list-style: none;
-}
-
-    li.bout div.header {
-        margin-bottom: 0.5em;
-    }
-
-        li.bout div.header span {
-            font-size: 1.4em;
-        }
-
-        li.bout div.header span.num {
-            margin-right: 0.3em;
-        }
-
-        li.bout div.header a.title {
-            font-size: 2.2em;
-            font-weight: bold;
-            margin-right: 0.3em;
-        }
-
+/*
+These elements should be there as well. I don't know why they don't work.
+    <author>urn:test:shary</author>
+    <name>New Document</name>
+*/
+def xml = """<?xml version="1.0"?>
+<Slip xmlns="urn:netbout:ns:shary/Slip"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:netbout:ns:shary/Slip ${rexsl.home}ns/shary/Slip.xsd">
+    <allow>true</allow>
+    <uri>http://www.netbout.com/</uri>
+</Slip>
+"""
+new DomParser(xml).validate()

@@ -130,7 +130,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <rexsl.version since="6 Jan 2012">0.2.9</rexsl.version>
+        <rexsl.version since="22 Jan 2012">0.3</rexsl.version>
     </properties>
 
     <repositories>
@@ -189,6 +189,18 @@
             <groupId>com.ymock</groupId>
             <artifactId>ymock-util</artifactId>
             <version since="26 Dec 2011">1.0.4</version>
+        </dependency>
+        <dependency>
+            <!--
+            Apache Xerces is a JAXP implementation of DOM.
+            In order to replace a default implementation
+            provided by JDK with Xerces we are using text files inside
+            "src/main/resources/META-INF/services" directory.
+            -->
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version since="9 Mar 2011">2.9.1</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- Forward all calls to SLF4J to LOG4J. -->

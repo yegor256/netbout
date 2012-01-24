@@ -123,7 +123,7 @@ public final class LongMessage {
             .arg(txt)
             .asDefault(txt)
             .exec();
-        return LongMessage.formatted(StringEscapeUtils.escapeHtml(render));
+        return LongMessage.formatted(StringEscapeUtils.escapeXml(render));
     }
 
     /**

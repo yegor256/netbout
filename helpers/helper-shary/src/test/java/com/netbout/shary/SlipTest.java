@@ -49,7 +49,7 @@ public final class SlipTest {
         MatcherAssert.assertThat(
             xml,
             Matchers.allOf(
-                Matchers.containsString("<slip"),
+                Matchers.containsString("<Slip"),
                 Matchers.containsString(Slip.NAMESPACE)
             )
         );
