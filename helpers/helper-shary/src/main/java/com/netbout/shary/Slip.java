@@ -99,15 +99,15 @@ public final class Slip {
         String text;
         if (this.allow) {
             text = String.format(
-                "%s shared **\"%s\"** document with us.",
-                this.name,
-                this.author
+                "%s shared **\"%s\"** with us.",
+                this.author,
+                this.name
             );
         } else {
             text = String.format(
                 "%s decided not to share \"%s\" with us any more.",
-                this.name,
-                this.author
+                this.author,
+                this.name
             );
         }
         return text;

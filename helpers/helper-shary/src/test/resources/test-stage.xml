@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="./test-stage.xsl" type="text/xsl"?>
+<!--
+ * Open this page in Safari or Chrome.
+ -->
+<page>
+    <stage>
+        <data>
+            <docs>
+                <doc>
+                    <links>
+                        <link href="/load:new%20document.txt" rel="load"/>
+                        <link href="/un:new%20document.txt" rel="unshare"/>
+                    </links>
+                    <name>new document.txt</name>
+                    <type>text/plain</type>
+                </doc>
+            </docs>
+        </data>
+    </stage>
+</page>

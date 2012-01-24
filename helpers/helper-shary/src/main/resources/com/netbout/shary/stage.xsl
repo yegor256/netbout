@@ -31,8 +31,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
-    xmlns:s="urn:netbout:ns:shary/stage"
     version="2.0" exclude-result-prefixes="xs">
 
     <xsl:template match="stage" mode="head">
@@ -41,7 +39,7 @@
 
     <xsl:template match="stage">
         <xsl:choose>
-            <xsl:when test="s:data/s:docs[count(s:doc) &gt; 0]">
+            <xsl:when test="data/docs[count(doc) &gt; 0]">
                 <ul>
                     <xsl:for-each select="data/docs/doc">
                         <li>
