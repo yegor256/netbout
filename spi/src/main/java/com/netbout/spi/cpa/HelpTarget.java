@@ -96,7 +96,7 @@ final class HelpTarget {
         } catch (java.lang.reflect.InvocationTargetException ex) {
             throw new IllegalStateException(
                 Logger.format(
-                    "Failed to call \"%s\" with %s[list]s",
+                    "Failed to call \"%s\" with %[list]s",
                     this.method.toGenericString(),
                     this.typesOf(params)
                 ),
