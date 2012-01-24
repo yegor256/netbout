@@ -26,7 +26,7 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.spi.Urn;
+import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.UriBuilder;
@@ -48,14 +48,18 @@ public final class ShortStageTest {
     @Test
     public void convertsToXml() throws Exception {
         final ShortStage obj = new ShortStage(
-            new Urn("urn:test:foo"),
+            new IdentityMocker()
+                .namedAs("urn:test:foo")
+                .withAlias("foo")
+                .mock(),
             UriBuilder.fromUri("http://localhost")
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),
             Matchers.allOf(
                 XhtmlMatchers.hasXPath("/stage/@href"),
-                XhtmlMatchers.hasXPath("/stage[.='urn:test:foo']")
+                XhtmlMatchers.hasXPath("/stage[.='urn:test:foo']"),
+                XhtmlMatchers.hasXPath("/stage[@alias='foo']")
             )
         );
     }

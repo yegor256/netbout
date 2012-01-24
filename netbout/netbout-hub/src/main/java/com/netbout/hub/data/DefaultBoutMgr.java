@@ -33,8 +33,10 @@ import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Manager of all bouts.
@@ -42,6 +44,8 @@ import org.w3c.dom.Element;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@XmlType(name = "manager")
+@XmlAccessorType(XmlAccessType.NONE)
 public final class DefaultBoutMgr implements BoutMgr {
 
     /**
@@ -56,6 +60,13 @@ public final class DefaultBoutMgr implements BoutMgr {
     private final transient Hub hub;
 
     /**
+     * Public ctor, for JAXB.
+     */
+    public DefaultBoutMgr() {
+        throw new IllegalStateException("illegal call");
+    }
+
+    /**
      * Public ctor.
      * @param ihub The hub
      */
@@ -64,17 +75,12 @@ public final class DefaultBoutMgr implements BoutMgr {
     }
 
     /**
-     * {@inheritDoc}
+     * Get total number of bouts.
+     * @return The total
      */
-    @Override
-    public Element stats(final Document doc) {
-        final Element root = doc.createElement("manager");
-        final Element total = doc.createElement("bouts");
-        total.appendChild(
-            doc.createTextNode(String.valueOf(this.bouts.size()))
-        );
-        root.appendChild(total);
-        return root;
+    @XmlElement(name = "bouts")
+    public int getBouts() {
+        return this.bouts.size();
     }
 
     /**

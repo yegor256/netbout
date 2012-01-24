@@ -24,44 +24,42 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.shary;
 
-import java.util.Iterator;
-import javax.xml.namespace.NamespaceContext;
+import com.netbout.spi.xml.JaxbPrinter;
+import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * DOM namespace context.
- *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * Test case for {@link Stage}.
+ * @author Yegor Bugayenko (yegor@woquo.com)
  * @version $Id$
  */
-final class DomContext implements NamespaceContext {
+public final class StageTest {
 
     /**
-     * {@inheritDoc}
+     * Stage can be converted to XML.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public String getNamespaceURI(final String prefix) {
-        if ("xsi".equals(prefix)) {
-            return "http://www.w3.org/2001/XMLSchema-instance";
-        }
-        throw new IllegalArgumentException(prefix);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getPrefix(final String uri) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Iterator getPrefixes(final String uri) {
-        throw new UnsupportedOperationException();
+    @Test
+    public void marshallsToXml() throws Exception {
+        final Stage stage = new Stage();
+        final Collection<SharedDoc> docs = new ArrayList<SharedDoc>();
+        final Slip slip = new Slip(true, "uri", "author", "name");
+        docs.add(new SharedDoc(slip));
+        stage.add(docs);
+        final String xml = new JaxbPrinter(stage).print();
+        MatcherAssert.assertThat(
+            XhtmlConverter.the(xml),
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("/data/docs/doc[name='name']")
+            )
+        );
     }
 
 }

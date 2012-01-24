@@ -24,65 +24,44 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.shary;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
+import com.netbout.spi.xml.JaxbPrinter;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Handler of validation errors.
- *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * Test case for {@link Slip}.
+ * @author Yegor Bugayenko (yegor@woquo.com)
  * @version $Id$
  */
-final class DomErrorHandler implements ErrorHandler {
+public final class SlipTest {
 
     /**
-     * List of exceptions registered.
+     * Stage can be converted to XML.
+     * @throws Exception If there is some problem inside
      */
-    private final transient List<Exception> errors =
-        new CopyOnWriteArrayList<Exception>();
-
-    /**
-     * Is it empty?
-     * @return Is it?
-     */
-    public boolean isEmpty() {
-        return this.errors.isEmpty();
+    @Test
+    public void marshallsToXml() throws Exception {
+        final Slip slip = new Slip(true, "uri", "author", "name");
+        final String xml = new JaxbPrinter(slip).print();
+        MatcherAssert.assertThat(
+            xml,
+            Matchers.allOf(
+                Matchers.containsString("<slip"),
+                Matchers.containsString(Slip.NAMESPACE)
+            )
+        );
     }
 
     /**
-     * All found exceptions.
-     * @return List of them
+     * Slip can be unmarshalled from XML.
+     * @throws Exception If there is some problem inside
      */
-    public List<Exception> exceptions() {
-        return this.errors;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void error(final SAXParseException err) {
-        this.errors.add(err);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void fatalError(final SAXParseException err) {
-        this.errors.add(err);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void warning(final SAXParseException err) {
-        this.errors.add(err);
+    @Test
+    public void unmarshallsFromXml() throws Exception {
+        // todo
     }
 
 }

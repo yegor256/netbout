@@ -33,15 +33,14 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import com.netbout.spi.xml.JaxbPrinter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.w3c.dom.Document;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.transform.XmlConverters;
 
@@ -81,14 +80,8 @@ public final class DefaultHubTest {
         final Bus bus = new BusMocker()
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .mock();
-        final HubStats stats = new DefaultHub(bus);
-        final Document doc = DocumentBuilderFactory
-            .newInstance()
-            .newDocumentBuilder()
-            .newDocument();
-        doc.appendChild(stats.stats(doc));
         MatcherAssert.assertThat(
-            XmlConverters.the(doc),
+            XmlConverters.the(new JaxbPrinter(new DefaultHub(bus)).print()),
             XmlMatchers.hasXPath("/hub")
         );
     }

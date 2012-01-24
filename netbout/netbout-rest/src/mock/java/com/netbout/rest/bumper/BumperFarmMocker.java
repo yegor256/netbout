@@ -84,9 +84,9 @@ public final class BumperFarmMocker implements IdentityAware {
      * @return Its URI
      */
     @Operation("resolve-xml-namespace")
-    public URL resolveXmlNamespace(final String namespace) {
+    public URL resolveXmlNamespace(final Urn namespace) {
         URL url = null;
-        if ("/bumper/ns".equals(namespace)) {
+        if (namespace.equals(Urn.create("urn:test:bumper:ns"))) {
             url = BumperFarmMocker.home;
         }
         return url;

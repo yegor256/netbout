@@ -24,30 +24,67 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.db.helper;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
- * DOM validation failure.
+ * One total summary in stage.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DomValidationException extends Exception {
+@XmlType(name = "total")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class Total {
 
     /**
-     * Public ctor.
-     * @param cause The cause
+     * The name.
      */
-    public DomValidationException(final String cause) {
-        super(cause);
+    private final transient String table;
+
+    /**
+     * The name.
+     */
+    private final transient Long count;
+
+    /**
+     * Public ctor, for JAXB.
+     */
+    public Total() {
+        throw new IllegalArgumentException("illegal call");
     }
 
     /**
-     * Public ctor.
-     * @param cause The cause
+     * Public ctor, for JAXB.
+     * @param tbl Name of table
+     * @param cnt Count of rows in it
      */
-    public DomValidationException(final Throwable cause) {
-        super(cause);
+    public Total(final String tbl, final Long cnt) {
+        this.table = tbl;
+        this.count = cnt;
+    }
+
+    /**
+     * Get name of table.
+     * @return The name of it
+     */
+    @XmlAttribute
+    public String getTable() {
+        return this.table;
+    }
+
+    /**
+     * Get count.
+     * @return The count
+     */
+    @XmlValue
+    public Long getCount() {
+        return this.count;
     }
 
 }

@@ -24,24 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
- * Hub statistics.
+ * Helper, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface HubStats {
-
-    /**
-     * Create statistics in the given XML document and return their element.
-     * @param doc The document to work in
-     * @return The element just created
-     */
-    Element stats(Document doc);
-
-}
+package com.netbout.db.helper;

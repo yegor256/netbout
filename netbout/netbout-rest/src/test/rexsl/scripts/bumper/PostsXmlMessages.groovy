@@ -51,9 +51,9 @@ RestTester.start(RestUriBuilder.from(bout).path('/s'))
     .post(
         'post message to the bumper',
         'data=' + URLEncoder.encode(
-            """<bump xmlns='/bumper/ns'
+            """<bump xmlns='urn:test:bumper:ns'
                 xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-                xsi:schemaLocation='/bumper/ns ${xsd}' >
+                xsi:schemaLocation='urn:test:bumper:ns ${xsd}' >
                 <text>hello, dude!</text>
                 <text>hello again!</text>
             </bump>"""
@@ -61,7 +61,7 @@ RestTester.start(RestUriBuilder.from(bout).path('/s'))
     )
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 MatcherAssert.assertThat(
-    bout.messages('(ns "/bumper/ns")').size(),
+    bout.messages('(ns "urn:test:bumper:ns")').size(),
     Matchers.equalTo(1)
 )
 MatcherAssert.assertThat(

@@ -27,8 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.spi.BoutNotFoundException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Manager of all bouts.
@@ -37,13 +35,6 @@ import org.w3c.dom.Element;
  * @version $Id$
  */
 public interface BoutMgr {
-
-    /**
-     * Create statistics in the given XML document and return their element.
-     * @param doc The document to work in
-     * @return The element just created
-     */
-    Element stats(Document doc);
 
     /**
      * Create new bout.

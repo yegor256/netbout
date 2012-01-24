@@ -60,7 +60,7 @@ public final class IdentityMocker {
     /**
      * Aliases.
      */
-    private final Set<String> aliases = new HashSet<String>();
+    private final List<String> aliases = new ArrayList<String>();
 
     /**
      * All bouts.
@@ -79,10 +79,16 @@ public final class IdentityMocker {
      */
     public IdentityMocker() {
         this.namedAs(new UrnMocker().mock());
-        this.withAlias("test identity alias");
-        this.belongsTo("http://localhost/some-authority");
-        this.withPhoto("http://localhost/unknown.png");
-        Mockito.doReturn(this.aliases).when(this.identity).aliases();
+        this.belongsTo("http://localhost/set-by-IdentityMocker");
+        this.withPhoto("http://localhost/set-by-IdentityMocker.png");
+        Mockito.doAnswer(
+            new Answer() {
+                @Override
+                public Object answer(final InvocationOnMock invocation) {
+                    return new HashSet(IdentityMocker.this.aliases);
+                }
+            }
+        ).when(this.identity).aliases();
         Mockito.doAnswer(
             new Answer() {
                 @Override
@@ -175,7 +181,7 @@ public final class IdentityMocker {
      * @return This object
      */
     public IdentityMocker withAlias(final String alias) {
-        this.aliases.add(alias);
+        this.aliases.add(0, alias);
         return this;
     }
 
@@ -235,6 +241,9 @@ public final class IdentityMocker {
         if (this.bouts.isEmpty()) {
             final Long num = Math.abs(new Random().nextLong());
             this.withBout(num, new BoutMocker().withNumber(num).mock());
+        }
+        if (this.aliases.isEmpty()) {
+            this.withAlias("test identity alias set by IdentityMocker");
         }
         return this.identity;
     }

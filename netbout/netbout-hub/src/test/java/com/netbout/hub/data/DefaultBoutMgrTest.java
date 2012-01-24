@@ -32,14 +32,13 @@ import com.netbout.hub.BoutMgr;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
+import com.netbout.spi.xml.JaxbPrinter;
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import java.util.Random;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.w3c.dom.Document;
 
 /**
  * Test case of {@link DefaultBoutMgr}.
@@ -54,15 +53,12 @@ public final class DefaultBoutMgrTest {
      */
     @Test
     public void producesStatisticsAsXmlElement() throws Exception {
-        final Hub hub = new HubMocker().mock();
-        final BoutMgr mgr = new DefaultBoutMgr(hub);
-        final Document doc = DocumentBuilderFactory
-            .newInstance()
-            .newDocumentBuilder()
-            .newDocument();
-        doc.appendChild(mgr.stats(doc));
         MatcherAssert.assertThat(
-            XhtmlConverter.the(doc),
+            XhtmlConverter.the(
+                new JaxbPrinter(
+                    new DefaultBoutMgr(new HubMocker().mock())
+                ).print()
+            ),
             XhtmlMatchers.hasXPath("/manager/bouts")
         );
     }

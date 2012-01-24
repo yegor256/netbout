@@ -26,6 +26,7 @@
  */
 package com.netbout.shary;
 
+import com.netbout.spi.xml.SchemaLocation;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -39,6 +40,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "slip", namespace = Slip.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
+@SchemaLocation("http://www.netbout.com/ns/shary/Slip.xsd")
 public final class Slip {
 
     /**
@@ -50,6 +52,11 @@ public final class Slip {
      * Is it an allowing slip or declining?
      */
     private transient boolean allow;
+
+    /**
+     * Title of the document.
+     */
+    private transient String name;
 
     /**
      * URI of the document to share.
@@ -72,12 +79,16 @@ public final class Slip {
      * Public ctor.
      * @param flag Allow of disallow?
      * @param addr The address of the document
-     * @param name The author
+     * @param who The author
+     * @param title The title of the document
+     * @checkstyle ParameterNumber (3 lines)
      */
-    public Slip(final boolean flag, final String addr, final String name) {
+    public Slip(final boolean flag, final String addr, final String who,
+        final String title) {
         this.allow = flag;
         this.uri = addr;
-        this.author = name;
+        this.author = who;
+        this.name = title;
     }
 
     /**
@@ -88,15 +99,15 @@ public final class Slip {
         String text;
         if (this.allow) {
             text = String.format(
-                "%s shared a document with us: \"%s\"",
-                this.author,
-                this.title()
+                "%s shared **\"%s\"** document with us.",
+                this.name,
+                this.author
             );
         } else {
             text = String.format(
-                "%s decided not to share a document with us any more: \"%s\"",
-                this.author,
-                this.title()
+                "%s decided not to share \"%s\" with us any more.",
+                this.name,
+                this.author
             );
         }
         return text;
@@ -131,10 +142,19 @@ public final class Slip {
 
     /**
      * Get title of the document to show to everybody.
-     * @return Title of it
+     * @return The name of it (unique in the bout)
      */
-    public String title() {
-        return this.uri;
+    @XmlElement(name = "name", namespace = Slip.NAMESPACE)
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Calculate and return type of document to share.
+     * @return The media type of it
+     */
+    public String getType() {
+        return "text/plain";
     }
 
 }

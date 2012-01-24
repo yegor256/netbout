@@ -36,13 +36,17 @@ import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Entry point to Hub.
@@ -51,7 +55,9 @@ import org.w3c.dom.Element;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class DefaultHub implements Hub, HubStats {
+@XmlType(name = "hub")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class DefaultHub implements Hub {
 
     /**
      * The bus.
@@ -75,6 +81,13 @@ public final class DefaultHub implements Hub, HubStats {
         new ConcurrentSkipListSet<Identity>();
 
     /**
+     * Public ctor, for JAXB.
+     */
+    public DefaultHub() {
+        throw new IllegalStateException("illegal call");
+    }
+
+    /**
      * Public ctor.
      * @param bus The bus
      */
@@ -82,7 +95,7 @@ public final class DefaultHub implements Hub, HubStats {
         this.ibus = bus;
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
-        StatsFarm.setHubStats(this);
+        StatsFarm.addStats(this);
     }
 
     /**
@@ -134,22 +147,17 @@ public final class DefaultHub implements Hub, HubStats {
     }
 
     /**
-     * {@inheritDoc}
+     * Get list of identities.
+     * @return The list
      */
-    @Override
-    public Element stats(final Document doc) {
-        final Element root = doc.createElement("hub");
-        final Element identities = doc.createElement("identities");
-        root.appendChild(identities);
+    @XmlElement(name = "identity")
+    @XmlElementWrapper(name = "identities")
+    public Collection<String> getIdentities() {
+        final Collection<String> identities = new ArrayList<String>();
         for (Object object : this.all) {
-            final Element identity = doc.createElement("identity");
-            identities.appendChild(identity);
-            identity.appendChild(
-                doc.createTextNode(((Identity) object).name().toString())
-            );
+            identities.add(((Identity) object).name().toString());
         }
-        root.appendChild(this.manager().stats(doc));
-        return root;
+        return identities;
     }
 
     /**
