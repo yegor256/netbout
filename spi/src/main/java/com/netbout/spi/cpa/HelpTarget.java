@@ -87,9 +87,21 @@ final class HelpTarget {
                 )
             );
         } catch (IllegalAccessException ex) {
-            throw new IllegalStateException(ex);
+            throw new IllegalStateException(
+                String.format(
+                    "Failed to access %s",
+                    this.method.toGenericString()
+                ),
+                ex
+            );
         } catch (java.lang.reflect.InvocationTargetException ex) {
-            throw new IllegalStateException(ex);
+            throw new IllegalStateException(
+                String.format(
+                    "Failed to call %s",
+                    this.method.toGenericString()
+                ),
+                ex
+            );
         }
         if (this.method.getReturnType().equals(Void.TYPE)) {
             token.result(new PlainVoid());
