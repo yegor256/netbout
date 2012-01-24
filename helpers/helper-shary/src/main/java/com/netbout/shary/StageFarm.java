@@ -155,7 +155,7 @@ public final class StageFarm implements IdentityAware {
                 dest = "";
                 this.identity.bout(number).post(new JaxbPrinter(slip).print());
             } else {
-                dest = "invalid-uri";
+                dest = "illegal-uri";
             }
         }
         return dest;
