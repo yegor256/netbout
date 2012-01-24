@@ -27,9 +27,10 @@
 package com.netbout.hub.predicates.xml;
 
 import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateException;
 import com.netbout.hub.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
+import com.netbout.spi.xml.DomParser;
 import com.ymock.util.Logger;
 import java.util.List;
 
@@ -55,26 +56,14 @@ public final class NsPred extends AbstractVarargPred {
     @Override
     public Object evaluate(final Message msg, final int pos) {
         final String namespace = (String) this.arg(0).evaluate(msg, pos);
-        final DomText text = new DomText(msg.text());
-        boolean result = false;
-        if (text.isXml()) {
-            String uri;
-            try {
-                uri = text.namespace();
-            } catch (DomValidationException ex) {
-                throw new PredicateException(ex);
-            }
-            result = namespace.equals(uri);
-            Logger.debug(
-                this,
-                // @checkstyle LineLength (1 line)
-                "#evaluate(): namespace '%s' required, '%s' found inside '%s': %B",
-                namespace,
-                uri,
-                text,
-                result
-            );
-        }
+        final boolean result = new DomParser(msg.text())
+            .belongsTo(Urn.create(namespace));
+        Logger.debug(
+            this,
+            "#evaluate(): namespace '%s' required: %B",
+            namespace,
+            result
+        );
         return result;
     }
 

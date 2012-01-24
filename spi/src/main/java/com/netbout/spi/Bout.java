@@ -86,8 +86,9 @@ public interface Bout extends Comparable<Bout> {
      * Invite new participant.
      * @param identity Identity of the participant
      * @return This new participant
+     * @throws DuplicateInvitationException If this person is already here
      */
-    Participant invite(Identity identity);
+    Participant invite(Identity identity) throws DuplicateInvitationException;
 
     /**
      * Get ordered list of all messages of the bout.

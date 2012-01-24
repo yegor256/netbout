@@ -63,6 +63,7 @@ public final class CloudAppenderTest {
             }
         ).when(feeder).feed(Mockito.anyString());
         appender.setFeeder(feeder);
+        appender.activateOptions();
         final LoggingEvent event = new LoggingEvent(
             this.getClass().getName(),
             new RootLogger(Level.DEBUG),
@@ -80,6 +81,7 @@ public final class CloudAppenderTest {
             }
         }
         Mockito.verify(feeder).feed("DEBUG - some text to log\n");
+        appender.close();
     }
 
 }

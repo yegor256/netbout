@@ -29,16 +29,14 @@ package com.netbout.rest.jaxb;
 import com.netbout.hub.Hub;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
-import java.io.StringReader;
+import com.netbout.spi.xml.DomParser;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 /**
  * Long version of a stage.
@@ -111,12 +109,7 @@ public final class LongStage {
     @XmlAnyElement(lax = true)
     @XmlMixed
     public Element getContent() throws Exception {
-        final DocumentBuilderFactory factory =
-            DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        return factory.newDocumentBuilder()
-            .parse(new InputSource(new StringReader(this.xml())))
-            .getDocumentElement();
+        return new DomParser(this.xml()).parse().getDocumentElement();
     }
 
     /**

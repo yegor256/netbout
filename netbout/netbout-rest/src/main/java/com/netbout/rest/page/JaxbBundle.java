@@ -26,12 +26,11 @@
  */
 package com.netbout.rest.page;
 
+import com.netbout.spi.xml.DomParser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -173,14 +172,7 @@ public final class JaxbBundle {
                 "You can convert only top level JaxbBundle to DOM"
             );
         }
-        DocumentBuilder builder;
-        try {
-            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (javax.xml.parsers.ParserConfigurationException ex) {
-            throw new IllegalStateException(ex);
-        }
-        final Document doc = builder.newDocument();
-        return this.element(doc);
+        return this.element(new DomParser("<root/>").parse());
     }
 
     /**

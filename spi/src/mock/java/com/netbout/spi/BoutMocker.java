@@ -164,7 +164,7 @@ public final class BoutMocker {
 
     /**
      * With this participant, by its name.
-     * @param The name of it
+     * @param name The name of it
      * @return This object
      */
     public BoutMocker withParticipant(final String name) {
@@ -173,7 +173,7 @@ public final class BoutMocker {
 
     /**
      * With this participant, by its name.
-     * @param The name of it
+     * @param name The name of it
      * @return This object
      */
     public BoutMocker withParticipant(final Urn name) {
@@ -182,7 +182,7 @@ public final class BoutMocker {
 
     /**
      * With this participant.
-     * @param The identity
+     * @param part The identity
      * @return This object
      */
     public BoutMocker withParticipant(final Identity part) {

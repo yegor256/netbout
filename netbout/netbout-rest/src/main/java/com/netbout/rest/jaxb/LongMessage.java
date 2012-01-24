@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Message convertable to XML through JAXB.
@@ -122,7 +123,7 @@ public final class LongMessage {
             .arg(txt)
             .asDefault(txt)
             .exec();
-        return LongMessage.formatted(render);
+        return LongMessage.formatted(StringEscapeUtils.escapeXml(render));
     }
 
     /**

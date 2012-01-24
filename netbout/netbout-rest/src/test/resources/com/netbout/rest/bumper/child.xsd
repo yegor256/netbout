@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'
-    xmlns:b='/bumper/ns' targetNamespace='/bumper/ns'>
+    xmlns:b='urn:test:bumper:ns' targetNamespace='urn:test:bumper:ns'>
     <xs:complexType name='bump'>
         <xs:sequence>
             <xs:element name='text' type='xs:string' form='qualified'

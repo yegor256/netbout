@@ -273,7 +273,7 @@
                         <xsl:choose>
                             <xsl:when test=". = /page/bout/stage/@name">
                                 <li class="active">
-                                    <xsl:value-of select="."/>
+                                    <xsl:value-of select="@alias"/>
                                 </li>
                             </xsl:when>
                             <xsl:otherwise>
@@ -282,7 +282,7 @@
                                         <xsl:attribute name="href">
                                             <xsl:value-of select="@href"/>
                                         </xsl:attribute>
-                                        <xsl:value-of select="."/>
+                                        <xsl:value-of select="@alias"/>
                                     </a>
                                 </li>
                             </xsl:otherwise>

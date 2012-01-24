@@ -23,66 +23,25 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.hub.predicates.xml;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
-
-/**
- * Handler of validation errors.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class DomErrorHandler implements ErrorHandler {
+package com.netbout.rest.rexsl.scripts
 
-    /**
-     * List of exceptions registered.
-     */
-    private final transient List<Exception> errors =
-        new CopyOnWriteArrayList<Exception>();
+import com.netbout.spi.xml.DomParser
 
-    /**
-     * Is it empty?
-     * @return Is it?
-     */
-    public boolean isEmpty() {
-        return this.errors.isEmpty();
-    }
-
-    /**
-     * All found exceptions.
-     * @return List of them
-     */
-    public List<Exception> exceptions() {
-        return this.errors;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void error(final SAXParseException err) {
-        this.errors.add(err);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void fatalError(final SAXParseException err) {
-        this.errors.add(err);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void warning(final SAXParseException err) {
-        this.errors.add(err);
-    }
-
-}
+/*
+These elements should be there as well. I don't know why they don't work.
+    <author>urn:test:shary</author>
+    <name>New Document</name>
+*/
+def xml = """<?xml version="1.0"?>
+<Slip xmlns="urn:netbout:ns:shary/Slip"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:netbout:ns:shary/Slip ${rexsl.home}ns/shary/Slip.xsd">
+    <allow>true</allow>
+    <uri>http://www.netbout.com/</uri>
+</Slip>
+"""
+new DomParser(xml).validate()

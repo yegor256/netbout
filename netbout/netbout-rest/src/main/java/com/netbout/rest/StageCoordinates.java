@@ -28,11 +28,12 @@ package com.netbout.rest;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.netbout.utils.TextUtils;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Coordinates of a stage.
@@ -50,7 +51,7 @@ public final class StageCoordinates {
     /**
      * List of all stages.
      */
-    private transient Collection<Urn> stages;
+    private transient Set<Identity> stages;
 
     /**
      * Name of stage.
@@ -159,7 +160,7 @@ public final class StageCoordinates {
      * List of all stages, their names.
      * @return The list
      */
-    public Collection<Urn> all() {
+    public Set<Identity> all() {
         if (this.stages == null) {
             throw new IllegalStateException("Call #normalize() before #all()");
         }
@@ -175,24 +176,40 @@ public final class StageCoordinates {
         if (this.stages != null) {
             throw new IllegalStateException("Duplicate call to #normalize()");
         }
-        this.stages = new ArrayList<Urn>();
+        this.stages = new HashSet<Identity>();
         for (Participant dude : bout.participants()) {
-            final Urn name = dude.identity().name();
+            final Identity identity = dude.identity();
             final Boolean exists = hub.make("does-stage-exist")
                 .synchronously()
                 .arg(bout.number())
-                .arg(name)
+                .arg(identity.name())
                 .inBout(bout)
                 .asDefault(false)
                 .exec();
             if (exists) {
-                this.stages.add(name);
+                this.stages.add(identity);
             }
         }
         if (this.istage.isEmpty() && this.stages.size() > 0) {
-            this.istage = this.stages.iterator().next();
+            this.istage = this.stages.iterator().next().name();
         }
-        if (!this.stages.contains(this.istage)) {
+        this.discharge();
+    }
+
+    /**
+     * Check current stage value and set it to VOID if such a stage
+     * is absent in the list of available stages.
+     * @see #normalize(Hub,Bout)
+     */
+    private void discharge() {
+        boolean found = false;
+        for (Identity identity : this.stages) {
+            if (identity.name().equals(this.istage)) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
             this.istage = new Urn();
         }
     }

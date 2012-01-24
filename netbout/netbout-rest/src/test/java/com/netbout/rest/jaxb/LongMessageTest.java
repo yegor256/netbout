@@ -80,6 +80,7 @@ public final class LongMessageTest {
     public void convertsMetaCommandsToHtmlFormatting() throws Exception {
         final Map<String, String> texts = ArrayUtils.toMap(
             new String[][] {
+                {"**1 < 3**", "<b>1 &lt; 3</b>"},
                 {"this is **bold** text", "this is <b>bold</b> text"},
                 {"this is _italic_ text", "this is <i>italic</i> text"},
                 {
@@ -88,7 +89,7 @@ public final class LongMessageTest {
                 },
                 {
                     "[\u0443\u0440\u0430!](http://a.com/\u0443)",
-                    "<a href='http://a.com/\u0443'>\u0443\u0440\u0430!</a>",
+                    "<a href='http://a.com/&#1091;'>&#1091;&#1088;&#1072;!</a>",
                 },
             }
         );

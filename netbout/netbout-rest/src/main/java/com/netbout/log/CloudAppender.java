@@ -54,6 +54,11 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     private transient Feeder feeder;
 
     /**
+     * The thread.
+     */
+    private transient Thread thread;
+
+    /**
      * Set feeder, option {@code feeder} in config.
      * @param fdr The feeder to use
      */
@@ -62,7 +67,6 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
             throw new IllegalArgumentException("call #setFeeder() only once");
         }
         this.feeder = fdr;
-        new Thread(this).start();
     }
 
     /**
@@ -77,8 +81,19 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
      * {@inheritDoc}
      */
     @Override
+    public void activateOptions() {
+        super.activateOptions();
+        this.thread = new Thread(this);
+        this.thread.start();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("PMD.NullAssignment")
     public void close() {
-        // empty
+        this.thread = null;
     }
 
     /**
@@ -97,7 +112,13 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     @Override
     @SuppressWarnings("PMD.SystemPrintln")
     public void run() {
+        System.out.println("CloudAppender started to work...");
         while (true) {
+            synchronized (this) {
+                if (this.thread == null) {
+                    break;
+                }
+            }
             final String text = this.messages.poll();
             if (text != null) {
                 try {
@@ -118,6 +139,7 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
                 continue;
             }
         }
+        System.out.println("CloudAppender finished to work.");
     }
 
 }

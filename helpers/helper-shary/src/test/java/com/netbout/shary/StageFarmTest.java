@@ -32,9 +32,9 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import com.netbout.spi.xml.JaxbPrinter;
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
-import com.woquo.netbout.Jaxb;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
@@ -53,9 +53,9 @@ public final class StageFarmTest {
     public void rendersStageXml() throws Exception {
         final StageFarm farm = new StageFarm();
         final Urn name = new UrnMocker().mock();
-        final Slip slip = new Slip(true, "s3:...", "John");
+        final Slip slip = new Slip(true, "s3:...", "John", "foo.txt");
         final Bout bout = new BoutMocker()
-            .withMessage(Jaxb.format(slip))
+            .withMessage(new JaxbPrinter(slip).print())
             .mock();
         final Identity identity = new IdentityMocker()
             .namedAs(name)

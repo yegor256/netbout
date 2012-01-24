@@ -165,12 +165,9 @@ body {
             font-weight: bold;
         }
 
-    #content p {
+    #content p,
+    #content ul,
+    #content ol {
         position: relative;
+        font-size: 1.4em;
     }
-
-#plain p,
-#plain ul,
-#plain ol {
-    font-size: 1.4em;
-}

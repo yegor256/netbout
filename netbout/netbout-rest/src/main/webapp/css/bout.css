@@ -106,7 +106,6 @@
     #titles li {
         display: inline;
         margin-right: 1em;
-        font-size: 1.4em;
     }
 
         /* active title of a stage */
@@ -118,7 +117,6 @@
 #stage {
     min-height: 3em;
     padding: 1em;
-    font-size: 1.4em;
     background-color: #f3f3f1;
     border: 0.1em solid #e4e5e3;
     box-shadow: 0 0.1em 0.1em #e4e5e3;

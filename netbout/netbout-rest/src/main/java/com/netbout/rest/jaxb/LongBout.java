@@ -35,7 +35,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -154,7 +153,7 @@ public final class LongBout {
     @XmlElementWrapper(name = "stages")
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new ArrayList<ShortStage>();
-        for (Urn identity : this.coords.all()) {
+        for (Identity identity : this.coords.all()) {
             stages.add(new ShortStage(identity, this.builder.clone()));
         }
         return stages;

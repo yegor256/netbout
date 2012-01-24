@@ -28,7 +28,7 @@ package com.netbout.shary;
 
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.woquo.netbout.Jaxb;
+import com.netbout.spi.xml.JaxbParser;
 
 /**
  * Render farm.
@@ -50,8 +50,9 @@ public final class RenderFarm {
     public String preRenderMessage(final Long number, final Long msg,
         final String text) {
         String result = null;
-        if (Jaxb.inNs(text, Slip.NAMESPACE)) {
-            result = Jaxb.parse(text, Slip.class).render();
+        final JaxbParser parser = new JaxbParser(text);
+        if (parser.has(Slip.class)) {
+            result = parser.parse(Slip.class).render();
         }
         return result;
     }
