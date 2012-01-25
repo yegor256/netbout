@@ -36,12 +36,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
 /**
- * Log appender, for over-HTTP events.
+ * Feeder through HTTP POST request.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LogglyFeeder implements Feeder {
+public final class HttpFeeder implements Feeder {
 
     /**
      * The URL to post to.
@@ -65,8 +65,8 @@ public final class LogglyFeeder implements Feeder {
      */
     @Override
     public void feed(final String text) throws IOException {
-        for (String line : text.split("\n")) {
-            this.post(line);
+        for (String line : text.split(CloudAppender.EOL)) {
+            this.post(String.format("%s%s", line, CloudAppender.EOL));
         }
     }
 
