@@ -195,7 +195,7 @@ public final class LongBout {
     public List<LongMessage> getMessages() {
         final Period period = Period.valueOf(this.view);
         List<Message> discussion;
-        if (view == null) {
+        if (this.view == null) {
             discussion = this.bout.messages(this.query);
         } else {
             discussion = this.bout.messages(period.query(this.query));
