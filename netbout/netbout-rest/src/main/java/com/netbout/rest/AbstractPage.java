@@ -59,6 +59,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
