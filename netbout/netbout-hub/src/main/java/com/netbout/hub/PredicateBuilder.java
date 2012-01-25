@@ -106,14 +106,22 @@ public final class PredicateBuilder {
                 predicate
             );
         } else {
-            predicate = this.parse(
-                String.format(
-                    "(matches \"%s\" $text)",
-                    query.replace("\"", "\\\"")
-                )
-            );
+            predicate = this.parse(PredicateBuilder.byKeyword(query));
         }
         return predicate;
+    }
+
+    /**
+     * Build a query by keyword.
+     * @param keyword The keyword to look for
+     * @return The text for predicate
+     */
+    public static String byKeyword(final String keyword) {
+        return String.format(
+            // @checkstyle LineLength (1 line)
+            "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
+            keyword.replace("'", "\\'")
+        );
     }
 
     /**

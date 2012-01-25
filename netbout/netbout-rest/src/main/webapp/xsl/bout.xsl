@@ -155,8 +155,8 @@
                     <b>
                     <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
                     </b>
-                    <xsl:text> at </xsl:text>
-                    <xsl:value-of select="date"/>
+                    <xsl:text> said </xsl:text>
+                    <xsl:value-of select="when"/>
                     <span class="red">
                         <xsl:if test="@seen = 'false'">
                             <xsl:text> new</xsl:text>
