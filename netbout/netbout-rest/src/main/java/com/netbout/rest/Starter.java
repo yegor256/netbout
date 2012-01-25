@@ -58,8 +58,8 @@ public final class Starter implements ContextResolver<Starter> {
     public Starter(@Context final ServletContext context) {
         final long start = System.currentTimeMillis();
         final Hub hub = new DefaultHub(new DefaultBus());
-        context.setAttribute("com.netbout.rest.HUB", hub);
         this.start(hub);
+        context.setAttribute("com.netbout.rest.HUB", hub);
         Logger.info(
             this,
             "#Starter(%[type]s): done in %dms",

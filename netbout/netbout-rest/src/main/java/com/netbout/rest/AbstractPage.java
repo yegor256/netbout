@@ -38,6 +38,7 @@ import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
@@ -58,6 +59,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -224,6 +226,15 @@ public abstract class AbstractPage implements Page {
     @XmlAttribute
     public final Long getNano() {
         return System.nanoTime() - this.home.nano();
+    }
+
+    /**
+     * Get time of page generation.
+     * @return Time in ISO 8601
+     */
+    @XmlAttribute
+    public final Date getTime() {
+        return new Date();
     }
 
     /**

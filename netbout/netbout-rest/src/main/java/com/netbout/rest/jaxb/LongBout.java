@@ -88,9 +88,9 @@ public final class LongBout {
     private final transient Identity viewer;
 
     /**
-     * The messages loaded.
+     * The view.
      */
-    private final transient List<LongMessage> messages;
+    private final transient String view;
 
     /**
      * Periods to show.
@@ -124,7 +124,7 @@ public final class LongBout {
         this.query = keyword;
         this.builder = bldr;
         this.viewer = vwr;
-        this.messages = this.load(period);
+        this.view = period;
     }
 
     /**
@@ -143,6 +143,15 @@ public final class LongBout {
     @XmlElement
     public String getTitle() {
         return this.bout.title();
+    }
+
+    /**
+     * Get view.
+     * @return The view
+     */
+    @XmlElement(nillable = false)
+    public String getView() {
+        return this.view;
     }
 
     /**
@@ -184,43 +193,9 @@ public final class LongBout {
     @XmlElement(name = "message")
     @XmlElementWrapper(name = "messages")
     public List<LongMessage> getMessages() {
-        return this.messages;
-    }
-
-    /**
-     * List of participants.
-     * @return The list
-     */
-    @XmlElement(name = "participant")
-    @XmlElementWrapper(name = "participants")
-    public Collection<LongParticipant> getParticipants() {
-        final Collection<LongParticipant> dudes =
-            new ArrayList<LongParticipant>();
-        for (Participant dude : this.bout.participants()) {
-            dudes.add(new LongParticipant(dude, this.builder, this.viewer));
-        }
-        return dudes;
-    }
-
-    /**
-     * List of periods.
-     * @return The list
-     */
-    @XmlElement(name = "link")
-    @XmlElementWrapper(name = "periods")
-    public Collection<Link> getPeriods() {
-        return this.periods;
-    }
-
-    /**
-     * Private ctor.
-     * @param view Which period to view
-     * @return The list of messages
-     */
-    public List<LongMessage> load(final String view) {
-        final Period period = Period.valueOf(view);
+        final Period period = Period.valueOf(this.view);
         List<Message> discussion;
-        if (view == null) {
+        if (this.view == null) {
             discussion = this.bout.messages(this.query);
         } else {
             discussion = this.bout.messages(period.query(this.query));
@@ -249,6 +224,31 @@ public final class LongBout {
         }
         this.periods.addAll(pbld.links());
         return msgs;
+    }
+
+    /**
+     * List of participants.
+     * @return The list
+     */
+    @XmlElement(name = "participant")
+    @XmlElementWrapper(name = "participants")
+    public Collection<LongParticipant> getParticipants() {
+        final Collection<LongParticipant> dudes =
+            new ArrayList<LongParticipant>();
+        for (Participant dude : this.bout.participants()) {
+            dudes.add(new LongParticipant(dude, this.builder, this.viewer));
+        }
+        return dudes;
+    }
+
+    /**
+     * List of periods.
+     * @return The list
+     */
+    @XmlElement(name = "link")
+    @XmlElementWrapper(name = "periods")
+    public Collection<Link> getPeriods() {
+        return this.periods;
     }
 
 }

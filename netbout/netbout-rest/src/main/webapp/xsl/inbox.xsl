@@ -58,6 +58,18 @@
     </xsl:template>
 
     <xsl:template name="content">
+        <xsl:if test="/page/view != ''">
+            <ul class="periods">
+                <li>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                        </xsl:attribute>
+                        <xsl:text>back to recent bouts</xsl:text>
+                    </a>
+                </li>
+            </ul>
+        </xsl:if>
         <nav>
             <ul class="bouts">
                 <xsl:for-each select="/page/bouts/bout">
@@ -66,7 +78,7 @@
             </ul>
         </nav>
         <nav>
-            <ul id="periods">
+            <ul class="periods">
                 <xsl:for-each select="/page/periods/link">
                     <li>
                         <a>

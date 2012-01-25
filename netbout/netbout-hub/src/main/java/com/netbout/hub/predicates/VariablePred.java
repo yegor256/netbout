@@ -29,6 +29,7 @@ package com.netbout.hub.predicates;
 import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateException;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 
 /**
  * Variable.
@@ -67,8 +68,10 @@ public final class VariablePred implements Predicate {
             value = msg.number();
         } else if ("date".equals(this.name)) {
             value = msg.date();
-        } else if ("author".equals(this.name)) {
-            value = msg.author();
+        } else if ("author.name".equals(this.name)) {
+            value = msg.author().name();
+        } else if ("author.alias".equals(this.name)) {
+            value = NetboutUtils.aliasOf(msg.author());
         } else if ("seen".equals(this.name)) {
             value = msg.seen();
         } else {

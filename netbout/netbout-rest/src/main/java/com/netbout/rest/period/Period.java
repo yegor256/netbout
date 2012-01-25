@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.period;
 
+import com.netbout.hub.PredicateBuilder;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.Map;
@@ -262,10 +263,7 @@ public final class Period {
             original = query;
         } else {
             if (!query.isEmpty()) {
-                original = String.format(
-                    " (matches '%s' $text)",
-                    query.replace("'", "\\'")
-                );
+                original = PredicateBuilder.byKeyword(query);
             }
         }
         final String text = String.format(
@@ -290,23 +288,32 @@ public final class Period {
      * @return Text presentation of this period
      */
     public String title() {
+        return this.when(this.newest());
+    }
+
+    /**
+     * Textual explanation of when this date happened.
+     * @param date The date
+     * @return Text explanation
+     */
+    public static String when(final Date date) {
         final org.joda.time.Period distance = new Interval(
-            this.newest().getTime(),
+            date.getTime(),
             new Date().getTime()
         ).toPeriod();
         String title;
         if (distance.getYears() > 0) {
-            title = this.plural("year", distance.getYears());
+            title = Period.plural("year", distance.getYears());
         } else if (distance.getMonths() > 0) {
-            title = this.plural("month", distance.getMonths());
+            title = Period.plural("month", distance.getMonths());
         } else if (distance.getWeeks() > 0) {
-            title = this.plural("week", distance.getWeeks());
+            title = Period.plural("week", distance.getWeeks());
         } else if (distance.getDays() > 0) {
-            title = this.plural("day", distance.getDays());
+            title = Period.plural("day", distance.getDays());
         } else if (distance.getHours() > 0) {
-            title = this.plural("hour", distance.getHours());
+            title = Period.plural("hour", distance.getHours());
         } else if (distance.getMinutes() > 0) {
-            title = this.plural("minute", distance.getMinutes());
+            title = Period.plural("minute", distance.getMinutes());
         } else {
             title = "a few seconds";
         }
@@ -320,7 +327,7 @@ public final class Period {
      * @return The text
      */
     @SuppressWarnings("PMD.UseConcurrentHashMap")
-    private String plural(final String noun, final int num) {
+    private static String plural(final String noun, final int num) {
         final Map<String, String> digits = ArrayUtils.toMap(
             new String[][] {
                 {"1", "a"},
@@ -332,6 +339,9 @@ public final class Period {
                 {"7", "seven"},
                 {"8", "eight"},
                 {"9", "nine"},
+                {"10", "ten"},
+                {"11", "eleven"},
+                {"12", "twelve"},
             }
         );
         String count = Integer.toString(num);

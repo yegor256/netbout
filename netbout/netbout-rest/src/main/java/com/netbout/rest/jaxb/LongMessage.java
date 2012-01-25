@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
+import com.netbout.rest.period.Period;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import java.util.Date;
@@ -133,6 +134,15 @@ public final class LongMessage {
     @XmlElement
     public Date getDate() {
         return this.message.date();
+    }
+
+    /**
+     * Get text explanation when this message was posted.
+     * @return The explanation
+     */
+    @XmlElement
+    public String getWhen() {
+        return Period.when(this.message.date());
     }
 
     /**

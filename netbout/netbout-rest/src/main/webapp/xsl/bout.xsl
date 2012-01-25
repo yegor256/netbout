@@ -116,9 +116,21 @@
                 <dl><input value="Post new message" type="submit" /></dl>
             </form>
         </xsl:if>
+        <xsl:if test="/page/bout/view != ''">
+            <ul class="periods">
+                <li>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                        </xsl:attribute>
+                        <xsl:text>back to recent messages</xsl:text>
+                    </a>
+                </li>
+            </ul>
+        </xsl:if>
         <xsl:apply-templates select="/page/bout/messages/message" />
         <nav>
-            <ul id="periods">
+            <ul class="periods">
                 <xsl:for-each select="/page/bout/periods/link">
                     <li>
                         <a>
@@ -155,8 +167,8 @@
                     <b>
                     <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
                     </b>
-                    <xsl:text> at </xsl:text>
-                    <xsl:value-of select="date"/>
+                    <xsl:text> said </xsl:text>
+                    <xsl:value-of select="when"/>
                     <span class="red">
                         <xsl:if test="@seen = 'false'">
                             <xsl:text> new</xsl:text>
@@ -190,7 +202,7 @@
                     </xsl:if>
                 </input>
             </form>
-            <xsl:if test="/page/invitees">
+            <xsl:if test="/page/invitees[count(invitee) &gt; 0]">
                 <ul id="invite-list">
                     <xsl:for-each select="/page/invitees/invitee">
                         <li>

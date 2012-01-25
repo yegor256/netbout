@@ -323,6 +323,9 @@ public abstract class AbstractRs implements Resource {
     @Context
     public final void setServletContext(final ServletContext context) {
         this.ihub = (Hub) context.getAttribute("com.netbout.rest.HUB");
+        if (this.ihub == null) {
+            throw new IllegalStateException("HUB is not initialized");
+        }
         Logger.debug(
             this,
             "#setServletContext(%[type]s): injected",
