@@ -148,7 +148,7 @@ public abstract class AbstractPage implements Page {
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
         if (identity instanceof Helper) {
-            this.append(new LongHelper((Helper) identity));
+            this.append(new LongHelper(identity, (Helper) identity));
         } else {
             this.append(new LongIdentity(identity));
         }

@@ -53,6 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
 @XmlType(name = "hub")
@@ -165,7 +166,15 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public void promote(final Identity identity, final Helper helper) {
-        this.ibus.register(helper);
+        if (!(identity instanceof HubIdentity)) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Can't promote '%s' since it's not from Hub",
+                    identity.name()
+                )
+            );
+        }
+        this.ibus.register(identity, helper);
         Identity existing;
         try {
             existing = this.identity(identity.name());
@@ -173,7 +182,7 @@ public final class DefaultHub implements Hub {
             throw new IllegalArgumentException(ex);
         }
         this.all.remove(existing);
-        this.save(helper);
+        this.save(new HelperIdentity((HubIdentity) identity, helper));
         Logger.info(
             this,
             "#promote('%s', '%[type]s'): replaced existing identity (%[type]s)",

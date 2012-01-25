@@ -28,14 +28,18 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
+import com.netbout.spi.HelperMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.netbout.spi.xml.JaxbPrinter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -49,6 +53,7 @@ import org.xmlmatchers.transform.XmlConverters;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle MultipleStringLiterals (500 lines)
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class DefaultHubTest {
@@ -103,11 +108,10 @@ public final class DefaultHubTest {
         final Identity identity = hub.identity(name);
         final Helper helper = Mockito.mock(Helper.class);
         Mockito.doReturn(new URL("file:com.netbout")).when(helper).location();
-        Mockito.doReturn(name).when(helper).name();
         hub.promote(identity, helper);
         MatcherAssert.assertThat(
             hub.identity(name),
-            Matchers.equalTo((Identity) helper)
+            Matchers.instanceOf(Helper.class)
         );
     }
 
@@ -172,7 +176,6 @@ public final class DefaultHubTest {
         final List<Urn> names = new ArrayList<Urn>();
         names.add(name);
         final Bus bus = new BusMocker()
-            // @checkstyle MultipleStringLiterals (1 line)
             .doReturn(names, "find-identities-by-keyword")
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
@@ -186,6 +189,32 @@ public final class DefaultHubTest {
             hub.findByKeyword(name.nss()),
             Matchers.hasItem(identity)
         );
+    }
+
+    /**
+     * DefaultHub can invite a helper and then kick him off.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void invitesHelperAndKicksHimOff() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(Arrays.asList(new String[]{"foo"}), "get-all-namespaces")
+            .doReturn("http://localhost", "get-namespace-template")
+            .doReturn(new Urn(), "get-namespace-owner")
+            .doReturn(1L, "get-next-bout-number")
+            .doReturn(Arrays.asList(new Urn[]{}), "get-bout-participants")
+            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
+            .doReturn(Arrays.asList(new Long[]{}), "get-bout-messages")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        final Identity host = hub.identity(new UrnMocker().mock());
+        final Bout bout = host.start();
+        final Identity helper = hub.identity(new UrnMocker().mock());
+        hub.promote(helper, new HelperMocker().mock());
+        bout.invite(helper);
+        MatcherAssert.assertThat(helper.inbox(""), Matchers.hasSize(1));
+        NetboutUtils.participantOf(helper, bout).kickOff();
+        MatcherAssert.assertThat(helper.inbox(""), Matchers.hasSize(0));
     }
 
 }

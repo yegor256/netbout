@@ -101,11 +101,7 @@ final class BoutData implements BoutDt {
      */
     @Override
     public void confirm(final Urn identity) {
-        for (ParticipantDt dude : this.getParticipants()) {
-            if (dude.getIdentity().equals(identity)) {
-                dude.setConfirmed(true);
-            }
-        }
+        this.find(identity).setConfirmed(true);
     }
 
     /**
@@ -113,23 +109,8 @@ final class BoutData implements BoutDt {
      */
     @Override
     public void kickOff(final Urn identity) {
-        ParticipantDt found = null;
-        for (ParticipantDt dude : this.getParticipants()) {
-            if (dude.getIdentity().equals(identity)) {
-                found = dude;
-                break;
-            }
-        }
-        if (found == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Identity '%s' is not in bout #%d, can't kick off",
-                    identity,
-                    this.number
-                )
-            );
-        }
-        this.participants.remove(found);
+        final ParticipantDt dude = this.find(identity);
+        this.participants.remove(dude);
         this.hub.make("removed-bout-participant")
             .asap()
             .arg(this.number)
@@ -322,6 +303,31 @@ final class BoutData implements BoutDt {
             }
         }
         throw new MessageNotFoundException(num);
+    }
+
+    /**
+     * Find this participant in the bout.
+     * @param name Name of it
+     * @return The participant
+     */
+    private ParticipantDt find(final Urn name) {
+        ParticipantDt found = null;
+        for (ParticipantDt dude : this.getParticipants()) {
+            if (dude.getIdentity().equals(name)) {
+                found = dude;
+                break;
+            }
+        }
+        if (found == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Identity '%s' is not in bout #%d, can't confirm/leave",
+                    name,
+                    this.number
+                )
+            );
+        }
+        return found;
     }
 
 }

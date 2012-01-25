@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
 import java.net.URL;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -47,6 +48,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 public final class LongHelper extends LongIdentity {
 
     /**
+     * The helper.
+     */
+    private final transient Helper helper;
+
+    /**
      * Public ctor for JAXB.
      */
     public LongHelper() {
@@ -56,10 +62,12 @@ public final class LongHelper extends LongIdentity {
 
     /**
      * Private ctor.
-     * @param helper The identity
+     * @param identity The identity
+     * @param hlp The helper
      */
-    public LongHelper(final Helper helper) {
-        super(helper);
+    public LongHelper(final Identity identity, final Helper hlp) {
+        super(identity);
+        this.helper = hlp;
     }
 
     /**
@@ -78,7 +86,7 @@ public final class LongHelper extends LongIdentity {
     @XmlElement(name = "operation")
     @XmlElementWrapper(name = "supports")
     public Set<String> getSupports() {
-        return this.helper().supports();
+        return this.helper.supports();
     }
 
     /**
@@ -87,15 +95,7 @@ public final class LongHelper extends LongIdentity {
      */
     @XmlElement
     public URL getLocation() {
-        return this.helper().location();
-    }
-
-    /**
-     * Get helper.
-     * @return The helper
-     */
-    private Helper helper() {
-        return (Helper) this.identity();
+        return this.helper.location();
     }
 
 }

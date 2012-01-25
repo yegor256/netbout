@@ -28,6 +28,7 @@ package com.netbout.bus;
 
 import com.netbout.bus.cache.EmptyTokenCache;
 import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -83,8 +84,8 @@ public final class DefaultBus implements Bus {
      * {@inheritDoc}
      */
     @Override
-    public void register(final Helper helper) {
-        this.controller.register(helper);
+    public void register(final Identity identity, final Helper helper) {
+        this.controller.register(identity, helper);
         synchronized (this.scheduler) {
             try {
                 if (this.scheduler.isInStandbyMode()) {
@@ -93,7 +94,7 @@ public final class DefaultBus implements Bus {
                     Logger.info(
                         this,
                         "#register(%s): Quartz started",
-                        helper.name()
+                        helper.location()
                     );
                 }
             } catch (org.quartz.SchedulerException ex) {

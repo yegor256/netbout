@@ -143,19 +143,6 @@ public final class CpaHelperTest {
     }
 
     /**
-     * CpaHelper can be compared with identity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void comparesWithIdentityForEquality() throws Exception {
-        final Identity identity = new IdentityMocker().mock();
-        MatcherAssert.assertThat(
-            new CpaHelper(identity, new FarmMocker().mock()),
-            Matchers.equalTo(identity)
-        );
-    }
-
-    /**
      * CpaHelper can throw exception if a call is made to an unknown operation.
      * @throws Exception If there is some problem inside
      */

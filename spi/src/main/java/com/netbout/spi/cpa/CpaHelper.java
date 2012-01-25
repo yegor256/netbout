@@ -29,16 +29,11 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Token;
-import com.netbout.spi.UnreachableUrnException;
-import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
@@ -71,7 +66,7 @@ public final class CpaHelper implements Helper {
 
     /**
      * Public ctor.
-     * @param idnt The identity of me
+     * @param idnt The identity, which this helper will act on behalf of
      * @param url Jar URL where to get the code
      */
     public CpaHelper(final Identity idnt, final URL url) {
@@ -104,9 +99,10 @@ public final class CpaHelper implements Helper {
         if (!this.ops.containsKey(token.mnemo())) {
             throw new IllegalArgumentException(
                 String.format(
-                    "Operation '%s' not supported by '%s'",
+                    "Operation '%s' not supported by '%s' (%s)",
                     token.mnemo(),
-                    this.name()
+                    this.identity.name(),
+                    this.home
                 )
             );
         }
@@ -121,119 +117,6 @@ public final class CpaHelper implements Helper {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int compareTo(final Identity idnt) {
-        return this.identity.compareTo(idnt);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        return (obj instanceof Identity)
-            && ((Identity) obj).name().equals(this.name());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.name().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL authority() {
-        return this.identity.authority();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Urn name() {
-        return this.identity.name();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout start() {
-        return this.identity.start();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Bout> inbox(final String query) {
-        return this.identity.inbox(query);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout(final Long number) throws BoutNotFoundException {
-        return this.identity.bout(number);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL photo() {
-        return this.identity.photo();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPhoto(final URL photo) {
-        this.identity.setPhoto(photo);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity friend(final Urn name) throws UnreachableUrnException {
-        return this.identity.friend(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Identity> friends(final String keyword) {
-        return this.identity.friends(keyword);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> aliases() {
-        return this.identity.aliases();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        this.identity.alias(alias);
-    }
-
-    /**
      * Initialize.
      * @param url URL where to get the code
      * @return Discovered ops
@@ -241,7 +124,7 @@ public final class CpaHelper implements Helper {
     private ConcurrentMap<String, HelpTarget> discover(final URL url) {
         final long start = System.currentTimeMillis();
         final ConcurrentMap<String, HelpTarget> found =
-            new OpDiscoverer(this).discover(url);
+            new OpDiscoverer(this.identity).discover(url);
         Logger.info(
             this,
             "#init('%s'): %d operations discovered in %dms: %[list]s",
