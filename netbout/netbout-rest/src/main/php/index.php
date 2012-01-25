@@ -37,10 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($handle === false) {
         echo "can't open file '${file}' for writing";
     } else {
-        fwrite($handle, file_get_contents('php://input'));
+        fwrite($handle, file_get_contents('php://input') . "\n");
     }
 } else {
-    echo "<html><body style='font-family: monospace;'><pre>";
-    passthru("tail -200 ${file}");
-    echo "</pre></body></html>";
+    echo "<html><head>
+        <meta http-equiv='refresh' content='5; URL=http://logs.netbout.com'/>
+        <body style='font-family: monospace; white-space: pre-wrap;'>";
+    echo $file . ":\n\n";
+    passthru("tail -50 ${file} | tac");
+    echo "</body></html>";
 }

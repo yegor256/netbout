@@ -1,0 +1,9 @@
+#
+# @version $Id$
+#
+
+AuthName "Restricted Area"
+AuthType Basic
+AuthUserFile /home/caybo/logs.netbout.com/.htpasswd
+AuthGroupFile /dev/null
+Require valid-user
