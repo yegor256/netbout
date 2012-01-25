@@ -339,6 +339,9 @@ public final class Period {
                 {"7", "seven"},
                 {"8", "eight"},
                 {"9", "nine"},
+                {"10", "ten"},
+                {"11", "eleven"},
+                {"12", "twelve"},
             }
         );
         String count = Integer.toString(num);
