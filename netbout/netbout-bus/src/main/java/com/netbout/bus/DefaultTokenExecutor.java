@@ -79,7 +79,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
         final Set<Helper> active = new HashSet<Helper>();
         for (Participant participant : bout.participants()) {
             final Identity identity = participant.identity();
-            if (this.helpers.contains(identity)) {
+            if (this.helpers.contains(identity) && identity instanceof Helper) {
                 active.add((Helper) identity);
             }
         }
