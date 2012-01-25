@@ -33,14 +33,14 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link LogglyFeeder}.
+ * Test case for {@link HttpFeeder}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LogglyFeederTest {
+public final class HttpFeederTest {
 
     /**
-     * LogglyFeeder can send messages to LOGGLY.COM.
+     * HttpFeeder can send messages to HTTP via POST.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -55,7 +55,7 @@ public final class LogglyFeederTest {
             )
             .returnBody("posted")
             .mock();
-        final LogglyFeeder feeder = new LogglyFeeder();
+        final HttpFeeder feeder = new HttpFeeder();
         feeder.setUrl(container.home().toString());
         feeder.activateOptions();
         feeder.feed(message);

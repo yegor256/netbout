@@ -27,9 +27,8 @@
 package com.netbout.log;
 
 import com.ymock.util.Logger;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -43,20 +42,20 @@ import org.apache.log4j.spi.LoggingEvent;
 public final class CloudAppender extends AppenderSkeleton implements Runnable {
 
     /**
+     * End of line.
+     */
+    public static final String EOL = "\n";
+
+    /**
      * Queue of messages to send to server.
      */
-    private final transient Queue<String> messages =
-        new ConcurrentLinkedQueue<String>();
+    private final transient BlockingQueue<String> messages =
+        new LinkedBlockingQueue<String>();
 
     /**
      * The feeder.
      */
     private transient Feeder feeder;
-
-    /**
-     * The thread.
-     */
-    private transient Thread thread;
 
     /**
      * Set feeder, option {@code feeder} in config.
@@ -83,17 +82,15 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     @Override
     public void activateOptions() {
         super.activateOptions();
-        this.thread = new Thread(this);
-        this.thread.start();
+        new Thread(this).start();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.NullAssignment")
     public void close() {
-        this.thread = null;
+        // empty
     }
 
     /**
@@ -101,9 +98,15 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
      */
     @Override
     public void append(final LoggingEvent event) {
-        synchronized (this.messages) {
-            this.messages.offer(this.getLayout().format(event));
+        final StringBuilder buf = new StringBuilder();
+        buf.append(this.getLayout().format(event));
+        final String[] exc = event.getThrowableStrRep();
+        if (exc != null) {
+            for (String text : exc) {
+                buf.append(text).append(this.EOL);
+            }
         }
+        this.messages.offer(buf.toString());
     }
 
     /**
@@ -114,29 +117,22 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     public void run() {
         System.out.println("CloudAppender started to work...");
         while (true) {
-            synchronized (this) {
-                if (this.thread == null) {
-                    break;
-                }
-            }
-            final String text = this.messages.poll();
-            if (text != null) {
-                try {
-                    this.feeder.feed(text);
-                } catch (java.io.IOException ex) {
-                    System.out.println(
-                        Logger.format(
-                            "%sfailed to report because of %[exception]s",
-                            text,
-                            ex
-                        )
-                    );
-                }
+            String text;
+            try {
+                text = this.messages.take();
+            } catch (InterruptedException ex) {
+                break;
             }
             try {
-                TimeUnit.SECONDS.sleep(1L);
-            } catch (InterruptedException ex) {
-                continue;
+                this.feeder.feed(text);
+            } catch (java.io.IOException ex) {
+                System.out.println(
+                    Logger.format(
+                        "%sfailed to report because of %[exception]s",
+                        text,
+                        ex
+                    )
+                );
             }
         }
         System.out.println("CloudAppender finished to work.");

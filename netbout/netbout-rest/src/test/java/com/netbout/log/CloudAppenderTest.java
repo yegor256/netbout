@@ -31,6 +31,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.RootLogger;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -80,7 +81,14 @@ public final class CloudAppenderTest {
                 throw new IllegalStateException("waiting for too long");
             }
         }
-        Mockito.verify(feeder).feed("DEBUG - some text to log\n");
+        Mockito.verify(feeder).feed(
+            Mockito.argThat(
+                Matchers.<String>allOf(
+                    Matchers.startsWith("DEBUG - some text to log\n"),
+                    Matchers.containsString("IllegalArgumentException")
+                )
+            )
+        );
         appender.close();
     }
 
