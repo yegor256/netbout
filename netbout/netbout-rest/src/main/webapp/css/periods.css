@@ -26,7 +26,7 @@
  */
 
 /* periods */
-#periods {
+ul.periods {
     margin-top: 4em;
     margin-left: 0;
     padding-left: 0;
@@ -35,7 +35,7 @@
 }
 
     /* one period */
-    #periods li {
+    ul.periods li {
         display: inline;
         margin-right: 1em;
         font-size: 1.8em;
