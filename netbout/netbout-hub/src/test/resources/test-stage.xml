@@ -7,12 +7,12 @@
     <stage>
         <data>
             <stats>
-                <stat type="hub">
+                <stat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="hub">
                     <identities>
                         <identity>urn:test:bumper</identity>
                     </identities>
                 </stat>
-                <stat type="manager">
+                <stat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="manager">
                     <bouts>4</bouts>
                 </stat>
             </stats>
