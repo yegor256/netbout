@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($handle === false) {
         echo "can't open file '${file}' for writing";
     } else {
-        fwrite($handle, file_get_contents('php://input') . "\n");
+        fwrite($handle, file_get_contents('php://input'));
     }
 } else {
     echo "<html><head>
