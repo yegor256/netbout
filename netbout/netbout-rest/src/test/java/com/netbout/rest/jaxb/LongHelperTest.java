@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.HelperMocker;
+import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
@@ -47,9 +48,9 @@ public final class LongHelperTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongHelper obj = new LongHelper(
+            new IdentityMocker().namedAs("urn:test:foo").mock(),
             new HelperMocker()
                 .withLocation("http://foo")
-                .namedAs("urn:test:foo")
                 .doReturn("test", "test-op")
                 .mock()
         );

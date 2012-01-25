@@ -27,6 +27,7 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
 
 /**
  * Common bus of all transactions processed by helpers.
@@ -62,8 +63,9 @@ public interface Bus {
 
     /**
      * A convenient static method to register new helper.
+     * @param identity Who is the owner of this helper
      * @param helper The helper to register
      */
-    void register(Helper helper);
+    void register(Identity identity, Helper helper);
 
 }

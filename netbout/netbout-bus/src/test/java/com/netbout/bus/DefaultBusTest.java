@@ -28,6 +28,7 @@ package com.netbout.bus;
 
 import com.netbout.spi.Helper;
 import com.netbout.spi.HelperMocker;
+import com.netbout.spi.IdentityMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public final class DefaultBusTest {
         final Helper helper = new HelperMocker()
             .doReturn(text, mnemo)
             .mock();
-        bus.register(helper);
+        bus.register(new IdentityMocker().mock(), helper);
         final String result = bus.make(mnemo)
             .synchronously()
             .arg("some argument")

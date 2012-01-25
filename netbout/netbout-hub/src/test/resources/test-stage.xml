@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="./test-stage.xsl" type="text/xsl"?>
+<!--
+ * Open this page in Safari or Chrome.
+ -->
+<page>
+    <stage>
+        <data>
+            <stats>
+                <stat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="hub">
+                    <identities>
+                        <identity>urn:test:bumper</identity>
+                    </identities>
+                </stat>
+                <stat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="manager">
+                    <bouts>4</bouts>
+                </stat>
+            </stats>
+        </data>
+    </stage>
+</page>

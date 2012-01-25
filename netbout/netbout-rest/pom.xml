@@ -388,6 +388,30 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <!-- <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <id>deploy-logging-backend</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <ftp server="logs.netbout.com"
+                                            remotedir="."
+                                            userid="${logs.user}"
+                                            password="${logs.password}"
+                                            depends="yes">
+                                            <fileset dir="${basedir}/src/main/php"/>
+                                        </ftp>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin> -->
                 </plugins>
                 <pluginManagement>
                     <plugins>

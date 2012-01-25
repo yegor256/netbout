@@ -38,7 +38,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Helper extends Identity {
+public interface Helper {
 
     /**
      * Returns full list of supported operations (their mnemos).

@@ -27,6 +27,7 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Plain;
 
 /**
@@ -67,8 +68,8 @@ final class DefaultTxController implements TxController {
      * {@inheritDoc}
      */
     @Override
-    public void register(final Helper helper) {
-        this.executor.register(helper);
+    public void register(final Identity identity, final Helper helper) {
+        this.executor.register(identity, helper);
     }
 
     /**

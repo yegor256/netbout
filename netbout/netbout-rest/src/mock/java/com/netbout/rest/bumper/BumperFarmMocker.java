@@ -49,7 +49,7 @@ public final class BumperFarmMocker implements IdentityAware {
     /**
      * URL of XSD.
      */
-    private static URL home;
+    private static URL xsd;
 
     /**
      * Me.
@@ -61,7 +61,7 @@ public final class BumperFarmMocker implements IdentityAware {
      */
     public static void setBaseUri(final URI uri) {
         try {
-            BumperFarmMocker.home = UriBuilder.fromUri(uri)
+            BumperFarmMocker.xsd = UriBuilder.fromUri(uri)
                 .path("/bumper/ns.xsd")
                 .build()
                 .toURL();
@@ -87,7 +87,7 @@ public final class BumperFarmMocker implements IdentityAware {
     public URL resolveXmlNamespace(final Urn namespace) {
         URL url = null;
         if (namespace.equals(Urn.create("urn:test:bumper:ns"))) {
-            url = BumperFarmMocker.home;
+            url = BumperFarmMocker.xsd;
         }
         return url;
     }

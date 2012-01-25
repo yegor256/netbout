@@ -77,28 +77,7 @@ public final class HelperMocker {
                 }
             }
         ).when(this.helper).execute(Mockito.any(Token.class));
-        this.namedAs(new UrnMocker().mock());
-        this.withLocation("http://localhost/some-helper-URL");
-    }
-
-    /**
-     * With this name.
-     * @param name The name
-     * @return This object
-     */
-    public HelperMocker namedAs(final String name) {
-        Mockito.doReturn(Urn.create(name)).when(this.helper).name();
-        return this;
-    }
-
-    /**
-     * With this name.
-     * @param name The name
-     * @return This object
-     */
-    public HelperMocker namedAs(final Urn name) {
-        Mockito.doReturn(name).when(this.helper).name();
-        return this;
+        this.withLocation("http://localhost/URL-set-by-HelperMocker");
     }
 
     /**

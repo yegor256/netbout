@@ -31,6 +31,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
@@ -39,20 +40,27 @@
     </xsl:template>
 
     <xsl:template match="stage">
+        <xsl:apply-templates select="data/stats/stat"/>
+    </xsl:template>
+
+    <xsl:template match="stat[@xsi:type='hub']">
         <p>
             <xsl:text>identities (</xsl:text>
-            <xsl:value-of select="count(hub/identities/identity)"/>
+            <xsl:value-of select="count(identities/identity)"/>
             <xsl:text>): </xsl:text>
-            <xsl:for-each select="hub/identities/identity">
+            <xsl:for-each select="identities/identity">
                 <xsl:if test="position() &gt; 1">
                     <xsl:text>, </xsl:text>
                 </xsl:if>
                 <xsl:value-of select="."/>
             </xsl:for-each>
         </p>
+    </xsl:template>
+
+    <xsl:template match="stat[@xsi:type='manager']">
         <p>
             <xsl:text>total bouts: </xsl:text>
-            <xsl:value-of select="hub/manager/bouts"/>
+            <xsl:value-of select="bouts"/>
         </p>
     </xsl:template>
 
