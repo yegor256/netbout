@@ -59,36 +59,7 @@
             <!-- this one has to stay on top of others -->
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.netbout.helpers</groupId>
-            <artifactId>helper-shary</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.woquo</groupId>
-            <artifactId>woquo-umpa</artifactId>
-            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.woquo</groupId>
-            <artifactId>woquo-nebo-helper</artifactId>
-            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.woquo</groupId>
-            <artifactId>woquo-mentor-helper</artifactId>
-            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.woquo</groupId>
-            <artifactId>woquo-board-helper</artifactId>
-            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
@@ -303,6 +274,36 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.netbout.helpers</groupId>
+            <artifactId>helper-shary</artifactId>
+            <version netbout="yes">2.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-umpa</artifactId>
+            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-nebo-helper</artifactId>
+            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-mentor-helper</artifactId>
+            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-board-helper</artifactId>
+            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

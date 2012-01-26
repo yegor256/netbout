@@ -30,6 +30,8 @@ import com.netbout.hub.Predicate;
 import com.netbout.hub.PredicateMocker;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
+import java.util.Map;
+import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
@@ -38,6 +40,9 @@ import org.junit.Test;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings({
+    "PMD.UseConcurrentHashMap", "PMD.AvoidInstantiatingObjectsInLoops"
+})
 public final class MatchesPredTest {
 
     /**
@@ -58,6 +63,72 @@ public final class MatchesPredTest {
             "matched",
             (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
         );
+    }
+
+    /**
+     * MatchesPred can match by keyword or a combination of them.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void positivelyMatchesByKeywords() throws Exception {
+        final Map<String, String> matches = ArrayUtils.toMap(
+            new String[][] {
+                {"", ""},
+                {"", "hello dear friend, how are you?"},
+                {"up?", "hi there, what's up"},
+                {"any time", "You can call me any time, really!"},
+                {"jeff lebowski", "the dude is Jeff Bridges (Lebowski)"},
+            }
+        );
+        for (Map.Entry<String, String> entry : matches.entrySet()) {
+            final Predicate pred = new MatchesPred(
+                Arrays.asList(
+                    new Predicate[] {
+                        new PredicateMocker().doReturn(entry.getKey()).mock(),
+                        new PredicateMocker().doReturn(entry.getValue()).mock(),
+                    }
+                )
+            );
+            MatcherAssert.assertThat(
+                String.format(
+                    "matches '%s' in '%s' as expected",
+                    entry.getKey(),
+                    entry.getValue()
+                ),
+                (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+            );
+        }
+    }
+
+    /**
+     * MatchesPred can avoid matching when it's not necessary.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void doesntMatchWhenItShouldnt() throws Exception {
+        final Map<String, String> matches = ArrayUtils.toMap(
+            new String[][] {
+                {"boy", "short story about some girls"},
+            }
+        );
+        for (Map.Entry<String, String> entry : matches.entrySet()) {
+            final Predicate pred = new MatchesPred(
+                Arrays.asList(
+                    new Predicate[] {
+                        new PredicateMocker().doReturn(entry.getKey()).mock(),
+                        new PredicateMocker().doReturn(entry.getValue()).mock(),
+                    }
+                )
+            );
+            MatcherAssert.assertThat(
+                String.format(
+                    "doesn't match '%s' in '%s' as expected",
+                    entry.getKey(),
+                    entry.getValue()
+                ),
+                !(Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+            );
+        }
     }
 
 }
