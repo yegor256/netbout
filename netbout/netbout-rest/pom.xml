@@ -263,8 +263,10 @@
             <artifactId>mockito-all</artifactId>
         </dependency>
         <dependency>
+            <!-- we need to keep it in "runtime" because of WOQUO helpers -->
             <groupId>org.xmlmatchers</groupId>
             <artifactId>xml-matchers</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
