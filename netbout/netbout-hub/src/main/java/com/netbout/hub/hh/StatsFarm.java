@@ -26,7 +26,6 @@
  */
 package com.netbout.hub.hh;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
@@ -83,21 +82,36 @@ public final class StatsFarm implements IdentityAware {
     /**
      * Somebody was just invited to the bout.
      * @param number Bout where it is happening
+     * @param who Who was invited
+     * @return Allow invitation?
+     * @throws Exception If some problem inside
+     */
+    @Operation("can-be-invited")
+    public Boolean canBeInvited(final Long number, final Urn who)
+        throws Exception {
+        Boolean allow = null;
+        if (who.equals(this.identity.name())) {
+            allow = NetboutUtils.participatesIn(
+                Urn.create("urn:facebook:1531296526"),
+                this.identity.bout(number)
+            );
+        }
+        return allow;
+    }
+
+    /**
+     * Somebody was just invited to the bout.
+     * @param number Bout where it is happening
+     * @param who Who was invited
+     * @return Confirm invitation?
      */
     @Operation("just-invited")
-    public void justInvited(final Long number) {
-        Bout bout;
-        try {
-            bout = this.identity.bout(number);
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
-            throw new IllegalArgumentException(ex);
+    public Boolean justInvited(final Long number, final Urn who) {
+        Boolean allow = null;
+        if (who.equals(this.identity.name())) {
+            allow = true;
         }
-        final Urn yegor = Urn.create("urn:facebook:1531296526");
-        if (NetboutUtils.participatesIn(yegor, bout)) {
-            bout.confirm();
-        } else {
-            bout.leave();
-        }
+        return allow;
     }
 
     /**

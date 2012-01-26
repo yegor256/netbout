@@ -175,6 +175,21 @@ public final class HubBout implements Bout {
                 )
             );
         }
+        final Boolean allowed = this.hub.make("can-be-invited")
+            .inBout(this)
+            .arg(this.number())
+            .arg(friend.name())
+            .asDefault(true)
+            .exec();
+        if (!allowed) {
+            throw new DuplicateInvitationException(
+                String.format(
+                    "Identity '%s' refused to be invited to bout #%d",
+                    friend,
+                    this.number()
+                )
+            );
+        }
         final ParticipantDt dude = this.data.addParticipant(friend.name());
         Logger.debug(
             this,
@@ -184,11 +199,15 @@ public final class HubBout implements Bout {
         if (friend instanceof InvitationSensitive) {
             ((InvitationSensitive) friend).invited(this);
         }
-        this.hub.make("just-invited")
+        final Boolean confirm = this.hub.make("just-invited")
             .inBout(this)
             .arg(this.number())
+            .arg(friend.name())
             .asDefault(false)
             .exec();
+        if (confirm) {
+            dude.setConfirmed(true);
+        }
         return new HubParticipant(this.hub, this, dude, this.data);
     }
 

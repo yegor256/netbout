@@ -58,6 +58,7 @@
         #invite-aside ul {
             padding: 1em;
             border: 0.071em solid #bfbcc1;
+            margin-left: 0.5em;
         }
 
             #invite-aside ul li {

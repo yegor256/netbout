@@ -72,6 +72,7 @@ public final class HubBoutTest {
         this.viewer = new IdentityMocker().mock();
         this.hub = new HubMocker()
             .doReturn("some text", "pre-render-message")
+            .doReturn(true, "can-be-invited")
             .withIdentity(this.viewer.name(), this.viewer)
             .mock();
         this.boutDtMocker = new BoutDtMocker()
