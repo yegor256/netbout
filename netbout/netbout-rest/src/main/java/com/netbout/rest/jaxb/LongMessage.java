@@ -166,6 +166,7 @@ public final class LongMessage {
                 "<a href='$2'>$1</a>"
         )
             .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
+            .replaceAll("`(.*?)`", "<span class='tt'>$1</span>")
             .replaceAll("_(.*?)_", "<i>$1</i>");
     }
 

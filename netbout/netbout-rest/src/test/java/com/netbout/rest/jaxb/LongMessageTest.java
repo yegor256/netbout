@@ -84,6 +84,10 @@ public final class LongMessageTest {
                 {"this is **bold** text", "this is <b>bold</b> text"},
                 {"this is _italic_ text", "this is <i>italic</i> text"},
                 {
+                    "fixed `font` text",
+                    "fixed <span class='tt'>font</span> text"
+                },
+                {
                     "a [link](http://foo.com) here",
                     "a <a href='http://foo.com'>link</a> here",
                 },
@@ -91,6 +95,10 @@ public final class LongMessageTest {
                     "[\u0443\u0440\u0430!](http://a.com/\u0443)",
                     "<a href='http://a.com/&#1091;'>&#1091;&#1088;&#1072;!</a>",
                 },
+                // {
+                //     "people\n{{{\nlive\nin cities\n}}}\n, indeed",
+                //     "people</p><pre>live\nin cities</pre><p>, indeed"
+                // },
             }
         );
         for (Map.Entry<String, String> entry : texts.entrySet()) {

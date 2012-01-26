@@ -123,4 +123,20 @@ public final class IdentityFarmTest {
         }
     }
 
+    /**
+     * IdentityFarm can exclude non-facebook and non-test identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void excludeNonObviousIdentities() throws Exception {
+        final Urn identity = new IdentityRowMocker()
+            .namedAs("urn:netbout:hh")
+            .withAlias("freeDOM")
+            .mock();
+        MatcherAssert.assertThat(
+            this.farm.findIdentitiesByKeyword("DOM"),
+            Matchers.hasSize(0)
+        );
+    }
+
 }
