@@ -56,14 +56,15 @@
                             </xsl:call-template>
                         </span>
                         <xsl:if test="@me != 'true'">
+                            <xsl:text> </xsl:text>
                             <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="link[@rel='kickoff']/@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
-                                    <xsl:text>kick </xsl:text>
+                                    <xsl:text>kick "</xsl:text>
                                     <xsl:value-of select="alias"/>
-                                    <xsl:text> this bout</xsl:text>
+                                    <xsl:text>" off this bout</xsl:text>
                                 </xsl:attribute>
                                 <xsl:text>off</xsl:text>
                             </a>

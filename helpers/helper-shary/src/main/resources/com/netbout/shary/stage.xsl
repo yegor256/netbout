@@ -75,8 +75,10 @@
             <xsl:attribute name="action">
                 <xsl:value-of select="$stage-home-uri"/>
             </xsl:attribute>
-            Name: <input name="name" size="22" maxlength="500"/>
-            URI: <input name="uri" size="68" maxlength="500"/>
+            <xsl:text>Name: </xsl:text>
+            <input name="name" size="22" maxlength="500"/>
+            <xsl:text>URI: </xsl:text>
+            <input name="uri" size="68" maxlength="500"/>
             <input value="Share it" type="submit"/>
         </form>
     </xsl:template>

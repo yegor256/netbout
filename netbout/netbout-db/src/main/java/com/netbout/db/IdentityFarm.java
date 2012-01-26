@@ -63,11 +63,13 @@ public final class IdentityFarm {
         final List<Urn> names = new ArrayList<Urn>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                // @checkstyle StringLiteralsConcatenation (6 lines)
+                // @checkstyle StringLiteralsConcatenation (8 lines)
                 "SELECT identity.name FROM identity "
                 + "LEFT JOIN alias ON alias.identity = identity.name "
                 + "WHERE identity.name = ? OR "
-                + "UCASE(alias.name) LIKE ? "
+                + "(UCASE(alias.name) LIKE ? AND"
+                + " (identity.name LIKE 'urn:facebook:%' OR"
+                + " identity.name LIKE 'urn:test:%'))"
                 + "GROUP BY identity.name "
                 + "LIMIT 10"
             );

@@ -210,7 +210,7 @@ public final class DefaultHubTest {
     @Test
     public void invitesHelperAndKicksHimOff() throws Exception {
         final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new String[]{"foo"}), "get-all-namespaces")
+            .doReturn(Arrays.asList(new String[]{"test"}), "get-all-namespaces")
             .doReturn("http://localhost", "get-namespace-template")
             .doReturn(new Urn(), "get-namespace-owner")
             .doReturn(1L, "get-next-bout-number")
