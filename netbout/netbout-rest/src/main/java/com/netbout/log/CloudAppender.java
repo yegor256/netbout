@@ -82,7 +82,9 @@ public final class CloudAppender extends AppenderSkeleton implements Runnable {
     @Override
     public void activateOptions() {
         super.activateOptions();
-        new Thread(this).start();
+        final Thread thread = new Thread(this);
+        thread.setName(Logger.format("CloudAppender to %[type]s", this.feeder));
+        thread.start();
     }
 
     /**
