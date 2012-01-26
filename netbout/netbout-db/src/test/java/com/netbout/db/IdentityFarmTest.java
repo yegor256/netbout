@@ -129,7 +129,7 @@ public final class IdentityFarmTest {
      */
     @Test
     public void excludeNonObviousIdentities() throws Exception {
-        final Urn identity = new IdentityRowMocker()
+        new IdentityRowMocker()
             .namedAs("urn:netbout:hh")
             .withAlias("freeDOM")
             .mock();

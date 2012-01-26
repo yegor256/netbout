@@ -52,7 +52,7 @@ public final class UrnMocker {
      * Public ctor.
      */
     public UrnMocker() {
-        this.nid = "foo";
+        this.nid = "test";
         this.nss = UUID.randomUUID().toString();
     }
 
