@@ -31,6 +31,7 @@ import com.netbout.hub.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Matches text against search string.
@@ -53,17 +54,28 @@ public final class MatchesPred extends AbstractVarargPred {
      */
     @Override
     public Object evaluate(final Message msg, final int pos) {
-        final String query = (String) this.arg(0).evaluate(msg, pos);
-        final String text = (String) this.arg(1).evaluate(msg, pos);
-        final boolean result = text.contains(query);
+        final String[] keywords = ((String) this.arg(0).evaluate(msg, pos))
+            .replaceAll(
+                "['\"\\!@#\\$%\\?\\^&\\*\\(\\),\\.\\[\\]=\\+\\/]+",
+                "  "
+        )
+            .trim()
+            .toUpperCase(Locale.ENGLISH)
+            .split(" ");
+        final String text = ((String) this.arg(1).evaluate(msg, pos))
+            .toUpperCase(Locale.ENGLISH);
+        boolean matches = true;
+        for (String keyword : keywords) {
+            matches &= text.contains(keyword);
+        }
         Logger.debug(
             this,
-            "#evaluate(): finding '%s' inside '%s': %B",
-            query,
+            "#evaluate(): finding %[list]s inside '%s': %B",
+            keywords,
             text,
-            result
+            matches
         );
-        return result;
+        return matches;
     }
 
 }
