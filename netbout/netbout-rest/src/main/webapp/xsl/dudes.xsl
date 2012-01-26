@@ -60,7 +60,12 @@
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="link[@rel='kickoff']/@href"/>
                                 </xsl:attribute>
-                                <span class="red"><xsl:text>x</xsl:text></span>
+                                <xsl:attribute name="title">
+                                    <xsl:text>kick </xsl:text>
+                                    <xsl:value-of select="alias"/>
+                                    <xsl:text> this bout</xsl:text>
+                                </xsl:attribute>
+                                <xsl:text>off</xsl:text>
                             </a>
                         </xsl:if>
                     </aside>

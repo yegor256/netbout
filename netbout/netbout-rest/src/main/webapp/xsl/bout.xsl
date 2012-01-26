@@ -193,7 +193,7 @@
                         <xsl:value-of select="/page/mask"/>
                     </xsl:attribute>
                     <xsl:attribute name="onblur">
-                        <xsl:text>$("#invite-list").hide(500);</xsl:text>
+                        <xsl:text>$("#invite-list").hide(100);</xsl:text>
                     </xsl:attribute>
                     <xsl:if test="/page/mask != ''">
                         <xsl:attribute name="autofocus">

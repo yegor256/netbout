@@ -26,7 +26,9 @@
  */
 package com.netbout.hub.hh;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
@@ -76,6 +78,26 @@ public final class StatsFarm implements IdentityAware {
     @Override
     public void init(final Identity idnt) {
         this.identity = idnt;
+    }
+
+    /**
+     * Somebody was just invited to the bout.
+     * @param number Bout where it is happening
+     */
+    @Operation("just-invited")
+    public void justInvited(final Long number) {
+        Bout bout;
+        try {
+            bout = this.identity.bout(number);
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        final Urn yegor = Urn.create("urn:facebook:1531296526");
+        if (NetboutUtils.participatesIn(yegor, bout)) {
+            bout.confirm();
+        } else {
+            bout.leave();
+        }
     }
 
     /**
