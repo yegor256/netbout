@@ -85,7 +85,7 @@ public final class LongMessageTest {
                 {"this is _italic_ text", "this is <i>italic</i> text"},
                 {
                     "fixed `font` text",
-                    "fixed <span class='tt'>font</span> text"
+                    "fixed <span class='tt'>font</span> text",
                 },
                 {
                     "a [link](http://foo.com) here",
