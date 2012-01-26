@@ -67,11 +67,6 @@ public final class EmailFarm implements IdentityAware {
     @Override
     public void init(final Identity idnt) {
         this.identity = idnt;
-        Logger.debug(
-            this,
-            "#init('%s'): injected",
-            this.identity.name()
-        );
     }
 
     /**
