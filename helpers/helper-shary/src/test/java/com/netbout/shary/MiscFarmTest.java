@@ -31,8 +31,8 @@ import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import java.util.Random;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case for {@link MiscFarm}.
@@ -58,8 +58,10 @@ public final class MiscFarmTest {
             .withBout(num, bout)
             .mock();
         this.farm.init(identity);
-        this.farm.justInvited(num);
-        Mockito.verify(bout).confirm();
+        MatcherAssert.assertThat(
+            "automatically confirm participation",
+            this.farm.justInvited(num, identity.name())
+        );
     }
 
 }

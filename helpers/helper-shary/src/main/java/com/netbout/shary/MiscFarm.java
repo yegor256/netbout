@@ -26,8 +26,8 @@
  */
 package com.netbout.shary;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -57,16 +57,16 @@ public final class MiscFarm implements IdentityAware {
     /**
      * Somebody was just invited to the bout.
      * @param number Bout where it is happening
+     * @param who Who was invited
+     * @return Allow invitation?
      */
     @Operation("just-invited")
-    public void justInvited(final Long number) {
-        Bout bout;
-        try {
-            bout = this.identity.bout(number);
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
-            throw new IllegalArgumentException(ex);
+    public Boolean justInvited(final Long number, final Urn who) {
+        Boolean allow = null;
+        if (who.equals(this.identity.name())) {
+            allow = true;
         }
-        bout.confirm();
+        return allow;
     }
 
 }

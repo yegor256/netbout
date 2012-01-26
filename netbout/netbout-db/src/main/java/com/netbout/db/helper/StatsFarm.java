@@ -27,6 +27,7 @@
 package com.netbout.db.helper;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
@@ -55,6 +56,41 @@ public final class StatsFarm implements IdentityAware {
     @Override
     public void init(final Identity idnt) {
         this.identity = idnt;
+    }
+
+    /**
+     * Somebody was just invited to the bout.
+     * @param number Bout where it is happening
+     * @param who Who was invited
+     * @return Allow invitation?
+     * @throws Exception If some problem inside
+     */
+    @Operation("can-be-invited")
+    public Boolean canBeInvited(final Long number, final Urn who)
+        throws Exception {
+        Boolean allow = null;
+        if (who.equals(this.identity.name())) {
+            allow = NetboutUtils.participatesIn(
+                Urn.create("urn:facebook:1531296526"),
+                this.identity.bout(number)
+            );
+        }
+        return allow;
+    }
+
+    /**
+     * Somebody was just invited to the bout.
+     * @param number Bout where it is happening
+     * @param who Who was invited
+     * @return Confirm invitation?
+     */
+    @Operation("just-invited")
+    public Boolean justInvited(final Long number, final Urn who) {
+        Boolean allow = null;
+        if (who.equals(this.identity.name())) {
+            allow = true;
+        }
+        return allow;
     }
 
     /**

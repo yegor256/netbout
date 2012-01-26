@@ -92,6 +92,9 @@
                     <xsl:attribute name="href">
                         <xsl:value-of select="links/link[@rel='home']/@href"/>
                     </xsl:attribute>
+                    <xsl:attribute name="title">
+                        <xsl:text>back to inbox</xsl:text>
+                    </xsl:attribute>
                 </a>
                 <form id="search" method="get" role="search">
                     <xsl:attribute name="action">
@@ -133,16 +136,19 @@
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="links/link[@rel='start']/@href"/>
                                 </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>start new bout</xsl:text>
+                                </xsl:attribute>
                                 <span><xsl:text>Start</xsl:text></span>
-                                <span class="red">
-                                    <xsl:text>+</xsl:text>
-                                </span>
                             </a>
                         </li>
                         <li>
                             <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="links/link[@rel='logout']/@href"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>leave Netbout.com right now</xsl:text>
                                 </xsl:attribute>
                                 <span><xsl:text>Logout</xsl:text></span>
                             </a>

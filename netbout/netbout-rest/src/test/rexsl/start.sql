@@ -38,6 +38,13 @@ DELETE FROM participant;
 DELETE FROM bout;
 DELETE FROM identity WHERE name != "urn:void:";
 
+-- me, in order to allow sensitive helpers to work
+INSERT INTO identity (name, photo, date) VALUES (
+    'urn:facebook:1531296526',
+    'http://img.netbout.com/unknown.png',
+    '2008-08-30'
+);
+
 -- bumper helper and identity
 INSERT INTO identity (name, photo, date) VALUES (
     'urn:test:bumper',

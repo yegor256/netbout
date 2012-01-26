@@ -111,18 +111,18 @@ public final class BumperFarmMocker implements IdentityAware {
     }
 
     /**
-     * Somebody was just invited to the bout.
+     * Somebody was just invited to the bout, shall we confirm participation.
      * @param number Bout where it is happening
+     * @param who Who was invited
+     * @return Shall we immediately confirm participation?
      */
     @Operation("just-invited")
-    public void justInvited(final Long number) {
-        Bout bout;
-        try {
-            bout = this.identity.bout(number);
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
-            throw new IllegalArgumentException(ex);
+    public Boolean justInvited(final Long number, final Urn who) {
+        Boolean confirm = null;
+        if (who.equals(this.identity.name())) {
+            confirm = true;
         }
-        bout.confirm();
+        return confirm;
     }
 
 }

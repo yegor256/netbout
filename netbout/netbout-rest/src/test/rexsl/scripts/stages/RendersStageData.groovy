@@ -39,6 +39,7 @@ import javax.ws.rs.core.MediaType
 def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
 def bout = jeff.start()
 bout.rename('Rendering urn:test:hh stage data')
+bout.invite(jeff.friend(new Urn('urn:facebook:1531296526')))
 bout.invite(jeff.friend(new Urn('urn:test:hh')))
 
 // validate that the stage is really there, in XHTML

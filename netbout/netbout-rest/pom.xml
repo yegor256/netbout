@@ -51,12 +51,15 @@
 
     <dependencies>
         <dependency>
-            <!-- this one has to stay on top of others -->
+            <!-- this one has to stay on top of others, and remain in "compile"
+            until we have WOQUO deps in this module -->
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
-            <!-- this one has to stay on top of others -->
+            <!-- this one has to stay on top of others, and remain in "compile"
+            until we have WOQUO deps in this module -->
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
             <scope>compile</scope>
