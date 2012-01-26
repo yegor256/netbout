@@ -42,7 +42,28 @@
     <packaging>war</packaging>
     <name>netbout-rest</name>
 
+    <repositories>
+        <repository>
+            <id>woquo.s3</id>
+            <url>s3://repo.woquo.com/snapshot</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <dependency>
+            <!-- this one has to stay on top of others, and remain in "compile"
+            until we have WOQUO deps in this module -->
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <!-- this one has to stay on top of others, and remain in "compile"
+            until we have WOQUO deps in this module -->
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-hub</artifactId>
@@ -85,6 +106,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.ymock</groupId>
+            <artifactId>ymock-util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
             <version since="3 Nov 2011">3.12.1.GA</version>
@@ -103,12 +128,25 @@
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-core</artifactId>
-            <version since="15 Oct 2011">1.0-SNAPSHOT</version>
+            <version>${rexsl.version}</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
-            <version since="15 Oct 2011">1.0-SNAPSHOT</version>
+            <version>${rexsl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version>${rexsl.version}</version>
+            <classifier>mock</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Embedded Java Servlet Container, for tests only. -->
+            <groupId>com.sun.grizzly</groupId>
+            <artifactId>grizzly-servlet-webserver</artifactId>
+            <version>1.9.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -134,7 +172,7 @@
             <!-- In-memory JDBC database to be used in unit tests -->
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version since="14 Nov 2011">1.3.161</version>
+            <version since="14 Jan 2012">1.3.163</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -145,12 +183,10 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!--
-            Javax Servlet API 2.3.
-            -->
+            <!-- Javax Servlet API 2.4. -->
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version since="26 Oct 2011">2.3</version>
+            <version since="26 Oct 2011">2.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -163,24 +199,18 @@
             <version since="10 Nov 2011">1.6.9</version>
         </dependency>
         <dependency>
-            <!--
-            Apache Xerces is a JAXP implementation of DOM.
-            In order to replace a default implementation
-            provided by JDK with Xerces we are using text files inside
-            "src/main/resources/META-INF/services" directory.
-            -->
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <version since="9 Mar 2011">2.9.1</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <!-- JSR 311 (JAX-RS) API. -->
@@ -202,20 +232,41 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>com.ymock</groupId>
+            <artifactId>ymock-server</artifactId>
+            <version since="18 Dec 2011">1.0.4</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version since="13 Dec 2011">1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ymock.mock</groupId>
+            <artifactId>mock-socket</artifactId>
+            <version since="18 Dec 2011">1.0.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
         </dependency>
         <dependency>
+            <!-- we need to keep it in "runtime" because of WOQUO helpers -->
             <groupId>org.xmlmatchers</groupId>
             <artifactId>xml-matchers</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -229,21 +280,52 @@
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.netbout.helpers</groupId>
+            <artifactId>helper-shary</artifactId>
+            <version netbout="yes">2.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-umpa</artifactId>
+            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-nebo-helper</artifactId>
+            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-mentor-helper</artifactId>
+            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.woquo</groupId>
+            <artifactId>woquo-board-helper</artifactId>
+            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>rexsl.snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version since="2 Dec 2010">2.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.rexsl</groupId>
                 <artifactId>rexsl-maven-plugin</artifactId>
-                <version since="15 Oct 2011">1.0-SNAPSHOT</version>
+                <version>${rexsl.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -258,11 +340,6 @@
 
     <profiles>
         <profile>
-            <!--
-            This profile activates all continuous integration specific
-            plugins, not necessary in development. To activate
-            this profile run: "mvn -Dci"
-            -->
             <id>continuous-integration</id>
             <activation>
                 <property><name>ci</name></property>
@@ -309,6 +386,7 @@
                         </configuration>
                         <executions>
                             <execution>
+                                <id>deploy-to-production</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>deploy</goal>
@@ -316,13 +394,37 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <!-- <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <id>deploy-logging-backend</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <ftp server="logs.netbout.com"
+                                            remotedir="."
+                                            userid="${logs.user}"
+                                            password="${logs.password}"
+                                            depends="yes">
+                                            <fileset dir="${basedir}/src/main/php"/>
+                                        </ftp>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin> -->
                 </plugins>
                 <pluginManagement>
                     <plugins>
                         <plugin>
                             <artifactId>maven-war-plugin</artifactId>
-                            <version since="2 Dec 2010">2.1</version>
                             <configuration>
+                                <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
                                 <archive>
                                     <manifestEntries>
                                         <Netbout-Revision>${buildNumber}</Netbout-Revision>
@@ -331,7 +433,7 @@
                                         <Netbout-FbId>${fb.id}</Netbout-FbId>
                                         <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
                                         <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
-                                        <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}</Netbout-JdbcUrl>
+                                        <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true</Netbout-JdbcUrl>
                                         <Netbout-JdbcUser>${mysql.user}</Netbout-JdbcUser>
                                         <Netbout-JdbcPassword>${mysql.password}</Netbout-JdbcPassword>
                                         <Netbout-SmtpHost>${smtp.host}</Netbout-SmtpHost>
@@ -344,6 +446,120 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>catapult</id>
+            <activation>
+                <file><exists>pom.xml</exists></file>
+            </activation>
+            <properties>
+                <catapult.warName>${project.build.finalName}-catapult</catapult.warName>
+                <!--
+                @todo #160 If you change this path to something different from
+                 "/" there will be many problems with paths of XSL and CSS files.
+                 It's definitely a defect and should be fixed either in netbout
+                 project or in rexsl.
+                -->
+                <catapult.context>/</catapult.context>
+            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.rexsl</groupId>
+                            <artifactId>rexsl-maven-plugin</artifactId>
+                            <configuration>
+                                <systemPropertyVariables>
+                                    <catapult.home>http://localhost:${catapult.port}${catapult.context}</catapult.home>
+                                </systemPropertyVariables>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <id>reserve-tomcat-port</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>reserve-network-port</goal>
+                                </goals>
+                                <configuration>
+                                    <portNames>
+                                        <portName>catapult.port</portName>
+                                    </portNames>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>war-for-catapult</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>war</goal>
+                                </goals>
+                                <configuration>
+                                    <warName>${catapult.warName}</warName>
+                                    <archive>
+                                        <manifestEntries>
+                                            <Netbout-Revision>555</Netbout-Revision>
+                                            <Netbout-Version>${project.version}</Netbout-Version>
+                                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                            <Netbout-FbId>12345</Netbout-FbId>
+                                            <Netbout-FbSecret>secret</Netbout-FbSecret>
+                                            <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
+                                            <!-- see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-configuration-properties.html -->
+                                            <Netbout-JdbcUrl>jdbc:mysql://test-db.netbout.com:3306/netbout-test?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true</Netbout-JdbcUrl>
+                                            <Netbout-JdbcUser>netbout-test</Netbout-JdbcUser>
+                                            <Netbout-JdbcPassword>secret</Netbout-JdbcPassword>
+                                            <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
+                                            <Netbout-SmtpPort>2525</Netbout-SmtpPort>
+                                            <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
+                                            <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
+                                        </manifestEntries>
+                                    </archive>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>tomcat-maven-plugin</artifactId>
+                        <version since="13 Dec 2011">1.1</version>
+                        <configuration>
+                            <fork>true</fork>
+                            <path>${catapult.context}</path>
+                            <port>${catapult.port}</port>
+                            <uriEncoding>UTF-8</uriEncoding>
+                            <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
+                            <warDirectory>${project.build.directory}/${catapult.warName}.war</warDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-embedded-tomcat</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run-war-only</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop-embedded-tomcat</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>

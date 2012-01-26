@@ -28,16 +28,17 @@ package com.netbout.hub.data;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.bus.DefaultBus;
 import com.netbout.hub.BoutMgr;
+import com.netbout.hub.DefaultHub;
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
+import com.netbout.spi.xml.JaxbPrinter;
+import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
 import java.util.Random;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.xmlmatchers.XmlMatchers;
-import org.xmlmatchers.transform.XmlConverters;
 
 /**
  * Test case of {@link DefaultBoutMgr}.
@@ -52,16 +53,13 @@ public final class DefaultBoutMgrTest {
      */
     @Test
     public void producesStatisticsAsXmlElement() throws Exception {
-        final Bus bus = new BusMocker().mock();
-        final BoutMgr mgr = new DefaultBoutMgr(bus);
-        final Document doc = DocumentBuilderFactory
-            .newInstance()
-            .newDocumentBuilder()
-            .newDocument();
-        doc.appendChild(mgr.stats(doc));
         MatcherAssert.assertThat(
-            XmlConverters.the(doc),
-            XmlMatchers.hasXPath("/manager/total")
+            XhtmlConverter.the(
+                new JaxbPrinter(
+                    new DefaultBoutMgr(new HubMocker().mock())
+                ).print()
+            ),
+            XhtmlMatchers.hasXPath("/manager/bouts")
         );
     }
 
@@ -72,21 +70,23 @@ public final class DefaultBoutMgrTest {
     @Test
     public void createsNewBout() throws Exception {
         final Long number = new Random().nextLong();
-        final Bus bus = new BusMocker()
+        final Hub hub = new HubMocker()
             .doReturn(number, "get-next-bout-number")
             .mock();
-        final BoutMgr mgr = new DefaultBoutMgr(bus);
+        final BoutMgr mgr = new DefaultBoutMgr(hub);
         final Long num = mgr.create();
         MatcherAssert.assertThat(num, Matchers.equalTo(number));
     }
 
     /**
-     * DefaultBoutMgr can create new bout on top of real bus.
+     * DefaultBoutMgr can create new bout on top of real hub.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void createsNewBoutWithRealBus() throws Exception {
-        final BoutMgr mgr = new DefaultBoutMgr(new DefaultBus());
+    @org.junit.Ignore
+    public void createsNewBoutWithRealHub() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final BoutMgr mgr = new DefaultBoutMgr(new DefaultHub(bus));
         final Long first = mgr.create();
         final Long second = mgr.create();
         MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));

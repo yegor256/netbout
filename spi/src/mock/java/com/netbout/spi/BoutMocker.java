@@ -31,9 +31,13 @@ package com.netbout.spi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import org.hamcrest.Matchers;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link Bout}.
@@ -57,7 +61,31 @@ public final class BoutMocker {
     /**
      * List of messages.
      */
-    private List<Message> messages;
+    private final List<Message> messages = new ArrayList<Message>();
+
+    /**
+     * Public ctor.
+     */
+    public BoutMocker() {
+        Mockito.doReturn(this.messages).when(this.bout)
+            .messages(Mockito.anyString());
+        Mockito.doReturn(this.participants).when(this.bout).participants();
+        try {
+            Mockito.doAnswer(
+                new Answer() {
+                    public Object answer(final InvocationOnMock invocation) {
+                        Long num = (Long) invocation.getArguments()[0];
+                        return BoutMocker.this.messages.get(num.intValue());
+                    }
+                }
+            ).when(this.bout).message(Mockito.anyLong());
+        } catch (com.netbout.spi.MessageNotFoundException ex) {
+            throw new IllegalStateException(ex);
+        }
+        this.titledAs("some random text");
+        this.withNumber(Math.abs(new Random().nextLong()));
+        this.withDate(new Date());
+    }
 
     /**
      * This is the title of bout.
@@ -70,30 +98,99 @@ public final class BoutMocker {
     }
 
     /**
-     * With this participant, by its name.
-     * @param The name of it
+     * With this number.
+     * @param The number
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public BoutMocker withParticipant(final String name) throws Exception {
-        this.participants.add(
-            new ParticipantMocker()
+    public BoutMocker withNumber(final Long num) {
+        Mockito.doReturn(num).when(this.bout).number();
+        return this;
+    }
+
+    /**
+     * With this date.
+     * @param The date
+     * @return This object
+     */
+    public BoutMocker withDate(final Date date) {
+        Mockito.doReturn(date).when(this.bout).date();
+        return this;
+    }
+
+    /**
+     * With this message.
+     * @param text The text
+     * @return This object
+     */
+    public BoutMocker withMessage(final String text) {
+        return this.withMessage(
+            new MessageMocker()
                 .inBout(this.bout)
-                .withIdentity(new IdentityMocker().namedAs(name).mock())
+                .withText(text)
                 .mock()
+        );
+    }
+
+    /**
+     * With this message.
+     * @param msg The message
+     * @return This object
+     */
+    public BoutMocker withMessage(final Message msg) {
+        this.messages.add(msg);
+        return this;
+    }
+
+    /**
+     * With this message on this string in request.
+     * @param mask The mask to find in query
+     * @param text The text
+     * @return This object
+     */
+    public BoutMocker messageOn(final String mask, final String text) {
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    final List<Message> msgs = new ArrayList<Message>();
+                    msgs.add(new MessageMocker().withText(text).mock());
+                    return msgs;
+                }
+            }
+        ).when(this.bout).messages(
+            Mockito.argThat(Matchers.containsString(mask))
         );
         return this;
     }
 
     /**
-     * With this participant.
-     * @param The identity
+     * With this participant, by its name.
+     * @param name The name of it
      * @return This object
-     * @throws Exception If some problem inside
      */
-    public BoutMocker withParticipant(final Identity part) throws Exception {
+    public BoutMocker withParticipant(final String name) {
+        return this.withParticipant(new IdentityMocker().namedAs(name).mock());
+    }
+
+    /**
+     * With this participant, by its name.
+     * @param name The name of it
+     * @return This object
+     */
+    public BoutMocker withParticipant(final Urn name) {
+        return this.withParticipant(new IdentityMocker().namedAs(name).mock());
+    }
+
+    /**
+     * With this participant.
+     * @param part The identity
+     * @return This object
+     */
+    public BoutMocker withParticipant(final Identity part) {
         this.participants.add(
-            new ParticipantMocker().inBout(this.bout).withIdentity(part).mock()
+            new ParticipantMocker()
+                .inBout(this.bout)
+                .withIdentity(part)
+                .mock()
         );
         return this;
     }
@@ -101,20 +198,11 @@ public final class BoutMocker {
     /**
      * Mock it.
      * @return Mocked bout
-     * @throws Exception If some problem inside
      */
-    public Bout mock() throws Exception {
-        if (this.messages == null) {
-            this.messages = new ArrayList<Message>();
-            this.messages.add(new MessageMocker().inBout(this.bout).mock());
+    public Bout mock() {
+        if (this.messages.isEmpty()) {
+            this.withMessage("\u043F\u0440\u0438\u0432\u0435\u0442");
         }
-        Mockito.doReturn(this.messages).when(this.bout)
-            .messages(Mockito.anyString());
-        Mockito.doReturn(this.messages.get(0)).when(this.bout)
-            .message(Mockito.anyLong());
-        Mockito.doReturn(this.participants).when(this.bout).participants();
-        final Long number = Math.abs(new Random().nextLong());
-        Mockito.doReturn(number).when(this.bout).number();
         return this.bout;
     }
 

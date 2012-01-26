@@ -29,15 +29,11 @@
  */
 package com.netbout.spi.cpa;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Token;
-import com.netbout.spi.UnreachableIdentityException;
 import com.ymock.util.Logger;
 import java.net.URL;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
@@ -45,12 +41,7 @@ import java.util.concurrent.ConcurrentMap;
  * Classpath annotations helper.
  *
  * <p>Your classes should be annotated with <tt>&#64;Farm</tt> and
- * <tt>&#64;Operation</tt> annotations. Every operation should accept one of
- * following types: {@link Long}, {@link String}, {@link Boolean}.
- * Every operation should return one of the
- * following types: <tt>void</tt>, {@link String}, {@link Long},
- * {@link Boolean}, and an array of {@link Long}. All other types will lead
- * to runtime exception in {@link #CpaHelper(String)} constructor.
+ * <tt>&#64;Operation</tt> annotations.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -64,38 +55,32 @@ public final class CpaHelper implements Helper {
     private final transient Identity identity;
 
     /**
+     * Where this helper lives.
+     */
+    private final transient URL home;
+
+    /**
      * All discovered operations.
      */
     private final transient ConcurrentMap<String, HelpTarget> ops;
 
     /**
      * Public ctor.
-     * @param idnt The identity of me
-     * @param name Name of the package where to look for annotated methods
-     *  and farms
+     * @param idnt The identity, which this helper will act on behalf of
+     * @param url Jar URL where to get the code
      */
-    public CpaHelper(final Identity idnt, final String name) {
+    public CpaHelper(final Identity idnt, final URL url) {
         this.identity = idnt;
-        final long start = System.currentTimeMillis();
-        this.ops = new OpDiscoverer().discover(this, name);
-        Logger.debug(
-            this,
-            "#CpaHelper('%s', '%s'): %d targets discovered in %dms",
-            idnt.name(),
-            name,
-            this.ops.size(),
-            System.currentTimeMillis() - start
-        );
+        this.home = url;
+        this.ops = this.discover(url);
     }
 
     /**
-     * Inject context into every {@link ContextAware} farm.
-     * @param context The context to inject (any object you like)
+     * {@inheritDoc}
      */
-    public void contextualize(final Object context) {
-        for (HelpTarget target : this.ops.values()) {
-            target.contextualize(context);
-        }
+    @Override
+    public URL location() {
+        return this.home;
     }
 
     /**
@@ -114,9 +99,10 @@ public final class CpaHelper implements Helper {
         if (!this.ops.containsKey(token.mnemo())) {
             throw new IllegalArgumentException(
                 String.format(
-                    "Operation '%s' not supported by '%s'",
+                    "Operation '%s' not supported by '%s' (%s)",
                     token.mnemo(),
-                    this.name()
+                    this.identity.name(),
+                    this.home
                 )
             );
         }
@@ -131,100 +117,23 @@ public final class CpaHelper implements Helper {
     }
 
     /**
-     * {@inheritDoc}
+     * Initialize.
+     * @param url URL where to get the code
+     * @return Discovered ops
      */
-    @Override
-    public String user() {
-        return this.identity.user();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String name() {
-        return this.identity.name();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout start() {
-        return this.identity.start();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Bout> inbox(final String query) {
-        return this.identity.inbox(query);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout(final Long number) throws BoutNotFoundException {
-        return this.identity.bout(number);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL photo() {
-        return this.identity.photo();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPhoto(final URL photo) {
-        this.identity.setPhoto(photo);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity friend(final String name)
-        throws UnreachableIdentityException {
-        return this.identity.friend(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Identity> friends(final String keyword) {
-        return this.identity.friends(keyword);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> aliases() {
-        return this.identity.aliases();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        this.identity.alias(alias);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void invited(final Bout bout) {
-        this.identity.invited(bout);
+    private ConcurrentMap<String, HelpTarget> discover(final URL url) {
+        final long start = System.currentTimeMillis();
+        final ConcurrentMap<String, HelpTarget> found =
+            new OpDiscoverer(this.identity).discover(url);
+        Logger.info(
+            this,
+            "#init('%s'): %d operations discovered in %dms: %[list]s",
+            url,
+            found.size(),
+            System.currentTimeMillis() - start,
+            found.keySet()
+        );
+        return found;
     }
 
 }

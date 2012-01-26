@@ -26,6 +26,8 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
+import java.net.URL;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -44,34 +46,96 @@ public final class IdentityFarmTest {
     private final transient IdentityFarm farm = new IdentityFarm();
 
     /**
-     * Find bouts of some identity.
+     * IdentityFarm can find bouts that belong to some identity.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBoutsFinding() throws Exception {
-        final BoutFarm bfarm = new BoutFarm();
-        final Long bout = bfarm.getNextBoutNumber();
-        bfarm.startedNewBout(bout);
-        final ParticipantFarm pfarm = new ParticipantFarm();
-        final String identity = "Steven Jobs";
-        this.farm.changedIdentityPhoto(identity, "");
-        pfarm.addedBoutParticipant(bout, identity);
+    public void findsBoutsThatBelongToSomeIdentity() throws Exception {
+        final Urn identity = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker()
+            .withParticipant(identity)
+            .mock();
         final List<Long> numbers = this.farm.getBoutsOfIdentity(identity);
         MatcherAssert.assertThat(numbers, Matchers.hasItem(bout));
     }
 
     /**
-     * Set and change identity photo.
+     * IdentityFarm can change photo of identity.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testChangeIdentityPhoto() throws Exception {
-        final String name = "John Cleese";
-        final String photo = "http://localhost/img.png";
-        this.farm.changedIdentityPhoto(name, photo);
+    public void changesIdentityPhoto() throws Exception {
+        final Urn identity = new IdentityRowMocker().mock();
+        final URL photo = new URL("http://localhost/img.png");
+        this.farm.changedIdentityPhoto(identity, photo);
         MatcherAssert.assertThat(
-            this.farm.getIdentityPhoto(name),
+            this.farm.getIdentityPhoto(identity),
             Matchers.equalTo(photo)
+        );
+    }
+
+    /**
+     * IdentityFarm can find identities by their aliases.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsIdentitiesByTheirAliases() throws Exception {
+        final Urn identity = new IdentityRowMocker()
+            .withAlias("martin.fowler@example.com")
+            .withAlias("Martin Fowler")
+            .withAlias("marty")
+            .withAlias("\u0443\u0440\u0430!")
+            .mock();
+        final String[] keywords = new String[] {
+            "martin",
+            "@example.com",
+            "Fowler",
+            "martin fowler",
+            "\u0443\u0440\u0430",
+        };
+        for (String keyword : keywords) {
+            MatcherAssert.assertThat(
+                this.farm.findIdentitiesByKeyword(keyword),
+                Matchers.hasItem(identity)
+            );
+        }
+    }
+
+    /**
+     * IdentityFarm can find identities by keyword using their names.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsIdentitiesByTheirNames() throws Exception {
+        final Urn identity = new IdentityRowMocker()
+            .namedAs("urn:test:test@example.com")
+            .withAlias("test@example.com")
+            .mock();
+        final String[] keywords = new String[] {
+            "test",
+            "@example",
+        };
+        for (String keyword : keywords) {
+            MatcherAssert.assertThat(
+                this.farm.findIdentitiesByKeyword(keyword),
+                Matchers.hasItem(identity)
+            );
+        }
+    }
+
+    /**
+     * IdentityFarm can exclude non-facebook and non-test identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void excludeNonObviousIdentities() throws Exception {
+        new IdentityRowMocker()
+            .namedAs("urn:netbout:hh")
+            .withAlias("freeDOM")
+            .mock();
+        MatcherAssert.assertThat(
+            this.farm.findIdentitiesByKeyword("DOM"),
+            Matchers.hasSize(0)
         );
     }
 

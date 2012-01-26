@@ -26,7 +26,6 @@
  */
 package com.netbout.db;
 
-import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,11 +33,6 @@ import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DriverManagerConnectionFactory;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.pool.impl.GenericObjectPool;
 
 /**
  * Database-related utility class.
@@ -49,105 +43,74 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 public final class Database {
 
     /**
-     * Datasource to use.
+     * Singleton instance, lazy loaded in {@link #connection()}.
      */
-    private static DataSource source;
+    private static Database instance;
 
     /**
-     * Reconnect on class initialization.
+     * Datasource to use.
      */
-    static {
-        try {
-            Database.reconnect();
-        } catch (SQLException ex) {
-            throw new IllegalStateException(ex);
+    private final transient DataSource source = new DataSourceBuilder().build();
+
+    /**
+     * Protected ctor.
+     */
+    protected Database() {
+        // empty
+    }
+
+    /**
+     * Drop all connections.
+     */
+    @SuppressWarnings("PMD.NullAssignment")
+    public static void drop() {
+        synchronized (Database.class) {
+            Database.instance = null;
         }
     }
 
     /**
-     * Private ctor.
-     */
-    private Database() {
-        // intentionally empty
-    }
-
-    /**
-     * Read next bout number.
-     * @return Next bout number
+     * Convenient method to get a new JDBC connection.
+     * @return New JDBC connection
      * @throws SQLException If some SQL error
      */
     public static Connection connection() throws SQLException {
-        return Database.source.getConnection();
+        synchronized (Database.class) {
+            if (Database.instance == null) {
+                Database.instance = new Database();
+                try {
+                    Database.update(Database.instance.connect());
+                } catch (SQLException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+            return Database.instance.connect();
+        }
     }
 
     /**
-     * Reconnect.
+     * Create JDBC connection.
+     * @return New JDBC connection
      * @throws SQLException If some SQL error
      */
-    public static void reconnect() throws SQLException {
-        Database.source = Database.datasource();
-        Database.update();
-    }
-
-    /**
-     * Create and return JDBC data source.
-     * @return The data source
-     */
-    private static DataSource datasource() {
-        final PoolableConnectionFactory factory = new PoolableConnectionFactory(
-            Database.factory(),
-            new GenericObjectPool(null),
-            null,
-            null,
-            false,
-            true
-        );
-        return new PoolingDataSource(factory.getPool());
-    }
-
-    /**
-     * Create and return connection factory.
-     * @return The connection factory
-     */
-    private static ConnectionFactory factory() {
-        final long start = System.currentTimeMillis();
-        final String driver = Manifests.read("Netbout-JdbcDriver");
-        try {
-            Class.forName(driver);
-        } catch (ClassNotFoundException ex) {
-            throw new IllegalStateException(ex);
-        }
-        final String url = Manifests.read("Netbout-JdbcUrl");
-        final ConnectionFactory factory = new DriverManagerConnectionFactory(
-            url,
-            Manifests.read("Netbout-JdbcUser"),
-            Manifests.read("Netbout-JdbcPassword")
-        );
-        Logger.info(
-            Database.class,
-            "#factory(): created with '%s' at '%s' [%dms]",
-            driver,
-            url,
-            System.currentTimeMillis() - start
-        );
-        return factory;
+    protected Connection connect() throws SQLException {
+        return this.source.getConnection();
     }
 
     /**
      * Update DB schema to the latest version.
+     * @param connection JDBC connection to use
      */
-    private static void update() {
+    private static void update(final Connection connection) {
         final long start = System.currentTimeMillis();
         try {
             final Liquibase liquibase = new Liquibase(
                 "com/netbout/db/liquibase.xml",
                 new ClassLoaderResourceAccessor(),
-                new JdbcConnection(Database.source.getConnection())
+                new JdbcConnection(connection)
             );
             liquibase.update("netbout");
         } catch (liquibase.exception.LiquibaseException ex) {
-            throw new IllegalStateException(ex);
-        } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
         Logger.info(

@@ -26,11 +26,16 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import java.util.Random;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import java.util.Date;
+import java.util.List;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,29 +44,24 @@ import org.mockito.Mockito;
  * Test case of {@link HubBout}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (200 lines)
  */
 public final class HubBoutTest {
 
     /**
-     * Name of viewer.
-     */
-    private final transient String name =
-        String.valueOf(Math.abs(new Random().nextLong()));
-
-    /**
      * The viewer.
      */
-    private final transient Identity viewer = Mockito.mock(Identity.class);
+    private transient Identity viewer;
 
     /**
      * The bout data type to work with.
      */
-    private final transient BoutDtMocker boutDtMocker = new BoutDtMocker();
+    private transient BoutDtMocker boutDtMocker;
 
     /**
-     * The catalog.
+     * The hub.
      */
-    private final transient Catalog catalog = Mockito.mock(Catalog.class);
+    private transient Hub hub;
 
     /**
      * Prepare all mocks.
@@ -69,13 +69,18 @@ public final class HubBoutTest {
      */
     @Before
     public void prepare() throws Exception {
-        Mockito.doReturn(this.name).when(this.viewer).name();
-        Mockito.doReturn(this.viewer).when(this.catalog).make(this.name);
-        this.boutDtMocker.withParticipant(
-            new ParticipantDtMocker()
-                .withIdentity(this.name)
-                .confirmed()
-                .mock()
+        this.viewer = new IdentityMocker().mock();
+        this.hub = new HubMocker()
+            .doReturn("some text", "pre-render-message")
+            .doReturn(true, "can-be-invited")
+            .withIdentity(this.viewer.name(), this.viewer)
+            .mock();
+        this.boutDtMocker = new BoutDtMocker()
+            .withParticipant(
+                new ParticipantDtMocker()
+                    .withIdentity(this.viewer.name())
+                    .confirmed()
+                    .mock()
         );
     }
 
@@ -85,9 +90,8 @@ public final class HubBoutTest {
      */
     @Test
     public void wrapsBoutDtDataProperties() throws Exception {
-        final Bus bus = new BusMocker().mock();
         final BoutDt data = this.boutDtMocker.mock();
-        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
+        final Bout bout = new HubBout(this.hub, this.viewer, data);
         bout.number();
         Mockito.verify(data).getNumber();
         bout.title();
@@ -95,15 +99,14 @@ public final class HubBoutTest {
     }
 
     /**
-     * HubBout can "wrap" BoutDt renaminng mechanism.
+     * HubBout can "wrap" BoutDt renaming mechanism.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void wrapsBoutRenamingMechanism() throws Exception {
-        final Bus bus = new BusMocker().mock();
         final BoutDt data = this.boutDtMocker.mock();
-        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
-        final String title = "some title, no matter which one..";
+        final Bout bout = new HubBout(this.hub, this.viewer, data);
+        final String title = "some title, \u0443\u0440\u0430!";
         bout.rename(title);
         Mockito.verify(data).setTitle(title);
     }
@@ -114,14 +117,70 @@ public final class HubBoutTest {
      */
     @Test
     public void acceptsInvitationRequestsAndPassesThemToDt() throws Exception {
-        final Bus bus = new BusMocker().mock();
         final BoutDt data = this.boutDtMocker.mock();
-        final Bout bout = new HubBout(this.catalog, bus, this.viewer, data);
+        final Bout bout = new HubBout(this.hub, this.viewer, data);
         final Identity friend = Mockito.mock(Identity.class);
-        final String fname = String.valueOf(Math.abs(new Random().nextLong()));
+        final Urn fname = new UrnMocker().mock();
         Mockito.doReturn(fname).when(friend).name();
         bout.invite(friend);
         Mockito.verify(data).addParticipant(fname);
+    }
+
+    /**
+     * HubBout can return messages in proper order.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void returnsMessagesInChronologicalOrder() throws Exception {
+        final BoutDt data = this.boutDtMocker
+            .but()
+            .withMessage(
+                new MessageDtMocker()
+                    .withNumber(1L)
+                    .withDate(new Date(1L))
+                    .mock()
+            )
+            .withMessage(
+                new MessageDtMocker()
+                    // @checkstyle MagicNumber (1 line)
+                    .withNumber(3L)
+                    // @checkstyle MagicNumber (1 line)
+                    .withDate(new Date(3L))
+                    .mock()
+            )
+            .withMessage(
+                new MessageDtMocker()
+                    .withNumber(2L)
+                    .withDate(new Date(2L))
+                    .mock()
+            )
+            .mock();
+        final Bout bout = new HubBout(this.hub, this.viewer, data);
+        final List<Message> messages = bout.messages("");
+        MatcherAssert.assertThat(
+            messages.get(0).number(),
+            // @checkstyle MagicNumber (1 line)
+            Matchers.equalTo(3L)
+        );
+    }
+
+    /**
+     * HubBout can return a plain message after a custom predicate.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void returnsPlainMessage() throws Exception {
+        final Bout bout = new HubBout(
+            new HubMocker()
+                .doReturn("plain text", "evaluate-predicate")
+                .mock(),
+            this.viewer,
+            this.boutDtMocker.mock()
+        );
+        MatcherAssert.assertThat(
+            bout.messages("(urn:test:predicate)").get(0).text(),
+            Matchers.startsWith("plain")
+        );
     }
 
 }

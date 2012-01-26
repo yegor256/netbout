@@ -26,19 +26,18 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.bus.Bus;
+import com.netbout.hub.Hub;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.spi.Bout;
-import java.io.StringReader;
+import com.netbout.spi.Identity;
+import com.netbout.spi.xml.DomParser;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 /**
  * Long version of a stage.
@@ -51,9 +50,9 @@ import org.xml.sax.InputSource;
 public final class LongStage {
 
     /**
-     * The bus to work with.
+     * The hub to work with.
      */
-    private transient Bus bus;
+    private transient Hub hub;
 
     /**
      * The bout.
@@ -66,6 +65,11 @@ public final class LongStage {
     private transient StageCoordinates coords;
 
     /**
+     * Who is viewing.
+     */
+    private transient Identity viewer;
+
+    /**
      * Public ctor for JAXB.
      */
     public LongStage() {
@@ -74,27 +78,18 @@ public final class LongStage {
 
     /**
      * Private ctor.
-     * @param ibus The bus
+     * @param ihub The hub
      * @param bot Bout to work with
      * @param crds The coordinates
+     * @param vwr The viewer
+     * @checkstyle ParameterNumber (3 lines)
      */
-    private LongStage(final Bus ibus, final Bout bot,
-        final StageCoordinates crds) {
-        this.bus = ibus;
+    public LongStage(final Hub ihub, final Bout bot,
+        final StageCoordinates crds, final Identity vwr) {
+        this.hub = ihub;
         this.bout = bot;
         this.coords = crds;
-    }
-
-    /**
-     * Builder.
-     * @param ibus The bus
-     * @param bot Bout to work with
-     * @param crds The coordinates
-     * @return The instance just created
-     */
-    public static LongStage build(final Bus ibus, final Bout bot,
-        final StageCoordinates crds) {
-        return new LongStage(ibus, bot, crds);
+        this.viewer = vwr;
     }
 
     /**
@@ -103,7 +98,7 @@ public final class LongStage {
      */
     @XmlAttribute
     public String getName() {
-        return this.coords.stage();
+        return this.coords.stage().toString();
     }
 
     /**
@@ -123,10 +118,7 @@ public final class LongStage {
     @XmlAnyElement(lax = true)
     @XmlMixed
     public Element getContent() throws Exception {
-        return DocumentBuilderFactory.newInstance()
-            .newDocumentBuilder()
-            .parse(new InputSource(new StringReader(this.xml())))
-            .getDocumentElement();
+        return new DomParser(this.xml()).parse().getDocumentElement();
     }
 
     /**
@@ -134,8 +126,9 @@ public final class LongStage {
      * @return The XML
      */
     private String xml() {
-        return this.bus.make("render-stage-xml")
+        return this.hub.make("render-stage-xml")
             .arg(this.bout.number())
+            .arg(this.viewer.name())
             .arg(this.coords.stage())
             .arg(this.coords.place())
             .noCache()

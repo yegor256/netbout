@@ -28,6 +28,9 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.TxBuilder;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
@@ -45,6 +48,15 @@ public final class ParticipantDtMocker {
     private final ParticipantDt participant = Mockito.mock(ParticipantDt.class);
 
     /**
+     * Public ctor.
+     */
+    public ParticipantDtMocker() {
+        this.withBout(Math.abs(new Random().nextLong()));
+        this.withIdentity(new UrnMocker().mock());
+        this.confirmed();
+    }
+
+    /**
      * With this number of bout.
      * @param bout The bout number
      * @return This object
@@ -60,7 +72,16 @@ public final class ParticipantDtMocker {
      * @return This object
      */
     public ParticipantDtMocker withIdentity(final String identity) {
-        Mockito.doReturn(identity).when(this.participant).getIdentity();
+        return this.withIdentity(Urn.create(identity));
+    }
+
+    /**
+     * With this identity name.
+     * @param name The name
+     * @return This object
+     */
+    public ParticipantDtMocker withIdentity(final Urn name) {
+        Mockito.doReturn(name).when(this.participant).getIdentity();
         return this;
     }
 

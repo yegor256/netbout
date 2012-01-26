@@ -25,86 +25,99 @@
  * SUCH DAMAGE.
  */
 
-img {
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
+/* all elements */
+a,
+img,
+body,
 input,
+h1,
+h2,
+h3,
 textarea {
-    font-size: 1.4em;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 1em;
+    font-weight: normal;
+    color: #211922;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    text-decoration: none;
 }
 
+/* any link */
+a {
+    text-decoration: underline;
+}
+
+    /* any link with a mouse over it */
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* any paragraph */
 p {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
 }
 
-ul, ol {
+/* any list */
+ul,
+ol {
     margin-left: 2em;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    font-size: 12pt;
-    line-height: 1.3em;
-    min-height: 100%;
-    position: relative;
-    color: #122632;
-    padding: 1em;
-    margin: 0;
+/* fixed font */
+.tt,
+.fixed,
+pre {
+    font-family: 'Courier New', monospace;
 }
 
-/* top right label about deployed version */
-#version {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 0.2em 0.5em;
-    font-size: 0.8em;
-    background-color: gray;
-    color: white;
+/* fixed block */
+.fixed {
+    white-space: pre-line;
 }
 
-#crumbs {
-    display: inline;
+/* red text marker */
+.red {
+    color: #f24a40;
 }
 
-    #crumbs ul {
-        margin: 0 !important;
-        display: inline;
+/* any input field */
+input {
+    border: 0.071em solid #bfbcc1;
+    background-color: white;
+    padding: 0.5em 0.71em; /* multiply by FONT-SIZE = 1em */
+}
+
+    /* any submit button */
+    input[type="submit"] {
+        background-color: #f3f3f1;
     }
 
-        #crumbs ul li {
-            list-style: none;
-            display: inline;
-            margin-right: 1em;
-        }
-
-        #photo {
-            height: 24px;
-        }
-
-#search {
-    display: inline;
+/* any text aread */
+textarea {
+    padding: 1em;
+    border: 0.071em solid #bfbcc1;
+    overflow: hidden;
 }
 
-/* message to show */
-#message {
-    color: red;
-}
-
-/* everything between header and footer */
-#content {
+/* error message to show */
+#error-message {
     position: relative;
+    font-size: 1.4em;
+    color: red;
+    margin-top: 0.3em;
 }
 
-/* all photos */
-.photo {
-    -moz-box-shadow: 1px 1px 1px gray;
-    -webkit-box-shadow: 1px 1px 1px gray;
-    -o-box-shadow: 1px 1px 1px gray;
-    box-shadow: 1px 1px 1px gray;
+/* bottom right label about deployed version */
+#version {
+    font-size: 1.2em;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    padding: 0.4em 0.8em;
+    background-color: #e4e5e3;
+    color: gray;
 }
 

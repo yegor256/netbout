@@ -26,9 +26,10 @@
  */
 package com.netbout.rest.page;
 
+import com.rexsl.core.Schema;
 import com.rexsl.core.Stylesheet;
-import com.rexsl.core.XmlSchema;
 import com.ymock.util.Logger;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -67,7 +69,7 @@ public final class PageBuilder {
     /**
      * Stylesheet to use.
      */
-    private transient String xsl = "/xsl/none.xsl";
+    private transient URI xsl = UriBuilder.fromUri("/xsl/none.xsl").build();
 
     /**
      * Schema to use.
@@ -76,11 +78,11 @@ public final class PageBuilder {
 
     /**
      * Configure the stylesheet to be used.
-     * @param name Name of stylesheet
+     * @param builder URI builder
      * @return This object
      */
-    public PageBuilder stylesheet(final String name) {
-        this.xsl = name;
+    public PageBuilder stylesheet(final UriBuilder builder) {
+        this.xsl = builder.build();
         return this;
     }
 
@@ -112,9 +114,9 @@ public final class PageBuilder {
         Logger.debug(
             PageBuilder.class,
             // @checkstyle LineLength (1 line)
-            "#build(%s): page of class %s created",
+            "#build(%s): page of class %[type]s created",
             base.getName(),
-            page.getClass().getName()
+            page
         );
         return page;
     }
@@ -128,10 +130,9 @@ public final class PageBuilder {
     private Class createOrFind(final Class base) {
         synchronized (PageBuilder.class) {
             final String name = String.format(
-                "%s$%s$%d",
+                "%s$%s",
                 base.getName(),
-                this.xsl.replaceAll("[^\\w]", ""),
-                Math.abs(this.xsl.hashCode())
+                this.xsl.getPath().replaceAll("[^\\w]", "")
             );
             Class cls;
             if (ClassPool.getDefault().getOrNull(name) == null) {
@@ -145,7 +146,7 @@ public final class PageBuilder {
                 // let's double check that the class found really is the
                 // class we're looking for
                 assert ((Stylesheet) cls.getAnnotation(Stylesheet.class))
-                    .value().equals(this.xsl);
+                    .value().equals(this.xsl.toString());
             }
             return cls;
         }
@@ -168,10 +169,10 @@ public final class PageBuilder {
                 AnnotationsAttribute.visibleTag
             );
             attribute.addAnnotation(
-                this.make(Stylesheet.class, this.xsl, file)
+                this.make(Stylesheet.class, this.xsl.toString(), file)
             );
             attribute.addAnnotation(
-                this.make(XmlSchema.class, this.xsd, file)
+                this.make(Schema.class, this.xsd, file)
             );
             for (Annotation existing : this.annotations(ctc, parent)) {
                 attribute.addAnnotation(existing);

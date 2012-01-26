@@ -82,7 +82,7 @@ public final class TextUtilsTest {
     public void formatsVelocityTemplate() throws Exception {
         final VelocityContext context = new VelocityContext();
         final String xsl = TextUtils.format(
-            "com/netbout/rest/bout.xsl.vm",
+            "com/netbout/rest/wrapper.xsl.vm",
             context
         );
         MatcherAssert.assertThat(

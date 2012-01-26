@@ -62,6 +62,16 @@ public final class BoutTest {
     }
 
     /**
+     * BoutMocker sets date automatically.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void setsBoutDateByDefault() throws Exception {
+        final Bout bout = new BoutMocker().mock();
+        MatcherAssert.assertThat(bout.date(), Matchers.notNullValue());
+    }
+
+    /**
      * BoutMocker can add messages to bout by default.
      * @throws Exception If there is some problem inside
      */
@@ -72,7 +82,7 @@ public final class BoutTest {
             bout.messages("").size(),
             Matchers.greaterThan(0)
         );
-        MatcherAssert.assertThat(bout.message(1L), Matchers.notNullValue());
+        MatcherAssert.assertThat(bout.message(0L), Matchers.notNullValue());
     }
 
     /**
@@ -81,15 +91,30 @@ public final class BoutTest {
      */
     @Test
     public void canAssignParticipantsToBout() throws Exception {
-        final String name = "some-identity-name";
+        final Urn name = new UrnMocker().mock();
         final Identity identity = new IdentityMocker().mock();
         final Bout bout = new BoutMocker()
-            .withParticipant(name)
+            .withParticipant(name.toString())
             .withParticipant(identity)
             .mock();
         MatcherAssert.assertThat(
             bout.participants().size(),
             Matchers.equalTo(2)
+        );
+    }
+
+    /**
+     * BoutMocker can return given message on pre-defined query.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void mocksMessageByQueryText() throws Exception {
+        final Bout bout = new BoutMocker()
+            .messageOn("foo", "hello!")
+            .mock();
+        MatcherAssert.assertThat(
+            bout.messages("foo is inside").get(0).text(),
+            Matchers.containsString("hello")
         );
     }
 

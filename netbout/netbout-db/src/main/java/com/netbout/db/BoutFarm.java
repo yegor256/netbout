@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,9 +59,10 @@ public final class BoutFarm {
         Long number;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO bout () VALUES ()",
+                "INSERT INTO bout (date) VALUES (?)",
                 Statement.RETURN_GENERATED_KEYS
             );
+            Utc.setTimestamp(stmt, 1);
             stmt.execute();
             final ResultSet rset = stmt.getGeneratedKeys();
             try {
@@ -213,6 +215,49 @@ public final class BoutFarm {
             System.currentTimeMillis() - start
         );
         return title;
+    }
+
+    /**
+     * Get bout date.
+     * @param number Number of bout
+     * @return The date
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("get-bout-date")
+    public Date getBoutDate(final Long number) throws SQLException {
+        final long start = System.currentTimeMillis();
+        final Connection conn = Database.connection();
+        Date date;
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT date FROM bout WHERE number = ?"
+            );
+            stmt.setLong(1, number);
+            final ResultSet rset = stmt.executeQuery();
+            try {
+                if (!rset.next()) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Bout #%d not found, can't read its date",
+                            number
+                        )
+                    );
+                }
+                date = Utc.getTimestamp(rset, 1);
+            } finally {
+                rset.close();
+            }
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#getBoutDate(%d): retrieved '%s' [%dms]",
+            number,
+            date,
+            System.currentTimeMillis() - start
+        );
+        return date;
     }
 
     /**

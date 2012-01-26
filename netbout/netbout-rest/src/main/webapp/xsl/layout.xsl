@@ -37,76 +37,37 @@
     <xsl:include href="/xsl/templates.xsl" />
 
     <xsl:template match="/">
+        <!-- see http://stackoverflow.com/questions/3387127 -->
+        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <xsl:apply-templates select="page" />
     </xsl:template>
 
     <xsl:template match="page">
         <html lang="en-US">
             <head>
+                <script type="text/javascript"
+                    src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"/>
                 <link href="/css/global.css" rel="stylesheet" type="text/css"
                     media="all"></link>
-                <link rel="icon" type="image/gif" href="http://img.netbout.com/favicon.ico"/>
+                <link href="/css/layout.css" rel="stylesheet" type="text/css"
+                    media="all"></link>
+                <link rel="icon" type="image/gif"
+                    href="http://img.netbout.com/favicon.ico"/>
                 <xsl:call-template name="head" />
             </head>
             <body>
                 <xsl:apply-templates select="version" />
-                <header>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="links/link[@rel='home']/@href"/>
-                        </xsl:attribute>
-                        <img src="http://img.netbout.com/logo.png"/>
-                    </a>
-                    <xsl:if test="identity">
-                        <nav id="crumbs" role="navigation">
-                            <ul>
-                                <li>
-                                    <img id="photo" class="photo">
-                                        <xsl:attribute name="src">
-                                            <xsl:value-of select="identity/photo"/>
-                                        </xsl:attribute>
-                                    </img>
-                                </li>
-                                <li>
-                                    <xsl:value-of select="identity/alias"/>
-                                </li>
-                                <li>
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="links/link[@rel='start']/@href"/>
-                                        </xsl:attribute>
-                                        <xsl:text>start</xsl:text>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="links/link[@rel='logout']/@href"/>
-                                        </xsl:attribute>
-                                        <xsl:text>logout</xsl:text>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                        <form id="search" method="get" role="search">
-                            <xsl:attribute name="action">
-                                <xsl:value-of select="/page/links/link[@rel='self']"/>
-                            </xsl:attribute>
-                            <input name="q" autofocus="true" autocomplete="off" type="search" required="true">
-                                <xsl:attribute name="value">
-                                    <xsl:value-of select="/page/query"/>
-                                </xsl:attribute>
-                            </input>
-                            <input value="find" type="submit" />
-                        </form>
-                    </xsl:if>
-                </header>
-                <xsl:if test="message != ''">
-                    <aside id="message">
-                        <xsl:value-of select="message"/>
-                    </aside>
-                </xsl:if>
+                <div id="cap">
+                    <div id="incap">
+                        <xsl:call-template name="header" />
+                    </div>
+                </div>
                 <section id="content" role="main">
+                    <xsl:if test="message != ''">
+                        <aside id="error-message">
+                            <xsl:value-of select="message"/>
+                        </aside>
+                    </xsl:if>
                     <xsl:call-template name="content" />
                 </section>
             </body>
@@ -122,6 +83,80 @@
                 <xsl:with-param name="nano" select="/page/@nano" />
             </xsl:call-template>
         </aside>
+    </xsl:template>
+
+    <xsl:template name="header">
+        <header id="header">
+            <div id="left">
+                <a id="logo">
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="links/link[@rel='home']/@href"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="title">
+                        <xsl:text>back to inbox</xsl:text>
+                    </xsl:attribute>
+                </a>
+                <form id="search" method="get" role="search">
+                    <xsl:attribute name="action">
+                        <xsl:value-of select="/page/links/link[@rel='self']"/>
+                    </xsl:attribute>
+                    <input name="q" id="search-input" placeholder="Find..."
+                        autocomplete="off" size="10" maxlength="120" required="true">
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="/page/query"/>
+                        </xsl:attribute>
+                        <xsl:if test="/page/query != ''">
+                            <xsl:attribute name="autofocus">
+                                <xsl:text>true</xsl:text>
+                            </xsl:attribute>
+                        </xsl:if>
+                    </input>
+                </form>
+            </div>
+            <xsl:if test="identity">
+                <nav id="right" role="navigation">
+                    <ul>
+                        <li>
+                            <img id="photo">
+                                <xsl:attribute name="src">
+                                    <xsl:value-of select="identity/photo"/>
+                                </xsl:attribute>
+                            </img>
+                            <span>
+                                <xsl:call-template name="alias">
+                                    <xsl:with-param name="alias" select="identity/alias" />
+                                </xsl:call-template>
+                            </span>
+                            <xsl:if test="identity/@helper='true'">
+                                <span><xsl:text>&#160;(h)</xsl:text></span>
+                            </xsl:if>
+                        </li>
+                        <li>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="links/link[@rel='start']/@href"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>start new bout</xsl:text>
+                                </xsl:attribute>
+                                <span><xsl:text>Start</xsl:text></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="links/link[@rel='logout']/@href"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>leave Netbout.com right now</xsl:text>
+                                </xsl:attribute>
+                                <span><xsl:text>Logout</xsl:text></span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </xsl:if>
+        </header>
     </xsl:template>
 
 </xsl:stylesheet>

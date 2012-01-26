@@ -28,7 +28,10 @@ package com.netbout.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -44,15 +47,19 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 public final class TextUtils {
 
     /**
-     * Encoding to be used.
-     */
-    private static final String ENCODING = "UTF-8";
-
-    /**
      * It's utility class.
      */
     private TextUtils() {
         // empty
+    }
+
+    /**
+     * URI encode.
+     * @param uri The URI to encode
+     * @return Encoded text
+     */
+    public static String ucode(final URI uri) {
+        return StringEscapeUtils.escapeXml(uri.toString());
     }
 
     /**
@@ -64,7 +71,7 @@ public final class TextUtils {
         assert text != null;
         try {
             return new Base64().encodeToString(
-                text.getBytes(TextUtils.ENCODING)
+                text.getBytes(CharEncoding.UTF_8)
             ).replaceAll("[\t\n\r]+", "");
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(ex);
@@ -79,7 +86,7 @@ public final class TextUtils {
     public static String unpack(final String text) {
         assert text != null;
         try {
-            return new String(new Base64().decode(text), TextUtils.ENCODING);
+            return new String(new Base64().decode(text), CharEncoding.UTF_8);
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(ex);
         }

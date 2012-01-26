@@ -26,17 +26,20 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
+import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlConverter;
-import java.net.URLEncoder;
-import java.util.Random;
+import com.rexsl.test.XhtmlMatchers;
+import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
-import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
 /**
  * Test case for {@link BoutStylesheetRs}.
@@ -46,42 +49,36 @@ import org.xmlmatchers.namespace.SimpleNamespaceContext;
 public final class BoutStylesheetRsTest {
 
     /**
-     * XPath context.
-     */
-    private static final SimpleNamespaceContext CONTEXT =
-        new SimpleNamespaceContext().withBinding(
-            "xsl",
-            "http://www.w3.org/1999/XSL/Transform"
-        );
-
-    /**
      * XSL wrapper is renderable.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void testWrappingXslRendering() throws Exception {
+        final Bout bout = new BoutMocker().mock();
+        final Identity identity = new IdentityMocker()
+            .withBout(bout.number(), bout)
+            .mock();
         final BoutStylesheetRs rest = new ResourceMocker()
+            .withIdentity(identity)
             .mock(BoutStylesheetRs.class);
-        final Long bout = new Random().nextLong();
-        final String stage = "some stage name";
-        rest.setBout(bout);
+        final Urn stage = new UrnMocker().mock();
+        rest.setBout(bout.number());
         rest.setStage(stage);
         final String xsl = rest.boutXsl();
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(
-                "/xsl:stylesheet/xsl:include[contains(@href,'/xsl/bout.xsl')]",
-                this.CONTEXT
+            XhtmlMatchers.hasXPath(
+                "/xsl:stylesheet/xsl:include[contains(@href,'/xsl/bout.xsl')]"
             )
         );
         final String xpath = String.format(
-            "//xsl:include[contains(@href,'/%d/xsl/stage.xsl?stage=%s')]",
-            bout,
-            URLEncoder.encode(stage, "UTF-8")
+            "//xsl:include[contains(@href,'%s')]",
+            UriBuilder.fromPath("/{bout}/xsl/{stage}/stage.xsl")
+                .build(bout.number(), stage)
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(xpath, this.CONTEXT)
+            XhtmlMatchers.hasXPath(xpath)
         );
     }
 
@@ -91,16 +88,21 @@ public final class BoutStylesheetRsTest {
      */
     @Test
     public void testStageXslRendering() throws Exception {
+        final Bout bout = new BoutMocker().mock();
+        final Identity identity = new IdentityMocker()
+            .withBout(bout.number(), bout)
+            .mock();
         final String text = "some text in XSL format";
-        final Bus bus = new BusMocker()
+        final Hub hub = new HubMocker()
+            .withIdentity(identity.name(), identity)
             .doReturn(text, "render-stage-xsl")
             .mock();
         final BoutStylesheetRs rest = new ResourceMocker()
-            .withDeps(bus, new HubMocker().mock())
+            .withIdentity(identity)
+            .withHub(hub)
             .mock(BoutStylesheetRs.class);
-        final Long bout = new Random().nextLong();
-        final String stage = "nb:hh";
-        rest.setBout(bout);
+        final Urn stage = new UrnMocker().mock();
+        rest.setBout(bout.number());
         rest.setStage(stage);
         final String xsl = rest.stageXsl();
         MatcherAssert.assertThat(xsl, Matchers.equalTo(text));

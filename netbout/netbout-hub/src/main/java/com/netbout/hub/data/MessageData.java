@@ -26,8 +26,9 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.bus.Bus;
+import com.netbout.hub.Hub;
 import com.netbout.hub.MessageDt;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,9 +43,9 @@ import java.util.concurrent.ConcurrentMap;
 final class MessageData implements MessageDt {
 
     /**
-     * Bus to work with.
+     * Hub to work with.
      */
-    private final transient Bus bus;
+    private final transient Hub hub;
 
     /**
      * Number of the message.
@@ -59,7 +60,7 @@ final class MessageData implements MessageDt {
     /**
      * The author.
      */
-    private transient String author;
+    private transient Urn author;
 
     /**
      * The text.
@@ -69,16 +70,16 @@ final class MessageData implements MessageDt {
     /**
      * Who already have seen this message, and who haven't?
      */
-    private final transient ConcurrentMap<String, Boolean> seenBy =
-        new ConcurrentHashMap<String, Boolean>();
+    private final transient ConcurrentMap<Urn, Boolean> seenBy =
+        new ConcurrentHashMap<Urn, Boolean>();
 
     /**
      * Public ctor.
-     * @param ibus The bus
+     * @param ihub The hub
      * @param num The number of this message
      */
-    public MessageData(final Bus ibus, final Long num) {
-        this.bus = ibus;
+    public MessageData(final Hub ihub, final Long num) {
+        this.hub = ihub;
         assert num != null;
         this.number = num;
     }
@@ -105,7 +106,7 @@ final class MessageData implements MessageDt {
     @Override
     public void setDate(final Date dte) {
         this.date = dte;
-        this.bus.make("changed-message-date")
+        this.hub.make("changed-message-date")
             .asap()
             .arg(this.number)
             .arg(this.date)
@@ -124,7 +125,7 @@ final class MessageData implements MessageDt {
     @Override
     public Date getDate() {
         if (this.date == null) {
-            this.date = this.bus.make("get-message-date")
+            this.date = this.hub.make("get-message-date")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -142,9 +143,9 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public void setAuthor(final String idnt) {
+    public void setAuthor(final Urn idnt) {
         this.author = idnt;
-        this.bus.make("changed-message-author")
+        this.hub.make("changed-message-author")
             .asap()
             .arg(this.number)
             .arg(this.author)
@@ -162,9 +163,9 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public String getAuthor() {
+    public Urn getAuthor() {
         if (this.author == null) {
-            this.author = this.bus.make("get-message-author")
+            this.author = this.hub.make("get-message-author")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -184,7 +185,7 @@ final class MessageData implements MessageDt {
     @Override
     public void setText(final String txt) {
         this.text = txt;
-        this.bus.make("changed-message-text")
+        this.hub.make("changed-message-text")
             .asap()
             .arg(this.number)
             .arg(this.text)
@@ -204,7 +205,7 @@ final class MessageData implements MessageDt {
     @Override
     public String getText() {
         if (this.text == null) {
-            this.text = this.bus.make("get-message-text")
+            this.text = this.hub.make("get-message-text")
                 .synchronously()
                 .arg(this.number)
                 .exec();
@@ -222,9 +223,9 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public void addSeenBy(final String identity) {
-        if (!this.seenBy.containsKey(identity) || !this.seenBy.get(identity)) {
-            this.bus.make("message-was-seen")
+    public void addSeenBy(final Urn identity) {
+        if (!this.isSeenBy(identity)) {
+            this.hub.make("message-was-seen")
                 .asap()
                 .arg(this.number)
                 .arg(identity)
@@ -244,9 +245,9 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public Boolean isSeenBy(final String identity) {
+    public Boolean isSeenBy(final Urn identity) {
         if (!this.seenBy.containsKey(identity)) {
-            final Boolean status = this.bus.make("was-message-seen")
+            final Boolean status = this.hub.make("was-message-seen")
                 .synchronously()
                 .arg(this.number)
                 .arg(identity)

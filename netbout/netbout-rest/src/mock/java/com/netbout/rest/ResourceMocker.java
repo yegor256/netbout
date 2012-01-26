@@ -30,10 +30,10 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
-import com.netbout.hub.User;
-import com.netbout.hub.UserMocker;
+import com.netbout.hub.UrnResolver;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
 import com.netbout.utils.Cryptor;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.XhtmlConverter;
@@ -61,11 +61,6 @@ import org.xmlmatchers.XmlMatchers;
 public final class ResourceMocker {
 
     /**
-     * Bus.
-     */
-    private transient Bus bus = new BusMocker().mock();
-
-    /**
      * Hub.
      */
     private transient Hub hub;
@@ -79,6 +74,11 @@ public final class ResourceMocker {
      * Identity logged in.
      */
     private transient Identity identity = new IdentityMocker().mock();
+
+    /**
+     * URL for all namespaces.
+     */
+    private transient URL namespaceUrl;
 
     /**
      * Providers.
@@ -127,6 +127,16 @@ public final class ResourceMocker {
     }
 
     /**
+     * With this URL for all namespaces.
+     * @param url The URL
+     * @return This object
+     */
+    public ResourceMocker withNamespaceURL(final URL url) {
+        this.namespaceUrl = url;
+        return this;
+    }
+
+    /**
      * With this message inside.
      * @param msg The message
      * @return This object
@@ -157,13 +167,11 @@ public final class ResourceMocker {
     }
 
     /**
-     * With these dependencies.
-     * @param ibus The bus
+     * With this hub.
      * @param ihub The hub
      * @return This object
      */
-    public ResourceMocker withDeps(final Bus ibus, final Hub ihub) {
-        this.bus = ibus;
+    public ResourceMocker withHub(final Hub ihub) {
         this.hub = ihub;
         return this;
     }
@@ -177,15 +185,17 @@ public final class ResourceMocker {
      */
     public <T> T mock(final Class<? extends Resource> type) throws Exception {
         if (this.hub == null) {
-            final String uname = this.identity.user();
-            final String iname = this.identity.name();
-            final User user = new UserMocker()
-                .namedAs(uname)
+            final Urn iname = this.identity.name();
+            this.hub = new HubMocker()
+                .doReturn("", "pre-render-message")
                 .withIdentity(iname, this.identity)
                 .mock();
-            this.hub = new HubMocker()
-                .withUser(uname, user)
-                .mock();
+            if (this.namespaceUrl != null) {
+                final UrnResolver resolver = Mockito.mock(UrnResolver.class);
+                Mockito.doReturn(this.namespaceUrl).when(resolver)
+                    .authority(Mockito.any(Urn.class));
+                Mockito.doReturn(resolver).when(this.hub).resolver();
+            }
         }
         // @checkstyle IllegalType (1 line)
         final AbstractRs rest = (AbstractRs) type.newInstance();
@@ -198,8 +208,6 @@ public final class ResourceMocker {
         final ServletContext context = Mockito.mock(ServletContext.class);
         Mockito.doReturn(this.hub).when(context)
             .getAttribute("com.netbout.rest.HUB");
-        Mockito.doReturn(this.bus).when(context)
-            .getAttribute("com.netbout.rest.BUS");
         rest.setServletContext(context);
         return (T) rest;
     }

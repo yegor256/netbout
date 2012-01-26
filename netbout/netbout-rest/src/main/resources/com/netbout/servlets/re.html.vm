@@ -5,13 +5,13 @@
         <link href="/css/global.css" rel="stylesheet" type="text/css"></link>
         <link rel="icon" type="image/gif" href="http://img.netbout.com/favicon.ico"/>
     </head>
-    <body>
-        <div id="bar">
-            <a id="logo">
-                <img src="http://img.netbout.com/logo.png"/>
-            </a>
-        </div>
-        <div id="content">
+    <body style="padding: 1em;">
+        <section>
+            <p>
+                <a href="http://www.netbout.com/">
+                    <img src="http://img.netbout.com/logo-small.png"/>
+                </a>
+            </p>
             <p>
                 <b style="color: red;">Internal application error</b>.
             </p>
@@ -21,12 +21,13 @@
                 mean time click "Back" button in your browser and try
                 to do something else.
             </p>
-            <p style="white-space: pre-line;">code: ${code}
-                message: ${message}
-                request_uri: ${request_uri}
-                exception_type: ${exception_type}
+            <p>
+                code: <span class="tt">${code}</span><br/>
+                message: <span class="tt">${message}</span><br/>
+                request_uri: <span class="tt">${request_uri}</span><br/>
+                exception_type: <span class="tt">${exception_type}</span>
             </p>
             <pre>${stacktrace}</pre>
-        </div>
+        </section>
     </body>
 </html>

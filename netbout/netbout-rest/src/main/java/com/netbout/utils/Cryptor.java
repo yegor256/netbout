@@ -28,10 +28,9 @@ package com.netbout.utils;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
-import org.apache.commons.lang.StringUtils;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 
-// import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
-// import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 /**
  * Encrypts and decrypts.
  *
@@ -41,29 +40,9 @@ import org.apache.commons.lang.StringUtils;
 public final class Cryptor {
 
     /**
-     * Separator between name and hash.
+     * Cipher.
      */
-    private static final String SEPARATOR = ".";
-
-    // /**
-    //  * Password to use in encryption.
-    //  */
-    // private static final String PASSWORD = "j&^%hgfRR43$#&==_ )(00(0}{-~";
-    //
-    // /**
-    //  * Encryptor.
-    //  */
-    // private final StandardPBEStringEncryptor encryptor =
-    //     new StandardPBEStringEncryptor();
-
-    // /**
-    //  * Public ctor.
-    //  */
-    // public Cryptor() {
-    //     this.encryptor.setPassword(this.PASSWORD);
-    //     this.encryptor
-    //        .setAlgorithm(StandardPBEByteEncryptor.DEFAULT_ALGORITHM);
-    // }
+    private static final Cipher CIPHER = new Cipher();
 
     /**
      * Encrypt user+identity into text.
@@ -71,12 +50,7 @@ public final class Cryptor {
      * @return Encrypted string
      */
     public String encrypt(final Identity identity) {
-        final StringBuilder builder = new StringBuilder();
-        builder
-            .append(TextUtils.pack(identity.user()))
-            .append(this.SEPARATOR)
-            .append(TextUtils.pack(identity.name()));
-        return TextUtils.pack(this.pack(builder.toString()));
+        return TextUtils.pack(this.CIPHER.encrypt(identity.name().toString()));
     }
 
     /**
@@ -91,40 +65,23 @@ public final class Cryptor {
         if (hash == null) {
             throw new DecryptionException(hash, "Hash is NULL");
         }
-        final String[] parts = StringUtils.split(
-            TextUtils.unpack(this.unpack(hash)),
-            this.SEPARATOR
-        );
-        if (parts.length != 2) {
-            throw new DecryptionException(hash, "Not enough parts");
-        }
-        final String uname = TextUtils.unpack(parts[0]);
-        final String iname = TextUtils.unpack(parts[1]);
+        final String iname = this.CIPHER.decrypt(TextUtils.unpack(hash));
+        Identity identity;
         try {
-            return hub.user(uname).identity(iname);
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            identity = hub.identity(new Urn(iname));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new DecryptionException(ex);
+        } catch (java.net.URISyntaxException ex) {
             throw new DecryptionException(ex);
         }
-    }
-
-    /**
-     * Pack with encryption.
-     * @param text The text to work with
-     * @return The packed string
-     */
-    private String pack(final String text) {
-        return text;
-        // return this.encryptor.encrypt(text);
-    }
-
-    /**
-     * Decrypt and unpack.
-     * @param hash Packed text
-     * @return The original string
-     */
-    private String unpack(final String hash) {
-        return hash;
-        // return this.encryptor.decrypt(hash);
+        Logger.debug(
+            this,
+            "#decrypt(%[type]s, %s): identity '%s' found",
+            hub,
+            hash,
+            identity.name()
+        );
+        return identity;
     }
 
 }

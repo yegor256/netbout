@@ -27,7 +27,9 @@
 package com.netbout.hub;
 
 import com.netbout.spi.MessageNotFoundException;
+import com.netbout.spi.Urn;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +47,12 @@ public interface BoutDt {
     Long getNumber();
 
     /**
+     * Get date of creation.
+     * @return The date
+     */
+    Date getDate();
+
+    /**
      * Get title.
      * @return The title
      */
@@ -59,16 +67,21 @@ public interface BoutDt {
     /**
      * Confirm participation.
      * @param identity Who confirms?
-     * @param aye To confirm?
      */
-    void confirm(String identity, Boolean aye);
+    void confirm(Urn identity);
+
+    /**
+     * Kick off this identity of the bout.
+     * @param identity Who leaves
+     */
+    void kickOff(Urn identity);
 
     /**
      * Add new participant.
      * @param name The name of participant
      * @return The participant just created/added
      */
-    ParticipantDt addParticipant(String name);
+    ParticipantDt addParticipant(Urn name);
 
     /**
      * Get list of participants.

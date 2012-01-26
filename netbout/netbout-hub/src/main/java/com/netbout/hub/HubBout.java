@@ -26,13 +26,18 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
+import com.netbout.spi.DuplicateInvitationException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageNotFoundException;
+import com.netbout.spi.MessagePostException;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
+import com.netbout.spi.xml.DomParser;
 import com.ymock.util.Logger;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,18 +49,15 @@ import java.util.List;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class HubBout implements Bout {
 
     /**
-     * The bus.
+     * The hub.
      */
-    private final transient Bus bus;
-
-    /**
-     * The catalog.
-     */
-    private final transient Catalog catalog;
+    private final transient Hub hub;
 
     /**
      * The viewer.
@@ -69,18 +71,22 @@ public final class HubBout implements Bout {
 
     /**
      * Public ctor.
-     * @param ctlg The catalog
-     * @param ibus The bus
+     * @param ihub The hub
      * @param idnt The viewer
      * @param dat The data
-     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubBout(final Catalog ctlg, final Bus ibus, final Identity idnt,
-        final BoutDt dat) {
-        this.catalog = ctlg;
-        this.bus = ibus;
+    public HubBout(final Hub ihub, final Identity idnt, final BoutDt dat) {
+        this.hub = ihub;
         this.viewer = idnt;
         this.data = dat;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Bout bout) {
+        return NetboutUtils.dateOf(this).compareTo(NetboutUtils.dateOf(bout));
     }
 
     /**
@@ -103,8 +109,27 @@ public final class HubBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public void confirm(final boolean aye) {
-        this.data.confirm(this.viewer.name(), aye);
+    public Date date() {
+        return this.data.getDate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void confirm() {
+        this.data.confirm(this.viewer.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void leave() {
+        this.data.kickOff(this.viewer.name());
+        if (this.viewer instanceof InvitationSensitive) {
+            ((InvitationSensitive) this.viewer).kickedOff(this.number());
+        }
     }
 
     /**
@@ -112,8 +137,14 @@ public final class HubBout implements Bout {
      */
     @Override
     public void rename(final String text) {
-        if (!this.confirmed()) {
-            throw new IllegalStateException("You can't rename until you join");
+        if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
+            throw new IllegalStateException(
+                String.format(
+                    "You '%s' can't rename bout #%d until you join",
+                    this.viewer,
+                    this.number()
+                )
+            );
         }
         this.data.setTitle(text);
     }
@@ -123,19 +154,61 @@ public final class HubBout implements Bout {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Participant invite(final Identity friend) {
-        if (!this.confirmed()) {
-            throw new IllegalStateException("You can't invite until you join");
+    public Participant invite(final Identity friend)
+        throws DuplicateInvitationException {
+        if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
+            throw new IllegalStateException(
+                String.format(
+                    "You '%s' can't invite %s until you join bout #%d",
+                    this.viewer,
+                    friend,
+                    this.number()
+                )
+            );
+        }
+        if (NetboutUtils.participatesIn(friend.name(), this)) {
+            throw new DuplicateInvitationException(
+                String.format(
+                    "Identity '%s' has already been invited to bout #%d",
+                    friend,
+                    this.number()
+                )
+            );
+        }
+        final Boolean allowed = this.hub.make("can-be-invited")
+            .inBout(this)
+            .arg(this.number())
+            .arg(friend.name())
+            .asDefault(true)
+            .exec();
+        if (!allowed) {
+            throw new DuplicateInvitationException(
+                String.format(
+                    "Identity '%s' refused to be invited to bout #%d",
+                    friend,
+                    this.number()
+                )
+            );
         }
         final ParticipantDt dude = this.data.addParticipant(friend.name());
-        dude.setConfirmed(false);
         Logger.debug(
             this,
             "#invite('%s'): success",
             friend
         );
-        friend.invited(this);
-        return new HubParticipant(this.catalog, this, dude);
+        if (friend instanceof InvitationSensitive) {
+            ((InvitationSensitive) friend).invited(this);
+        }
+        final Boolean confirm = this.hub.make("just-invited")
+            .inBout(this)
+            .arg(this.number())
+            .arg(friend.name())
+            .asDefault(false)
+            .exec();
+        if (confirm) {
+            dude.setConfirmed(true);
+        }
+        return new HubParticipant(this.hub, this, dude, this.data);
     }
 
     /**
@@ -147,13 +220,16 @@ public final class HubBout implements Bout {
         final Collection<Participant> participants
             = new ArrayList<Participant>();
         for (ParticipantDt dude : this.data.getParticipants()) {
-            participants.add(new HubParticipant(this.catalog, this, dude));
+            participants.add(
+                new HubParticipant(this.hub, this, dude, this.data)
+            );
         }
         Logger.debug(
             this,
-            "#participants(): %d participant(s) found in bout #%d",
+            "#participants(): %d participant(s) found in bout #%d: %[list]s",
             participants.size(),
-            this.number()
+            this.number(),
+            participants
         );
         return participants;
     }
@@ -166,18 +242,19 @@ public final class HubBout implements Bout {
     public List<Message> messages(final String query) {
         final List<MessageDt> datas =
             new ArrayList<MessageDt>(this.data.getMessages());
-        Collections.reverse(datas);
         final List<Message> messages = new ArrayList<Message>();
         for (MessageDt msg : datas) {
-            messages.add(new HubMessage(this.catalog, this.viewer, this, msg));
+            messages.add(new HubMessage(this.hub, this.viewer, this, msg));
         }
+        Collections.sort(messages, Collections.reverseOrder());
+        final List<Message> result = this.filter(messages, query);
         Logger.debug(
             this,
             "#messages('%s'): %d message(s) found",
             query,
-            messages.size()
+            result.size()
         );
-        return messages;
+        return result;
     }
 
     /**
@@ -187,7 +264,7 @@ public final class HubBout implements Bout {
     @Override
     public Message message(final Long num) throws MessageNotFoundException {
         final Message message = new HubMessage(
-            this.catalog,
+            this.hub,
             this.viewer,
             this,
             this.data.findMessage(num)
@@ -202,47 +279,178 @@ public final class HubBout implements Bout {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
+     * @checkstyle ExecutableStatementCount (80 lines)
      */
     @Override
-    public Message post(final String text) {
-        if (!this.confirmed()) {
-            throw new IllegalStateException("You can't post until you join");
+    public Message post(final String text) throws MessagePostException {
+        if (text.isEmpty()) {
+            throw new MessagePostException("some message content is required");
         }
-        final MessageDt msg = this.data.addMessage();
-        msg.setDate(new Date());
-        msg.setAuthor(this.viewer.name());
-        msg.setText(text);
-        Logger.debug(
-            this,
-            "#post('%s'): message posted",
-            text
-        );
-        final Message message = new HubMessage(
-            this.catalog,
-            this.viewer,
-            this,
-            msg
-        );
-        message.text();
-        this.bus.make("notify-bout-participants")
+        if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
+            throw new IllegalStateException(
+                String.format(
+                    "You '%s' can't post to bout #%d until you join",
+                    this.viewer,
+                    this.number()
+                )
+            );
+        }
+        this.validate(text);
+        final Long duplicate = this.hub.make("pre-post-ignore-duplicate")
+            .synchronously()
+            .inBout(this)
             .arg(this.number())
-            .arg(message.number())
-            .asDefault(false)
+            .arg(text)
+            .asDefault(0L)
             .exec();
+        Message message;
+        if (duplicate == 0L) {
+            final MessageDt msg = this.data.addMessage();
+            msg.setDate(new Date());
+            msg.setAuthor(this.viewer.name());
+            msg.setText(text);
+            Logger.debug(
+                this,
+                "#post('%s'): message posted",
+                text
+            );
+            message = new HubMessage(
+                this.hub,
+                this.viewer,
+                this,
+                msg
+            );
+            message.text();
+            this.hub.make("notify-bout-participants")
+                .inBout(this)
+                .arg(this.number())
+                .arg(message.number())
+                .asDefault(false)
+                .exec();
+        } else {
+            try {
+                message = this.message(duplicate);
+            } catch (com.netbout.spi.MessageNotFoundException ex) {
+                throw new MessagePostException(
+                    String.format(
+                        "duplicate found at msg #%d, but it's absent",
+                        duplicate
+                    ),
+                    ex
+                );
+            }
+        }
         return message;
     }
 
     /**
-     * This identity has confirmed participation?
-     * @return Is it?
+     * Filter list of messages with a predicate.
+     * @param list The list to filter
+     * @param query The query
+     * @return New list of them
      */
-    private boolean confirmed() {
-        for (Participant dude : this.participants()) {
-            if (dude.identity().equals(this.viewer)) {
-                return dude.confirmed();
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public List<Message> filter(final List<Message> list,
+        final String query) {
+        final List<Message> result = new ArrayList<Message>();
+        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
+        for (Message msg : list) {
+            boolean visible = true;
+            if (!query.isEmpty()) {
+                final Object response = predicate.evaluate(msg, result.size());
+                if (response instanceof Boolean) {
+                    visible = (Boolean) response;
+                } else if (response instanceof String) {
+                    result.add(new PlainMessage(this, (String) response));
+                    break;
+                } else {
+                    throw new IllegalArgumentException(
+                        Logger.format(
+                            "Can't understand %[type]s response from '%s'",
+                            response,
+                            query
+                        )
+                    );
+                }
+            }
+            if (visible) {
+                result.add(msg);
             }
         }
-        throw new IllegalStateException("Can't find myself in participants");
+        if (list.isEmpty()) {
+            final Object response = predicate.evaluate(
+                new PlainMessage(this, ""), 0
+            );
+            if (response instanceof String) {
+                result.add(new PlainMessage(this, (String) response));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Validate incoming text and throw exception if not valid.
+     * @param text The text to validate
+     * @throws MessagePostException If failed to validate
+     * @checkstyle RedundantThrows (3 lines)
+     */
+    private void validate(final String text) throws MessagePostException {
+        final DomParser parser = new DomParser(text);
+        try {
+            parser.validate();
+        } catch (com.netbout.spi.xml.DomValidationException ex) {
+            Logger.warn(
+                this,
+                "#post('%s'): %[exception]s",
+                text,
+                ex
+            );
+            throw new MessagePostException(ex);
+        }
+        if (parser.isXml()) {
+            Urn namespace;
+            try {
+                namespace = parser.namespace();
+            } catch (com.netbout.spi.xml.DomValidationException ex) {
+                throw new MessagePostException(ex);
+            }
+            URL def;
+            try {
+                def = new URL("http://localhost");
+            } catch (java.net.MalformedURLException ex) {
+                throw new IllegalStateException();
+            }
+            final URL url = this.hub.make("resolve-xml-namespace")
+                .synchronously()
+                .arg(namespace)
+                .asDefault(def)
+                .exec();
+            if (url.equals(def)) {
+                throw new MessagePostException(
+                    String.format(
+                        "Namespace '%s' is not supported by helpers",
+                        namespace
+                    )
+                );
+            }
+            URL schema;
+            try {
+                schema = parser.schemaLocation(namespace);
+            } catch (com.netbout.spi.xml.DomValidationException ex) {
+                throw new MessagePostException(ex);
+            }
+            if (!url.equals(schema)) {
+                throw new MessagePostException(
+                    String.format(
+                        "Schema for namespace '%s' should be '%s' (not '%s')",
+                        namespace,
+                        url,
+                        schema
+                    )
+                );
+            }
+        }
     }
 
 }

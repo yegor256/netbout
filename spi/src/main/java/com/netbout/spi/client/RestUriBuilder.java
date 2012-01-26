@@ -31,6 +31,8 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.ymock.util.Logger;
+import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
 
 /**
@@ -54,7 +56,23 @@ public final class RestUriBuilder {
      * @return The builder
      */
     public static UriBuilder from(final Bout bout) {
-        return UriBuilder.fromUri(((RestBout) bout).uri());
+        if (!(bout instanceof RestBout)) {
+            throw new IllegalArgumentException(
+                Logger.format(
+                    // @checkstyle LineLength (1 line)
+                    "RestUriBuilder#from(Bout) accepts only bouts from RestSession, while '%[type]s' provided",
+                    bout
+                )
+            );
+        }
+        final URI uri = ((RestBout) bout).uri();
+        Logger.debug(
+            RestUriBuilder.class,
+            "#from(%[type]s): Bout URI '%s' found",
+            bout,
+            uri
+        );
+        return UriBuilder.fromUri(uri);
     }
 
     /**
@@ -63,7 +81,23 @@ public final class RestUriBuilder {
      * @return The builder
      */
     public static UriBuilder from(final Identity identity) {
-        return UriBuilder.fromUri(((RestIdentity) identity).uri());
+        if (!(identity instanceof RestIdentity)) {
+            throw new IllegalArgumentException(
+                Logger.format(
+                    // @checkstyle LineLength (1 line)
+                    "RestUriBuilder#from(Identity) accepts only identities from RestSession, while '%[type]s' provided",
+                    identity
+                )
+            );
+        }
+        final URI uri = ((RestIdentity) identity).uri();
+        Logger.debug(
+            RestUriBuilder.class,
+            "#from(%[type]s): Identity URI '%s' found",
+            identity,
+            uri
+        );
+        return UriBuilder.fromUri(uri);
     }
 
 }

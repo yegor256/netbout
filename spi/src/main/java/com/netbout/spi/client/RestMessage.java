@@ -32,8 +32,11 @@ package com.netbout.spi.client;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.util.Date;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * The message.
@@ -67,6 +70,14 @@ final class RestMessage implements Message {
      * {@inheritDoc}
      */
     @Override
+    public int compareTo(final Message msg) {
+        return this.date().compareTo(msg.date());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Bout bout() {
         return new RestBout(this.client.copy());
     }
@@ -84,7 +95,7 @@ final class RestMessage implements Message {
      */
     @Override
     public Identity author() {
-        return new Friend(this.bySuffix("/author/text()"));
+        return new Friend(Urn.create(this.bySuffix("/author/text()")));
     }
 
     /**
@@ -100,7 +111,11 @@ final class RestMessage implements Message {
      */
     @Override
     public Date date() {
-        return new Date(this.bySuffix("/date/text()"));
+        return ISODateTimeFormat
+            .dateTime()
+            .withZone(DateTimeZone.UTC)
+            .parseDateTime(this.bySuffix("/date/text()"))
+            .toDate();
     }
 
     /**
@@ -118,7 +133,10 @@ final class RestMessage implements Message {
      */
     public String bySuffix(final String suffix) {
         return this.client
-            .queryParam("q", String.format("message:%d", this.num))
+            .queryParam(
+                RestSession.QUERY_PARAM,
+                String.format("(equal $number %d)", this.num)
+        )
             .get(String.format("reading %s of a message", suffix))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(

@@ -26,12 +26,14 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
+import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.netbout.utils.TextUtils;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Coordinates of a stage.
@@ -47,19 +49,14 @@ public final class StageCoordinates {
     private static final String SEPARATOR = "::";
 
     /**
-     * Encoding to be used.
-     */
-    private static final String ENCODING = "UTF-8";
-
-    /**
      * List of all stages.
      */
-    private transient Collection<String> stages;
+    private transient Set<Identity> stages;
 
     /**
      * Name of stage.
      */
-    private transient String istage = "";
+    private transient Urn istage = new Urn();
 
     /**
      * Place of stage.
@@ -70,7 +67,7 @@ public final class StageCoordinates {
      * Get stage.
      * @return The name of it
      */
-    public String stage() {
+    public Urn stage() {
         if (this.stages == null) {
             throw new IllegalStateException(
                 "Call #normalize() before #stage()"
@@ -80,11 +77,25 @@ public final class StageCoordinates {
     }
 
     /**
+     * Create and return a new object, which is a copy of this one.
+     * @return New coordinates object
+     */
+    public StageCoordinates copy() {
+        final StageCoordinates coords = new StageCoordinates();
+        coords.stages = new HashSet<Identity>(this.stages);
+        coords.istage = this.istage;
+        coords.iplace = this.iplace;
+        return coords;
+    }
+
+    /**
      * Set stage.
      * @param name The name of it
+     * @return This object
      */
-    public void setStage(final String name) {
+    public StageCoordinates setStage(final Urn name) {
         this.istage = name;
+        return this;
     }
 
     /**
@@ -103,9 +114,11 @@ public final class StageCoordinates {
     /**
      * Set stage place.
      * @param place The place name
+     * @return This object
      */
-    public void setPlace(final String place) {
+    public StageCoordinates setPlace(final String place) {
         this.iplace = place;
+        return this;
     }
 
     /**
@@ -116,19 +129,29 @@ public final class StageCoordinates {
     public static StageCoordinates valueOf(final String pair) {
         final StageCoordinates coords = new StageCoordinates();
         if (pair != null && pair.contains(StageCoordinates.SEPARATOR)) {
-            coords.setStage(
-                TextUtils.unpack(
-                    pair.substring(0, pair.indexOf(StageCoordinates.SEPARATOR))
-                )
-            );
-            coords.setPlace(
-                TextUtils.unpack(
-                    pair.substring(
-                        pair.indexOf(StageCoordinates.SEPARATOR)
-                        + StageCoordinates.SEPARATOR.length()
+            try {
+                coords.setStage(
+                    new Urn(
+                        TextUtils.unpack(
+                            pair.substring(
+                                0,
+                                pair.indexOf(StageCoordinates.SEPARATOR)
+                            )
+                        )
                     )
-                )
-            );
+                );
+                coords.setPlace(
+                    TextUtils.unpack(
+                        pair.substring(
+                            pair.indexOf(StageCoordinates.SEPARATOR)
+                            + StageCoordinates.SEPARATOR.length()
+                        )
+                    )
+                );
+            } catch (java.net.URISyntaxException ex) {
+                coords.setStage(new Urn());
+                coords.setPlace("");
+            }
         }
         return coords;
     }
@@ -143,9 +166,9 @@ public final class StageCoordinates {
         }
         return String.format(
             "%s%s%s",
-            TextUtils.pack(this.istage),
+            TextUtils.pack(this.stage().toString()),
             this.SEPARATOR,
-            TextUtils.pack(this.iplace)
+            TextUtils.pack(this.place())
         );
     }
 
@@ -153,7 +176,7 @@ public final class StageCoordinates {
      * List of all stages, their names.
      * @return The list
      */
-    public Collection<String> all() {
+    public Set<Identity> all() {
         if (this.stages == null) {
             throw new IllegalStateException("Call #normalize() before #all()");
         }
@@ -162,32 +185,48 @@ public final class StageCoordinates {
 
     /**
      * Normalize it according to the bout.
-     * @param bus The bus
+     * @param hub The hub
      * @param bout The bout
      */
-    public void normalize(final Bus bus, final Bout bout) {
+    public void normalize(final Hub hub, final Bout bout) {
         if (this.stages != null) {
             throw new IllegalStateException("Duplicate call to #normalize()");
         }
-        this.stages = new ArrayList<String>();
+        this.stages = new HashSet<Identity>();
         for (Participant dude : bout.participants()) {
-            final String name = dude.identity().name();
-            final Boolean exists = bus.make("does-stage-exist")
+            final Identity identity = dude.identity();
+            final Boolean exists = hub.make("does-stage-exist")
                 .synchronously()
                 .arg(bout.number())
-                .arg(name)
+                .arg(identity.name())
                 .inBout(bout)
                 .asDefault(false)
                 .exec();
             if (exists) {
-                this.stages.add(name);
+                this.stages.add(identity);
             }
         }
         if (this.istage.isEmpty() && this.stages.size() > 0) {
-            this.istage = this.stages.iterator().next();
+            this.istage = this.stages.iterator().next().name();
         }
-        if (!this.stages.contains(this.istage)) {
-            this.istage = "";
+        this.discharge();
+    }
+
+    /**
+     * Check current stage value and set it to VOID if such a stage
+     * is absent in the list of available stages.
+     * @see #normalize(Hub,Bout)
+     */
+    private void discharge() {
+        boolean found = false;
+        for (Identity identity : this.stages) {
+            if (identity.name().equals(this.istage)) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            this.istage = new Urn();
         }
     }
 

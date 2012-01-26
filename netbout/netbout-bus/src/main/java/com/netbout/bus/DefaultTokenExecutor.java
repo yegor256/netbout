@@ -33,7 +33,8 @@ import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Default executor of a token.
@@ -46,16 +47,25 @@ final class DefaultTokenExecutor implements TokenExecutor {
     /**
      * List of registered helpers.
      */
-    private final transient Set<Helper> helpers =
-        new CopyOnWriteArraySet<Helper>();
+    private final transient ConcurrentMap<Identity, Helper> helpers =
+        new ConcurrentHashMap<Identity, Helper>();
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void register(final Helper helper) {
-        this.helpers.add(helper);
-        Logger.debug(
+    public void register(final Identity identity, final Helper helper) {
+        if (this.helpers.containsKey(identity)) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Identity '%s' has already been registered as '%s'",
+                    identity.name(),
+                    helper.location()
+                )
+            );
+        }
+        this.helpers.put(identity, helper);
+        Logger.info(
             this,
             "#register(%s): registered (%d total now)",
             helper,
@@ -68,7 +78,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
      */
     @Override
     public void exec(final TxToken token) {
-        this.run(token, this.helpers);
+        this.run(token, new HashSet<Helper>(this.helpers.values()));
     }
 
     /**
@@ -79,8 +89,8 @@ final class DefaultTokenExecutor implements TokenExecutor {
         final Set<Helper> active = new HashSet<Helper>();
         for (Participant participant : bout.participants()) {
             final Identity identity = participant.identity();
-            if (this.helpers.contains(identity)) {
-                active.add((Helper) identity);
+            if (this.helpers.containsKey(identity)) {
+                active.add(this.helpers.get(identity));
             }
         }
         this.run(token, active);
@@ -103,9 +113,10 @@ final class DefaultTokenExecutor implements TokenExecutor {
         }
         Logger.debug(
             this,
-            "#run(%s, %d helpers): executed in %dms",
+            "#run(%s, %d helpers): returned [%s] in %dms",
             token,
             targets.size(),
+            token.getResult(),
             System.currentTimeMillis() - start
         );
     }

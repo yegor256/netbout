@@ -27,10 +27,15 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
-import java.net.URL;
+import com.netbout.spi.UrnMocker;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link HubIdentity}.
@@ -40,35 +45,70 @@ import org.mockito.Mockito;
 public final class HubIdentityTest {
 
     /**
-     * HubIdentity can "wrap" another Identity and add User property to it.
+     * HubIdentity can sort bouts before returning them back.
      * @throws Exception If there is some problem inside
-     * @checkstyle ExecutableStatementCount (30 lines)
+     * @todo #169 Doesn't work at the moment because Bus is not complete now
      */
     @Test
-    public void wrapsAnotherIdentityAndAddsUserProperty() throws Exception {
-        final Identity original = Mockito.mock(Identity.class);
-        final User user = Mockito.mock(User.class);
-        final Identity wrapper = new HubIdentity(original, user);
-        wrapper.name();
-        Mockito.verify(original).name();
-        wrapper.start();
-        Mockito.verify(original).start();
-        wrapper.bout(1L);
-        Mockito.verify(original).bout(1L);
-        wrapper.inbox("");
-        Mockito.verify(original).inbox("");
-        wrapper.photo();
-        Mockito.verify(original).photo();
-        wrapper.setPhoto(new URL("http://localhost/photo.png"));
-        Mockito.verify(original).setPhoto(Mockito.any(URL.class));
-        wrapper.friend("");
-        Mockito.verify(original).friend("");
-        wrapper.friends("");
-        Mockito.verify(original).friends("");
-        wrapper.aliases();
-        Mockito.verify(original).aliases();
-        wrapper.invited(Mockito.mock(Bout.class));
-        Mockito.verify(original).invited(Mockito.any(Bout.class));
+    @org.junit.Ignore
+    public void sortsBoutsByRecentlyPostedMessages() throws Exception {
+        final List<Long> nums = new ArrayList<Long>();
+        final Bout first = new BoutMocker().mock();
+        nums.add(first.number());
+        final Bout second = new BoutMocker().mock();
+        nums.add(second.number());
+        final Bout third = new BoutMocker().mock();
+        nums.add(third.number());
+        final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (4 lines)
+            .doReturn(nums, "get-bouts-of-identity")
+            .doReturn(
+                Arrays.asList(new Long[]{1L}),
+                "get-bout-messages",
+                second.number()
+            )
+            .mock();
+        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
+        MatcherAssert.assertThat(
+            identity.inbox("").get(0).number(),
+            Matchers.equalTo(second.number())
+        );
+    }
+
+    /**
+     * HubIdentity can find bouts by predicate, even without messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsBoutsWithoutMessages() throws Exception {
+        final List<Long> nums = new ArrayList<Long>();
+        final Bout bout = new BoutMocker().mock();
+        nums.add(bout.number());
+        final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (2 lines)
+            .doReturn(nums, "get-bouts-of-identity")
+            .doReturn(new ArrayList<Long>(), "get-bout-messages")
+            .mock();
+        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
+        MatcherAssert.assertThat(
+            identity.inbox("(matches '' $text)").size(),
+            Matchers.equalTo(1)
+        );
+    }
+
+    /**
+     * HubIdentity can start a new bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void startsNewBoutAndRenamesIt() throws Exception {
+        final Hub hub = new HubMocker()
+            // @checkstyle MultipleStringLiterals (2 lines)
+            .doReturn(new ArrayList<Long>(), "get-bouts-of-identity")
+            .mock();
+        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
+        final Bout bout = identity.start();
+        bout.rename("how it works?");
     }
 
 }

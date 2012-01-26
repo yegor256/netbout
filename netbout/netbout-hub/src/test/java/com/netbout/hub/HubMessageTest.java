@@ -27,7 +27,9 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Message;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -45,11 +47,13 @@ public final class HubMessageTest {
      */
     @Test
     public void wrapsMessageDtDataProperties() throws Exception {
-        final Catalog catalog = Mockito.mock(Catalog.class);
-        final Identity viewer = Mockito.mock(Identity.class);
-        final Bout bout = Mockito.mock(Bout.class);
+        final Hub hub = new HubMocker()
+            .doReturn("some text", "pre-render-message")
+            .mock();
+        final Identity viewer = new IdentityMocker().mock();
+        final Bout bout = new BoutMocker().mock();
         final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(catalog, viewer, bout, data);
+        final Message msg = new HubMessage(hub, viewer, bout, data);
         msg.number();
         Mockito.verify(data).getNumber();
         msg.author();

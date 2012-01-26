@@ -39,9 +39,9 @@ import com.netbout.spi.Participant;
 public final class HubParticipant implements Participant {
 
     /**
-     * The catalog.
+     * The hub.
      */
-    private final transient Catalog catalog;
+    private final transient Hub hub;
 
     /**
      * The bout I'm in.
@@ -54,16 +54,32 @@ public final class HubParticipant implements Participant {
     private final transient ParticipantDt data;
 
     /**
+     * Data of bout.
+     */
+    private final transient BoutDt boutdt;
+
+    /**
      * Public ctor.
-     * @param ctlg The catalog
+     * @param ihub The hub
      * @param bout The bout
      * @param dat The data
+     * @param bdt Bout data
+     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubParticipant(final Catalog ctlg, final Bout bout,
-        final ParticipantDt dat) {
-        this.catalog = ctlg;
+    public HubParticipant(final Hub ihub, final Bout bout,
+        final ParticipantDt dat, final BoutDt bdt) {
+        this.hub = ihub;
         this.ibout = bout;
         this.data = dat;
+        this.boutdt = bdt;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.data.getIdentity().toString();
     }
 
     /**
@@ -80,9 +96,21 @@ public final class HubParticipant implements Participant {
     @Override
     public Identity identity() {
         try {
-            return this.catalog.make(this.data.getIdentity());
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            return this.hub.identity(this.data.getIdentity());
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void kickOff() {
+        final Identity identity = this.identity();
+        this.boutdt.kickOff(identity.name());
+        if (identity instanceof InvitationSensitive) {
+            ((InvitationSensitive) identity).kickedOff(this.ibout.number());
         }
     }
 

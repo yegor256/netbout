@@ -27,7 +27,8 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
-import com.netbout.utils.AliasBuilder;
+import com.netbout.spi.NetboutUtils;
+import java.net.URL;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -43,12 +44,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "identity")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class LongIdentity {
+public class LongIdentity {
 
     /**
      * The identity.
      */
-    private transient Identity identity;
+    private transient Identity person;
 
     /**
      * Public ctor for JAXB.
@@ -62,25 +63,25 @@ public final class LongIdentity {
      * @param idnt The identity
      */
     public LongIdentity(final Identity idnt) {
-        this.identity = idnt;
+        this.person = idnt;
     }
 
     /**
-     * Get name.
+     * Get identity name.
      * @return The name
      */
     @XmlElement
-    public String getName() {
-        return this.identity.name();
+    public final String getName() {
+        return this.person.name().toString();
     }
 
     /**
-     * Get user name.
+     * Get authority.
      * @return The name
      */
     @XmlElement
-    public String getUser() {
-        return this.identity.user();
+    public final URL getAuthority() {
+        return this.person.authority();
     }
 
     /**
@@ -88,8 +89,8 @@ public final class LongIdentity {
      * @return The alias
      */
     @XmlElement
-    public String getAlias() {
-        return new AliasBuilder(this.identity).build();
+    public final String getAlias() {
+        return NetboutUtils.aliasOf(this.person);
     }
 
     /**
@@ -97,8 +98,8 @@ public final class LongIdentity {
      * @return The photo
      */
     @XmlElement
-    public String getPhoto() {
-        return this.identity.photo().toString();
+    public final URL getPhoto() {
+        return this.person.photo();
     }
 
     /**
@@ -107,8 +108,16 @@ public final class LongIdentity {
      */
     @XmlElement(name = "alias")
     @XmlElementWrapper(name = "aliases")
-    public Collection<String> getAliases() {
-        return this.identity.aliases();
+    public final Collection<String> getAliases() {
+        return this.person.aliases();
+    }
+
+    /**
+     * Get identity.
+     * @return The identity
+     */
+    protected final Identity identity() {
+        return this.person;
     }
 
 }

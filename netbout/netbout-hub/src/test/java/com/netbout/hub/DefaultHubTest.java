@@ -28,15 +28,23 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
+import com.netbout.spi.HelperMocker;
 import com.netbout.spi.Identity;
-import java.util.Random;
-import javax.xml.parsers.DocumentBuilderFactory;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import com.netbout.spi.xml.JaxbPrinter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.w3c.dom.Document;
 import org.xmlmatchers.XmlMatchers;
 import org.xmlmatchers.transform.XmlConverters;
 
@@ -44,20 +52,28 @@ import org.xmlmatchers.transform.XmlConverters;
  * Test case of {@link DefaultHub}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle MultipleStringLiterals (500 lines)
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class DefaultHubTest {
 
     /**
-     * DefaultHub can create a user by name.
+     * DefaultHub can create an identity by name.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void createsUserByName() throws Exception {
-        final String name = "Chuck Norris";
-        final Bus bus = new BusMocker().mock();
+    public void createsIdentityByName() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
         final Hub hub = new DefaultHub(bus);
-        final User user = hub.user(name);
-        MatcherAssert.assertThat(user.name(), Matchers.equalTo(name));
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://abc"
+        );
+        final Identity identity = hub.identity(name);
+        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
     }
 
     /**
@@ -66,16 +82,12 @@ public final class DefaultHubTest {
      */
     @Test
     public void producesStatisticsAsXmlElement() throws Exception {
-        final Bus bus = new BusMocker().mock();
-        final Hub hub = new DefaultHub(bus);
-        final Document doc = DocumentBuilderFactory
-            .newInstance()
-            .newDocumentBuilder()
-            .newDocument();
-        doc.appendChild(hub.stats(doc));
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
         MatcherAssert.assertThat(
-            XmlConverters.the(doc),
-            XmlMatchers.hasXPath("/catalog")
+            XmlConverters.the(new JaxbPrinter(new DefaultHub(bus)).print()),
+            XmlMatchers.hasXPath("/hub")
         );
     }
 
@@ -85,18 +97,137 @@ public final class DefaultHubTest {
      */
     @Test
     public void promotesIdentityToHelper() throws Exception {
-        final Bus bus = new BusMocker().mock();
+        final Urn name = new UrnMocker().mock();
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
         final Hub hub = new DefaultHub(bus);
-        final String name = String.valueOf(Math.abs(new Random().nextLong()));
-        final User user = hub.user("Billy Bonce");
-        final Identity identity = user.identity(name);
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://cde"
+        );
+        final Identity identity = hub.identity(name);
         final Helper helper = Mockito.mock(Helper.class);
-        Mockito.doReturn(name).when(helper).name();
+        Mockito.doReturn(new URL("file:com.netbout")).when(helper).location();
         hub.promote(identity, helper);
         MatcherAssert.assertThat(
-            user.identity(name),
-            Matchers.equalTo((Identity) helper)
+            hub.identity(name),
+            Matchers.instanceOf(Helper.class)
         );
+    }
+
+    /**
+     * Hub can return the same identity on similar requests.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void doesntDuplicateIdentities() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        final Urn name = new UrnMocker().mock();
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://foo"
+        );
+        final Identity first = hub.identity(name);
+        MatcherAssert.assertThat(hub.identity(name), Matchers.equalTo(first));
+    }
+
+    /**
+     * Catalog can inform Bus on every identity being mentioned, just once.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void informsBusAboutIdentityBeingMentioned() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        final Urn name = new UrnMocker().mock();
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://bar"
+        );
+        hub.identity(name);
+        hub.identity(name);
+        Mockito.verify(bus, Mockito.times(1)).make("identity-mentioned");
+    }
+
+    /**
+     * Catalog can check identity name and throws exception if it's unreachable.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = com.netbout.spi.UnreachableUrnException.class)
+    public void doesntAllowUnreachableIdentities() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        final Urn name = new UrnMocker().mock();
+        hub.identity(name);
+    }
+
+    /**
+     * DefaultHub can find identities in pool when they are there.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsIdentitiesByNameWhenTheyExist() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final List<Urn> names = new ArrayList<Urn>();
+        names.add(name);
+        final Bus bus = new BusMocker()
+            .doReturn(names, "find-identities-by-keyword")
+            .doReturn(new ArrayList<String>(), "get-all-namespaces")
+            .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        hub.resolver().register(
+            new IdentityMocker().mock(), name.nid(), "http://foo-foo"
+        );
+        final Identity identity = hub.identity(name);
+        MatcherAssert.assertThat(
+            hub.findByKeyword(name.nss()),
+            Matchers.hasItem(identity)
+        );
+    }
+
+    /**
+     * DefaultHub can ignore empty queries for identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void ignoresEmptyRequestsForIdentities() throws Exception {
+        MatcherAssert.assertThat(
+            new DefaultHub(new BusMocker().mock()).findByKeyword(""),
+            Matchers.hasSize(0)
+        );
+    }
+
+    /**
+     * DefaultHub can invite a helper and then kick him off.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void invitesHelperAndKicksHimOff() throws Exception {
+        final Bus bus = new BusMocker()
+            .doReturn(Arrays.asList(new String[]{"test"}), "get-all-namespaces")
+            .doReturn("http://localhost", "get-namespace-template")
+            .doReturn(new Urn(), "get-namespace-owner")
+            .doReturn(1L, "get-next-bout-number")
+            .doReturn(true, "can-be-invited")
+            .doReturn(Arrays.asList(new Urn[]{}), "get-bout-participants")
+            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
+            .doReturn(Arrays.asList(new Long[]{}), "get-bout-messages")
+            .mock();
+        final Hub hub = new DefaultHub(bus);
+        final Identity host = hub.identity(new UrnMocker().mock());
+        final Bout bout = host.start();
+        final Identity helper = hub.identity(new UrnMocker().mock());
+        hub.promote(helper, new HelperMocker().mock());
+        bout.invite(helper);
+        MatcherAssert.assertThat(helper.inbox(""), Matchers.hasSize(1));
+        NetboutUtils.participantOf(helper, bout).kickOff();
+        MatcherAssert.assertThat(helper.inbox(""), Matchers.hasSize(0));
     }
 
 }

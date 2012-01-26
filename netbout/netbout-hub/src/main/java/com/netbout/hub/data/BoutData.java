@@ -26,14 +26,16 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.bus.Bus;
 import com.netbout.hub.BoutDt;
+import com.netbout.hub.Hub;
 import com.netbout.hub.MessageDt;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.MessageNotFoundException;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -46,9 +48,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 final class BoutData implements BoutDt {
 
     /**
-     * Bus to work with.
+     * Hub to work with.
      */
-    private final transient Bus bus;
+    private final transient Hub hub;
 
     /**
      * The number.
@@ -59,6 +61,11 @@ final class BoutData implements BoutDt {
      * The title.
      */
     private transient String title;
+
+    /**
+     * The date.
+     */
+    private transient Date date;
 
     /**
      * Collection of participants.
@@ -72,11 +79,11 @@ final class BoutData implements BoutDt {
 
     /**
      * Public ctor.
-     * @param ibus The bus
+     * @param ihub The hub
      * @param num The number
      */
-    public BoutData(final Bus ibus, final Long num) {
-        this.bus = ibus;
+    public BoutData(final Hub ihub, final Long num) {
+        this.hub = ihub;
         assert num != null;
         this.number = num;
     }
@@ -93,11 +100,44 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public void confirm(final String identity, final Boolean aye) {
-        for (ParticipantDt dude : this.getParticipants()) {
-            if (dude.getIdentity().equals(identity)) {
-                dude.setConfirmed(aye);
+    public void confirm(final Urn identity) {
+        this.find(identity).setConfirmed(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void kickOff(final Urn identity) {
+        final ParticipantDt dude = this.find(identity);
+        this.participants.remove(dude);
+        this.hub.make("removed-bout-participant")
+            .asap()
+            .arg(this.number)
+            .arg(identity)
+            .asDefault(true)
+            .exec();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date getDate() {
+        synchronized (this) {
+            if (this.date == null) {
+                this.date = this.hub.make("get-bout-date")
+                    .synchronously()
+                    .arg(this.number)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#getDate(): date '%s' loaded for bout #%d",
+                    this.date,
+                    this.number
+                );
             }
+            return this.date;
         }
     }
 
@@ -106,19 +146,21 @@ final class BoutData implements BoutDt {
      */
     @Override
     public String getTitle() {
-        if (this.title == null) {
-            this.title = this.bus.make("get-bout-title")
-                .synchronously()
-                .arg(this.number)
-                .exec();
-            Logger.debug(
-                this,
-                "#getTitle(): title '%s' loaded for bout #%d",
-                this.title,
-                this.number
-            );
+        synchronized (this) {
+            if (this.title == null) {
+                this.title = this.hub.make("get-bout-title")
+                    .synchronously()
+                    .arg(this.number)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#getTitle(): title '%s' loaded for bout #%d",
+                    this.title,
+                    this.number
+                );
+            }
+            return this.title;
         }
-        return this.title;
     }
 
     /**
@@ -126,30 +168,32 @@ final class BoutData implements BoutDt {
      */
     @Override
     public void setTitle(final String text) {
-        this.title = text;
-        this.bus.make("changed-bout-title")
-            .asap()
-            .arg(this.number)
-            .arg(this.title)
-            .asDefault(true)
-            .exec();
-        Logger.debug(
-            this,
-            "#setTitle('%s'): set for bout #%d",
-            this.title,
-            this.number
-        );
+        synchronized (this) {
+            this.title = text;
+            this.hub.make("changed-bout-title")
+                .asap()
+                .arg(this.number)
+                .arg(this.title)
+                .asDefault(true)
+                .exec();
+            Logger.debug(
+                this,
+                "#setTitle('%s'): set for bout #%d",
+                this.title,
+                this.number
+            );
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ParticipantDt addParticipant(final String name) {
+    public ParticipantDt addParticipant(final Urn name) {
         final ParticipantDt data =
-            new ParticipantData(this.bus, this.number, name);
+            new ParticipantData(this.hub, this.number, name);
         this.getParticipants().add(data);
-        this.bus.make("added-bout-participant")
+        this.hub.make("added-bout-participant")
             .asap()
             .arg(this.number)
             .arg(data.getIdentity())
@@ -174,15 +218,15 @@ final class BoutData implements BoutDt {
         synchronized (this) {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantDt>();
-                final List<String> identities = this.bus
+                final List<Urn> identities = this.hub
                     .make("get-bout-participants")
                     .synchronously()
                     .arg(this.number)
-                    .asDefault(new ArrayList<String>())
+                    .asDefault(new ArrayList<Urn>())
                     .exec();
-                for (String identity : identities) {
+                for (Urn identity : identities) {
                     this.participants.add(
-                        new ParticipantData(this.bus, this.number, identity)
+                        new ParticipantData(this.hub, this.number, identity)
                     );
                 }
                 Logger.debug(
@@ -201,12 +245,12 @@ final class BoutData implements BoutDt {
      */
     @Override
     public MessageDt addMessage() {
-        final Long num = this.bus.make("create-bout-message")
+        final Long num = this.hub.make("create-bout-message")
             .synchronously()
             .arg(this.number)
             .asDefault(1L)
             .exec();
-        final MessageDt data = new MessageData(this.bus, num);
+        final MessageDt data = new MessageData(this.hub, num);
         this.getMessages().add(data);
         Logger.debug(
             this,
@@ -226,14 +270,14 @@ final class BoutData implements BoutDt {
         synchronized (this) {
             if (this.messages == null) {
                 this.messages = new CopyOnWriteArrayList<MessageDt>();
-                final List<Long> nums = this.bus
+                final List<Long> nums = this.hub
                     .make("get-bout-messages")
                     .synchronously()
                     .arg(this.number)
                     .asDefault(new ArrayList<Long>())
                     .exec();
                 for (Long num : nums) {
-                    this.messages.add(new MessageData(this.bus, num));
+                    this.messages.add(new MessageData(this.hub, num));
                 }
                 Logger.debug(
                     this,
@@ -259,6 +303,31 @@ final class BoutData implements BoutDt {
             }
         }
         throw new MessageNotFoundException(num);
+    }
+
+    /**
+     * Find this participant in the bout.
+     * @param name Name of it
+     * @return The participant
+     */
+    private ParticipantDt find(final Urn name) {
+        ParticipantDt found = null;
+        for (ParticipantDt dude : this.getParticipants()) {
+            if (dude.getIdentity().equals(name)) {
+                found = dude;
+                break;
+            }
+        }
+        if (found == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Identity '%s' is not in bout #%d, can't confirm/leave",
+                    name,
+                    this.number
+                )
+            );
+        }
+        return found;
     }
 
 }

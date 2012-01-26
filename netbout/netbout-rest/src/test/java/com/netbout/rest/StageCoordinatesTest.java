@@ -26,10 +26,12 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -48,7 +50,7 @@ public final class StageCoordinatesTest {
      */
     @Test(expected = IllegalStateException.class)
     public void doesntAllowToWorkWithoutNormalization() throws Exception {
-        final String stage = "some-stage-name";
+        final Urn stage = new UrnMocker().mock();
         final String place = "/some/place?with&some info";
         final StageCoordinates coords = new StageCoordinates();
         coords.setStage(stage);
@@ -62,13 +64,13 @@ public final class StageCoordinatesTest {
      */
     @Test
     public void normalizesWithEmptyBout() throws Exception {
-        final String stage = "some-stage-name-2";
+        final Urn stage = new UrnMocker().mock();
         final String place = "/some/place";
         final StageCoordinates coords = new StageCoordinates();
         coords.setStage(stage);
         coords.setPlace(place);
-        coords.normalize(new BusMocker().mock(), Mockito.mock(Bout.class));
-        MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(""));
+        coords.normalize(new HubMocker().mock(), Mockito.mock(Bout.class));
+        MatcherAssert.assertThat(coords.stage().isEmpty(), Matchers.is(true));
     }
 
     /**
@@ -77,23 +79,36 @@ public final class StageCoordinatesTest {
      */
     @Test
     public void convertsTextToCoordinatesAndBack() throws Exception {
-        final String stage = "some-stage-name-3";
+        final Urn stage = new UrnMocker().mock();
         final String place = "/some/place?with-info";
         final StageCoordinates coords = new StageCoordinates();
         coords.setStage(stage);
         coords.setPlace(place);
-        final Bus bus = new BusMocker()
+        final Hub hub = new HubMocker()
             .doReturn(true, "does-stage-exist")
             .mock();
         final Bout bout = new BoutMocker()
-            .withParticipant(stage)
+            .withParticipant(stage.toString())
             .mock();
-        coords.normalize(bus, bout);
+        coords.normalize(hub, bout);
         final String text = coords.toString();
         final StageCoordinates reverted = StageCoordinates.valueOf(text);
-        reverted.normalize(bus, bout);
+        reverted.normalize(hub, bout);
         MatcherAssert.assertThat(reverted.stage(), Matchers.equalTo(stage));
         MatcherAssert.assertThat(reverted.place(), Matchers.equalTo(place));
+    }
+
+    /**
+     * StageCoordinates can handle incorrect format of input properly.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesIncorrectFormatProperly() throws Exception {
+        final Hub hub = new HubMocker().mock();
+        final Bout bout = new BoutMocker().mock();
+        final StageCoordinates coords = StageCoordinates.valueOf("ouch");
+        coords.normalize(hub, bout);
+        MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(new Urn()));
     }
 
 }

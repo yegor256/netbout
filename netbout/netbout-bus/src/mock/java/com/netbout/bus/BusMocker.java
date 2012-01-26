@@ -39,17 +39,36 @@ import org.mockito.Mockito;
 public final class BusMocker {
 
     /**
-     * Mnemo of TxBuilder.
+     * The mock.
      */
-    private transient ConcurrentMap<String, Object> matchers =
-        new ConcurrentHashMap<String, Object>();
+    private final transient Bus bus = Mockito.mock(Bus.class);
+
+    /**
+     * Public ctor.
+     */
+    public BusMocker() {
+        this.doReturn(false, "");
+    }
 
     /**
      * Expecting this mnemo.
-     * @param name The mnemo name
+     * @param val The value to return
+     * @param mnemo The mnemo name
+     * @param args Optional arguments
+     * @return This object
      */
-    public BusMocker doReturn(final Object val, final String mnemo) {
-        this.matchers.put(mnemo, val);
+    public BusMocker doReturn(final Object val, final String mnemo,
+        final Object... args) {
+        final TxBuilder builder = Mockito.mock(TxBuilder.class);
+        Mockito.doReturn(builder).when(builder).synchronously();
+        Mockito.doReturn(builder).when(builder).asap();
+        Mockito.doReturn(builder).when(builder).expire(Mockito.anyString());
+        Mockito.doReturn(builder).when(builder).arg(Mockito.anyObject());
+        Mockito.doReturn(builder).when(builder).asDefault(Mockito.anyObject());
+        Mockito.doReturn(builder).when(builder).inBout(Mockito.any(Bout.class));
+        Mockito.doReturn(builder).when(builder).noCache();
+        Mockito.doReturn(val).when(builder).exec();
+        Mockito.doReturn(builder).when(bus).make(Mockito.contains(mnemo));
         return this;
     }
 
@@ -58,32 +77,7 @@ public final class BusMocker {
      * @return The bus
      */
     public Bus mock() {
-        final Bus bus = Mockito.mock(Bus.class);
-        final TxBuilder generic = this.builder();
-        Mockito.doReturn(false).when(generic).exec();
-        Mockito.doReturn(generic).when(bus).make(Mockito.anyString());
-        for (ConcurrentMap.Entry<String, Object> entry
-            : this.matchers.entrySet()) {
-            final TxBuilder builder = this.builder();
-            Mockito.doReturn(entry.getValue()).when(builder).exec();
-            Mockito.doReturn(builder).when(bus).make(entry.getKey());
-        }
         return bus;
-    }
-
-    /**
-     * Create TxBuilder.
-     * @return The builder
-     */
-    private TxBuilder builder() {
-        final TxBuilder builder = Mockito.mock(TxBuilder.class);
-        Mockito.doReturn(builder).when(builder).synchronously();
-        Mockito.doReturn(builder).when(builder).asap();
-        Mockito.doReturn(builder).when(builder).expire(Mockito.anyString());
-        Mockito.doReturn(builder).when(builder).arg(Mockito.anyObject());
-        Mockito.doReturn(builder).when(builder).asDefault(Mockito.anyObject());
-        Mockito.doReturn(builder).when(builder).inBout(Mockito.any(Bout.class));
-        return builder;
     }
 
 }

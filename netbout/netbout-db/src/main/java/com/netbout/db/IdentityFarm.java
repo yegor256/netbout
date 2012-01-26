@@ -26,10 +26,13 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
+import java.net.URL;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -53,26 +56,33 @@ public final class IdentityFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("find-identities-by-keyword")
-    public List<String> findIdentitiesByKeyword(final String keyword)
+    public List<Urn> findIdentitiesByKeyword(final String keyword)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
-        final List<String> names = new ArrayList<String>();
+        final List<Urn> names = new ArrayList<Urn>();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                // @checkstyle LineLength (1 line)
-                "SELECT identity.name FROM identity JOIN alias ON alias.identity = identity.name WHERE UCASE(identity.name) LIKE ? OR UCASE(alias.name) LIKE ?"
+                // @checkstyle StringLiteralsConcatenation (8 lines)
+                "SELECT identity.name FROM identity "
+                + "LEFT JOIN alias ON alias.identity = identity.name "
+                + "WHERE identity.name = ? OR "
+                + "(UCASE(alias.name) LIKE ? AND"
+                + " (identity.name LIKE 'urn:facebook:%' OR"
+                + " identity.name LIKE 'urn:test:%'))"
+                + "GROUP BY identity.name "
+                + "LIMIT 10"
             );
             final String matcher = String.format(
                 "%%%s%%",
                 keyword.toUpperCase(Locale.ENGLISH)
             );
-            stmt.setString(1, matcher);
+            stmt.setString(1, keyword.toUpperCase(Locale.ENGLISH));
             stmt.setString(2, matcher);
             final ResultSet rset = stmt.executeQuery();
             try {
                 while (rset.next()) {
-                    names.add(rset.getString(1));
+                    names.add(Urn.create(rset.getString(1)));
                 }
             } finally {
                 rset.close();
@@ -82,10 +92,12 @@ public final class IdentityFarm {
         }
         Logger.debug(
             this,
-            "#findIdentitiesByKeyword('%s'): retrieved %d identitie(s) [%dms]",
+            // @checkstyle LineLength (1 line)
+            "#findIdentitiesByKeyword('%s'): retrieved %d identitie(s) [%dms]: %[list]s",
             keyword,
             names.size(),
-            System.currentTimeMillis() - start
+            System.currentTimeMillis() - start,
+            names
         );
         return names;
     }
@@ -97,7 +109,7 @@ public final class IdentityFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-bouts-of-identity")
-    public List<Long> getBoutsOfIdentity(final String name)
+    public List<Long> getBoutsOfIdentity(final Urn name)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -107,7 +119,7 @@ public final class IdentityFarm {
                 // @checkstyle LineLength (1 line)
                 "SELECT number FROM bout JOIN participant ON bout.number = participant.bout WHERE identity = ?"
             );
-            stmt.setString(1, name);
+            stmt.setString(1, name.toString());
             final ResultSet rset = stmt.executeQuery();
             try {
                 while (rset.next()) {
@@ -136,16 +148,16 @@ public final class IdentityFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-identity-photo")
-    public String getIdentityPhoto(final String name)
+    public URL getIdentityPhoto(final Urn name)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
-        String photo;
+        String value;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 "SELECT photo FROM identity WHERE name = ?"
             );
-            stmt.setString(1, name);
+            stmt.setString(1, name.toString());
             final ResultSet rset = stmt.executeQuery();
             try {
                 if (!rset.next()) {
@@ -156,12 +168,18 @@ public final class IdentityFarm {
                         )
                     );
                 }
-                photo = rset.getString(1);
+                value = rset.getString(1);
             } finally {
                 rset.close();
             }
         } finally {
             conn.close();
+        }
+        URL photo;
+        try {
+            photo = new URL(value);
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
         }
         Logger.debug(
             this,
@@ -179,22 +197,25 @@ public final class IdentityFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("identity-mentioned")
-    public void identityMentioned(final String name) throws SQLException {
+    public void identityMentioned(final Urn name) throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 "SELECT name FROM identity WHERE name = ?"
             );
-            stmt.setString(1, name);
+            stmt.setString(1, name.toString());
             final ResultSet rset = stmt.executeQuery();
             try {
                 if (!rset.next()) {
                     final PreparedStatement istmt = conn.prepareStatement(
-                        "INSERT INTO identity (name, photo) VALUES (?, ?)"
+                        // @checkstyle LineLength (1 line)
+                        "INSERT INTO identity (name, photo, date) VALUES (?, ?, ?)"
                     );
-                    istmt.setString(1, name);
+                    istmt.setString(1, name.toString());
                     istmt.setString(2, "http://img.netbout.com/unknown.png");
+                    // @checkstyle MagicNumber (1 line)
+                    istmt.setDate(3, new Date(System.currentTimeMillis()));
                     istmt.executeUpdate();
                     Logger.debug(
                         this,
@@ -218,8 +239,8 @@ public final class IdentityFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("changed-identity-photo")
-    public void changedIdentityPhoto(final String name,
-        final String photo) throws SQLException {
+    public void changedIdentityPhoto(final Urn name,
+        final URL photo) throws SQLException {
         final long start = System.currentTimeMillis();
         this.identityMentioned(name);
         final Connection conn = Database.connection();
@@ -227,8 +248,8 @@ public final class IdentityFarm {
             final PreparedStatement ustmt = conn.prepareStatement(
                 "UPDATE identity SET photo = ? WHERE name = ?"
             );
-            ustmt.setString(1, photo);
-            ustmt.setString(2, name);
+            ustmt.setString(1, photo.toString());
+            ustmt.setString(2, name.toString());
             ustmt.executeUpdate();
             Logger.debug(
                 this,

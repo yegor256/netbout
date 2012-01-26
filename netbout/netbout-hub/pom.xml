@@ -69,14 +69,43 @@
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
-            <version since="2 Nov 2011">0.2.3</version>
+            <version>${rexsl.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!--
+            ANTLR3 Parser/Lexer
+            @link http://www.antlr.org/
+            -->
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version since="9 Jan 2012">3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ymock</groupId>
+            <artifactId>ymock-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version>${rexsl.version}</version>
+            <classifier>mock</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+        </dependency>
+        <dependency>
+            <!-- Embedded Java Servlet Container, for tests only. -->
+            <groupId>com.sun.grizzly</groupId>
+            <artifactId>grizzly-servlet-webserver</artifactId>
+            <version>1.9.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlmatchers</groupId>
             <artifactId>xml-matchers</artifactId>
-            <version since="26 Jun 2011">0.10</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -95,12 +124,16 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
+            <artifactId>hamcrest-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -115,5 +148,24 @@
             <artifactId>powermock-api-mockito</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr3-maven-plugin</artifactId>
+                <version since="6 Jan 2012">3.4</version>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

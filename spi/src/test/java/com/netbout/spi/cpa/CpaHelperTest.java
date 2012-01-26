@@ -31,11 +31,12 @@ package com.netbout.spi.cpa;
 
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Plain;
 import com.netbout.spi.Token;
+import com.netbout.spi.TokenMocker;
 import com.netbout.spi.plain.PlainBoolean;
 import com.netbout.spi.plain.PlainList;
-import com.netbout.spi.plain.PlainLong;
 import com.netbout.spi.plain.PlainString;
 import com.netbout.spi.plain.PlainVoid;
 import org.hamcrest.MatcherAssert;
@@ -49,7 +50,6 @@ import org.mockito.Mockito;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
 public final class CpaHelperTest {
 
     /**
@@ -63,19 +63,16 @@ public final class CpaHelperTest {
      */
     @Before
     public void prepare() throws Exception {
-        final Identity identity = Mockito.mock(Identity.class);
-        this.helper = new CpaHelper(
-            identity,
-            this.getClass().getPackage().getName()
-        );
+        final Identity identity = new IdentityMocker().mock();
+        this.helper = new CpaHelper(identity, new FarmMocker().mock());
     }
 
     /**
-     * Helper discovers farms and operations in classpatch.
+     * CpaHelper can discover operations from annotations.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testDiscoveryOfOperations() throws Exception {
+    public void discoversOperationsInClasses() throws Exception {
         MatcherAssert.assertThat(
             this.helper.supports().size(),
             Matchers.greaterThan(0)
@@ -83,64 +80,75 @@ public final class CpaHelperTest {
     }
 
     /**
-     * Test with different types of params.
+     * CpaHelper can process tokens with different types of params.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testDifferentTypesOfParams() throws Exception {
-        final Token token = Mockito.mock(Token.class);
-        Mockito.doReturn("comparison").when(token).mnemo();
-        Mockito.doReturn(new PlainString("alpha-12")).when(token).arg(0);
-        Mockito.doReturn(new PlainLong(1L)).when(token).arg(1);
+    public void acceptsTokensWithDifferentTypesOfParams() throws Exception {
+        final Token token = new TokenMocker()
+            .withMnemo("comparison")
+            .withArg("alpha-12")
+            .withArg(1L)
+            .mock();
         this.helper.execute(token);
         Mockito.verify(token).result(new PlainBoolean(true));
     }
 
     /**
-     * Test with NULL response.
+     * CpaHelper can handle NULL response.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testNullResponse() throws Exception {
-        final Token token = Mockito.mock(Token.class);
-        Mockito.doReturn("empty").when(token).mnemo();
+    public void handlesNullResponse() throws Exception {
+        final Token token = new TokenMocker().withMnemo("empty").mock();
         this.helper.execute(token);
         Mockito.verify(token).result(new PlainVoid());
     }
 
     /**
-     * Test with lists.
+     * CpaHelper can handle lists are return types.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testLists() throws Exception {
-        final Token token = Mockito.mock(Token.class);
-        Mockito.doReturn("list").when(token).mnemo();
+    public void handlesListsAsResults() throws Exception {
+        final Token token = new TokenMocker().withMnemo("list").mock();
         this.helper.execute(token);
         Mockito.verify(token).result(Mockito.any(Plain.class));
     }
 
     /**
-     * Test with text lists.
+     * CpaHelper can handle lists of texts.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testTextLists() throws Exception {
-        final Token token = Mockito.mock(Token.class);
-        Mockito.doReturn("texts").when(token).mnemo();
+    public void handlesTextLists() throws Exception {
+        final Token token = new TokenMocker().withMnemo("texts").mock();
         this.helper.execute(token);
         Mockito.verify(token).result(Mockito.any(PlainList.class));
     }
 
     /**
-     * Helper can't execute unknown operation.
+     * CpaHelper can work properly with UTF-8 texts.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesUnicodeTexts() throws Exception {
+        final String text = "\u0443\u0440\u0430!";
+        final Token token = new TokenMocker()
+            .withMnemo("echo")
+            .withArg(text)
+            .mock();
+        this.helper.execute(token);
+        Mockito.verify(token).result(new PlainString(text));
+    }
+
+    /**
+     * CpaHelper can throw exception if a call is made to an unknown operation.
      * @throws Exception If there is some problem inside
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testCallToUnknownOperation() throws Exception {
-        final Token token = Mockito.mock(Token.class);
-        Mockito.doReturn("unknown-operation").when(token).mnemo();
-        this.helper.execute(token);
+    public void throwsExceptionWhenAnUnknownOperationCalled() throws Exception {
+        this.helper.execute(new TokenMocker().withMnemo("unknown").mock());
     }
 
 }

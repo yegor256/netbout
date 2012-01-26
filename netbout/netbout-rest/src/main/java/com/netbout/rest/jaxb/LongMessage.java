@@ -26,6 +26,9 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.hub.Hub;
+import com.netbout.rest.period.Period;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,6 +36,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Message convertable to XML through JAXB.
@@ -43,6 +47,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "message")
 @XmlAccessorType(XmlAccessType.NONE)
 public final class LongMessage {
+
+    /**
+     * The bus.
+     */
+    private final transient Hub hub;
+
+    /**
+     * The bout.
+     */
+    private final transient Bout bout;
 
     /**
      * The message.
@@ -58,19 +72,14 @@ public final class LongMessage {
 
     /**
      * Private ctor.
+     * @param ihub The hub
+     * @param ibout The bout
      * @param msg The message
      */
-    private LongMessage(final Message msg) {
+    public LongMessage(final Hub ihub, final Bout ibout, final Message msg) {
+        this.hub = ihub;
+        this.bout = ibout;
         this.message = msg;
-    }
-
-    /**
-     * Build it.
-     * @param msg The message
-     * @return The instance of the class
-     */
-    public static LongMessage build(final Message msg) {
-        return new LongMessage(msg);
     }
 
     /**
@@ -88,7 +97,7 @@ public final class LongMessage {
      */
     @XmlElement
     public String getAuthor() {
-        return this.message.author().name();
+        return this.message.author().name().toString();
     }
 
     /**
@@ -101,6 +110,24 @@ public final class LongMessage {
     }
 
     /**
+     * Get its text for rendering.
+     * @return The text
+     */
+    @XmlElement
+    public String getRender() {
+        final String txt = this.getText();
+        final String render = this.hub.make("pre-render-message")
+            .synchronously()
+            .inBout(this.bout)
+            .arg(this.bout.number())
+            .arg(this.message.number())
+            .arg(txt)
+            .asDefault(txt)
+            .exec();
+        return LongMessage.formatted(StringEscapeUtils.escapeXml(render));
+    }
+
+    /**
      * Get its date.
      * @return The date
      */
@@ -110,12 +137,37 @@ public final class LongMessage {
     }
 
     /**
+     * Get text explanation when this message was posted.
+     * @return The explanation
+     */
+    @XmlElement
+    public String getWhen() {
+        return Period.when(this.message.date());
+    }
+
+    /**
      * Was it seen by the author already?
      * @return The status
      */
     @XmlAttribute
     public Boolean getSeen() {
         return this.message.seen();
+    }
+
+    /**
+     * Format the text.
+     * @param text The text to format
+     * @return Formatted text
+     */
+    public static String formatted(final String text) {
+        return text
+            .replaceAll(
+                "\\[(.*?)\\]\\((http://.*?)\\)",
+                "<a href='$2'>$1</a>"
+        )
+            .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
+            .replaceAll("`(.*?)`", "<span class='tt'>$1</span>")
+            .replaceAll("_(.*?)_", "<i>$1</i>");
     }
 
 }

@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -49,11 +50,6 @@ import java.util.Set;
 final class RestIdentity implements Identity {
 
     /**
-     * Query param to search INBOX.
-     */
-    private static final transient String QUERY_PARAM = "q";
-
-    /**
      * Rest client.
      */
     private final transient RestClient client;
@@ -64,6 +60,14 @@ final class RestIdentity implements Identity {
      */
     public RestIdentity(final RestClient clnt) {
         this.client = clnt;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Identity identity) {
+        return this.name().compareTo(identity.name());
     }
 
     /**
@@ -78,23 +82,34 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public String user() {
-        throw new UnsupportedOperationException(
-            "Identity#user() is not supported by Netbout REST API"
-        );
+    public URL authority() {
+        try {
+            return new URL(
+                this.client
+                    .get("reading authority of identity")
+                    .assertStatus(HttpURLConnection.HTTP_OK)
+                    .assertXPath("/page/identity/authority")
+                    .xpath("/page/identity/authority/text()")
+                    .get(0)
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String name() {
-        return this.client
-            .get("reading identity name")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/identity")
-            .xpath("/page/identity/name/text()")
-            .get(0);
+    public Urn name() {
+        return Urn.create(
+            this.client
+                .get("reading identity name")
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .assertXPath("/page/identity")
+                .xpath("/page/identity/name/text()")
+                .get(0)
+        );
     }
 
     /**
@@ -120,11 +135,11 @@ final class RestIdentity implements Identity {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Bout> inbox(final String query) {
         final List<String> hrefs = this.client
-            .queryParam(this.QUERY_PARAM, query)
+            .queryParam(RestSession.QUERY_PARAM, query)
             .get(String.format("reading bouts in the inbox '%s'", query))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bouts")
-            .xpath("/page/bouts/bout/@href");
+            .xpath("/page/bouts/bout/link[@rel='page']/@href");
         final List<Bout> bouts = new ArrayList<Bout>();
         for (String href : hrefs) {
             bouts.add(new RestBout(this.client.copy(href)));
@@ -138,11 +153,19 @@ final class RestIdentity implements Identity {
     @Override
     public Bout bout(final Long num) {
         final String href = this.client
-            .queryParam(this.QUERY_PARAM, String.format("bout:%s", num))
+            .queryParam(
+                RestSession.QUERY_PARAM,
+                String.format("(equal $bout.number %d)", num)
+        )
             .get(String.format("reading href of bout #%d", num))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))
-            .xpath(String.format("/page/bouts/bout[number='%d']/@href", num))
+            .xpath(
+                String.format(
+                    "/page/bouts/bout[number='%d']/link[@rel='page']/@href",
+                    num
+                )
+            )
             .get(0);
         return new RestBout(this.client.copy(href));
     }
@@ -179,7 +202,7 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final String name) {
+    public Identity friend(final Urn name) {
         return new Friend(name);
     }
 
@@ -202,7 +225,7 @@ final class RestIdentity implements Identity {
             .xpath("/page/invitees/invitee/name/text()");
         final Set<Identity> friends = new HashSet<Identity>();
         for (String name : names) {
-            friends.add(new Friend(name));
+            friends.add(new Friend(Urn.create(name)));
         }
         return friends;
     }
@@ -227,16 +250,6 @@ final class RestIdentity implements Identity {
     public void alias(final String alias) {
         throw new UnsupportedOperationException(
             "Identity#alias() is not implemented yet"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void invited(final Bout bout) {
-        throw new IllegalArgumentException(
-            "Identity#invited() shouldn't be called on REST API"
         );
     }
 

@@ -27,13 +27,11 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
+import com.netbout.spi.HelperMocker;
+import com.netbout.spi.IdentityMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link DefaultBus}.
@@ -43,35 +41,23 @@ import org.mockito.Mockito;
 public final class DefaultBusTest {
 
     /**
-     * The bus.
-     */
-    private final transient Bus bus = new DefaultBus();
-
-    /**
-     * Register new helper.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void prepare() throws Exception {
-        final Helper helper = new CpaHelper(
-            Mockito.mock(Identity.class),
-            this.getClass().getPackage().getName()
-        );
-        this.bus.register(helper);
-    }
-
-    /**
      * Simple synch transaction with a helper.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void testSynchronousTransaction() throws Exception {
-        final String result = this.bus.make("simple-translation")
+        final Bus bus = new DefaultBus();
+        final String text = "\u0443\u0440\u0430!";
+        final String mnemo = "simple-translation";
+        final Helper helper = new HelperMocker()
+            .doReturn(text, mnemo)
+            .mock();
+        bus.register(new IdentityMocker().mock(), helper);
+        final String result = bus.make(mnemo)
             .synchronously()
-            .arg("test me")
-            .asDefault("doesn't work")
+            .arg("some argument")
             .exec();
-        MatcherAssert.assertThat(result, Matchers.equalTo("XXXX XX"));
+        MatcherAssert.assertThat(result, Matchers.equalTo(text));
     }
 
 }

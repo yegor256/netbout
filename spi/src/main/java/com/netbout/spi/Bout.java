@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,13 +39,20 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bout {
+@SuppressWarnings("PMD.TooManyMethods")
+public interface Bout extends Comparable<Bout> {
 
     /**
      * Get its unique number.
      * @return The number of the bout
      */
     Long number();
+
+    /**
+     * When it was created.
+     * @return The date of creation
+     */
+    Date date();
 
     /**
      * Get its title.
@@ -65,17 +73,22 @@ public interface Bout {
     Collection<Participant> participants();
 
     /**
-     * Confirm participantion in this bout (or reject).
-     * @param confirm To confirm or reject?
+     * Confirm participantion in this bout.
      */
-    void confirm(boolean confirm);
+    void confirm();
+
+    /**
+     * Leave this bout.
+     */
+    void leave();
 
     /**
      * Invite new participant.
      * @param identity Identity of the participant
      * @return This new participant
+     * @throws DuplicateInvitationException If this person is already here
      */
-    Participant invite(Identity identity);
+    Participant invite(Identity identity) throws DuplicateInvitationException;
 
     /**
      * Get ordered list of all messages of the bout.
@@ -96,7 +109,8 @@ public interface Bout {
      * Post a new message.
      * @param text The text of the new message
      * @return The message just posted
+     * @throws MessagePostException If can't post it for some reason
      */
-    Message post(String text);
+    Message post(String text) throws MessagePostException;
 
 }

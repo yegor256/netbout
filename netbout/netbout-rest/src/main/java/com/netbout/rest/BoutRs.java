@@ -34,9 +34,10 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
+import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Urn;
+import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.CookieParam;
@@ -55,10 +56,26 @@ import javax.ws.rs.core.UriBuilder;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (400 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
 @Path("/{num : [0-9]+}")
 public final class BoutRs extends AbstractRs {
+
+    /**
+     * Threshold param.
+     */
+    public static final String PERIOD_PARAM = "p";
+
+    /**
+     * Place changing param.
+     */
+    public static final String PLACE_PARAM = "place";
+
+    /**
+     * Stage changing param.
+     */
+    public static final String STAGE_PARAM = "stage";
 
     /**
      * Number of the bout.
@@ -68,7 +85,7 @@ public final class BoutRs extends AbstractRs {
     /**
      * Query to filter messages with.
      */
-    private transient String query;
+    private transient String query = "";
 
     /**
      * Mask for suggestions of invitees.
@@ -81,6 +98,11 @@ public final class BoutRs extends AbstractRs {
     private transient StageCoordinates coords = new StageCoordinates();
 
     /**
+     * The period we're looking at.
+     */
+    private transient String view;
+
+    /**
      * Set number of bout.
      * @param num The number
      */
@@ -90,11 +112,22 @@ public final class BoutRs extends AbstractRs {
     }
 
     /**
+     * Set period to view.
+     * @param name The name of it
+     */
+    @QueryParam(BoutRs.PERIOD_PARAM)
+    public void setPeriod(final String name) {
+        if (name != null) {
+            this.view = name;
+        }
+    }
+
+    /**
      * Set stage, if it's selected.
      * @param name The name of it
      */
-    @QueryParam("stage")
-    public void setStage(final String name) {
+    @QueryParam(BoutRs.STAGE_PARAM)
+    public void setStage(final Urn name) {
         if (name != null) {
             this.coords.setStage(name);
         }
@@ -104,7 +137,7 @@ public final class BoutRs extends AbstractRs {
      * Set stage place.
      * @param place The place name
      */
-    @QueryParam("place")
+    @QueryParam(BoutRs.PLACE_PARAM)
     public void setPlace(final String place) {
         if (place != null) {
             this.coords.setPlace(place);
@@ -115,9 +148,11 @@ public final class BoutRs extends AbstractRs {
      * Set filtering keyword.
      * @param keyword The query
      */
-    @QueryParam("q")
+    @QueryParam(RestSession.QUERY_PARAM)
     public void setQuery(final String keyword) {
-        this.query = keyword;
+        if (keyword != null) {
+            this.query = keyword;
+        }
     }
 
     /**
@@ -144,10 +179,29 @@ public final class BoutRs extends AbstractRs {
      */
     @GET
     public Response front() {
-        return this.page()
-            .authenticated(this.identity())
-            .cookie(this.stageCookie())
-            .build();
+        final Response.ResponseBuilder resp =
+            this.page().authenticated(this.identity());
+        final String place = this.hub().make("post-render-change-place")
+            .inBout(this.bout())
+            .arg(this.bout().number())
+            .arg(this.identity().name())
+            .arg(this.coords.stage())
+            .arg(this.coords.place())
+            .noCache()
+            .asDefault(this.coords.place())
+            .exec();
+        final NewCookie cookie = new NewCookie(
+            "netbout-stage",
+            this.coords.copy().setPlace(place).toString(),
+            this.self("").build().getPath(),
+            this.base().build().getHost(),
+            Integer.valueOf(Manifests.read("Netbout-Revision")),
+            "Netbout.com stage information",
+            // @checkstyle MagicNumber (1 line)
+            60 * 60 * 24 * 90,
+            false
+        );
+        return resp.cookie(cookie).build();
     }
 
     /**
@@ -166,13 +220,18 @@ public final class BoutRs extends AbstractRs {
                 "Form param 'text' missed"
             );
         }
-        final Message msg = bout.post(text);
+        Message msg;
+        try {
+            msg = bout.post(text);
+        } catch (com.netbout.spi.MessagePostException ex) {
+            throw new ForwardException(this, this.self(""), ex);
+        }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.self("").build())
             .header("Message-number", msg.number())
             .build();
     }
@@ -199,7 +258,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.self("").build())
             .build();
     }
 
@@ -210,7 +269,7 @@ public final class BoutRs extends AbstractRs {
      */
     @Path("/i")
     @GET
-    public Response invite(@QueryParam("name") final String name) {
+    public Response invite(@QueryParam("name") final Urn name) {
         final Bout bout = this.bout();
         if (name == null) {
             throw new ForwardException(
@@ -221,7 +280,9 @@ public final class BoutRs extends AbstractRs {
         }
         try {
             bout.invite(this.identity().friend(name));
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new ForwardException(this, this.self(""), ex);
+        } catch (com.netbout.spi.DuplicateInvitationException ex) {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
@@ -229,7 +290,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.self("").build())
             .header("Participant-name", name)
             .build();
     }
@@ -241,13 +302,13 @@ public final class BoutRs extends AbstractRs {
     @Path("/join")
     @GET
     public Response join() {
-        this.bout().confirm(true);
+        this.bout().confirm();
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.self("").build())
             .build();
     }
 
@@ -258,14 +319,47 @@ public final class BoutRs extends AbstractRs {
     @Path("/leave")
     @GET
     public Response leave() {
-        this.bout().confirm(false);
+        this.bout().leave();
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
-            .location(this.self(""))
+            .location(this.base().build())
             .build();
+    }
+
+    /**
+     * Kick-off somebody from the bout.
+     * @param name Who to kick off
+     * @return The JAX-RS response
+     */
+    @Path("/kickoff")
+    @GET
+    public Response kickoff(@QueryParam("name") final String name) {
+        Identity friend;
+        try {
+            friend = this.identity().friend(Urn.create(name));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new ForwardException(this, this.base(), ex);
+        }
+        NetboutUtils.participantOf(friend, this.bout()).kickOff();
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(this.identity())
+            .status(Response.Status.SEE_OTHER)
+            .location(this.self("").build())
+            .build();
+    }
+
+    /**
+     * Stage dispatcher.
+     * @return The stage RS resource
+     */
+    @Path("/s")
+    public StageRs stageDispatcher() {
+        return new StageRs(this.bout(), this.coords).duplicate(this);
     }
 
     /**
@@ -278,66 +372,53 @@ public final class BoutRs extends AbstractRs {
         try {
             bout = identity.bout(this.number);
         } catch (com.netbout.spi.BoutNotFoundException ex) {
-            // @checkstyle MultipleStringLiterals (1 line)
-            throw new ForwardException(this, "/", ex);
+            throw new ForwardException(this, this.base(), ex);
         }
         return bout;
-    }
-
-    /**
-     * Get me as a participant.
-     * @return The participant
-     */
-    private Participant participant() {
-        for (Participant participant : this.bout().participants()) {
-            if (participant.identity().equals(this.identity())) {
-                return participant;
-            }
-        }
-        throw new IllegalStateException("Can't find myself in the bout");
     }
 
     /**
      * Main page.
      * @return The page
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private Page page() {
-        this.coords.normalize(this.bus(), this.bout());
+        final Identity myself = this.identity();
+        this.coords.normalize(this.hub(), this.bout());
         final Page page = new PageBuilder()
             .schema("")
             .stylesheet(
-                UriBuilder.fromUri(this.self("/xsl/bout.xsl"))
-                    .queryParam("stage", this.coords.stage())
-                    .build()
-                    .toString()
+                this.baseWithToken()
+                    // @checkstyle MultipleStringLiterals (1 line)
+                    .path(String.format("/%d", this.bout().number()))
+                    .path("/xsl")
+                    .path(String.format("/%s", this.coords.stage()))
+                    .path("/wrapper.xsl")
             )
             .build(AbstractPage.class)
             .init(this)
             .append(
                 new LongBout(
-                    this.bus(),
+                    this.hub(),
                     this.bout(),
                     this.coords,
                     this.query,
-                    UriBuilder.fromUri(this.self(""))
+                    this.self(""),
+                    myself,
+                    this.view
                 )
             )
             .append(new JaxbBundle("query", this.query))
             .link("leave", this.self("/leave"));
         if (this.mask != null) {
             final List<Invitee> invitees = new ArrayList<Invitee>();
-            for (Identity identity : this.identity().friends(this.mask)) {
-                invitees.add(
-                    Invitee.build(
-                        identity,
-                        UriBuilder.fromUri(this.self(""))
-                    )
-                );
+            for (Identity friend : myself.friends(this.mask)) {
+                invitees.add(new Invitee(friend, this.self("")));
             }
             page.append(new JaxbBundle("mask", this.mask))
                 .append(JaxbGroup.build(invitees, "invitees"));
         }
-        if (this.participant().confirmed()) {
+        if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
             page.link("post", this.self("/p"))
                 .link("rename", this.self("/r"));
         } else {
@@ -349,33 +430,13 @@ public final class BoutRs extends AbstractRs {
     /**
      * Location of myself.
      * @param path The path to add
-     * @return The location
+     * @return The location, its builder actually
      */
-    private URI self(final String path) {
-        return this.uriInfo()
-            .getBaseUriBuilder()
-            .clone()
-            .path("/{num}")
-            .path(path)
-            .build(this.bout().number());
-    }
-
-    /**
-     * Create cookie for stage.
-     * @return The cookie
-     */
-    private NewCookie stageCookie() {
-        return new NewCookie(
-            "netbout-stage",
-            this.coords.toString(),
-            this.self("").getPath(),
-            this.uriInfo().getBaseUri().getHost(),
-            Integer.valueOf(Manifests.read("Netbout-Revision")),
-            "Netbout.com stage information",
-            // @checkstyle MagicNumber (1 line)
-            60 * 60 * 24 * 90,
-            false
-        );
+    private UriBuilder self(final String path) {
+        return this.base()
+            // @checkstyle MultipleStringLiterals (1 line)
+            .path(String.format("/%d", this.bout().number()))
+            .path(path);
     }
 
 }

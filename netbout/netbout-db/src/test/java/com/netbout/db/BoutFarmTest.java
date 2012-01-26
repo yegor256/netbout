@@ -87,11 +87,25 @@ public final class BoutFarmTest {
             this.farm.getBoutTitle(num),
             Matchers.equalTo("")
         );
-        final String title = "interesting discussion about something...";
+        final String title = "interesting discussion, \u0443\u0440\u0430!";
         this.farm.changedBoutTitle(num, title);
         MatcherAssert.assertThat(
             this.farm.getBoutTitle(num),
             Matchers.equalTo(title)
+        );
+    }
+
+    /**
+     * BoutFarm can set and read bout date.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void readsBoutCreationDate() throws Exception {
+        final Long num = this.farm.getNextBoutNumber();
+        this.farm.startedNewBout(num);
+        MatcherAssert.assertThat(
+            this.farm.getBoutDate(num),
+            Matchers.notNullValue()
         );
     }
 

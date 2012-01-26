@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
@@ -52,16 +53,18 @@ public final class AliasFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("added-identity-alias")
-    public void addedIdentityAlias(final String identity, final String alias)
+    public void addedIdentityAlias(final Urn identity, final String alias)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
         try {
             final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO alias (identity, name) VALUES (?, ?)"
+                "INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)"
             );
-            stmt.setString(1, identity);
+            stmt.setString(1, identity.toString());
             stmt.setString(2, alias);
+            // @checkstyle MagicNumber (1 line)
+            Utc.setTimestamp(stmt, 3);
             stmt.execute();
         } finally {
             conn.close();
@@ -82,7 +85,7 @@ public final class AliasFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-aliases-of-identity")
-    public List<String> getAliasesOfIdentity(final String name)
+    public List<String> getAliasesOfIdentity(final Urn name)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
@@ -91,7 +94,7 @@ public final class AliasFarm {
             final PreparedStatement stmt = conn.prepareStatement(
                 "SELECT name FROM alias WHERE identity = ?"
             );
-            stmt.setString(1, name);
+            stmt.setString(1, name.toString());
             final ResultSet rset = stmt.executeQuery();
             try {
                 while (rset.next()) {

@@ -30,6 +30,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.client.RestSession;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -74,26 +75,6 @@ public final class EmailFarm implements IdentityAware {
     }
 
     /**
-     * Can notify identity?
-     * @param name The name of identity
-     * @return Can be notified by this farm or NULL if not
-     */
-    @Operation("can-notify-identity")
-    public Boolean canNotifyIdentity(final String name) {
-        Boolean can = null;
-        if (this.isEmail(name)) {
-            can = true;
-        }
-        Logger.debug(
-            this,
-            "#canNotifyIdentity('%s'): returned %B",
-            name,
-            can
-        );
-        return can;
-    }
-
-    /**
      * Notify bout participants.
      * @param bnum Bout where it's happening
      * @param mnum Message number to notify about
@@ -105,19 +86,10 @@ public final class EmailFarm implements IdentityAware {
         final Bout bout = this.identity.bout(bnum);
         final Message message = bout.message(mnum);
         for (Participant participant : bout.participants()) {
-            if (this.isEmail(participant.identity().name())) {
+            if ("email".equals(participant.identity().name().nid())) {
                 this.send(participant, message);
             }
         }
-    }
-
-    /**
-     * Is it an email?
-     * @param name The name of identity
-     * @return Is it?
-     */
-    private Boolean isEmail(final String name) {
-        return name.matches("[:\\w\\.\\-\\+]+@[\\w\\.\\-]+");
     }
 
     /**
@@ -135,7 +107,10 @@ public final class EmailFarm implements IdentityAware {
             "href",
             UriBuilder.fromUri("http://www.netbout.com/")
                 .path("/{num}")
-                .queryParam("auth", new Cryptor().encrypt(dude.identity()))
+                .queryParam(
+                    RestSession.AUTH_PARAM,
+                    new Cryptor().encrypt(dude.identity())
+                )
                 .build(dude.bout().number())
                 .toString()
         );
@@ -148,15 +123,15 @@ public final class EmailFarm implements IdentityAware {
             final Address reply = new InternetAddress(
                 String.format(
                     "%s@netbout.com",
-                    TextUtils.pack(dude.identity().name())
+                    TextUtils.pack(dude.identity().name().toString())
                 ),
-                message.author().name()
+                message.author().name().toString()
             );
             email.addFrom(new Address[] {reply});
             email.setReplyTo(new Address[] {reply});
             email.addRecipient(
                 javax.mail.Message.RecipientType.TO,
-                new InternetAddress(dude.identity().name())
+                new InternetAddress(dude.identity().name().nss())
             );
             email.setText(text);
             email.setSubject(

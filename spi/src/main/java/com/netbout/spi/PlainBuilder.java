@@ -34,8 +34,13 @@ import com.netbout.spi.plain.PlainDate;
 import com.netbout.spi.plain.PlainList;
 import com.netbout.spi.plain.PlainLong;
 import com.netbout.spi.plain.PlainString;
+import com.netbout.spi.plain.PlainURL;
+import com.netbout.spi.plain.PlainUrn;
+import com.ymock.util.Logger;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Plain type builder.
@@ -43,6 +48,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class PlainBuilder {
 
     /**
@@ -58,6 +64,7 @@ public final class PlainBuilder {
      * @return The plain object
      * @param <T> Type to return
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     public static <T> Plain<T> fromObject(final Object data) {
         if (data == null) {
             throw new IllegalArgumentException("Can't convert NULL");
@@ -71,14 +78,18 @@ public final class PlainBuilder {
             result = (Plain) new PlainBoolean((Boolean) data);
         } else if (data instanceof Date) {
             result = (Plain) new PlainDate((Date) data);
+        } else if (data instanceof URL) {
+            result = (Plain) new PlainURL((URL) data);
+        } else if (data instanceof Urn) {
+            result = (Plain) new PlainUrn((Urn) data);
         } else if (data instanceof List) {
             result = (Plain) new PlainList((List) data);
         } else {
             throw new IllegalArgumentException(
-                String.format(
-                    "Can't convert '%s' (%s) to Plain<?>",
-                    data.toString(),
-                    data.getClass().getName()
+                Logger.format(
+                    "Can't convert '%s' (%[type]s) to Plain<?>",
+                    StringEscapeUtils.escapeJava(data.toString()),
+                    data
                 )
             );
         }
@@ -91,6 +102,7 @@ public final class PlainBuilder {
      * @return The plain object
      * @param <T> Type to return
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     public static <T> Plain<T> fromText(final String text) {
         if (text == null) {
             throw new IllegalArgumentException("Can't convert NULL as text");
@@ -101,6 +113,10 @@ public final class PlainBuilder {
         Plain<T> result;
         if (PlainList.isIt(text)) {
             result = (Plain) PlainList.valueOf(text);
+        } else if (PlainUrn.isIt(text)) {
+            result = (Plain) new PlainUrn(text);
+        } else if (PlainURL.isIt(text)) {
+            result = (Plain) new PlainURL(text);
         } else if (PlainDate.isIt(text)) {
             result = (Plain) new PlainDate(text);
         } else if (PlainLong.isIt(text)) {
@@ -111,9 +127,9 @@ public final class PlainBuilder {
             result = (Plain) PlainString.valueOf(text);
         } else {
             throw new IllegalArgumentException(
-                String.format(
+                Logger.format(
                     "Can't convert text '%s' to Plain<?>",
-                    text
+                    StringEscapeUtils.escapeJava(text)
                 )
             );
         }

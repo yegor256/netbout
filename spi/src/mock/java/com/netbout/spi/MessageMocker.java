@@ -47,6 +47,17 @@ public final class MessageMocker {
     private final Message message = Mockito.mock(Message.class);
 
     /**
+     * Public ctor.
+     */
+    public MessageMocker() {
+        this.withNumber(Math.abs(new Random().nextLong()));
+        this.withAuthor(new UrnMocker().mock());
+        this.withText("some text");
+        this.withDate(new Date());
+        this.inBout(new BoutMocker().withMessage(this.message).mock());
+    }
+
+    /**
      * In this bout.
      * @param The bout
      * @return This object
@@ -57,18 +68,61 @@ public final class MessageMocker {
     }
 
     /**
+     * With this number.
+     * @param The text
+     * @return This object
+     */
+    public MessageMocker withNumber(final Long num) {
+        Mockito.doReturn(num).when(this.message).number();
+        return this;
+    }
+
+    /**
+     * With this date.
+     * @param The text
+     * @return This object
+     */
+    public MessageMocker withDate(final Date date) {
+        Mockito.doReturn(date).when(this.message).date();
+        return this;
+    }
+
+    /**
+     * With this author.
+     * @param name Name of the author
+     * @return This object
+     */
+    public MessageMocker withAuthor(final Urn name) {
+        final Identity author = Mockito.mock(Identity.class);
+        Mockito.doReturn(name).when(author).name();
+        Mockito.doReturn(author).when(this.message).author();
+        return this;
+    }
+
+    /**
+     * With this author.
+     * @param name Name of the author
+     * @return This object
+     */
+    public MessageMocker withAuthor(final String name) {
+        return this.withAuthor(Urn.create(name));
+    }
+
+    /**
+     * With this text.
+     * @param The text
+     * @return This object
+     */
+    public MessageMocker withText(final String text) {
+        Mockito.doReturn(text).when(this.message).text();
+        return this;
+    }
+
+    /**
      * Mock it.
      * @return Mocked message
-     * @throws Exception If some problem inside
      */
-    public Message mock() throws Exception {
-        final Long number = Math.abs(new Random().nextLong());
-        Mockito.doReturn(number).when(this.message).number();
-        final Identity author = Mockito.mock(Identity.class);
-        Mockito.doReturn("Author").when(author).name();
-        Mockito.doReturn(author).when(this.message).author();
-        Mockito.doReturn("some text").when(this.message).text();
-        Mockito.doReturn(new Date()).when(this.message).date();
+    public Message mock() {
         return this.message;
     }
 

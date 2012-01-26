@@ -26,9 +26,9 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
+import com.netbout.spi.client.RestSession;
 import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContext;
@@ -37,9 +37,11 @@ import javax.ws.rs.CookieParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Abstract RESTful resource.
@@ -47,6 +49,7 @@ import org.apache.commons.codec.binary.Base64;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public abstract class AbstractRs implements Resource {
 
     /**
@@ -58,11 +61,6 @@ public abstract class AbstractRs implements Resource {
      * Hub to work with.
      */
     private transient Hub ihub;
-
-    /**
-     * Bus to work with.
-     */
-    private transient Bus ibus;
 
     /**
      * List of known JAX-RS providers.
@@ -90,6 +88,11 @@ public abstract class AbstractRs implements Resource {
     private transient String icookie;
 
     /**
+     * Shall we add AUTH to URLs?
+     */
+    private transient boolean addAuthToURIs;
+
+    /**
      * The message to show.
      */
     private transient String imessage = "";
@@ -109,9 +112,9 @@ public abstract class AbstractRs implements Resource {
     public final Providers providers() {
         if (this.iproviders == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#providers was never injected by JAX-RS",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#providers was never injected by JAX-RS",
+                    this
                 )
             );
         }
@@ -125,9 +128,9 @@ public abstract class AbstractRs implements Resource {
     public final HttpHeaders httpHeaders() {
         if (this.ihttpHeaders == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#httpHeaders was never injected by JAX-RS",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#httpHeaders was never injected by JAX-RS",
+                    this
                 )
             );
         }
@@ -141,9 +144,9 @@ public abstract class AbstractRs implements Resource {
     public final UriInfo uriInfo() {
         if (this.iuriInfo == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#uriInfo was never injected by JAX-RS",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#uriInfo was never injected by JAX-RS",
+                    this
                 )
             );
         }
@@ -157,9 +160,9 @@ public abstract class AbstractRs implements Resource {
     public final HttpServletRequest httpServletRequest() {
         if (this.ihttpRequest == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#httpRequest was never injected by JAX-RS",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#httpRequest was never injected by JAX-RS",
+                    this
                 )
             );
         }
@@ -175,6 +178,21 @@ public abstract class AbstractRs implements Resource {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final UriBuilder base() {
+        final UriBuilder builder = this.uriInfo()
+            .getBaseUriBuilder()
+            .clone();
+        if (this.icookie != null && !this.icookie.isEmpty()
+            && this.addAuthToURIs) {
+            builder.queryParam(RestSession.AUTH_PARAM, this.icookie);
+        }
+        return builder;
+    }
+
+    /**
      * Inject message, if it was sent.
      * @param msg The message
      */
@@ -183,7 +201,10 @@ public abstract class AbstractRs implements Resource {
         if (msg != null) {
             String decoded;
             try {
-                decoded = new String(new Base64().decode(msg), "UTF-8");
+                decoded = new String(
+                    new Base64().decode(msg),
+                    CharEncoding.UTF_8
+                );
             } catch (java.io.UnsupportedEncodingException ex) {
                 throw new IllegalArgumentException(ex);
             }
@@ -202,7 +223,7 @@ public abstract class AbstractRs implements Resource {
      * because of <tt>&#64;CookieParam</tt> annotation.
      * @param cookie The cookie to set
      */
-    @CookieParam(AbstractPage.AUTH_COOKIE)
+    @CookieParam(RestSession.AUTH_COOKIE)
     public final void setCookie(final String cookie) {
         if (cookie != null) {
             this.icookie = cookie;
@@ -219,10 +240,11 @@ public abstract class AbstractRs implements Resource {
      * because of <tt>&#64;CookieParam</tt> annotation.
      * @param auth The auth code to set
      */
-    @QueryParam("auth")
+    @QueryParam(RestSession.AUTH_PARAM)
     public final void setAuth(final String auth) {
         if (auth != null) {
             this.icookie = auth;
+            this.addAuthToURIs = true;
             Logger.debug(
                 this,
                 "#setAuth('%s'): injected",
@@ -241,8 +263,8 @@ public abstract class AbstractRs implements Resource {
         this.iuriInfo = info;
         Logger.debug(
             this,
-            "#setUriInfo(%s): injected",
-            info.getClass().getName()
+            "#setUriInfo(%[type]s): injected",
+            info
         );
     }
 
@@ -256,8 +278,8 @@ public abstract class AbstractRs implements Resource {
         this.iproviders = prov;
         Logger.debug(
             this,
-            "#setProviders(%s): injected",
-            prov.getClass().getName()
+            "#setProviders(%[type]s): injected",
+            prov
         );
     }
 
@@ -271,8 +293,8 @@ public abstract class AbstractRs implements Resource {
         this.ihttpHeaders = hdrs;
         Logger.debug(
             this,
-            "#setHttpHeaders(%s): injected",
-            hdrs.getClass().getName()
+            "#setHttpHeaders(%[type]s): injected",
+            hdrs
         );
     }
 
@@ -286,8 +308,8 @@ public abstract class AbstractRs implements Resource {
         this.ihttpRequest = request;
         Logger.debug(
             this,
-            "#setHttpServletRequest(%s): injected",
-            request.getClass().getName()
+            "#setHttpServletRequest(%[type]s): injected",
+            request
         );
     }
 
@@ -301,12 +323,35 @@ public abstract class AbstractRs implements Resource {
     @Context
     public final void setServletContext(final ServletContext context) {
         this.ihub = (Hub) context.getAttribute("com.netbout.rest.HUB");
-        this.ibus = (Bus) context.getAttribute("com.netbout.rest.BUS");
+        if (this.ihub == null) {
+            throw new IllegalStateException("HUB is not initialized");
+        }
         Logger.debug(
             this,
-            "#setServletContext(%s): injected",
-            context.getClass().getName()
+            "#setServletContext(%[type]s): injected",
+            context
         );
+    }
+
+    /**
+     * Initialize all fields from another resource.
+     * @param res The parent resource
+     * @return This object
+     * @param <T> The type of it
+     */
+    public final <T> T duplicate(final Resource res) {
+        this.ihub = ((AbstractRs) res).hub();
+        this.setProviders(res.providers());
+        this.setHttpHeaders(res.httpHeaders());
+        this.setUriInfo(res.uriInfo());
+        this.setHttpServletRequest(res.httpServletRequest());
+        this.setMessage(res.message());
+        if (((AbstractRs) res).addAuthToURIs) {
+            this.setAuth(((AbstractRs) res).icookie);
+        } else {
+            this.setCookie(((AbstractRs) res).icookie);
+        }
+        return (T) this;
     }
 
     /**
@@ -320,29 +365,20 @@ public abstract class AbstractRs implements Resource {
         } catch (com.netbout.utils.DecryptionException ex) {
             Logger.debug(
                 this,
-                "Decryption failure from %s calling '%s': %s",
+                "Decryption failure from %s calling '%s': %[exception]s",
                 this.httpServletRequest().getRemoteAddr(),
                 this.httpServletRequest().getRequestURI(),
-                ex.getMessage()
+                ex
             );
-            throw new ForwardException(this, "/g", ex);
+            throw new LoginRequiredException(this, ex);
         }
     }
 
     /**
-     * Get bus.
-     * @return The bus
+     * Forget current identity, if it exists.
      */
-    protected final Bus bus() {
-        if (this.ibus == null) {
-            throw new IllegalStateException(
-                String.format(
-                    "%s#bus was never injected by container",
-                    this.getClass().getName()
-                )
-            );
-        }
-        return this.ibus;
+    protected final void logoff() {
+        this.icookie = "";
     }
 
     /**
@@ -350,15 +386,26 @@ public abstract class AbstractRs implements Resource {
      * @return The hub
      */
     protected final Hub hub() {
-        if (this.ibus == null) {
+        if (this.ihub == null) {
             throw new IllegalStateException(
-                String.format(
-                    "%s#hub was never injected by container",
-                    this.getClass().getName()
+                Logger.format(
+                    "%[type]s#hub was never injected by container",
+                    this
                 )
             );
         }
         return this.ihub;
+    }
+
+    /**
+     * Get base with auth token.
+     * @return The builder
+     */
+    protected final UriBuilder baseWithToken() {
+        return this.uriInfo()
+            .getBaseUriBuilder()
+            .queryParam(RestSession.AUTH_PARAM, this.icookie)
+            .clone();
     }
 
 }

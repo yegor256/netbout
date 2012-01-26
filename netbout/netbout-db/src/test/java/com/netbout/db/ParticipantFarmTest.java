@@ -26,10 +26,10 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -45,55 +45,50 @@ public final class ParticipantFarmTest {
     private final transient ParticipantFarm farm = new ParticipantFarm();
 
     /**
-     * Bout number to work with.
-     */
-    private transient Long bout;
-
-    /**
-     * Start new bout to work with.
-     * @throws Exception If there is some problem inside
-     */
-    @Before
-    public void prepareNewBout() throws Exception {
-        final BoutFarm bfarm = new BoutFarm();
-        this.bout = bfarm.getNextBoutNumber();
-        bfarm.startedNewBout(this.bout);
-    }
-
-    /**
-     * Manipulate with participant status.
+     * ParticipantFarm can manipulate participant status.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBoutStatusChanging() throws Exception {
-        final String identity = "Steve Jobs";
-        new IdentityFarm().changedIdentityPhoto(identity, "");
-        this.farm.addedBoutParticipant(this.bout, identity);
+    public void manipulatsBoutStatus() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Urn identity = new ParticipantRowMocker(bout).mock();
         MatcherAssert.assertThat(
-            this.farm.getParticipantStatus(this.bout, identity),
+            this.farm.getParticipantStatus(bout, identity),
             Matchers.equalTo(false)
         );
-        this.farm.changedParticipantStatus(this.bout, identity, true);
+        this.farm.changedParticipantStatus(bout, identity, true);
         MatcherAssert.assertThat(
-            this.farm.getParticipantStatus(this.bout, identity),
+            this.farm.getParticipantStatus(bout, identity),
             Matchers.equalTo(true)
         );
     }
 
     /**
-     * Read all participants of the bout.
+     * ParticipantFarm can read all participants of the bout.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testBoutParticipantsReading() throws Exception {
-        final String identity = "Bill Gates";
-        new IdentityFarm().changedIdentityPhoto(identity, "");
-        this.farm.addedBoutParticipant(this.bout, identity);
-        final List<String> names = this.farm.getBoutParticipants(this.bout);
+    public void readsBoutParticipants() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Urn identity = new ParticipantRowMocker(bout).mock();
+        final List<Urn> names = this.farm.getBoutParticipants(bout);
         MatcherAssert.assertThat(
             names,
             Matchers.hasItem(identity)
         );
+    }
+
+    /**
+     * ParticipantFarm can remove bout participants.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void addsAndRemovesParticipants() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Urn identity = new ParticipantRowMocker(bout).mock();
+        this.farm.removedBoutParticipant(bout, identity);
+        final List<Urn> names = this.farm.getBoutParticipants(bout);
+        MatcherAssert.assertThat(names.size(), Matchers.equalTo(0));
     }
 
 }

@@ -27,7 +27,8 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
-import com.netbout.utils.AliasBuilder;
+import com.netbout.spi.NetboutUtils;
+import java.net.URL;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -67,19 +68,9 @@ public final class Invitee {
      * @param idnt Parent identity to refer to
      * @param bldr Uri builder
      */
-    private Invitee(final Identity idnt, final UriBuilder bldr) {
+    public Invitee(final Identity idnt, final UriBuilder bldr) {
         this.identity = idnt;
         this.builder = bldr;
-    }
-
-    /**
-     * Build it.
-     * @param idnt Parent identity to refer to
-     * @param bldr Uri builder
-     * @return The object just created
-     */
-    public static Invitee build(final Identity idnt, final UriBuilder bldr) {
-        return new Invitee(idnt, bldr);
     }
 
     /**
@@ -101,7 +92,7 @@ public final class Invitee {
      */
     @XmlElement
     public String getAlias() {
-        return new AliasBuilder(this.identity).build();
+        return NetboutUtils.aliasOf(this.identity);
     }
 
     /**
@@ -110,7 +101,7 @@ public final class Invitee {
      */
     @XmlElement
     public String getName() {
-        return this.identity.name();
+        return this.identity.name().toString();
     }
 
     /**
@@ -118,8 +109,8 @@ public final class Invitee {
      * @return The photo
      */
     @XmlElement
-    public String getPhoto() {
-        return this.identity.photo().toString();
+    public URL getPhoto() {
+        return this.identity.photo();
     }
 
 }

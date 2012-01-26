@@ -30,8 +30,12 @@ import com.netbout.rest.jaxb.ShortBout;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.rest.period.Period;
+import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;
@@ -49,6 +53,11 @@ import javax.ws.rs.core.Response;
 public final class InboxRs extends AbstractRs {
 
     /**
+     * Threshold param.
+     */
+    private static final String PERIOD_PARAM = "p";
+
+    /**
      * Query to filter messages with.
      */
     private transient String query = "";
@@ -57,47 +66,69 @@ public final class InboxRs extends AbstractRs {
      * Set filtering keyword.
      * @param keyword The query
      */
-    @QueryParam("q")
+    @QueryParam(RestSession.QUERY_PARAM)
     public void setQuery(final String keyword) {
-        this.query = keyword;
+        if (keyword != null) {
+            this.query = keyword;
+        }
     }
 
     /**
      * Get inbox.
+     * @param view Which period to view
      * @return The JAX-RS response
      */
     @GET
-    public Response inbox() {
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public Response inbox(@QueryParam(InboxRs.PERIOD_PARAM) final String view) {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
-        for (Bout bout : identity.inbox(this.query)) {
-            bouts.add(
-                ShortBout.build(
-                    bout,
-                    this.uriInfo().getBaseUriBuilder().clone()
-                )
-            );
+        final Period period = Period.valueOf(view);
+        List<Bout> inbox;
+        if (view == null) {
+            inbox = identity.inbox(this.query);
+        } else {
+            inbox = identity.inbox(period.query(this.query));
+        }
+        final PeriodsBuilder periods = new PeriodsBuilder(
+            period,
+            this.base().clone().queryParam(RestSession.QUERY_PARAM, this.query)
+        ).setQueryParam(InboxRs.PERIOD_PARAM);
+        for (Bout bout : inbox) {
+            boolean show;
+            try {
+                show = periods.show(NetboutUtils.dateOf(bout));
+            } catch (com.netbout.rest.period.PeriodViolationException ex) {
+                throw new IllegalStateException(
+                    String.format("Invalid date of bout #%d", bout.number()),
+                    ex
+                );
+            }
+            if (show) {
+                bouts.add(
+                    new ShortBout(
+                        bout,
+                        this.base().path(String.format("/%d", bout.number())),
+                        identity
+                    )
+                );
+            }
+            if (!periods.more(inbox.size())) {
+                break;
+            }
         }
         return new PageBuilder()
             .schema("")
-            .stylesheet(
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path("/xsl/inbox.xsl")
-                    .build()
-                    .toString()
-            )
+            .stylesheet(this.base().path("/xsl/inbox.xsl"))
             .build(AbstractPage.class)
             .init(this)
             .append(new JaxbBundle("query", this.query))
+            .append(new JaxbBundle("view", view))
+            .append(new JaxbBundle("total", Integer.toString(inbox.size())))
             .append(JaxbGroup.build(bouts, "bouts"))
-            .link(
-                "friends",
-                this.uriInfo().getBaseUriBuilder()
-                    .clone()
-                    .path("/f")
-                    .build()
-            )
+            .append(JaxbGroup.build(periods.links(), "periods"))
+            .link("friends", this.base().path("/f"))
+            .link("helper", this.base().path("/h"))
             .authenticated(identity)
             .build();
     }
@@ -117,13 +148,7 @@ public final class InboxRs extends AbstractRs {
             .authenticated(identity)
             .entity(String.format("bout #%d created", bout.number()))
             .status(Response.Status.SEE_OTHER)
-            .location(
-                this.uriInfo()
-                    .getBaseUriBuilder()
-                    .clone()
-                    .path("/{num}")
-                    .build(bout.number())
-            )
+            .location(this.base().path("/{num}").build(bout.number()))
             .header("Bout-number", bout.number())
             .build();
     }

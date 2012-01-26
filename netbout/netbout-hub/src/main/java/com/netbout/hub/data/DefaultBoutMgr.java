@@ -26,15 +26,17 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.bus.Bus;
 import com.netbout.hub.BoutMgr;
+import com.netbout.hub.Hub;
 import com.netbout.spi.BoutNotFoundException;
 import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Manager of all bouts.
@@ -42,6 +44,8 @@ import org.w3c.dom.Element;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@XmlType(name = "manager")
+@XmlAccessorType(XmlAccessType.NONE)
 public final class DefaultBoutMgr implements BoutMgr {
 
     /**
@@ -53,28 +57,30 @@ public final class DefaultBoutMgr implements BoutMgr {
     /**
      * Bus to work with.
      */
-    private final transient Bus bus;
+    private final transient Hub hub;
 
     /**
-     * Public ctor.
-     * @param ibus The bus
+     * Public ctor, for JAXB.
      */
-    public DefaultBoutMgr(final Bus ibus) {
-        this.bus = ibus;
+    public DefaultBoutMgr() {
+        throw new IllegalStateException("illegal call");
     }
 
     /**
-     * {@inheritDoc}
+     * Public ctor.
+     * @param ihub The hub
      */
-    @Override
-    public Element stats(final Document doc) {
-        final Element root = doc.createElement("manager");
-        final Element total = doc.createElement("total");
-        total.appendChild(
-            doc.createTextNode(String.valueOf(this.bouts.size()))
-        );
-        root.appendChild(total);
-        return root;
+    public DefaultBoutMgr(final Hub ihub) {
+        this.hub = ihub;
+    }
+
+    /**
+     * Get total number of bouts.
+     * @return The total
+     */
+    @XmlElement(name = "bouts")
+    public int getBouts() {
+        return this.bouts.size();
     }
 
     /**
@@ -84,17 +90,17 @@ public final class DefaultBoutMgr implements BoutMgr {
     public Long create() {
         BoutData data;
         synchronized (this.bouts) {
-            final Long number = this.bus
+            final Long number = this.hub
                 // @checkstyle MultipleStringLiterals (1 lines)
                 .make("get-next-bout-number")
                 .synchronously()
                 .asDefault(this.defaultNextBoutNumber())
                 .exec();
-            data = new BoutData(this.bus, number);
+            data = new BoutData(this.hub, number);
             this.bouts.put(data.getNumber(), data);
         }
         data.setTitle("");
-        this.bus.make("started-new-bout")
+        this.hub.make("started-new-bout")
             .asap()
             .arg(data.getNumber())
             // @checkstyle MultipleStringLiterals (1 lines)
@@ -125,7 +131,7 @@ public final class DefaultBoutMgr implements BoutMgr {
                 number
             );
         } else {
-            final Boolean exists = this.bus
+            final Boolean exists = this.hub
                 .make("check-bout-existence")
                 .synchronously()
                 .arg(number)
@@ -134,7 +140,7 @@ public final class DefaultBoutMgr implements BoutMgr {
             if (!exists) {
                 throw new BoutNotFoundException(number);
             }
-            data = new BoutData(this.bus, number);
+            data = new BoutData(this.hub, number);
             this.bouts.put(number, data);
             Logger.debug(
                 this,

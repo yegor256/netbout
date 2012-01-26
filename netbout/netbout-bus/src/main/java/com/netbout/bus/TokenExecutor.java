@@ -28,6 +28,7 @@ package com.netbout.bus;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
+import com.netbout.spi.Identity;
 
 /**
  * Executor of a token.
@@ -39,9 +40,10 @@ interface TokenExecutor {
 
     /**
      * Register a new helper in this executor.
+     * @param identity Who is the owner of this helper
      * @param helper The helper to register
      */
-    void register(Helper helper);
+    void register(Identity identity, Helper helper);
 
     /**
      * Execute one token.

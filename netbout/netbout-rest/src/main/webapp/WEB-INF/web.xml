@@ -84,7 +84,7 @@
         <servlet-class>com.rexsl.core.RestfulServlet</servlet-class>
         <init-param>
             <param-name>com.rexsl.PACKAGES</param-name>
-            <param-value>com.netbout.rest</param-value>
+            <param-value>com.netbout.rest,com.netbout.rest.auth</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

@@ -37,34 +37,64 @@
     <xsl:template match="participants">
         <nav class="dudes">
             <xsl:for-each select="participant">
-                <article class="dude">
-                    <xsl:attribute name="style">
-                        <xsl:text>left: </xsl:text>
-                        <xsl:value-of select="(position()-1) * 70"/>
-                        <xsl:text>px;</xsl:text>
-                    </xsl:attribute>
-                    <img>
-                        <xsl:attribute name="src">
-                            <xsl:value-of select="photo"/>
+                <div>
+                    <aside class="bar">
+                        <xsl:attribute name="style">
+                            <xsl:text>left: </xsl:text>
+                            <xsl:value-of select="(position()-1) * 5.7"/>
+                            <xsl:text>em;</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="class">
-                            <xsl:text>photo</xsl:text>
-                            <xsl:if test="@confirmed != 'true'">
-                                <xsl:text> pending</xsl:text>
-                            </xsl:if>
+                        <xsl:attribute name="onmouseover">
+                            <xsl:text>$(this).show();</xsl:text>
                         </xsl:attribute>
-                    </img>
-                    <xsl:variable name="name" select="alias"/>
-                    <xsl:choose>
-                        <xsl:when test="string-length($name) &gt; 10">
-                            <xsl:value-of select="substring($name, 0, 8)"/>
-                            <xsl:text>...</xsl:text>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="$name"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </article>
+                        <xsl:attribute name="onmouseout">
+                            <xsl:text>$(this).hide();</xsl:text>
+                        </xsl:attribute>
+                        <span>
+                            <xsl:call-template name="alias">
+                                <xsl:with-param name="alias" select="alias" />
+                            </xsl:call-template>
+                        </span>
+                        <xsl:if test="@me != 'true'">
+                            <xsl:text> </xsl:text>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="link[@rel='kickoff']/@href"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>kick "</xsl:text>
+                                    <xsl:value-of select="alias"/>
+                                    <xsl:text>" off this bout</xsl:text>
+                                </xsl:attribute>
+                                <xsl:text>off</xsl:text>
+                            </a>
+                        </xsl:if>
+                    </aside>
+                    <article class="dude">
+                        <xsl:attribute name="style">
+                            <xsl:text>left: </xsl:text>
+                            <xsl:value-of select="(position()-1) * 5.7"/>
+                            <xsl:text>em;</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="onmouseover">
+                            <xsl:text>$(this).parent().find(".bar").show();</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="onmouseout">
+                            <xsl:text>$(this).parent().find(".bar").hide();</xsl:text>
+                        </xsl:attribute>
+                        <img>
+                            <xsl:attribute name="src">
+                                <xsl:value-of select="photo"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="class">
+                                <xsl:text>photo</xsl:text>
+                                <xsl:if test="@confirmed != 'true'">
+                                    <xsl:text> pending</xsl:text>
+                                </xsl:if>
+                            </xsl:attribute>
+                        </img>
+                    </article>
+                </div>
             </xsl:for-each>
         </nav>
     </xsl:template>

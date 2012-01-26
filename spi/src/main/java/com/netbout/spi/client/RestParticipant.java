@@ -32,6 +32,7 @@ package com.netbout.spi.client;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 
 /**
@@ -50,14 +51,14 @@ final class RestParticipant implements Participant {
     /**
      * Number of this guy.
      */
-    private final transient String name;
+    private final transient Urn name;
 
     /**
      * Public ctor.
      * @param clnt Rest client
      * @param nam Name of participant
      */
-    public RestParticipant(final RestClient clnt, final String nam) {
+    public RestParticipant(final RestClient clnt, final Urn nam) {
         this.client = clnt;
         this.name = nam;
     }
@@ -84,6 +85,32 @@ final class RestParticipant implements Participant {
     @Override
     public boolean confirmed() {
         return Boolean.valueOf(this.bySuffix("/@confirmed"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void kickOff() {
+        this.client
+            .get("reading 'kickoff' rel link")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "/page/bout/participants/participant[@identity='%s']/link[@rel='kickoff']",
+                    this.name
+                )
+            )
+            .rel(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "/page/bout/participants/participant[@identity='%s']/link[@rel='kickoff']/@href",
+                    this.name
+                )
+            )
+            .get(String.format("kicking off '%s' participant", this.name))
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
     /**

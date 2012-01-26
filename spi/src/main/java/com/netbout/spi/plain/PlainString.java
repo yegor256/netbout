@@ -31,6 +31,7 @@ package com.netbout.spi.plain;
 
 import com.netbout.spi.Plain;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Plain string.
@@ -44,11 +45,6 @@ public final class PlainString implements Plain<String> {
      * Quote around a string.
      */
     private static final String QUOTE = "\"";
-
-    /**
-     * Encoding to be used.
-     */
-    private static final String ENCODING = "UTF-8";
 
     /**
      * The value.
@@ -138,7 +134,7 @@ public final class PlainString implements Plain<String> {
     private static String encode(final String text) {
         try {
             return new Base64().encodeToString(
-                text.getBytes(PlainString.ENCODING)
+                text.getBytes(CharEncoding.UTF_8)
             );
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(ex);
@@ -152,7 +148,7 @@ public final class PlainString implements Plain<String> {
      */
     private static String decode(final String text) {
         try {
-            return new String(new Base64().decode(text), PlainString.ENCODING);
+            return new String(new Base64().decode(text), CharEncoding.UTF_8);
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(ex);
         }

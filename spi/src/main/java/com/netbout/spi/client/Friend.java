@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
@@ -47,13 +48,13 @@ final class Friend implements Identity {
     /**
      * Name of it.
      */
-    private final transient String iname;
+    private final transient Urn iname;
 
     /**
      * Public ctor.
      * @param name The name of it
      */
-    public Friend(final String name) {
+    public Friend(final Urn name) {
         this.iname = name;
     }
 
@@ -61,9 +62,17 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public String user() {
+    public int compareTo(final Identity identity) {
+        return this.iname.compareTo(identity.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL authority() {
         throw new UnsupportedOperationException(
-            "#user() can't be called on a friend"
+            "#authority() can't be called on a friend"
         );
     }
 
@@ -71,7 +80,7 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public String name() {
+    public Urn name() {
         return this.iname;
     }
 
@@ -129,7 +138,7 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final String name) {
+    public Identity friend(final Urn name) {
         throw new UnsupportedOperationException(
             "#friend() can't be called on a friend"
         );
@@ -162,16 +171,6 @@ final class Friend implements Identity {
     public void alias(final String alias) {
         throw new UnsupportedOperationException(
             "#alias() can't be called on a friend"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void invited(final Bout bout) {
-        throw new UnsupportedOperationException(
-            "#invited() can't be called on a friend"
         );
     }
 

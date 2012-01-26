@@ -114,7 +114,7 @@
         </snapshotRepository>
         <site>
             <!--
-            Deploying the site to Amazon S3. "netbout-spi.s3" server details
+            Deploying the site to Amazon S3. "netbout.s3" server details
             are defined in "settings.xml" file, provided by continuous integration
             server during build cycle.
             -->
@@ -130,6 +130,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <rexsl.version since="22 Jan 2012">0.3</rexsl.version>
     </properties>
 
     <repositories>
@@ -148,15 +149,27 @@
             -->
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version since="15 Oct 2010">2.5</version>
+            <version since="26 Dec 2010">2.6</version>
         </dependency>
         <dependency>
-            <!--
-            This library simplifies file-management operations.
-            -->
-            <groupId>org.apache.commons</groupId>
+            <!-- This library simplifies file-management operations. -->
+            <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version since="9 Oct 2010">1.3.2</version>
+            <version since="19 Oct 2011">2.1</version>
+        </dependency>
+        <dependency>
+            <!-- ReXSL test client -->
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version>${rexsl.version}</version>
+        </dependency>
+        <dependency>
+            <!-- ReXSL test client, mocks -->
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version>${rexsl.version}</version>
+            <classifier>mock</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <!-- JAX-RS API -->
@@ -168,22 +181,26 @@
             <!-- JAX-RS implementation, core library -->
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version since="26 Oct 2011">1.9.1</version>
+            <version since="13 Dec 2011">1.11</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!-- JAX-RS implementation, core library -->
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version since="26 Oct 2011">1.9.1</version>
+            <!-- Logging facility, on top of SLF4J. -->
+            <groupId>com.ymock</groupId>
+            <artifactId>ymock-util</artifactId>
+            <version since="26 Dec 2011">1.0.4</version>
         </dependency>
         <dependency>
             <!--
-            Logging facility, on top of SLF4J.
+            Apache Xerces is a JAXP implementation of DOM.
+            In order to replace a default implementation
+            provided by JDK with Xerces we are using text files inside
+            "src/main/resources/META-INF/services" directory.
             -->
-            <groupId>com.ymock</groupId>
-            <artifactId>ymock-util</artifactId>
-            <version since="2 Nov 2011">1.0</version>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version since="9 Mar 2011">2.9.1</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- Forward all calls to SLF4J to LOG4J. -->
@@ -201,15 +218,13 @@
         </dependency>
         <dependency>
             <!--
-            We are using JUnit framework for unit test organization
-            and management. This framework is the most stable and mature
-            in the market. Other options considered: TestNG.
-            @link http://www.junit.org/
+            org.hamcrest.MatcherAssert class.
+            @link http://code.google.com/p/hamcrest/wiki/Tutorial
             -->
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version since="3 July 2011">4.8.2</version>
-            <scope>test</scope>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version since="23 Dec 2011">1.2.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <!--
@@ -217,8 +232,20 @@
             @link http://code.google.com/p/hamcrest/wiki/Tutorial
             -->
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version since="6 Apr 2011">1.1</version>
+            <artifactId>hamcrest-library</artifactId>
+            <version since="23 Dec 2011">1.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <!--
+            We are using JUnit framework for unit test organization
+            and management. This framework is the most stable and mature
+            in the market. Other options considered: TestNG.
+            @link http://www.junit.org/
+            -->
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version since="23 Dec 2011">4.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -246,7 +273,7 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version since="1 Nov 2011">0.9.5</version>
+            <version since="8 Dec 2011">0.9.5</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -258,6 +285,13 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version since="8 Nov 2011">1.5</version>
+        </dependency>
+        <dependency>
+            <!-- Embedded Java Servlet Container, for com.rexsl:rexsl-test:mock -->
+            <groupId>com.sun.grizzly</groupId>
+            <artifactId>grizzly-servlet-webserver</artifactId>
+            <version>1.9.10</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -303,15 +337,27 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.ymock</groupId>
+                                <artifactId>ymock-tk</artifactId>
+                                <version since="26 Dec 2011">1.0.4</version>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
+                                <id>sources-package</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
                                     <descriptorRefs>
-                                        <descriptorRef>src</descriptorRef>
+                                        <!--
+                                        This descriptor is in ymock-tk sub-module, which is in classpath of this plugin.
+                                        @see http://maven.apache.org/plugins/maven-assembly-plugin/examples/sharing-descriptors.html
+                                        -->
+                                        <descriptorRef>ymock-sources</descriptorRef>
                                     </descriptorRefs>
                                 </configuration>
                             </execution>
@@ -333,7 +379,6 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-site-plugin</artifactId>
-                        <version since="17 Nov 2011">3.0</version>
                         <configuration>
                             <reportPlugins>
                                 <plugin>
@@ -487,7 +532,7 @@
                     to the STDOUT as well, not only to the file.
                     -->
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version since="2 Oct 2011">2.10</version>
+                    <version since="13 Dec 2011">2.11</version>
                     <configuration>
                         <argLine>-Dfile.encoding=UTF8</argLine>
                         <runOrder>random</runOrder>
@@ -510,6 +555,7 @@
                 <version since="5 Dec 2011">2.3.2</version>
                 <executions>
                     <execution>
+                        <id>mock-artifact</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
@@ -524,7 +570,7 @@
                             </archive>
                             <classifier>mock</classifier>
                             <includes>
-                                <include>**/*Mocker.class</include>
+                                <include>**/*Mocker*.class</include>
                             </includes>
                         </configuration>
                     </execution>

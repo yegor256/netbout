@@ -26,10 +26,12 @@
  */
 package com.netbout.hub;
 
+import com.netbout.bus.TxBuilder;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import com.netbout.spi.UnreachableUrnException;
+import com.netbout.spi.Urn;
+import java.util.Set;
 
 /**
  * Hub.
@@ -40,18 +42,32 @@ import org.w3c.dom.Element;
 public interface Hub {
 
     /**
-     * Find user by name.
-     * @param name The name of the user to find
-     * @return The user found
+     * Find identity by URN.
+     * @param name The name of the identity
+     * @return The identity found
+     * @throws UnreachableUrnException If we can't reach it
+     * @checkstyle RedundantThrows (3 lines)
      */
-    User user(String name);
+    Identity identity(Urn name) throws UnreachableUrnException;
 
     /**
-     * Create statistics in the given XML document and return their element.
-     * @param doc The document to work in
-     * @return The element just created
+     * Get URN resolver.
+     * @return The resolver
      */
-    Element stats(Document doc);
+    UrnResolver resolver();
+
+    /**
+     * Start new transaction.
+     * @param mnemo Transaction mnemo
+     * @return The transaction builder
+     */
+    TxBuilder make(final String mnemo);
+
+    /**
+     * Get manager of bouts.
+     * @return The manager
+     */
+    BoutMgr manager();
 
     /**
      * Promote existing identity to the helper.
@@ -59,5 +75,12 @@ public interface Hub {
      * @param helper The helper to use
      */
     void promote(Identity identity, Helper helper);
+
+    /**
+     * Find identities by keyword.
+     * @param keyword The keyword
+     * @return The identities found
+     */
+    Set<Identity> findByKeyword(String keyword);
 
 }

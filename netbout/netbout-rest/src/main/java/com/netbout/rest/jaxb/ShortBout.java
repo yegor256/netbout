@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.ArrayList;
@@ -60,6 +61,11 @@ public final class ShortBout {
     private final transient UriBuilder builder;
 
     /**
+     * The viewer of it.
+     */
+    private final transient Identity viewer;
+
+    /**
      * Public ctor for JAXB.
      */
     public ShortBout() {
@@ -70,32 +76,22 @@ public final class ShortBout {
      * Private ctor.
      * @param parent Parent bout to refer to
      * @param bldr URI builder
+     * @param vwr The viewer
      */
-    public ShortBout(final Bout parent, final UriBuilder bldr) {
+    public ShortBout(final Bout parent, final UriBuilder bldr,
+        final Identity vwr) {
         this.bout = parent;
         this.builder = bldr;
+        this.viewer = vwr;
     }
 
     /**
-     * Builder.
-     * @param parent Parent bout to refer to
-     * @param bldr URI builder
-     * @return The instance just created
+     * Link to the bout.
+     * @return The link
      */
-    public static ShortBout build(final Bout parent, final UriBuilder bldr) {
-        return new ShortBout(parent, bldr);
-    }
-
-    /**
-     * HREF of the bout.
-     * @return The url
-     */
-    @XmlAttribute
-    public String getHref() {
-        return this.builder
-            .path("/{num}")
-            .build(this.bout.number())
-            .toString();
+    @XmlElement
+    public Link getLink() {
+        return new Link("page", this.builder);
     }
 
     /**
@@ -105,6 +101,15 @@ public final class ShortBout {
     @XmlElement
     public Long getNumber() {
         return this.bout.number();
+    }
+
+    /**
+     * JAXB related method, to return the date of the bout.
+     * @return The number
+     */
+    @XmlElement
+    public java.util.Date getDate() {
+        return this.bout.date();
     }
 
     /**
@@ -122,11 +127,12 @@ public final class ShortBout {
      */
     @XmlElement(name = "participant")
     @XmlElementWrapper(name = "participants")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
             new ArrayList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
-            dudes.add(LongParticipant.build(dude));
+            dudes.add(new LongParticipant(dude, this.builder, this.viewer));
         }
         return dudes;
     }

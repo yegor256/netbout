@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -46,9 +47,24 @@ public final class IdentityTest {
      */
     @Test
     public void canHaveANameMocked() throws Exception {
-        final String name = "some-name-of-identity";
-        final Identity identity = new IdentityMocker().namedAs(name).mock();
+        final Urn name = new UrnMocker().mock();
+        final Identity identity = new IdentityMocker()
+            .namedAs(name.toString()).mock();
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+    }
+
+    /**
+     * IdentityMocker can assign an alias to identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void canHaveAnAliasMocked() throws Exception {
+        final String alias = "some alias";
+        final Identity identity = new IdentityMocker().withAlias(alias).mock();
+        MatcherAssert.assertThat(
+            NetboutUtils.aliasOf(identity),
+            Matchers.equalTo(alias)
+        );
     }
 
     /**
@@ -57,9 +73,12 @@ public final class IdentityTest {
      */
     @Test
     public void canBelongToSomeMockedUser() throws Exception {
-        final String uname = "user-name";
+        final String uname = "http://localhost/auth";
         final Identity identity = new IdentityMocker().belongsTo(uname).mock();
-        MatcherAssert.assertThat(identity.user(), Matchers.equalTo(uname));
+        MatcherAssert.assertThat(
+            identity.authority().toString(),
+            Matchers.equalTo(uname)
+        );
     }
 
     /**
@@ -70,7 +89,7 @@ public final class IdentityTest {
     public void setsAllIdentityPropertiesByDefault() throws Exception {
         final Identity identity = new IdentityMocker().mock();
         MatcherAssert.assertThat(identity.name(), Matchers.notNullValue());
-        MatcherAssert.assertThat(identity.user(), Matchers.notNullValue());
+        MatcherAssert.assertThat(identity.authority(), Matchers.notNullValue());
     }
 
     /**
@@ -82,7 +101,68 @@ public final class IdentityTest {
         final Identity identity = new IdentityMocker().mock();
         final Bout bout = identity.start();
         MatcherAssert.assertThat(bout, Matchers.notNullValue());
-        MatcherAssert.assertThat(identity.bout(1L), Matchers.notNullValue());
+        MatcherAssert.assertThat(
+            identity.bout(bout.number()),
+            Matchers.notNullValue()
+        );
+        MatcherAssert.assertThat(
+            identity.inbox("").size(),
+            Matchers.equalTo(2)
+        );
+    }
+
+    /**
+     * IdentityMocker can add bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void addsBoutByNumber() throws Exception {
+        final Long number = Math.abs(new Random().nextLong());
+        final Bout bout = new BoutMocker().mock();
+        final Identity identity = new IdentityMocker()
+            .withBout(number, bout)
+            .mock();
+        MatcherAssert.assertThat(identity.bout(number), Matchers.equalTo(bout));
+    }
+
+    /**
+     * IdentityMocker can mock inbox response.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void mocksDifferentInboxQueries() throws Exception {
+        final String query = "some query";
+        final Identity identity = new IdentityMocker()
+            .withBout(1L, new BoutMocker().mock())
+            .withBout(2L, new BoutMocker().mock())
+            .withInbox(query, new Long[] {1L})
+            .mock();
+        MatcherAssert.assertThat(
+            identity.inbox(query).size(),
+            Matchers.equalTo(1)
+        );
+        MatcherAssert.assertThat(
+            identity.inbox("").size(),
+            Matchers.equalTo(2)
+        );
+    }
+
+    /**
+     * IdentityMocker can sort bouts by number.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void sortsBoutByNumber() throws Exception {
+        final Long num = Math.abs(new Random().nextLong());
+        final Identity identity = new IdentityMocker()
+            .withBout(num, new BoutMocker().withNumber(num).mock())
+            .withBout(num + 1, new BoutMocker().withNumber(num + 1).mock())
+            .withBout(num - 1, new BoutMocker().withNumber(num - 1).mock())
+            .mock();
+        MatcherAssert.assertThat(
+            identity.inbox("").get(0).number(),
+            Matchers.equalTo(num + 1)
+        );
     }
 
 }

@@ -29,10 +29,16 @@ package com.netbout.hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableIdentityException;
+import com.netbout.spi.UnreachableUrnException;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Identity.
@@ -41,26 +47,63 @@ import java.util.Set;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-final class HubIdentity implements Identity {
+public final class HubIdentity implements Identity, InvitationSensitive {
 
     /**
-     * Orphan identity.
+     * Default photo of identity.
      */
-    private final transient Identity orphan;
+    private static final String DEFAULT_PHOTO =
+        "http://img.netbout.com/unknown.png";
 
     /**
-     * User of this identity.
+     * The hub.
      */
-    private final transient User iuser;
+    private final transient Hub hub;
+
+    /**
+     * The name.
+     */
+    private final transient Urn iname;
+
+    /**
+     * The photo.
+     */
+    private transient URL iphoto;
+
+    /**
+     * List of bouts where I'm a participant.
+     */
+    private transient Set<Long> ibouts;
+
+    /**
+     * List of aliases.
+     */
+    private transient Set<String> ialiases;
 
     /**
      * Public ctor.
-     * @param orph Parent object
-     * @param user The user
+     * @param ihub The hub
+     * @param name The identity's name
      */
-    public HubIdentity(final Identity orph, final User user) {
-        this.orphan = orph;
-        this.iuser = user;
+    public HubIdentity(final Hub ihub, final Urn name) {
+        this.hub = ihub;
+        this.iname = name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.iname.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Identity identity) {
+        return this.iname.compareTo(identity.name());
     }
 
     /**
@@ -68,7 +111,8 @@ final class HubIdentity implements Identity {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this.orphan.equals(obj);
+        return (obj instanceof Identity)
+            && this.name().equals(((Identity) obj).name());
     }
 
     /**
@@ -76,23 +120,27 @@ final class HubIdentity implements Identity {
      */
     @Override
     public int hashCode() {
-        return this.orphan.hashCode();
+        return this.name().hashCode();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String user() {
-        return this.iuser.name();
+    public URL authority() {
+        try {
+            return this.hub.resolver().authority(this.name());
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String name() {
-        return this.orphan.name();
+    public Urn name() {
+        return this.iname;
     }
 
     /**
@@ -100,7 +148,22 @@ final class HubIdentity implements Identity {
      */
     @Override
     public Bout start() {
-        return this.orphan.start();
+        final Long num = this.hub.manager().create();
+        BoutDt data;
+        try {
+            data = this.hub.manager().find(num);
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new IllegalStateException(ex);
+        }
+        final ParticipantDt dude = data.addParticipant(this.name());
+        dude.setConfirmed(true);
+        Logger.debug(
+            this,
+            "#start(): bout #%d started",
+            num
+        );
+        this.myBouts().add(num);
+        return new HubBout(this.hub, this, data);
     }
 
     /**
@@ -109,15 +172,58 @@ final class HubIdentity implements Identity {
      */
     @Override
     public Bout bout(final Long number) throws BoutNotFoundException {
-        return this.orphan.bout(number);
+        final HubBout bout;
+        bout = new HubBout(
+            this.hub,
+            this,
+            this.hub.manager().find(number)
+        );
+        Logger.debug(
+            this,
+            "#bout(#%d): bout found",
+            number
+        );
+        return bout;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Bout> inbox(final String query) {
-        return this.orphan.inbox(query);
+        final List<Bout> bouts = new ArrayList<Bout>();
+        for (Long num : this.myBouts()) {
+            try {
+                bouts.add(this.bout(num));
+            } catch (com.netbout.spi.BoutNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        Collections.sort(bouts, Collections.reverseOrder());
+        final List<Bout> result = new ArrayList<Bout>();
+        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
+        for (Bout bout : bouts) {
+            boolean matches = false;
+            if (bout.messages(query).isEmpty()) {
+                matches = (Boolean) predicate.evaluate(
+                    new StubMessage(bout),
+                    0
+                );
+            } else {
+                matches = true;
+            }
+            if (matches) {
+                result.add(bout);
+            }
+        }
+        Logger.debug(
+            this,
+            "#inbox('%s'): %d bouts found",
+            query,
+            result.size()
+        );
+        return result;
     }
 
     /**
@@ -125,15 +231,36 @@ final class HubIdentity implements Identity {
      */
     @Override
     public URL photo() {
-        return this.orphan.photo();
+        if (this.iphoto == null) {
+            final URL url = this.hub.make("get-identity-photo")
+                .synchronously()
+                .arg(this.name())
+                .asDefault(this.DEFAULT_PHOTO)
+                .exec();
+            this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
+        }
+        return this.iphoto;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setPhoto(final URL pic) {
-        this.orphan.setPhoto(pic);
+    public void setPhoto(final URL url) {
+        synchronized (this) {
+            this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
+        }
+        this.hub.make("identity-mentioned")
+            .synchronously()
+            .arg(this.name())
+            .asDefault(true)
+            .exec();
+        this.hub.make("changed-identity-photo")
+            .synchronously()
+            .arg(this.name())
+            .arg(this.iphoto)
+            .asDefault(true)
+            .exec();
     }
 
     /**
@@ -141,9 +268,14 @@ final class HubIdentity implements Identity {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final String name)
-        throws UnreachableIdentityException {
-        return this.orphan.friend(name);
+    public Identity friend(final Urn name) throws UnreachableUrnException {
+        final Identity identity = this.hub.identity(name);
+        Logger.debug(
+            this,
+            "#friend('%s'): found",
+            name
+        );
+        return identity;
     }
 
     /**
@@ -151,7 +283,14 @@ final class HubIdentity implements Identity {
      */
     @Override
     public Set<Identity> friends(final String keyword) {
-        return this.orphan.friends(keyword);
+        final Set<Identity> friends = this.hub.findByKeyword(keyword);
+        Logger.debug(
+            this,
+            "#friends('%s'): found %d friends",
+            keyword,
+            friends.size()
+        );
+        return friends;
     }
 
     /**
@@ -159,7 +298,13 @@ final class HubIdentity implements Identity {
      */
     @Override
     public Set<String> aliases() {
-        return this.orphan.aliases();
+        final Set<String> list = new HashSet<String>(this.myAliases());
+        Logger.debug(
+            this,
+            "#aliases(): %d returned",
+            list.size()
+        );
+        return list;
     }
 
     /**
@@ -167,7 +312,28 @@ final class HubIdentity implements Identity {
      */
     @Override
     public void alias(final String alias) {
-        this.orphan.alias(alias);
+        if (this.myAliases().contains(alias)) {
+            Logger.debug(
+                this,
+                "#alias('%s'): it's already set for '%s'",
+                alias,
+                this.name()
+            );
+        } else {
+            this.hub.make("added-identity-alias")
+                .asap()
+                .arg(this.name())
+                .arg(alias)
+                .asDefault(true)
+                .exec();
+            Logger.debug(
+                this,
+                "#alias('%s'): added for '%s'",
+                alias,
+                this.name()
+            );
+            this.myAliases().add(alias);
+        }
     }
 
     /**
@@ -175,7 +341,55 @@ final class HubIdentity implements Identity {
      */
     @Override
     public void invited(final Bout bout) {
-        this.orphan.invited(bout);
+        this.myBouts().add(bout.number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void kickedOff(final Long bout) {
+        this.myBouts().remove(bout);
+    }
+
+    /**
+     * Return a link to my list of bouts.
+     * @return The list of them
+     */
+    private Set<Long> myBouts() {
+        synchronized (this) {
+            if (this.ibouts == null) {
+                this.ibouts = new CopyOnWriteArraySet<Long>(
+                    (List<Long>) this.hub
+                        .make("get-bouts-of-identity")
+                        .synchronously()
+                        .arg(this.name())
+                        .asDefault(new ArrayList<Long>())
+                        .exec()
+                );
+            }
+        }
+        return this.ibouts;
+    }
+
+    /**
+     * Returns a link to the list of aliases.
+     * @return The link to the list of them
+     */
+    private Set<String> myAliases() {
+        synchronized (this) {
+            if (this.ialiases == null) {
+                this.ialiases = new CopyOnWriteArraySet<String>(
+                    (List<String>) this.hub
+                        .make("get-aliases-of-identity")
+                        .synchronously()
+                        .arg(this.name())
+                        .asDefault(new ArrayList<String>())
+                        .exec()
+                );
+            }
+        }
+        return this.ialiases;
     }
 
 }

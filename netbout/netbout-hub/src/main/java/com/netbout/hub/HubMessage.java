@@ -40,9 +40,9 @@ import java.util.Date;
 final class HubMessage implements Message {
 
     /**
-     * The catalog.
+     * The hub.
      */
-    private final transient Catalog catalog;
+    private final transient Hub hub;
 
     /**
      * The viewer.
@@ -61,18 +61,34 @@ final class HubMessage implements Message {
 
     /**
      * Public ctor.
-     * @param ctlg The catalog
+     * @param ihub The hub
      * @param vwr Viewer
      * @param bout The bout where this message is located
      * @param dat The data
      * @checkstyle ParameterNumber (3 lines)
      */
-    public HubMessage(final Catalog ctlg, final Identity vwr,
+    public HubMessage(final Hub ihub, final Identity vwr,
         final Bout bout, final MessageDt dat) {
-        this.catalog = ctlg;
+        this.hub = ihub;
         this.viewer = vwr;
         this.ibout = bout;
         this.data = dat;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Message msg) {
+        return this.date().compareTo(msg.date());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("msg#%d", this.number());
     }
 
     /**
@@ -97,8 +113,8 @@ final class HubMessage implements Message {
     @Override
     public Identity author() {
         try {
-            return this.catalog.make(this.data.getAuthor());
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
+            return this.hub.identity(this.data.getAuthor());
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
         }
     }

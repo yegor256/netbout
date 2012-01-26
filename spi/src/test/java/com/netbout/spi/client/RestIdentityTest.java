@@ -30,6 +30,8 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -47,9 +49,9 @@ public final class RestIdentityTest {
      */
     @Test
     public void fetchesNameOfIdentity() throws Exception {
-        final String name = "Jeff Lebowski";
+        final Urn name = new UrnMocker().mock();
         final RestClient client = new RestClientMocker()
-            .onXPath("/page/identity/name/text()", name)
+            .onXPath("/page/identity/name/text()", name.toString())
             .mock();
         final Identity identity = new RestIdentity(client);
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));

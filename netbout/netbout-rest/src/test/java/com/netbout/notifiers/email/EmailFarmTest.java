@@ -30,8 +30,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -43,37 +41,6 @@ import org.mockito.Mockito;
 public final class EmailFarmTest {
 
     /**
-     * EmailFarm can validate incoming name as email.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void validatesEmailFormat() throws Exception {
-        final EmailFarm farm = new EmailFarm();
-        final String[] valid = new String[] {
-            "test.me-now+1@example.com.ua",
-            "test1_88@alpha-beta-gamma.net.kz",
-            "test@example.com",
-        };
-        for (String email : valid) {
-            MatcherAssert.assertThat(
-                farm.canNotifyIdentity(email),
-                Matchers.is(true)
-            );
-        }
-        final String[] invalid = new String[] {
-            "tes t@example.com.ua",
-            "7274562",
-            "test-that-doesn't-work",
-        };
-        for (String email : invalid) {
-            MatcherAssert.assertThat(
-                farm.canNotifyIdentity(email),
-                Matchers.nullValue()
-            );
-        }
-    }
-
-    /**
      * EmailFarm can send notify bout participants.
      * @throws Exception If there is some problem inside
      */
@@ -81,7 +48,7 @@ public final class EmailFarmTest {
     public void notfiesBoutParticipants() throws Exception {
         final Identity identity = new IdentityMocker().mock();
         final Identity receiver = new IdentityMocker()
-            .namedAs("yegor@tpc2.com")
+            .namedAs("urn:email:yegor@tpc2.com")
             .mock();
         final Bout bout = new BoutMocker()
             .withParticipant(receiver)
@@ -90,7 +57,7 @@ public final class EmailFarmTest {
         Mockito.doReturn(bout).when(identity).bout(Mockito.anyLong());
         final EmailFarm farm = new EmailFarm();
         farm.init(identity);
-        farm.notifyBoutParticipants(bout.number(), 1L);
+        farm.notifyBoutParticipants(bout.number(), 0L);
     }
 
 }

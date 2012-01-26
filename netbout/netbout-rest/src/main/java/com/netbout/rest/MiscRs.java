@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.PageBuilder;
+import com.ymock.util.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -52,14 +53,20 @@ public final class MiscRs extends AbstractRs {
      */
     @GET
     @Path("/{code : \\d{3}}")
-    public Response notFoundPage(@PathParam("code") final Integer code) {
+    public Response error(@PathParam("code") final Integer code) {
         final Response.Status status = Response.Status.fromStatusCode(code);
         String message = "unknown";
         if (status != null) {
             message = status.toString();
         }
+        Logger.debug(
+            this,
+            "#error(#%d): at '%s'",
+            code,
+            this.uriInfo().getAbsolutePath()
+        );
         return new PageBuilder()
-            .stylesheet("/xsl/error.xsl")
+            .stylesheet(this.base().path("/xsl/error.xsl"))
             .build(AbstractPage.class)
             .init(this)
             .append(
@@ -81,8 +88,8 @@ public final class MiscRs extends AbstractRs {
      */
     @POST
     @Path("/{code : \\d{3}}")
-    public Response notFoundPagePost(@PathParam("code") final Integer code) {
-        return this.notFoundPage(code);
+    public Response errorByPost(@PathParam("code") final Integer code) {
+        return this.error(code);
     }
 
 }

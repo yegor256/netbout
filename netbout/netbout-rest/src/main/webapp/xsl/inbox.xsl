@@ -54,9 +54,22 @@
         </title>
         <link href="/css/inbox.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/periods.css" rel="stylesheet" type="text/css"></link>
     </xsl:template>
 
     <xsl:template name="content">
+        <xsl:if test="/page/view != ''">
+            <ul class="periods">
+                <li>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                        </xsl:attribute>
+                        <xsl:text>back to recent bouts</xsl:text>
+                    </a>
+                </li>
+            </ul>
+        </xsl:if>
         <nav>
             <ul class="bouts">
                 <xsl:for-each select="/page/bouts/bout">
@@ -64,37 +77,56 @@
                 </xsl:for-each>
             </ul>
         </nav>
+        <nav>
+            <ul class="periods">
+                <xsl:for-each select="/page/periods/link">
+                    <li>
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="@href"/>
+                            </xsl:attribute>
+                            <xsl:value-of select="@label" />
+                            <xsl:if test="@rel='earliest'">
+                                <xsl:text>...</xsl:text>
+                            </xsl:if>
+                        </a>
+                    </li>
+                </xsl:for-each>
+            </ul>
+        </nav>
     </xsl:template>
 
     <xsl:template match="bout">
-        <li>
-            <a class="title unread">
-                <xsl:attribute name="class">
-                    <xsl:text>title</xsl:text>
-                    <xsl:if test="@seen &lt; @messages">
-                        <xsl:text> unread</xsl:text>
-                    </xsl:if>
-                </xsl:attribute>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="@href"/>
-                </xsl:attribute>
-                <xsl:text>#</xsl:text>
-                <xsl:value-of select="number" />
-                <xsl:text>: </xsl:text>
-                <xsl:choose>
-                    <xsl:when test="title != ''">
-                        <xsl:value-of select="title" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>untitled</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose>
+        <li class="bout">
+            <xsl:attribute name="id">
+                <xsl:text>bout</xsl:text>
+                <xsl:value-of select="number"/>
+            </xsl:attribute>
+            <div class="header">
+                <span class="num">
+                    <xsl:text>#</xsl:text>
+                    <xsl:value-of select="number" />
+                </span>
+                <a class="title">
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="link[@rel='page']/@href"/>
+                    </xsl:attribute>
+                    <xsl:choose>
+                        <xsl:when test="title != ''">
+                            <xsl:value-of select="title" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>untitled</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </a>
                 <xsl:if test="@seen &lt; @messages">
-                    <xsl:text> (</xsl:text>
-                    <xsl:value-of select="@messages - @seen"/>
-                    <xsl:text> unread)</xsl:text>
+                    <span class="red">
+                        <xsl:value-of select="@messages - @seen"/>
+                        <xsl:text> new</xsl:text>
+                    </span>
                 </xsl:if>
-            </a>
+            </div>
             <xsl:apply-templates select="participants" />
         </li>
     </xsl:template>

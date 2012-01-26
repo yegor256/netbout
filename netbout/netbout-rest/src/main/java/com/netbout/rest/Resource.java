@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 
@@ -50,6 +51,12 @@ public interface Resource {
      * @return The message
      */
     String message();
+
+    /**
+     * Base URI builder.
+     * @return The builder
+     */
+    UriBuilder base();
 
     /**
      * Get URI Info.

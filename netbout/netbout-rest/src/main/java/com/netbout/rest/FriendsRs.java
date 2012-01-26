@@ -53,22 +53,18 @@ public final class FriendsRs extends AbstractRs {
      * @return The JAX-RS response
      */
     @GET
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Response list(@QueryParam("mask") final String mask) {
         if (mask == null) {
             throw new ForwardException(
                 this,
-                this.uriInfo().getBaseUriBuilder().build(),
+                this.base(),
                 "Query param 'mask' missed"
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();
         for (Identity identity : this.identity().friends(mask)) {
-            invitees.add(
-                Invitee.build(
-                    identity,
-                    this.uriInfo().getBaseUriBuilder().clone()
-                )
-            );
+            invitees.add(new Invitee(identity, this.base()));
         }
         return new PageBuilder()
             .schema("")

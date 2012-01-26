@@ -30,15 +30,13 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Identity;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.netbout.spi.Urn;
+import com.rexsl.test.RestTester;
 import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
+import org.hamcrest.Matchers;
 
 /**
  * Restful session.
@@ -49,14 +47,39 @@ import javax.ws.rs.core.UriBuilder;
 public final class RestSession {
 
     /**
-     * Home URI.
+     * Authentication header.
      */
-    private final transient URI home;
+    public static final String AUTH_HEADER = "Netbout-auth";
+
+    /**
+     * HTTP header with error message.
+     */
+    public static final String ERROR_HEADER = "Netbout-error";
+
+    /**
+     * Authentication query param.
+     */
+    public static final String AUTH_PARAM = "auth";
+
+    /**
+     * Name of the user authentication cookie.
+     */
+    public static final String AUTH_COOKIE = "netbout";
+
+    /**
+     * Name of the message transferring cookie.
+     */
+    public static final String MESSAGE_COOKIE = "netbout-msg";
+
+    /**
+     * Query param to search INBOX.
+     */
+    public static final String QUERY_PARAM = "q";
 
     /**
      * Home URI.
      */
-    private final transient Client client;
+    private final transient URI home;
 
     /**
      * Public ctor.
@@ -65,76 +88,55 @@ public final class RestSession {
     public RestSession(final URI uri) {
         if (!uri.isAbsolute()) {
             throw new IllegalArgumentException(
-                String.format(
+                Logger.format(
                     "URI '%s' has to be absolute",
                     uri
                 )
             );
         }
         this.home = UriBuilder.fromUri(uri).path("/").build();
-        final ClientConfig config = new DefaultClientConfig();
-        config.getProperties()
-            .put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        this.client = Client.create(config);
     }
 
     /**
      * Get identity in the session through Netbout authentication mechanism.
-     * @param user The user to authenticate
      * @param iname Name of the identity
      * @param secret The secret word to use
      * @return The identity to work with
      */
-    public Identity authenticate(final URI user, final String iname,
-        final String secret) {
+    public Identity authenticate(final Urn iname, final String secret) {
         return new RestIdentity(
-            new JerseyRestClient(
-                this.client.resource(this.home),
-                this.fetch(user, iname, secret)
+            new RexslRestClient(
+                RestTester.start(this.home),
+                this.fetch(iname, secret)
             )
         );
     }
 
     /**
      * Fetch auth code.
-     * @param user The user to authenticate
      * @param identity Name of the identity
      * @param secret The secret word to use
      * @return The URL
      */
-    public String fetch(final URI user, final String identity,
-        final String secret) {
-        final WebResource resource = this.client.resource(this.home)
+    private String fetch(final Urn identity, final String secret) {
+        final URI uri = UriBuilder.fromUri(this.home)
             .path("/auth")
-            .queryParam("user", user.toString())
-            .queryParam("identity", identity)
-            .queryParam("secret", secret);
-        final ClientResponse response = resource.get(ClientResponse.class);
-        if (response.getStatus() != HttpURLConnection.HTTP_SEE_OTHER) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Invalid HTTP status %d at %s during authentication",
-                    response.getStatus(),
-                    resource.getURI()
-                )
-            );
-        }
-        final String token = response.getHeaders().getFirst("Netbout-auth");
-        if (token == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Authentication token not found in response header at %s",
-                    resource.getURI()
-                )
-            );
-        }
+            .queryParam("identity", identity.toString())
+            .queryParam("secret", secret)
+            .build();
+        final String token = RestTester.start(uri)
+            .get("authorization")
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+            .assertHeader(this.AUTH_HEADER, Matchers.notNullValue())
+            .assertHeader(this.AUTH_HEADER, Matchers.not(Matchers.empty()))
+            .getHeaders()
+            .getFirst(this.AUTH_HEADER);
         Logger.debug(
             this,
-            "#fetch('%s', '%s', '%s'): '%s' authenticated us as '%s'",
-            user,
+            "#fetch('%s', '%s'): '%s' authenticated us as '%s'",
             identity,
             secret,
-            resource.getURI(),
+            uri,
             token
         );
         return token;

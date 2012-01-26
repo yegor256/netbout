@@ -26,21 +26,18 @@
  */
 package com.netbout.hub.hh;
 
-import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.ContextAware;
+import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
+import com.netbout.spi.xml.JaxbPrinter;
 import com.ymock.util.Logger;
-import java.io.StringWriter;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import java.util.ArrayList;
+import java.util.Collection;
 import org.apache.commons.io.IOUtils;
-import org.w3c.dom.Document;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Stats.
@@ -49,7 +46,12 @@ import org.w3c.dom.Document;
  * @version $Id$
  */
 @Farm
-public final class StatsFarm implements IdentityAware, ContextAware {
+public final class StatsFarm implements IdentityAware {
+
+    /**
+     * Stats for Hub.
+     */
+    private static final Collection<Object> STATS = new ArrayList<Object>();
 
     /**
      * Me.
@@ -57,20 +59,15 @@ public final class StatsFarm implements IdentityAware, ContextAware {
     private transient Identity identity;
 
     /**
-     * The hub.
+     * Set data provider.
+     * @param sts The stats
      */
-    private transient Hub hub;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init(final Identity idnt) {
-        this.identity = idnt;
+    public static void addStats(final Object sts) {
+        StatsFarm.STATS.add(sts);
         Logger.debug(
-            this,
-            "#init('%s'): injected",
-            this.identity.name()
+            StatsFarm.class,
+            "#addStats('%[type]s'): injected",
+            sts
         );
     }
 
@@ -78,13 +75,43 @@ public final class StatsFarm implements IdentityAware, ContextAware {
      * {@inheritDoc}
      */
     @Override
-    public void context(final Object ctx) {
-        this.hub = (Hub) ctx;
-        Logger.debug(
-            this,
-            "#context('%s'): injected",
-            ctx.getClass().getName()
-        );
+    public void init(final Identity idnt) {
+        this.identity = idnt;
+    }
+
+    /**
+     * Somebody was just invited to the bout.
+     * @param number Bout where it is happening
+     * @param who Who was invited
+     * @return Allow invitation?
+     * @throws Exception If some problem inside
+     */
+    @Operation("can-be-invited")
+    public Boolean canBeInvited(final Long number, final Urn who)
+        throws Exception {
+        Boolean allow = null;
+        if (who.equals(this.identity.name())) {
+            allow = NetboutUtils.participatesIn(
+                Urn.create("urn:facebook:1531296526"),
+                this.identity.bout(number)
+            );
+        }
+        return allow;
+    }
+
+    /**
+     * Somebody was just invited to the bout.
+     * @param number Bout where it is happening
+     * @param who Who was invited
+     * @return Confirm invitation?
+     */
+    @Operation("just-invited")
+    public Boolean justInvited(final Long number, final Urn who) {
+        Boolean allow = null;
+        if (who.equals(this.identity.name())) {
+            allow = true;
+        }
+        return allow;
     }
 
     /**
@@ -94,50 +121,30 @@ public final class StatsFarm implements IdentityAware, ContextAware {
      * @return Does it?
      */
     @Operation("does-stage-exist")
-    public Boolean doesStageExist(final Long number, final String stage) {
+    public Boolean doesStageExist(final Long number, final Urn stage) {
         Boolean exists = null;
         if (this.identity.name().equals(stage)) {
             exists = Boolean.TRUE;
         }
-        Logger.debug(
-            this,
-            "#doesStageExist(#%d, '%s'): %B returned",
-            number,
-            stage,
-            exists
-        );
         return exists;
     }
 
     /**
      * Get XML of the stage.
      * @param number Bout where it is happening
+     * @param viewer The viewer
      * @param stage Name of stage to render
      * @param place The place in the stage to render
      * @return The XML document
      * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("render-stage-xml")
-    public String renderStageXml(final Long number, final String stage,
-        final String place) throws Exception {
+    public String renderStageXml(final Long number, final Urn viewer,
+        final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
-            final Document doc = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder().newDocument();
-            doc.appendChild(this.hub.stats(doc));
-            final Transformer transformer = TransformerFactory.newInstance()
-                .newTransformer();
-            final StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(doc), new StreamResult(writer));
-            xml = writer.toString();
-            Logger.debug(
-                this,
-                "#renderStageXml(#%d, '%s', '%s'): %d chars delivered",
-                number,
-                stage,
-                place,
-                xml.length()
-            );
+            xml = new JaxbPrinter(new Stage(this.STATS)).print();
         }
         return xml;
     }
@@ -150,18 +157,13 @@ public final class StatsFarm implements IdentityAware, ContextAware {
      * @throws java.io.IOException If some problem inside
      */
     @Operation("render-stage-xsl")
-    public String renderStageXsl(final Long number, final String stage)
+    public String renderStageXsl(final Long number, final Urn stage)
         throws java.io.IOException {
         String xsl = null;
         if (this.identity.name().equals(stage)) {
             xsl = IOUtils.toString(
-                this.getClass().getResourceAsStream("stage.xsl")
-            );
-            Logger.debug(
-                this,
-                "#renderStageXsl('%s'): %d chars delivered",
-                stage,
-                xsl.length()
+                this.getClass().getResourceAsStream("stage.xsl"),
+                CharEncoding.UTF_8
             );
         }
         return xsl;

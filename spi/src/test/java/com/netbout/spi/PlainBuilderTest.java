@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -63,9 +64,10 @@ public final class PlainBuilderTest {
     /**
      * Incoming params.
      * @return The collection of them
+     * @throws Exception If some problem inside
      */
     @Parameterized.Parameters
-    public static Collection<Object[]> parameters() {
+    public static Collection<Object[]> parameters() throws Exception {
         final Random random = new Random();
         return Arrays.asList(
             new Object[][] {
@@ -73,7 +75,11 @@ public final class PlainBuilderTest {
                 new Object[] {""},
                 new Object[] {"a"},
                 new Object[] {"some text: 8(&^%$,:;,\"/\\+ "},
+                new Object[] {"\u043F\u0440\u0438\u0432\u0435\u0442"},
                 new Object[] {new Date()},
+                new Object[] {new Urn("urn:foo:test")},
+                new Object[] {new Urn("bar", "&^%$#@\u8514\u043F")},
+                new Object[] {new URL("http://localhost/test")},
                 new Object[] {new Date(Math.abs(random.nextLong()))},
                 new Object[] {true},
                 new Object[] {Boolean.FALSE},
@@ -83,11 +89,19 @@ public final class PlainBuilderTest {
                     ),
                 },
                 new Object[]{Arrays.asList(new Boolean[]{true, false}), },
+                new Object[]{Arrays.asList(new Boolean[]{}), },
                 new Object[] {
                     Arrays.asList(
-                        new String[]{"some text", "another text;;;", }
+                        new String[]{"some text", "another text;;;\u043F", }
                     ),
                 },
+                new Object[] {
+                    Arrays.asList(
+                        new Object[]{"\u043F\u0440\u0440", 1L, Boolean.TRUE}
+                    ),
+                },
+                new Object[] {Arrays.asList(new String[]{"\u043F\u0440"})},
+                new Object[] {Arrays.asList(new String[]{"\u043F", "\u0440"})},
             }
         );
     }
@@ -101,9 +115,45 @@ public final class PlainBuilderTest {
         final Plain<?> plain = PlainBuilder.fromObject(this.data);
         final String text = plain.toString();
         MatcherAssert.assertThat(
-            (Plain) PlainBuilder.fromText(text),
-            Matchers.equalTo((Plain) plain)
+            ((Plain) PlainBuilder.fromText(text)).value(),
+            Matchers.equalTo(((Plain) plain).value())
         );
+    }
+
+    /**
+     * PlainBuilder throws exception when type is unknown.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsOnIllegalInputType() throws Exception {
+        PlainBuilder.fromObject(new BoutMocker().mock());
+    }
+
+    /**
+     * PlainBuilder throws exception on NULL input.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsOnNullInput() throws Exception {
+        PlainBuilder.fromObject(null);
+    }
+
+    /**
+     * PlainBuilder throws exception when text is invalid.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsOnIllegalInputText() throws Exception {
+        PlainBuilder.fromText("---");
+    }
+
+    /**
+     * PlainBuilder throws exception when text is empty.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsOnEmptyInputText() throws Exception {
+        PlainBuilder.fromText("");
     }
 
 }

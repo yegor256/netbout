@@ -25,44 +25,148 @@
  * SUCH DAMAGE.
  */
 
-#holder {
-    margin-top: 2em;
-    margin-bottom: 2em;
-}
-
-    #titles{
-    }
-
-        #titles li{
-            display: inline;
-            margin-right: 1em;
-        }
-
-#stage{
-    border: 1px solid gray;
-    min-height: 3em;
-    padding: 1em;
-    font-size: 0.8em;
-    background-color: #ddd;
-}
-
-#post {
-    margin-bottom: 2em;
-}
-
-.message {
-    border-top: 1px dotted gray;
-    padding-top: 1em;
-    margin-bottom: 1em;
+/* header with title */
+#top1 {
+    width: 70em;
     position: relative;
 }
 
-    .message header {
-        position: relative;
-        height: 60px;
+    h1 span.num {
+        font-size: 1.4em;
+        margin-right: 0.3em;
     }
 
-        .message header img {
-            height: 50px;
-            margin-right: 1em;
+/* header with participants and options */
+#top2 {
+    position: relative;
+}
+
+    /* invite sector */
+    #invite-aside {
+        position: absolute;
+        top: 0;
+        right: 0;
+        text-align: right;
+        background-color: white;
+        z-index: 10;
+    }
+
+        #invite-aside input {
+            background-color: white;
         }
+
+        #invite-aside ul {
+            padding: 1em;
+            border: 0.071em solid #bfbcc1;
+            margin-left: 0.5em;
+        }
+
+            #invite-aside ul li {
+                list-style: none;
+                margin-bottom: 0.3em;
+            }
+
+                #invite-aside ul li a {
+                    vertical-align: middle;
+                }
+
+                #invite-aside ul li img {
+                    vertical-align: middle;
+                    margin-left: 0.5em;
+                    height: 2.6em;
+                    width: 2.6em;
+                    box-shadow: 0.1em 0.1em 0.1em gray;
+                    -moz-box-shadow: 0.1em 0.1em 0.1em gray;
+                    -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
+                    -o-box-shadow: 0.1em 0.1em 0.1em gray;
+                }
+
+    /* options below invite sector */
+    #options {
+        position: absolute;
+        top: 4em;
+        right: 0;
+        text-align: right;
+        background-color: white;
+        z-index: 5;
+    }
+
+        #options span {
+            font-size: 1.4em;
+        }
+
+/* titles of the stages */
+#titles {
+    margin-top: 2em;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    /* one title of a stage */
+    #titles li {
+        display: inline;
+        margin-right: 1em;
+    }
+
+        /* active title of a stage */
+        #titles li.active {
+            font-weight: bold;
+        }
+
+/* stage itself */
+#stage {
+    min-height: 3em;
+    margin-top: 2em;
+    padding: 1em;
+    background-color: #f3f3f1;
+    border: 0.1em solid #e4e5e3;
+    box-shadow: 0 0.1em 0.1em #e4e5e3;
+}
+
+/* form to post a new message */
+#post {
+    margin-bottom: 2em;
+    margin-top: 2em;
+}
+
+    #post textarea {
+        width: 62.29em; /* multiply by 1.4 = 90em - (1.4 * 2) = 87.2em */
+    }
+
+/* one message */
+.message {
+    margin-top: 4em;
+    position: relative;
+    min-height: 6em;
+}
+
+    .message .left {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .message .left img {
+        height: 5em;
+        width: 5em;
+        box-shadow: 0.1em 0.1em 0.1em gray;
+        -moz-box-shadow: 0.1em 0.1em 0.1em gray;
+        -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
+        -o-box-shadow: 0.1em 0.1em 0.1em gray;
+    }
+
+    .message .right {
+        margin-left: 7em;
+        position: relative;
+    }
+
+        .message .right .meta {
+            font-size: 1.4em;
+            color: gray;
+        }
+
+        .message .right .text {
+            white-space: pre-line;
+            font-size: 1.4em;
+        }
+

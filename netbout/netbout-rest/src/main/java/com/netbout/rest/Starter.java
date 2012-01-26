@@ -26,14 +26,16 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
+import com.netbout.spi.Urn;
+import com.netbout.utils.Promoter;
 import com.ymock.util.Logger;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.ContextResolver;
@@ -55,11 +57,13 @@ public final class Starter implements ContextResolver<Starter> {
      */
     public Starter(@Context final ServletContext context) {
         final long start = System.currentTimeMillis();
-        this.start(context);
+        final Hub hub = new DefaultHub(new DefaultBus());
+        this.start(hub);
+        context.setAttribute("com.netbout.rest.HUB", hub);
         Logger.info(
             this,
-            "#Starter(%s): done in %dms",
-            context.getClass().getName(),
+            "#Starter(%[type]s): done in %dms",
+            context,
             System.currentTimeMillis() - start
         );
     }
@@ -74,34 +78,61 @@ public final class Starter implements ContextResolver<Starter> {
 
     /**
      * Start all.
-     * @param context Servlet context
+     * @param hub The hub to work with
      */
-    private void start(@Context final ServletContext context) {
-        final Bus bus = new DefaultBus();
-        final Hub hub = new DefaultHub(bus);
-        context.setAttribute("com.netbout.rest.HUB", hub);
-        context.setAttribute("com.netbout.rest.BUS", bus);
-        final String uname = "netbout";
+    private void start(final Hub hub) {
+        final Promoter promoter = new Promoter(hub);
+        final Identity persister = this.persister(hub, promoter);
+        final List<Urn> helpers = hub.make("get-all-helpers")
+            .synchronously()
+            .asDefault(new ArrayList<Urn>())
+            .exec();
+        for (Urn name : helpers) {
+            if (name.equals(persister.name())) {
+                continue;
+            }
+            final URL url = hub.make("get-helper-url")
+                .synchronously()
+                .arg(name)
+                .exec();
+            try {
+                promoter.promote(persister.friend(name), url);
+            } catch (com.netbout.spi.UnreachableUrnException ex) {
+                Logger.error(
+                    this,
+                    "#start(): failed to create '%s' identity:\n%[exception]s",
+                    name,
+                    ex
+                );
+            }
+        }
+    }
+
+    /**
+     * Create persister's identity.
+     * @param hub The hub
+     * @param promoter The promoter
+     * @return The persister
+     */
+    private Identity persister(final Hub hub, final Promoter promoter) {
+        final Identity persister;
         try {
-            final Identity idb = hub.user(uname).identity("nb:db");
-            hub.promote(idb, new CpaHelper(idb, "com.netbout.db"));
-            idb.setPhoto(new URL("http://img.netbout.com/db.png"));
-            final Identity ihh = hub.user(uname).identity("nb:hh");
-            ihh.setPhoto(new URL("http://img.netbout.com/hh.png"));
-            final CpaHelper hhelper = new CpaHelper(ihh, "com.netbout.hub.hh");
-            hhelper.contextualize(hub);
-            hub.promote(ihh, hhelper);
-            final Identity iemail = hub.user(uname).identity("nb:email");
-            iemail.setPhoto(new URL("http://img.netbout.com/email.png"));
-            hub.promote(
-                iemail,
-                new CpaHelper(iemail, "com.netbout.notifiers.email")
+            persister = hub.identity(new Urn("netbout", "db"));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalStateException(
+                "Failed to create starter's identity",
+                ex
             );
-        } catch (com.netbout.spi.UnreachableIdentityException ex) {
-            throw new IllegalStateException(ex);
+        }
+        try {
+            promoter.promote(
+                persister,
+                new URL("file", "", "com.netbout.db")
+            );
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
+        return persister;
     }
 
 }

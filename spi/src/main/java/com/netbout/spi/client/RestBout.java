@@ -33,11 +33,15 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * The bout.
@@ -45,6 +49,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class RestBout implements Bout {
 
     /**
@@ -72,6 +77,25 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public int compareTo(final Bout bout) {
+        final String query = "(equal $pos 0)";
+        final List<Message> mine = this.messages(query);
+        final List<Message> his = bout.messages(query);
+        int result;
+        if (mine.isEmpty()) {
+            result = -1;
+        } else if (his.isEmpty()) {
+            result = 1;
+        } else {
+            result = mine.get(0).date().compareTo(his.get(0).date());
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long number() {
         final String num = this.client
             .get("reading bout number")
@@ -80,6 +104,24 @@ final class RestBout implements Bout {
             .xpath("/page/bout/number/text()")
             .get(0);
         return Long.valueOf(num);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date date() {
+        final String date = this.client
+            .get("reading bout creation date")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/bout/date")
+            .xpath("/page/bout/date/text()")
+            .get(0);
+        return ISODateTimeFormat
+            .dateTime()
+            .withZone(DateTimeZone.UTC)
+            .parseDateTime(date)
+            .toDate();
     }
 
     /**
@@ -121,7 +163,9 @@ final class RestBout implements Bout {
             .xpath("/page/bout/participants/participant/identity/text()");
         final List<Participant> dudes = new ArrayList<Participant>();
         for (String name : names) {
-            dudes.add(new RestParticipant(this.client.copy(), name));
+            dudes.add(
+                new RestParticipant(this.client.copy(), Urn.create(name))
+            );
         }
         return dudes;
     }
@@ -131,9 +175,9 @@ final class RestBout implements Bout {
      */
     @Override
     public Participant invite(final Identity identity) {
-        final String name = identity.name();
+        final Urn name = identity.name();
         final List<String> hrefs = this.client
-            .queryParam("mask", name)
+            .queryParam("mask", name.toString())
             .get(String.format("reading suggestions for '%s'", name))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/mask[.='%s']", name))
@@ -148,7 +192,7 @@ final class RestBout implements Bout {
             throw new IllegalStateException(
                 String.format(
                     // @checkstyle LineLength (1 line)
-                    "Can't invite '%s' to the bout because Netbout doesn't suggest his/her identity",
+                    "Can't invite '%s' to the bout because Netbout doesn't suggest any identities by this keyword",
                     name
                 )
             );
@@ -158,7 +202,7 @@ final class RestBout implements Bout {
             .get(String.format("inviting '%s' to the bout", name))
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("Participant-name");
-        return new RestParticipant(this.client.copy(), participant);
+        return new RestParticipant(this.client.copy(), Urn.create(participant));
     }
 
     /**
@@ -167,14 +211,22 @@ final class RestBout implements Bout {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
-        final List<String> nums = this.client
-            .get("reading numbers of bout messages")
+        final RestResponse response = this.client
+            .queryParam(RestSession.QUERY_PARAM, query)
+            .get("reading numbers of bout messages");
+        final List<String> nums = response
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/messages")
-            .xpath("/page/bout/messages/message/number");
+            .xpath("/page/bout/messages/message/number/text()");
         final List<Message> msgs = new ArrayList<Message>();
         for (String num : nums) {
-            msgs.add(new RestMessage(this.client.copy(), Long.valueOf(num)));
+            msgs.add(
+                new XmlMessage(
+                    this.client.copy(),
+                    response,
+                    Long.valueOf(num)
+                )
+            );
         }
         return msgs;
     }
@@ -191,24 +243,28 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public void confirm(final boolean status) {
-        if (status) {
-            this.client
-                .get("reading 'join' rel link")
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .assertXPath("/page/links/link[@rel='join']")
-                .rel("join")
-                .get("joining the bout")
-                .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
-        } else {
-            this.client
-                .get("reading 'leave' rel link")
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .assertXPath("/page/links/link[@rel='leave']")
-                .rel("leave")
-                .get("leaving the bout")
-                .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
-        }
+    public void confirm() {
+        this.client
+            .get("reading 'join' rel link")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/links/link[@rel='join']")
+            .rel("join")
+            .get("joining the bout")
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void leave() {
+        this.client
+            .get("reading 'leave' rel link")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/links/link[@rel='leave']")
+            .rel("leave")
+            .get("leaving the bout")
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
     /**

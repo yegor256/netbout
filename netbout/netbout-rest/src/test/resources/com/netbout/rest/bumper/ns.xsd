@@ -1,0 +1,7 @@
+<?xml version='1.0'?>
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'
+    xmlns:b='urn:test:bumper:ns' elementFormDefault='qualified'
+    targetNamespace='urn:test:bumper:ns'>
+    <xs:include schemaLocation='${home}bumper/child.xsd' />
+    <xs:element name='bump' type='b:bump'/>
+</xs:schema>

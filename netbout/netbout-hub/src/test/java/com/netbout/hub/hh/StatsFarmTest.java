@@ -30,12 +30,12 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.DefaultHub;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.xmlmatchers.XmlMatchers;
-import org.xmlmatchers.namespace.SimpleNamespaceContext;
 
 /**
  * Test case of {@link StatsFarm}.
@@ -50,16 +50,21 @@ public final class StatsFarmTest {
      */
     @Test
     public void rendersStageXml() throws Exception {
-        final StatsFarm farm = new StatsFarm();
         final Bus bus = new BusMocker().mock();
-        farm.context(new DefaultHub(bus));
-        final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn("some-name").when(identity).name();
+        final StatsFarm farm = new StatsFarm();
+        farm.addStats(new DefaultHub(bus));
+        final Identity identity = new IdentityMocker().mock();
         farm.init(identity);
-        final String xml = farm.renderStageXml(1L, identity.name(), "");
+        final String xml = farm.renderStageXml(
+            1L, identity.name(), identity.name(), ""
+        );
         MatcherAssert.assertThat(
             XhtmlConverter.the(xml),
-            XmlMatchers.hasXPath("/catalog/identities")
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("/data/stats/stat")
+                // XhtmlMatchers.hasXPath("//stat[xsi:type='hub']/identities"),
+                // XhtmlMatchers.hasXPath("//stat[xsi:type='manager']/bouts")
+            )
         );
     }
 
@@ -70,17 +75,12 @@ public final class StatsFarmTest {
     @Test
     public void testRenderingOfXslStylesheet() throws Exception {
         final StatsFarm farm = new StatsFarm();
-        final Identity identity = Mockito.mock(Identity.class);
-        Mockito.doReturn("stage-1").when(identity).name();
+        final Identity identity = new IdentityMocker().mock();
         farm.init(identity);
         final String xsl = farm.renderStageXsl(1L, identity.name());
         MatcherAssert.assertThat(
             XhtmlConverter.the(xsl),
-            XmlMatchers.hasXPath(
-                "/xsl:stylesheet",
-                new SimpleNamespaceContext()
-                    .withBinding("xsl", "http://www.w3.org/1999/XSL/Transform")
-            )
+            XhtmlMatchers.hasXPath("/xsl:stylesheet")
         );
     }
 
