@@ -36,7 +36,6 @@ import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import com.netbout.utils.Cryptor;
 import com.netbout.utils.TextUtils;
-import com.ymock.util.Logger;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.core.UriBuilder;
