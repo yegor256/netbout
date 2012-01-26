@@ -33,6 +33,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 
@@ -43,7 +45,7 @@ import org.apache.commons.lang.StringUtils;
  * @version $Id$
  * @see <a href="http://tools.ietf.org/html/rfc2141">RFC2141</a>
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.UseConcurrentHashMap" })
 public final class Urn implements Comparable {
 
     /**
@@ -66,7 +68,7 @@ public final class Urn implements Comparable {
      */
     private static final String REGEX =
         // @checkstyle LineLength (1 line)
-        "^urn:[a-z]{1,31}(:([\\w,\\-\\+\\*\\.@/]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+=([\\.\\w+\\-\\_]|%[0-9a-fA-F]{2})*(&[a-z]+=([\\.\\w+\\-\\_]|%[0-9a-fA-F]{2})*)*)?\\*?$";
+        "^urn:[a-z]{1,31}(:([\\w,\\-\\+\\*\\.@/]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+(=([a-zA-Z0-9]|%[0-9a-fA-F]{2})*)?(&[a-z]+(=([a-zA-Z0-9]|%[0-9a-fA-F]{2})*)?)*)?\\*?$";
 
     /**
      * The URI.
@@ -265,30 +267,36 @@ public final class Urn implements Comparable {
      * @return The value of it
      */
     public String param(final String name) {
-        final String[] sectors = StringUtils.split(this.toString(), '?');
-        if (sectors.length != 2) {
+        final Map<String, String> params = Urn.demap(this.toString());
+        if (!params.containsKey(name)) {
             throw new IllegalArgumentException(
-                String.format("Query part not found in '%s'", this)
+                String.format(
+                    "Param '%s' not found in '%s', among %s",
+                    name,
+                    this,
+                    params.keySet()
+                )
             );
         }
-        final String[] parts = StringUtils.split(sectors[1], '&');
-        String found = null;
-        for (String part : parts) {
-            final String[] pair = StringUtils.split(part, '=');
-            if (pair[0].equals(name)) {
-                found = pair[1];
-            }
-        }
-        if (found == null) {
-            throw new IllegalArgumentException(
-                String.format("Param '%s' not found in '%s'", name, this)
-            );
-        }
-        try {
-            return URLDecoder.decode(found, CharEncoding.UTF_8);
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return params.get(name);
+    }
+
+    /**
+     * Add query param and return new URN.
+     * @param name Name of parameter
+     * @param value The value of parameter
+     * @return New URN
+     */
+    public Urn param(final String name, final Object value) {
+        final Map<String, String> params = Urn.demap(this.toString());
+        params.put(name, value.toString());
+        return Urn.create(
+            String.format(
+                "%s%s",
+                StringUtils.split(this.toString(), '?')[0],
+                Urn.enmap(params)
+            )
+        );
     }
 
     /**
@@ -324,6 +332,84 @@ public final class Urn implements Comparable {
                 )
             );
         }
+    }
+
+    /**
+     * Decode query part of the URN into Map.
+     * @param urn The URN to demap
+     * @return The map of values
+     */
+    private static Map<String, String> demap(final String urn) {
+        final Map<String, String> map = new HashMap<String, String>();
+        final String[] sectors = StringUtils.split(urn, '?');
+        if (sectors.length == 2) {
+            final String[] parts = StringUtils.split(sectors[1], '&');
+            for (String part : parts) {
+                final String[] pair = StringUtils.split(part, '=');
+                String value;
+                if (pair.length == 2) {
+                    try {
+                        value = URLDecoder.decode(pair[1], CharEncoding.UTF_8);
+                    } catch (java.io.UnsupportedEncodingException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                } else {
+                    value = "";
+                }
+                map.put(pair[0], value);
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Encode map of params into query part of URN.
+     * @param params Map of params to convert to query suffix
+     * @return The suffix of URN, starting with "?"
+     */
+    private static String enmap(final Map<String, String> params) {
+        final StringBuilder query = new StringBuilder();
+        if (!params.isEmpty()) {
+            query.append("?");
+            boolean first = true;
+            for (Map.Entry<String, String> param : params.entrySet()) {
+                if (!first) {
+                    query.append("&");
+                }
+                query.append(param.getKey());
+                if (!param.getValue().isEmpty()) {
+                    query.append("=").append(Urn.encode(param.getValue()));
+                }
+                first = false;
+            }
+        }
+        return query.toString();
+    }
+
+    /**
+     * Perform proper URL encoding with the text.
+     * @param text The text to encode
+     * @return The encoded text
+     */
+    private static String encode(final String text) {
+        final StringBuilder encoded = new StringBuilder();
+        byte[] bytes;
+        try {
+            bytes = text.getBytes(CharEncoding.UTF_8);
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalStateException(ex);
+        }
+        for (byte chr : bytes) {
+            // @checkstyle BooleanExpressionComplexity (4 lines)
+            if ((chr >= 'A' && chr <= 'Z')
+                || (chr >= '0' && chr <= '9')
+                || (chr >= 'a' && chr <= 'z')) {
+                encoded.append((char) chr);
+            } else {
+                encoded.append("%").append(String.format("%X", chr));
+            }
+        }
+        return encoded.toString();
     }
 
 }

@@ -74,12 +74,29 @@ public final class JaxbPrinter {
      * @return The document
      */
     public String print(final String suffix) {
+        final Urn namespace = this.namespace(this.object.getClass());
+        if (namespace.isEmpty() && !suffix.isEmpty()) {
+            throw new IllegalArgumentException(
+                Logger.format(
+                    "Can't add '%s' suffix to empty namespace document",
+                    suffix
+                )
+            );
+        }
+        return this.print(
+            Urn.create(String.format("%s%s", namespace, suffix))
+        );
+    }
+
+    /**
+     * Print the XML document, changing the namespace.
+     * @param required New namespace to set there
+     * @return The document
+     */
+    public String print(final Urn required) {
         final Document dom = this.marshall();
         final Urn namespace = this.namespace(this.object.getClass());
         if (!namespace.isEmpty()) {
-            final Urn required = Urn.create(
-                String.format("%s%s", namespace, suffix)
-            );
             if (!namespace.equals(required)) {
                 DomParser.rename(
                     dom,
