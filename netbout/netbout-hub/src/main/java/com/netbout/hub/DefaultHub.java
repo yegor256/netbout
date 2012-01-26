@@ -204,24 +204,26 @@ public final class DefaultHub implements Hub {
     @Override
     public Set<Identity> findByKeyword(final String keyword) {
         final Set<Identity> found = new HashSet<Identity>();
-        final List<Urn> names = this
-            .make("find-identities-by-keyword")
-            .synchronously()
-            .arg(keyword)
-            .asDefault(new ArrayList<Urn>())
-            .exec();
-        for (Urn name : names) {
-            try {
-                found.add(this.identity(name));
-            } catch (com.netbout.spi.UnreachableUrnException ex) {
-                Logger.warn(
-                    this,
-                    // @checkstyle LineLength (1 line)
-                    "#findByKeyword('%s'): some helper returned '%s' identity that is not reachable:\n%[exception]s",
-                    keyword,
-                    name,
-                    ex
-                );
+        if (!keyword.isEmpty()) {
+            final List<Urn> names = this
+                .make("find-identities-by-keyword")
+                .synchronously()
+                .arg(keyword)
+                .asDefault(new ArrayList<Urn>())
+                .exec();
+            for (Urn name : names) {
+                try {
+                    found.add(this.identity(name));
+                } catch (com.netbout.spi.UnreachableUrnException ex) {
+                    Logger.warn(
+                        this,
+                        // @checkstyle LineLength (1 line)
+                        "#findByKeyword('%s'): some helper returned '%s' identity that is not reachable:\n%[exception]s",
+                        keyword,
+                        name,
+                        ex
+                    );
+                }
             }
         }
         return found;

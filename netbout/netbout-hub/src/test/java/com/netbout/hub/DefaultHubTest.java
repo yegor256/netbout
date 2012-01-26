@@ -192,6 +192,18 @@ public final class DefaultHubTest {
     }
 
     /**
+     * DefaultHub can ignore empty queries for identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void ignoresEmptyRequestsForIdentities() throws Exception {
+        MatcherAssert.assertThat(
+            new DefaultHub(new BusMocker().mock()).findByKeyword(""),
+            Matchers.hasSize(0)
+        );
+    }
+
+    /**
      * DefaultHub can invite a helper and then kick him off.
      * @throws Exception If there is some problem inside
      */
