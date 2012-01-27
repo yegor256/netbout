@@ -253,15 +253,17 @@ public final class UrnTest {
      */
     @Test
     public void addAndRetrievesParamsByName() throws Exception {
-        final Urn urn = new Urn("urn:test:x?bb").param("bar", "\u8514 value?");
+        final String name = "crap";
+        final String value = "@!$#^\u0433iu**76\u0945";
+        final Urn urn = new Urn("urn:test:x?bb")
+            .param("bar", "\u8514 value?")
+            .param(name, value);
         MatcherAssert.assertThat(
             urn.toString(),
             Matchers.containsString("bar=%E8%94%94%20value%3F")
         );
-        MatcherAssert.assertThat(
-            urn.param("bb"),
-            Matchers.equalTo("")
-        );
+        MatcherAssert.assertThat(urn.param("bb"), Matchers.equalTo(""));
+        MatcherAssert.assertThat(urn.param(name), Matchers.equalTo(value));
     }
 
 }

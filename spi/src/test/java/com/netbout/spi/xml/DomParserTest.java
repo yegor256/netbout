@@ -98,7 +98,7 @@ public final class DomParserTest {
         final String schema =
             // @checkstyle StringLiteralsConcatenation (10 lines)
             "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'"
-            + " xmlns:p='foo' targetNamespace='foo'"
+            + " xmlns:p='urn:test:foo' targetNamespace='urn:test:foo'"
             + " elementFormDefault='qualified'>"
             + "<xs:element name='root' type='p:main'/>"
             + "<xs:complexType name='main'>"
@@ -118,9 +118,12 @@ public final class DomParserTest {
                 .toString()
         );
         // @checkstyle StringLiteralsConcatenation (4 lines)
-        final String xml = "<root xmlns='foo'"
+        final String xml = "<root xmlns='urn:test:foo?alpha=123'"
             + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
-            + String.format(" xsi:schemaLocation='foo %s'", xsd)
+            + String.format(
+                " xsi:schemaLocation='urn:test:foo?alpha=123 %s'",
+                xsd
+            )
             + "><alpha>xxx</alpha></root>";
         new DomParser(xml).validate();
     }
