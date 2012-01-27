@@ -39,6 +39,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -50,6 +51,12 @@ import org.w3c.dom.NodeList;
  */
 @SuppressWarnings("PMD.DefaultPackage")
 public final class DomParser {
+
+    /**
+     * XML Schema Instance namespace.
+     */
+    private static final String XSI_NAMESPACE =
+        "http://www.w3.org/2001/XMLSchema-instance";
 
     /**
      * The XML content.
@@ -103,7 +110,7 @@ public final class DomParser {
             builder.setErrorHandler(handler);
             try {
                 builder.parse(
-                    IOUtils.toInputStream(this.xml, CharEncoding.UTF_8)
+                    IOUtils.toInputStream(this.clean(), CharEncoding.UTF_8)
                 );
             } catch (java.io.IOException ex) {
                 throw new IllegalStateException(ex);
@@ -154,7 +161,7 @@ public final class DomParser {
         final String namespace = this.parse()
             .getDocumentElement()
             .getNamespaceURI();
-        if (namespace.isEmpty()) {
+        if (namespace == null || namespace.isEmpty()) {
             throw new DomValidationException(
                 "Root element should belong to some namespace"
             );
@@ -272,6 +279,35 @@ public final class DomParser {
             );
         }
         return matches;
+    }
+
+    /**
+     * Convert our XML into a new one, where namespace is cleaned from
+     * a suffix ("?...").
+     * @return Clean version of it
+     * @throws DomValidationException If some problem
+     */
+    private String clean() throws DomValidationException {
+        final Document dom = this.parse();
+        final Urn namespace = this.namespace();
+        if (namespace.hasParams()) {
+            final Element root = dom.getDocumentElement();
+            DomParser.rename(
+                dom,
+                root,
+                namespace.toString(),
+                namespace.pure()
+            );
+            root.setAttributeNS(
+                this.XSI_NAMESPACE,
+                "xsi:schemaLocation",
+                root.getAttributeNS(
+                    this.XSI_NAMESPACE,
+                    "schemaLocation"
+                ).replace(namespace.toString(), namespace.pure().toString())
+            );
+        }
+        return new DomPrinter(dom).print();
     }
 
 }

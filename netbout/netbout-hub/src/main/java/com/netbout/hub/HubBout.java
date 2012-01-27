@@ -423,7 +423,7 @@ public final class HubBout implements Bout {
             }
             final URL url = this.hub.make("resolve-xml-namespace")
                 .synchronously()
-                .arg(namespace)
+                .arg(namespace.pure())
                 .asDefault(def)
                 .exec();
             if (url.equals(def)) {

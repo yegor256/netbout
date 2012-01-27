@@ -158,6 +158,7 @@
     .message .right {
         margin-left: 7em;
         position: relative;
+        overflow-x: auto;
     }
 
         .message .right .meta {

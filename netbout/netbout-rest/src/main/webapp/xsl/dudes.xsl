@@ -83,6 +83,9 @@
                             <xsl:text>$(this).parent().find(".bar").hide();</xsl:text>
                         </xsl:attribute>
                         <img>
+                            <xsl:attribute name="alt">
+                                <xsl:value-of select="alias"/>
+                            </xsl:attribute>
                             <xsl:attribute name="src">
                                 <xsl:value-of select="photo"/>
                             </xsl:attribute>

@@ -51,7 +51,7 @@ import org.junit.Test;
 public final class RexslRestClientTest {
 
     /**
-     * RestSession can return URI of home page.
+     * RexslRestClient can return URI of home page.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -73,7 +73,7 @@ public final class RexslRestClientTest {
     }
 
     /**
-     * RestSession can return URI of home page.
+     * RexslRestClient can return URI of home page.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -96,6 +96,21 @@ public final class RexslRestClientTest {
             .get("just a test")
             .assertXPath("/page/a")
             .assertStatus(HttpURLConnection.HTTP_OK);
+    }
+
+    /**
+     * RexslRestClient can properly encode URI.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void encodesUriWithAllParamsProperly() throws Exception {
+        final URI uri = new RexslRestClient(
+            new TestClientMocker().mock(), "token"
+        ).queryParam("p1", "100% %40").uri();
+        MatcherAssert.assertThat(
+            uri.toString(),
+            Matchers.equalTo("http://localhost/?p1=100%25+%2540&auth=token")
+        );
     }
 
 }

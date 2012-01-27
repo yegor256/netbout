@@ -160,9 +160,9 @@ public final class UrnTest {
             "urn:foo:some%20text%20with%20spaces",
             "urn:a:",
             "urn:a:?alpha=50",
-            "urn:a:?alpha=abc_cde%20%45%4F.me",
+            "urn:a:?alpha=abccde%20%45%4Fme",
             "urn:woquo:ns:pa/procure/BalanceRecord?name=*",
-            "urn:a:?alpha=50&beta=u%20-works-fine",
+            "urn:a:?alpha=50&beta=u%20worksfine",
             "urn:verylongnamespaceid:",
             "urn:a:?alpha=50*",
             "urn:a:b/c/d",
@@ -191,6 +191,7 @@ public final class UrnTest {
             "urn:abc+foo:test-me",
             "urn:test:?abc?",
             "urn:test:?abc=incorrect*value",
+            "urn:test:?abc=invalid-symbols:^%$#&@*()!-in-argument-value",
             "urn:incorrect%20namespace:",
             "urn:verylongnameofanamespaceverylongnameofanamespace:",
             "urn:test:spaces are not allowed here",
@@ -247,14 +248,33 @@ public final class UrnTest {
     }
 
     /**
-     * Urn can retrieve params.
+     * Urn can add and retrieve params.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void retrievesParamsByName() throws Exception {
+    public void addAndRetrievesParamsByName() throws Exception {
+        final String name = "crap";
+        final String value = "@!$#^\u0433iu**76\u0945";
+        final Urn urn = new Urn("urn:test:x?bb")
+            .param("bar", "\u8514 value?")
+            .param(name, value);
         MatcherAssert.assertThat(
-            new Urn("urn:test:x?a=some%20value").param("a"),
-            Matchers.equalTo("some value")
+            urn.toString(),
+            Matchers.containsString("bar=%E8%94%94%20value%3F")
+        );
+        MatcherAssert.assertThat(urn.param("bb"), Matchers.equalTo(""));
+        MatcherAssert.assertThat(urn.param(name), Matchers.equalTo(value));
+    }
+
+    /**
+     * Urn can fetch a pure part (without params) from itself.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void fetchesBodyWithoutParams() throws Exception {
+        MatcherAssert.assertThat(
+            new Urn("urn:test:something?a=9&b=4").pure(),
+            Matchers.equalTo(new Urn("urn:test:something"))
         );
     }
 
