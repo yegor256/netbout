@@ -117,7 +117,7 @@ public final class DomParserTest {
                 .toURL()
                 .toString()
         );
-        // @checkstyle StringLiteralsConcatenation (4 lines)
+        // @checkstyle StringLiteralsConcatenation (7 lines)
         final String xml = "<root xmlns='urn:test:foo?alpha=123'"
             + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
             + String.format(
