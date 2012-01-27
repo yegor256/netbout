@@ -290,14 +290,13 @@ public final class DomParser {
     private String clean() throws DomValidationException {
         final Document dom = this.parse();
         final Urn namespace = this.namespace();
-        final String[] parts = namespace.toString().split("\\?");
-        if (parts.length > 1) {
+        if (namespace.hasParams()) {
             final Element root = dom.getDocumentElement();
             DomParser.rename(
                 dom,
                 root,
                 namespace.toString(),
-                Urn.create(parts[0])
+                namespace.pure()
             );
             root.setAttributeNS(
                 this.XSI_NAMESPACE,
@@ -305,7 +304,7 @@ public final class DomParser {
                 root.getAttributeNS(
                     this.XSI_NAMESPACE,
                     "schemaLocation"
-                ).replace(namespace.toString(), parts[0])
+                ).replace(namespace.toString(), namespace.pure().toString())
             );
         }
         return new DomPrinter(dom).print();
