@@ -300,6 +300,28 @@ public final class Urn implements Comparable {
     }
 
     /**
+     * Get just body of URN, without params.
+     * @return Clean version of it
+     */
+    public Urn pure() {
+        String urn = this.toString();
+        if (this.hasParams()) {
+            // @checkstyle MultipleStringLiterals (1 line)
+            urn = urn.substring(0, urn.indexOf('?'));
+        }
+        return Urn.create(urn);
+    }
+
+    /**
+     * Whether this URN has params?
+     * @return Has them?
+     */
+    public boolean hasParams() {
+        // @checkstyle MultipleStringLiterals (1 line)
+        return this.toString().contains("?");
+    }
+
+    /**
      * Get segment by position.
      * @param pos Its position
      * @return The segment

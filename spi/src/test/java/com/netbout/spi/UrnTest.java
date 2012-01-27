@@ -266,4 +266,16 @@ public final class UrnTest {
         MatcherAssert.assertThat(urn.param(name), Matchers.equalTo(value));
     }
 
+    /**
+     * Urn can fetch a pure part (without params) from itself.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void fetchesBodyWithoutParams() throws Exception {
+        MatcherAssert.assertThat(
+            new Urn("urn:test:something?a=9&b=4").pure(),
+            Matchers.equalTo(new Urn("urn:test:something"))
+        );
+    }
+
 }

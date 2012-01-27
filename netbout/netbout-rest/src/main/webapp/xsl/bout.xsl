@@ -210,6 +210,11 @@
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="@href"/>
                                 </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>click to invite "</xsl:text>
+                                    <xsl:value-of select="alias"/>
+                                    <xsl:text>" to this bout</xsl:text>
+                                </xsl:attribute>
                                 <xsl:call-template name="alias">
                                     <xsl:with-param name="alias" select="alias" />
                                 </xsl:call-template>
@@ -217,6 +222,9 @@
                             <img>
                                 <xsl:attribute name="src">
                                     <xsl:value-of select="photo"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="alt">
+                                    <xsl:value-of select="alias"/>
                                 </xsl:attribute>
                             </img>
                         </li>
