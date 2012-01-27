@@ -77,7 +77,7 @@ final class RexslRestClient implements RestClient {
     public RestClient queryParam(final String name, final String value) {
         final URI uri = UriBuilder
             .fromUri(this.client.uri())
-            .queryParam(name, value)
+            .queryParam(name, value.replace("%", "%25"))
             .build();
         return new RexslRestClient(
             RestTester.start(uri),

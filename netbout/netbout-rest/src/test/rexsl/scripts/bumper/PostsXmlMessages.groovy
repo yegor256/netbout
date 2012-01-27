@@ -51,9 +51,9 @@ RestTester.start(RestUriBuilder.from(bout).path('/s'))
     .post(
         'post message to the bumper',
         'data=' + URLEncoder.encode(
-            """<bump xmlns='urn:test:bumper:ns'
+            """<bump xmlns='urn:test:bumper:ns?bar=%E8%94%94%20value%3F'
                 xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-                xsi:schemaLocation='urn:test:bumper:ns ${xsd}' >
+                xsi:schemaLocation='urn:test:bumper:ns?bar=%E8%94%94%20value%3F ${xsd}' >
                 <text>hello, dude!</text>
                 <text>hello again!</text>
             </bump>"""
