@@ -58,23 +58,10 @@ public final class NbRs extends AbstractRs {
     @GET
     public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
-        if (iname == null || secret == null) {
-            throw new LoginRequiredException(
-                this,
-                "'identity' and 'secret' query params are mandatory"
-            );
-        }
-        final Identity identity = this.authenticate(iname, secret);
-        Logger.debug(
-            this,
-            "#auth('%s', '%s'): authenticated",
-            iname,
-            secret
-        );
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
-            .authenticated(identity)
+            .authenticated(this.authenticate(iname, secret))
             .build();
     }
 

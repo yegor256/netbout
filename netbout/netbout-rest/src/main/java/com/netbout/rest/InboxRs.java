@@ -68,9 +68,9 @@ public final class InboxRs extends AbstractRs {
      * @param keyword The query
      */
     @QueryParam(RestSession.QUERY_PARAM)
-    public void setQuery(final String keyword) {
+    public void setQuery(final Deee keyword) {
         if (keyword != null) {
-            this.query = keyword;
+            this.query = keyword.txt();
         }
     }
 
@@ -81,7 +81,7 @@ public final class InboxRs extends AbstractRs {
      */
     @GET
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Response inbox(@QueryParam(InboxRs.PERIOD_PARAM) final String view) {
+    public Response inbox(@QueryParam(InboxRs.PERIOD_PARAM) final Deee view) {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
         final Period period = Period.valueOf(view);

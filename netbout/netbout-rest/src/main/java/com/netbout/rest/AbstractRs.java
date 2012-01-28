@@ -241,9 +241,9 @@ public abstract class AbstractRs implements Resource {
      * @param auth The auth code to set
      */
     @QueryParam(RestSession.AUTH_PARAM)
-    public final void setAuth(final String auth) {
+    public final void setAuth(final Deee auth) {
         if (auth != null) {
-            this.icookie = auth;
+            this.icookie = auth.txt();
             this.addAuthToURIs = true;
             Logger.debug(
                 this,
@@ -347,7 +347,7 @@ public abstract class AbstractRs implements Resource {
         this.setHttpServletRequest(res.httpServletRequest());
         this.setMessage(res.message());
         if (((AbstractRs) res).addAuthToURIs) {
-            this.setAuth(((AbstractRs) res).icookie);
+            this.setAuth(Deee.plain(((AbstractRs) res).icookie));
         } else {
             this.setCookie(((AbstractRs) res).icookie);
         }

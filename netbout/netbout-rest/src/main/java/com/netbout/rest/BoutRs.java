@@ -116,9 +116,9 @@ public final class BoutRs extends AbstractRs {
      * @param name The name of it
      */
     @QueryParam(BoutRs.PERIOD_PARAM)
-    public void setPeriod(final String name) {
+    public void setPeriod(final Deee name) {
         if (name != null) {
-            this.view = name;
+            this.view = name.txt();
         }
     }
 
@@ -127,9 +127,9 @@ public final class BoutRs extends AbstractRs {
      * @param name The name of it
      */
     @QueryParam(BoutRs.STAGE_PARAM)
-    public void setStage(final Urn name) {
+    public void setStage(final Deee name) {
         if (name != null) {
-            this.coords.setStage(name);
+            this.coords.setStage(Urn.create(name.txt()));
         }
     }
 
@@ -138,9 +138,9 @@ public final class BoutRs extends AbstractRs {
      * @param place The place name
      */
     @QueryParam(BoutRs.PLACE_PARAM)
-    public void setPlace(final String place) {
+    public void setPlace(final Deee place) {
         if (place != null) {
-            this.coords.setPlace(place);
+            this.coords.setPlace(place.txt());
         }
     }
 
@@ -149,9 +149,9 @@ public final class BoutRs extends AbstractRs {
      * @param keyword The query
      */
     @QueryParam(RestSession.QUERY_PARAM)
-    public void setQuery(final String keyword) {
+    public void setQuery(final Deee keyword) {
         if (keyword != null) {
-            this.query = keyword;
+            this.query = keyword.txt();
         }
     }
 
@@ -160,8 +160,8 @@ public final class BoutRs extends AbstractRs {
      * @param msk The mask
      */
     @QueryParam("mask")
-    public void setMask(final String msk) {
-        this.mask = msk;
+    public void setMask(final Deee msk) {
+        this.mask = msk.txt();
     }
 
     /**
@@ -269,7 +269,7 @@ public final class BoutRs extends AbstractRs {
      */
     @Path("/i")
     @GET
-    public Response invite(@QueryParam("name") final Urn name) {
+    public Response invite(@QueryParam("name") final Deee name) {
         final Bout bout = this.bout();
         if (name == null) {
             throw new ForwardException(
@@ -279,7 +279,7 @@ public final class BoutRs extends AbstractRs {
             );
         }
         try {
-            bout.invite(this.identity().friend(name));
+            bout.invite(this.identity().friend(Urn.create(name.txt())));
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new ForwardException(this, this.self(""), ex);
         } catch (com.netbout.spi.DuplicateInvitationException ex) {
@@ -336,10 +336,10 @@ public final class BoutRs extends AbstractRs {
      */
     @Path("/kickoff")
     @GET
-    public Response kickoff(@QueryParam("name") final String name) {
+    public Response kickoff(@QueryParam("name") final Deee name) {
         Identity friend;
         try {
-            friend = this.identity().friend(Urn.create(name));
+            friend = this.identity().friend(Urn.create(name.txt()));
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new ForwardException(this, this.base(), ex);
         }

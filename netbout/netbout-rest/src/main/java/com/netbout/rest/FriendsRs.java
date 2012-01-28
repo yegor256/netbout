@@ -54,7 +54,7 @@ public final class FriendsRs extends AbstractRs {
      */
     @GET
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Response list(@QueryParam("mask") final String mask) {
+    public Response list(@QueryParam("mask") final Deee mask) {
         if (mask == null) {
             throw new ForwardException(
                 this,
@@ -63,14 +63,14 @@ public final class FriendsRs extends AbstractRs {
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();
-        for (Identity identity : this.identity().friends(mask)) {
+        for (Identity identity : this.identity().friends(mask.txt())) {
             invitees.add(new Invitee(identity, this.base()));
         }
         return new PageBuilder()
             .schema("")
             .build(AbstractPage.class)
             .init(this)
-            .append(new JaxbBundle("mask", mask))
+            .append(new JaxbBundle("mask", mask.txt()))
             .append(JaxbGroup.build(invitees, "invitees"))
             .authenticated(this.identity())
             .build();

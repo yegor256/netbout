@@ -56,12 +56,12 @@ public final class EmailFarm implements IdentityAware {
     /**
      * Namespace ID.
      */
-    private static final String NID = "email";
+    public static final String NID = "email";
 
     /**
      * Email validating regex.
      */
-    private static final String EMAIL_REGEX =
+    public static final String EMAIL_REGEX =
         // @checkstyle LineLength (1 line)
         "[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})";
 

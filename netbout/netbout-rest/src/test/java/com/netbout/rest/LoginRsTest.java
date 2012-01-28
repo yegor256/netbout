@@ -63,7 +63,7 @@ public final class LoginRsTest {
     @Test
     public void rendersLoginPage() throws Exception {
         final LoginRs rest = new ResourceMocker().mock(LoginRs.class);
-        rest.setAuth("some-incorrect-auth-code");
+        rest.setAuth(Deee.plain("some-incorrect-auth-code"));
         final Response response = rest.login();
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
@@ -98,7 +98,10 @@ public final class LoginRsTest {
         final String code = "some-auth-code";
         PowerMockito.doReturn(remote).when(spy, "remote", Mockito.eq(code));
         MatcherAssert.assertThat(
-            ResourceMocker.the((Page) spy.fbauth(code).getEntity(), rest),
+            ResourceMocker.the(
+                (Page) spy.fbauth(Deee.plain(code)).getEntity(),
+                rest
+            ),
             Matchers.allOf(
                 XmlMatchers.hasXPath(
                     String.format("/page/identity[name='%s']", name)

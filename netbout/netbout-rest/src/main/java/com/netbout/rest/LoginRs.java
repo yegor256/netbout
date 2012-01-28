@@ -90,8 +90,8 @@ public final class LoginRs extends AbstractRs {
      */
     @GET
     @Path("/fb")
-    public Response fbauth(@QueryParam("code") final String code) {
-        final RemoteIdentity remote = this.remote(code);
+    public Response fbauth(@QueryParam("code") final Deee code) {
+        final RemoteIdentity remote = this.remote(code.txt());
         this.logoff();
         Identity identity;
         try {
