@@ -28,7 +28,6 @@ package com.netbout.rest.auth;
 
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
-import com.netbout.rest.Deee;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
@@ -67,31 +66,32 @@ public final class FacebookRs extends AbstractRs {
      * @param iname Name of identity
      * @param secret The secret code
      * @return The JAX-RS response
+     * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
-    public Response auth(@QueryParam("identity") final Deee iname,
-        @QueryParam("secret") final Deee secret) {
+    @Path("/")
+    public Response auth(@QueryParam("identity") final Urn iname,
+        @QueryParam("secret") final String secret) {
         if (iname == null || secret == null) {
             throw new LoginRequiredException(
                 this,
                 "'identity' and 'secret' query params are mandatory"
             );
         }
-        final Urn person = Urn.create(iname.txt());
-        if (!this.NAMESPACE.equals(person.nid())) {
+        if (!this.NAMESPACE.equals(iname.nid())) {
             throw new LoginRequiredException(
                 this,
                 String.format(
                     "NID '%s' is not correct in '%s', '%s' expected",
-                    person.nid(),
-                    person,
+                    iname.nid(),
+                    iname,
                     this.NAMESPACE
                 )
             );
         }
         Identity identity;
         try {
-            identity = this.authenticate(secret.txt());
+            identity = this.authenticate(secret);
         } catch (IOException ex) {
             Logger.warn(
                 this,

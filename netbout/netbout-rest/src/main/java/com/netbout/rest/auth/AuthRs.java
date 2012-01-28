@@ -28,7 +28,6 @@ package com.netbout.rest.auth;
 
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
-import com.netbout.rest.Deee;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
@@ -57,11 +56,13 @@ public final class AuthRs extends AbstractRs {
      * @param secret Secret word
      * @param path Where to go next
      * @return The JAX-RS response
+     * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
-    public Response auth(@QueryParam("identity") final Deee iname,
-        @QueryParam("secret") final Deee secret,
-        @QueryParam("goto") @DefaultValue("/") final Deee path) {
+    @Path("/")
+    public Response auth(@QueryParam("identity") final Urn iname,
+        @QueryParam("secret") final String secret,
+        @QueryParam("goto") @DefaultValue("/") final String path) {
         if (iname == null || secret == null) {
             throw new LoginRequiredException(
                 this,
@@ -69,16 +70,13 @@ public final class AuthRs extends AbstractRs {
             );
         }
         this.logoff();
-        final Identity identity = this.authenticate(
-            Urn.create(iname.txt()), 
-            secret.txt()
-        );
+        final Identity identity = this.authenticate(iname, secret);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
-            .location(this.base().path(path.txt()).build())
+            .location(this.base().path(path).build())
             .header(RestSession.AUTH_HEADER, new Cryptor().encrypt(identity))
             .build();
     }

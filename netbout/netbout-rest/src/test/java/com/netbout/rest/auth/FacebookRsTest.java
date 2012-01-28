@@ -28,7 +28,6 @@ package com.netbout.rest.auth;
 
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
-import com.netbout.rest.Deee;
 import com.netbout.rest.ResourceMocker;
 import com.netbout.rest.UriInfoMocker;
 import com.netbout.spi.Identity;
@@ -107,7 +106,7 @@ public final class FacebookRsTest {
         Mockito.doReturn(fbid).when(fbuser).getId();
         Mockito.doReturn("John Doe").when(fbuser).getName();
         PowerMockito.doReturn(fbuser).when(spy, "fbUser", "abc|cde");
-        final Response response = spy.auth(Deee.plain(iname), Deee.plain(code));
+        final Response response = spy.auth(iname, code);
         MatcherAssert.assertThat(
             response.getStatus(),
             Matchers.equalTo(HttpURLConnection.HTTP_OK)

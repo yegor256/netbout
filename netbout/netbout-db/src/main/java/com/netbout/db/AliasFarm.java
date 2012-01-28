@@ -110,13 +110,22 @@ public final class AliasFarm {
         } finally {
             conn.close();
         }
-        Logger.debug(
-            this,
-            "#getAliasesOfIdentity('%s'): retrieved %d aliase(s) [%dms]",
-            name,
-            aliases.size(),
-            System.currentTimeMillis() - start
-        );
+        if (aliases == null) {
+            Logger.debug(
+                this,
+                "#getAliasesOfIdentity('%s'): no aliases found [%dms]",
+                name,
+                System.currentTimeMillis() - start
+            );
+        } else {
+            Logger.debug(
+                this,
+                "#getAliasesOfIdentity('%s'): retrieved %d aliase(s) [%dms]",
+                name,
+                aliases.size(),
+                System.currentTimeMillis() - start
+            );
+        }
         return aliases;
     }
 

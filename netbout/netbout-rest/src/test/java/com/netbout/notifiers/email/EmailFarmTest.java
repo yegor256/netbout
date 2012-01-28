@@ -52,7 +52,7 @@ public final class EmailFarmTest {
     public void notfiesBoutParticipants() throws Exception {
         final Identity identity = new IdentityMocker().mock();
         final Identity receiver = new IdentityMocker()
-            .namedAs("urn:email:yegor@tpc2.com")
+            .namedAs("urn:email:yegor%40tpc2%2Ecom")
             .mock();
         final Bout bout = new BoutMocker()
             .withParticipant(receiver)
@@ -71,11 +71,11 @@ public final class EmailFarmTest {
     @Test
     public void constructsUrnFromEmail() throws Exception {
         final EmailFarm farm = new EmailFarm();
-        final List<Urn> urns = farm.constructExtraIdentities("abc@example.com");
+        final List<Urn> urns = farm.constructExtraIdentities("abc@a.com");
         MatcherAssert.assertThat(urns, Matchers.hasSize(1));
         MatcherAssert.assertThat(
             urns.get(0),
-            Matchers.equalTo(new Urn("urn:email:abc%40example.com"))
+            Matchers.equalTo(new Urn("urn:email:abc%40a%2Ecom"))
         );
     }
 

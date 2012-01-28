@@ -26,7 +26,6 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.Deee;
 import com.netbout.rest.ForwardException;
 import com.netbout.rest.ResourceMocker;
 import com.netbout.spi.Identity;
@@ -82,11 +81,7 @@ public final class AuthRsTest {
             .withIdentity(identity)
             .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
-        final Response response = rest.auth(
-            Deee.plain(iname),
-            Deee.plain(secret),
-            Deee.plain("/some-path")
-        );
+        final Response response = rest.auth(iname, secret, "/some-path");
         MatcherAssert.assertThat(
             response.getStatus(),
             Matchers.equalTo(HttpURLConnection.HTTP_SEE_OTHER)
@@ -105,11 +100,7 @@ public final class AuthRsTest {
         final AuthRs rest = new ResourceMocker()
             .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
-        rest.auth(
-            Deee.plain(new Urn("foo", "test")),
-            Deee.plain(""),
-            Deee.plain("/path-to-go")
-        );
+        rest.auth(new Urn("foo", "test"), "", "/path-to-go");
     }
 
 }

@@ -33,7 +33,6 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.utils.Cipher;
-import com.ymock.util.Logger;
 import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -54,8 +53,10 @@ public final class NbRs extends AbstractRs {
      * @param iname Name of identity
      * @param secret The secret code
      * @return The JAX-RS response
+     * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
+    @Path("/")
     public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
         return new PageBuilder()

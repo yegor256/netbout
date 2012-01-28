@@ -51,10 +51,12 @@ public final class FriendsRs extends AbstractRs {
      * Get list of friends.
      * @param mask The mask
      * @return The JAX-RS response
+     * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
+    @Path("/")
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Response list(@QueryParam("mask") final Deee mask) {
+    public Response list(@QueryParam("mask") final String mask) {
         if (mask == null) {
             throw new ForwardException(
                 this,
@@ -63,14 +65,14 @@ public final class FriendsRs extends AbstractRs {
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();
-        for (Identity identity : this.identity().friends(mask.txt())) {
+        for (Identity identity : this.identity().friends(mask)) {
             invitees.add(new Invitee(identity, this.base()));
         }
         return new PageBuilder()
             .schema("")
             .build(AbstractPage.class)
             .init(this)
-            .append(new JaxbBundle("mask", mask.txt()))
+            .append(new JaxbBundle("mask", mask))
             .append(JaxbGroup.build(invitees, "invitees"))
             .authenticated(this.identity())
             .build();

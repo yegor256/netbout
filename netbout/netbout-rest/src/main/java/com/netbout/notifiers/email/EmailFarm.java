@@ -31,11 +31,10 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.netbout.spi.client.RestSession;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import com.netbout.utils.Cryptor;
+import com.netbout.utils.Cipher;
 import com.netbout.utils.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,6 +116,21 @@ public final class EmailFarm implements IdentityAware {
     }
 
     /**
+     * Get list of aliases that belong to some identity.
+     * @param name The identity of bout participant
+     * @return List of aliases
+     */
+    @Operation("get-aliases-of-identity")
+    public List<String> getAliasesOfIdentity(final Urn name) {
+        List<String> aliases = null;
+        if (this.NID.equals(name.nid())) {
+            aliases = new ArrayList<String>();
+            aliases.add(name.nss());
+        }
+        return aliases;
+    }
+
+    /**
      * Notify this identity.
      * @param dude The recepient
      * @param message The message
@@ -133,10 +147,11 @@ public final class EmailFarm implements IdentityAware {
                 .path("/auth")
                 .queryParam("identity", "{urn}")
                 .queryParam("secret", "{secret}")
-                .queryParam("goto", String.format("/%d", dude.bout().number()))
+                .queryParam("goto", "{path}")
                 .build(
                     dude.identity().name(),
-                    new Cryptor().encrypt(dude.identity())
+                    new Cipher().encrypt(dude.identity().name().toString()),
+                    String.format("/%d", dude.bout().number())
                 )
                 .toString()
         );

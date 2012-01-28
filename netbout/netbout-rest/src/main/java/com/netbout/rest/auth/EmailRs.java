@@ -29,13 +29,11 @@ package com.netbout.rest.auth;
 import com.netbout.notifiers.email.EmailFarm;
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
-import com.netbout.rest.Deee;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.utils.Cipher;
-import com.ymock.util.Logger;
 import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -56,16 +54,16 @@ public final class EmailRs extends AbstractRs {
      * @param iname Name of identity
      * @param secret The secret code
      * @return The JAX-RS response
+     * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
-    public Response auth(@QueryParam("identity") final Deee iname,
-        @QueryParam("secret") final Deee secret) {
+    @Path("/")
+    public Response auth(@QueryParam("identity") final Urn iname,
+        @QueryParam("secret") final String secret) {
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
-            .authenticated(
-                this.authenticate(Urn.create(iname.txt()), secret.txt())
-            )
+            .authenticated(this.authenticate(iname, secret))
             .build();
     }
 
@@ -109,12 +107,7 @@ public final class EmailRs extends AbstractRs {
             identity = new ResolvedIdentity(
                 new URL("http://www.netbout.com/email"),
                 iname,
-                new URL(
-                    String.format(
-                        "http://img.netbout.com/email.png",
-                        iname.nss()
-                    )
-                )
+                new URL("http://img.netbout.com/email.png")
             );
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(ex);
