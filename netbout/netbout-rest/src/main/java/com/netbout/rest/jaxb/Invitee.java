@@ -81,8 +81,8 @@ public final class Invitee {
     public String getHref() {
         return this.builder
             .path("/i")
-            .queryParam("name", this.identity.name())
-            .build()
+            .queryParam("name", "{name}")
+            .build(this.identity.name())
             .toString();
     }
 

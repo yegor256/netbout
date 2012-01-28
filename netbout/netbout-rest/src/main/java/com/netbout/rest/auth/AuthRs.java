@@ -35,6 +35,7 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -53,11 +54,13 @@ public final class AuthRs extends AbstractRs {
      * Authentication page.
      * @param iname Identity name
      * @param secret Secret word
+     * @param path Where to go next
      * @return The JAX-RS response
      */
     @GET
     public Response auth(@QueryParam("identity") final Urn iname,
-        @QueryParam("secret") final String secret) {
+        @QueryParam("secret") final String secret,
+        @QueryParam("goto") @DefaultValue("/") final String path) {
         if (iname == null || secret == null) {
             throw new LoginRequiredException(
                 this,
@@ -71,7 +74,7 @@ public final class AuthRs extends AbstractRs {
             .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
-            .location(this.base().build())
+            .location(this.base().path(path).build())
             .header(RestSession.AUTH_HEADER, new Cryptor().encrypt(identity))
             .build();
     }

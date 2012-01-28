@@ -30,6 +30,10 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
+import java.util.List;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -58,6 +62,21 @@ public final class EmailFarmTest {
         final EmailFarm farm = new EmailFarm();
         farm.init(identity);
         farm.notifyBoutParticipants(bout.number(), 0L);
+    }
+
+    /**
+     * EmailFarm can construct a URN from email.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void constructsUrnFromEmail() throws Exception {
+        final EmailFarm farm = new EmailFarm();
+        final List<Urn> urns = farm.constructExtraIdentities("abc@example.com");
+        MatcherAssert.assertThat(urns, Matchers.hasSize(1));
+        MatcherAssert.assertThat(
+            urns.get(0),
+            Matchers.equalTo(new Urn("urn:email:abc%40example.com"))
+        );
     }
 
 }

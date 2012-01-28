@@ -42,6 +42,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of user's inbox.
@@ -92,7 +93,11 @@ public final class InboxRs extends AbstractRs {
         }
         final PeriodsBuilder periods = new PeriodsBuilder(
             period,
-            this.base().clone().queryParam(RestSession.QUERY_PARAM, this.query)
+            UriBuilder.fromUri(
+                this.base().clone()
+                    .queryParam(RestSession.QUERY_PARAM, "{query}")
+                    .build(this.query)
+            )
         ).setQueryParam(InboxRs.PERIOD_PARAM);
         for (Bout bout : inbox) {
             boolean show;

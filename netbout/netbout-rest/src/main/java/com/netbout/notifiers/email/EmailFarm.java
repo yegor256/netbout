@@ -30,12 +30,15 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import com.netbout.utils.Cryptor;
 import com.netbout.utils.TextUtils;
+import java.util.ArrayList;
+import java.util.List;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.core.UriBuilder;
@@ -49,6 +52,18 @@ import org.apache.velocity.VelocityContext;
  */
 @Farm
 public final class EmailFarm implements IdentityAware {
+
+    /**
+     * Namespace ID.
+     */
+    private static final String NID = "email";
+
+    /**
+     * Email validating regex.
+     */
+    private static final String EMAIL_REGEX =
+        // @checkstyle LineLength (1 line)
+        "[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})";
 
     /**
      * Email sender.
@@ -80,10 +95,25 @@ public final class EmailFarm implements IdentityAware {
         final Bout bout = this.identity.bout(bnum);
         final Message message = bout.message(mnum);
         for (Participant participant : bout.participants()) {
-            if ("email".equals(participant.identity().name().nid())) {
+            if (this.NID.equals(participant.identity().name().nid())) {
                 this.send(participant, message);
             }
         }
+    }
+
+    /**
+     * Construct extra identities, if necessary.
+     * @param keyword The keyword they are searching for
+     * @return List of URNs
+     */
+    @Operation("construct-extra-identities")
+    public List<Urn> constructExtraIdentities(final String keyword) {
+        List<Urn> urns = null;
+        if (keyword.matches(this.EMAIL_REGEX)) {
+            urns = new ArrayList<Urn>();
+            urns.add(new Urn(this.NID, keyword));
+        }
+        return urns;
     }
 
     /**
@@ -100,12 +130,14 @@ public final class EmailFarm implements IdentityAware {
         context.put(
             "href",
             UriBuilder.fromUri("http://www.netbout.com/")
-                .path("/{num}")
-                .queryParam(
-                    RestSession.AUTH_PARAM,
+                .path("/auth")
+                .queryParam("identity", "{urn}")
+                .queryParam("secret", "{secret}")
+                .queryParam("goto", String.format("/%d", dude.bout().number()))
+                .build(
+                    dude.identity().name(),
                     new Cryptor().encrypt(dude.identity())
                 )
-                .build(dude.bout().number())
                 .toString()
         );
         final String text = TextUtils.format(

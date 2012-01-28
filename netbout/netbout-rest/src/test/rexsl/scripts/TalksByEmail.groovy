@@ -38,11 +38,8 @@ def ozzie = new RestSession(rexsl.home).authenticate(new Urn('urn:test:ozzie'), 
 
 def bout = ozzie.start()
 bout.rename('Ozzie talking by email, \u0443\u0440\u0430!')
-/*
-@todo #161 Doesn't work at the moment, required Bus refactoring.
 def email = 'test@example.com'
 def friends = ozzie.friends(email)
 MatcherAssert.assertThat(friends.size(), Matchers.equalTo(1))
 bout.invite(friends.iterator().next())
 bout.post('How are you doing?')
-*/
