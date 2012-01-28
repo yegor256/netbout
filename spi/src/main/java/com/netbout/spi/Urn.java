@@ -32,7 +32,6 @@ package com.netbout.spi;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.CharEncoding;
@@ -68,7 +67,7 @@ public final class Urn implements Comparable {
      */
     private static final String REGEX =
         // @checkstyle LineLength (1 line)
-        "^urn:[a-z]{1,31}(:([\\w,\\-\\+\\*\\.@/]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+(=([a-zA-Z0-9]|%[0-9a-fA-F]{2})*)?(&[a-z]+(=([a-zA-Z0-9]|%[0-9a-fA-F]{2})*)?)*)?\\*?$";
+        "^urn:[a-z]{1,31}(:([a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+(=([a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?(&[a-z]+(=([a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?)*)?\\*?$";
 
     /**
      * The URI.
@@ -110,19 +109,15 @@ public final class Urn implements Comparable {
         if (nss == null) {
             throw new IllegalArgumentException("NSS can't be NULL");
         }
-        try {
-            this.uri = URI.create(
-                String.format(
-                    "%s%s%s%2$s%s",
-                    this.PREFIX,
-                    this.SEP,
-                    nid,
-                    URLEncoder.encode(nss, CharEncoding.UTF_8)
-                )
-            );
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalStateException(ex);
-        }
+        this.uri = URI.create(
+            String.format(
+                "%s%s%s%2$s%s",
+                this.PREFIX,
+                this.SEP,
+                nid,
+                Urn.encode(nss)
+            )
+        );
         try {
             this.validate();
         } catch (URISyntaxException ex) {
@@ -422,16 +417,26 @@ public final class Urn implements Comparable {
             throw new IllegalStateException(ex);
         }
         for (byte chr : bytes) {
-            // @checkstyle BooleanExpressionComplexity (4 lines)
-            if ((chr >= 'A' && chr <= 'Z')
-                || (chr >= '0' && chr <= '9')
-                || (chr >= 'a' && chr <= 'z')) {
+            if (Urn.allowed(chr)) {
                 encoded.append((char) chr);
             } else {
                 encoded.append("%").append(String.format("%X", chr));
             }
         }
         return encoded.toString();
+    }
+
+    /**
+     * This char is allowed in URN's NSS part?
+     * @param chr The character
+     * @return It is allowed?
+     */
+    private static boolean allowed(final byte chr) {
+        // @checkstyle BooleanExpressionComplexity (4 lines)
+        return (chr >= 'A' && chr <= 'Z')
+            || (chr >= '0' && chr <= '9')
+            || (chr >= 'a' && chr <= 'z')
+            || (chr == '/');
     }
 
 }

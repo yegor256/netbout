@@ -50,7 +50,23 @@ public final class UrnTest {
     public void instantiatesFromText() throws Exception {
         final Urn urn = new Urn("urn:netbout:jeff%20lebowski%2540");
         MatcherAssert.assertThat(urn.nid(), Matchers.equalTo("netbout"));
-        MatcherAssert.assertThat(urn.nss(), Matchers.equalTo("jeff lebowski%40"));
+        MatcherAssert.assertThat(
+            urn.nss(),
+            Matchers.equalTo("jeff lebowski%40")
+        );
+    }
+
+    /**
+     * Urn can encode NSS properly.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void encodesNssAsRequiredByUrlSyntax() throws Exception {
+        final Urn urn = new Urn("test", "walter sobchak!");
+        MatcherAssert.assertThat(
+            urn.toString(),
+            Matchers.equalTo("urn:test:walter%20sobchak%21")
+        );
     }
 
     /**
@@ -100,7 +116,7 @@ public final class UrnTest {
      */
     @Test
     public void comparesForEquivalence() throws Exception {
-        final String text = "urn:foo:some-other-specific-string";
+        final String text = "urn:foo:someotherspecificstring";
         final Urn first = new Urn(text);
         final Urn second = new Urn(text);
         MatcherAssert.assertThat(first, Matchers.equalTo(second));
@@ -112,7 +128,7 @@ public final class UrnTest {
      */
     @Test
     public void comparesForEquivalenceWithUri() throws Exception {
-        final String text = "urn:foo:some-specific-string";
+        final String text = "urn:foo:somespecificstring";
         final Urn first = new Urn(text);
         final URI second = new URI(text);
         MatcherAssert.assertThat(first.equals(second), Matchers.is(true));
@@ -124,7 +140,7 @@ public final class UrnTest {
      */
     @Test
     public void comparesForEquivalenceWithString() throws Exception {
-        final String text = "urn:foo:some-text-as-text";
+        final String text = "urn:foo:sometextastext";
         final Urn first = new Urn(text);
         MatcherAssert.assertThat(first.equals(text), Matchers.is(true));
     }
@@ -135,7 +151,7 @@ public final class UrnTest {
      */
     @Test
     public void convertsToString() throws Exception {
-        final String text = "urn:foo:text-of-urn";
+        final String text = "urn:foo:textofurn";
         final Urn urn = new Urn(text);
         MatcherAssert.assertThat(urn.toString(), Matchers.equalTo(text));
     }
@@ -156,7 +172,6 @@ public final class UrnTest {
     @Test
     public void passesCorrectUrnSyntax() throws Exception {
         final String[] texts = new String[] {
-            "urn:foo:Some+Text+With+Spaces",
             "urn:foo:some%20text%20with%20spaces",
             "urn:a:",
             "urn:a:?alpha=50",
