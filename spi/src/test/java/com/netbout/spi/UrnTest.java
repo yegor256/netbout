@@ -48,9 +48,9 @@ public final class UrnTest {
      */
     @Test
     public void instantiatesFromText() throws Exception {
-        final Urn urn = new Urn("urn:netbout:jeff%20lebowski");
+        final Urn urn = new Urn("urn:netbout:jeff%20lebowski%2540");
         MatcherAssert.assertThat(urn.nid(), Matchers.equalTo("netbout"));
-        MatcherAssert.assertThat(urn.nss(), Matchers.equalTo("jeff lebowski"));
+        MatcherAssert.assertThat(urn.nss(), Matchers.equalTo("jeff lebowski%40"));
     }
 
     /**
