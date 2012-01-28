@@ -108,7 +108,7 @@ public final class IdentityFarmTest {
     @Test
     public void findsIdentitiesByTheirNames() throws Exception {
         final Urn identity = new IdentityRowMocker()
-            .namedAs("urn:test:test@example.com")
+            .namedAs("urn:test:test%40example%2Ecom")
             .withAlias("test@example.com")
             .mock();
         final String[] keywords = new String[] {
