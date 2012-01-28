@@ -38,12 +38,12 @@ import javax.ws.rs.core.MediaType
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def mandy = new RestSession(rexsl.home).authenticate(new Urn('urn:test:mandy'), '')
-def bob = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bob'), '')
+def mandy = new RestSession(rexsl.home).authenticate(new Urn('urn:test:Mr%2EMandy'), '')
+def bob = new RestSession(rexsl.home).authenticate(new Urn('urn:test:Bob%20Good'), '')
 
 def bout = mandy.start()
 bout.post('hi everybody!')
-bout.rename('Some test conversation between Jeff and Walter, \u0443\u0440\u0430!')
+bout.rename('Some test conversation between Mandy and Bob, \u0443\u0440\u0430!')
 def number = bout.number()
 bout.invite(bob)
 bob.bout(number).confirm()
@@ -56,8 +56,8 @@ RestTester.start(RestUriBuilder.from(bout))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('read bout page')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page/identity[name="urn:test:mandy"]')
-    .assertXPath('/page/bout/participants/participant[identity="urn:test:mandy"]')
-    .assertXPath('/page/bout/participants/participant[identity="urn:test:bob"]')
-    .assertXPath('/page/bout/messages/message[author="urn:test:bob"]')
+    .assertXPath('/page/identity[name="urn:test:Mr%2EMandy"]')
+    .assertXPath('/page/bout/participants/participant[identity="urn:test:Mr%2EMandy"]')
+    .assertXPath('/page/bout/participants/participant[identity="urn:test:Bob%20Good"]')
+    .assertXPath('/page/bout/messages/message[author="urn:test:Bob%20Good"]')
     .assertXPath('/page/bout/messages/message[text="Hi, dude!"]')

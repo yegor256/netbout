@@ -70,6 +70,12 @@ public final class BoutRsTest {
             )
             .mock(BoutRs.class);
         rest.setNumber(bout.number());
+        rest.setPeriod(null);
+        rest.setStage(null);
+        rest.setPlace(null);
+        rest.setQuery(null);
+        rest.setMask(null);
+        rest.setStageCoords(null);
         final Response response = rest.front();
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),

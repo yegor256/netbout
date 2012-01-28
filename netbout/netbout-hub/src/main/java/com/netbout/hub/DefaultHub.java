@@ -211,6 +211,13 @@ public final class DefaultHub implements Hub {
                 .arg(keyword)
                 .asDefault(new ArrayList<Urn>())
                 .exec();
+            final List<Urn> extras = this
+                .make("construct-extra-identities")
+                .synchronously()
+                .arg(keyword)
+                .asDefault(new ArrayList<Urn>())
+                .exec();
+            names.addAll(extras);
             for (Urn name : names) {
                 try {
                     found.add(this.identity(name));

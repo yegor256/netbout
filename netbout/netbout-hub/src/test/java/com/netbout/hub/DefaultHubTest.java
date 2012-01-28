@@ -177,6 +177,7 @@ public final class DefaultHubTest {
         names.add(name);
         final Bus bus = new BusMocker()
             .doReturn(names, "find-identities-by-keyword")
+            .doReturn(new ArrayList<Urn>(), "construct-extra-identities")
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
             .mock();

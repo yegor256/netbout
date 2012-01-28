@@ -103,10 +103,10 @@ public final class Period {
      * @param text The text
      * @return The period discovered
      */
-    public static Period valueOf(final String text) {
+    public static Period valueOf(final Object text) {
         Period period;
-        if (text != null && text.matches("^\\d+t\\d+$")) {
-            final String[] parts = text.split("t");
+        if (text != null && text.toString().matches("^\\d+t\\d+$")) {
+            final String[] parts = text.toString().split("t");
             period = new Period(
                 new Date(Long.valueOf(parts[0])),
                 Long.valueOf(parts[1])

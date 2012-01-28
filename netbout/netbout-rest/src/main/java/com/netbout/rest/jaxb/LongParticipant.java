@@ -92,8 +92,8 @@ public final class LongParticipant {
             "kickoff",
             this.builder.clone()
                 .path("/kickoff")
-                .queryParam("name", this.participant.identity().name())
-                .build()
+                .queryParam("name", "{name}")
+                .build(this.participant.identity().name())
         );
     }
 

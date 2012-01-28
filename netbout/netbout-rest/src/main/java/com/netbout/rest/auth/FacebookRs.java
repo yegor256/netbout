@@ -66,8 +66,10 @@ public final class FacebookRs extends AbstractRs {
      * @param iname Name of identity
      * @param secret The secret code
      * @return The JAX-RS response
+     * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
+    @Path("/")
     public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
         if (iname == null || secret == null) {
@@ -144,14 +146,16 @@ public final class FacebookRs extends AbstractRs {
             UriBuilder
                 // @checkstyle MultipleStringLiterals (5 lines)
                 .fromPath("https://graph.facebook.com/oauth/access_token")
-                .queryParam("client_id", Manifests.read("Netbout-FbId"))
-                .queryParam(
-                    "redirect_uri",
-                    this.base().path("/g/fb").build()
+                .queryParam("client_id", "{id}")
+                .queryParam("redirect_uri", "{uri}")
+                .queryParam("client_secret", "{secret}")
+                .queryParam("code", "{code}")
+                .build(
+                    Manifests.read("Netbout-FbId"),
+                    this.base().path("/g/fb").build(),
+                    Manifests.read("Netbout-FbSecret"),
+                    code
                 )
-                .queryParam("client_secret", Manifests.read("Netbout-FbSecret"))
-                .queryParam("code", code)
-                .build()
         );
         final String[] sectors = response.split("&");
         for (String sector : sectors) {

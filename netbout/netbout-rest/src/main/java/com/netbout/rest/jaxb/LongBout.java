@@ -202,7 +202,11 @@ public final class LongBout {
         }
         final PeriodsBuilder pbld = new PeriodsBuilder(
             period,
-            this.builder.clone().queryParam(RestSession.QUERY_PARAM, this.query)
+            UriBuilder.fromUri(
+                this.builder.clone()
+                    .queryParam(RestSession.QUERY_PARAM, "{query}")
+                    .build(this.query)
+            )
         ).setQueryParam(BoutRs.PERIOD_PARAM);
         final List<LongMessage> msgs = new ArrayList<LongMessage>();
         for (Message msg : discussion) {

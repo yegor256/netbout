@@ -40,7 +40,8 @@ import javax.ws.rs.core.UriBuilder
 def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
 [
     'test' : '/mock-auth',
-    'facebook': '/fb'
+    'facebook': '/fb',
+    'email': '/email', // doesn't work yet
 ].each {
     RestTester.start(RestUriBuilder.from(starter).build())
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
@@ -61,7 +62,7 @@ def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
 
 [
     'urn:test:hh' : 'file:com.netbout.hub.hh',
-    'urn:test:email' : 'file:com.netbout.notifiers.email'
+    'urn:test:email' : 'file:com.netbout.notifiers.email',
 ].each {
     def helper = new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
     RestTester.start(RestUriBuilder.from(helper).build())

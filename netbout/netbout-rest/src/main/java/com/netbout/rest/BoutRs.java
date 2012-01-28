@@ -161,7 +161,9 @@ public final class BoutRs extends AbstractRs {
      */
     @QueryParam("mask")
     public void setMask(final String msk) {
-        this.mask = msk;
+        if (msk != null) {
+            this.mask = msk;
+        }
     }
 
     /**
@@ -336,10 +338,10 @@ public final class BoutRs extends AbstractRs {
      */
     @Path("/kickoff")
     @GET
-    public Response kickoff(@QueryParam("name") final String name) {
+    public Response kickoff(@QueryParam("name") final Urn name) {
         Identity friend;
         try {
-            friend = this.identity().friend(Urn.create(name));
+            friend = this.identity().friend(name);
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new ForwardException(this, this.base(), ex);
         }

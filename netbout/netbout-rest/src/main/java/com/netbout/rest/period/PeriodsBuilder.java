@@ -211,7 +211,11 @@ public final class PeriodsBuilder {
                 title,
                 this.total
             ),
-            this.base.clone().queryParam(this.param, this.period)
+            UriBuilder.fromUri(
+                this.base.clone()
+                    .queryParam(this.param, "{period}")
+                    .build(this.period)
+            )
         );
     }
 

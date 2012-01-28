@@ -51,8 +51,10 @@ public final class FriendsRs extends AbstractRs {
      * Get list of friends.
      * @param mask The mask
      * @return The JAX-RS response
+     * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
+    @Path("/")
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Response list(@QueryParam("mask") final String mask) {
         if (mask == null) {

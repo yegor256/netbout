@@ -121,9 +121,9 @@ public final class RestSession {
     private String fetch(final Urn identity, final String secret) {
         final URI uri = UriBuilder.fromUri(this.home)
             .path("/auth")
-            .queryParam("identity", identity.toString())
-            .queryParam("secret", secret)
-            .build();
+            .queryParam("identity", "{identity}")
+            .queryParam("secret", "{secret}")
+            .build(identity.toString(), secret);
         final String token = RestTester.start(uri)
             .get("authorization")
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)

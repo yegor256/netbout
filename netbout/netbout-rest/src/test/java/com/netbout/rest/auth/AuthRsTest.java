@@ -81,7 +81,7 @@ public final class AuthRsTest {
             .withIdentity(identity)
             .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
-        final Response response = rest.auth(iname, secret);
+        final Response response = rest.auth(iname, secret, "/some-path");
         MatcherAssert.assertThat(
             response.getStatus(),
             Matchers.equalTo(HttpURLConnection.HTTP_SEE_OTHER)
@@ -100,7 +100,7 @@ public final class AuthRsTest {
         final AuthRs rest = new ResourceMocker()
             .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
-        rest.auth(new Urn("foo", "test"), "");
+        rest.auth(new Urn("foo", "test"), "", "/path-to-go");
     }
 
 }

@@ -79,8 +79,8 @@ public final class ShortStage {
     @XmlAttribute
     public String getHref() {
         return this.builder
-            .queryParam("stage", this.identity.name())
-            .build()
+            .queryParam("stage", "{stage}")
+            .build(this.identity.name())
             .toString();
     }
 

@@ -53,7 +53,22 @@ public final class DummyTransport extends Transport {
      */
     @Override
     public void sendMessage(final Message message, final Address[] addrs) {
-        Logger.info(this, "#sendMessage(...)");
+        try {
+            Logger.info(
+                this,
+                "#sendMessage(..):\n  From: %[list]s\n  To: %[list]s\n  CC:%s\n  Reply-to: %[list]s\n  Subject: %s\n  Text: %s",
+                message.getFrom(),
+                message.getRecipients(Message.RecipientType.TO),
+                message.getRecipients(Message.RecipientType.CC),
+                message.getReplyTo(),
+                message.getSubject(),
+                message.getContent()
+            );
+        } catch (javax.mail.MessagingException ex) {
+            throw new IllegalArgumentException(ex);
+        } catch (java.io.IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**

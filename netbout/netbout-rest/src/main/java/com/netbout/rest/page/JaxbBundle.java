@@ -92,10 +92,14 @@ public final class JaxbBundle {
      * @param nam The name of it
      * @param text The content
      */
-    public JaxbBundle(final String nam, final String text) {
+    public JaxbBundle(final String nam, final Object text) {
         this.parent = null;
         this.name = nam;
-        this.content = text;
+        if (text == null) {
+            this.content = (String) text;
+        } else {
+            this.content = text.toString();
+        }
     }
 
     /**
@@ -105,10 +109,14 @@ public final class JaxbBundle {
      * @param text The content
      */
     private JaxbBundle(final JaxbBundle prnt, final String nam,
-        final String text) {
+        final Object text) {
         this.parent = prnt;
         this.name = nam;
-        this.content = text;
+        if (text == null) {
+            this.content = (String) text;
+        } else {
+            this.content = text.toString();
+        }
     }
 
     /**

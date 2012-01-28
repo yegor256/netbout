@@ -26,83 +26,93 @@
  */
 package com.netbout.rest.auth;
 
+import com.netbout.notifiers.email.EmailFarm;
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.spi.client.RestSession;
-import com.netbout.utils.Cryptor;
-import com.ymock.util.Logger;
-import javax.ws.rs.DefaultValue;
+import com.netbout.utils.Cipher;
+import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
- * REST authentication page.
+ * Authorizer of "urn:email:..." identities.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/auth")
-public final class AuthRs extends AbstractRs {
+@Path("/email")
+public final class EmailRs extends AbstractRs {
 
     /**
      * Authentication page.
-     * @param iname Identity name
-     * @param secret Secret word
-     * @param path Where to go next
+     * @param iname Name of identity
+     * @param secret The secret code
      * @return The JAX-RS response
      * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
     @Path("/")
     public Response auth(@QueryParam("identity") final Urn iname,
-        @QueryParam("secret") final String secret,
-        @QueryParam("goto") @DefaultValue("/") final String path) {
-        if (iname == null || secret == null) {
-            throw new LoginRequiredException(
-                this,
-                "'identity' and 'secret' query params are mandatory"
-            );
-        }
-        this.logoff();
-        final Identity identity = this.authenticate(iname, secret);
+        @QueryParam("secret") final String secret) {
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
-            .authenticated(identity)
-            .status(Response.Status.SEE_OTHER)
-            .location(this.base().path(path).build())
-            .header(RestSession.AUTH_HEADER, new Cryptor().encrypt(identity))
+            .authenticated(this.authenticate(iname, secret))
             .build();
     }
 
     /**
-     * Authenticate the user through facebook.
-     * @param iname Identity name
-     * @param secret Secret word
-     * @return The identity found
+     * Validate them.
+     * @param iname Name of identity
+     * @param secret The secret code
+     * @return The identity just authenticated
      */
-    private Identity authenticate(final Urn iname,
-        final String secret) {
-        RemoteIdentity remote;
+    private Identity authenticate(final Urn iname, final String secret) {
+        if ((iname == null) || (secret == null)) {
+            throw new LoginRequiredException(
+                this,
+                "Both 'identity' and 'secret' query params are mandatory"
+            );
+        }
+        if (!EmailFarm.NID.equals(iname.nid())) {
+            throw new LoginRequiredException(
+                this,
+                String.format("Bad namespace '%s' in '%s'", iname.nid(), iname)
+            );
+        }
+        if (!iname.nss().matches(EmailFarm.EMAIL_REGEX)) {
+            throw new LoginRequiredException(
+                this,
+                String.format("Invalid name '%s' in '%s'", iname.nss(), iname)
+            );
+        }
         try {
-            remote = new AuthMediator(this.hub().resolver())
-                .authenticate(iname, secret);
-        } catch (java.io.IOException ex) {
-            Logger.warn(this, "%[exception]s", ex);
+            if (!new Cipher().decrypt(secret).equals(iname.toString())) {
+                throw new LoginRequiredException(
+                    this,
+                    String.format("Wrong secret '%s' for '%s'", secret, iname)
+                );
+            }
+        } catch (com.netbout.utils.DecryptionException ex) {
             throw new LoginRequiredException(this, ex);
         }
-        Identity identity;
+        ResolvedIdentity identity;
         try {
-            identity = remote.findIn(this.hub());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new LoginRequiredException(this, ex);
+            identity = new ResolvedIdentity(
+                new URL("http://www.netbout.com/email"),
+                iname,
+                new URL("http://img.netbout.com/email.png")
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
         }
+        identity.addAlias(iname.nss());
         return identity;
     }
 
