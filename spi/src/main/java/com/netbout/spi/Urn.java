@@ -67,7 +67,7 @@ public final class Urn implements Comparable {
      */
     private static final String REGEX =
         // @checkstyle LineLength (1 line)
-        "^urn:[a-z]{1,31}(:([a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+(=([a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?(&[a-z]+(=([a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?)*)?\\*?$";
+        "^urn:[a-z]{1,31}(:([\\-a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+(=([\\-a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?(&[a-z]+(=([\\-a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?)*)?\\*?$";
 
     /**
      * The URI.
@@ -436,7 +436,7 @@ public final class Urn implements Comparable {
         return (chr >= 'A' && chr <= 'Z')
             || (chr >= '0' && chr <= '9')
             || (chr >= 'a' && chr <= 'z')
-            || (chr == '/');
+            || (chr == '/') || (chr == '-');
     }
 
 }

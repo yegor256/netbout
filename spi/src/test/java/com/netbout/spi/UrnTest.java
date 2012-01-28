@@ -116,7 +116,7 @@ public final class UrnTest {
      */
     @Test
     public void comparesForEquivalence() throws Exception {
-        final String text = "urn:foo:someotherspecificstring";
+        final String text = "urn:foo:some-other-specific-string";
         final Urn first = new Urn(text);
         final Urn second = new Urn(text);
         MatcherAssert.assertThat(first, Matchers.equalTo(second));
