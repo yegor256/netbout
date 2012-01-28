@@ -85,11 +85,12 @@ public final class AliasFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("get-aliases-of-identity")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<String> getAliasesOfIdentity(final Urn name)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
-        final List<String> aliases = new ArrayList<String>();
+        List<String> aliases = null;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 "SELECT name FROM alias WHERE identity = ?"
@@ -98,6 +99,9 @@ public final class AliasFarm {
             final ResultSet rset = stmt.executeQuery();
             try {
                 while (rset.next()) {
+                    if (aliases == null) {
+                        aliases = new ArrayList<String>();
+                    }
                     aliases.add(rset.getString(1));
                 }
             } finally {
