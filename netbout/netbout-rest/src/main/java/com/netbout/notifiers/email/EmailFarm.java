@@ -29,6 +29,7 @@ package com.netbout.notifiers.email;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
@@ -139,8 +140,8 @@ public final class EmailFarm implements IdentityAware {
         assert dude != null;
         final VelocityContext context = new VelocityContext();
         context.put("bout", dude.bout());
-        context.put("recepient", dude.identity());
         context.put("message", message);
+        context.put("author", NetboutUtils.aliasOf(message.author()));
         context.put(
             "href",
             UriBuilder.fromUri("http://www.netbout.com/")
@@ -166,7 +167,7 @@ public final class EmailFarm implements IdentityAware {
                     "%s@netbout.com",
                     TextUtils.pack(dude.identity().name().toString())
                 ),
-                message.author().name().toString()
+                NetboutUtils.aliasOf(message.author())
             );
             email.addFrom(new Address[] {reply});
             email.setReplyTo(new Address[] {reply});
