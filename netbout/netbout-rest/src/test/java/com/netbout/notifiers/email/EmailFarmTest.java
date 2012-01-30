@@ -71,11 +71,23 @@ public final class EmailFarmTest {
     @Test
     public void constructsUrnFromEmail() throws Exception {
         final EmailFarm farm = new EmailFarm();
-        final List<Urn> urns = farm.constructExtraIdentities("abc@a.com");
+        final List<Urn> urns = farm.findIdentitiesByKeyword("abc@a.com");
         MatcherAssert.assertThat(urns, Matchers.hasSize(1));
         MatcherAssert.assertThat(
             urns.get(0),
             Matchers.equalTo(new Urn("urn:email:abc%40a%2Ecom"))
+        );
+    }
+
+    /**
+     * EmailFarm can ignore non-email URNs.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void ingoresOtherKeywords() throws Exception {
+        MatcherAssert.assertThat(
+            new EmailFarm().findIdentitiesByKeyword("some text"),
+            Matchers.nullValue()
         );
     }
 

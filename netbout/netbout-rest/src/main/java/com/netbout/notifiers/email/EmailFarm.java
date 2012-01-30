@@ -105,8 +105,8 @@ public final class EmailFarm implements IdentityAware {
      * @param keyword The keyword they are searching for
      * @return List of URNs
      */
-    @Operation("construct-extra-identities")
-    public List<Urn> constructExtraIdentities(final String keyword) {
+    @Operation("find-identities-by-keyword")
+    public List<Urn> findIdentitiesByKeyword(final String keyword) {
         List<Urn> urns = null;
         if (keyword.matches(this.EMAIL_REGEX)) {
             urns = new ArrayList<Urn>();

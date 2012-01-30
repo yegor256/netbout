@@ -56,11 +56,12 @@ public final class IdentityFarm {
      * @throws SQLException If some SQL problem inside
      */
     @Operation("find-identities-by-keyword")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Urn> findIdentitiesByKeyword(final String keyword)
         throws SQLException {
         final long start = System.currentTimeMillis();
         final Connection conn = Database.connection();
-        final List<Urn> names = new ArrayList<Urn>();
+        List<Urn> names = null;
         try {
             final PreparedStatement stmt = conn.prepareStatement(
                 // @checkstyle StringLiteralsConcatenation (8 lines)
@@ -82,6 +83,9 @@ public final class IdentityFarm {
             final ResultSet rset = stmt.executeQuery();
             try {
                 while (rset.next()) {
+                    if (names == null) {
+                        names = new ArrayList<Urn>();
+                    }
                     names.add(Urn.create(rset.getString(1)));
                 }
             } finally {
@@ -90,15 +94,17 @@ public final class IdentityFarm {
         } finally {
             conn.close();
         }
-        Logger.debug(
-            this,
-            // @checkstyle LineLength (1 line)
-            "#findIdentitiesByKeyword('%s'): retrieved %d identitie(s) [%dms]: %[list]s",
-            keyword,
-            names.size(),
-            System.currentTimeMillis() - start,
-            names
-        );
+        if (names != null) {
+            Logger.debug(
+                this,
+                // @checkstyle LineLength (1 line)
+                "#findIdentitiesByKeyword('%s'): retrieved %d identitie(s) [%dms]: %[list]s",
+                keyword,
+                names.size(),
+                System.currentTimeMillis() - start,
+                names
+            );
+        }
         return names;
     }
 

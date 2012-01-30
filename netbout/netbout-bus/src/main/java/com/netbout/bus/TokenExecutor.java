@@ -58,4 +58,10 @@ interface TokenExecutor {
      */
     void exec(TxToken token, Bout bout);
 
+    /**
+     * Summary of current stats.
+     * @return Summary
+     */
+    String stats();
+
 }

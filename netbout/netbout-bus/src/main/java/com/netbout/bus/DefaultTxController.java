@@ -93,6 +93,14 @@ final class DefaultTxController implements TxController {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String stats() {
+        return this.executor.stats();
+    }
+
+    /**
      * Retrieves result of the token through executor.
      * @param trans The transaction
      * @param token The token

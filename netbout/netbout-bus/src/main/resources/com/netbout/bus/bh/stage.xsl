@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -23,55 +24,24 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.bus;
-
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-
-/**
- * Common bus of all transactions processed by helpers.
- *
- * <p>To execute a transaction you do something like this:
- *
- * <pre>
- * final String[] names = bus.make("get-user-names")
- *   .inBout(bout)
- *   .arg("Some text argument")
- *   .arg(123L)
- *   .arg(new Date())
- *   .asap()
- *   .expire(".*(user|name).*")
- *   .reportProgress(reporter)
- *   .asPreliminary(null)
- *   .noCache()
- *   .asDefault(new String[] {})
- *   .exec(String[].class)
- * </pre>
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-public interface Bus {
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-    /**
-     * A convenient static method to create a new transaction builder.
-     * @param mnemo Mnemo-code of the transation
-     * @return The transaction builder
-     */
-    TxBuilder make(String mnemo);
+    <xsl:template match="stage" mode="head">
+        <!-- nothing -->
+    </xsl:template>
 
-    /**
-     * A convenient static method to register new helper.
-     * @param identity Who is the owner of this helper
-     * @param helper The helper to register
-     */
-    void register(Identity identity, Helper helper);
+    <xsl:template match="stage">
+        <p>Latest BUS events (most recent on top):</p>
+        <p class="fixed"><xsl:value-of select="data/text"/></p>
+    </xsl:template>
 
-    /**
-     * Summary of current stats.
-     * @return Summary
-     */
-    String stats();
-
-}
+</xsl:stylesheet>

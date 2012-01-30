@@ -24,54 +24,48 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
+package com.netbout.db;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Test;
 
 /**
- * Common bus of all transactions processed by helpers.
- *
- * <p>To execute a transaction you do something like this:
- *
- * <pre>
- * final String[] names = bus.make("get-user-names")
- *   .inBout(bout)
- *   .arg("Some text argument")
- *   .arg(123L)
- *   .arg(new Date())
- *   .asap()
- *   .expire(".*(user|name).*")
- *   .reportProgress(reporter)
- *   .asPreliminary(null)
- *   .noCache()
- *   .asDefault(new String[] {})
- *   .exec(String[].class)
- * </pre>
- *
+ * Test case of {@link BillFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bus {
+public final class BillFarmTest {
 
     /**
-     * A convenient static method to create a new transaction builder.
-     * @param mnemo Mnemo-code of the transation
-     * @return The transaction builder
+     * Farm to work with.
      */
-    TxBuilder make(String mnemo);
+    private final transient BillFarm farm = new BillFarm();
 
     /**
-     * A convenient static method to register new helper.
-     * @param identity Who is the owner of this helper
-     * @param helper The helper to register
+     * BillFarm can save bills to DB.
+     * @throws Exception If there is some problem inside
      */
-    void register(Identity identity, Helper helper);
-
-    /**
-     * Summary of current stats.
-     * @return Summary
-     */
-    String stats();
+    @Test
+    public void savesBills() throws Exception {
+        final Urn name = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().mock();
+        final List<String> lines = new ArrayList<String>();
+        lines.add(
+            String.format(
+                "2012-01-29T21:07:41.405-08:00 some-mnemo %s 657 null",
+                name
+            )
+        );
+        lines.add(
+            String.format(
+                "2012-01-24T21:08:41.405-05:00 txt %s 543 %d",
+                name,
+                bout
+            )
+        );
+        this.farm.saveBills(lines);
+    }
 
 }

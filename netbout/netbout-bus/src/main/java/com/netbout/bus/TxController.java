@@ -52,4 +52,10 @@ interface TxController {
      */
     Plain<?> exec(Transaction trans);
 
+    /**
+     * Summary of current stats.
+     * @return Summary
+     */
+    String stats();
+
 }
