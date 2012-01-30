@@ -39,11 +39,12 @@
         <link href="/xml/inbox.xml" rel="home" />
         <link href="/" rel="logout" />
         <link href="/xml/bout.xml" rel="start" />
+        <link href="/" rel="self" />
     </links>
     <identity>
         <alias>Willy</alias>
         <aliases/>
-        <name>William.Shakespeare</name>
+        <name>urn:facebook:123456789</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
     </identity>
     <keyword>some text</keyword>
@@ -67,36 +68,36 @@
             </payments>
         </stage>
         <stages>
-            <stage name="Documents" href="/xml/PageBout.xml" />
-            <stage name="Files" href="/xml/PageBout.xml" />
-            <stage name="Meetings" href="/xml/PageBout.xml" />
+            <stage name="urn:test:123" href="/xml/PageBout.xml" />
+            <stage name="urn:test:Files" href="/xml/PageBout.xml" />
+            <stage name="urn:test:Meetings" href="/xml/PageBout.xml" />
         </stages>
         <participants>
             <participant href="/xml/PageBout.xml" confirmed="1">
                 <alias>Johnny Depp</alias>
-                <identity>depp</identity>
+                <identity>urn:test:depp</identity>
                 <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
             </participant>
             <participant href="/xml/PageBout.xml" confirmed="1">
                 <alias>Javier</alias>
-                <identity>javier@gmail.com</identity>
+                <identity>urn:test:javier%40gmail.com</identity>
                 <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
             </participant>
             <participant href="/xml/PageBout.xml" confirmed="0">
                 <alias>John Turturro</alias>
-                <identity>john.turturro</identity>
+                <identity>urn:test:john-turturro</identity>
                 <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
             </participant>
             <participant href="/xml/PageBout.xml" confirmed="1">
                 <alias>2Pac</alias>
-                <identity>2pac</identity>
+                <identity>urn:test:2pac</identity>
                 <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>
             </participant>
         </participants>
         <messages>
             <message seen="true">
                 <number>1</number>
-                <author>depp</author>
+                <author>urn:test:depp</author>
                 <text>
                     I think that this subject should be discussed in
                     this bout. What do you think, guys?...
@@ -109,7 +110,7 @@
             </message>
             <message seen="true">
                 <number>2</number>
-                <author>javier@gmail.com</author>
+                <author>urn:test:javier%40gmail.com</author>
                 <text>
                     Yeah, I agree, let's talk about it today!
                 </text>
@@ -117,7 +118,7 @@
             </message>
             <message seen="true">
                 <number>3</number>
-                <author>john.turturro</author>
+                <author>urn:test:unknown-author</author>
                 <text>
                     It's [a link](http://example.com)
                 </text>
@@ -125,7 +126,7 @@
             </message>
             <message>
                 <number>4</number>
-                <author>2pac</author>
+                <author>urn:test:2pac</author>
                 <text>
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                 </text>
