@@ -202,10 +202,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Bout> inbox(final String query) {
         final List<Bout> bouts = new LazyBouts(
-            this.hub.infinity().bouts(
-                this.name(),
-                this.hub.predicate(query)
-            ),
+            this.hub.infinity().bouts(this, this.hub.predicate(query)),
             this
         );
         Logger.debug(

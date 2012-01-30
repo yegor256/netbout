@@ -242,10 +242,7 @@ public final class HubBout implements Bout {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
         final List<Message> messages = new LazyMessages(
-            this.hub.infinity().messages(
-                this.number(),
-                this.hub.predicate(query)
-            ),
+            this.hub.infinity().messages(this, this.hub.predicate(query)),
             this
         );
         Logger.debug(

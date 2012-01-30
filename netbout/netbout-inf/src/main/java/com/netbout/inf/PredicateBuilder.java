@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.inf.predicates.CustomPred;
+import com.netbout.inf.predicates.TruePred;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.List;
@@ -107,7 +108,11 @@ public final class PredicateBuilder {
                 predicate
             );
         } else {
-            predicate = this.parse(PredicateBuilder.byKeyword(query));
+            if (query.isEmpty()) {
+                predicate = new TruePred();
+            } else {
+                predicate = this.parse(PredicateBuilder.byKeyword(query));
+            }
         }
         return predicate;
     }

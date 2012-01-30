@@ -27,8 +27,10 @@
 package com.netbout.inf;
 
 import com.netbout.bus.Bus;
+import com.netbout.inf.predicates.TruePred;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,52 +116,50 @@ public final class MemInfinity implements Infinity {
      */
     @Override
     public List<Long> messages(final Bout bout, final Predicate predicate) {
-        return null;
+        final List<Long> numbers = this.bus
+            .make("get-bout-messages")
+            .synchronously()
+            .arg(bout.number())
+            .asDefault(new ArrayList<Long>())
+            .exec();
+        final List<Message> messages = new ArrayList<Message>();
+        for (Long num : numbers) {
+            try {
+                messages.add(bout.message(num));
+            } catch (com.netbout.spi.MessageNotFoundException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+        }
+        Collections.sort(messages, Collections.reverseOrder());
+        final List<Long> result = new ArrayList<Long>();
+        for (Message msg : messages) {
+            boolean visible = true;
+            if (predicate instanceof TruePred) {
+                final Object response = predicate.evaluate(msg, result.size());
+                if (response instanceof Boolean) {
+                    visible = (Boolean) response;
+                } else {
+                    throw new IllegalArgumentException(
+                        Logger.format(
+                            "Can't understand %[type]s response from '%s'",
+                            response,
+                            predicate
+                        )
+                    );
+                }
+            }
+            if (visible) {
+                result.add(msg.number());
+            }
+        }
+        Logger.debug(
+            this,
+            "#messages(#%d, '%s'): %d message(s) found",
+            bout.number(),
+            predicate,
+            result.size()
+        );
+        return result;
     }
-
-    // /**
-    //  * Filter list of messages with a predicate.
-    //  * @param list The list to filter
-    //  * @param query The query
-    //  * @return New list of them
-    //  */
-    // @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    // public List<Message> filter(final List<Message> list,
-    //     final String query) {
-    //     final List<Message> result = new ArrayList<Message>();
-    //     final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
-    //     for (Message msg : list) {
-    //         boolean visible = true;
-    //         if (!query.isEmpty()) {
-    //             final Object response = predicate.evaluate(msg, result.size());
-    //             if (response instanceof Boolean) {
-    //                 visible = (Boolean) response;
-    //             } else if (response instanceof String) {
-    //                 result.add(new PlainMessage(this, (String) response));
-    //                 break;
-    //             } else {
-    //                 throw new IllegalArgumentException(
-    //                     Logger.format(
-    //                         "Can't understand %[type]s response from '%s'",
-    //                         response,
-    //                         query
-    //                     )
-    //                 );
-    //             }
-    //         }
-    //         if (visible) {
-    //             result.add(msg);
-    //         }
-    //     }
-    //     if (list.isEmpty()) {
-    //         final Object response = predicate.evaluate(
-    //             new PlainMessage(this, ""), 0
-    //         );
-    //         if (response instanceof String) {
-    //             result.add(new PlainMessage(this, (String) response));
-    //         }
-    //     }
-    //     return result;
-    // }
 
 }
