@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,43 +23,38 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.notifiers.email;
+
+import com.rexsl.core.Manifests;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+/**
+ * The stage to render with JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    version="2.0" exclude-result-prefixes="xs">
+ */
+@XmlType(name = "data")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class Stage {
 
-    <xsl:template match="stage" mode="head">
-        <!-- nothing -->
-    </xsl:template>
+    /**
+     * Get text.
+     * @return The text
+     */
+    @XmlElement
+    public String getText() {
+        return String.format(
+            "Host: %s\nPort: %s\nUser: %s\nPassword: %s",
+            Manifests.read("Netbout-SmtpHost"),
+            Manifests.read("Netbout-SmtpPort"),
+            Manifests.read("Netbout-SmtpUser"),
+            Manifests.read("Netbout-SmtpPassword")
+        );
+    }
 
-    <xsl:template match="stage">
-        <xsl:apply-templates select="data/stats/stat"/>
-    </xsl:template>
-
-    <xsl:template match="stat[@xsi:type='hub']">
-        <p>
-            <xsl:text>identities (</xsl:text>
-            <xsl:value-of select="count(identities/identity)"/>
-            <xsl:text>): </xsl:text>
-            <xsl:for-each select="identities/identity">
-                <xsl:if test="position() &gt; 1">
-                    <xsl:text>, </xsl:text>
-                </xsl:if>
-                <xsl:value-of select="."/>
-            </xsl:for-each>
-        </p>
-    </xsl:template>
-
-    <xsl:template match="stat[@xsi:type='manager']">
-        <p>
-            <xsl:text>total bouts: </xsl:text>
-            <xsl:value-of select="bouts"/>
-        </p>
-    </xsl:template>
-
-</xsl:stylesheet>
+}

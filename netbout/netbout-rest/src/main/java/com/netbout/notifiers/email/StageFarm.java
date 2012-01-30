@@ -24,9 +24,8 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus.bh;
+package com.netbout.notifiers.email;
 
-import com.netbout.bus.Bus;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
@@ -38,7 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
 /**
- * Stats.
+ * Stage farm.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -47,25 +46,9 @@ import org.apache.commons.lang.CharEncoding;
 public final class StageFarm implements IdentityAware {
 
     /**
-     * The executor.
-     */
-    private static Bus bus;
-
-    /**
      * Me.
      */
     private transient Identity identity;
-
-    /**
-     * Set data provider.
-     * @param ibus The bus
-     */
-    public static void register(final Bus ibus) {
-        if (StageFarm.bus != null) {
-            throw new IllegalStateException("BUS was already injected");
-        }
-        StageFarm.bus = ibus;
-    }
 
     /**
      * {@inheritDoc}
@@ -140,7 +123,7 @@ public final class StageFarm implements IdentityAware {
         final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
-            xml = new JaxbPrinter(new Stage(this.bus.stats())).print();
+            xml = new JaxbPrinter(new Stage()).print();
         }
         return xml;
     }
