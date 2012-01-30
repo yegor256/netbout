@@ -156,18 +156,37 @@
             </xsl:attribute>
             <aside class="left">
                 <img class="photo">
-                    <xsl:attribute name="src">
-                        <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/photo"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="alt">
-                        <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
-                    </xsl:attribute>
+                    <xsl:choose>
+                        <xsl:when test="/page/bout/participants/participant[$msg/author=identity]">
+                            <xsl:attribute name="src">
+                                <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/photo"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="alt">
+                                <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
+                            </xsl:attribute>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="src">
+                                <xsl:text>http://img.netbout.com/someone.png</xsl:text>
+                            </xsl:attribute>
+                            <xsl:attribute name="alt">
+                                <xsl:text>someone some time ago</xsl:text>
+                            </xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </img>
             </aside>
             <div class="right">
                 <header class="meta">
                     <b>
-                    <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
+                        <xsl:choose>
+                            <xsl:when test="/page/bout/participants/participant[$msg/author=identity]">
+                                <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>someone</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </b>
                     <xsl:text> said </xsl:text>
                     <xsl:value-of select="when"/>
