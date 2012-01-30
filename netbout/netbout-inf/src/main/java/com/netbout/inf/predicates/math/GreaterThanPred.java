@@ -24,84 +24,57 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf.predicates.math;
 
-import com.netbout.spi.MessageNotFoundException;
-import com.netbout.spi.Urn;
-import java.util.Collection;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.predicates.AbstractVarargPred;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.List;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
- * Bout data type.
+ * First argument is greater than the second.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public final class GreaterThanPred extends AbstractVarargPred {
 
     /**
-     * Get its number.
-     * @return The number
+     * Public ctor.
+     * @param args The arguments
      */
-    Long getNumber();
+    public GreaterThanPred(final List<Predicate> args) {
+        super("greater-than", args);
+    }
 
     /**
-     * Get date of creation.
-     * @return The date
+     * {@inheritDoc}
      */
-    Date getDate();
-
-    /**
-     * Get title.
-     * @return The title
-     */
-    String getTitle();
-
-    /**
-     * Set title.
-     * @param text The title
-     */
-    void setTitle(String text);
-
-    /**
-     * Confirm participation.
-     * @param identity Who confirms?
-     */
-    void confirm(Urn identity);
-
-    /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
-     */
-    void kickOff(Urn identity);
-
-    /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
-     */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final Object left = this.arg(0).evaluate(msg, pos);
+        final String right = this.arg(1).evaluate(msg, pos).toString();
+        boolean greater;
+        if (left instanceof Date) {
+            greater = ((Date) left).after(
+                ISODateTimeFormat.dateTime().parseDateTime(right).toDate()
+            );
+        } else if (left instanceof Long) {
+            greater = ((Long) left) > Long.valueOf(right);
+        } else {
+            greater = left.toString().compareTo(right) > 0;
+        }
+        Logger.debug(
+            this,
+            "#evaluate(): is %[type]s > '%s': %B",
+            left,
+            right,
+            greater
+        );
+        return greater;
+    }
 
 }

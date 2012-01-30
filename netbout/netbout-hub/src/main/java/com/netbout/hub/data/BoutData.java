@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -73,9 +75,10 @@ final class BoutData implements BoutDt {
     private transient Collection<ParticipantDt> participants;
 
     /**
-     * Ordered list of messages.
+     * List of already retrieved messages (cached).
      */
-    private transient List<MessageDt> messages;
+    private final transient Map<Long, MessageDt> messages =
+        new ConcurrentHashMap<Long, MessageDt>();
 
     /**
      * Public ctor.
@@ -251,7 +254,7 @@ final class BoutData implements BoutDt {
             .asDefault(1L)
             .exec();
         final MessageDt data = new MessageData(this.hub, num);
-        this.getMessages().add(data);
+        this.messages.put(num, data);
         Logger.debug(
             this,
             "#addMessage(): new empty message #%d added to bout #%d",
@@ -263,46 +266,25 @@ final class BoutData implements BoutDt {
 
     /**
      * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public List<MessageDt> getMessages() {
-        synchronized (this) {
-            if (this.messages == null) {
-                this.messages = new CopyOnWriteArrayList<MessageDt>();
-                final List<Long> nums = this.hub
-                    .make("get-bout-messages")
-                    .synchronously()
-                    .arg(this.number)
-                    .asDefault(new ArrayList<Long>())
-                    .exec();
-                for (Long num : nums) {
-                    this.messages.add(new MessageData(this.hub, num));
-                }
-                Logger.debug(
-                    this,
-                    "#getMessages(): reloaded %d messages for bout #%d",
-                    this.messages.size(),
-                    this.number
-                );
-            }
-            return this.messages;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public MessageDt findMessage(final Long num)
         throws MessageNotFoundException {
-        for (MessageDt msg : this.getMessages()) {
-            if (msg.getNumber().equals(num)) {
-                return msg;
+        if (!this.messages.containsKey(num)) {
+            final Boolean exists = this.hub
+                .make("check-message-existence")
+                .synchronously()
+                .arg(this.number)
+                .arg(num)
+                .asDefault(false)
+                .exec();
+            if (!exists) {
+                throw new MessageNotFoundException(num);
             }
+            this.messages.put(num, new MessageData(this.hub, num));
         }
-        throw new MessageNotFoundException(num);
+        return this.messages.get(num);
     }
 
     /**

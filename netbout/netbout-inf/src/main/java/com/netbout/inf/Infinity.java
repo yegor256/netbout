@@ -24,84 +24,49 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf;
 
+import com.netbout.hub.BoutDt;
+import com.netbout.hub.Hub;
+import com.netbout.hub.MessageDt;
+import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Bout data type.
+ * Infinity, with information about bouts and messages.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public interface Infinity {
 
     /**
-     * Get its number.
-     * @return The number
+     * Find bundles and group them.
+     * @param predicate The predicate to use
+     * @return The list of groups
      */
-    Long getNumber();
+    List<Bundle> bundles(Urn identity, Predicate predicate);
 
     /**
-     * Get date of creation.
-     * @return The date
+     * Find bouts for the given predicate.
+     * @param predicate The predicate to use
+     * @return The list of bouts, ordered
      */
-    Date getDate();
+    List<Long> bouts(Urn identity, Predicate predicate);
 
     /**
-     * Get title.
-     * @return The title
+     * Find messages for the given predicate.
+     * @param
+     * @param predicate The predicate to use
+     * @return The list of messages, ordered
      */
-    String getTitle();
-
-    /**
-     * Set title.
-     * @param text The title
-     */
-    void setTitle(String text);
-
-    /**
-     * Confirm participation.
-     * @param identity Who confirms?
-     */
-    void confirm(Urn identity);
-
-    /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
-     */
-    void kickOff(Urn identity);
-
-    /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
-     */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    List<Long> messages(Long bout, Predicate predicate);
 
 }

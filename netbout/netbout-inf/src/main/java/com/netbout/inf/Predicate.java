@@ -24,84 +24,24 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf;
 
-import com.netbout.spi.MessageNotFoundException;
-import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import com.netbout.spi.Message;
 
 /**
- * Bout data type.
+ * One predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public interface Predicate {
 
     /**
-     * Get its number.
-     * @return The number
+     * Evaluate it.
+     * @param msg The message
+     * @param pos Its position in the list
+     * @return Result of it
      */
-    Long getNumber();
-
-    /**
-     * Get date of creation.
-     * @return The date
-     */
-    Date getDate();
-
-    /**
-     * Get title.
-     * @return The title
-     */
-    String getTitle();
-
-    /**
-     * Set title.
-     * @param text The title
-     */
-    void setTitle(String text);
-
-    /**
-     * Confirm participation.
-     * @param identity Who confirms?
-     */
-    void confirm(Urn identity);
-
-    /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
-     */
-    void kickOff(Urn identity);
-
-    /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
-     */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    Object evaluate(Message msg, int pos);
 
 }

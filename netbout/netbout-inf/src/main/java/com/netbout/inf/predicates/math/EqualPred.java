@@ -24,84 +24,55 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf.predicates.math;
 
-import com.netbout.spi.MessageNotFoundException;
-import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.Date;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.predicates.AbstractVarargPred;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Bout data type.
+ * All arguments should be equal to each other.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public final class EqualPred extends AbstractVarargPred {
 
     /**
-     * Get its number.
-     * @return The number
+     * Public ctor.
+     * @param args The arguments
      */
-    Long getNumber();
+    public EqualPred(final List<Predicate> args) {
+        super("equal", args);
+    }
 
     /**
-     * Get date of creation.
-     * @return The date
+     * {@inheritDoc}
      */
-    Date getDate();
-
-    /**
-     * Get title.
-     * @return The title
-     */
-    String getTitle();
-
-    /**
-     * Set title.
-     * @param text The title
-     */
-    void setTitle(String text);
-
-    /**
-     * Confirm participation.
-     * @param identity Who confirms?
-     */
-    void confirm(Urn identity);
-
-    /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
-     */
-    void kickOff(Urn identity);
-
-    /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
-     */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final List<Object> values = new ArrayList<Object>();
+        for (Predicate arg : this.args()) {
+            values.add(arg.evaluate(msg, pos));
+        }
+        boolean equal = true;
+        for (int num = 1; num < values.size(); num += 1) {
+            if (!values.get(num).toString()
+                .equals(values.get(num - 1).toString())) {
+                equal = false;
+                break;
+            }
+        }
+        Logger.debug(
+            this,
+            "#evaluate(): comparing %[list]s: %B",
+            values,
+            equal
+        );
+        return equal;
+    }
 
 }

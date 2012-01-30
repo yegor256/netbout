@@ -73,7 +73,8 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     /**
      * List of bouts where I'm a participant.
      */
-    private transient Set<Long> ibouts;
+    private transient Map<Long, BoutDt> ibouts =
+        new ConcurrentHashMap<Long, BoutDt>();
 
     /**
      * List of aliases.
@@ -162,7 +163,6 @@ public final class HubIdentity implements Identity, InvitationSensitive {
             "#start(): bout #%d started",
             num
         );
-        this.myBouts().add(num);
         return new HubBout(this.hub, this, data);
     }
 
@@ -172,18 +172,24 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public Bout bout(final Long number) throws BoutNotFoundException {
-        final HubBout bout;
-        bout = new HubBout(
-            this.hub,
-            this,
-            this.hub.manager().find(number)
-        );
-        Logger.debug(
-            this,
-            "#bout(#%d): bout found",
-            number
-        );
-        return bout;
+        synchronized (this) {
+            if (!this.ibouts.containsKey(number)) {
+                this.bouts.put(
+                    number,
+                    new HubBout(
+                        this.hub,
+                        this,
+                        this.hub.manager().find(number)
+                    )
+                );
+            }
+            Logger.debug(
+                this,
+                "#bout(#%d): bout found",
+                number
+            );
+            return this.ibouts.get(number);
+        }
     }
 
     /**
@@ -192,38 +198,19 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Bout> inbox(final String query) {
-        final List<Bout> bouts = new ArrayList<Bout>();
-        for (Long num : this.myBouts()) {
-            try {
-                bouts.add(this.bout(num));
-            } catch (com.netbout.spi.BoutNotFoundException ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
-        Collections.sort(bouts, Collections.reverseOrder());
-        final List<Bout> result = new ArrayList<Bout>();
-        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
-        for (Bout bout : bouts) {
-            boolean matches = false;
-            if (bout.messages(query).isEmpty()) {
-                matches = (Boolean) predicate.evaluate(
-                    new StubMessage(bout),
-                    0
-                );
-            } else {
-                matches = true;
-            }
-            if (matches) {
-                result.add(bout);
-            }
-        }
+        final List<Bout> bouts = new LazyBouts(
+            new SimpleSearcher().bouts(
+                new PredicateBuilder(this.hub).parse(query)
+            ),
+            this
+        )
         Logger.debug(
             this,
             "#inbox('%s'): %d bouts found",
             query,
-            result.size()
+            bouts.size()
         );
-        return result;
+        return bouts;
     }
 
     /**
@@ -341,7 +328,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public void invited(final Bout bout) {
-        this.myBouts().add(bout.number());
+        // this.ibouts.remove(bout.number());
     }
 
     /**
@@ -349,27 +336,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public void kickedOff(final Long bout) {
-        this.myBouts().remove(bout);
-    }
-
-    /**
-     * Return a link to my list of bouts.
-     * @return The list of them
-     */
-    private Set<Long> myBouts() {
-        synchronized (this) {
-            if (this.ibouts == null) {
-                this.ibouts = new CopyOnWriteArraySet<Long>(
-                    (List<Long>) this.hub
-                        .make("get-bouts-of-identity")
-                        .synchronously()
-                        .arg(this.name())
-                        .asDefault(new ArrayList<Long>())
-                        .exec()
-                );
-            }
-        }
-        return this.ibouts;
+        this.ibouts.remove(bout);
     }
 
     /**

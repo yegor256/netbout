@@ -24,84 +24,59 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf.predicates;
 
-import com.netbout.spi.MessageNotFoundException;
-import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.Date;
+import com.netbout.inf.Predicate;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
 import java.util.List;
 
 /**
- * Bout data type.
+ * Show the message if its position is bigger or equal than this one.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public final class FromPred extends AbstractVarargPred {
 
     /**
-     * Get its number.
-     * @return The number
+     * How many we already disallowed to go?
      */
-    Long getNumber();
+    private transient int blocked;
 
     /**
-     * Get date of creation.
-     * @return The date
+     * Public ctor.
+     * @param args The arguments
      */
-    Date getDate();
+    public FromPred(final List<Predicate> args) {
+        super("from", args);
+    }
 
     /**
-     * Get title.
-     * @return The title
+     * {@inheritDoc}
      */
-    String getTitle();
-
-    /**
-     * Set title.
-     * @param text The title
-     */
-    void setTitle(String text);
-
-    /**
-     * Confirm participation.
-     * @param identity Who confirms?
-     */
-    void confirm(Urn identity);
-
-    /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
-     */
-    void kickOff(Urn identity);
-
-    /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
-     */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final int from = Integer.valueOf(
+            this.arg(0).evaluate(msg, pos).toString()
+        );
+        boolean matches;
+        synchronized (this) {
+            matches = this.blocked >= from;
+            if (!matches) {
+                this.blocked += 1;
+            }
+        }
+        Logger.debug(
+            this,
+            "#evaluate(.., %d): %d blocked already, 'from' is #%d: %B",
+            pos,
+            msg.number(),
+            this.blocked,
+            from,
+            matches
+        );
+        return matches;
+    }
 
 }

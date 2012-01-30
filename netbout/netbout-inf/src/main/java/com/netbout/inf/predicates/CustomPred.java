@@ -24,84 +24,65 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf.predicates;
 
-import com.netbout.spi.MessageNotFoundException;
+import com.netbout.hub.Hub;
+import com.netbout.inf.Predicate;
+import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.Date;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Bout data type.
+ * Call predicate by name in Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public final class CustomPred extends AbstractVarargPred {
 
     /**
-     * Get its number.
-     * @return The number
+     * Hub to work with.
      */
-    Long getNumber();
+    private final transient Hub ihub;
 
     /**
-     * Get date of creation.
-     * @return The date
+     * Public ctor.
+     * @param hub The hub to work with
+     * @param name Name of the predicate
+     * @param args The arguments
      */
-    Date getDate();
+    public CustomPred(final Hub hub, final Urn name,
+        final List<Predicate> args) {
+        super(name.toString(), args);
+        this.ihub = hub;
+    }
 
     /**
-     * Get title.
-     * @return The title
+     * {@inheritDoc}
      */
-    String getTitle();
-
-    /**
-     * Set title.
-     * @param text The title
-     */
-    void setTitle(String text);
-
-    /**
-     * Confirm participation.
-     * @param identity Who confirms?
-     */
-    void confirm(Urn identity);
-
-    /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
-     */
-    void kickOff(Urn identity);
-
-    /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
-     */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final List<Object> values = new ArrayList<Object>();
+        for (Predicate pred : this.args()) {
+            values.add(pred.evaluate(msg, pos));
+        }
+        final Object result = this.ihub.make("evaluate-predicate")
+            .inBout(msg.bout())
+            .arg(msg.bout().number())
+            .arg(msg.number())
+            .arg(Urn.create(this.name()))
+            .arg(values)
+            .asDefault(false)
+            .exec();
+        Logger.debug(
+            this,
+            "#evaluate(): evaluated '%s': %[type]s",
+            this.name(),
+            result
+        );
+        return result;
+    }
 
 }

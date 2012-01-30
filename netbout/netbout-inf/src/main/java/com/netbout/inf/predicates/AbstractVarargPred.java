@@ -24,84 +24,77 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf.predicates;
 
-import com.netbout.spi.MessageNotFoundException;
-import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.Date;
+import com.netbout.inf.Predicate;
+import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * Bout data type.
+ * Variable arguments predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public abstract class AbstractVarargPred implements Predicate {
 
     /**
-     * Get its number.
-     * @return The number
+     * Name of it.
      */
-    Long getNumber();
+    private final transient String iname;
 
     /**
-     * Get date of creation.
-     * @return The date
+     * Arguments.
      */
-    Date getDate();
+    private final transient List<Predicate> arguments =
+        new ArrayList<Predicate>();
 
     /**
-     * Get title.
-     * @return The title
+     * Public ctor.
+     * @param name The name of it
+     * @param args Arguments/predicates
      */
-    String getTitle();
+    public AbstractVarargPred(final String name, final List<Predicate> args) {
+        this.iname = name;
+        this.arguments.addAll(args);
+    }
 
     /**
-     * Set title.
-     * @param text The title
+     * {@inheritDoc}
      */
-    void setTitle(String text);
+    @Override
+    public final String toString() {
+        return String.format(
+            "(%s %s)",
+            this.iname,
+            StringUtils.join(this.args(), " ")
+        );
+    }
 
     /**
-     * Confirm participation.
-     * @param identity Who confirms?
+     * Get arguments.
+     * @return The arguments
      */
-    void confirm(Urn identity);
+    protected final List<Predicate> args() {
+        return this.arguments;
+    }
 
     /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
+     * Get its name.
+     * @return The name
      */
-    void kickOff(Urn identity);
+    protected final String name() {
+        return this.iname;
+    }
 
     /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
+     * Get argument by number.
+     * @param num The number
+     * @return The predicate/argument
      */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    protected final Predicate arg(final int num) {
+        return this.arguments.get(num);
+    }
 
 }

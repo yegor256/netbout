@@ -24,84 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf.predicates;
 
-import com.netbout.spi.MessageNotFoundException;
-import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.Date;
+import com.netbout.inf.Predicate;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import com.ymock.util.Logger;
 import java.util.List;
 
 /**
- * Bout data type.
+ * This participant is in the bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public final class TalksWithPred extends AbstractVarargPred {
 
     /**
-     * Get its number.
-     * @return The number
+     * Public ctor.
+     * @param args The arguments
      */
-    Long getNumber();
+    public TalksWithPred(final List<Predicate> args) {
+        super("talks-with", args);
+    }
 
     /**
-     * Get date of creation.
-     * @return The date
+     * {@inheritDoc}
      */
-    Date getDate();
-
-    /**
-     * Get title.
-     * @return The title
-     */
-    String getTitle();
-
-    /**
-     * Set title.
-     * @param text The title
-     */
-    void setTitle(String text);
-
-    /**
-     * Confirm participation.
-     * @param identity Who confirms?
-     */
-    void confirm(Urn identity);
-
-    /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
-     */
-    void kickOff(Urn identity);
-
-    /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
-     */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final String name = (String) this.arg(0).evaluate(msg, pos);
+        final Bout bout = msg.bout();
+        boolean found = false;
+        for (Participant dude : bout.participants()) {
+            if (dude.identity().name().equals(name)) {
+                found = true;
+                break;
+            }
+        }
+        Logger.debug(
+            this,
+            "#evaluate(): participant '%s' in bout %d: %B",
+            name,
+            bout.number(),
+            found
+        );
+        return found;
+    }
 
 }

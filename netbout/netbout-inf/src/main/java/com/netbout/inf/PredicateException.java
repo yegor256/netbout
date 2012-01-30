@@ -24,84 +24,39 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
-
-import com.netbout.spi.MessageNotFoundException;
-import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+package com.netbout.inf;
 
 /**
- * Bout data type.
+ * Exception in predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public final class PredicateException extends RuntimeException {
 
     /**
-     * Get its number.
-     * @return The number
+     * Public ctor.
+     * @param cause The cause of it
      */
-    Long getNumber();
+    public PredicateException(final Throwable cause) {
+        super(cause);
+    }
 
     /**
-     * Get date of creation.
-     * @return The date
+     * Public ctor.
+     * @param cause The cause of it
      */
-    Date getDate();
+    public PredicateException(final String cause) {
+        super(cause);
+    }
 
     /**
-     * Get title.
-     * @return The title
+     * Public ctor.
+     * @param query The query that cause this problem
+     * @param thr The cause of it
      */
-    String getTitle();
-
-    /**
-     * Set title.
-     * @param text The title
-     */
-    void setTitle(String text);
-
-    /**
-     * Confirm participation.
-     * @param identity Who confirms?
-     */
-    void confirm(Urn identity);
-
-    /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
-     */
-    void kickOff(Urn identity);
-
-    /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
-     */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    public PredicateException(final String query, final Throwable thr) {
+        super(query, thr);
+    }
 
 }

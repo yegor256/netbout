@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 public final class DefaultBoutMgr implements BoutMgr {
 
     /**
-     * All bouts existing in the system.
+     * Recently seen bouts.
      */
     private final transient ConcurrentMap<Long, BoutData> bouts =
         new ConcurrentHashMap<Long, BoutData>();
@@ -75,7 +75,7 @@ public final class DefaultBoutMgr implements BoutMgr {
     }
 
     /**
-     * Get total number of bouts.
+     * Get total number of cached bouts.
      * @return The total
      */
     @XmlElement(name = "bouts")
@@ -88,17 +88,13 @@ public final class DefaultBoutMgr implements BoutMgr {
      */
     @Override
     public Long create() {
-        BoutData data;
-        synchronized (this.bouts) {
-            final Long number = this.hub
-                // @checkstyle MultipleStringLiterals (1 lines)
-                .make("get-next-bout-number")
-                .synchronously()
-                .asDefault(this.defaultNextBoutNumber())
-                .exec();
-            data = new BoutData(this.hub, number);
-            this.bouts.put(data.getNumber(), data);
-        }
+        final Long number = this.hub
+            // @checkstyle MultipleStringLiterals (1 lines)
+            .make("get-next-bout-number")
+            .synchronously()
+            .asDefault(this.defaultNextBoutNumber())
+            .exec();
+        final BoutData data = this.find(number);
         data.setTitle("");
         this.hub.make("started-new-bout")
             .asap()
@@ -121,34 +117,27 @@ public final class DefaultBoutMgr implements BoutMgr {
      */
     @Override
     public BoutData find(final Long number) throws BoutNotFoundException {
-        assert number != null;
-        BoutData data;
-        if (this.bouts.containsKey(number)) {
-            data = this.bouts.get(number);
-            Logger.debug(
-                this,
-                "#find(#%d): bout data found",
-                number
-            );
-        } else {
-            final Boolean exists = this.hub
-                .make("check-bout-existence")
-                .synchronously()
-                .arg(number)
-                .asDefault(false)
-                .exec();
-            if (!exists) {
-                throw new BoutNotFoundException(number);
+        synchronized (this) {
+            assert number != null;
+            if (!this.bouts.containsKey(number)) {
+                final Boolean exists = this.hub
+                    .make("check-bout-existence")
+                    .synchronously()
+                    .arg(number)
+                    .asDefault(false)
+                    .exec();
+                if (!exists) {
+                    throw new BoutNotFoundException(number);
+                }
+                this.bouts.put(number, new BoutData(this.hub, number));
+                Logger.debug(
+                    this,
+                    "#find(#%d): bout data restored",
+                    number
+                );
             }
-            data = new BoutData(this.hub, number);
-            this.bouts.put(number, data);
-            Logger.debug(
-                this,
-                "#find(#%d): bout data restored",
-                number
-            );
+            return this.bouts.get(number);
         }
-        return data;
     }
 
     /**

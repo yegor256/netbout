@@ -24,84 +24,46 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf.predicates.math;
 
-import com.netbout.spi.MessageNotFoundException;
-import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.Date;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.predicates.AbstractVarargPred;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
 import java.util.List;
 
 /**
- * Bout data type.
+ * First argument is less than the second.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutDt {
+public final class LessThanPred extends AbstractVarargPred {
 
     /**
-     * Get its number.
-     * @return The number
+     * Public ctor.
+     * @param args The arguments
      */
-    Long getNumber();
+    public LessThanPred(final List<Predicate> args) {
+        super("less-than", args);
+    }
 
     /**
-     * Get date of creation.
-     * @return The date
+     * {@inheritDoc}
      */
-    Date getDate();
-
-    /**
-     * Get title.
-     * @return The title
-     */
-    String getTitle();
-
-    /**
-     * Set title.
-     * @param text The title
-     */
-    void setTitle(String text);
-
-    /**
-     * Confirm participation.
-     * @param identity Who confirms?
-     */
-    void confirm(Urn identity);
-
-    /**
-     * Kick off this identity of the bout.
-     * @param identity Who leaves
-     */
-    void kickOff(Urn identity);
-
-    /**
-     * Add new participant.
-     * @param name The name of participant
-     * @return The participant just created/added
-     */
-    ParticipantDt addParticipant(Urn name);
-
-    /**
-     * Get list of participants.
-     * @return The list
-     */
-    Collection<ParticipantDt> getParticipants();
-
-    /**
-     * Post new message.
-     * @return The data
-     */
-    MessageDt addMessage();
-
-    /**
-     * Find message by number.
-     * @param num The number of it
-     * @return Message
-     * @throws MessageNotFoundException If not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    @Override
+    public Object evaluate(final Message msg, final int pos) {
+        final boolean equal = (Boolean) new EqualPred(this.args())
+            .evaluate(msg, pos);
+        final boolean greater = (Boolean) new GreaterThanPred(this.args())
+            .evaluate(msg, pos);
+        final boolean less = !equal && !greater;
+        Logger.debug(
+            this,
+            "#evaluate(): %B",
+            less
+        );
+        return less;
+    }
 
 }
