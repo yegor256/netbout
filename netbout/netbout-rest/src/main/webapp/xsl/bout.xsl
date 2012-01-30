@@ -31,10 +31,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:output method="xhtml"/>
+    <xsl:output method="html"/>
 
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
@@ -60,9 +59,9 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="$title"/>
         </title>
-        <link href="/css/bout.css" rel="stylesheet" type="text/css"></link>
-        <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
-        <link href="/css/periods.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/bout.css" rel="stylesheet" type="text/css"/>
+        <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
+        <link href="/css/periods.css" rel="stylesheet" type="text/css"/>
         <xsl:if test="/page/bout/stage">
             <xsl:apply-templates select="/page/bout/stage" mode="head" />
         </xsl:if>
@@ -159,6 +158,9 @@
                 <img class="photo">
                     <xsl:attribute name="src">
                         <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/photo"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="alt">
+                        <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
                     </xsl:attribute>
                 </img>
             </aside>

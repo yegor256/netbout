@@ -31,10 +31,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:output method="xhtml"/>
+    <xsl:output method="html"/>
 
     <xsl:include href="/xsl/templates.xsl" />
 
@@ -62,7 +61,8 @@
                 </aside>
                 <div id="wrapper">
                     <section id="content">
-                        <img src="http://img.netbout.com/logo-white.png" id="logo" />
+                        <img src="http://img.netbout.com/logo-white.png"
+                            id="logo" alt="logo" />
                         <br/>
                         <xsl:if test="/page/message != ''">
                             <aside id="error-message">

@@ -43,6 +43,7 @@ MatcherAssert.assertThat(
         XhtmlMatchers.hasXPath('//xhtml:aside[@id="version"]'),
         XhtmlMatchers.hasXPath('//xhtml:aside[contains(.,"r555")]'),
         XhtmlMatchers.hasXPath('//xhtml:aside[contains(.,"56ms")]'),
+        XhtmlMatchers.hasXPath('//xhtml:article[@id="msg4"]//img[@class="photo" and .!=""]'),
 /*        XhtmlMatchers.hasXPath('//xhtml:article[@id="msg3"]//p[@class="text"]/a[@href="http://example.com"]')*/
     )
 )

@@ -31,7 +31,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
 
     <xsl:include href="/xsl/templates.xsl" />
@@ -48,9 +47,9 @@
                 <script type="text/javascript"
                     src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"/>
                 <link href="/css/global.css" rel="stylesheet" type="text/css"
-                    media="all"></link>
+                    media="all"/>
                 <link href="/css/layout.css" rel="stylesheet" type="text/css"
-                    media="all"></link>
+                    media="all"/>
                 <link rel="icon" type="image/gif"
                     href="http://img.netbout.com/favicon.ico"/>
                 <xsl:call-template name="head" />
@@ -98,10 +97,10 @@
                 </a>
                 <form id="search" method="get" role="search">
                     <xsl:attribute name="action">
-                        <xsl:value-of select="/page/links/link[@rel='self']"/>
+                        <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                     </xsl:attribute>
                     <input name="q" id="search-input" placeholder="Find..."
-                        autocomplete="off" size="10" maxlength="120" required="true">
+                        autocomplete="off" size="10" maxlength="120">
                         <xsl:attribute name="value">
                             <xsl:value-of select="/page/query"/>
                         </xsl:attribute>
@@ -120,6 +119,9 @@
                             <img id="photo">
                                 <xsl:attribute name="src">
                                     <xsl:value-of select="identity/photo"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="alt">
+                                    <xsl:value-of select="identity/alias"/>
                                 </xsl:attribute>
                             </img>
                             <span>
