@@ -26,7 +26,8 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Urn;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import java.util.List;
 
 /**
@@ -42,14 +43,14 @@ public interface Infinity {
      * @param predicate The predicate to use
      * @return The list of groups
      */
-    List<Bundle> bundles(Urn identity, Predicate predicate);
+    List<Bundle> bundles(Identity identity, Predicate predicate);
 
     /**
      * Find bouts for the given predicate.
      * @param predicate The predicate to use
      * @return The list of bouts, ordered
      */
-    List<Long> bouts(Urn identity, Predicate predicate);
+    List<Long> bouts(Identity identity, Predicate predicate);
 
     /**
      * Find messages for the given predicate.
@@ -57,6 +58,6 @@ public interface Infinity {
      * @param predicate The predicate to use
      * @return The list of messages, ordered
      */
-    List<Long> messages(Long bout, Predicate predicate);
+    List<Long> messages(Bout bout, Predicate predicate);
 
 }

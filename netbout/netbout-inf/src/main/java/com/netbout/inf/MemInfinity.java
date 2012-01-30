@@ -27,9 +27,11 @@
 package com.netbout.inf;
 
 import com.netbout.bus.Bus;
-import com.netbout.spi.Urn;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,23 +59,61 @@ public final class MemInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public List<Bundle> bundles(final Urn identity, final Predicate predicate) {
-        return null;
+    public List<Bundle> bundles(final Identity identity,
+        final Predicate predicate) {
+        throw new UnsupportedOperationException("#bundles()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Long> bouts(final Urn identity, final Predicate predicate) {
-        return null;
+    public List<Long> bouts(final Identity identity,
+        final Predicate predicate) {
+        final List<Bout> bouts = new ArrayList<Bout>();
+        final List<Long> numbers = this.bus
+            .make("get-bouts-of-identity")
+            .synchronously()
+            .arg(identity.name())
+            .asDefault(new ArrayList<Long>())
+            .exec();
+        for (Long num : numbers) {
+            try {
+                bouts.add(identity.bout(num));
+            } catch (com.netbout.spi.BoutNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        Collections.sort(bouts, Collections.reverseOrder());
+        final List<Long> result = new ArrayList<Long>();
+        for (Bout bout : bouts) {
+            boolean matches = false;
+            if (this.messages(bout, predicate).isEmpty()) {
+                matches = (Boolean) predicate.evaluate(
+                    new StubMessage(bout),
+                    0
+                );
+            } else {
+                matches = true;
+            }
+            if (matches) {
+                result.add(bout.number());
+            }
+        }
+        Logger.debug(
+            this,
+            "#bouts('%s'): %d bouts found",
+            predicate,
+            result.size()
+        );
+        return result;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Long> messages(final Long bout, final Predicate predicate) {
+    public List<Long> messages(final Bout bout, final Predicate predicate) {
         return null;
     }
 
