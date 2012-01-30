@@ -24,54 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
-
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
 
 /**
- * Common bus of all transactions processed by helpers.
- *
- * <p>To execute a transaction you do something like this:
- *
- * <pre>
- * final String[] names = bus.make("get-user-names")
- *   .inBout(bout)
- *   .arg("Some text argument")
- *   .arg(123L)
- *   .arg(new Date())
- *   .asap()
- *   .expire(".*(user|name).*")
- *   .reportProgress(reporter)
- *   .asPreliminary(null)
- *   .noCache()
- *   .asDefault(new String[] {})
- *   .exec(String[].class)
- * </pre>
+ * Bus helper.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bus {
-
-    /**
-     * A convenient static method to create a new transaction builder.
-     * @param mnemo Mnemo-code of the transation
-     * @return The transaction builder
-     */
-    TxBuilder make(String mnemo);
-
-    /**
-     * A convenient static method to register new helper.
-     * @param identity Who is the owner of this helper
-     * @param helper The helper to register
-     */
-    void register(Identity identity, Helper helper);
-
-    /**
-     * Summary of current stats.
-     * @return Summary
-     */
-    String stats();
-
-}
+package com.netbout.bus;

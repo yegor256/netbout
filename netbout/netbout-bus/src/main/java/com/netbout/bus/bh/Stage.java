@@ -24,54 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
+package com.netbout.bus.bh;
 
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Common bus of all transactions processed by helpers.
- *
- * <p>To execute a transaction you do something like this:
- *
- * <pre>
- * final String[] names = bus.make("get-user-names")
- *   .inBout(bout)
- *   .arg("Some text argument")
- *   .arg(123L)
- *   .arg(new Date())
- *   .asap()
- *   .expire(".*(user|name).*")
- *   .reportProgress(reporter)
- *   .asPreliminary(null)
- *   .noCache()
- *   .asDefault(new String[] {})
- *   .exec(String[].class)
- * </pre>
+ * The stage to render with JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bus {
+@XmlType(name = "data")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class Stage {
 
     /**
-     * A convenient static method to create a new transaction builder.
-     * @param mnemo Mnemo-code of the transation
-     * @return The transaction builder
+     * The text to show.
      */
-    TxBuilder make(String mnemo);
+    private final transient String text;
 
     /**
-     * A convenient static method to register new helper.
-     * @param identity Who is the owner of this helper
-     * @param helper The helper to register
+     * Public ctor, for JAXB.
      */
-    void register(Identity identity, Helper helper);
+    public Stage() {
+        throw new IllegalStateException("illegal call");
+    }
 
     /**
-     * Summary of current stats.
-     * @return Summary
+     * Public ctor.
+     * @param txt The text to show
      */
-    String stats();
+    public Stage(final String txt) {
+        this.text = txt;
+    }
+
+    /**
+     * Get text.
+     * @return The text
+     */
+    @XmlElement
+    public String getText() {
+        return this.text;
+    }
 
 }

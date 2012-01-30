@@ -26,6 +26,7 @@
  */
 package com.netbout.bus;
 
+import com.netbout.bus.bh.StageFarm;
 import com.netbout.bus.cache.EmptyTokenCache;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
@@ -70,6 +71,7 @@ public final class DefaultBus implements Bus {
         } catch (org.quartz.SchedulerException ex) {
             throw new IllegalStateException(ex);
         }
+        StageFarm.register(this);
     }
 
     /**
@@ -101,6 +103,14 @@ public final class DefaultBus implements Bus {
                 throw new IllegalStateException(ex);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String stats() {
+        return this.controller.stats();
     }
 
     /**
