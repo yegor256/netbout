@@ -88,6 +88,49 @@ public final class MessageFarm {
     }
 
     /**
+     * Check message existence in the bout.
+     * @param bout Bout number to check
+     * @param msg Message number to check
+     * @return It exists?
+     * @throws SQLException If some SQL problem inside
+     */
+    @Operation("check-message-existence")
+    public Boolean checkMessageExistence(final Long bout, final Long msg)
+        throws SQLException {
+        final long start = System.currentTimeMillis();
+        final Connection conn = Database.connection();
+        Boolean exists;
+        try {
+            final PreparedStatement stmt = conn.prepareStatement(
+                "SELECT number FROM message WHERE number = ? AND bout = ?"
+            );
+            stmt.setLong(1, msg);
+            stmt.setLong(2, bout);
+            final ResultSet rset = stmt.executeQuery();
+            try {
+                if (rset.next()) {
+                    exists = true;
+                } else {
+                    exists = false;
+                }
+            } finally {
+                rset.close();
+            }
+        } finally {
+            conn.close();
+        }
+        Logger.debug(
+            this,
+            "#checkMessageExistence(#%d, #%d): retrieved %b [%dms]",
+            bout,
+            msg,
+            exists,
+            System.currentTimeMillis() - start
+        );
+        return exists;
+    }
+
+    /**
      * Get list of numbers of all bout messages.
      * @param bout The bout where it happened
      * @return List of numbers

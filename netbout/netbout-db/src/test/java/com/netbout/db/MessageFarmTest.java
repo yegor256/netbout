@@ -58,6 +58,20 @@ public final class MessageFarmTest {
     }
 
     /**
+     * MessageFarm can check for message existence.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void addsMessageToBoutAndChecksForExistence() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Long message = new MessageRowMocker(bout).mock();
+        MatcherAssert.assertThat(
+            "exists",
+            this.farm.checkMessageExistence(bout, message)
+        );
+    }
+
+    /**
      * MessageFarm can set and read message date.
      * @throws Exception If there is some problem inside
      */
