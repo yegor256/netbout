@@ -27,14 +27,10 @@
 package com.netbout.inf;
 
 import com.netbout.hub.Hub;
-import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Searcher, which keeps all data in memory.
@@ -45,18 +41,41 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class MemInfinity implements Infinity {
 
     /**
-     * Find bouts for the given predicate.
-     * @param predicate The predicate to use
-     * @return The list of bouts, ordered
+     * The hub to work with.
      */
-    List<Long> bouts(final Predicate predicate);
+    private final transient Hub hub;
 
     /**
-     * Find messages for the given predicate.
-     * @param predicate The predicate to use
-     * @return The list of messages, ordered
+     * Public ctor.
+     * @param ihub The hub to work with
      */
-    List<Long> messages(final Predicate predicate);
+    public MemInfinity(final Hub ihub) {
+        this.hub = ihub;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Bundle> bundles(final Urn identity, final Predicate predicate) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Long> bouts(final Urn identity, final Predicate predicate) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Long> messages(final Long bout, final Predicate predicate) {
+        return null;
+    }
 
     // /**
     //  * Filter list of messages with a predicate.

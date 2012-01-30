@@ -26,18 +26,8 @@
  */
 package com.netbout.inf;
 
-import com.netbout.hub.BoutDt;
-import com.netbout.hub.Hub;
-import com.netbout.hub.MessageDt;
-import com.netbout.hub.ParticipantDt;
-import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Infinity, with information about bouts and messages.
