@@ -216,8 +216,9 @@ public final class DefaultHubTest {
             .doReturn(new Urn(), "get-namespace-owner")
             .doReturn(1L, "get-next-bout-number")
             .doReturn(true, "can-be-invited")
+            .doReturn(true, "check-bout-existence")
             .doReturn(Arrays.asList(new Urn[]{}), "get-bout-participants")
-            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
+            .doReturn(Arrays.asList(new Long[]{1L}), "get-bouts-of-identity")
             .doReturn(Arrays.asList(new Long[]{}), "get-bout-messages")
             .mock();
         final Hub hub = new DefaultHub(bus);

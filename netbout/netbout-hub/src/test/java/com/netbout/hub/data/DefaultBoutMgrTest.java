@@ -72,6 +72,7 @@ public final class DefaultBoutMgrTest {
         final Long number = new Random().nextLong();
         final Hub hub = new HubMocker()
             .doReturn(number, "get-next-bout-number")
+            .doReturn(true, "check-bout-existence")
             .mock();
         final BoutMgr mgr = new DefaultBoutMgr(hub);
         final Long num = mgr.create();
