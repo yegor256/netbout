@@ -135,7 +135,7 @@ public final class IdentityFarmTest {
             .mock();
         MatcherAssert.assertThat(
             this.farm.findIdentitiesByKeyword("DOM"),
-            Matchers.hasSize(0)
+            Matchers.nullValue()
         );
     }
 

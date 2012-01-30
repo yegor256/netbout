@@ -29,6 +29,7 @@
 --
 
 -- clean the datbase before start
+DELETE FROM bill;
 DELETE FROM namespace WHERE identity != "urn:void:";
 DELETE FROM helper;
 DELETE FROM alias;

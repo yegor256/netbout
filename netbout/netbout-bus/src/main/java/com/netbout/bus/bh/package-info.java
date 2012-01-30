@@ -31,4 +31,4 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.bus;
+package com.netbout.bus.bh;

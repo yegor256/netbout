@@ -31,12 +31,12 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Plain;
-import com.netbout.spi.Urn;
 import com.netbout.spi.plain.PlainList;
 import com.ymock.util.Logger;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,12 +44,16 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Default executor of a token.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class DefaultTokenExecutor implements TokenExecutor {
 
@@ -63,6 +67,12 @@ final class DefaultTokenExecutor implements TokenExecutor {
      * Consumption bills.
      */
     private final transient List<Bill> bills = new CopyOnWriteArrayList<Bill>();
+
+    /**
+     * Already running mnemos.
+     */
+    private final transient Set<String> running =
+        new CopyOnWriteArraySet<String>();
 
     /**
      * {@inheritDoc}
@@ -108,6 +118,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void exec(final TxToken token, final Bout bout) {
         final Set<Map.Entry<Identity, Helper>> active =
             new HashSet<Map.Entry<Identity, Helper>>();
@@ -147,21 +158,31 @@ final class DefaultTokenExecutor implements TokenExecutor {
      */
     private Bill run(final TxToken token,
         final Set<Map.Entry<Identity, Helper>> targets) {
-        final Bill bill = new Bill();
+        final String mnemo = token.mnemo();
+        if (this.running.contains(mnemo)) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Suspected endless cycle since '%s' is already running",
+                    mnemo
+                )
+            );
+        }
+        this.running.add(mnemo);
+        final Bill bill = new Bill(mnemo);
         for (Map.Entry<Identity, Helper> helper : targets) {
-            if (helper.getValue().supports().contains(token.mnemo())) {
+            if (helper.getValue().supports().contains(mnemo)) {
                 final long start = System.currentTimeMillis();
                 helper.getValue().execute(token);
                 if (token.isCompleted()) {
                     bill.done(
-                        token.mnemo(),
-                        helper.getKey().name(),
+                        helper.getKey().name().toString(),
                         System.currentTimeMillis() - start
                     );
                     break;
                 }
             }
         }
+        this.running.remove(mnemo);
         Logger.debug(
             this,
             "#run(%s, %d helpers): returned [%s]",
@@ -178,21 +199,24 @@ final class DefaultTokenExecutor implements TokenExecutor {
      */
     private void save(final Bill bill) {
         synchronized (this.bills) {
-            if (this.bills.size() > 100) {
+            // @checkstyle MagicNumber (1 line)
+            if (this.bills.size() > 50) {
                 final List<String> lines = new ArrayList<String>();
                 for (Bill archive : this.bills) {
                     lines.add(archive.toString());
                 }
+                this.bills.clear();
                 this.exec(
                     new DefaultTxToken(
-                        "save-bus-statistics",
+                        "save-bills",
                         Arrays.asList(new Plain<?>[] {new PlainList(lines)})
                     )
                 );
-                this.bills.clear();
             }
         }
-        this.bills.add(bill);
+        if (bill.isDone()) {
+            this.bills.add(bill);
+        }
     }
 
     /**
@@ -200,13 +224,17 @@ final class DefaultTokenExecutor implements TokenExecutor {
      */
     private static final class Bill {
         /**
+         * When it happened.
+         */
+        private final transient Date date = new Date();
+        /**
          * Mnemo.
          */
-        private transient String mnemo;
+        private final transient String mnemo;
         /**
          * Helper.
          */
-        private transient Urn helper;
+        private transient String helper;
         /**
          * Milliseconds.
          */
@@ -216,14 +244,18 @@ final class DefaultTokenExecutor implements TokenExecutor {
          */
         private transient Long number;
         /**
-         * Mark it done.
+         * Public ctor.
          * @param mnem The token we just executed
+         */
+        public Bill(final String mnem) {
+            this.mnemo = mnem;
+        }
+        /**
+         * Mark it done.
          * @param hlpr Who completed
          * @param msec How long did it take
          */
-        public void done(final String mnem, final Urn hlpr,
-            final Long msec) {
-            this.mnemo = mnem;
+        public void done(final String hlpr, final Long msec) {
             this.helper = hlpr;
             this.millis = msec;
         }
@@ -235,12 +267,20 @@ final class DefaultTokenExecutor implements TokenExecutor {
             this.number = num;
         }
         /**
+         * It is done?
+         * @return Yes or no
+         */
+        public boolean isDone() {
+            return this.helper != null;
+        }
+        /**
          * {@inheritDoc}
          */
         @Override
         public String toString() {
             return String.format(
-                "%s %s %d %d",
+                "%s %-30s %-25s %4d %5d",
+                ISODateTimeFormat.dateTime().print(new DateTime(this.date)),
                 this.mnemo,
                 this.helper,
                 this.millis,

@@ -34,9 +34,6 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import com.netbout.spi.xml.JaxbPrinter;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 

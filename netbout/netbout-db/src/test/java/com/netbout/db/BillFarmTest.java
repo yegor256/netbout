@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,24 +23,49 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.db;
+
+import com.netbout.spi.Urn;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Test;
+
+/**
+ * Test case of {@link BillFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:nb="http://www.netbout.com"
-    version="2.0" exclude-result-prefixes="xs">
+ */
+public final class BillFarmTest {
 
-    <xsl:template match="stage" mode="head">
-        <!-- nothing -->
-    </xsl:template>
+    /**
+     * Farm to work with.
+     */
+    private final transient BillFarm farm = new BillFarm();
 
-    <xsl:template match="stage">
-        <p>Latest BUS events (most recent on top):</p>
-        <p class="fixed"><xsl:value-of select="data/text"/></p>
-    </xsl:template>
+    /**
+     * BillFarm can save bills to DB.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void savesBills() throws Exception {
+        final Urn name = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().mock();
+        final List<String> lines = new ArrayList<String>();
+        lines.add(
+            String.format(
+                "2012-01-29T21:07:41.405-08:00 some-mnemo %s 657 null",
+                name
+            )
+        );
+        lines.add(
+            String.format(
+                "2012-01-24T21:08:41.405-05:00 txt %s 543 %d",
+                name,
+                bout
+            )
+        );
+        this.farm.saveBills(lines);
+    }
 
-</xsl:stylesheet>
+}
