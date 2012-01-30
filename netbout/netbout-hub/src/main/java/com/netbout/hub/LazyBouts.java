@@ -41,12 +41,23 @@ import java.util.ListIterator;
 public final class LazyBouts extends AbstractSequentialList<Bout> {
 
     /**
+     * List of bout numbers.
+     */
+    private final transient List<Long> bouts;
+
+    /**
+     * Where they are.
+     */
+    private final transient Identity identity;
+
+    /**
      * Public ctor.
      * @param bts The list of bout numbers
      * @param where The bout where they are located
      */
     public LazyBouts(final List<Long> bts, final Identity where) {
-        //
+        this.bouts = bts;
+        this.identity = where;
     }
 
     /**
@@ -54,7 +65,7 @@ public final class LazyBouts extends AbstractSequentialList<Bout> {
      */
     @Override
     public ListIterator<Bout> listIterator(final int idx) {
-        return null;
+        return new BoutsIterator(this.bouts.listIterator(idx));
     }
 
     /**
@@ -62,7 +73,95 @@ public final class LazyBouts extends AbstractSequentialList<Bout> {
      */
     @Override
     public int size() {
-        return 0;
+        return this.bouts.size();
+    }
+
+    /**
+     * Iterator.
+     */
+    private final class BoutsIterator implements ListIterator<Bout> {
+        /**
+         * The iterator to work with.
+         */
+        private final transient ListIterator<Long> iterator;
+        /**
+         * Public ctor.
+         * @param iter The iterator
+         */
+        public BoutsIterator(final ListIterator<Long> iter) {
+            this.iterator = iter;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void add(final Bout bout) {
+            throw new IllegalArgumentException("#add()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean hasNext() {
+            return this.iterator.hasNext();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean hasPrevious() {
+            return this.iterator.hasPrevious();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Bout next() {
+            try {
+                return LazyBouts.this.identity.bout(this.iterator.next());
+            } catch (com.netbout.spi.BoutNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int nextIndex() {
+            return this.iterator.nextIndex();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Bout previous() {
+            try {
+                return LazyBouts.this.identity.bout(this.iterator.previous());
+            } catch (com.netbout.spi.BoutNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int previousIndex() {
+            return this.iterator.previousIndex();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void remove() {
+            throw new IllegalArgumentException("#remove()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void set(final Bout bout) {
+            throw new IllegalArgumentException("#set()");
+        }
     }
 
 }

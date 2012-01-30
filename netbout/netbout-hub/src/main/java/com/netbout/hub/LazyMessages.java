@@ -41,12 +41,23 @@ import java.util.ListIterator;
 public final class LazyMessages extends AbstractSequentialList<Message> {
 
     /**
+     * List of message numbers.
+     */
+    private final transient List<Long> messages;
+
+    /**
+     * Where they are.
+     */
+    private final transient Bout bout;
+
+    /**
      * Public ctor.
      * @param msgs The list of message numbers
      * @param where The bout where they are located
      */
     public LazyMessages(final List<Long> msgs, final Bout where) {
-        //
+        this.messages = msgs;
+        this.bout = where;
     }
 
     /**
@@ -54,7 +65,7 @@ public final class LazyMessages extends AbstractSequentialList<Message> {
      */
     @Override
     public ListIterator<Message> listIterator(final int idx) {
-        return null;
+        return new MessagesIterator(this.messages.listIterator(idx));
     }
 
     /**
@@ -62,7 +73,95 @@ public final class LazyMessages extends AbstractSequentialList<Message> {
      */
     @Override
     public int size() {
-        return 0;
+        return this.messages.size();
+    }
+
+    /**
+     * Iterator.
+     */
+    private final class MessagesIterator implements ListIterator<Message> {
+        /**
+         * The iterator to work with.
+         */
+        private final transient ListIterator<Long> iterator;
+        /**
+         * Public ctor.
+         * @param iter The iterator
+         */
+        public MessagesIterator(final ListIterator<Long> iter) {
+            this.iterator = iter;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void add(final Message msg) {
+            throw new IllegalArgumentException("#add()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean hasNext() {
+            return this.iterator.hasNext();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean hasPrevious() {
+            return this.iterator.hasPrevious();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Message next() {
+            try {
+                return LazyMessages.this.bout.message(this.iterator.next());
+            } catch (com.netbout.spi.MessageNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int nextIndex() {
+            return this.iterator.nextIndex();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Message previous() {
+            try {
+                return LazyMessages.this.bout.message(this.iterator.previous());
+            } catch (com.netbout.spi.MessageNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int previousIndex() {
+            return this.iterator.previousIndex();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void remove() {
+            throw new IllegalArgumentException("#remove()");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void set(final Message bout) {
+            throw new IllegalArgumentException("#set()");
+        }
     }
 
 }
