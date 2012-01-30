@@ -94,7 +94,12 @@ public final class DefaultBoutMgr implements BoutMgr {
             .synchronously()
             .asDefault(this.defaultNextBoutNumber())
             .exec();
-        final BoutData data = this.find(number);
+        BoutData data;
+        try {
+            data = this.find(number);
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new IllegalStateException(ex);
+        }
         data.setTitle("");
         this.hub.make("started-new-bout")
             .asap()

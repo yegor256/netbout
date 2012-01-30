@@ -74,7 +74,6 @@ public final class BoutDtMocker {
     private BoutDtMocker(final BoutDt mock) {
         this.bout = mock;
         Mockito.doReturn(this.participants).when(this.bout).getParticipants();
-        Mockito.doReturn(this.messages).when(this.bout).getMessages();
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {

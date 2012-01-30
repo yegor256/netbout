@@ -38,7 +38,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -175,13 +177,9 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     public Bout bout(final Long number) throws BoutNotFoundException {
         synchronized (this) {
             if (!this.ibouts.containsKey(number)) {
-                this.bouts.put(
+                this.ibouts.put(
                     number,
-                    new HubBout(
-                        this.hub,
-                        this,
-                        this.hub.manager().find(number)
-                    )
+                    this.hub.manager().find(number)
                 );
             }
             Logger.debug(
@@ -189,7 +187,11 @@ public final class HubIdentity implements Identity, InvitationSensitive {
                 "#bout(#%d): bout found",
                 number
             );
-            return this.ibouts.get(number);
+            return new HubBout(
+                this.hub,
+                this,
+                this.ibouts.get(number)
+            );
         }
     }
 
@@ -202,7 +204,7 @@ public final class HubIdentity implements Identity, InvitationSensitive {
         final List<Bout> bouts = new LazyBouts(
             this.hub.infinity().bouts(
                 this.name(),
-                new PredicateBuilder(this.hub).parse(query)
+                this.hub.predicate(query)
             ),
             this
         );

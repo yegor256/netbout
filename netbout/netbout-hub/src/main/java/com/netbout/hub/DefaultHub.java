@@ -32,6 +32,8 @@ import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.hub.hh.StatsFarm;
 import com.netbout.inf.Infinity;
 import com.netbout.inf.MemInfinity;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
@@ -101,7 +103,7 @@ public final class DefaultHub implements Hub {
      */
     public DefaultHub(final Bus bus) {
         this.ibus = bus;
-        this.inf = new MemInfinity(this);
+        this.inf = new MemInfinity(this.ibus);
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         StatsFarm.addStats(this);
@@ -137,6 +139,14 @@ public final class DefaultHub implements Hub {
     @Override
     public Infinity infinity() {
         return this.inf;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Predicate predicate(final String query) {
+        return new PredicateBuilder(this.ibus).parse(query);
     }
 
     /**

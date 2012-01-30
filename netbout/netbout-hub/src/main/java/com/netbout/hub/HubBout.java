@@ -244,7 +244,7 @@ public final class HubBout implements Bout {
         final List<Message> messages = new LazyMessages(
             this.hub.infinity().messages(
                 this.number(),
-                new PredicateBuilder(this.hub).parse(query)
+                this.hub.predicate(query)
             ),
             this
         );
