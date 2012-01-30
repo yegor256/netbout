@@ -144,8 +144,17 @@ final class DefaultTokenExecutor implements TokenExecutor {
     @Override
     public String stats() {
         final StringBuilder text = new StringBuilder();
+        for (Map.Entry<Identity, Helper> entry : this.helpers.entrySet()) {
+            text.append(
+                String.format(
+                    "%s as %s\n",
+                    entry.getKey().name(),
+                    entry.getValue().location()
+                )
+            );
+        }
         for (Bill archive : this.bills) {
-            text.append(archive.toString()).append("\n");
+            text.append("\n").append(archive.toString());
         }
         return text.toString();
     }
