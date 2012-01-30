@@ -24,11 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates;
+package com.netbout.inf.predicates;
 
-import com.netbout.hub.HubMocker;
-import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateBuilder;
+import com.netbout.bus.BusMocker;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
@@ -71,7 +71,7 @@ public final class FromPredTest {
         final int total = 10;
         final int from = 3;
         final int limit = total - from - 1;
-        final Predicate pred = new PredicateBuilder(new HubMocker().mock())
+        final Predicate pred = new PredicateBuilder(new BusMocker().mock())
             .parse(String.format("(and (from %d) (limit %d))", from, limit));
         int count = 0;
         final Message msg = new MessageMocker().mock();

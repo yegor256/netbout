@@ -31,4 +31,4 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.hub.predicates.math;
+package com.netbout.inf.predicates.math;

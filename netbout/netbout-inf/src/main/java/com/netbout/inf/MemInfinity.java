@@ -26,7 +26,7 @@
  */
 package com.netbout.inf;
 
-import com.netbout.hub.Hub;
+import com.netbout.bus.Bus;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -41,16 +41,16 @@ import java.util.List;
 public final class MemInfinity implements Infinity {
 
     /**
-     * The hub to work with.
+     * The bus to work with.
      */
-    private final transient Hub hub;
+    private final transient Bus bus;
 
     /**
      * Public ctor.
-     * @param ihub The hub to work with
+     * @param ibus The BUS to work with
      */
-    public MemInfinity(final Hub ihub) {
-        this.hub = ihub;
+    public MemInfinity(final Bus ibus) {
+        this.bus = ibus;
     }
 
     /**

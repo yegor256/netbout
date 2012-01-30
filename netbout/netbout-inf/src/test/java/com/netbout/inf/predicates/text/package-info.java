@@ -31,4 +31,4 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.hub.predicates.text;
+package com.netbout.inf.predicates.text;

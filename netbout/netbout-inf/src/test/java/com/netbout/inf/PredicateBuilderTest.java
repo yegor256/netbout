@@ -24,8 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf;
 
+import com.netbout.bus.BusMocker;
 import com.netbout.spi.MessageMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -59,7 +60,7 @@ public final class PredicateBuilderTest {
             "just simple text: \u0435",
         };
         final PredicateBuilder builder =
-            new PredicateBuilder(new HubMocker().mock());
+            new PredicateBuilder(new BusMocker().mock());
         for (String query : queries) {
             builder.parse(query);
         }
@@ -78,7 +79,7 @@ public final class PredicateBuilderTest {
             "(invalid-name-of-predicate# 5)",
         };
         final PredicateBuilder builder =
-            new PredicateBuilder(new HubMocker().mock());
+            new PredicateBuilder(new BusMocker().mock());
         for (String query : queries) {
             try {
                 builder.parse(query);
@@ -99,7 +100,7 @@ public final class PredicateBuilderTest {
     @Test
     public void buildsPredicateFromQuery() throws Exception {
         final PredicateBuilder builder =
-            new PredicateBuilder(new HubMocker().mock());
+            new PredicateBuilder(new BusMocker().mock());
         final String text = "\u043F\u0440\u0438\u0432\u0435";
         final Predicate pred = builder.parse(
             String.format("(and (matches \"%s\" $text) (pos 0))", text)
@@ -127,7 +128,7 @@ public final class PredicateBuilderTest {
     @Test
     public void buildsPredicateFromText() throws Exception {
         final PredicateBuilder builder =
-            new PredicateBuilder(new HubMocker().mock());
+            new PredicateBuilder(new BusMocker().mock());
         final String text = "\u043F\u0440\u0438\u0432\u0435\u0442";
         final Predicate pred = builder.parse(text);
         MatcherAssert.assertThat(

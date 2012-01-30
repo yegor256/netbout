@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.DuplicateInvitationException;
 import com.netbout.spi.Identity;
@@ -241,11 +242,12 @@ public final class HubBout implements Bout {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
         final List<Message> messages = new LazyMessages(
-            new MemSearcher().messages(
+            this.hub.infinity().messages(
+                this.number(),
                 new PredicateBuilder(this.hub).parse(query)
             ),
             this
-        )
+        );
         Logger.debug(
             this,
             "#messages('%s'): %d message(s) found",

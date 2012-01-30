@@ -26,7 +26,7 @@
  */
 package com.netbout.inf;
 
-import com.netbout.hub.Hub;
+import com.netbout.bus.Bus;
 import com.netbout.inf.predicates.CustomPred;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
@@ -52,32 +52,32 @@ public final class PredicateBuilder {
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     private static final Map<String, String> FUNCS = ArrayUtils.toMap(
         new String[][] {
-            {"and", "com.netbout.hub.predicates.logic.AndPred"},
-            {"equal", "com.netbout.hub.predicates.math.EqualPred"},
-            {"from", "com.netbout.hub.predicates.FromPred"},
-            {"greater-than", "com.netbout.hub.predicates.math.GreaterThanPred"},
-            {"less-than", "com.netbout.hub.predicates.math.LessThanPred"},
-            {"limit", "com.netbout.hub.predicates.LimitPred"},
-            {"matches", "com.netbout.hub.predicates.text.MatchesPred"},
-            {"not", "com.netbout.hub.predicates.logic.NotPred"},
-            {"ns", "com.netbout.hub.predicates.xml.NsPred"},
-            {"or", "com.netbout.hub.predicates.logic.OrPred"},
-            {"pos", "com.netbout.hub.predicates.PosPred"},
-            {"talks-with", "com.netbout.hub.predicates.TalksWithPred"},
+            {"and", "com.netbout.inf.predicates.logic.AndPred"},
+            {"equal", "com.netbout.inf.predicates.math.EqualPred"},
+            {"from", "com.netbout.inf.predicates.FromPred"},
+            {"greater-than", "com.netbout.inf.predicates.math.GreaterThanPred"},
+            {"less-than", "com.netbout.inf.predicates.math.LessThanPred"},
+            {"limit", "com.netbout.inf.predicates.LimitPred"},
+            {"matches", "com.netbout.inf.predicates.text.MatchesPred"},
+            {"not", "com.netbout.inf.predicates.logic.NotPred"},
+            {"ns", "com.netbout.inf.predicates.xml.NsPred"},
+            {"or", "com.netbout.inf.predicates.logic.OrPred"},
+            {"pos", "com.netbout.inf.predicates.PosPred"},
+            {"talks-with", "com.netbout.inf.predicates.TalksWithPred"},
         }
     );
 
     /**
-     * Hub to find custom predicates.
+     * BUS to find custom predicates.
      */
-    private final transient Hub ihub;
+    private final transient Bus ibus;
 
     /**
      * Public ctor.
-     * @param hub The hub to work with
+     * @param bus The bus to work with
      */
-    public PredicateBuilder(final Hub hub) {
-        this.ihub = hub;
+    public PredicateBuilder(final Bus bus) {
+        this.ibus = bus;
     }
 
     /**
@@ -150,7 +150,7 @@ public final class PredicateBuilder {
                 throw new PredicateException(ex);
             }
         } else if (Urn.isValid(name)) {
-            predicate = new CustomPred(this.ihub, Urn.create(name), preds);
+            predicate = new CustomPred(this.ibus, Urn.create(name), preds);
         } else {
             throw new PredicateException(
                 String.format("Unknown function '%s'", name)

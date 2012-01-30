@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.bus.TxBuilder;
+import com.netbout.inf.Infinity;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
@@ -68,6 +69,12 @@ public interface Hub {
      * @return The manager
      */
     BoutMgr manager();
+
+    /**
+     * Get infinity.
+     * @return The infinity
+     */
+    Infinity infinity();
 
     /**
      * Promote existing identity to the helper.

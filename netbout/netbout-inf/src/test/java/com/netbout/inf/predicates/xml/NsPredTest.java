@@ -24,10 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates.xml;
+package com.netbout.inf.predicates.xml;
 
-import com.netbout.hub.Predicate;
-import com.netbout.hub.PredicateMocker;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateMocker;
 import com.netbout.spi.MessageMocker;
 import com.rexsl.test.ContainerMocker;
 import java.util.Arrays;

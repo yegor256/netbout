@@ -24,9 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.predicates;
+package com.netbout.inf.predicates;
 
-import com.netbout.hub.Predicate;
+import com.netbout.inf.Predicate;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.MessageMocker;

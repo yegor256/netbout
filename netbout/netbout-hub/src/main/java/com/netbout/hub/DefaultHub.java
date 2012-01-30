@@ -30,6 +30,8 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.TxBuilder;
 import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.hub.hh.StatsFarm;
+import com.netbout.inf.Infinity;
+import com.netbout.inf.MemInfinity;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
@@ -71,6 +73,11 @@ public final class DefaultHub implements Hub {
     private final transient BoutMgr imanager;
 
     /**
+     * Infinity.
+     */
+    private final transient Infinity inf;
+
+    /**
      * Resolver.
      */
     private final transient UrnResolver iresolver;
@@ -94,6 +101,7 @@ public final class DefaultHub implements Hub {
      */
     public DefaultHub(final Bus bus) {
         this.ibus = bus;
+        this.inf = new MemInfinity(this);
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         StatsFarm.addStats(this);
@@ -121,6 +129,14 @@ public final class DefaultHub implements Hub {
     @Override
     public BoutMgr manager() {
         return this.imanager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Infinity infinity() {
+        return this.inf;
     }
 
     /**

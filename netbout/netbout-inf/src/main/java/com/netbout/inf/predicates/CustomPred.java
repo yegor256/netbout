@@ -26,7 +26,7 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.hub.Hub;
+import com.netbout.bus.Bus;
 import com.netbout.inf.Predicate;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
@@ -43,20 +43,20 @@ import java.util.List;
 public final class CustomPred extends AbstractVarargPred {
 
     /**
-     * Hub to work with.
+     * Bus to work with.
      */
-    private final transient Hub ihub;
+    private final transient Bus ibus;
 
     /**
      * Public ctor.
-     * @param hub The hub to work with
+     * @param bus The bus to work with
      * @param name Name of the predicate
      * @param args The arguments
      */
-    public CustomPred(final Hub hub, final Urn name,
+    public CustomPred(final Bus bus, final Urn name,
         final List<Predicate> args) {
         super(name.toString(), args);
-        this.ihub = hub;
+        this.ibus = bus;
     }
 
     /**
@@ -68,7 +68,7 @@ public final class CustomPred extends AbstractVarargPred {
         for (Predicate pred : this.args()) {
             values.add(pred.evaluate(msg, pos));
         }
-        final Object result = this.ihub.make("evaluate-predicate")
+        final Object result = this.ibus.make("evaluate-predicate")
             .inBout(msg.bout())
             .arg(msg.bout().number())
             .arg(msg.number())

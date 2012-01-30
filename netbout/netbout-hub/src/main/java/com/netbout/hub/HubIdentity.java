@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
@@ -199,11 +200,12 @@ public final class HubIdentity implements Identity, InvitationSensitive {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Bout> inbox(final String query) {
         final List<Bout> bouts = new LazyBouts(
-            new SimpleSearcher().bouts(
+            this.hub.infinity().bouts(
+                this.name(),
                 new PredicateBuilder(this.hub).parse(query)
             ),
             this
-        )
+        );
         Logger.debug(
             this,
             "#inbox('%s'): %d bouts found",
