@@ -56,6 +56,7 @@ public final class LazyMessages extends AbstractSequentialList<Message> {
      * @param where The bout where they are located
      */
     public LazyMessages(final List<Long> msgs, final Bout where) {
+        super();
         this.messages = msgs;
         this.bout = where;
     }
@@ -159,7 +160,7 @@ public final class LazyMessages extends AbstractSequentialList<Message> {
          * {@inheritDoc}
          */
         @Override
-        public void set(final Message bout) {
+        public void set(final Message msg) {
             throw new IllegalArgumentException("#set()");
         }
     }

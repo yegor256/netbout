@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
@@ -35,12 +34,9 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**

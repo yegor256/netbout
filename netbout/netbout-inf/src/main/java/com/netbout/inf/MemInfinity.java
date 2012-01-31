@@ -70,6 +70,7 @@ public final class MemInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Long> bouts(final Identity identity,
         final Predicate predicate) {
         final List<Bout> bouts = new ArrayList<Bout>();
@@ -89,16 +90,8 @@ public final class MemInfinity implements Infinity {
         Collections.sort(bouts, Collections.reverseOrder());
         final List<Long> result = new ArrayList<Long>();
         for (Bout bout : bouts) {
-            boolean matches = false;
-            if (this.messages(bout, predicate).isEmpty()) {
-                matches = (Boolean) predicate.evaluate(
-                    new StubMessage(bout),
-                    0
-                );
-            } else {
-                matches = true;
-            }
-            if (matches) {
+            if ((predicate instanceof TruePred)
+                || !this.messages(bout, predicate).isEmpty()) {
                 result.add(bout.number());
             }
         }
@@ -116,6 +109,40 @@ public final class MemInfinity implements Infinity {
      */
     @Override
     public List<Long> messages(final Bout bout, final Predicate predicate) {
+        final List<Long> numbers = this.matches(bout, predicate);
+        Logger.debug(
+            this,
+            "#messages(#%d, '%s'): %d message(s) found",
+            bout.number(),
+            predicate,
+            numbers.size()
+        );
+        return numbers;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void seeBout(final Long bout) {
+        // ignore
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void seeMessage(final Long message) {
+        // ignore
+    }
+
+    /**
+     * Find messages in the bout that matches the predicate.
+     * @param bout The bout
+     * @param predicate The predicate
+     * @return List of their numbers
+     */
+    private List<Long> matches(final Bout bout, final Predicate predicate) {
         final List<Long> numbers = this.bus
             .make("get-bout-messages")
             .synchronously()
@@ -134,8 +161,9 @@ public final class MemInfinity implements Infinity {
         final List<Long> result = new ArrayList<Long>();
         for (Message msg : messages) {
             boolean visible = true;
-            if (predicate instanceof TruePred) {
-                final Object response = predicate.evaluate(msg, result.size());
+            if (!(predicate instanceof TruePred)) {
+                final Object response =
+                    predicate.evaluate(msg, result.size());
                 if (response instanceof Boolean) {
                     visible = (Boolean) response;
                 } else {
@@ -152,30 +180,7 @@ public final class MemInfinity implements Infinity {
                 result.add(msg.number());
             }
         }
-        Logger.debug(
-            this,
-            "#messages(#%d, '%s'): %d message(s) found",
-            bout.number(),
-            predicate,
-            result.size()
-        );
         return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void seeBout(final Long bout) {
-        // ignore
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void seeMessage(final Long message) {
-        // ignore
     }
 
 }

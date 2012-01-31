@@ -93,24 +93,6 @@ public final class BumperFarmMocker implements IdentityAware {
     }
 
     /**
-     * Evaluate predicate.
-     * @param bout Number of bout
-     * @param msg Number of message
-     * @param name Name of predicate
-     * @param args Arguments
-     * @return Value or NULL if name is unknown for us
-     */
-    @Operation("evaluate-predicate")
-    public String evaluatePredicate(final Long bout, final Long msg,
-        final Urn name, final List args) {
-        String response = null;
-        if ("urn:test:bumper:what-is-your-name".equals(name.toString())) {
-            response = "bumper";
-        }
-        return response;
-    }
-
-    /**
      * Somebody was just invited to the bout, shall we confirm participation.
      * @param number Bout where it is happening
      * @param who Who was invited

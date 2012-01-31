@@ -77,6 +77,7 @@ final class BoutData implements BoutDt {
     /**
      * List of already retrieved messages (cached).
      */
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final transient Map<Long, MessageDt> messages =
         new ConcurrentHashMap<Long, MessageDt>();
 

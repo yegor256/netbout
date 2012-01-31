@@ -56,6 +56,7 @@ public final class LazyBouts extends AbstractSequentialList<Bout> {
      * @param where The bout where they are located
      */
     public LazyBouts(final List<Long> bts, final Identity where) {
+        super();
         this.bouts = bts;
         this.identity = where;
     }

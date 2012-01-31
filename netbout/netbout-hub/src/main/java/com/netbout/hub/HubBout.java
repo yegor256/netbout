@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.DuplicateInvitationException;
 import com.netbout.spi.Identity;
@@ -41,7 +40,6 @@ import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -127,7 +125,6 @@ public final class HubBout implements Bout {
      */
     @Override
     public void leave() {
-        final Long number = this.number();
         this.data.kickOff(this.viewer.name());
     }
 

@@ -24,89 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
-
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
-import java.util.Date;
 
 /**
- * Message used in searches.
+ * Infinity, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class StubMessage implements Message {
-
-    /**
-     * The bout where this message is located.
-     */
-    private final transient Bout ibout;
-
-    /**
-     * Public ctor.
-     * @param bout The bout where this message is located
-     */
-    public StubMessage(final Bout bout) {
-        this.ibout = bout;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int compareTo(final Message msg) {
-        return this.ibout.date().compareTo(msg.date());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout() {
-        return this.ibout;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long number() {
-        return 0L;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity author() {
-        return this.ibout.participants().iterator().next().identity();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String text() {
-        return "";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Date date() {
-        return NetboutUtils.dateOf(this.ibout);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Boolean seen() {
-        return true;
-    }
-
-}
+package com.netbout.inf;

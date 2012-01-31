@@ -47,6 +47,7 @@ import org.junit.Test;
  * Test case of {@link DefaultBoutMgr}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class DefaultBoutMgrTest {
 

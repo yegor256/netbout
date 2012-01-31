@@ -46,37 +46,6 @@ import org.junit.Test;
 public final class HubIdentityTest {
 
     /**
-     * HubIdentity can sort bouts before returning them back.
-     * @throws Exception If there is some problem inside
-     * @todo #169 Doesn't work at the moment because Bus is not complete now
-     */
-    @Test
-    @org.junit.Ignore
-    public void sortsBoutsByRecentlyPostedMessages() throws Exception {
-        final List<Long> nums = new ArrayList<Long>();
-        final Bout first = new BoutMocker().mock();
-        nums.add(first.number());
-        final Bout second = new BoutMocker().mock();
-        nums.add(second.number());
-        final Bout third = new BoutMocker().mock();
-        nums.add(third.number());
-        final Hub hub = new HubMocker()
-            // @checkstyle MultipleStringLiterals (4 lines)
-            .doReturn(nums, "get-bouts-of-identity")
-            .doReturn(
-                Arrays.asList(new Long[]{1L}),
-                "get-bout-messages",
-                second.number()
-            )
-            .mock();
-        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
-        MatcherAssert.assertThat(
-            identity.inbox("").get(0).number(),
-            Matchers.equalTo(second.number())
-        );
-    }
-
-    /**
      * HubIdentity can find bouts by predicate, even without messages.
      * @throws Exception If there is some problem inside
      */
@@ -92,7 +61,7 @@ public final class HubIdentityTest {
             .mock();
         final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
         MatcherAssert.assertThat(
-            identity.inbox("(matches '' $text)").size(),
+            identity.inbox("").size(),
             Matchers.equalTo(1)
         );
     }

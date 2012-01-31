@@ -95,6 +95,13 @@ public final class DefaultBoutMgr implements BoutMgr {
             .synchronously()
             .asDefault(this.defaultNextBoutNumber())
             .exec();
+        this.hub.make("started-new-bout")
+            .asap()
+            .arg(number)
+            // @checkstyle MultipleStringLiterals (1 lines)
+            .expire("get-next-bout-number")
+            .asDefault(true)
+            .exec();
         BoutData data;
         try {
             data = this.find(number);
@@ -103,13 +110,6 @@ public final class DefaultBoutMgr implements BoutMgr {
         }
         data.setTitle("");
         data.addParticipant(author).setConfirmed(true);
-        this.hub.make("started-new-bout")
-            .asap()
-            .arg(data.getNumber())
-            // @checkstyle MultipleStringLiterals (1 lines)
-            .expire("get-next-bout-number")
-            .asDefault(true)
-            .exec();
         Logger.debug(
             this,
             "#create(): bout #%d created",

@@ -62,6 +62,10 @@ public final class VariablePred implements Predicate {
             value = msg.text();
         } else if ("bout.number".equals(this.name)) {
             value = msg.bout().number();
+        } else if ("bout.date".equals(this.name)) {
+            value = msg.bout().date();
+        } else if ("bout.recent".equals(this.name)) {
+            value = NetboutUtils.dateOf(msg.bout());
         } else if ("bout.title".equals(this.name)) {
             value = msg.bout().title();
         } else if ("number".equals(this.name)) {

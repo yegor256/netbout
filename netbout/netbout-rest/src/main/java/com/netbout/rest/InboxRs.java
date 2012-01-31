@@ -90,7 +90,12 @@ public final class InboxRs extends AbstractRs {
         if (view == null) {
             inbox = identity.inbox(this.query);
         } else {
-            inbox = identity.inbox(period.query(this.query));
+            inbox = identity.inbox(
+                period.query(
+                    this.query,
+                    "(not (greater-than $bout.recent '%s'))"
+                )
+            );
         }
         final PeriodsBuilder periods = new PeriodsBuilder(
             period,
