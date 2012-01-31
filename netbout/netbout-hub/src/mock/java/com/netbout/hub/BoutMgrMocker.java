@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Urn;
 import java.util.Random;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -49,7 +50,7 @@ public final class BoutMgrMocker {
      */
     public BoutMgr mock() {
         Mockito.doReturn(Math.abs(new Random().nextLong()))
-            .when(this.mgr).create();
+            .when(this.mgr).create(Mockito.any(Urn.class));
         try {
             Mockito.doAnswer(
                 new Answer() {

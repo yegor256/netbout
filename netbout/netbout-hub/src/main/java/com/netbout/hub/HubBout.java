@@ -128,9 +128,6 @@ public final class HubBout implements Bout {
     @Override
     public void leave() {
         this.data.kickOff(this.viewer.name());
-        if (this.viewer instanceof InvitationSensitive) {
-            ((InvitationSensitive) this.viewer).kickedOff(this.number());
-        }
     }
 
     /**
@@ -197,9 +194,6 @@ public final class HubBout implements Bout {
             "#invite('%s'): success",
             friend
         );
-        if (friend instanceof InvitationSensitive) {
-            ((InvitationSensitive) friend).invited(this);
-        }
         final Boolean confirm = this.hub.make("just-invited")
             .inBout(this)
             .arg(this.number())

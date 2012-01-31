@@ -29,6 +29,7 @@ package com.netbout.hub.data;
 import com.netbout.hub.BoutMgr;
 import com.netbout.hub.Hub;
 import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,7 +88,7 @@ public final class DefaultBoutMgr implements BoutMgr {
      * {@inheritDoc}
      */
     @Override
-    public Long create() {
+    public Long create(final Urn author) {
         final Long number = this.hub
             // @checkstyle MultipleStringLiterals (1 lines)
             .make("get-next-bout-number")
@@ -101,6 +102,7 @@ public final class DefaultBoutMgr implements BoutMgr {
             throw new IllegalStateException(ex);
         }
         data.setTitle("");
+        data.addParticipant(author).setConfirmed(true);
         this.hub.make("started-new-bout")
             .asap()
             .arg(data.getNumber())

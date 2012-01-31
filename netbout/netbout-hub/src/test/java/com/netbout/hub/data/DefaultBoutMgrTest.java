@@ -32,6 +32,7 @@ import com.netbout.hub.BoutMgr;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
+import com.netbout.spi.UrnMocker;
 import com.netbout.spi.xml.JaxbPrinter;
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
@@ -75,7 +76,7 @@ public final class DefaultBoutMgrTest {
             .doReturn(true, "check-bout-existence")
             .mock();
         final BoutMgr mgr = new DefaultBoutMgr(hub);
-        final Long num = mgr.create();
+        final Long num = mgr.create(new UrnMocker().mock());
         MatcherAssert.assertThat(num, Matchers.equalTo(number));
     }
 
@@ -88,8 +89,8 @@ public final class DefaultBoutMgrTest {
     public void createsNewBoutWithRealHub() throws Exception {
         final Bus bus = new BusMocker().mock();
         final BoutMgr mgr = new DefaultBoutMgr(new DefaultHub(bus));
-        final Long first = mgr.create();
-        final Long second = mgr.create();
+        final Long first = mgr.create(new UrnMocker().mock());
+        final Long second = mgr.create(new UrnMocker().mock());
         MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));
     }
 

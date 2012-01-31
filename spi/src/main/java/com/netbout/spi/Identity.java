@@ -36,6 +36,8 @@ import java.util.Set;
 /**
  * The identity of the person in a bout.
  *
+ * <p>Instances of this interface are thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

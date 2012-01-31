@@ -50,7 +50,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class HubIdentity implements Identity, InvitationSensitive {
+public final class HubIdentity implements Identity {
 
     /**
      * Default photo of identity.
@@ -72,12 +72,6 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      * The photo.
      */
     private transient URL iphoto;
-
-    /**
-     * List of bouts where I'm a participant.
-     */
-    private transient Map<Long, BoutDt> ibouts =
-        new ConcurrentHashMap<Long, BoutDt>();
 
     /**
      * List of aliases.
@@ -152,21 +146,11 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public Bout start() {
-        final Long num = this.hub.manager().create();
-        BoutDt data;
         try {
-            data = this.hub.manager().find(num);
+            return this.bout(this.hub.manager().create(this.name()));
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        final ParticipantDt dude = data.addParticipant(this.name());
-        dude.setConfirmed(true);
-        Logger.debug(
-            this,
-            "#start(): bout #%d started",
-            num
-        );
-        return new HubBout(this.hub, this, data);
     }
 
     /**
@@ -175,43 +159,18 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public Bout bout(final Long number) throws BoutNotFoundException {
-        synchronized (this) {
-            if (!this.ibouts.containsKey(number)) {
-                this.ibouts.put(
-                    number,
-                    this.hub.manager().find(number)
-                );
-            }
-            Logger.debug(
-                this,
-                "#bout(#%d): bout found",
-                number
-            );
-            return new HubBout(
-                this.hub,
-                this,
-                this.ibouts.get(number)
-            );
-        }
+        return new HubBout(this.hub, this, this.hub.manager().find(number));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Bout> inbox(final String query) {
-        final List<Bout> bouts = new LazyBouts(
+        return new LazyBouts(
             this.hub.infinity().bouts(this, this.hub.predicate(query)),
             this
         );
-        Logger.debug(
-            this,
-            "#inbox('%s'): %d bouts found",
-            query,
-            bouts.size()
-        );
-        return bouts;
     }
 
     /**
@@ -219,15 +178,17 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public URL photo() {
-        if (this.iphoto == null) {
-            final URL url = this.hub.make("get-identity-photo")
-                .synchronously()
-                .arg(this.name())
-                .asDefault(this.DEFAULT_PHOTO)
-                .exec();
-            this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
+        synchronized (this) {
+            if (this.iphoto == null) {
+                final URL url = this.hub.make("get-identity-photo")
+                    .synchronously()
+                    .arg(this.name())
+                    .asDefault(this.DEFAULT_PHOTO)
+                    .exec();
+                this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
+            }
+            return this.iphoto;
         }
-        return this.iphoto;
     }
 
     /**
@@ -300,44 +261,30 @@ public final class HubIdentity implements Identity, InvitationSensitive {
      */
     @Override
     public void alias(final String alias) {
-        if (this.myAliases().contains(alias)) {
-            Logger.debug(
-                this,
-                "#alias('%s'): it's already set for '%s'",
-                alias,
-                this.name()
-            );
-        } else {
-            this.hub.make("added-identity-alias")
-                .asap()
-                .arg(this.name())
-                .arg(alias)
-                .asDefault(true)
-                .exec();
-            Logger.debug(
-                this,
-                "#alias('%s'): added for '%s'",
-                alias,
-                this.name()
-            );
-            this.myAliases().add(alias);
+        synchronized (this) {
+            if (this.myAliases().contains(alias)) {
+                Logger.debug(
+                    this,
+                    "#alias('%s'): it's already set for '%s'",
+                    alias,
+                    this.name()
+                );
+            } else {
+                this.hub.make("added-identity-alias")
+                    .asap()
+                    .arg(this.name())
+                    .arg(alias)
+                    .asDefault(true)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#alias('%s'): added for '%s'",
+                    alias,
+                    this.name()
+                );
+                this.myAliases().add(alias);
+            }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void invited(final Bout bout) {
-        // this.ibouts.remove(bout.number());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void kickedOff(final Long bout) {
-        this.ibouts.remove(bout);
     }
 
     /**

@@ -44,7 +44,7 @@ import java.util.Set;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-final class HelperIdentity implements Identity, InvitationSensitive, Helper {
+final class HelperIdentity implements Identity, Helper {
 
     /**
      * The identity.
@@ -186,22 +186,6 @@ final class HelperIdentity implements Identity, InvitationSensitive, Helper {
     @Override
     public void alias(final String alias) {
         this.identity.alias(alias);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void invited(final Bout bout) {
-        this.identity.invited(bout);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void kickedOff(final Long bout) {
-        this.identity.kickedOff(bout);
     }
 
     /**

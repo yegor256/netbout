@@ -32,6 +32,8 @@ package com.netbout.spi;
 /**
  * One token to process by helper.
  *
+ * <p>Instances of this interface are thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

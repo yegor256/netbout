@@ -35,6 +35,8 @@ import java.util.Set;
 /**
  * Helper, implementation of identity.
  *
+ * <p>Instances of this interface are thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

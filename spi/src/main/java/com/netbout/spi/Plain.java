@@ -32,6 +32,8 @@ package com.netbout.spi;
 /**
  * Plain type used in {@link Token}.
  *
+ * <p>Instances of this interface are immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @param <T> The type of encapsulated value
