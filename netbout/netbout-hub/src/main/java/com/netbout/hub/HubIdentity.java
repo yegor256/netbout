@@ -153,6 +153,12 @@ public final class HubIdentity implements Identity {
             throw new IllegalStateException(ex);
         }
         this.hub.infinity().seeBout(bout.number());
+        Logger.debug(
+            this,
+            "#start(): bout #%d started by '%s'",
+            bout.number(),
+            this.name()
+        );
         return bout;
     }
 

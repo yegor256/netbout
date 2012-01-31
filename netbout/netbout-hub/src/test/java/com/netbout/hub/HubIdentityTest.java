@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,11 +103,17 @@ public final class HubIdentityTest {
      */
     @Test
     public void startsNewBoutAndRenamesIt() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final BoutMgr mgr = new BoutMgrMocker()
+            .withAuthor(name)
+            .mock();
         final Hub hub = new HubMocker()
+            .withBoutMgr(mgr)
             // @checkstyle MultipleStringLiterals (2 lines)
             .doReturn(new ArrayList<Long>(), "get-bouts-of-identity")
+            .doReturn(Arrays.asList(new Urn[] {name}), "get-bout-participants")
             .mock();
-        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
+        final Identity identity = new HubIdentity(hub, name);
         final Bout bout = identity.start();
         bout.rename("how it works?");
     }
