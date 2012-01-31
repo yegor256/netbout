@@ -37,6 +37,7 @@ import com.netbout.spi.NetboutUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class VariablePred implements Predicate {
 
     /**
@@ -54,6 +55,7 @@ public final class VariablePred implements Predicate {
 
     /**
      * {@inheritDoc}
+     * @checkstyle CyclomaticComplexity (30 lines)
      */
     @Override
     public Object evaluate(final Message msg, final int pos) {
