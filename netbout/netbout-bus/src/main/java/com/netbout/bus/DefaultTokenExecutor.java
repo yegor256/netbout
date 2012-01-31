@@ -44,7 +44,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -67,12 +66,6 @@ final class DefaultTokenExecutor implements TokenExecutor {
      * Consumption bills.
      */
     private final transient List<Bill> bills = new CopyOnWriteArrayList<Bill>();
-
-    /**
-     * Already running mnemos.
-     */
-    private final transient Set<String> running =
-        new CopyOnWriteArraySet<String>();
 
     /**
      * {@inheritDoc}
@@ -168,15 +161,6 @@ final class DefaultTokenExecutor implements TokenExecutor {
     private Bill run(final TxToken token,
         final Set<Map.Entry<Identity, Helper>> targets) {
         final String mnemo = token.mnemo();
-        if (this.running.contains(mnemo)) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Suspected endless cycle since '%s' is already running",
-                    mnemo
-                )
-            );
-        }
-        this.running.add(mnemo);
         final Bill bill = new Bill(mnemo);
         for (Map.Entry<Identity, Helper> helper : targets) {
             if (helper.getValue().supports().contains(mnemo)) {
@@ -191,7 +175,6 @@ final class DefaultTokenExecutor implements TokenExecutor {
                 }
             }
         }
-        this.running.remove(mnemo);
         Logger.debug(
             this,
             "#run(%s, %d helpers): returned [%s]",
