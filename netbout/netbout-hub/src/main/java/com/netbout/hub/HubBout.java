@@ -127,6 +127,7 @@ public final class HubBout implements Bout {
      */
     @Override
     public void leave() {
+        final Long number = this.number();
         this.data.kickOff(this.viewer.name());
     }
 

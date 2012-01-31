@@ -146,11 +146,14 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Bout start() {
+        Bout bout;
         try {
-            return this.bout(this.hub.manager().create(this.name()));
+            bout = this.bout(this.hub.manager().create(this.name()));
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
+        this.hub.infinity().seeBout(bout.number());
+        return bout;
     }
 
     /**

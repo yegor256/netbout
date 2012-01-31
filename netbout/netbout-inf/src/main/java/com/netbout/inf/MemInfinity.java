@@ -162,4 +162,20 @@ public final class MemInfinity implements Infinity {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void seeBout(final Long bout) {
+        // ignore
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void seeMessage(final Long message) {
+        // ignore
+    }
+
 }

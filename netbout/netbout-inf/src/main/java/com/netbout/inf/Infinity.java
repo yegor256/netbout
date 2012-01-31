@@ -40,6 +40,7 @@ public interface Infinity {
 
     /**
      * Find bundles and group them.
+     * @param identity Where to search for them
      * @param predicate The predicate to use
      * @return The list of groups
      */
@@ -47,6 +48,7 @@ public interface Infinity {
 
     /**
      * Find bouts for the given predicate.
+     * @param identity Where to search for them
      * @param predicate The predicate to use
      * @return The list of bouts, ordered
      */
@@ -54,10 +56,22 @@ public interface Infinity {
 
     /**
      * Find messages for the given predicate.
-     * @param
+     * @param bout Where to search for them
      * @param predicate The predicate to use
      * @return The list of messages, ordered
      */
     List<Long> messages(Bout bout, Predicate predicate);
+
+    /**
+     * Update information about this bout (something was changed there, maybe).
+     * @param bout The bout to inform about
+     */
+    void seeBout(Long bout);
+
+    /**
+     * Update information about this message.
+     * @param message The message to inform about
+     */
+    void seeMessage(Long message);
 
 }
