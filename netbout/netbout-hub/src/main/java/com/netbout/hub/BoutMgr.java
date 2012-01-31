@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.Urn;
 
 /**
  * Manager of all bouts.
@@ -38,9 +39,10 @@ public interface BoutMgr {
 
     /**
      * Create new bout.
+     * @param author Who is creating it
      * @return It's number (unique)
      */
-    Long create();
+    Long create(Urn author);
 
     /**
      * Find and return bout from collection.

@@ -34,6 +34,8 @@ import java.util.Date;
 /**
  * Single message in a {@link Bout}.
  *
+ * <p>Instances of this interface are thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

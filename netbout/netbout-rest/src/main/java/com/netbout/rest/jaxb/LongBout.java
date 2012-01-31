@@ -198,7 +198,9 @@ public final class LongBout {
         if (this.view == null) {
             discussion = this.bout.messages(this.query);
         } else {
-            discussion = this.bout.messages(period.query(this.query));
+            discussion = this.bout.messages(
+                period.query(this.query, "(not (greater-than $date '%s'))")
+            );
         }
         final PeriodsBuilder pbld = new PeriodsBuilder(
             period,

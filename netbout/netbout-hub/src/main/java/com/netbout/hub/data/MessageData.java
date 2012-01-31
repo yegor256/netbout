@@ -107,11 +107,12 @@ final class MessageData implements MessageDt {
     public void setDate(final Date dte) {
         this.date = dte;
         this.hub.make("changed-message-date")
-            .asap()
+            .synchronously()
             .arg(this.number)
             .arg(this.date)
             .asDefault(true)
             .exec();
+        this.hub.infinity().seeMessage(this.number);
         Logger.debug(
             this,
             "#setDate('%s'): set",
@@ -146,11 +147,12 @@ final class MessageData implements MessageDt {
     public void setAuthor(final Urn idnt) {
         this.author = idnt;
         this.hub.make("changed-message-author")
-            .asap()
+            .synchronously()
             .arg(this.number)
             .arg(this.author)
             .asDefault(true)
             .exec();
+        this.hub.infinity().seeMessage(this.number);
         Logger.debug(
             this,
             "#setAuthor('%s'): set for msg #%d",
@@ -186,11 +188,12 @@ final class MessageData implements MessageDt {
     public void setText(final String txt) {
         this.text = txt;
         this.hub.make("changed-message-text")
-            .asap()
+            .synchronously()
             .arg(this.number)
             .arg(this.text)
             .asDefault(true)
             .exec();
+        this.hub.infinity().seeMessage(this.number);
         Logger.debug(
             this,
             "#setText('%s'): set for msg #%d",
@@ -231,6 +234,7 @@ final class MessageData implements MessageDt {
                 .arg(identity)
                 .asDefault(true)
                 .exec();
+            this.hub.infinity().seeMessage(this.number);
             Logger.debug(
                 this,
                 "#addSeenBy('%s'): set for msg #%d",

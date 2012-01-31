@@ -109,9 +109,6 @@ public final class HubParticipant implements Participant {
     public void kickOff() {
         final Identity identity = this.identity();
         this.boutdt.kickOff(identity.name());
-        if (identity instanceof InvitationSensitive) {
-            ((InvitationSensitive) identity).kickedOff(this.ibout.number());
-        }
     }
 
     /**

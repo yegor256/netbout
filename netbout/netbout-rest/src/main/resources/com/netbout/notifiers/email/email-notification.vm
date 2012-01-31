@@ -1,4 +1,4 @@
 ${message.text()}
 
 --
-This message was just posted to "${bout.title()}" bout by ${message.author().name()}. Reply by email or click to reply in Netbout: ${href}
+Sent via Netbout: ${href}

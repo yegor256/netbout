@@ -54,12 +54,6 @@ public final class BoutDtMocker {
         new ArrayList<ParticipantDt>();
 
     /**
-     * Messages.
-     */
-    private final transient List<MessageDt> messages =
-        new ArrayList<MessageDt>();
-
-    /**
      * Public ctor.
      */
     public BoutDtMocker() {
@@ -74,7 +68,6 @@ public final class BoutDtMocker {
     private BoutDtMocker(final BoutDt mock) {
         this.bout = mock;
         Mockito.doReturn(this.participants).when(this.bout).getParticipants();
-        Mockito.doReturn(this.messages).when(this.bout).getMessages();
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
@@ -110,23 +103,12 @@ public final class BoutDtMocker {
     }
 
     /**
-     * With this message on board.
-     * @param msg The message
-     * @return This object
-     */
-    public BoutDtMocker withMessage(final MessageDt msg) {
-        this.messages.add(msg);
-        return this;
-    }
-
-    /**
      * Copy it.
      * @return New mocker
      */
     public BoutDtMocker but() {
         final BoutDtMocker copy = new BoutDtMocker(this.bout);
         copy.participants.addAll(this.participants);
-        copy.messages.addAll(this.messages);
         return copy;
     }
 

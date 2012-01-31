@@ -30,7 +30,6 @@ import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Bout data type.
@@ -94,12 +93,6 @@ public interface BoutDt {
      * @return The data
      */
     MessageDt addMessage();
-
-    /**
-     * Get full list of messages.
-     * @return Messages
-     */
-    List<MessageDt> getMessages();
 
     /**
      * Find message by number.

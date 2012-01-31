@@ -36,6 +36,8 @@ import java.util.List;
 /**
  * Bout, a conversation room.
  *
+ * <p>Instances of this interface are thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

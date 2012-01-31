@@ -40,7 +40,6 @@ import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -127,9 +126,6 @@ public final class HubBout implements Bout {
     @Override
     public void leave() {
         this.data.kickOff(this.viewer.name());
-        if (this.viewer instanceof InvitationSensitive) {
-            ((InvitationSensitive) this.viewer).kickedOff(this.number());
-        }
     }
 
     /**
@@ -196,9 +192,6 @@ public final class HubBout implements Bout {
             "#invite('%s'): success",
             friend
         );
-        if (friend instanceof InvitationSensitive) {
-            ((InvitationSensitive) friend).invited(this);
-        }
         final Boolean confirm = this.hub.make("just-invited")
             .inBout(this)
             .arg(this.number())
@@ -240,21 +233,17 @@ public final class HubBout implements Bout {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
-        final List<MessageDt> datas =
-            new ArrayList<MessageDt>(this.data.getMessages());
-        final List<Message> messages = new ArrayList<Message>();
-        for (MessageDt msg : datas) {
-            messages.add(new HubMessage(this.hub, this.viewer, this, msg));
-        }
-        Collections.sort(messages, Collections.reverseOrder());
-        final List<Message> result = this.filter(messages, query);
+        final List<Message> messages = new LazyMessages(
+            this.hub.infinity().messages(this, this.hub.predicate(query)),
+            this
+        );
         Logger.debug(
             this,
             "#messages('%s'): %d message(s) found",
             query,
-            result.size()
+            messages.size()
         );
-        return result;
+        return messages;
     }
 
     /**
@@ -341,51 +330,6 @@ public final class HubBout implements Bout {
             }
         }
         return message;
-    }
-
-    /**
-     * Filter list of messages with a predicate.
-     * @param list The list to filter
-     * @param query The query
-     * @return New list of them
-     */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public List<Message> filter(final List<Message> list,
-        final String query) {
-        final List<Message> result = new ArrayList<Message>();
-        final Predicate predicate = new PredicateBuilder(this.hub).parse(query);
-        for (Message msg : list) {
-            boolean visible = true;
-            if (!query.isEmpty()) {
-                final Object response = predicate.evaluate(msg, result.size());
-                if (response instanceof Boolean) {
-                    visible = (Boolean) response;
-                } else if (response instanceof String) {
-                    result.add(new PlainMessage(this, (String) response));
-                    break;
-                } else {
-                    throw new IllegalArgumentException(
-                        Logger.format(
-                            "Can't understand %[type]s response from '%s'",
-                            response,
-                            query
-                        )
-                    );
-                }
-            }
-            if (visible) {
-                result.add(msg);
-            }
-        }
-        if (list.isEmpty()) {
-            final Object response = predicate.evaluate(
-                new PlainMessage(this, ""), 0
-            );
-            if (response instanceof String) {
-                result.add(new PlainMessage(this, (String) response));
-            }
-        }
-        return result;
     }
 
     /**

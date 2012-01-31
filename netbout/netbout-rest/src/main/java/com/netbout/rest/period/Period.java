@@ -26,7 +26,7 @@
  */
 package com.netbout.rest.period;
 
-import com.netbout.hub.PredicateBuilder;
+import com.netbout.inf.PredicateBuilder;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.Map;
@@ -255,9 +255,10 @@ public final class Period {
     /**
      * Create query from this period.
      * @param query Original query
+     * @param formula The formula to use for predicate building
      * @return The query
      */
-    public String query(final String query) {
+    public String query(final String query, final String formula) {
         String original = "";
         if (!query.isEmpty() && query.charAt(0) == '(') {
             original = query;
@@ -267,9 +268,12 @@ public final class Period {
             }
         }
         final String text = String.format(
-            "(and (not (greater-than $date '%s'))%s)",
-            ISODateTimeFormat.dateTime().print(
-                new DateTime(this.newest().getTime())
+            "(and %s %s)",
+            String.format(
+                formula,
+                ISODateTimeFormat.dateTime().print(
+                    new DateTime(this.newest().getTime())
+                )
             ),
             original
         );

@@ -54,6 +54,7 @@
     <modules>
         <module>netbout-db</module>
         <module>netbout-bus</module>
+        <module>netbout-inf</module>
         <module>netbout-hub</module>
         <module>netbout-rest</module>
     </modules>

@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,37 +44,6 @@ import org.junit.Test;
  * @version $Id$
  */
 public final class HubIdentityTest {
-
-    /**
-     * HubIdentity can sort bouts before returning them back.
-     * @throws Exception If there is some problem inside
-     * @todo #169 Doesn't work at the moment because Bus is not complete now
-     */
-    @Test
-    @org.junit.Ignore
-    public void sortsBoutsByRecentlyPostedMessages() throws Exception {
-        final List<Long> nums = new ArrayList<Long>();
-        final Bout first = new BoutMocker().mock();
-        nums.add(first.number());
-        final Bout second = new BoutMocker().mock();
-        nums.add(second.number());
-        final Bout third = new BoutMocker().mock();
-        nums.add(third.number());
-        final Hub hub = new HubMocker()
-            // @checkstyle MultipleStringLiterals (4 lines)
-            .doReturn(nums, "get-bouts-of-identity")
-            .doReturn(
-                Arrays.asList(new Long[]{1L}),
-                "get-bout-messages",
-                second.number()
-            )
-            .mock();
-        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
-        MatcherAssert.assertThat(
-            identity.inbox("").get(0).number(),
-            Matchers.equalTo(second.number())
-        );
-    }
 
     /**
      * HubIdentity can find bouts by predicate, even without messages.
@@ -91,7 +61,7 @@ public final class HubIdentityTest {
             .mock();
         final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
         MatcherAssert.assertThat(
-            identity.inbox("(matches '' $text)").size(),
+            identity.inbox("").size(),
             Matchers.equalTo(1)
         );
     }
@@ -102,11 +72,17 @@ public final class HubIdentityTest {
      */
     @Test
     public void startsNewBoutAndRenamesIt() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final BoutMgr mgr = new BoutMgrMocker()
+            .withAuthor(name)
+            .mock();
         final Hub hub = new HubMocker()
+            .withBoutMgr(mgr)
             // @checkstyle MultipleStringLiterals (2 lines)
             .doReturn(new ArrayList<Long>(), "get-bouts-of-identity")
+            .doReturn(Arrays.asList(new Urn[] {name}), "get-bout-participants")
             .mock();
-        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
+        final Identity identity = new HubIdentity(hub, name);
         final Bout bout = identity.start();
         bout.rename("how it works?");
     }

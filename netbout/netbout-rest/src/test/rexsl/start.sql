@@ -114,20 +114,33 @@ INSERT INTO participant (bout, identity, confirmed, date) VALUES (900, 'urn:test
 INSERT INTO bout (number, title, date) VALUES (901, 'test', '2010-01-13');
 INSERT INTO participant (bout, identity, confirmed, date) VALUES (901, 'urn:test:leon', 1, '2010-01-13');
 INSERT INTO message (number, bout, date, author, text) VALUES (901, 901, '2011-01-25', 'urn:test:leon', 'hi!');
+
 INSERT INTO seen (message, identity, date) VALUES (901, 'urn:test:leon', '2011-01-25');
 INSERT INTO bout (number, title, date) VALUES (902, 'test', '2010-01-14');
 INSERT INTO participant (bout, identity, confirmed, date) VALUES (902, 'urn:test:leon', 1, '2010-01-14');
+INSERT INTO message (number, bout, date, author, text) VALUES (902, 902, '2011-01-15', 'urn:test:leon', 'hi!');
+
 INSERT INTO bout (number, title, date) VALUES (903, 'test', '2010-01-15');
 INSERT INTO participant (bout, identity, confirmed, date) VALUES (903, 'urn:test:leon', 1, '2010-01-15');
+INSERT INTO message (number, bout, date, author, text) VALUES (903, 903, '2011-01-16', 'urn:test:leon', 'hi!');
+
 INSERT INTO bout (number, title, date) VALUES (904, 'test', '2010-01-16');
 INSERT INTO participant (bout, identity, confirmed, date) VALUES (904, 'urn:test:leon', 1, '2010-01-16');
+INSERT INTO message (number, bout, date, author, text) VALUES (904, 904, '2011-01-17', 'urn:test:leon', 'hi!');
+
 INSERT INTO bout (number, title, date) VALUES (905, 'test', '2010-01-17');
 INSERT INTO participant (bout, identity, confirmed, date) VALUES (905, 'urn:test:leon', 1, '2010-01-17');
+INSERT INTO message (number, bout, date, author, text) VALUES (905, 905, '2011-01-18', 'urn:test:leon', 'hi!');
+
 INSERT INTO bout (number, title, date) VALUES (906, 'test', '2010-01-18');
 INSERT INTO participant (bout, identity, confirmed, date) VALUES (906, 'urn:test:leon', 1, '2010-01-18');
+INSERT INTO message (number, bout, date, author, text) VALUES (906, 906, '2011-01-19', 'urn:test:leon', 'hi!');
+
 INSERT INTO bout (number, title, date) VALUES (907, 'test', '2010-01-19');
 INSERT INTO participant (bout, identity, confirmed, date) VALUES (907, 'urn:test:leon', 1, '2010-01-19');
+INSERT INTO message (number, bout, date, author, text) VALUES (907, 907, '2011-01-20', 'urn:test:leon', 'hi!');
+
 INSERT INTO bout (number, title, date) VALUES (908, 'test', '2010-01-20');
 INSERT INTO participant (bout, identity, confirmed, date) VALUES (908, 'urn:test:leon', 1, '2010-01-20');
-INSERT INTO message (number, bout, date, author, text) VALUES (908, 908, '2010-01-20', 'urn:test:leon', 'hi!');
-INSERT INTO seen (message, identity, date) VALUES (908, 'urn:test:leon', '2010-01-20');
+INSERT INTO message (number, bout, date, author, text) VALUES (908, 908, '2010-01-21', 'urn:test:leon', 'hi!');
+INSERT INTO seen (message, identity, date) VALUES (908, 'urn:test:leon', '2010-01-21');
