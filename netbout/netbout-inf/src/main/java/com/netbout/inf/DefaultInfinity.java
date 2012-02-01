@@ -69,7 +69,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public List<Bundle> bundles(final Predicate predicate) {
+    public List<Bundle> bundles(final String query) {
         throw new UnsupportedOperationException("#bundles()");
     }
 
@@ -77,7 +77,8 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public List<Long> bouts(final Predicate predicate) {
+    public List<Long> bouts(final String query) {
+        final Predicate predicate = new PredicateBuilder(this.bus).parse(query);
         final List<Long> numbers = new ArrayList<Long>();
         for (Msg msg : this.messages.values()) {
             if ((Boolean) predicate.evaluate(msg, 0)
@@ -92,7 +93,8 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public List<Long> messages(final Predicate predicate) {
+    public List<Long> messages(final String query) {
+        final Predicate predicate = new PredicateBuilder(this.bus).parse(query);
         final List<Long> numbers = new ArrayList<Long>();
         int pos = 0;
         for (Msg msg : this.messages.values()) {

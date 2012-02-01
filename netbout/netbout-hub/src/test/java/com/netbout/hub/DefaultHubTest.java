@@ -28,12 +28,9 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
-import com.netbout.spi.HelperMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.netbout.spi.xml.JaxbPrinter;
@@ -66,6 +63,7 @@ public final class DefaultHubTest {
     public void createsIdentityByName() throws Exception {
         final Urn name = new UrnMocker().mock();
         final Bus bus = new BusMocker()
+            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .mock();
         final Hub hub = new DefaultHub(bus);
@@ -99,6 +97,7 @@ public final class DefaultHubTest {
     public void promotesIdentityToHelper() throws Exception {
         final Urn name = new UrnMocker().mock();
         final Bus bus = new BusMocker()
+            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .mock();
         final Hub hub = new DefaultHub(bus);
@@ -122,6 +121,7 @@ public final class DefaultHubTest {
     @Test
     public void doesntDuplicateIdentities() throws Exception {
         final Bus bus = new BusMocker()
+            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .mock();
         final Hub hub = new DefaultHub(bus);
@@ -140,6 +140,7 @@ public final class DefaultHubTest {
     @Test
     public void informsBusAboutIdentityBeingMentioned() throws Exception {
         final Bus bus = new BusMocker()
+            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .mock();
         final Hub hub = new DefaultHub(bus);
@@ -177,7 +178,7 @@ public final class DefaultHubTest {
         names.add(name);
         final Bus bus = new BusMocker()
             .doReturn(names, "find-identities-by-keyword")
-            .doReturn(new ArrayList<Urn>(), "construct-extra-identities")
+            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
             .doReturn(new ArrayList<String>(), "get-all-namespaces")
             .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
             .mock();
@@ -202,36 +203,6 @@ public final class DefaultHubTest {
             new DefaultHub(new BusMocker().mock()).findByKeyword(""),
             Matchers.hasSize(0)
         );
-    }
-
-    /**
-     * DefaultHub can invite a helper and then kick him off.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void invitesHelperAndKicksHimOff() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new String[]{"test"}), "get-all-namespaces")
-            .doReturn("http://localhost", "get-namespace-template")
-            .doReturn(new Urn(), "get-namespace-owner")
-            .doReturn(1L, "get-next-bout-number")
-            .doReturn(true, "can-be-invited")
-            .doReturn(true, "check-bout-existence")
-            .doReturn(Arrays.asList(new Urn[]{}), "get-bout-participants")
-            .doReturn(Arrays.asList(new Long[]{1L}), "get-bouts-of-identity")
-            .doReturn(Arrays.asList(new Long[]{}), "get-bout-messages")
-            .mock();
-        final Hub hub = new DefaultHub(bus);
-        final Identity host = hub.identity(new UrnMocker().mock());
-        final Bout bout = host.start();
-        final Identity helper = hub.identity(new UrnMocker().mock());
-        hub.promote(helper, new HelperMocker().mock());
-        bout.invite(helper);
-        MatcherAssert.assertThat(helper.inbox(""), Matchers.hasSize(1));
-        NetboutUtils.participantOf(helper, bout).kickOff();
-        // this doesn't work because it's not a real BUS. every time
-        // the mocked BUS returns the same list on "get-bouts-of-identity"
-        // MatcherAssert.assertThat(helper.inbox(""), Matchers.hasSize(0));
     }
 
 }

@@ -112,7 +112,6 @@ final class MessageData implements MessageDt {
             .arg(this.date)
             .asDefault(true)
             .exec();
-        this.hub.infinity().seeMessage(this.number);
         Logger.debug(
             this,
             "#setDate('%s'): set",
@@ -152,7 +151,6 @@ final class MessageData implements MessageDt {
             .arg(this.author)
             .asDefault(true)
             .exec();
-        this.hub.infinity().seeMessage(this.number);
         Logger.debug(
             this,
             "#setAuthor('%s'): set for msg #%d",
@@ -193,7 +191,6 @@ final class MessageData implements MessageDt {
             .arg(this.text)
             .asDefault(true)
             .exec();
-        this.hub.infinity().seeMessage(this.number);
         Logger.debug(
             this,
             "#setText('%s'): set for msg #%d",
@@ -234,7 +231,6 @@ final class MessageData implements MessageDt {
                 .arg(identity)
                 .asDefault(true)
                 .exec();
-            this.hub.infinity().seeMessage(this.number);
             Logger.debug(
                 this,
                 "#addSeenBy('%s'): set for msg #%d",

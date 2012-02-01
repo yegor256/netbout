@@ -32,8 +32,6 @@ import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.hub.hh.StatsFarm;
 import com.netbout.inf.DefaultInfinity;
 import com.netbout.inf.Infinity;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
@@ -139,14 +137,6 @@ public final class DefaultHub implements Hub {
     @Override
     public Infinity infinity() {
         return this.inf;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Predicate predicate(final String query) {
-        return new PredicateBuilder(this.ibus).parse(query);
     }
 
     /**

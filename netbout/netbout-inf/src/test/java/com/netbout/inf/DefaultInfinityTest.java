@@ -51,8 +51,7 @@ public final class DefaultInfinityTest {
         final Bus bus = new BusMocker().mock();
         final Infinity inf = new DefaultInfinity(bus);
         final Identity identity = new IdentityMocker().mock();
-        final Predicate predicate = new PredicateBuilder(bus).parse("foo");
-        final List<Long> messages = inf.messages(predicate);
+        final List<Long> messages = inf.messages("foo");
     }
 
 }

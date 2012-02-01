@@ -42,27 +42,27 @@ public interface Infinity {
     /**
      * Find bundles and group them.
      * @param identity Where to search for them
-     * @param predicate The predicate to use
+     * @param query The predicate to use
      * @return The list of groups
      */
-    List<Bundle> bundles(Predicate predicate);
+    List<Bundle> bundles(String query);
 
     /**
      * Find bouts for the given predicate.
      * @param identity Where to search for them
-     * @param predicate The predicate to use
+     * @param query The predicate to use
      * @return The list of bouts, ordered
      */
-    List<Long> bouts(Predicate predicate);
+    List<Long> bouts(String query);
 
     /**
      * Find messages for the given predicate.
      * @param identity Where to search for them
      * @param bout Where to search for them
-     * @param predicate The predicate to use
+     * @param query The predicate to use
      * @return The list of messages, ordered
      */
-    List<Long> messages(Predicate predicate);
+    List<Long> messages(String query);
 
     /**
      * Update information about this identity
