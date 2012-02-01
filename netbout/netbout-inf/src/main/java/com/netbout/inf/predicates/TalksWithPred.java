@@ -28,7 +28,6 @@ package com.netbout.inf.predicates;
 
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.List;
 
@@ -57,7 +56,8 @@ public final class TalksWithPred extends AbstractVarargPred {
         final boolean talks = msg.has(String.format("talks-with:%s", name));
         Logger.debug(
             this,
-            "#evaluate(): talks with participant '%s': %B",
+            "#evaluate(): msg #%d talks with participant '%s': %B",
+            msg.number(),
             name,
             talks
         );

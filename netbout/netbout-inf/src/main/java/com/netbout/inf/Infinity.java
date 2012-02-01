@@ -41,7 +41,6 @@ public interface Infinity {
 
     /**
      * Find bundles and group them.
-     * @param identity Where to search for them
      * @param query The predicate to use
      * @return The list of groups
      */
@@ -49,7 +48,6 @@ public interface Infinity {
 
     /**
      * Find bouts for the given predicate.
-     * @param identity Where to search for them
      * @param query The predicate to use
      * @return The list of bouts, ordered
      */
@@ -57,8 +55,6 @@ public interface Infinity {
 
     /**
      * Find messages for the given predicate.
-     * @param identity Where to search for them
-     * @param bout Where to search for them
      * @param query The predicate to use
      * @return The list of messages, ordered
      */

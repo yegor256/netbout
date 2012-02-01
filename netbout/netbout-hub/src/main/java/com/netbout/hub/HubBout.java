@@ -243,7 +243,7 @@ public final class HubBout implements Bout {
                 String.format(
                     "(and (equal $bout.number %d) %s)",
                     this.number(),
-                    PredicateBuilder.byKeyword(query)
+                    PredicateBuilder.normalize(query)
                 )
             ),
             this

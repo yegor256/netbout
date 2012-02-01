@@ -88,43 +88,49 @@ public final class PredicateBuilder {
      * @return The predicate
      */
     public Predicate parse(final String query) {
+        final CharStream input = new ANTLRStringStream(
+            this.normalize(query)
+        );
+        final QueryLexer lexer = new QueryLexer(input);
+        final TokenStream tokens = new CommonTokenStream(lexer);
+        final QueryParser parser = new QueryParser(tokens);
+        parser.setPredicateBuilder(this);
         Predicate predicate;
-        if (!query.isEmpty() && query.charAt(0) == '(') {
-            final CharStream input = new ANTLRStringStream(query);
-            final QueryLexer lexer = new QueryLexer(input);
-            final TokenStream tokens = new CommonTokenStream(lexer);
-            final QueryParser parser = new QueryParser(tokens);
-            parser.setPredicateBuilder(this);
-            try {
-                predicate = parser.query();
-            } catch (org.antlr.runtime.RecognitionException ex) {
-                throw new PredicateException(query, ex);
-            } catch (PredicateException ex) {
-                throw new PredicateException(query, ex);
-            }
-            Logger.debug(
-                this,
-                "#parse('%s'): predicate found: '%s'",
-                query,
-                predicate
-            );
-        } else {
-            predicate = this.parse(PredicateBuilder.byKeyword(query));
+        try {
+            predicate = parser.query();
+        } catch (org.antlr.runtime.RecognitionException ex) {
+            throw new PredicateException(query, ex);
+        } catch (PredicateException ex) {
+            throw new PredicateException(query, ex);
         }
+        Logger.debug(
+            this,
+            "#parse('%s'): predicate found: '%s'",
+            query,
+            predicate
+        );
         return predicate;
     }
 
     /**
-     * Build a query by keyword.
-     * @param keyword The keyword to look for
+     * Normalize the query.
+     * @param query Raw format
      * @return The text for predicate
      */
-    public static String byKeyword(final String keyword) {
-        return String.format(
-            // @checkstyle LineLength (1 line)
-            "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
-            keyword.replace("'", "\\'")
-        );
+    public static String normalize(final String query) {
+        String normalized;
+        if (query == null) {
+            normalized = PredicateBuilder.normalize("");
+        } else if (query.startsWith("(") && query.endsWith(")")) {
+            normalized = query;
+        } else {
+            normalized = String.format(
+                // @checkstyle LineLength (1 line)
+                "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
+                query.replace("'", "\\'")
+            );
+        }
+        return normalized;
     }
 
     /**

@@ -183,7 +183,7 @@ public final class HubIdentity implements Identity {
                 String.format(
                     "(and (talks-with '%s') %s)",
                     this.name(),
-                    PredicateBuilder.byKeyword(query)
+                    PredicateBuilder.normalize(query)
                 )
             ),
             this

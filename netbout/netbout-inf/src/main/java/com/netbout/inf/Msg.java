@@ -26,16 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.bus.Bus;
-import com.netbout.inf.predicates.TruePred;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * One message to use in predicates.
  *

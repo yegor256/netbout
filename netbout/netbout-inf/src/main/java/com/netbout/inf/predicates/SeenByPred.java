@@ -28,7 +28,6 @@ package com.netbout.inf.predicates;
 
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.List;
 
@@ -46,6 +45,9 @@ public final class SeenByPred extends AbstractVarargPred {
      */
     public SeenByPred(final List<Predicate> args) {
         super("seen-by", args);
+        throw new UnsupportedOperationException(
+            "seen-by predicate is not implemented yet"
+        );
     }
 
     /**

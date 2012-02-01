@@ -83,7 +83,9 @@ public final class PredicateBuilderTest {
         for (String query : queries) {
             try {
                 builder.parse(query);
-                throw new IllegalArgumentException("should fail here");
+                throw new IllegalArgumentException(
+                    String.format("should fail with '%s'", query)
+                );
             } catch (PredicateException ex) {
                 MatcherAssert.assertThat(
                     ex.getMessage(),

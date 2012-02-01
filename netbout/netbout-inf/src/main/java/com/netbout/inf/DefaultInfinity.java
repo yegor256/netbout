@@ -27,7 +27,6 @@
 package com.netbout.inf;
 
 import com.netbout.bus.Bus;
-import com.netbout.inf.predicates.TruePred;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -111,19 +110,27 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Identity identity) {
-        final List<Long> bouts = this.bus
+        final long start = System.currentTimeMillis();
+        final List<Long> numbers = this.bus
             .make("get-bouts-of-identity")
             .synchronously()
             .arg(identity.name())
             .asDefault(new ArrayList<Long>())
             .exec();
-        for (Long number : bouts) {
+        for (Long number : numbers) {
             try {
                 this.see(identity.bout(number));
             } catch (com.netbout.spi.BoutNotFoundException ex) {
                 throw new IllegalStateException(ex);
             }
         }
+        Logger.debug(
+            this,
+            "#see(%s): cached %d bouts in %dms",
+            identity.name(),
+            numbers.size(),
+            System.currentTimeMillis() - start
+        );
     }
 
     /**
@@ -131,16 +138,27 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Bout bout) {
-        for (SortedMap.Entry<Long, Msg> entry : this.messages.entrySet()) {
-            final Msg msg = entry.getValue();
-            if (msg.bout().equals(bout.number())) {
-                try {
-                    this.see(bout.message(entry.getKey()));
-                } catch (com.netbout.spi.MessageNotFoundException ex) {
-                    throw new IllegalStateException(ex);
-                }
+        final long start = System.currentTimeMillis();
+        final List<Long> numbers = this.bus
+            .make("get-bout-messages")
+            .synchronously()
+            .arg(bout.number())
+            .asDefault(new ArrayList<Long>())
+            .exec();
+        for (Long number : numbers) {
+            try {
+                this.see(bout.message(number));
+            } catch (com.netbout.spi.MessageNotFoundException ex) {
+                throw new IllegalStateException(ex);
             }
         }
+        Logger.debug(
+            this,
+            "#see(bout #%d): cached %d messages in %dms",
+            bout.number(),
+            numbers.size(),
+            System.currentTimeMillis() - start
+        );
     }
 
     /**
