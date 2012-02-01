@@ -24,33 +24,77 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * It is always TRUE.
+ * Default implementation of {@link Msg}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TruePred implements Predicate {
+final class DefaultMsg implements Msg {
 
     /**
-     * {@inheritDoc}
+     * Number of message.
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        return Boolean.TRUE;
+    private final transient Long num;
+
+    /**
+     * Number of bout.
+     */
+    private final transient Long bnum;
+
+    /**
+     * Props.
+     */
+    private final transient Map<String, Object> properties;
+
+    /**
+     * Public ctor.
+     * @param msg Number of message
+     * @param bout Number of bout
+     * @param props List of properties
+     */
+    public DefaultMsg(final Long msg, final Long bout,
+        final Map<String, Object> props) {
+        this.num = msg;
+        this.bnum = bout;
+        this.properties = props;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        return Boolean.TRUE.toString();
+    public Long number() {
+        return this.num;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long bout() {
+        return this.bnum;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T get(final String name) {
+        return (T) this.properties.get(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean has(final String name) {
+        return this.properties.containsKey(name);
     }
 
 }

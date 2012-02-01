@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates.text;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +53,7 @@ public final class MatchesPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final String[] keywords = ((String) this.arg(0).evaluate(msg, pos))
             .replaceAll(
                 "['\"\\!@#\\$%\\?\\^&\\*\\(\\),\\.\\[\\]=\\+\\/]+",

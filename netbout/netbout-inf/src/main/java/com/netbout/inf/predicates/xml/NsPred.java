@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates.xml;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
 import com.ymock.util.Logger;
@@ -54,9 +54,9 @@ public final class NsPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final String namespace = (String) this.arg(0).evaluate(msg, pos);
-        final boolean result = new DomParser(msg.text())
+        final boolean result = new DomParser(msg.<String>get("text"))
             .belongsTo(Urn.create(namespace));
         Logger.debug(
             this,

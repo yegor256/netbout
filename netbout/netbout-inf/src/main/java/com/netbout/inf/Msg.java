@@ -24,33 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
+import com.netbout.bus.Bus;
+import com.netbout.inf.predicates.TruePred;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * It is always TRUE.
+ * One message to use in predicates.
+ *
+ * <p>Implementation of this class should be immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TruePred implements Predicate {
+public interface Msg {
 
     /**
-     * {@inheritDoc}
+     * Its number.
+     * @return The number
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        return Boolean.TRUE;
-    }
+    Long number();
 
     /**
-     * {@inheritDoc}
+     * Number of bout it's in.
+     * @return The number
      */
-    @Override
-    public String toString() {
-        return Boolean.TRUE.toString();
-    }
+    Long bout();
+
+    /**
+     * Has property.
+     * @param name The name of the property
+     * @return Yes, it has this property
+     */
+    boolean has(String name);
+
+    /**
+     * Get property.
+     * @param name The name of the property to get
+     * @param <T> Type of response
+     * @return Value of the property
+     */
+    <T> T get(String name);
 
 }

@@ -24,33 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
+import com.netbout.spi.Message;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * It is always TRUE.
+ * Builds {@link Msg} from {@link Messsage}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TruePred implements Predicate {
+final class MsgBuilder {
 
     /**
-     * {@inheritDoc}
+     * The message to get data from.
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        return Boolean.TRUE;
+    private final transient Message message;
+
+    /**
+     * Public ctor.
+     * @param msg The message
+     */
+    public MsgBuilder(final Message msg) {
+        this.message = msg;
     }
 
     /**
-     * {@inheritDoc}
+     * Build Msg and return.
+     * @return The msg
      */
-    @Override
-    public String toString() {
-        return Boolean.TRUE.toString();
+    public Msg build() {
+        final Map<String, Object> props = new HashMap<String, Object>();
+        props.put("text", this.message.text());
+        return new DefaultMsg(
+            this.message.number(),
+            this.message.bout().number(),
+            props
+        );
     }
 
 }

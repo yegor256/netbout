@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates.logic;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import java.util.List;
 
 /**
@@ -51,7 +51,7 @@ public final class NotPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Boolean evaluate(final Message msg, final int pos) {
+    public Boolean evaluate(final Msg msg, final int pos) {
         return !(Boolean) this.arg(0).evaluate(msg, pos);
     }
 

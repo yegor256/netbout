@@ -26,10 +26,11 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
-import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Urn;
+import java.util.Date;
 
 /**
  * Variable.
@@ -37,7 +38,6 @@ import com.netbout.spi.NetboutUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class VariablePred implements Predicate {
 
     /**
@@ -55,31 +55,28 @@ public final class VariablePred implements Predicate {
 
     /**
      * {@inheritDoc}
-     * @checkstyle CyclomaticComplexity (30 lines)
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         Object value;
         if ("text".equals(this.name)) {
-            value = msg.text();
+            value = msg.<String>get("text");
         } else if ("bout.number".equals(this.name)) {
-            value = msg.bout().number();
+            value = msg.bout();
         } else if ("bout.date".equals(this.name)) {
-            value = msg.bout().date();
+            value = msg.<Date>get("bout.date");
         } else if ("bout.recent".equals(this.name)) {
-            value = NetboutUtils.dateOf(msg.bout());
+            value = msg.<Date>get("bout.recent");
         } else if ("bout.title".equals(this.name)) {
-            value = msg.bout().title();
+            value = msg.<String>get("bout.title");
         } else if ("number".equals(this.name)) {
             value = msg.number();
         } else if ("date".equals(this.name)) {
-            value = msg.date();
+            value = msg.<Date>get("date");
         } else if ("author.name".equals(this.name)) {
-            value = msg.author().name();
+            value = msg.<Urn>get("author.name");
         } else if ("author.alias".equals(this.name)) {
-            value = NetboutUtils.aliasOf(msg.author());
-        } else if ("seen".equals(this.name)) {
-            value = msg.seen();
+            value = msg.<String>get("author.alias");
         } else {
             throw new PredicateException(
                 String.format("Unknown variable '$%s'", this.name)

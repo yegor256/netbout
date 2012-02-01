@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public interface Infinity {
      * @param predicate The predicate to use
      * @return The list of groups
      */
-    List<Bundle> bundles(Identity identity, Predicate predicate);
+    List<Bundle> bundles(Predicate predicate);
 
     /**
      * Find bouts for the given predicate.
@@ -52,26 +53,34 @@ public interface Infinity {
      * @param predicate The predicate to use
      * @return The list of bouts, ordered
      */
-    List<Long> bouts(Identity identity, Predicate predicate);
+    List<Long> bouts(Predicate predicate);
 
     /**
      * Find messages for the given predicate.
+     * @param identity Where to search for them
      * @param bout Where to search for them
      * @param predicate The predicate to use
      * @return The list of messages, ordered
      */
-    List<Long> messages(Bout bout, Predicate predicate);
+    List<Long> messages(Predicate predicate);
+
+    /**
+     * Update information about this identity
+     * (something was changed there, maybe).
+     * @param identity The identity to inform about
+     */
+    void see(Identity identity);
 
     /**
      * Update information about this bout (something was changed there, maybe).
      * @param bout The bout to inform about
      */
-    void seeBout(Long bout);
+    void see(Bout bout);
 
     /**
      * Update information about this message.
      * @param message The message to inform about
      */
-    void seeMessage(Long message);
+    void see(Message message);
 
 }

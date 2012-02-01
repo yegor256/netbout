@@ -28,29 +28,40 @@ package com.netbout.inf.predicates;
 
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
+import java.util.List;
 
 /**
- * It is always TRUE.
+ * The message was seen by this person.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TruePred implements Predicate {
+public final class SeenByPred extends AbstractVarargPred {
 
     /**
-     * {@inheritDoc}
+     * Public ctor.
+     * @param args The arguments
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        return Boolean.TRUE;
+    public SeenByPred(final List<Predicate> args) {
+        super("seen-by", args);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        return Boolean.TRUE.toString();
+    public Object evaluate(final Msg msg, final int pos) {
+        final String name = (String) this.arg(0).evaluate(msg, pos);
+        final boolean seen = msg.has(String.format("seen-by:%s", name));
+        Logger.debug(
+            this,
+            "#evaluate(): participant '%s' has seen message: %B",
+            name,
+            seen
+        );
+        return seen;
     }
 
 }

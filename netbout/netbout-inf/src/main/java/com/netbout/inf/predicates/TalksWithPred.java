@@ -26,10 +26,9 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.List;
 
@@ -53,24 +52,16 @@ public final class TalksWithPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final String name = (String) this.arg(0).evaluate(msg, pos);
-        final Bout bout = msg.bout();
-        boolean found = false;
-        for (Participant dude : bout.participants()) {
-            if (dude.identity().name().equals(name)) {
-                found = true;
-                break;
-            }
-        }
+        final boolean talks = msg.has(String.format("talks-with:%s", name));
         Logger.debug(
             this,
-            "#evaluate(): participant '%s' in bout %d: %B",
+            "#evaluate(): talks with participant '%s': %B",
             name,
-            bout.number(),
-            found
+            talks
         );
-        return found;
+        return talks;
     }
 
 }

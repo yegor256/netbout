@@ -64,6 +64,7 @@ public final class PredicateBuilder {
             {"ns", "com.netbout.inf.predicates.xml.NsPred"},
             {"or", "com.netbout.inf.predicates.logic.OrPred"},
             {"pos", "com.netbout.inf.predicates.PosPred"},
+            {"seen-by", "com.netbout.inf.predicates.SeenByPred"},
             {"talks-with", "com.netbout.inf.predicates.TalksWithPred"},
         }
     );
@@ -108,11 +109,7 @@ public final class PredicateBuilder {
                 predicate
             );
         } else {
-            if (query.isEmpty()) {
-                predicate = new TruePred();
-            } else {
-                predicate = this.parse(PredicateBuilder.byKeyword(query));
-            }
+            predicate = this.parse(PredicateBuilder.byKeyword(query));
         }
         return predicate;
     }

@@ -24,33 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
+import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * It is always TRUE.
- *
+ * Test case of {@link DefaultInfinity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TruePred implements Predicate {
+public final class DefaultInfinityTest {
 
     /**
-     * {@inheritDoc}
+     * DefaultInfinity can find messages.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        return Boolean.TRUE;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return Boolean.TRUE.toString();
+    @Test
+    public void populatesIndexOnFirstTimeCall() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Infinity inf = new DefaultInfinity(bus);
+        final Identity identity = new IdentityMocker().mock();
+        final Predicate predicate = new PredicateBuilder(bus).parse("foo");
+        final List<Long> messages = inf.messages(predicate);
     }
 
 }

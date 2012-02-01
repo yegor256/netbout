@@ -24,33 +24,28 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
+import org.mockito.Mockito;
 
 /**
- * It is always TRUE.
- *
+ * Mocker of {@link Infinity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TruePred implements Predicate {
+public final class InfinityMocker {
 
     /**
-     * {@inheritDoc}
+     * The object.
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        return Boolean.TRUE;
-    }
+    private final transient Infinity infinity = Mockito.mock(Infinity.class);
 
     /**
-     * {@inheritDoc}
+     * Build it.
+     * @return The infinity
      */
-    @Override
-    public String toString() {
-        return Boolean.TRUE.toString();
+    public Infinity mock() {
+        return this.infinity;
     }
 
 }

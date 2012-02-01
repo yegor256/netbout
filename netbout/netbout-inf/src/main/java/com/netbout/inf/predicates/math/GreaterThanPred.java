@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates.math;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.List;
@@ -54,7 +54,7 @@ public final class GreaterThanPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final Object left = this.arg(0).evaluate(msg, pos);
         final String right = this.arg(1).evaluate(msg, pos).toString();
         boolean greater;

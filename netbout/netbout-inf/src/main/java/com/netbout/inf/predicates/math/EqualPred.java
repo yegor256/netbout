@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates.math;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public final class EqualPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final List<Object> values = new ArrayList<Object>();
         for (Predicate arg : this.args()) {
             values.add(arg.evaluate(msg, pos));
