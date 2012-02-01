@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates.text;
 
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
-import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
@@ -61,7 +61,7 @@ public final class MatchesPredTest {
         );
         MatcherAssert.assertThat(
             "matched",
-            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
         );
     }
 
@@ -95,7 +95,7 @@ public final class MatchesPredTest {
                     entry.getKey(),
                     entry.getValue()
                 ),
-                (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+                (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
             );
         }
     }
@@ -126,7 +126,7 @@ public final class MatchesPredTest {
                     entry.getKey(),
                     entry.getValue()
                 ),
-                !(Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+                !(Boolean) pred.evaluate(new MsgMocker().mock(), 0)
             );
         }
     }

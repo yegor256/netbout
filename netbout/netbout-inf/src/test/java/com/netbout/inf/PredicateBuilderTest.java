@@ -27,7 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.bus.BusMocker;
-import com.netbout.spi.MessageMocker;
+import com.netbout.inf.MsgMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -108,14 +108,14 @@ public final class PredicateBuilderTest {
         MatcherAssert.assertThat(
             "message found",
             (Boolean) pred.evaluate(
-                new MessageMocker().withText(text).mock(),
+                new MsgMocker().with("text", text).mock(),
                 0
             )
         );
         MatcherAssert.assertThat(
             "message not found",
             !(Boolean) pred.evaluate(
-                new MessageMocker().withText("bar").mock(),
+                new MsgMocker().with("text", "bar").mock(),
                 1
             )
         );
@@ -134,14 +134,14 @@ public final class PredicateBuilderTest {
         MatcherAssert.assertThat(
             "message with text is found",
             (Boolean) pred.evaluate(
-                new MessageMocker().withText(text).mock(),
+                new MsgMocker().with("text", text).mock(),
                 0
             )
         );
         MatcherAssert.assertThat(
             "message without text is not found",
             !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some text").mock(),
+                new MsgMocker().with("text", "some text").mock(),
                 0
             )
         );

@@ -27,10 +27,11 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.bus.BusMocker;
+import com.netbout.inf.Msg;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -54,11 +55,11 @@ public final class FromPredTest {
         );
         MatcherAssert.assertThat(
             "not matched",
-            !(Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+            !(Boolean) pred.evaluate(new MsgMocker().mock(), 0)
         );
         MatcherAssert.assertThat(
             "matched",
-            (Boolean) pred.evaluate(new MessageMocker().mock(), 1)
+            (Boolean) pred.evaluate(new MsgMocker().mock(), 1)
         );
     }
 
@@ -74,7 +75,7 @@ public final class FromPredTest {
         final Predicate pred = new PredicateBuilder(new BusMocker().mock())
             .parse(String.format("(and (from %d) (limit %d))", from, limit));
         int count = 0;
-        final Message msg = new MessageMocker().mock();
+        final Msg msg = new MsgMocker().mock();
         for (int pos = 0; pos < total; pos += 1) {
             if ((Boolean) pred.evaluate(msg, pos)) {
                 count += 1;

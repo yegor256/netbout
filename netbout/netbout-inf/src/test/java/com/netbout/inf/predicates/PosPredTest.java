@@ -26,8 +26,8 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
@@ -52,7 +52,7 @@ public final class PosPredTest {
         );
         MatcherAssert.assertThat(
             "matched",
-            (Boolean) pred.evaluate(new MessageMocker().mock(), pos)
+            (Boolean) pred.evaluate(new MsgMocker().mock(), pos)
         );
     }
 

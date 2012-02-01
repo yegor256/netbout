@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates.xml;
 
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
-import com.netbout.spi.MessageMocker;
 import com.rexsl.test.ContainerMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
@@ -85,7 +85,8 @@ public final class NsPredTest {
         MatcherAssert.assertThat(
             "matched",
             (Boolean) pred.evaluate(
-                new MessageMocker().withText(
+                new MsgMocker().with(
+                    "text",
                     // @checkstyle StringLiteralsConcatenation (7 lines)
                     "<root xmlns='urn:test:foo'"
                     + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
@@ -116,7 +117,7 @@ public final class NsPredTest {
         MatcherAssert.assertThat(
             "not matched",
             !(Boolean) pred.evaluate(
-                new MessageMocker().withText("some non-XML text").mock(),
+                new MsgMocker().with("text", "some non-XML text").mock(),
                 0
             )
         );

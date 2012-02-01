@@ -29,41 +29,42 @@ package com.netbout.inf;
 import org.mockito.Mockito;
 
 /**
- * Mocker of {@link Predicate}.
+ * Mocker of {@link Msg}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PredicateMocker {
+public final class MsgMocker {
 
     /**
      * The object.
      */
-    private final transient Predicate predicate = Mockito.mock(Predicate.class);
+    private final transient Msg msg = Mockito.mock(Msg.class);
 
     /**
      * Public ctor.
      */
-    public PredicateMocker() {
-        this.doReturn(Boolean.TRUE);
+    public MsgMocker() {
+        Mockito.doReturn("").when(this.msg).get(Mockito.anyString());
     }
 
     /**
-     * Return this object as {@code evaluate()} result.
-     * @param ret What to return
+     * With this property.
+     * @param name Name of prop
+     * @param value Name of prop
      * @return This object
      */
-    public PredicateMocker doReturn(final Object ret) {
-        Mockito.doReturn(ret).when(this.predicate)
-            .evaluate(Mockito.any(Msg.class), Mockito.anyInt());
+    public MsgMocker with(final String name, final Object value) {
+        Mockito.doReturn(value).when(this.msg).get(name);
+        Mockito.doReturn(true).when(this.msg).has(name);
         return this;
     }
 
     /**
      * Build it.
-     * @return The predicate
+     * @return The msg
      */
-    public Predicate mock() {
-        return this.predicate;
+    public Msg mock() {
+        return this.msg;
     }
 
 }

@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates.math;
 
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
-import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -60,7 +60,7 @@ public final class EqualPredTest {
         );
         MatcherAssert.assertThat(
             "they are equal",
-            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
         );
     }
 

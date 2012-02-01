@@ -26,10 +26,10 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
-import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
@@ -56,7 +56,12 @@ public final class TalksWithPredTest {
         final Bout bout = new BoutMocker().withParticipant(name).mock();
         MatcherAssert.assertThat(
             "matched",
-            (Boolean) pred.evaluate(new MessageMocker().inBout(bout).mock(), 0)
+            (Boolean) pred.evaluate(
+                new MsgMocker()
+                    .with(String.format("talks-with:%s", name), true)
+                    .mock(),
+                0
+            )
         );
     }
 

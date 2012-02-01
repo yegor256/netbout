@@ -28,6 +28,9 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
