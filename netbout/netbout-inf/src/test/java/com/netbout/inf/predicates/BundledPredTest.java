@@ -24,46 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.inf.predicates;
 
-ul.bouts {
-    margin: 0 !important;
-    padding: 0 !important;
-    font-size: 1em !important;
-}
+import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Predicate;
+import java.util.Arrays;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
-li.bout {
-    position: relative;
-    clear: both;
-    margin-top: 4em;
-    list-style: none;
-}
+/**
+ * Test case of {@link BundledPred}.
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ */
+public final class BundledPredTest {
 
-    li.bout div.header {
-        margin-bottom: 0.5em;
+    /**
+     * BundledPred can pass only bundled messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void positivelyMatchesBundledMessageOnly() throws Exception {
+        final Predicate pred = new BundledPred(
+            Arrays.asList(new Predicate[] {})
+        );
+        MatcherAssert.assertThat(
+            "matched",
+            (Boolean) pred.evaluate(
+                new MsgMocker().with("bundled(urn:test)").mock(),
+                0
+            )
+        );
+        MatcherAssert.assertThat(
+            "not matched",
+            !(Boolean) pred.evaluate(new MsgMocker().mock(), 1)
+        );
     }
 
-        li.bout div.header span {
-            font-size: 1.4em;
-        }
-
-        li.bout div.header span.num {
-            margin-right: 0.3em;
-        }
-
-        li.bout div.header a.title {
-            font-size: 2.2em;
-            font-weight: bold;
-            margin-right: 0.3em;
-        }
-
-.bundled {
-    position: absolute;
-    right: 0;
-    top: 3em;
-    width: 30em;
 }
-
-    .bundled a {
-        font-size: 1.4em;
-    }
-

@@ -104,6 +104,16 @@ public final class Link {
      * Public ctor.
      * @param rname The "rel" of it
      * @param name The label of it
+     * @param uri URI
+     */
+    public Link(final String rname, final String name, final URI uri) {
+        this(rname, name, uri, MediaType.TEXT_XML);
+    }
+
+    /**
+     * Public ctor.
+     * @param rname The "rel" of it
+     * @param name The label of it
      * @param uri The href
      * @param tpe Media type of destination
      * @checkstyle ParameterNumber (3 lines)
