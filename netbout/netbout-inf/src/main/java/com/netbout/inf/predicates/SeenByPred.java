@@ -61,7 +61,9 @@ public final class SeenByPred extends AbstractVarargPred {
         final boolean seen = msg.has(String.format("seen-by:%s", name));
         Logger.debug(
             this,
-            "#evaluate(): participant '%s' has seen message: %B",
+            "#evaluate(#%d, %d): participant '%s' has seen message: %B",
+            msg.number(),
+            pos,
             name,
             seen
         );

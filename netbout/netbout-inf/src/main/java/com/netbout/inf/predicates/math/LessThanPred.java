@@ -62,7 +62,9 @@ public final class LessThanPred extends AbstractVarargPred {
         final boolean less = !equal && !greater;
         Logger.debug(
             this,
-            "#evaluate(): %B",
+            "#evaluate(#%d, %d): %B",
+            msg.number(),
+            pos,
             less
         );
         return less;

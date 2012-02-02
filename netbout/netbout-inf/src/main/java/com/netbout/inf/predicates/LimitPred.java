@@ -71,9 +71,9 @@ public final class LimitPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(.., %d): %d already passed, limit is #%d: %B",
-            pos,
+            "#evaluate(#%d, %d): %d already passed, limit is #%d: %B",
             msg.number(),
+            pos,
             this.passed,
             limit,
             matches

@@ -71,7 +71,8 @@ public final class FromPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(.., %d): %d blocked already, 'from' is #%d: %B",
+            "#evaluate(#%d, %d): %d blocked already, 'from' is #%d: %B",
+            msg.number(),
             pos,
             msg.number(),
             this.blocked,

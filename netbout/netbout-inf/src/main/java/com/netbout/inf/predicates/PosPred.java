@@ -60,7 +60,7 @@ public final class PosPred extends AbstractVarargPred {
         final boolean matches = pos == required;
         Logger.debug(
             this,
-            "#evaluate(): message #%d is at position #%d, required #%d: %B",
+            "#evaluate(#%d, %d): required #%d: %B",
             msg.number(),
             pos,
             required,

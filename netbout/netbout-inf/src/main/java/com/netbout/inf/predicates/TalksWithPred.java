@@ -81,8 +81,9 @@ public final class TalksWithPred extends AbstractVarargPred {
         final boolean talks = msg.has(String.format(this.PATTERN, name));
         Logger.debug(
             this,
-            "#evaluate(): msg #%d talks with participant '%s': %B",
+            "#evaluate(#%d, %d): talks with participant '%s': %B",
             msg.number(),
+            pos,
             name,
             talks
         );

@@ -72,7 +72,9 @@ public final class MatchesPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(): finding %[list]s inside '%s': %B",
+            "#evaluate(#%d, %d): finding %[list]s inside '%s': %B",
+            msg.number(),
+            pos,
             keywords,
             text,
             matches

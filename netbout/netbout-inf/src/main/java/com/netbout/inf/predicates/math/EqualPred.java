@@ -70,7 +70,9 @@ public final class EqualPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(): comparing %[list]s: %B",
+            "#evaluate(#%d, %d): comparing %[list]s: %B",
+            msg.number(),
+            pos,
             values,
             equal
         );

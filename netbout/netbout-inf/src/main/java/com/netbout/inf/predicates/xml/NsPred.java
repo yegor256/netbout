@@ -68,11 +68,19 @@ public final class NsPred extends AbstractVarargPred {
         final Map<String, Object> props) {
         final DomParser parser = new DomParser(msg.text());
         if (parser.isXml()) {
+            Urn namespace;
             try {
-                props.put(NsPred.NAMESPACE, parser.namespace());
+                namespace = parser.namespace();
             } catch (com.netbout.spi.xml.DomValidationException ex) {
                 throw new IllegalStateException(ex);
             }
+            props.put(NsPred.NAMESPACE, namespace);
+            Logger.debug(
+                NsPred.class,
+                "#extract(#%d, ..): namespace '%s' found",
+                msg.number(),
+                namespace
+            );
         }
     }
 
@@ -86,7 +94,9 @@ public final class NsPred extends AbstractVarargPred {
             && msg.<Urn>get(this.NAMESPACE).equals(namespace);
         Logger.debug(
             this,
-            "#evaluate(): namespace '%s' required: %B",
+            "#evaluate(#%d, %d): namespace '%s' required: %B",
+            msg.number(),
+            pos,
             namespace,
             result
         );

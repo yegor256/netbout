@@ -71,7 +71,9 @@ public final class GreaterThanPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(): is %[type]s > '%s': %B",
+            "#evaluate(#%d, %d): is %[type]s > '%s': %B",
+            msg.number(),
+            pos,
             left,
             right,
             greater
