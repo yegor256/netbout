@@ -64,7 +64,6 @@ final class MsgBuilder {
         props.put("author.name", this.message.author().name());
         props.put("author.alias", NetboutUtils.aliasOf(this.message.author()));
         props.put("bout.date", this.message.bout().date());
-        props.put("bout.recent", NetboutUtils.dateOf(this.message.bout()));
         props.put("bout.title", this.message.bout().title());
         for (Participant dude : this.message.bout().participants()) {
             props.put(
@@ -77,6 +76,17 @@ final class MsgBuilder {
             this.message.bout().number(),
             props
         );
+    }
+
+    /**
+     * Re-build the message, if necessary.
+     * @param msg The msg to rebuild
+     * @return New message
+     */
+    public Msg rebuild(final Msg msg) {
+        final Map<String, Object> props = new HashMap<String, Object>();
+        props.put("bout.recent", NetboutUtils.dateOf(this.message.bout()));
+        return ((DefaultMsg) msg).copy(props);
     }
 
 }

@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -62,6 +63,18 @@ final class DefaultMsg implements Msg {
         this.num = msg;
         this.bnum = bout;
         this.properties = props;
+    }
+
+    /**
+     * Create a copy of this message with additional properties.
+     * @param extra Extra properties to add
+     * @return New Msg
+     */
+    public Msg copy(final Map<String, Object> extra) {
+        final Map<String, Object> props = new HashMap<String, Object>();
+        props.putAll(this.properties);
+        props.putAll(extra);
+        return new DefaultMsg(this.num, this.bnum, props);
     }
 
     /**

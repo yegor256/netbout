@@ -180,7 +180,10 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
-        this.all.put(message.number(), new MsgBuilder(message).build());
+        final Long number = message.number();
+        final MsgBuilder builder = new MsgBuilder(message);
+        this.all.put(number, builder.build());
+        this.all.put(number, builder.rebuild(this.all.get(number)));
     }
 
 }
