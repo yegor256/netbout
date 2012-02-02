@@ -31,7 +31,6 @@ import com.netbout.inf.Msg;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateBuilder;
-import com.netbout.spi.Message;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

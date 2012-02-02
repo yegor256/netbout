@@ -34,7 +34,9 @@ import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
@@ -53,7 +55,7 @@ public final class DefaultInfinity implements Infinity {
     /**
      * All messages.
      */
-    private final transient SortedMap<Long, Msg> messages =
+    private final transient SortedMap<Long, Msg> all =
         new ConcurrentSkipListMap<Long, Msg>(Collections.<Long>reverseOrder());
 
     /**
@@ -77,12 +79,11 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public List<Long> bouts(final String query) {
-        final List<Long> numbers = new ArrayList<Long>();
+        final Set<Long> numbers = new TreeSet<Long>(
+            Collections.<Long>reverseOrder()
+        );
         for (Long msg : this.messages(query)) {
-            if ((Boolean) predicate.evaluate(msg, 0)
-                && !numbers.contains(msg.bout())) {
-                numbers.add(msg.bout());
-            }
+            numbers.add(this.all.get(msg).bout());
         }
         Logger.debug(
             this,
@@ -91,7 +92,7 @@ public final class DefaultInfinity implements Infinity {
             numbers.size(),
             numbers
         );
-        return numbers;
+        return new ArrayList<Long>(numbers);
     }
 
     /**
@@ -102,7 +103,7 @@ public final class DefaultInfinity implements Infinity {
         final Predicate predicate = new PredicateBuilder(this.bus).parse(query);
         final List<Long> numbers = new ArrayList<Long>();
         int pos = 0;
-        for (Msg msg : this.messages.values()) {
+        for (Msg msg : this.all.values()) {
             if ((Boolean) predicate.evaluate(msg, pos)) {
                 numbers.add(msg.number());
                 pos += 1;
@@ -179,7 +180,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
-        this.messages.put(message.number(), new MsgBuilder(message).build());
+        this.all.put(message.number(), new MsgBuilder(message).build());
     }
 
 }

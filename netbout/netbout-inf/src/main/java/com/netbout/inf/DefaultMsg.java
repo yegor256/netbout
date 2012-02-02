@@ -26,7 +26,6 @@
  */
 package com.netbout.inf;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

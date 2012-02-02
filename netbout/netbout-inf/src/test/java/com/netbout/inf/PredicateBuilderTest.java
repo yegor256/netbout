@@ -27,7 +27,6 @@
 package com.netbout.inf;
 
 import com.netbout.bus.BusMocker;
-import com.netbout.inf.MsgMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
