@@ -327,6 +327,7 @@ public final class HubBout implements Bout {
                 .arg(message.number())
                 .asDefault(false)
                 .exec();
+            this.hub.infinity().see(message);
         } else {
             try {
                 message = this.message(duplicate);
@@ -340,7 +341,6 @@ public final class HubBout implements Bout {
                 );
             }
         }
-        this.hub.infinity().see(message);
         return message;
     }
 
