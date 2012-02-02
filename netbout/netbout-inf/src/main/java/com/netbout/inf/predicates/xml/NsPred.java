@@ -47,6 +47,11 @@ import java.util.Map;
 public final class NsPred extends AbstractVarargPred {
 
     /**
+     * Message property.
+     */
+    public static final String NAMESPACE = "namespace";
+
+    /**
      * Public ctor.
      * @param args The arguments
      */
@@ -61,7 +66,14 @@ public final class NsPred extends AbstractVarargPred {
      */
     public static void extract(final Message msg,
         final Map<String, Object> props) {
-        // ...
+        final DomParser parser = new DomParser(msg.text());
+        if (parser.isXml()) {
+            try {
+                props.put(NsPred.NAMESPACE, parser.namespace());
+            } catch (com.netbout.spi.xml.DomValidationException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
     }
 
     /**
@@ -70,8 +82,8 @@ public final class NsPred extends AbstractVarargPred {
     @Override
     public Object evaluate(final Msg msg, final int pos) {
         final String namespace = (String) this.arg(0).evaluate(msg, pos);
-        final boolean result = new DomParser(msg.<String>get("text"))
-            .belongsTo(Urn.create(namespace));
+        final boolean result = msg.has(this.NAMESPACE)
+            && msg.<Urn>get(this.NAMESPACE).equals(namespace);
         Logger.debug(
             this,
             "#evaluate(): namespace '%s' required: %B",

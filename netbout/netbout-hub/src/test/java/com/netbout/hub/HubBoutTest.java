@@ -131,12 +131,12 @@ public final class HubBoutTest {
      */
     @Test
     public void createsProperRequestForInfinity() throws Exception {
-        final Hub hub = Mockito.mock(Hub.class);
+        final Hub ihub = Mockito.mock(Hub.class);
         final Infinity infinity = Mockito.mock(Infinity.class);
-        Mockito.doReturn(infinity).when(hub).infinity();
+        Mockito.doReturn(infinity).when(ihub).infinity();
         final Identity identity = new IdentityMocker().mock();
         final BoutDt data = new BoutDtMocker().mock();
-        new HubBout(hub, identity, data).messages("(pos 0)");
+        new HubBout(ihub, identity, data).messages("(pos 0)");
         Mockito.verify(infinity).messages(
             Mockito.argThat(
                 Matchers.<String>allOf(

@@ -29,13 +29,16 @@ package com.netbout.inf.predicates.xml;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
-import com.netbout.inf.predicates.VariablePred;
+import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
 import com.rexsl.test.ContainerMocker;
 import java.util.Arrays;
+import java.util.Map;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link NsPred}.
@@ -60,7 +63,7 @@ public final class NsPredTest {
             .returnBody(
                 // @checkstyle StringLiteralsConcatenation (3 lines)
                 "<schema xmlns='http://www.w3.org/2001/XMLSchema'"
-                + " xmlns:foo='urn:test:foo' targetNamespace='urn:test:foo'>"
+                + " xmlns:foo='urn:test:bar' targetNamespace='urn:test:bar'>"
                 + "<element name='root'/></schema>"
             )
             .returnHeader("Content-Type", "application/xml")
@@ -71,32 +74,46 @@ public final class NsPredTest {
     }
 
     /**
+     * NsPred can extract namespace from XML document.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    public void extractsNamespaceFromXml() throws Exception {
+        final Message msg = Mockito.mock(Message.class);
+        Mockito.doReturn(
+            // @checkstyle StringLiteralsConcatenation (7 lines)
+            "<root xmlns='urn:test:bar'"
+            + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
+            + String.format(
+                " xsi:schemaLocation='urn:test:bar %s'",
+                this.xsd
+            )
+            + "/>"
+        ).when(msg).text();
+        final Map props = Mockito.mock(Map.class);
+        NsPred.extract(msg, props);
+        Mockito.verify(props).put(NsPred.NAMESPACE, Urn.create("urn:test:bar"));
+    }
+
+    /**
      * NsPred can match an XML document.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void positivelyMatchesXmlDocument() throws Exception {
+        final Urn namespace = new Urn("urn:test:foo");
         final Predicate pred = new NsPred(
             Arrays.asList(
                 new Predicate[] {
-                    new PredicateMocker().doReturn("urn:test:foo").mock(),
+                    new PredicateMocker().doReturn(namespace.toString()).mock(),
                 }
             )
         );
         MatcherAssert.assertThat(
             "matched",
             (Boolean) pred.evaluate(
-                new MsgMocker().with(
-                    VariablePred.TEXT,
-                    // @checkstyle StringLiteralsConcatenation (7 lines)
-                    "<root xmlns='urn:test:foo'"
-                    + " xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
-                    + String.format(
-                        " xsi:schemaLocation='urn:test:foo %s'",
-                        this.xsd
-                    )
-                    + "/>"
-                ).mock(),
+                new MsgMocker().with(NsPred.NAMESPACE, namespace).mock(),
                 0
             )
         );
@@ -117,12 +134,7 @@ public final class NsPredTest {
         );
         MatcherAssert.assertThat(
             "not matched",
-            !(Boolean) pred.evaluate(
-                new MsgMocker()
-                    .with(VariablePred.TEXT, "some non-XML text")
-                    .mock(),
-                0
-            )
+            !(Boolean) pred.evaluate(new MsgMocker().mock(), 0)
         );
     }
 
