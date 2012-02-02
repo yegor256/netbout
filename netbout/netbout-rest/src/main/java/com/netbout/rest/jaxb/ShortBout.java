@@ -176,15 +176,16 @@ public final class ShortBout {
             this.bout.number()
         );
         final Iterator<Bout> bouts = this.viewer.inbox(query).iterator();
+        // @checkstyle MagicNumber (1 line)
         int max = 5;
         while (bouts.hasNext() && max > 0) {
-            final Bout bout = bouts.next();
+            final Bout item = bouts.next();
             max -= 1;
             links.add(
                 new Link(
                     "bout",
-                    String.format("#%d: %s", bout.number(), bout.title()),
-                    this.builder.clone().path("/../{num}").build(bout.number())
+                    String.format("#%d: %s", item.number(), item.title()),
+                    this.builder.clone().path("/../{num}").build(item.number())
                 )
             );
         }
