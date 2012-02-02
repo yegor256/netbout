@@ -138,11 +138,12 @@ public final class DefaultInfinity implements Infinity {
                 throw new IllegalStateException(ex);
             }
         }
-        Logger.debug(
+        Logger.info(
             this,
-            "#see(%s): cached %d bouts in %dms",
+            "#see(%s): cached %d bouts of '%s' in %dms",
             identity.name(),
             numbers.size(),
+            identity.name(),
             System.currentTimeMillis() - start
         );
     }
@@ -166,11 +167,12 @@ public final class DefaultInfinity implements Infinity {
                 throw new IllegalStateException(ex);
             }
         }
-        Logger.debug(
+        Logger.info(
             this,
-            "#see(bout #%d): cached %d messages in %dms",
+            "#see(bout #%d): cached %d messages of bout #%d in %dms",
             bout.number(),
             numbers.size(),
+            bout.number(),
             System.currentTimeMillis() - start
         );
     }
