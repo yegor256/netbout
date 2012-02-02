@@ -26,12 +26,14 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This participant is in the bout.
@@ -39,38 +41,53 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "talks-with", extracts = true)
 public final class TalksWithPred extends AbstractVarargPred {
+
+    /**
+     * Pattern for message property.
+     */
+    public static final String PATTERN = "talks-with:%s";
 
     /**
      * Public ctor.
      * @param args The arguments
      */
     public TalksWithPred(final List<Predicate> args) {
-        super("talks-with", args);
+        super(args);
+    }
+
+    /**
+     * Extracts necessary data from message.
+     * @param msg The message to extract from
+     * @param props Where to extract
+     */
+    public static void extract(final Message msg,
+        final Map<String, Object> props) {
+        for (Participant dude : msg.bout().participants()) {
+            props.put(
+                String.format(TalksWithPred.PATTERN, dude.identity().name()),
+                true
+            );
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final String name = (String) this.arg(0).evaluate(msg, pos);
-        final Bout bout = msg.bout();
-        boolean found = false;
-        for (Participant dude : bout.participants()) {
-            if (dude.identity().name().equals(name)) {
-                found = true;
-                break;
-            }
-        }
+        final boolean talks = msg.has(String.format(this.PATTERN, name));
         Logger.debug(
             this,
-            "#evaluate(): participant '%s' in bout %d: %B",
+            "#evaluate(#%d, %d): talks with participant '%s': %B",
+            msg.number(),
+            pos,
             name,
-            bout.number(),
-            found
+            talks
         );
-        return found;
+        return talks;
     }
 
 }

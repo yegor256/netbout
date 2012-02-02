@@ -26,7 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
 import org.mockito.Mockito;
 
 /**
@@ -55,7 +54,7 @@ public final class PredicateMocker {
      */
     public PredicateMocker doReturn(final Object ret) {
         Mockito.doReturn(ret).when(this.predicate)
-            .evaluate(Mockito.any(Message.class), Mockito.anyInt());
+            .evaluate(Mockito.any(Msg.class), Mockito.anyInt());
         return this;
     }
 

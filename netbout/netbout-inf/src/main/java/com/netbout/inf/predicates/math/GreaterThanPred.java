@@ -26,9 +26,10 @@
  */
 package com.netbout.inf.predicates.math;
 
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.joda.time.format.ISODateTimeFormat;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "greater-than")
 public final class GreaterThanPred extends AbstractVarargPred {
 
     /**
@@ -47,14 +49,14 @@ public final class GreaterThanPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public GreaterThanPred(final List<Predicate> args) {
-        super("greater-than", args);
+        super(args);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final Object left = this.arg(0).evaluate(msg, pos);
         final String right = this.arg(1).evaluate(msg, pos).toString();
         boolean greater;
@@ -69,7 +71,9 @@ public final class GreaterThanPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(): is %[type]s > '%s': %B",
+            "#evaluate(#%d, %d): is %[type]s > '%s': %B",
+            msg.number(),
+            pos,
             left,
             right,
             greater

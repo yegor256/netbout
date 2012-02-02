@@ -26,8 +26,8 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Message;
 
 /**
  * Number atom.
@@ -54,7 +54,7 @@ public final class NumberPred implements Predicate {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         return this.number;
     }
 

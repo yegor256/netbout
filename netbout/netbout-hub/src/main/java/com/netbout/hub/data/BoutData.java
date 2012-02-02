@@ -106,7 +106,6 @@ final class BoutData implements BoutDt {
     @Override
     public void confirm(final Urn identity) {
         this.find(identity).setConfirmed(true);
-        this.hub.infinity().seeBout(this.number);
     }
 
     /**
@@ -122,7 +121,6 @@ final class BoutData implements BoutDt {
             .arg(identity)
             .asDefault(true)
             .exec();
-        this.hub.infinity().seeBout(this.number);
     }
 
     /**
@@ -189,7 +187,6 @@ final class BoutData implements BoutDt {
                 this.number
             );
         }
-        this.hub.infinity().seeBout(this.number);
     }
 
     /**
@@ -206,7 +203,6 @@ final class BoutData implements BoutDt {
             .arg(data.getIdentity())
             .asDefault(true)
             .exec();
-        this.hub.infinity().seeBout(this.number);
         Logger.debug(
             this,
             "#addParticipant('%s'): added for bout #%d (%d total)",
@@ -260,7 +256,6 @@ final class BoutData implements BoutDt {
             .exec();
         final MessageDt data = new MessageData(this.hub, num);
         this.messages.put(num, data);
-        this.hub.infinity().seeMessage(num);
         Logger.debug(
             this,
             "#addMessage(): new empty message #%d added to bout #%d",

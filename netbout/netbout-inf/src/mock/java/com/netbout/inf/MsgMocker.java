@@ -24,33 +24,47 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf;
 
-import com.netbout.inf.Predicate;
-import com.netbout.spi.Message;
+import org.mockito.Mockito;
 
 /**
- * It is always TRUE.
- *
+ * Mocker of {@link Msg}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TruePred implements Predicate {
+public final class MsgMocker {
 
     /**
-     * {@inheritDoc}
+     * The object.
      */
-    @Override
-    public Object evaluate(final Message msg, final int pos) {
-        return Boolean.TRUE;
+    private final transient Msg msg = Mockito.mock(Msg.class);
+
+    /**
+     * Public ctor.
+     */
+    public MsgMocker() {
+        Mockito.doReturn("").when(this.msg).get(Mockito.anyString());
     }
 
     /**
-     * {@inheritDoc}
+     * With this property.
+     * @param name Name of prop
+     * @param value Name of prop
+     * @return This object
      */
-    @Override
-    public String toString() {
-        return Boolean.TRUE.toString();
+    public MsgMocker with(final String name, final Object value) {
+        Mockito.doReturn(value).when(this.msg).get(name);
+        Mockito.doReturn(true).when(this.msg).has(name);
+        return this;
+    }
+
+    /**
+     * Build it.
+     * @return The msg
+     */
+    public Msg mock() {
+        return this.msg;
     }
 
 }

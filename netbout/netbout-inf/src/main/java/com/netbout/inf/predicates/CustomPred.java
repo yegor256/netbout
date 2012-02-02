@@ -27,8 +27,8 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.bus.Bus;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
@@ -63,14 +63,13 @@ public final class CustomPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final List<Object> values = new ArrayList<Object>();
         for (Predicate pred : this.args()) {
             values.add(pred.evaluate(msg, pos));
         }
         final Object result = this.ibus.make("evaluate-predicate")
-            .inBout(msg.bout())
-            .arg(msg.bout().number())
+            .arg(msg.bout())
             .arg(msg.number())
             .arg(Urn.create(this.name()))
             .arg(values)

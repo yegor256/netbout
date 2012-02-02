@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates.math;
 
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
-import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
@@ -61,7 +61,7 @@ public final class GreaterThanPredTest {
         );
         MatcherAssert.assertThat(
             "matched",
-            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
         );
     }
 
@@ -86,7 +86,7 @@ public final class GreaterThanPredTest {
         );
         MatcherAssert.assertThat(
             "left date is bigger than the right one",
-            (Boolean) pred.evaluate(new MessageMocker().mock(), 0)
+            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
         );
     }
 

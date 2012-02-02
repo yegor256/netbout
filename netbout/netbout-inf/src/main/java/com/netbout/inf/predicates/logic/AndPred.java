@@ -26,9 +26,10 @@
  */
 package com.netbout.inf.predicates.logic;
 
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import java.util.List;
 
 /**
@@ -37,6 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "and")
 public final class AndPred extends AbstractVarargPred {
 
     /**
@@ -44,14 +46,14 @@ public final class AndPred extends AbstractVarargPred {
      * @param args Arguments/predicates
      */
     public AndPred(final List<Predicate> args) {
-        super("and", args);
+        super(args);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Boolean evaluate(final Message msg, final int pos) {
+    public Boolean evaluate(final Msg msg, final int pos) {
         boolean value = true;
         for (Predicate pred : this.args()) {
             value &= (Boolean) pred.evaluate(msg, pos);

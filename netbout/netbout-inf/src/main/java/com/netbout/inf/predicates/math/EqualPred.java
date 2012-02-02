@@ -26,9 +26,10 @@
  */
 package com.netbout.inf.predicates.math;
 
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "equal")
 public final class EqualPred extends AbstractVarargPred {
 
     /**
@@ -46,14 +48,14 @@ public final class EqualPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public EqualPred(final List<Predicate> args) {
-        super("equal", args);
+        super(args);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final List<Object> values = new ArrayList<Object>();
         for (Predicate arg : this.args()) {
             values.add(arg.evaluate(msg, pos));
@@ -68,7 +70,9 @@ public final class EqualPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(): comparing %[list]s: %B",
+            "#evaluate(#%d, %d): comparing %[list]s: %B",
+            msg.number(),
+            pos,
             values,
             equal
         );

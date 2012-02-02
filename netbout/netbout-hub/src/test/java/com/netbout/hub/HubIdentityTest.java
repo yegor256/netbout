@@ -26,17 +26,12 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
+import com.netbout.inf.Infinity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link HubIdentity}.
@@ -46,45 +41,23 @@ import org.junit.Test;
 public final class HubIdentityTest {
 
     /**
-     * HubIdentity can find bouts by predicate, even without messages.
+     * HubIdentity can create proper predicate for infinity.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void findsBoutsWithoutMessages() throws Exception {
-        final List<Long> nums = new ArrayList<Long>();
-        final Bout bout = new BoutMocker().mock();
-        nums.add(bout.number());
-        final Hub hub = new HubMocker()
-            // @checkstyle MultipleStringLiterals (2 lines)
-            .doReturn(nums, "get-bouts-of-identity")
-            .doReturn(new ArrayList<Long>(), "get-bout-messages")
-            .mock();
-        final Identity identity = new HubIdentity(hub, new UrnMocker().mock());
-        MatcherAssert.assertThat(
-            identity.inbox("").size(),
-            Matchers.equalTo(1)
-        );
-    }
-
-    /**
-     * HubIdentity can start a new bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void startsNewBoutAndRenamesIt() throws Exception {
+    public void createsProperRequestForInfinity() throws Exception {
+        final Hub hub = Mockito.mock(Hub.class);
+        final Infinity infinity = Mockito.mock(Infinity.class);
+        Mockito.doReturn(infinity).when(hub).infinity();
         final Urn name = new UrnMocker().mock();
-        final BoutMgr mgr = new BoutMgrMocker()
-            .withAuthor(name)
-            .mock();
-        final Hub hub = new HubMocker()
-            .withBoutMgr(mgr)
-            // @checkstyle MultipleStringLiterals (2 lines)
-            .doReturn(new ArrayList<Long>(), "get-bouts-of-identity")
-            .doReturn(Arrays.asList(new Urn[] {name}), "get-bout-participants")
-            .mock();
-        final Identity identity = new HubIdentity(hub, name);
-        final Bout bout = identity.start();
-        bout.rename("how it works?");
+        new HubIdentity(hub, name).inbox("");
+        Mockito.verify(infinity).bouts(
+            Mockito.argThat(
+                Matchers.containsString(
+                    String.format("(talks-with '%s')", name)
+                )
+            )
+        );
     }
 
 }

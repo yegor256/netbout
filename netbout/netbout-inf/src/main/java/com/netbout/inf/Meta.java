@@ -26,57 +26,30 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Infinity, with information about bouts and messages.
+ * Meta information about predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Meta {
 
     /**
-     * Find bundles and group them.
-     * @param query The predicate to use
-     * @return The list of groups
+     * Does it have {@code extract(Message,Map)} method, similar to the
+     * one defined in {@link PredicateBuilder}.
      */
-    List<Bundle> bundles(String query);
+    boolean extracts() default false;
 
     /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
+     * What is the name of it, if it can be used in text.
      */
-    List<Long> bouts(String query);
-
-    /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
-     */
-    List<Long> messages(String query);
-
-    /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
-     */
-    void see(Identity identity);
-
-    /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
-     */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    String name() default "";
 
 }

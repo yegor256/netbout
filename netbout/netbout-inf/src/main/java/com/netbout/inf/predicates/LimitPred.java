@@ -26,8 +26,9 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "limit")
 public final class LimitPred extends AbstractVarargPred {
 
     /**
@@ -49,14 +51,14 @@ public final class LimitPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public LimitPred(final List<Predicate> args) {
-        super("limit", args);
+        super(args);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final int limit = Integer.valueOf(
             this.arg(0).evaluate(msg, pos).toString()
         );
@@ -69,9 +71,9 @@ public final class LimitPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(.., %d): %d already passed, limit is #%d: %B",
-            pos,
+            "#evaluate(#%d, %d): %d already passed, limit is #%d: %B",
             msg.number(),
+            pos,
             this.passed,
             limit,
             matches

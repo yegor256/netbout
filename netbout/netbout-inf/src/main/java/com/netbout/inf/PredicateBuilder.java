@@ -28,45 +28,32 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.inf.predicates.CustomPred;
-import com.netbout.inf.predicates.TruePred;
+import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
-import org.apache.commons.lang.ArrayUtils;
+import org.reflections.Reflections;
 
 /**
  * Builder of a predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class PredicateBuilder {
 
     /**
-     * All functions and their classes.
+     * All predicates discovered in classpath.
      */
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
-    private static final Map<String, String> FUNCS = ArrayUtils.toMap(
-        new String[][] {
-            {"and", "com.netbout.inf.predicates.logic.AndPred"},
-            {"equal", "com.netbout.inf.predicates.math.EqualPred"},
-            {"from", "com.netbout.inf.predicates.FromPred"},
-            {"greater-than", "com.netbout.inf.predicates.math.GreaterThanPred"},
-            {"less-than", "com.netbout.inf.predicates.math.LessThanPred"},
-            {"limit", "com.netbout.inf.predicates.LimitPred"},
-            {"matches", "com.netbout.inf.predicates.text.MatchesPred"},
-            {"not", "com.netbout.inf.predicates.logic.NotPred"},
-            {"ns", "com.netbout.inf.predicates.xml.NsPred"},
-            {"or", "com.netbout.inf.predicates.logic.OrPred"},
-            {"pos", "com.netbout.inf.predicates.PosPred"},
-            {"talks-with", "com.netbout.inf.predicates.TalksWithPred"},
-        }
-    );
+    private static final List<PredicateToken> PREDICATES =
+        PredicateBuilder.discover();
 
     /**
      * BUS to find custom predicates.
@@ -87,47 +74,62 @@ public final class PredicateBuilder {
      * @return The predicate
      */
     public Predicate parse(final String query) {
+        final CharStream input = new ANTLRStringStream(
+            this.normalize(query)
+        );
+        final QueryLexer lexer = new QueryLexer(input);
+        final TokenStream tokens = new CommonTokenStream(lexer);
+        final QueryParser parser = new QueryParser(tokens);
+        parser.setPredicateBuilder(this);
         Predicate predicate;
-        if (!query.isEmpty() && query.charAt(0) == '(') {
-            final CharStream input = new ANTLRStringStream(query);
-            final QueryLexer lexer = new QueryLexer(input);
-            final TokenStream tokens = new CommonTokenStream(lexer);
-            final QueryParser parser = new QueryParser(tokens);
-            parser.setPredicateBuilder(this);
-            try {
-                predicate = parser.query();
-            } catch (org.antlr.runtime.RecognitionException ex) {
-                throw new PredicateException(query, ex);
-            } catch (PredicateException ex) {
-                throw new PredicateException(query, ex);
-            }
-            Logger.debug(
-                this,
-                "#parse('%s'): predicate found: '%s'",
-                query,
-                predicate
-            );
-        } else {
-            if (query.isEmpty()) {
-                predicate = new TruePred();
-            } else {
-                predicate = this.parse(PredicateBuilder.byKeyword(query));
-            }
+        try {
+            predicate = parser.query();
+        } catch (org.antlr.runtime.RecognitionException ex) {
+            throw new PredicateException(query, ex);
+        } catch (PredicateException ex) {
+            throw new PredicateException(query, ex);
         }
+        Logger.debug(
+            this,
+            "#parse('%s'): predicate found: '%s'",
+            query,
+            predicate
+        );
         return predicate;
     }
 
     /**
-     * Build a query by keyword.
-     * @param keyword The keyword to look for
+     * Extract properties from the message.
+     * @param msg The message
+     * @param props Where to extract
+     */
+    @SuppressWarnings("PMD.DefaultPackage")
+    static void extract(final Message msg, final Map<String, Object> props) {
+        for (PredicateToken token : PredicateBuilder.PREDICATES) {
+            token.extract(msg, props);
+        }
+    }
+
+    /**
+     * Normalize the query.
+     * @param query Raw format
      * @return The text for predicate
      */
-    public static String byKeyword(final String keyword) {
-        return String.format(
-            // @checkstyle LineLength (1 line)
-            "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
-            keyword.replace("'", "\\'")
-        );
+    public static String normalize(final String query) {
+        String normalized;
+        if (query == null) {
+            normalized = PredicateBuilder.normalize("");
+        } else if (!query.isEmpty() && query.charAt(0) == '('
+            && query.endsWith(")")) {
+            normalized = query;
+        } else {
+            normalized = String.format(
+                // @checkstyle LineLength (1 line)
+                "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
+                query.replace("'", "\\'")
+            );
+        }
+        return normalized;
     }
 
     /**
@@ -137,31 +139,45 @@ public final class PredicateBuilder {
      * @return The predicate
      */
     protected Predicate build(final String name, final List<Predicate> preds) {
-        Predicate predicate;
-        if (this.FUNCS.containsKey(name)) {
-            try {
-                predicate = (Predicate) Class.forName(this.FUNCS.get(name))
-                    .getConstructor(List.class)
-                    .newInstance(preds);
-            } catch (ClassNotFoundException ex) {
-                throw new PredicateException(ex);
-            } catch (NoSuchMethodException ex) {
-                throw new PredicateException(ex);
-            } catch (InstantiationException ex) {
-                throw new PredicateException(ex);
-            } catch (IllegalAccessException ex) {
-                throw new PredicateException(ex);
-            } catch (java.lang.reflect.InvocationTargetException ex) {
-                throw new PredicateException(ex);
+        Predicate predicate = null;
+        for (PredicateToken token : this.PREDICATES) {
+            if (token.namedAs(name)) {
+                predicate = token.build(preds);
+                break;
             }
-        } else if (Urn.isValid(name)) {
-            predicate = new CustomPred(this.ibus, Urn.create(name), preds);
-        } else {
-            throw new PredicateException(
-                String.format("Unknown function '%s'", name)
-            );
+        }
+        if (predicate == null) {
+            if (Urn.isValid(name)) {
+                predicate = new CustomPred(this.ibus, Urn.create(name), preds);
+            } else {
+                throw new PredicateException(
+                    String.format("Unknown function '%s'", name)
+                );
+            }
         }
         return predicate;
+    }
+
+    /**
+     * Discover all predicates.
+     * @return List of predicate tokens
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private static List<PredicateToken> discover() {
+        final Reflections ref = new Reflections(
+            PredicateBuilder.class.getPackage().getName()
+        );
+        final List<PredicateToken> tokens = new ArrayList<PredicateToken>();
+        for (Class pred : ref.getTypesAnnotatedWith(Meta.class)) {
+            tokens.add(new PredicateToken(pred));
+        }
+        Logger.debug(
+            PredicateBuilder.class,
+            "#discover(): %d predicates discovered in classpath: %[list]s",
+            tokens.size(),
+            tokens
+        );
+        return tokens;
     }
 
 }

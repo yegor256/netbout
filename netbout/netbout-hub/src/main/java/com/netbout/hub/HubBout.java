@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.DuplicateInvitationException;
 import com.netbout.spi.Identity;
@@ -118,6 +119,7 @@ public final class HubBout implements Bout {
     @Override
     public void confirm() {
         this.data.confirm(this.viewer.name());
+        this.hub.infinity().see(this);
     }
 
     /**
@@ -126,6 +128,7 @@ public final class HubBout implements Bout {
     @Override
     public void leave() {
         this.data.kickOff(this.viewer.name());
+        this.hub.infinity().see(this);
     }
 
     /**
@@ -143,6 +146,7 @@ public final class HubBout implements Bout {
             );
         }
         this.data.setTitle(text);
+        this.hub.infinity().see(this);
     }
 
     /**
@@ -201,6 +205,7 @@ public final class HubBout implements Bout {
         if (confirm) {
             dude.setConfirmed(true);
         }
+        this.hub.infinity().see(this);
         return new HubParticipant(this.hub, this, dude, this.data);
     }
 
@@ -234,7 +239,13 @@ public final class HubBout implements Bout {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public List<Message> messages(final String query) {
         final List<Message> messages = new LazyMessages(
-            this.hub.infinity().messages(this, this.hub.predicate(query)),
+            this.hub.infinity().messages(
+                String.format(
+                    "(and (equal $bout.number %d) %s)",
+                    this.number(),
+                    PredicateBuilder.normalize(query)
+                )
+            ),
             this
         );
         Logger.debug(
@@ -316,6 +327,7 @@ public final class HubBout implements Bout {
                 .arg(message.number())
                 .asDefault(false)
                 .exec();
+            this.hub.infinity().see(message);
         } else {
             try {
                 message = this.message(duplicate);

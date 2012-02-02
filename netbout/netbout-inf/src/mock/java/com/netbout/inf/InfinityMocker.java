@@ -26,57 +26,26 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import java.util.List;
+import org.mockito.Mockito;
 
 /**
- * Infinity, with information about bouts and messages.
- *
+ * Mocker of {@link Infinity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+public final class InfinityMocker {
 
     /**
-     * Find bundles and group them.
-     * @param query The predicate to use
-     * @return The list of groups
+     * The object.
      */
-    List<Bundle> bundles(String query);
+    private final transient Infinity infinity = Mockito.mock(Infinity.class);
 
     /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
+     * Build it.
+     * @return The infinity
      */
-    List<Long> bouts(String query);
-
-    /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
-     */
-    List<Long> messages(String query);
-
-    /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
-     */
-    void see(Identity identity);
-
-    /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
-     */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    public Infinity mock() {
+        return this.infinity;
+    }
 
 }

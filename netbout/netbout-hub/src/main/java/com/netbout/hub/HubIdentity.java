@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
@@ -148,7 +149,12 @@ public final class HubIdentity implements Identity {
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        this.hub.infinity().seeBout(bout.number());
+        try {
+            bout.post("Welcome to a new bout!");
+        } catch (com.netbout.spi.MessagePostException ex) {
+            throw new IllegalStateException(ex);
+        }
+        this.hub.infinity().see(bout);
         Logger.debug(
             this,
             "#start(): bout #%d started by '%s'",
@@ -173,7 +179,13 @@ public final class HubIdentity implements Identity {
     @Override
     public List<Bout> inbox(final String query) {
         return new LazyBouts(
-            this.hub.infinity().bouts(this, this.hub.predicate(query)),
+            this.hub.infinity().bouts(
+                String.format(
+                    "(and (talks-with '%s') %s)",
+                    this.name(),
+                    PredicateBuilder.normalize(query)
+                )
+            ),
             this
         );
     }

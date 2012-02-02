@@ -26,12 +26,14 @@
  */
 package com.netbout.hub;
 
+import com.netbout.inf.Infinity;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.ArrayList;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -121,6 +123,33 @@ public final class HubBoutTest {
         Mockito.doReturn(fname).when(friend).name();
         bout.invite(friend);
         Mockito.verify(data).addParticipant(fname);
+    }
+
+    /**
+     * HubBout can create proper predicate for infinity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void createsProperRequestForInfinity() throws Exception {
+        final Hub ihub = Mockito.mock(Hub.class);
+        final Infinity infinity = Mockito.mock(Infinity.class);
+        Mockito.doReturn(infinity).when(ihub).infinity();
+        final Identity identity = new IdentityMocker().mock();
+        final BoutDt data = new BoutDtMocker().mock();
+        new HubBout(ihub, identity, data).messages("(pos 0)");
+        Mockito.verify(infinity).messages(
+            Mockito.argThat(
+                Matchers.<String>allOf(
+                    Matchers.containsString(
+                        String.format(
+                            "(equal $bout.number %d)",
+                            data.getNumber()
+                        )
+                    ),
+                    Matchers.not(Matchers.containsString("'(pos 0)'"))
+                )
+            )
+        );
     }
 
 }

@@ -30,10 +30,8 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.TxBuilder;
 import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.hub.hh.StatsFarm;
+import com.netbout.inf.DefaultInfinity;
 import com.netbout.inf.Infinity;
-import com.netbout.inf.MemInfinity;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
@@ -103,7 +101,7 @@ public final class DefaultHub implements Hub {
      */
     public DefaultHub(final Bus bus) {
         this.ibus = bus;
-        this.inf = new MemInfinity(this.ibus);
+        this.inf = new DefaultInfinity(this.ibus);
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         StatsFarm.addStats(this);
@@ -139,14 +137,6 @@ public final class DefaultHub implements Hub {
     @Override
     public Infinity infinity() {
         return this.inf;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Predicate predicate(final String query) {
-        return new PredicateBuilder(this.ibus).parse(query);
     }
 
     /**
@@ -266,10 +256,13 @@ public final class DefaultHub implements Hub {
             .arg(identity.name())
             .asDefault(true)
             .exec();
+        this.infinity().see(identity);
     }
 
     /**
      * Token for searching of identities in storage.
+     * @todo #181 I don't understand what this mechanism is for. Let's either
+     *  document it properly or destroy
      */
     private static final class Token implements Comparable<Identity> {
         /**

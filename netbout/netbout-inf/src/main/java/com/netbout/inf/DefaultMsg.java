@@ -26,57 +26,88 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Infinity, with information about bouts and messages.
+ * Default implementation of {@link Msg}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+final class DefaultMsg implements Msg {
 
     /**
-     * Find bundles and group them.
-     * @param query The predicate to use
-     * @return The list of groups
+     * Number of message.
      */
-    List<Bundle> bundles(String query);
+    private final transient Long num;
 
     /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
+     * Number of bout.
      */
-    List<Long> bouts(String query);
+    private final transient Long bnum;
 
     /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
+     * Props.
      */
-    List<Long> messages(String query);
+    private final transient Map<String, Object> properties;
 
     /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
+     * Public ctor.
+     * @param msg Number of message
+     * @param bout Number of bout
+     * @param props List of properties
      */
-    void see(Identity identity);
+    public DefaultMsg(final Long msg, final Long bout,
+        final Map<String, Object> props) {
+        this.num = msg;
+        this.bnum = bout;
+        this.properties = props;
+    }
 
     /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
+     * Create a copy of this message with additional properties.
+     * @param extra Extra properties to add
+     * @return New Msg
      */
-    void see(Bout bout);
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    public Msg copy(final Map<String, Object> extra) {
+        final Map<String, Object> props = new HashMap<String, Object>();
+        props.putAll(this.properties);
+        props.putAll(extra);
+        return new DefaultMsg(this.num, this.bnum, props);
+    }
 
     /**
-     * Update information about this message.
-     * @param message The message to inform about
+     * {@inheritDoc}
      */
-    void see(Message message);
+    @Override
+    public Long number() {
+        return this.num;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long bout() {
+        return this.bnum;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T get(final String name) {
+        return (T) this.properties.get(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean has(final String name) {
+        return this.properties.containsKey(name);
+    }
 
 }

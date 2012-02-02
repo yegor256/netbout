@@ -24,59 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.predicates;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
+import com.netbout.inf.Predicate;
+import com.ymock.util.Logger;
 import java.util.List;
 
 /**
- * Infinity, with information about bouts and messages.
+ * The message was seen by this person.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+@Meta(name = "seen-by")
+public final class SeenByPred extends AbstractVarargPred {
 
     /**
-     * Find bundles and group them.
-     * @param query The predicate to use
-     * @return The list of groups
+     * Public ctor.
+     * @param args The arguments
      */
-    List<Bundle> bundles(String query);
+    public SeenByPred(final List<Predicate> args) {
+        super(args);
+        throw new UnsupportedOperationException(
+            "seen-by predicate is not implemented yet"
+        );
+    }
 
     /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
+     * {@inheritDoc}
      */
-    List<Long> bouts(String query);
-
-    /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
-     */
-    List<Long> messages(String query);
-
-    /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
-     */
-    void see(Identity identity);
-
-    /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
-     */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    @Override
+    public Object evaluate(final Msg msg, final int pos) {
+        final String name = (String) this.arg(0).evaluate(msg, pos);
+        final boolean seen = msg.has(String.format("seen-by:%s", name));
+        Logger.debug(
+            this,
+            "#evaluate(#%d, %d): participant '%s' has seen message: %B",
+            msg.number(),
+            pos,
+            name,
+            seen
+        );
+        return seen;
+    }
 
 }

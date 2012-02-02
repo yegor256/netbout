@@ -26,57 +26,53 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Infinity, with information about bouts and messages.
+ * Builds {@link Msg} from {@link Messsage}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+final class MsgBuilder {
 
     /**
-     * Find bundles and group them.
-     * @param query The predicate to use
-     * @return The list of groups
+     * The message to get data from.
      */
-    List<Bundle> bundles(String query);
+    private final transient Message message;
 
     /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
+     * Public ctor.
+     * @param msg The message
      */
-    List<Long> bouts(String query);
+    public MsgBuilder(final Message msg) {
+        this.message = msg;
+    }
 
     /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
+     * Build Msg and return.
+     * @return The msg
      */
-    List<Long> messages(String query);
+    public Msg build() {
+        return new DefaultMsg(
+            this.message.number(),
+            this.message.bout().number(),
+            new HashMap<String, Object>()
+        );
+    }
 
     /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
+     * Re-build the message, if necessary.
+     * @param msg The msg to rebuild
+     * @return New message
      */
-    void see(Identity identity);
-
-    /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
-     */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    public Msg rebuild(final Msg msg) {
+        final Map<String, Object> props = new HashMap<String, Object>();
+        PredicateBuilder.extract(this.message, props);
+        return ((DefaultMsg) msg).copy(props);
+    }
 
 }

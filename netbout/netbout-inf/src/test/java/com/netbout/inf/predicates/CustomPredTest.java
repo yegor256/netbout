@@ -28,9 +28,9 @@ package com.netbout.inf.predicates;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
-import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
@@ -62,7 +62,7 @@ public final class CustomPredTest {
             Arrays.asList(new Predicate[] {new PredicateMocker().mock()})
         );
         MatcherAssert.assertThat(
-            (String) pred.evaluate(new MessageMocker().mock(), 0),
+            (String) pred.evaluate(new MsgMocker().mock(), 0),
             Matchers.equalTo(result)
         );
     }

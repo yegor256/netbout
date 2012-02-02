@@ -26,8 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
-
 /**
  * One predicate.
  *
@@ -39,9 +37,9 @@ public interface Predicate {
     /**
      * Evaluate it.
      * @param msg The message
-     * @param pos Its position in the list
+     * @param pos Its position in the output list
      * @return Result of it
      */
-    Object evaluate(Message msg, int pos);
+    Object evaluate(Msg msg, int pos);
 
 }

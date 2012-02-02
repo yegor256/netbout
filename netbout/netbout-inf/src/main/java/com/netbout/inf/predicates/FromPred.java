@@ -26,8 +26,9 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "from")
 public final class FromPred extends AbstractVarargPred {
 
     /**
@@ -49,14 +51,14 @@ public final class FromPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public FromPred(final List<Predicate> args) {
-        super("from", args);
+        super(args);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final int from = Integer.valueOf(
             this.arg(0).evaluate(msg, pos).toString()
         );
@@ -69,7 +71,8 @@ public final class FromPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(.., %d): %d blocked already, 'from' is #%d: %B",
+            "#evaluate(#%d, %d): %d blocked already, 'from' is #%d: %B",
+            msg.number(),
             pos,
             msg.number(),
             this.blocked,

@@ -28,7 +28,6 @@ package com.netbout.hub;
 
 import com.netbout.bus.TxBuilder;
 import com.netbout.inf.Infinity;
-import com.netbout.inf.Predicate;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
@@ -76,13 +75,6 @@ public interface Hub {
      * @return The infinity
      */
     Infinity infinity();
-
-    /**
-     * Parse predicate.
-     * @param query The query
-     * @return The predicate
-     */
-    Predicate predicate(String query);
 
     /**
      * Promote existing identity to the helper.

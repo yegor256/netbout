@@ -26,57 +26,41 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import java.util.List;
-
 /**
- * Infinity, with information about bouts and messages.
+ * One message to use in predicates.
+ *
+ * <p>Implementation of this class should be immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+public interface Msg {
 
     /**
-     * Find bundles and group them.
-     * @param query The predicate to use
-     * @return The list of groups
+     * Its number.
+     * @return The number
      */
-    List<Bundle> bundles(String query);
+    Long number();
 
     /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
+     * Number of bout it's in.
+     * @return The number
      */
-    List<Long> bouts(String query);
+    Long bout();
 
     /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
+     * Has property.
+     * @param name The name of the property
+     * @return Yes, it has this property
      */
-    List<Long> messages(String query);
+    boolean has(String name);
 
     /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
+     * Get property.
+     * @param name The name of the property to get
+     * @param <T> Type of response
+     * @return Value of the property
      */
-    void see(Identity identity);
-
-    /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
-     */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    <T> T get(String name);
 
 }

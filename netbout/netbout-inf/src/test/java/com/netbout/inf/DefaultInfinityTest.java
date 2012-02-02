@@ -26,57 +26,26 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import java.util.List;
+import com.netbout.bus.Bus;
+import com.netbout.bus.BusMocker;
+import org.junit.Test;
 
 /**
- * Infinity, with information about bouts and messages.
- *
+ * Test case of {@link DefaultInfinity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+public final class DefaultInfinityTest {
 
     /**
-     * Find bundles and group them.
-     * @param query The predicate to use
-     * @return The list of groups
+     * DefaultInfinity can find messages.
+     * @throws Exception If there is some problem inside
      */
-    List<Bundle> bundles(String query);
-
-    /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
-     */
-    List<Long> bouts(String query);
-
-    /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
-     */
-    List<Long> messages(String query);
-
-    /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
-     */
-    void see(Identity identity);
-
-    /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
-     */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    @Test
+    public void populatesIndexOnFirstTimeCall() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final Infinity inf = new DefaultInfinity(bus);
+        inf.messages("foo");
+    }
 
 }

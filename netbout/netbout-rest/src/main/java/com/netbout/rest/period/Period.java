@@ -264,7 +264,7 @@ public final class Period {
             original = query;
         } else {
             if (!query.isEmpty()) {
-                original = PredicateBuilder.byKeyword(query);
+                original = PredicateBuilder.normalize(query);
             }
         }
         final String text = String.format(

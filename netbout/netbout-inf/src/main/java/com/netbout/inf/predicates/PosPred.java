@@ -26,8 +26,9 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "pos")
 public final class PosPred extends AbstractVarargPred {
 
     /**
@@ -44,21 +46,21 @@ public final class PosPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public PosPred(final List<Predicate> args) {
-        super("pos", args);
+        super(args);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final int required = Integer.valueOf(
             this.arg(0).evaluate(msg, pos).toString()
         );
         final boolean matches = pos == required;
         Logger.debug(
             this,
-            "#evaluate(): message #%d is at position #%d, required #%d: %B",
+            "#evaluate(#%d, %d): required #%d: %B",
             msg.number(),
             pos,
             required,

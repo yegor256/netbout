@@ -26,10 +26,15 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Urn;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * Variable.
@@ -37,8 +42,54 @@ import com.netbout.spi.NetboutUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(extracts = true)
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public final class VariablePred implements Predicate {
+
+    /**
+     * Message property.
+     */
+    public static final String TEXT = "text";
+
+    /**
+     * Message property "date".
+     */
+    public static final String DATE = "date";
+
+    /**
+     * Message property.
+     */
+    public static final String NUMBER = "number";
+
+    /**
+     * Message property.
+     */
+    public static final String BOUT_NUMBER = "bout.number";
+
+    /**
+     * Message property.
+     */
+    public static final String BOUT_DATE = "bout.date";
+
+    /**
+     * Message property.
+     */
+    public static final String BOUT_RECENT = "bout.recent";
+
+    /**
+     * Message property.
+     */
+    public static final String BOUT_TITLE = "bout.title";
+
+    /**
+     * Message property.
+     */
+    public static final String AUTHOR_NAME = "author.name";
+
+    /**
+     * Message property.
+     */
+    public static final String AUTHOR_ALIAS = "author.alias";
 
     /**
      * The value of it.
@@ -54,32 +105,48 @@ public final class VariablePred implements Predicate {
     }
 
     /**
+     * Extracts necessary data from message.
+     * @param msg The message to extract from
+     * @param props Where to extract
+     */
+    public static void extract(final Message msg,
+        final Map<String, Object> props) {
+        props.put(VariablePred.TEXT, msg.text());
+        props.put(VariablePred.DATE, msg.date());
+        props.put(VariablePred.AUTHOR_NAME, msg.author().name());
+        props.put(
+            VariablePred.AUTHOR_ALIAS,
+            NetboutUtils.aliasOf(msg.author())
+        );
+        props.put(VariablePred.BOUT_DATE, msg.bout().date());
+        props.put(VariablePred.BOUT_TITLE, msg.bout().title());
+        props.put(VariablePred.BOUT_RECENT, NetboutUtils.dateOf(msg.bout()));
+    }
+
+    /**
      * {@inheritDoc}
-     * @checkstyle CyclomaticComplexity (30 lines)
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         Object value;
-        if ("text".equals(this.name)) {
-            value = msg.text();
-        } else if ("bout.number".equals(this.name)) {
-            value = msg.bout().number();
-        } else if ("bout.date".equals(this.name)) {
-            value = msg.bout().date();
-        } else if ("bout.recent".equals(this.name)) {
-            value = NetboutUtils.dateOf(msg.bout());
-        } else if ("bout.title".equals(this.name)) {
-            value = msg.bout().title();
-        } else if ("number".equals(this.name)) {
+        if (this.TEXT.equals(this.name)) {
+            value = msg.<String>get(this.TEXT);
+        } else if (this.BOUT_NUMBER.equals(this.name)) {
+            value = msg.bout();
+        } else if (this.BOUT_DATE.equals(this.name)) {
+            value = msg.<Date>get(this.BOUT_DATE);
+        } else if (this.BOUT_RECENT.equals(this.name)) {
+            value = msg.<Date>get(this.BOUT_RECENT);
+        } else if (this.BOUT_TITLE.equals(this.name)) {
+            value = msg.<String>get(this.BOUT_TITLE);
+        } else if (this.NUMBER.equals(this.name)) {
             value = msg.number();
-        } else if ("date".equals(this.name)) {
-            value = msg.date();
-        } else if ("author.name".equals(this.name)) {
-            value = msg.author().name();
-        } else if ("author.alias".equals(this.name)) {
-            value = NetboutUtils.aliasOf(msg.author());
-        } else if ("seen".equals(this.name)) {
-            value = msg.seen();
+        } else if (this.DATE.equals(this.name)) {
+            value = msg.<Date>get(this.DATE);
+        } else if (this.AUTHOR_NAME.equals(this.name)) {
+            value = msg.<Urn>get(this.AUTHOR_NAME);
+        } else if (this.AUTHOR_ALIAS.equals(this.name)) {
+            value = msg.<String>get(this.AUTHOR_ALIAS);
         } else {
             throw new PredicateException(
                 String.format("Unknown variable '$%s'", this.name)

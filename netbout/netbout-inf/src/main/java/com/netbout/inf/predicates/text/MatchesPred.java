@@ -26,9 +26,10 @@
  */
 package com.netbout.inf.predicates.text;
 
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +40,7 @@ import java.util.Locale;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "matches")
 public final class MatchesPred extends AbstractVarargPred {
 
     /**
@@ -46,14 +48,14 @@ public final class MatchesPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public MatchesPred(final List<Predicate> args) {
-        super("matches", args);
+        super(args);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Message msg, final int pos) {
+    public Object evaluate(final Msg msg, final int pos) {
         final String[] keywords = ((String) this.arg(0).evaluate(msg, pos))
             .replaceAll(
                 "['\"\\!@#\\$%\\?\\^&\\*\\(\\),\\.\\[\\]=\\+\\/]+",
@@ -70,7 +72,9 @@ public final class MatchesPred extends AbstractVarargPred {
         }
         Logger.debug(
             this,
-            "#evaluate(): finding %[list]s inside '%s': %B",
+            "#evaluate(#%d, %d): finding %[list]s inside '%s': %B",
+            msg.number(),
+            pos,
             keywords,
             text,
             matches

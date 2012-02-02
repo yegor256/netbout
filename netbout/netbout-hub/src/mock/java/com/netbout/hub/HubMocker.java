@@ -28,7 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.inf.MemInfinity;
+import com.netbout.inf.DefaultInfinity;
 import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
@@ -70,19 +70,10 @@ public final class HubMocker {
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
-                    return new MemInfinity(HubMocker.this.bmocker.mock());
+                    return new DefaultInfinity(HubMocker.this.bmocker.mock());
                 }
             }
         ).when(this.hub).infinity();
-        Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
-                    final String query = (String) invocation.getArguments()[0];
-                    return new PredicateBuilder(HubMocker.this.bmocker.mock())
-                        .parse(query);
-                }
-            }
-        ).when(this.hub).predicate(Mockito.anyString());
         this.withUrnResolver(new UrnResolverMocker().mock());
         this.withBoutMgr(new BoutMgrMocker().mock());
         try {
