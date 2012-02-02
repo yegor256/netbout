@@ -82,9 +82,13 @@ public final class LazyBouts implements Iterable<Long> {
          */
         private final transient Iterator<Long> iterator;
         /**
-         * Head of the list, recently loaded (or NULL if it's the end).
+         * Head of the list, recently loaded.
          */
         private transient Long head;
+        /**
+         * Current value of {@code head} is vital?
+         */
+        private transient boolean ready;
         /**
          * Public ctor.
          * @param iter The iterator
@@ -98,14 +102,10 @@ public final class LazyBouts implements Iterable<Long> {
         @Override
         public boolean hasNext() {
             synchronized (this) {
-                boolean has;
-                if (this.head == null) {
+                if (!this.ready) {
                     this.head = this.fetch();
-                    has = this.head != null;
-                } else {
-                    has = true;
                 }
-                return has;
+                return this.ready;
             }
         }
         /**
@@ -114,12 +114,13 @@ public final class LazyBouts implements Iterable<Long> {
         @Override
         public Long next() {
             synchronized (this) {
-                if (this.head == null) {
+                if (!this.ready) {
                     this.head = this.fetch();
                 }
-                if (this.head == null) {
+                if (!this.ready) {
                     throw new NoSuchElementException();
                 }
+                this.ready = false;
                 return this.head;
             }
         }
@@ -141,6 +142,7 @@ public final class LazyBouts implements Iterable<Long> {
                 final Long bout = LazyBouts.this.heap.get(msg).bout();
                 if (!this.passed.contains(bout)) {
                     found = bout;
+                    this.ready = true;
                     this.passed.add(bout);
                     break;
                 }

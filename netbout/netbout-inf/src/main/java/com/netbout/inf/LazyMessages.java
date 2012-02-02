@@ -84,6 +84,10 @@ public final class LazyMessages implements Iterable<Long> {
          */
         private transient int position;
         /**
+         * Current value of {@code head} is vital?
+         */
+        private transient boolean ready;
+        /**
          * Public ctor.
          * @param iter The iterator
          */
@@ -96,14 +100,10 @@ public final class LazyMessages implements Iterable<Long> {
         @Override
         public boolean hasNext() {
             synchronized (this) {
-                boolean has;
-                if (this.head == null) {
+                if (!this.ready) {
                     this.head = this.fetch();
-                    has = this.head != null;
-                } else {
-                    has = true;
                 }
-                return has;
+                return this.ready;
             }
         }
         /**
@@ -112,12 +112,13 @@ public final class LazyMessages implements Iterable<Long> {
         @Override
         public Long next() {
             synchronized (this) {
-                if (this.head == null) {
+                if (!this.ready) {
                     this.head = this.fetch();
                 }
-                if (this.head == null) {
+                if (!this.ready) {
                     throw new NoSuchElementException();
                 }
+                this.ready = false;
                 return this.head;
             }
         }
@@ -140,6 +141,7 @@ public final class LazyMessages implements Iterable<Long> {
                 if ((Boolean) LazyMessages.this.predicate
                     .evaluate(msg, this.position)) {
                     found = msg.number();
+                    this.ready = true;
                     break;
                 }
             }
