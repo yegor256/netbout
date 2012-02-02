@@ -41,6 +41,11 @@ import java.util.List;
 public final class UnbundledPred extends AbstractVarargPred {
 
     /**
+     * Expected marker.
+     */
+    private transient String expected;
+
+    /**
      * Public ctor.
      * @param args The arguments
      */
@@ -53,7 +58,18 @@ public final class UnbundledPred extends AbstractVarargPred {
      */
     @Override
     public Object evaluate(final Msg msg, final int pos) {
-        return true;
+        final Long bout = Long.valueOf(
+            this.arg(0).evaluate(msg, pos).toString()
+        );
+        final String marker = msg.<String>get(BundledPred.BUNDLE);
+        boolean allow;
+        if (msg.bout().equals(bout)) {
+            this.expected = marker;
+            allow = false;
+        } else {
+            allow = marker.equals(this.expected);
+        }
+        return allow;
     }
 
 }

@@ -29,7 +29,12 @@ package com.netbout.inf.predicates;
 import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Allows only bundled messages.
@@ -37,8 +42,18 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "bundled")
+@Meta(name = "bundled", extracts = true)
 public final class BundledPred extends AbstractVarargPred {
+
+    /**
+     * Bundle marker.
+     */
+    public static final String BUNDLE = "bundle";
+
+    /**
+     * List of already passed bundles.
+     */
+    private final transient Set<String> passed = new HashSet<String>();
 
     /**
      * Public ctor.
@@ -49,11 +64,33 @@ public final class BundledPred extends AbstractVarargPred {
     }
 
     /**
+     * Extracts necessary data from message.
+     * @param msg The message to extract from
+     * @param props Where to extract
+     */
+    public static void extract(final Message msg,
+        final Map<String, Object> props) {
+        final StringBuilder builder = new StringBuilder();
+        for (Participant dude : msg.bout().participants()) {
+            builder.append(dude.identity().name()).append(" ");
+        }
+        props.put(BundledPred.BUNDLE, builder.toString());
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public Object evaluate(final Msg msg, final int pos) {
-        return true;
+        final String bundle = msg.<String>get(this.BUNDLE);
+        boolean allow;
+        if (this.passed.contains(bundle)) {
+            allow = false;
+        } else {
+            this.passed.add(bundle);
+            allow = true;
+        }
+        return allow;
     }
 
 }

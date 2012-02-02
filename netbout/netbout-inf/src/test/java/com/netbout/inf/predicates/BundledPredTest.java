@@ -26,11 +26,18 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
+import java.util.Map;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link BundledPred}.
@@ -38,6 +45,24 @@ import org.junit.Test;
  * @version $Id$
  */
 public final class BundledPredTest {
+
+    /**
+     * BundledPred can extract marker.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    public void extractsMarker() throws Exception {
+        final Bout bout = new BoutMocker()
+            .withParticipant("urn:test:somebody")
+            .mock();
+        final Message msg = new MessageMocker()
+            .inBout(bout)
+            .mock();
+        final Map props = Mockito.mock(Map.class);
+        BundledPred.extract(msg, props);
+        Mockito.verify(props).put(BundledPred.BUNDLE, "urn:test:somebody ");
+    }
 
     /**
      * BundledPred can pass only bundled messages.
@@ -48,17 +73,10 @@ public final class BundledPredTest {
         final Predicate pred = new BundledPred(
             Arrays.asList(new Predicate[] {})
         );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MsgMocker().with("bundled(urn:test)").mock(),
-                0
-            )
-        );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(new MsgMocker().mock(), 1)
-        );
+        final String marker = "abc";
+        final Msg msg = new MsgMocker().with(BundledPred.BUNDLE, marker).mock();
+        MatcherAssert.assertThat("matched", (Boolean) pred.evaluate(msg, 0));
+        MatcherAssert.assertThat("no!", !(Boolean) pred.evaluate(msg, 1));
     }
 
 }
