@@ -32,10 +32,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Default implementation of Infitity.
@@ -51,10 +48,9 @@ public final class DefaultInfinity implements Infinity {
     private final transient Bus bus;
 
     /**
-     * All messages.
+     * The heap.
      */
-    private final transient SortedMap<Long, Msg> all =
-        new ConcurrentSkipListMap<Long, Msg>(Collections.<Long>reverseOrder());
+    private final transient Heap heap = new Heap();
 
     /**
      * Public ctor.
@@ -68,54 +64,19 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public List<Bundle> bundles(final String query) {
-        throw new UnsupportedOperationException("#bundles()");
+    public Iterable<Long> bouts(final String query) {
+        return new LazyBouts(this.heap, this.messages(query));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Long> bouts(final String query) {
-        final List<Long> numbers = new ArrayList<Long>();
-        for (Long msg : this.messages(query)) {
-            final Long number = this.all.get(msg).bout();
-            if (!numbers.contains(number)) {
-                numbers.add(number);
-            }
-        }
-        Logger.debug(
-            this,
-            "#bouts(\"%s\"): found %d bouts: %[list]s",
-            query,
-            numbers.size(),
-            numbers
+    public Iterable<Long> messages(final String query) {
+        return new LazyMessages(
+            this.heap.messages(),
+            new PredicateBuilder(this.bus).parse(query)
         );
-        return new ArrayList<Long>(numbers);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Long> messages(final String query) {
-        final Predicate predicate = new PredicateBuilder(this.bus).parse(query);
-        final List<Long> numbers = new ArrayList<Long>();
-        int pos = 0;
-        for (Msg msg : this.all.values()) {
-            if ((Boolean) predicate.evaluate(msg, pos)) {
-                numbers.add(msg.number());
-                pos += 1;
-            }
-        }
-        Logger.debug(
-            this,
-            "#messages(\"%s\"): found %d messages: %[list]s",
-            query,
-            numbers.size(),
-            numbers
-        );
-        return numbers;
     }
 
     /**
@@ -185,8 +146,8 @@ public final class DefaultInfinity implements Infinity {
     public void see(final Message message) {
         final Long number = message.number();
         final MsgBuilder builder = new MsgBuilder(message);
-        this.all.put(number, builder.build());
-        this.all.put(number, builder.rebuild(this.all.get(number)));
+        this.heap.put(number, builder.build());
+        this.heap.put(number, builder.rebuild(this.heap.get(number)));
     }
 
 }

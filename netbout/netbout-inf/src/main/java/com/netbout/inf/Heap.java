@@ -26,49 +26,48 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
+import java.util.Collections;
+import java.util.SortedMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * Infinity, with information about bouts and messages.
+ * Heap of messages.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+final class Heap {
 
     /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
+     * All messages.
      */
-    Iterable<Long> bouts(String query);
+    private final transient SortedMap<Long, Msg> all =
+        new ConcurrentSkipListMap<Long, Msg>(Collections.<Long>reverseOrder());
 
     /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
+     * Iterator of messages.
+     * @return The iterator
      */
-    Iterable<Long> messages(String query);
+    public Iterable<Msg> messages() {
+        return this.all.values();
+    }
 
     /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
+     * Get message by number.
+     * @param number The number
+     * @return The message
      */
-    void see(Identity identity);
+    public Msg get(final Long number) {
+        return this.all.get(number);
+    }
 
     /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
+     * Put message by number.
+     * @param number The number
+     * @param msg The message to put
      */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    public void put(final Long number, final Msg msg) {
+        this.all.put(number, msg);
+    }
 
 }
