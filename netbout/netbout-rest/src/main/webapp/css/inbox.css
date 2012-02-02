@@ -63,7 +63,8 @@ li.bout {
     width: 30em;
 }
 
-    .bundled a {
+    .bundled a,
+    .bundled span {
         font-size: 1.4em;
     }
 

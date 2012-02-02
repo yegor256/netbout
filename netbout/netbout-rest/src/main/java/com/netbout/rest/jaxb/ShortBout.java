@@ -183,7 +183,7 @@ public final class ShortBout {
             links.add(
                 new Link(
                     "bout",
-                    String.format("%d: %s", bout.number(), bout.title()),
+                    String.format("#%d: %s", bout.number(), bout.title()),
                     this.builder.clone().path("/../{num}").build(bout.number())
                 )
             );

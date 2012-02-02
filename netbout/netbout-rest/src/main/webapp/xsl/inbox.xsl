@@ -129,7 +129,7 @@
             <aside class="bundled">
                 <xsl:for-each select="bundled/link">
                     <xsl:if test="position() &gt; 1">
-                        <xsl:text>, </xsl:text>
+                        <span><xsl:text>, </xsl:text></span>
                     </xsl:if>
                     <a>
                         <xsl:attribute name="href">
@@ -139,10 +139,10 @@
                     </a>
                 </xsl:for-each>
                 <xsl:if test="bundled/link[@rel='all']">
-                    <xsl:text>, and </xsl:text>
+                    <span><xsl:text>, and </xsl:text></span>
                     <a>
                         <xsl:attribute name="href">
-                            <xsl:value-of select="@href"/>
+                            <xsl:value-of select="bundled/link[@rel='all']/@href"/>
                         </xsl:attribute>
                         <xsl:text>all of them</xsl:text>
                     </a>
