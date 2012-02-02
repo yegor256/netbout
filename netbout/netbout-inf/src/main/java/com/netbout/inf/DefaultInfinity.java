@@ -34,9 +34,7 @@ import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedMap;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
@@ -79,11 +77,12 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public List<Long> bouts(final String query) {
-        final Set<Long> numbers = new TreeSet<Long>(
-            Collections.<Long>reverseOrder()
-        );
+        final List<Long> numbers = new ArrayList<Long>();
         for (Long msg : this.messages(query)) {
-            numbers.add(this.all.get(msg).bout());
+            final Long number = this.all.get(msg).bout();
+            if (!numbers.contains(number)) {
+                numbers.add(number);
+            }
         }
         Logger.debug(
             this,
