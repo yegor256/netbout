@@ -34,9 +34,7 @@ import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedMap;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
@@ -79,11 +77,12 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public List<Long> bouts(final String query) {
-        final Set<Long> numbers = new TreeSet<Long>(
-            Collections.<Long>reverseOrder()
-        );
+        final List<Long> numbers = new ArrayList<Long>();
         for (Long msg : this.messages(query)) {
-            numbers.add(this.all.get(msg).bout());
+            final Long number = this.all.get(msg).bout();
+            if (!numbers.contains(number)) {
+                numbers.add(number);
+            }
         }
         Logger.debug(
             this,
@@ -138,11 +137,12 @@ public final class DefaultInfinity implements Infinity {
                 throw new IllegalStateException(ex);
             }
         }
-        Logger.debug(
+        Logger.info(
             this,
-            "#see(%s): cached %d bouts in %dms",
+            "#see(%s): cached %d bouts of '%s' in %dms",
             identity.name(),
             numbers.size(),
+            identity.name(),
             System.currentTimeMillis() - start
         );
     }
@@ -166,11 +166,12 @@ public final class DefaultInfinity implements Infinity {
                 throw new IllegalStateException(ex);
             }
         }
-        Logger.debug(
+        Logger.info(
             this,
-            "#see(bout #%d): cached %d messages in %dms",
+            "#see(bout #%d): cached %d messages of bout #%d in %dms",
             bout.number(),
             numbers.size(),
+            bout.number(),
             System.currentTimeMillis() - start
         );
     }
