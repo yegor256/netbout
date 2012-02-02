@@ -26,10 +26,13 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This participant is in the bout.
@@ -37,6 +40,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "talks-with", extracts = true)
 public final class TalksWithPred extends AbstractVarargPred {
 
     /**
@@ -44,7 +48,17 @@ public final class TalksWithPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public TalksWithPred(final List<Predicate> args) {
-        super("talks-with", args);
+        super(args);
+    }
+
+    /**
+     * Extracts necessary data from message.
+     * @param msg The message to extract from
+     * @param props Where to extract
+     */
+    public static void extract(final Message msg,
+        final Map<String, Object> props) {
+        // ...
     }
 
     /**

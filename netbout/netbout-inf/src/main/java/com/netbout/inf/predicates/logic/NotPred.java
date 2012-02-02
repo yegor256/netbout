@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.predicates.logic;
 
+import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
@@ -37,6 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "not")
 public final class NotPred extends AbstractVarargPred {
 
     /**
@@ -44,7 +46,7 @@ public final class NotPred extends AbstractVarargPred {
      * @param args Arguments/predicates
      */
     public NotPred(final List<Predicate> args) {
-        super("not", args);
+        super(args);
     }
 
     /**

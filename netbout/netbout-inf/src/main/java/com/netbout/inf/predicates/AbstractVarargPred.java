@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,15 @@ public abstract class AbstractVarargPred implements Predicate {
      */
     public AbstractVarargPred(final String name, final List<Predicate> args) {
         this.iname = name;
+        this.arguments.addAll(args);
+    }
+
+    /**
+     * Public ctor.
+     * @param args Arguments/predicates
+     */
+    public AbstractVarargPred(final List<Predicate> args) {
+        this.iname = this.getClass().getAnnotation(Meta.class).name();
         this.arguments.addAll(args);
     }
 

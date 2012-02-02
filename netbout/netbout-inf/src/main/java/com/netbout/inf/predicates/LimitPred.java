@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.ymock.util.Logger;
@@ -37,6 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "limit")
 public final class LimitPred extends AbstractVarargPred {
 
     /**
@@ -49,7 +51,7 @@ public final class LimitPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public LimitPred(final List<Predicate> args) {
-        super("limit", args);
+        super(args);
     }
 
     /**

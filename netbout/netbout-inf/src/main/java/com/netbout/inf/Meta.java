@@ -24,57 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.math;
+package com.netbout.inf;
 
-import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.predicates.AbstractVarargPred;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * All arguments should be equal to each other.
+ * Meta information about predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "equal")
-public final class EqualPred extends AbstractVarargPred {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Meta {
 
     /**
-     * Public ctor.
-     * @param args The arguments
+     * Does it have {@code extract(Message,Map)} method, similar to the
+     * one defined in {@link PredicateBuilder}.
      */
-    public EqualPred(final List<Predicate> args) {
-        super(args);
-    }
+    boolean extracts() default false;
 
     /**
-     * {@inheritDoc}
+     * What is the name of it, if it can be used in text.
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final List<Object> values = new ArrayList<Object>();
-        for (Predicate arg : this.args()) {
-            values.add(arg.evaluate(msg, pos));
-        }
-        boolean equal = true;
-        for (int num = 1; num < values.size(); num += 1) {
-            if (!values.get(num).toString()
-                .equals(values.get(num - 1).toString())) {
-                equal = false;
-                break;
-            }
-        }
-        Logger.debug(
-            this,
-            "#evaluate(): comparing %[list]s: %B",
-            values,
-            equal
-        );
-        return equal;
-    }
+    String name() default "";
 
 }

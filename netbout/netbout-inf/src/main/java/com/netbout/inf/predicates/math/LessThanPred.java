@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.predicates.math;
 
+import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
@@ -38,6 +39,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "less-than")
 public final class LessThanPred extends AbstractVarargPred {
 
     /**
@@ -45,7 +47,7 @@ public final class LessThanPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public LessThanPred(final List<Predicate> args) {
-        super("less-than", args);
+        super(args);
     }
 
     /**

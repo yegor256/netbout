@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.ymock.util.Logger;
@@ -37,6 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "seen-by")
 public final class SeenByPred extends AbstractVarargPred {
 
     /**
@@ -44,7 +46,7 @@ public final class SeenByPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public SeenByPred(final List<Predicate> args) {
-        super("seen-by", args);
+        super(args);
         throw new UnsupportedOperationException(
             "seen-by predicate is not implemented yet"
         );

@@ -26,11 +26,14 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
+import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Variable.
@@ -38,6 +41,7 @@ import java.util.Date;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(extracts = true)
 public final class VariablePred implements Predicate {
 
     /**
@@ -51,6 +55,16 @@ public final class VariablePred implements Predicate {
      */
     public VariablePred(final String value) {
         this.name = value;
+    }
+
+    /**
+     * Extracts necessary data from message.
+     * @param msg The message to extract from
+     * @param props Where to extract
+     */
+    public static void extract(final Message msg,
+        final Map<String, Object> props) {
+        // ...
     }
 
     /**

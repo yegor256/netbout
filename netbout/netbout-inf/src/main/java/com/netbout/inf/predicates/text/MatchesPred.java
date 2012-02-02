@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.predicates.text;
 
+import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
@@ -39,6 +40,7 @@ import java.util.Locale;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "matches")
 public final class MatchesPred extends AbstractVarargPred {
 
     /**
@@ -46,7 +48,7 @@ public final class MatchesPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public MatchesPred(final List<Predicate> args) {
-        super("matches", args);
+        super(args);
     }
 
     /**

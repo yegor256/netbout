@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.predicates.math;
 
+import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
@@ -40,6 +41,7 @@ import org.joda.time.format.ISODateTimeFormat;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta(name = "greater-than")
 public final class GreaterThanPred extends AbstractVarargPred {
 
     /**
@@ -47,7 +49,7 @@ public final class GreaterThanPred extends AbstractVarargPred {
      * @param args The arguments
      */
     public GreaterThanPred(final List<Predicate> args) {
-        super("greater-than", args);
+        super(args);
     }
 
     /**

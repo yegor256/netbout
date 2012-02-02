@@ -85,7 +85,8 @@ final class MsgBuilder {
      */
     public Msg rebuild(final Msg msg) {
         final Map<String, Object> props = new HashMap<String, Object>();
-        props.put("bout.recent", NetboutUtils.dateOf(this.message.bout()));
+        // props.put("bout.recent", NetboutUtils.dateOf(this.message.bout()));
+        PredicateBuilder.extract(this.message, props);
         return ((DefaultMsg) msg).copy(props);
     }
 
