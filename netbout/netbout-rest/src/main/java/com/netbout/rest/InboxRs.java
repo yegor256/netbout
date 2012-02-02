@@ -166,7 +166,7 @@ public final class InboxRs extends AbstractRs {
      */
     private Iterable<Bout> fetch(final String view, final Period period) {
         String pred = PredicateBuilder.normalize(this.query);
-        if (!pred.startsWith("(unbundled")) {
+        if (!pred.startsWith("(unbundled ")) {
             pred = String.format("(and (bundled) %s)", pred);
         }
         Iterable<Bout> list;
