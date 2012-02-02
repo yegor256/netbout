@@ -77,14 +77,20 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public List<Long> bouts(final String query) {
-        final Predicate predicate = new PredicateBuilder(this.bus).parse(query);
         final List<Long> numbers = new ArrayList<Long>();
-        for (Msg msg : this.messages.values()) {
+        for (Long msg : this.messages(query)) {
             if ((Boolean) predicate.evaluate(msg, 0)
                 && !numbers.contains(msg.bout())) {
                 numbers.add(msg.bout());
             }
         }
+        Logger.debug(
+            this,
+            "#bouts(\"%s\"): found %d bouts: %[list]s",
+            query,
+            numbers.size(),
+            numbers
+        );
         return numbers;
     }
 
@@ -102,6 +108,13 @@ public final class DefaultInfinity implements Infinity {
                 pos += 1;
             }
         }
+        Logger.debug(
+            this,
+            "#messages(\"%s\"): found %d messages: %[list]s",
+            query,
+            numbers.size(),
+            numbers
+        );
         return numbers;
     }
 
