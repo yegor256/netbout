@@ -24,45 +24,46 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.jaxb;
+package com.netbout.inf;
 
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
+import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link ShortBout}.
+ * Test case of {@link LazyMessages}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ShortBoutTest {
+public final class LazyMessagesTest {
 
     /**
-     * ShortBout can be converted to XML.
+     * LazyMessages can find messages.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void convertsToXml() throws Exception {
-        final ShortBout obj = new ShortBout(
-            new BoutMocker().mock(),
-            UriBuilder.fromUri("http://localhost"),
-            new IdentityMocker().mock()
+    public void findsMessagesInStreamOfMsgs() throws Exception {
+        final Iterable<Msg> msgs = Arrays.asList(
+            new Msg[] {new MsgMocker().mock()}
         );
+        final Predicate pred = new PredicateMocker().mock();
+        final Iterable<Long> messages = new LazyMessages(msgs, pred);
         MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/bout[@unseen]"),
-                XhtmlMatchers.hasXPath("/bout/link[@rel='page']"),
-                XhtmlMatchers.hasXPath("/bout/number"),
-                XhtmlMatchers.hasXPath("/bout/title"),
-                XhtmlMatchers.hasXPath("/bout/participants")
-            )
+            messages,
+            Matchers.<Long>iterableWithSize(1)
         );
+    }
+
+    /**
+     * LazyMessages throws exception on incorrect call to {@code next()}.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = java.util.NoSuchElementException.class)
+    public void throwsWhenIteratorIsEmpty() throws Exception {
+        new LazyMessages(
+            Arrays.asList(new Msg[] {}), new PredicateMocker().mock()
+        ).iterator().next();
     }
 
 }

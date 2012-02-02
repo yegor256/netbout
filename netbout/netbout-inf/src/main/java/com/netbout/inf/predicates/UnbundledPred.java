@@ -24,45 +24,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.jaxb;
+package com.netbout.inf.predicates;
 
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
+import com.netbout.inf.Predicate;
+import java.util.List;
 
 /**
- * Test case for {@link ShortBout}.
+ * Allows only messages that unbundle on the specified bout number.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ShortBoutTest {
+@Meta(name = "unbundled")
+public final class UnbundledPred extends AbstractVarargPred {
 
     /**
-     * ShortBout can be converted to XML.
-     * @throws Exception If there is some problem inside
+     * Public ctor.
+     * @param args The arguments
      */
-    @Test
-    public void convertsToXml() throws Exception {
-        final ShortBout obj = new ShortBout(
-            new BoutMocker().mock(),
-            UriBuilder.fromUri("http://localhost"),
-            new IdentityMocker().mock()
-        );
-        MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/bout[@unseen]"),
-                XhtmlMatchers.hasXPath("/bout/link[@rel='page']"),
-                XhtmlMatchers.hasXPath("/bout/number"),
-                XhtmlMatchers.hasXPath("/bout/title"),
-                XhtmlMatchers.hasXPath("/bout/participants")
-            )
-        );
+    public UnbundledPred(final List<Predicate> args) {
+        super(args);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Msg msg, final int pos) {
+        return true;
     }
 
 }

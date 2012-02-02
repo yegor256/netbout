@@ -24,44 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.jaxb;
+package com.netbout.inf;
 
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link ShortBout}.
+ * Test case of {@link Heap}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ShortBoutTest {
+public final class HeapTest {
 
     /**
-     * ShortBout can be converted to XML.
+     * Heap can sort messages properly.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void convertsToXml() throws Exception {
-        final ShortBout obj = new ShortBout(
-            new BoutMocker().mock(),
-            UriBuilder.fromUri("http://localhost"),
-            new IdentityMocker().mock()
-        );
+    public void findsBoutsInStreamOfMessages() throws Exception {
+        final Heap heap = new Heap();
+        heap.put(1L, new DefaultMsg(1L, 0L, null));
+        heap.put(2L, new DefaultMsg(2L, 0L, null));
         MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/bout[@unseen]"),
-                XhtmlMatchers.hasXPath("/bout/link[@rel='page']"),
-                XhtmlMatchers.hasXPath("/bout/number"),
-                XhtmlMatchers.hasXPath("/bout/title"),
-                XhtmlMatchers.hasXPath("/bout/participants")
-            )
+            heap.messages().iterator().next().number(),
+            Matchers.equalTo(2L)
         );
     }
 

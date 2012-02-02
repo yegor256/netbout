@@ -24,45 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.jaxb;
+package com.netbout.inf;
 
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import java.util.Collections;
+import java.util.SortedMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * Test case for {@link ShortBout}.
+ * Heap of messages.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ShortBoutTest {
+final class Heap {
 
     /**
-     * ShortBout can be converted to XML.
-     * @throws Exception If there is some problem inside
+     * All messages.
      */
-    @Test
-    public void convertsToXml() throws Exception {
-        final ShortBout obj = new ShortBout(
-            new BoutMocker().mock(),
-            UriBuilder.fromUri("http://localhost"),
-            new IdentityMocker().mock()
-        );
-        MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/bout[@unseen]"),
-                XhtmlMatchers.hasXPath("/bout/link[@rel='page']"),
-                XhtmlMatchers.hasXPath("/bout/number"),
-                XhtmlMatchers.hasXPath("/bout/title"),
-                XhtmlMatchers.hasXPath("/bout/participants")
-            )
-        );
+    private final transient SortedMap<Long, Msg> all =
+        new ConcurrentSkipListMap<Long, Msg>(Collections.<Long>reverseOrder());
+
+    /**
+     * Iterator of messages.
+     * @return The iterator
+     */
+    public Iterable<Msg> messages() {
+        return this.all.values();
+    }
+
+    /**
+     * Get message by number.
+     * @param number The number
+     * @return The message
+     */
+    public Msg get(final Long number) {
+        return this.all.get(number);
+    }
+
+    /**
+     * Put message by number.
+     * @param number The number
+     * @param msg The message to put
+     */
+    public void put(final Long number, final Msg msg) {
+        this.all.put(number, msg);
     }
 
 }

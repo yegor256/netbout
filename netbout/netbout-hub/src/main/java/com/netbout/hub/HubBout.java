@@ -42,7 +42,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Identity.
@@ -237,8 +236,8 @@ public final class HubBout implements Bout {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public List<Message> messages(final String query) {
-        final List<Message> messages = new LazyMessages(
+    public Iterable<Message> messages(final String query) {
+        return new LazyMessages(
             this.hub.infinity().messages(
                 String.format(
                     "(and (equal $bout.number %d) %s)",
@@ -248,13 +247,6 @@ public final class HubBout implements Bout {
             ),
             this
         );
-        Logger.debug(
-            this,
-            "#messages('%s'): %d message(s) found",
-            query,
-            messages.size()
-        );
-        return messages;
     }
 
     /**

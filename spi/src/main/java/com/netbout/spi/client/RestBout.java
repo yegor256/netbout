@@ -32,6 +32,7 @@ package com.netbout.spi.client;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
@@ -78,18 +79,7 @@ final class RestBout implements Bout {
      */
     @Override
     public int compareTo(final Bout bout) {
-        final String query = "(equal $pos 0)";
-        final List<Message> mine = this.messages(query);
-        final List<Message> his = bout.messages(query);
-        int result;
-        if (mine.isEmpty()) {
-            result = -1;
-        } else if (his.isEmpty()) {
-            result = 1;
-        } else {
-            result = mine.get(0).date().compareTo(his.get(0).date());
-        }
-        return result;
+        return NetboutUtils.dateOf(this).compareTo(NetboutUtils.dateOf(bout));
     }
 
     /**
@@ -210,7 +200,7 @@ final class RestBout implements Bout {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public List<Message> messages(final String query) {
+    public Iterable<Message> messages(final String query) {
         final RestResponse response = this.client
             .queryParam(RestSession.QUERY_PARAM, query)
             .get("reading numbers of bout messages");

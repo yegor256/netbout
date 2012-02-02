@@ -24,57 +24,71 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
- * Lazy list of bouts.
+ * Lazy list of bout numbers.
+ *
+ * <p>It's thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyBouts implements Iterable<Bout> {
+public final class LazyBouts implements Iterable<Long> {
 
     /**
-     * List of bout numbers.
+     * What is the heap to use.
      */
-    private final transient Iterable<Long> bouts;
+    private final transient Heap heap;
 
     /**
-     * Where they are.
+     * List of messages.
      */
-    private final transient Identity identity;
+    private final transient Iterable<Long> messages;
 
     /**
      * Public ctor.
-     * @param bts The list of bout numbers
-     * @param where The bout where they are located
+     * @param where The heap
+     * @param msgs The list of them
      */
-    public LazyBouts(final Iterable<Long> bts, final Identity where) {
-        super();
-        this.bouts = bts;
-        this.identity = where;
+    public LazyBouts(final Heap where, final Iterable<Long> msgs) {
+        this.heap = where;
+        this.messages = msgs;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Iterator<Bout> iterator() {
-        return new BoutsIterator(this.bouts.iterator());
+    public Iterator<Long> iterator() {
+        return new BoutsIterator(this.messages.iterator());
     }
 
     /**
      * Iterator.
      */
-    private final class BoutsIterator implements Iterator<Bout> {
+    private final class BoutsIterator implements Iterator<Long> {
+        /**
+         * Found bout numbers already.
+         */
+        private final transient Set<Long> passed = new HashSet<Long>();
         /**
          * The iterator to work with.
          */
         private final transient Iterator<Long> iterator;
+        /**
+         * Head of the list, recently loaded.
+         */
+        private transient Long head;
+        /**
+         * Current value of {@code head} is vital?
+         */
+        private transient boolean ready;
         /**
          * Public ctor.
          * @param iter The iterator
@@ -87,17 +101,27 @@ public final class LazyBouts implements Iterable<Bout> {
          */
         @Override
         public boolean hasNext() {
-            return this.iterator.hasNext();
+            synchronized (this) {
+                if (!this.ready) {
+                    this.head = this.fetch();
+                }
+                return this.ready;
+            }
         }
         /**
          * {@inheritDoc}
          */
         @Override
-        public Bout next() {
-            try {
-                return LazyBouts.this.identity.bout(this.iterator.next());
-            } catch (com.netbout.spi.BoutNotFoundException ex) {
-                throw new IllegalStateException(ex);
+        public Long next() {
+            synchronized (this) {
+                if (!this.ready) {
+                    this.head = this.fetch();
+                }
+                if (!this.ready) {
+                    throw new NoSuchElementException();
+                }
+                this.ready = false;
+                return this.head;
             }
         }
         /**
@@ -106,6 +130,24 @@ public final class LazyBouts implements Iterable<Bout> {
         @Override
         public void remove() {
             throw new UnsupportedOperationException("#remove()");
+        }
+        /**
+         * Fetch the next element or return NULL.
+         * @return The bout number or NULL
+         */
+        private Long fetch() {
+            Long found = null;
+            while (this.iterator.hasNext()) {
+                final Long msg = this.iterator.next();
+                final Long bout = LazyBouts.this.heap.get(msg).bout();
+                if (!this.passed.contains(bout)) {
+                    found = bout;
+                    this.ready = true;
+                    this.passed.add(bout);
+                    break;
+                }
+            }
+            return found;
         }
     }
 

@@ -24,62 +24,74 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Message;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
- * Lazy list of messages.
+ * Lazy list of message numbers.
+ *
+ * <p>It's thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyMessages implements Iterable<Message> {
+public final class LazyMessages implements Iterable<Long> {
 
     /**
-     * List of message numbers.
+     * List of messages.
      */
-    private final transient Iterable<Long> messages;
+    private final transient Iterable<Msg> messages;
 
     /**
-     * Where they are.
+     * The predicate.
      */
-    private final transient Bout bout;
+    private final transient Predicate predicate;
 
     /**
      * Public ctor.
-     * @param msgs The list of message numbers
-     * @param where The bout where they are located
+     * @param msgs The list of messages
+     * @param pred The predicate
      */
-    public LazyMessages(final Iterable<Long> msgs, final Bout where) {
-        super();
+    public LazyMessages(final Iterable<Msg> msgs, final Predicate pred) {
         this.messages = msgs;
-        this.bout = where;
+        this.predicate = pred;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Iterator<Message> iterator() {
+    public Iterator<Long> iterator() {
         return new MessagesIterator(this.messages.iterator());
     }
 
     /**
      * Iterator.
      */
-    private final class MessagesIterator implements Iterator<Message> {
+    private final class MessagesIterator implements Iterator<Long> {
         /**
          * The iterator to work with.
          */
-        private final transient Iterator<Long> iterator;
+        private final transient Iterator<Msg> iterator;
+        /**
+         * Head of the list, recently loaded (or NULL if it's the end).
+         */
+        private transient Long head;
+        /**
+         * Position in the list.
+         */
+        private transient int position;
+        /**
+         * Current value of {@code head} is vital?
+         */
+        private transient boolean ready;
         /**
          * Public ctor.
          * @param iter The iterator
          */
-        public MessagesIterator(final Iterator<Long> iter) {
+        public MessagesIterator(final Iterator<Msg> iter) {
             this.iterator = iter;
         }
         /**
@@ -87,17 +99,27 @@ public final class LazyMessages implements Iterable<Message> {
          */
         @Override
         public boolean hasNext() {
-            return this.iterator.hasNext();
+            synchronized (this) {
+                if (!this.ready) {
+                    this.head = this.fetch();
+                }
+                return this.ready;
+            }
         }
         /**
          * {@inheritDoc}
          */
         @Override
-        public Message next() {
-            try {
-                return LazyMessages.this.bout.message(this.iterator.next());
-            } catch (com.netbout.spi.MessageNotFoundException ex) {
-                throw new IllegalStateException(ex);
+        public Long next() {
+            synchronized (this) {
+                if (!this.ready) {
+                    this.head = this.fetch();
+                }
+                if (!this.ready) {
+                    throw new NoSuchElementException();
+                }
+                this.ready = false;
+                return this.head;
             }
         }
         /**
@@ -106,6 +128,24 @@ public final class LazyMessages implements Iterable<Message> {
         @Override
         public void remove() {
             throw new UnsupportedOperationException("#remove()");
+        }
+        /**
+         * Fetch the next element or return NULL.
+         * @return The message number or NULL
+         */
+        private Long fetch() {
+            Long found = null;
+            while (this.iterator.hasNext()) {
+                final Msg msg = this.iterator.next();
+                this.position += 1;
+                if ((Boolean) LazyMessages.this.predicate
+                    .evaluate(msg, this.position)) {
+                    found = msg.number();
+                    this.ready = true;
+                    break;
+                }
+            }
+            return found;
         }
     }
 

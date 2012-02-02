@@ -34,7 +34,6 @@ import com.netbout.spi.Token;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.net.URL;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -135,7 +134,7 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
-    public List<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final String query) {
         return this.identity.inbox(query);
     }
 

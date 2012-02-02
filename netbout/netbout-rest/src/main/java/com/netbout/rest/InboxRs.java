@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.inf.PredicateBuilder;
 import com.netbout.rest.jaxb.ShortBout;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
@@ -86,17 +87,7 @@ public final class InboxRs extends AbstractRs {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
         final Period period = Period.valueOf(view);
-        List<Bout> inbox;
-        if (view == null) {
-            inbox = identity.inbox(this.query);
-        } else {
-            inbox = identity.inbox(
-                period.query(
-                    this.query,
-                    "(not (greater-than $bout.recent '%s'))"
-                )
-            );
-        }
+        final Iterable<Bout> inbox = this.fetch(view, period);
         final PeriodsBuilder periods = new PeriodsBuilder(
             period,
             UriBuilder.fromUri(
@@ -124,7 +115,7 @@ public final class InboxRs extends AbstractRs {
                     )
                 );
             }
-            if (!periods.more(inbox.size())) {
+            if (!periods.more()) {
                 break;
             }
         }
@@ -135,7 +126,6 @@ public final class InboxRs extends AbstractRs {
             .init(this)
             .append(new JaxbBundle("query", this.query))
             .append(new JaxbBundle("view", view))
-            .append(new JaxbBundle("total", Integer.toString(inbox.size())))
             .append(JaxbGroup.build(bouts, "bouts"))
             .append(JaxbGroup.build(periods.links(), "periods"))
             .link("friends", this.base().path("/f"))
@@ -162,6 +152,28 @@ public final class InboxRs extends AbstractRs {
             .location(this.base().path("/{num}").build(bout.number()))
             .header("Bout-number", bout.number())
             .build();
+    }
+
+    /**
+     * Fetch bouts.
+     * @param view The view
+     * @param period The period
+     * @return The list of them
+     */
+    private Iterable<Bout> fetch(final String view, final Period period) {
+        final String bundled = String.format(
+            "(and (bundled) %s)",
+            PredicateBuilder.normalize(this.query)
+        );
+        Iterable<Bout> list;
+        if (view == null) {
+            list = this.identity().inbox(bundled);
+        } else {
+            list = this.identity().inbox(
+                period.query(bundled, "(not (greater-than $bout.recent '%s'))")
+            );
+        }
+        return list;
     }
 
 }

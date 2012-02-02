@@ -194,7 +194,7 @@ public final class LongBout {
     @XmlElementWrapper(name = "messages")
     public List<LongMessage> getMessages() {
         final Period period = Period.valueOf(this.view);
-        List<Message> discussion;
+        Iterable<Message> discussion;
         if (this.view == null) {
             discussion = this.bout.messages(this.query);
         } else {
@@ -224,7 +224,7 @@ public final class LongBout {
             if (show) {
                 msgs.add(new LongMessage(this.hub, this.bout, msg));
             }
-            if (!pbld.more(discussion.size())) {
+            if (!pbld.more()) {
                 break;
             }
         }

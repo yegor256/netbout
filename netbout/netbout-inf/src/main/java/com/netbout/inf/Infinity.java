@@ -29,7 +29,6 @@ package com.netbout.inf;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import java.util.List;
 
 /**
  * Infinity, with information about bouts and messages.
@@ -40,25 +39,18 @@ import java.util.List;
 public interface Infinity {
 
     /**
-     * Find bundles and group them.
-     * @param query The predicate to use
-     * @return The list of groups
-     */
-    List<Bundle> bundles(String query);
-
-    /**
      * Find bouts for the given predicate.
      * @param query The predicate to use
      * @return The list of bouts, ordered
      */
-    List<Long> bouts(String query);
+    Iterable<Long> bouts(String query);
 
     /**
      * Find messages for the given predicate.
      * @param query The predicate to use
      * @return The list of messages, ordered
      */
-    List<Long> messages(String query);
+    Iterable<Long> messages(String query);
 
     /**
      * Update information about this identity
