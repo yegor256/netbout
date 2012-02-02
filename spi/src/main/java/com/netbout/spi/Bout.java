@@ -31,7 +31,6 @@ package com.netbout.spi;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Bout, a conversation room.
@@ -97,7 +96,7 @@ public interface Bout extends Comparable<Bout> {
      * @param query Search query, if necessary
      * @return The list of them
      */
-    List<Message> messages(String query);
+    Iterable<Message> messages(String query);
 
     /**
      * Find message by ID.

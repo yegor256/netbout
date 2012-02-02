@@ -28,9 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
-import java.util.AbstractSequentialList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.Iterator;
 
 /**
  * Lazy list of messages.
@@ -38,12 +36,12 @@ import java.util.ListIterator;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyMessages extends AbstractSequentialList<Message> {
+public final class LazyMessages implements Iterable<Message> {
 
     /**
      * List of message numbers.
      */
-    private final transient List<Long> messages;
+    private final transient Iterable<Long> messages;
 
     /**
      * Where they are.
@@ -55,7 +53,7 @@ public final class LazyMessages extends AbstractSequentialList<Message> {
      * @param msgs The list of message numbers
      * @param where The bout where they are located
      */
-    public LazyMessages(final List<Long> msgs, final Bout where) {
+    public LazyMessages(final Iterable<Long> msgs, final Bout where) {
         super();
         this.messages = msgs;
         this.bout = where;
@@ -65,39 +63,24 @@ public final class LazyMessages extends AbstractSequentialList<Message> {
      * {@inheritDoc}
      */
     @Override
-    public ListIterator<Message> listIterator(final int idx) {
-        return new MessagesIterator(this.messages.listIterator(idx));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int size() {
-        return this.messages.size();
+    public Iterator<Message> iterator() {
+        return new MessagesIterator(this.messages.iterator());
     }
 
     /**
      * Iterator.
      */
-    private final class MessagesIterator implements ListIterator<Message> {
+    private final class MessagesIterator implements Iterator<Message> {
         /**
          * The iterator to work with.
          */
-        private final transient ListIterator<Long> iterator;
+        private final transient Iterator<Long> iterator;
         /**
          * Public ctor.
          * @param iter The iterator
          */
-        public MessagesIterator(final ListIterator<Long> iter) {
+        public MessagesIterator(final Iterator<Long> iter) {
             this.iterator = iter;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void add(final Message msg) {
-            throw new IllegalArgumentException("#add()");
         }
         /**
          * {@inheritDoc}
@@ -105,13 +88,6 @@ public final class LazyMessages extends AbstractSequentialList<Message> {
         @Override
         public boolean hasNext() {
             return this.iterator.hasNext();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean hasPrevious() {
-            return this.iterator.hasPrevious();
         }
         /**
          * {@inheritDoc}
@@ -128,40 +104,8 @@ public final class LazyMessages extends AbstractSequentialList<Message> {
          * {@inheritDoc}
          */
         @Override
-        public int nextIndex() {
-            return this.iterator.nextIndex();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Message previous() {
-            try {
-                return LazyMessages.this.bout.message(this.iterator.previous());
-            } catch (com.netbout.spi.MessageNotFoundException ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int previousIndex() {
-            return this.iterator.previousIndex();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
         public void remove() {
-            throw new IllegalArgumentException("#remove()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void set(final Message msg) {
-            throw new IllegalArgumentException("#set()");
+            throw new UnsupportedOperationException("#remove()");
         }
     }
 

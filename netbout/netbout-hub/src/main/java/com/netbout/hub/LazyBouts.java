@@ -28,9 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import java.util.AbstractSequentialList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.Iterator;
 
 /**
  * Lazy list of bouts.
@@ -38,12 +36,12 @@ import java.util.ListIterator;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyBouts extends AbstractSequentialList<Bout> {
+public final class LazyBouts implements Iterable<Bout> {
 
     /**
      * List of bout numbers.
      */
-    private final transient List<Long> bouts;
+    private final transient Iterable<Long> bouts;
 
     /**
      * Where they are.
@@ -55,7 +53,7 @@ public final class LazyBouts extends AbstractSequentialList<Bout> {
      * @param bts The list of bout numbers
      * @param where The bout where they are located
      */
-    public LazyBouts(final List<Long> bts, final Identity where) {
+    public LazyBouts(final Iterable<Long> bts, final Identity where) {
         super();
         this.bouts = bts;
         this.identity = where;
@@ -65,39 +63,24 @@ public final class LazyBouts extends AbstractSequentialList<Bout> {
      * {@inheritDoc}
      */
     @Override
-    public ListIterator<Bout> listIterator(final int idx) {
-        return new BoutsIterator(this.bouts.listIterator(idx));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int size() {
-        return this.bouts.size();
+    public Iterator<Bout> iterator() {
+        return new BoutsIterator(this.bouts.iterator());
     }
 
     /**
      * Iterator.
      */
-    private final class BoutsIterator implements ListIterator<Bout> {
+    private final class BoutsIterator implements Iterator<Bout> {
         /**
          * The iterator to work with.
          */
-        private final transient ListIterator<Long> iterator;
+        private final transient Iterator<Long> iterator;
         /**
          * Public ctor.
          * @param iter The iterator
          */
-        public BoutsIterator(final ListIterator<Long> iter) {
+        public BoutsIterator(final Iterator<Long> iter) {
             this.iterator = iter;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void add(final Bout bout) {
-            throw new IllegalArgumentException("#add()");
         }
         /**
          * {@inheritDoc}
@@ -105,13 +88,6 @@ public final class LazyBouts extends AbstractSequentialList<Bout> {
         @Override
         public boolean hasNext() {
             return this.iterator.hasNext();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean hasPrevious() {
-            return this.iterator.hasPrevious();
         }
         /**
          * {@inheritDoc}
@@ -128,40 +104,8 @@ public final class LazyBouts extends AbstractSequentialList<Bout> {
          * {@inheritDoc}
          */
         @Override
-        public int nextIndex() {
-            return this.iterator.nextIndex();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Bout previous() {
-            try {
-                return LazyBouts.this.identity.bout(this.iterator.previous());
-            } catch (com.netbout.spi.BoutNotFoundException ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int previousIndex() {
-            return this.iterator.previousIndex();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
         public void remove() {
-            throw new IllegalArgumentException("#remove()");
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void set(final Bout bout) {
-            throw new IllegalArgumentException("#set()");
+            throw new UnsupportedOperationException("#remove()");
         }
     }
 

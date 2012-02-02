@@ -166,14 +166,16 @@ public final class DefaultInfinity implements Infinity {
                 throw new IllegalStateException(ex);
             }
         }
-        Logger.info(
-            this,
-            "#see(bout #%d): cached %d messages of bout #%d in %dms",
-            bout.number(),
-            numbers.size(),
-            bout.number(),
-            System.currentTimeMillis() - start
-        );
+        if (!numbers.isEmpty()) {
+            Logger.info(
+                this,
+                "#see(bout #%d): cached %d messages of bout #%d in %dms",
+                bout.number(),
+                numbers.size(),
+                bout.number(),
+                System.currentTimeMillis() - start
+            );
+        }
     }
 
     /**

@@ -79,8 +79,8 @@ public final class BoutTest {
     public void addsBoutMessageByDefault() throws Exception {
         final Bout bout = new BoutMocker().mock();
         MatcherAssert.assertThat(
-            bout.messages("").size(),
-            Matchers.greaterThan(0)
+            bout.messages(""),
+            Matchers.not(Matchers.<Message>emptyIterable())
         );
         MatcherAssert.assertThat(bout.message(0L), Matchers.notNullValue());
     }
@@ -113,7 +113,7 @@ public final class BoutTest {
             .messageOn("foo", "hello!")
             .mock();
         MatcherAssert.assertThat(
-            bout.messages("foo is inside").get(0).text(),
+            bout.messages("foo is inside").iterator().next().text(),
             Matchers.containsString("hello")
         );
     }

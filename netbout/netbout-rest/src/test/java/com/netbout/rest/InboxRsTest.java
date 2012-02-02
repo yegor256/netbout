@@ -77,7 +77,6 @@ public final class InboxRsTest {
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
             Matchers.allOf(
-                XmlMatchers.hasXPath(String.format("/page[total=%d]", total)),
                 XmlMatchers.hasXPath(
                     String.format("/page/bouts[count(bout)=%d]", Period.MAX)
                 ),
@@ -96,12 +95,6 @@ public final class InboxRsTest {
                     String.format(
                         "//link[@rel='more' and contains(@label,'(%d)')]",
                         Period.MAX
-                    )
-                ),
-                XmlMatchers.hasXPath(
-                    String.format(
-                        "//link[@rel='earliest' and contains(@label,'(%d)')]",
-                        total - (Period.MAX * 2)
                     )
                 )
             )

@@ -138,23 +138,14 @@ public final class ShortBout {
     }
 
     /**
-     * How many messages are there?
-     * @return Total number of messages
+     * How many UN-seen messages are there?
+     * @return Total number of messages which haven't been seen yet
      */
-    @XmlAttribute(name = "messages")
-    public Integer getTotalNumberOfMessages() {
-        return this.bout.messages("").size();
-    }
-
-    /**
-     * How many seen messages are there?
-     * @return Total number of messages which were already seen
-     */
-    @XmlAttribute(name = "seen")
-    public Integer getTotalNumberOfSeenMessages() {
+    @XmlAttribute(name = "unseen")
+    public Integer getTotalNumberOfUnseenMessages() {
         Integer count = 0;
         for (Message msg : this.bout.messages("")) {
-            if (msg.seen()) {
+            if (!msg.seen()) {
                 count += 1;
             }
         }

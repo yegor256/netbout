@@ -30,7 +30,6 @@
 package com.netbout.spi;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -74,7 +73,7 @@ public interface Identity extends Comparable<Identity> {
      * @param query Search query, if necessary
      * @return The list of bouts
      */
-    List<Bout> inbox(String query);
+    Iterable<Bout> inbox(String query);
 
     /**
      * Get bout by its unique ID.

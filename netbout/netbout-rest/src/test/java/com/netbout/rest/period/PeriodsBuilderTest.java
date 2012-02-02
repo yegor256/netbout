@@ -71,7 +71,7 @@ public final class PeriodsBuilderTest {
         );
         MatcherAssert.assertThat(
             "still have space to show",
-            this.builder.more(1)
+            this.builder.more()
         );
         MatcherAssert.assertThat(
             "is empty, since no slides should be linked",
@@ -92,7 +92,7 @@ public final class PeriodsBuilderTest {
             );
             MatcherAssert.assertThat(
                 "need to show more, we're still in visible slide",
-                this.builder.more(1)
+                this.builder.more()
             );
         }
         MatcherAssert.assertThat(
@@ -101,15 +101,12 @@ public final class PeriodsBuilderTest {
         );
         MatcherAssert.assertThat(
             "but we still have space for more dates",
-            this.builder.more(1)
+            this.builder.more()
         );
         MatcherAssert.assertThat(
             this.builder.links().get(0),
-            Matchers.allOf(
-                // @checkstyle MultipleStringLiterals (2 lines)
-                Matchers.hasProperty("rel", Matchers.equalTo("more")),
-                Matchers.hasProperty("label", Matchers.containsString("(1)"))
-            )
+            // @checkstyle MultipleStringLiterals (2 lines)
+            Matchers.hasProperty("rel", Matchers.equalTo("more"))
         );
     }
 
@@ -121,26 +118,17 @@ public final class PeriodsBuilderTest {
     public void returnsTwoLinksForThreeGroups() throws Exception {
         for (int day = Period.MAX * 2; day > 0; day -= 1) {
             this.builder.show(this.date(String.format("2008-07-%02d", day)));
-            MatcherAssert.assertThat("still have space", this.builder.more(1));
+            MatcherAssert.assertThat("still have space", this.builder.more());
         }
         MatcherAssert.assertThat(
             "it shouldn't be visible",
             !this.builder.show(this.date("2004-01-01"))
         );
-        final int total = Period.MAX * 2 + Math.abs(new Random().nextInt());
-        MatcherAssert.assertThat("that's it", !this.builder.more(total));
+        MatcherAssert.assertThat("that's it", !this.builder.more());
         MatcherAssert.assertThat(
             this.builder.links().get(PeriodsBuilder.MAX_LINKS - 1),
-            Matchers.allOf(
-                // @checkstyle MultipleStringLiterals (2 lines)
-                Matchers.hasProperty("rel", Matchers.equalTo("earliest")),
-                Matchers.hasProperty(
-                    "label",
-                    Matchers.containsString(
-                        String.format("(%d)", total - Period.MAX * 2)
-                    )
-                )
-            )
+            // @checkstyle MultipleStringLiterals (2 lines)
+            Matchers.hasProperty("rel", Matchers.equalTo("earliest"))
         );
     }
 

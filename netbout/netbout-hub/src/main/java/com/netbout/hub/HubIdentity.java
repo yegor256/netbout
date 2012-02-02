@@ -177,7 +177,7 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public List<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final String query) {
         return new LazyBouts(
             this.hub.infinity().bouts(
                 String.format(

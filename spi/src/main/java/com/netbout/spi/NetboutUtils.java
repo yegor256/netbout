@@ -33,7 +33,6 @@ import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Utils for netbout entities manipulations.
@@ -73,16 +72,17 @@ public final class NetboutUtils {
      * @return Its recent date
      */
     public static Date dateOf(final Bout bout) {
-        final List<Message> msgs = bout.messages("(pos 0)");
+        final Iterable<Message> msgs = bout.messages("(pos 0)");
         Date recent = bout.date();
-        if (!msgs.isEmpty()) {
-            final Date mdate = msgs.get(0).date();
+        if (msgs.iterator().hasNext()) {
+            final Message msg = msgs.iterator().next();
+            final Date mdate = msg.date();
             if (mdate.before(recent)) {
                 throw new IllegalArgumentException(
                     String.format(
                         // @checkstyle LineLength (1 line)
                         "Message #%d in bout #%d created on '%s', which before bout was created '%s', how come?",
-                        msgs.get(0).number(),
+                        msg.number(),
                         bout.number(),
                         mdate,
                         recent

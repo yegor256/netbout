@@ -41,7 +41,6 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.UriBuilder;
@@ -314,7 +313,7 @@ public final class StageFarm implements IdentityAware {
      * @return The list of them
      */
     private static Collection<SharedDoc> documents(final Bout bout) {
-        final List<Message> inbox = bout.messages(
+        final Iterable<Message> inbox = bout.messages(
             String.format("(ns '%s')", Slip.NAMESPACE)
         );
         final Map<String, SharedDoc> docs =

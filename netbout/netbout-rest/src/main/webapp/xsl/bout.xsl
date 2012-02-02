@@ -190,11 +190,11 @@
                     </b>
                     <xsl:text> said </xsl:text>
                     <xsl:value-of select="when"/>
-                    <span class="red">
-                        <xsl:if test="@seen = 'false'">
+                    <xsl:if test="@seen = 'false'">
+                        <span class="red">
                             <xsl:text> new</xsl:text>
-                        </xsl:if>
-                    </span>
+                        </span>
+                    </xsl:if>
                 </header>
                 <p class="text">
                     <xsl:value-of select="render" disable-output-escaping="yes" />

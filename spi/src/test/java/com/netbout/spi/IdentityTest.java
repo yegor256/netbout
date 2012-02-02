@@ -106,8 +106,8 @@ public final class IdentityTest {
             Matchers.notNullValue()
         );
         MatcherAssert.assertThat(
-            identity.inbox("").size(),
-            Matchers.equalTo(2)
+            identity.inbox(""),
+            Matchers.<Bout>iterableWithSize(2)
         );
     }
 
@@ -138,12 +138,12 @@ public final class IdentityTest {
             .withInbox(query, new Long[] {1L})
             .mock();
         MatcherAssert.assertThat(
-            identity.inbox(query).size(),
-            Matchers.equalTo(1)
+            identity.inbox(query),
+            Matchers.<Bout>iterableWithSize(1)
         );
         MatcherAssert.assertThat(
-            identity.inbox("").size(),
-            Matchers.equalTo(2)
+            identity.inbox(""),
+            Matchers.<Bout>iterableWithSize(2)
         );
     }
 
@@ -160,7 +160,7 @@ public final class IdentityTest {
             .withBout(num - 1, new BoutMocker().withNumber(num - 1).mock())
             .mock();
         MatcherAssert.assertThat(
-            identity.inbox("").get(0).number(),
+            identity.inbox("").iterator().next().number(),
             Matchers.equalTo(num + 1)
         );
     }

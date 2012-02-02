@@ -40,7 +40,7 @@
     <xsl:template match="stage">
         <xsl:choose>
             <xsl:when test="data/docs[count(doc) &gt; 0]">
-                <table>
+                <table style="width: 100%;">
                     <colgroup width="25%"/>
                     <colgroup width="25%"/>
                     <colgroup width="25%"/>
@@ -72,20 +72,22 @@
             <xsl:apply-templates select="data/place"/>
         </xsl:if>
         <form method="post">
-            <xsl:attribute name="action">
-                <xsl:value-of select="$stage-home-uri"/>
-            </xsl:attribute>
-            <xsl:text>Name: </xsl:text>
-            <input name="name" size="22" maxlength="500"/>
-            <xsl:text>URI: </xsl:text>
-            <input name="uri" size="68" maxlength="500"/>
-            <input value="Share it" type="submit"/>
+            <p>
+                <xsl:attribute name="action">
+                    <xsl:value-of select="$stage-home-uri"/>
+                </xsl:attribute>
+                <xsl:text>Name: </xsl:text>
+                <input name="name" size="22" maxlength="500"/>
+                <xsl:text>URI: </xsl:text>
+                <input name="uri" size="68" maxlength="500"/>
+                <input value="Share it" type="submit"/>
+            </p>
         </form>
     </xsl:template>
 
     <xsl:template match="doc">
         <p>
-            <img style="width: 2.5em; height: 2.5em;">
+            <img style="width: 2.5em; height: 2.5em; display: block;">
                 <xsl:attribute name="src">
                     <xsl:text>http://img.netbout.com/shary/</xsl:text>
                     <xsl:choose>
@@ -108,7 +110,6 @@
                     <xsl:text>.png</xsl:text>
                 </xsl:attribute>
             </img>
-            <br/>
             <a>
                 <xsl:attribute name="href">
                     <xsl:value-of select="$stage-home-uri"/>
@@ -119,7 +120,6 @@
                 </xsl:attribute>
                 <xsl:value-of select="name"/>
             </a>
-            <br/>
             <xsl:text> by </xsl:text>
             <xsl:value-of select="alias"/>
             <xsl:if test="links/link[@rel='unshare']">
