@@ -27,8 +27,6 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
-import com.netbout.spi.Participant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,23 +56,10 @@ final class MsgBuilder {
      * @return The msg
      */
     public Msg build() {
-        final Map<String, Object> props = new HashMap<String, Object>();
-        props.put("text", this.message.text());
-        props.put("date", this.message.date());
-        props.put("author.name", this.message.author().name());
-        props.put("author.alias", NetboutUtils.aliasOf(this.message.author()));
-        props.put("bout.date", this.message.bout().date());
-        props.put("bout.title", this.message.bout().title());
-        for (Participant dude : this.message.bout().participants()) {
-            props.put(
-                String.format("talks-with:%s", dude.identity().name()),
-                true
-            );
-        }
         return new DefaultMsg(
             this.message.number(),
             this.message.bout().number(),
-            props
+            new HashMap<String, Object>()
         );
     }
 
@@ -83,9 +68,9 @@ final class MsgBuilder {
      * @param msg The msg to rebuild
      * @return New message
      */
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     public Msg rebuild(final Msg msg) {
         final Map<String, Object> props = new HashMap<String, Object>();
-        // props.put("bout.recent", NetboutUtils.dateOf(this.message.bout()));
         PredicateBuilder.extract(this.message, props);
         return ((DefaultMsg) msg).copy(props);
     }

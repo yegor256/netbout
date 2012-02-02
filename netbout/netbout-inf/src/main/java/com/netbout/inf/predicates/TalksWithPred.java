@@ -30,6 +30,7 @@ import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
 import com.ymock.util.Logger;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,11 @@ import java.util.Map;
  */
 @Meta(name = "talks-with", extracts = true)
 public final class TalksWithPred extends AbstractVarargPred {
+
+    /**
+     * Pattern for message property.
+     */
+    public static final String PATTERN = "talks-with:%s";
 
     /**
      * Public ctor.
@@ -58,7 +64,12 @@ public final class TalksWithPred extends AbstractVarargPred {
      */
     public static void extract(final Message msg,
         final Map<String, Object> props) {
-        // ...
+        for (Participant dude : msg.bout().participants()) {
+            props.put(
+                String.format(TalksWithPred.PATTERN, dude.identity().name()),
+                true
+            );
+        }
     }
 
     /**
@@ -67,7 +78,7 @@ public final class TalksWithPred extends AbstractVarargPred {
     @Override
     public Object evaluate(final Msg msg, final int pos) {
         final String name = (String) this.arg(0).evaluate(msg, pos);
-        final boolean talks = msg.has(String.format("talks-with:%s", name));
+        final boolean talks = msg.has(String.format(this.PATTERN, name));
         Logger.debug(
             this,
             "#evaluate(): msg #%d talks with participant '%s': %B",

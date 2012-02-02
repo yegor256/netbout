@@ -103,6 +103,7 @@ public final class PredicateBuilder {
      * @param msg The message
      * @param props Where to extract
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static void extract(final Message msg, final Map<String, Object> props) {
         for (PredicateToken token : PredicateBuilder.PREDICATES) {
             token.extract(msg, props);
@@ -118,7 +119,8 @@ public final class PredicateBuilder {
         String normalized;
         if (query == null) {
             normalized = PredicateBuilder.normalize("");
-        } else if (query.startsWith("(") && query.endsWith(")")) {
+        } else if (!query.isEmpty() && query.charAt(0) == '('
+            && query.endsWith(")")) {
             normalized = query;
         } else {
             normalized = String.format(
@@ -160,6 +162,7 @@ public final class PredicateBuilder {
      * Discover all predicates.
      * @return List of predicate tokens
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private static List<PredicateToken> discover() {
         final Reflections ref = new Reflections(
             PredicateBuilder.class.getPackage().getName()

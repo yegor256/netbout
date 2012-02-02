@@ -28,9 +28,6 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import java.util.List;
 import org.junit.Test;
 
 /**
@@ -48,8 +45,7 @@ public final class DefaultInfinityTest {
     public void populatesIndexOnFirstTimeCall() throws Exception {
         final Bus bus = new BusMocker().mock();
         final Infinity inf = new DefaultInfinity(bus);
-        final Identity identity = new IdentityMocker().mock();
-        final List<Long> messages = inf.messages("foo");
+        inf.messages("foo");
     }
 
 }

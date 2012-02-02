@@ -70,6 +70,7 @@ final class DefaultMsg implements Msg {
      * @param extra Extra properties to add
      * @return New Msg
      */
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     public Msg copy(final Map<String, Object> extra) {
         final Map<String, Object> props = new HashMap<String, Object>();
         props.putAll(this.properties);
