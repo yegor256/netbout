@@ -102,7 +102,11 @@ public final class InboxRs extends AbstractRs {
                 show = periods.show(NetboutUtils.dateOf(bout));
             } catch (com.netbout.rest.period.PeriodViolationException ex) {
                 throw new IllegalStateException(
-                    String.format("Invalid date of bout #%d", bout.number()),
+                    String.format(
+                        "Invalid date of bout #%d after %[list]s",
+                        bout.number(),
+                        bouts
+                    ),
                     ex
                 );
             }

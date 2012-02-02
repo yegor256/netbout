@@ -88,6 +88,14 @@ public final class ShortBout {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("#%d", this.bout.number());
+    }
+
+    /**
      * Link to the bout.
      * @return The link
      */
