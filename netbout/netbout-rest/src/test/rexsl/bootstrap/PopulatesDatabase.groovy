@@ -61,6 +61,23 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
         line.setLength(0)
     }
 }
+
+// let's create a big amount of bouts and messages for one identity
+(5000..6000).each {
+    queries.add(
+        'INSERT INTO bout (number, title, date) VALUES'
+        + " (${it}, 'test', '2001-01-01')"
+    );
+    queries.add(
+        'INSERT INTO participant (bout, identity, confirmed, date) VALUES'
+        + " (${it}, 'urn:test:bumper', 1, '2001-01-01')"
+    );
+    queries.add(
+        'INSERT INTO message (number, bout, date, author, text) VALUES'
+        + " (${it}, ${it}, '2001-01-01', 'urn:test:bumper', 'hi!')"
+    );
+}
+
 queries.each { query ->
     def stmt = conn.createStatement()
     stmt.execute(query)

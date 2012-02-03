@@ -49,7 +49,7 @@ final class Mux {
      * Executor service, with a number of threads working in parallel.
      */
     private final transient ExecutorService executor =
-        Executors.newFixedThreadPool(5);
+        Executors.newFixedThreadPool(20);
 
     /**
      * How many tasks are currently waiting.
