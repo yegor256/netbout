@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
  * Multiplexer of heap updating tasks.
@@ -57,6 +58,12 @@ final class Mux {
         new ConcurrentHashMap<Urn, AtomicLong>();
 
     /**
+     * Stats on performance.
+     */
+    private final transient DescriptiveStatistics stats =
+        new DescriptiveStatistics(100);
+
+    /**
      * How long do I need to wait before sending requests?
      * @param who Who is asking
      * @return Estimated number of milliseconds
@@ -68,7 +75,7 @@ final class Mux {
         } else {
             eta = 0L;
         }
-        return eta;
+        return eta * (long) this.stats.getMean();
     }
 
     /**
@@ -90,6 +97,7 @@ final class Mux {
         for (Urn urn : who) {
             this.waiting.get(urn).incrementAndGet();
         }
+        final long start = System.currentTimeMillis();
         this.executor.submit(
             new Runnable() {
                 @Override
@@ -99,6 +107,9 @@ final class Mux {
                         for (Urn urn : who) {
                             Mux.this.waiting.get(urn).decrementAndGet();
                         }
+                        Mux.this.stats.addValue(
+                            (double) System.currentTimeMillis() - start
+                        );
                     // @checkstyle IllegalCatchCheck (1 line)
                     } catch (Throwable ex) {
                         Logger.error(
