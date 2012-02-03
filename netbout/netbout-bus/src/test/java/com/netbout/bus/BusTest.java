@@ -24,42 +24,61 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.bus;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Message;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
- * Test case of {@link HubMessage}.
+ * Test case of {@link Bus} and {@link BusMocker}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubMessageTest {
+public final class BusTest {
 
     /**
-     * HubMessage can "wrap" MessageDt class.
+     * BusMocker can mock default returns.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void wrapsMessageDtDataProperties() throws Exception {
-        final Hub hub = new HubMocker().mock();
-        final Identity viewer = new IdentityMocker().mock();
-        final Bout bout = new BoutMocker().mock();
-        final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(hub, viewer, bout, data);
-        msg.number();
-        Mockito.verify(data).getNumber();
-        msg.author();
-        Mockito.verify(data).getAuthor();
-        msg.text();
-        Mockito.verify(data).getText();
-        msg.date();
-        Mockito.verify(data).getDate();
+    public void mocksDefaultValueReturning() throws Exception {
+        final String result = new BusMocker()
+            .mock()
+            .make("some-mnemo")
+            .synchronously()
+            .arg("some argument")
+            .asDefault("hi there")
+            .exec();
+        MatcherAssert.assertThat(result, Matchers.containsString("hi"));
+    }
+
+    /**
+     * BusMocker can mock normal predicted returns.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void mocksValueReturning() throws Exception {
+        final String mnemo = "some-other-mnemo";
+        final Bus bus = new BusMocker()
+            .doReturn(false, "on-something-irrelevant")
+            .doReturn("some value", mnemo)
+            .doReturn(false, "on-something-else")
+            .mock();
+        MatcherAssert.assertThat(
+            (Long) bus.make("x").asDefault(1L).exec(),
+            Matchers.notNullValue()
+        );
+        MatcherAssert.assertThat(
+            (Boolean) bus.make("bar").asDefault(true).exec(),
+            Matchers.equalTo(true)
+        );
+        final String result = bus.make(mnemo)
+            .synchronously()
+            .asDefault("default, which is not supposed to be returned")
+            .arg(1L)
+            .exec();
+        MatcherAssert.assertThat(result, Matchers.containsString("some"));
     }
 
 }

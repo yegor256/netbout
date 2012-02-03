@@ -36,7 +36,6 @@ import com.netbout.spi.UrnMocker;
 import com.netbout.spi.xml.JaxbPrinter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -62,10 +61,7 @@ public final class DefaultHubTest {
     @Test
     public void createsIdentityByName() throws Exception {
         final Urn name = new UrnMocker().mock();
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .mock();
+        final Bus bus = new BusMocker().mock();
         final Hub hub = new DefaultHub(bus);
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://abc"
@@ -80,9 +76,7 @@ public final class DefaultHubTest {
      */
     @Test
     public void producesStatisticsAsXmlElement() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .mock();
+        final Bus bus = new BusMocker().mock();
         MatcherAssert.assertThat(
             XmlConverters.the(new JaxbPrinter(new DefaultHub(bus)).print()),
             XmlMatchers.hasXPath("/hub")
@@ -96,18 +90,13 @@ public final class DefaultHubTest {
     @Test
     public void promotesIdentityToHelper() throws Exception {
         final Urn name = new UrnMocker().mock();
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .mock();
+        final Bus bus = new BusMocker().mock();
         final Hub hub = new DefaultHub(bus);
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://cde"
         );
         final Identity identity = hub.identity(name);
-        final Helper helper = Mockito.mock(Helper.class);
-        Mockito.doReturn(new URL("file:com.netbout")).when(helper).location();
-        hub.promote(identity, helper);
+        hub.promote(identity, new URL("file:com.netbout"));
         MatcherAssert.assertThat(
             hub.identity(name),
             Matchers.instanceOf(Helper.class)
@@ -120,10 +109,7 @@ public final class DefaultHubTest {
      */
     @Test
     public void doesntDuplicateIdentities() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .mock();
+        final Bus bus = new BusMocker().mock();
         final Hub hub = new DefaultHub(bus);
         final Urn name = new UrnMocker().mock();
         hub.resolver().register(
@@ -139,10 +125,7 @@ public final class DefaultHubTest {
      */
     @Test
     public void informsBusAboutIdentityBeingMentioned() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .mock();
+        final Bus bus = new BusMocker().mock();
         final Hub hub = new DefaultHub(bus);
         final Urn name = new UrnMocker().mock();
         hub.resolver().register(
@@ -150,7 +133,7 @@ public final class DefaultHubTest {
         );
         hub.identity(name);
         hub.identity(name);
-        Mockito.verify(bus, Mockito.times(1)).make("identity-mentioned");
+        Mockito.verify(bus, Mockito.atLeastOnce()).make("identity-mentioned");
     }
 
     /**
@@ -159,9 +142,7 @@ public final class DefaultHubTest {
      */
     @Test(expected = com.netbout.spi.UnreachableUrnException.class)
     public void doesntAllowUnreachableIdentities() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .mock();
+        final Bus bus = new BusMocker().mock();
         final Hub hub = new DefaultHub(bus);
         final Urn name = new UrnMocker().mock();
         hub.identity(name);
@@ -178,9 +159,6 @@ public final class DefaultHubTest {
         names.add(name);
         final Bus bus = new BusMocker()
             .doReturn(names, "find-identities-by-keyword")
-            .doReturn(Arrays.asList(new Long[]{}), "get-bouts-of-identity")
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
             .mock();
         final Hub hub = new DefaultHub(bus);
         hub.resolver().register(

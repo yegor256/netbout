@@ -30,7 +30,6 @@ import com.netbout.rest.jaxb.Namespace;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
-import com.netbout.utils.Promoter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -86,7 +85,7 @@ public final class HelperRs extends AbstractRs {
             throw new ForwardException(this, this.self(), ex);
         }
         final Identity identity = this.identity();
-        new Promoter(this.hub()).promote(identity, url);
+        this.hub().promote(identity, url);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

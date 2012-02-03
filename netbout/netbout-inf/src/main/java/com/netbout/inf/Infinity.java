@@ -30,6 +30,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
+import java.io.Closeable;
 
 /**
  * Infinity, with information about bouts and messages.
@@ -37,7 +38,7 @@ import com.netbout.spi.Urn;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+public interface Infinity extends Closeable {
 
     /**
      * How long do I need to wait before sending requests?

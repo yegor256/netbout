@@ -81,8 +81,6 @@ public final class LoginRsTest {
         final Identity identity = new IdentityMocker().namedAs(name).mock();
         final Hub hub = new HubMocker()
             .withIdentity(name, identity)
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
             .mock();
         final LoginRs rest = new ResourceMocker()
             .withHub(hub)

@@ -78,6 +78,14 @@ public final class DefaultBus implements Bus {
      * {@inheritDoc}
      */
     @Override
+    public void close() {
+        // nothing to do yet
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public TxBuilder make(final String mnemo) {
         return new DefaultTxBuilder(this.controller, mnemo);
     }

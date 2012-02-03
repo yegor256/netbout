@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.bus.DefaultBus;
 import com.netbout.bus.TxBuilder;
 import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.hub.hh.StatsFarm;
@@ -36,7 +37,9 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
+import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -49,6 +52,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Entry point to Hub.
@@ -89,14 +93,14 @@ public final class DefaultHub implements Hub {
         new ConcurrentSkipListSet<Identity>();
 
     /**
-     * Public ctor, for JAXB.
+     * Public ctor.
      */
     public DefaultHub() {
-        throw new IllegalStateException("illegal call");
+        this(new DefaultBus());
     }
 
     /**
-     * Public ctor.
+     * Public ctor, for tests mostly.
      * @param bus The bus
      */
     public DefaultHub(final Bus bus) {
@@ -105,6 +109,16 @@ public final class DefaultHub implements Hub {
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         StatsFarm.addStats(this);
+        this.start();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        IOUtils.closeQuietly(this.inf);
+        IOUtils.closeQuietly(this.ibus);
     }
 
     /**
@@ -181,7 +195,7 @@ public final class DefaultHub implements Hub {
      * {@inheritDoc}
      */
     @Override
-    public void promote(final Identity identity, final Helper helper) {
+    public Helper promote(final Identity identity, final URL location) {
         if (!(identity instanceof HubIdentity)) {
             throw new IllegalArgumentException(
                 String.format(
@@ -190,6 +204,7 @@ public final class DefaultHub implements Hub {
                 )
             );
         }
+        final CpaHelper helper = new CpaHelper(identity, location);
         this.ibus.register(identity, helper);
         Identity existing;
         try {
@@ -212,6 +227,7 @@ public final class DefaultHub implements Hub {
             .arg(helper.location())
             .asDefault(true)
             .exec();
+        return helper;
     }
 
     /**
@@ -257,6 +273,67 @@ public final class DefaultHub implements Hub {
             .asDefault(true)
             .exec();
         this.infinity().see(identity);
+    }
+
+    /**
+     * Start it.
+     */
+    private void start() {
+        final long start = System.currentTimeMillis();
+        final Identity persister = this.persister();
+        final List<Urn> helpers = this.make("get-all-helpers")
+            .synchronously()
+            .asDefault(new ArrayList<Urn>())
+            .exec();
+        for (Urn name : helpers) {
+            if (name.equals(persister.name())) {
+                continue;
+            }
+            final URL url = this.make("get-helper-url")
+                .synchronously()
+                .arg(name)
+                .exec();
+            try {
+                this.promote(persister.friend(name), url);
+            } catch (com.netbout.spi.UnreachableUrnException ex) {
+                Logger.error(
+                    this,
+                    "#start(): failed to create '%s' identity:\n%[exception]s",
+                    name,
+                    ex
+                );
+            }
+        }
+        Logger.info(
+            this,
+            "#start(): done in %dms",
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
+     * Create persister's identity.
+     * @return The persister
+     */
+    private Identity persister() {
+        final Identity persister;
+        try {
+            persister = this.identity(new Urn("netbout", "db"));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalStateException(
+                "Failed to create starter's identity",
+                ex
+            );
+        }
+        try {
+            this.promote(
+                persister,
+                new URL("file", "", "com.netbout.db")
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
+        return persister;
     }
 
     /**

@@ -79,10 +79,7 @@ public final class DefaultUrnResolverTest {
     public void registersNamespacesForIdentity() throws Exception {
         final String namespace = "beta";
         final String url = "http://localhost/beta";
-        final Hub hub = new HubMocker()
-            // @checkstyle MultipleStringLiterals (1 line)
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .mock();
+        final Hub hub = new HubMocker().mock();
         final Identity identity = new IdentityMocker().mock();
         final UrnResolver resolver = new DefaultUrnResolver(hub);
         resolver.register(identity, namespace, url);
@@ -127,10 +124,7 @@ public final class DefaultUrnResolverTest {
      */
     @Test(expected = com.netbout.spi.UnreachableUrnException.class)
     public void thowsOnAbsentNamespace() throws Exception {
-        final Hub hub = new HubMocker()
-            // @checkstyle MultipleStringLiterals (1 line)
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .mock();
+        final Hub hub = new HubMocker().mock();
         new DefaultUrnResolver(hub).authority(new Urn("absent", ""));
     }
 
@@ -140,9 +134,7 @@ public final class DefaultUrnResolverTest {
      */
     @Test
     public void lazyLoadsNamesspaces() throws Exception {
-        final HubMocker hmocker = new HubMocker()
-            // @checkstyle MultipleStringLiterals (1 line)
-            .doReturn(new ArrayList<String>(), "get-all-namespaces");
+        final HubMocker hmocker = new HubMocker();
         final UrnResolver resolver = new DefaultUrnResolver(hmocker.mock());
         final String namespace = "lazy";
         try {

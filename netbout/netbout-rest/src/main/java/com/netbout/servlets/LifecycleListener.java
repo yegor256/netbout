@@ -24,53 +24,49 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.servlets;
 
+import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
+import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
-import java.net.URL;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
- * Identity promoter.
+ * Application-wide listener that initializes the application on start
+ * and shuts it down on stop.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Promoter {
+public final class LifecycleListener implements ServletContextListener {
 
     /**
-     * The hub to work with.
+     * The hub.
      */
-    private final transient Hub hub;
+    private transient Hub hub;
 
     /**
-     * Ctor.
-     * @param ihub The hub
+     * {@inheritDoc}
+     *
+     * <p>This attributes is used later in
+     * {@link com.netbout.rest.AbstractRs#setServletContext(ServletContext)}.
      */
-    public Promoter(final Hub ihub) {
-        this.hub = ihub;
+    @Override
+    public void contextInitialized(final ServletContextEvent event) {
+        Manifests.append(event.getServletContext());
+        this.hub = new DefaultHub();
+        event.getServletContext()
+            .setAttribute("com.netbout.rest.HUB", this.hub);
     }
 
     /**
-     * Promote this identity.
-     * @param identity The identity to promote
-     * @param url The URL
-     * @return Helper
+     * {@inheritDoc}
      */
-    public Helper promote(final Identity identity, final URL url) {
-        final CpaHelper helper = new CpaHelper(identity, url);
-        this.hub.promote(identity, helper);
-        Logger.info(
-            this,
-            "#promote('%s', '%s'): promoted with '%[type]s'",
-            identity.name(),
-            url,
-            helper
-        );
-        return helper;
+    @Override
+    public void contextDestroyed(final ServletContextEvent event) {
+        this.hub.close();
     }
 
 }

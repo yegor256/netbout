@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.io.Closeable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -43,7 +44,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
  * @version $Id$
  */
 @SuppressWarnings("PMD.DoNotUseThreads")
-final class Mux {
+final class Mux implements Closeable {
 
     /**
      * Executor service, with a number of threads working in parallel.
@@ -62,6 +63,14 @@ final class Mux {
      */
     private final transient DescriptiveStatistics stats =
         new DescriptiveStatistics(100);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        this.executor.shutdown();
+    }
 
     /**
      * How long do I need to wait before sending requests?

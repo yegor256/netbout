@@ -32,7 +32,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.util.ArrayList;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,9 +68,6 @@ public final class HubBoutTest {
     public void prepare() throws Exception {
         this.viewer = new IdentityMocker().mock();
         this.hub = new HubMocker()
-            .doReturn("some text", "pre-render-message")
-            .doReturn(true, "can-be-invited")
-            .doReturn(new ArrayList<Long>(), "get-bout-messages")
             .withIdentity(this.viewer.name(), this.viewer)
             .mock();
         this.boutDtMocker = new BoutDtMocker()

@@ -73,6 +73,9 @@
                                 some data may not look as fresh as they should be. Try
                                 to refresh the page in </xsl:text>
                             <xsl:choose>
+                                <xsl:when test="eta &gt; 60000">
+                                    <xsl:text>a few minutes</xsl:text>
+                                </xsl:when>
                                 <xsl:when test="eta &gt; 5000">
                                     <xsl:value-of select="round(eta div 1000)"/>
                                     <xsl:text>seconds</xsl:text>

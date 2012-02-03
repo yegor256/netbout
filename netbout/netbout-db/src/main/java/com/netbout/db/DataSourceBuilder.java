@@ -111,7 +111,6 @@ final class DataSourceBuilder {
         props.setProperty("testWhileIdle", Boolean.TRUE.toString());
         props.setProperty("testOnBorrow", Boolean.TRUE.toString());
         props.setProperty("testOnReturn", Boolean.TRUE.toString());
-        props.setProperty("maxActive", "4");
         props.setProperty("minEvictableIdleTimeMillis", "1800000");
         props.setProperty("timeBetweenEvictionRunsMillis", "1800001");
         props.setProperty("numTestsPerEvictionRun", "3");

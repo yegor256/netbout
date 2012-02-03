@@ -32,13 +32,10 @@ import com.netbout.hub.BoutMgr;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
-import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.netbout.spi.xml.JaxbPrinter;
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
-import java.util.ArrayList;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -73,15 +70,10 @@ public final class DefaultBoutMgrTest {
      */
     @Test
     public void createsNewBout() throws Exception {
-        final Long number = new Random().nextLong();
-        final Hub hub = new HubMocker()
-            .doReturn(number, "get-next-bout-number")
-            .doReturn(true, "check-bout-existence")
-            .doReturn(new ArrayList<Urn>(), "get-bout-participants")
-            .mock();
+        final Hub hub = new HubMocker().mock();
         final BoutMgr mgr = new DefaultBoutMgr(hub);
         final Long num = mgr.create(new UrnMocker().mock());
-        MatcherAssert.assertThat(num, Matchers.equalTo(number));
+        MatcherAssert.assertThat(num, Matchers.equalTo(1L));
     }
 
     /**

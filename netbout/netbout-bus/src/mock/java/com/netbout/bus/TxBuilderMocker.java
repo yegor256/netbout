@@ -34,52 +34,77 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 /**
- * Mocker of {@link Bus}.
+ * Mocker of {@link TxBuilder}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BusMocker {
+public final class TxBuilderMocker {
 
     /**
      * The mock.
      */
-    private final transient Bus bus = Mockito.mock(Bus.class);
+    private final transient TxBuilder builder = Mockito.mock(TxBuilder.class);
+
+    /**
+     * Value to return.
+     */
+    private transient Object value;
 
     /**
      * Public ctor.
      */
-    public BusMocker() {
+    public TxBuilderMocker() {
+        Mockito.doReturn(this.builder).when(this.builder).synchronously();
+        Mockito.doReturn(this.builder).when(this.builder).asap();
+        Mockito.doReturn(this.builder).when(this.builder)
+            .expire(Mockito.anyString());
+        Mockito.doReturn(this.builder).when(this.builder)
+            .arg(Mockito.anyObject());
+        Mockito.doReturn(this.builder).when(this.builder)
+            .inBout(Mockito.any(Bout.class));
+        Mockito.doReturn(this.builder).when(this.builder).noCache();
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
-                    return new TxBuilderMocker().mock();
+                    if (TxBuilderMocker.this.value == null) {
+                        TxBuilderMocker.this.value =
+                            invocation.getArguments()[0];
+                    }
+                    return TxBuilderMocker.this.builder;
                 }
             }
-        ).when(this.bus).make(Mockito.anyString());
+        ).when(this.builder).asDefault(Mockito.anyObject());
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    if (TxBuilderMocker.this.value == null) {
+                        throw new IllegalStateException(
+                            "Default not set and doReturn() not specified"
+                        );
+                    }
+                    return TxBuilderMocker.this.value;
+                }
+            }
+        ).when(this.builder).exec();
     }
 
     /**
      * Expecting this mnemo.
      * @param val The value to return
-     * @param mnemo The mnemo name
      * @param args Optional arguments
      * @return This object
      */
-    public BusMocker doReturn(final Object val, final String mnemo,
-        final Object... args) {
-        final TxBuilder builder = new TxBuilderMocker()
-            .doReturn(val, args)
-            .mock();
-        Mockito.doReturn(builder).when(this.bus).make(mnemo);
+    public TxBuilderMocker doReturn(final Object val, final Object... args) {
+        this.value = val;
         return this;
     }
 
     /**
      * Build it.
-     * @return The bus
+     * @return The this
      */
-    public Bus mock() {
-        return this.bus;
+    public TxBuilder mock() {
+        return this.builder;
     }
 
 }
