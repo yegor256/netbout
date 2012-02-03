@@ -46,10 +46,10 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 final class Mux {
 
     /**
-     * Executor service.
+     * Executor service, with a number of threads working in parallel.
      */
     private final transient ExecutorService executor =
-        Executors.newFixedThreadPool(10);
+        Executors.newFixedThreadPool(5);
 
     /**
      * How many tasks are currently waiting.

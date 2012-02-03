@@ -61,11 +61,15 @@ public final class AliasFarm {
             final PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)"
             );
-            stmt.setString(1, identity.toString());
-            stmt.setString(2, alias);
-            // @checkstyle MagicNumber (1 line)
-            Utc.setTimestamp(stmt, 3);
-            stmt.execute();
+            try {
+                stmt.setString(1, identity.toString());
+                stmt.setString(2, alias);
+                // @checkstyle MagicNumber (1 line)
+                Utc.setTimestamp(stmt, 3);
+                stmt.execute();
+            } finally {
+                stmt.close();
+            }
         } finally {
             conn.close();
         }
