@@ -50,6 +50,7 @@ public final class DefaultInfinityTest {
     public void populatesIndexOnFirstTimeCall() throws Exception {
         final Bus bus = new BusMocker()
             .doReturn(Arrays.asList(new Long[] {1L}), "get-bouts-of-identity")
+            .doReturn(Arrays.asList(new Long[] {}), "get-bout-messages")
             .mock();
         final Infinity inf = new DefaultInfinity(bus);
         final Bout bout = new BoutMocker().mock();
