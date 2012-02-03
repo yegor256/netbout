@@ -32,9 +32,9 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Default implementation of Infitity.
@@ -101,7 +101,7 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public void see(final Identity identity) {
         this.mux.submit(
-            Arrays.asList(new Urn[] {identity.name()}),
+            new HashSet(Arrays.asList(new Urn[] {identity.name()})),
             new SeeIdentityTask(this, this.bus, identity)
         );
     }
@@ -133,8 +133,8 @@ public final class DefaultInfinity implements Infinity {
      * @param bout The bout
      * @return Names
      */
-    public Collection<Urn> names(final Bout bout) {
-        final Collection<Urn> names = new ArrayList<Urn>();
+    public Set<Urn> names(final Bout bout) {
+        final Set<Urn> names = new HashSet<Urn>();
         for (Participant dude : bout.participants()) {
             names.add(dude.identity().name());
         }

@@ -103,7 +103,7 @@ textarea {
 }
 
 /* error message to show */
-#error-message {
+.error-message {
     position: relative;
     font-size: 1.4em;
     color: red;

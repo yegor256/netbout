@@ -63,8 +63,17 @@
                 </div>
                 <section id="content" role="main">
                     <xsl:if test="message != ''">
-                        <aside id="error-message">
+                        <aside class="error-message">
                             <xsl:value-of select="message"/>
+                        </aside>
+                    </xsl:if>
+                    <xsl:if test="eta != 0">
+                        <aside class="error-message">
+                            <xsl:text>The server is currently updating your account,
+                                some data may not look as fresh as they should be. Try
+                                to refresh the page in </xsl:text>
+                            <xsl:value-of select="eta"/>
+                            <xsl:text>ms.</xsl:text>
                         </aside>
                     </xsl:if>
                     <xsl:call-template name="content" />

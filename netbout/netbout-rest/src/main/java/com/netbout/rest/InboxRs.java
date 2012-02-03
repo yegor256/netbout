@@ -37,6 +37,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.client.RestSession;
+import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;

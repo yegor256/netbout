@@ -28,7 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
-import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -62,7 +62,13 @@ final class Mux {
      * @return Estimated number of milliseconds
      */
     public Long eta(final Urn who) {
-        return this.waiting.get(who).get();
+        Long eta;
+        if (this.waiting.containsKey(who)) {
+            eta = this.waiting.get(who).get();
+        } else {
+            eta = 0L;
+        }
+        return eta;
     }
 
     /**
@@ -73,14 +79,16 @@ final class Mux {
     @SuppressWarnings({
         "PMD.AvoidInstantiatingObjectsInLoops", "PMD.AvoidCatchingThrowable"
     })
-    public void submit(final Collection<Urn> who, final Task task) {
-        synchronized (this) {
+    public void submit(final Set<Urn> who, final Task task) {
+        synchronized (this.waiting) {
             for (Urn urn : who) {
-                if (!this.waiting.containsKey(who)) {
+                if (!this.waiting.containsKey(urn)) {
                     this.waiting.put(urn, new AtomicLong());
                 }
-                this.waiting.get(urn).incrementAndGet();
             }
+        }
+        for (Urn urn : who) {
+            this.waiting.get(urn).incrementAndGet();
         }
         this.executor.submit(
             new Runnable() {

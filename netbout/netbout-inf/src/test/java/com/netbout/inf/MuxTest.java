@@ -24,70 +24,47 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.inf;
 
-import com.netbout.spi.Identity;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * RESTful resource.
- *
+ * Test case of {@link Mux}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+public final class MuxTest {
 
     /**
-     * When this resource was created, in nano seconds.
-     * @return The time
+     * Mux can run tasks in parallel.
+     * @throws Exception If there is some problem inside
      */
-    long nano();
-
-    /**
-     * Estimated time to full availability.
-     * @param who Who is asking
-     * @return The time in milliseconds (zero if it's fully ready)
-     */
-    long eta(Identity who);
-
-    /**
-     * Message to show.
-     * @return The message
-     */
-    String message();
-
-    /**
-     * Base URI builder.
-     * @return The builder
-     */
-    UriBuilder base();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
-
-    /**
-     * Request just received.
-     * @return The request
-     */
-    HttpServletRequest httpServletRequest();
+    @Test
+    public void runsTasksInParallel() throws Exception {
+        final Mux mux = new Mux();
+        final Set<Urn> names = new HashSet<Urn>();
+        final Urn name = new UrnMocker().mock();
+        names.add(name);
+        final Task task = new Task() {
+            @Override
+            public void exec() {
+                MatcherAssert.assertThat(
+                    mux.eta(name),
+                    Matchers.greaterThan(0L)
+                );
+            }
+        };
+        mux.submit(names, task);
+        mux.submit(names, task);
+        TimeUnit.SECONDS.sleep(1L);
+        MatcherAssert.assertThat(mux.eta(name), Matchers.equalTo(0L));
+    }
 
 }
