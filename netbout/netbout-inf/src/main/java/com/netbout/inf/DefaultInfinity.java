@@ -30,15 +30,18 @@ import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.ymock.util.Logger;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Default implementation of Infitity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class DefaultInfinity implements Infinity {
 
@@ -53,11 +56,24 @@ public final class DefaultInfinity implements Infinity {
     private final transient Heap heap = new Heap();
 
     /**
+     * Multiplexer of tasks.
+     */
+    private final transient Mux mux = new Mux();
+
+    /**
      * Public ctor.
      * @param ibus The BUS to work with
      */
     public DefaultInfinity(final Bus ibus) {
         this.bus = ibus;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long eta(final Urn who) {
+        return this.mux.eta(who);
     }
 
     /**
@@ -84,27 +100,9 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Identity identity) {
-        final long start = System.currentTimeMillis();
-        final List<Long> numbers = this.bus
-            .make("get-bouts-of-identity")
-            .synchronously()
-            .arg(identity.name())
-            .asDefault(new ArrayList<Long>())
-            .exec();
-        for (Long number : numbers) {
-            try {
-                this.see(identity.bout(number));
-            } catch (com.netbout.spi.BoutNotFoundException ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
-        Logger.info(
-            this,
-            "#see(%s): cached %d bouts of '%s' in %dms",
-            identity.name(),
-            numbers.size(),
-            identity.name(),
-            System.currentTimeMillis() - start
+        this.mux.submit(
+            Arrays.asList(new Urn[] {identity.name()}),
+            new SeeIdentityTask(this, this.bus, identity)
         );
     }
 
@@ -113,30 +111,10 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Bout bout) {
-        final long start = System.currentTimeMillis();
-        final List<Long> numbers = this.bus
-            .make("get-bout-messages")
-            .synchronously()
-            .arg(bout.number())
-            .asDefault(new ArrayList<Long>())
-            .exec();
-        for (Long number : numbers) {
-            try {
-                this.see(bout.message(number));
-            } catch (com.netbout.spi.MessageNotFoundException ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
-        if (!numbers.isEmpty()) {
-            Logger.info(
-                this,
-                "#see(bout #%d): cached %d messages of bout #%d in %dms",
-                bout.number(),
-                numbers.size(),
-                bout.number(),
-                System.currentTimeMillis() - start
-            );
-        }
+        this.mux.submit(
+            this.names(bout),
+            new SeeBoutTask(this, this.bus, bout)
+        );
     }
 
     /**
@@ -144,10 +122,23 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
-        final Long number = message.number();
-        final MsgBuilder builder = new MsgBuilder(message);
-        this.heap.put(number, builder.build());
-        this.heap.put(number, builder.rebuild(this.heap.get(number)));
+        this.mux.submit(
+            this.names(message.bout()),
+            new SeeMessageTask(this.heap, message)
+        );
+    }
+
+    /**
+     * Names of bout participants.
+     * @param bout The bout
+     * @return Names
+     */
+    public Collection<Urn> names(final Bout bout) {
+        final Collection<Urn> names = new ArrayList<Urn>();
+        for (Participant dude : bout.participants()) {
+            names.add(dude.identity().name());
+        }
+        return names;
     }
 
 }

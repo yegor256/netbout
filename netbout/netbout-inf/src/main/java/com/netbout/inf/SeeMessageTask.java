@@ -24,68 +24,47 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.inf;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+import com.netbout.spi.Message;
 
 /**
- * RESTful resource.
+ * The task to review one message.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+final class SeeMessageTask implements Task {
 
     /**
-     * When this resource was created, in nano seconds.
-     * @return The time
+     * The heap.
      */
-    long nano();
+    private final transient Heap heap;
 
     /**
-     * Estimated time to full availability.
-     * @return The time in milliseconds (zero if it's fully ready)
+     * The bout.
      */
-    long eta();
+    private final transient Message message;
 
     /**
-     * Message to show.
-     * @return The message
+     * Public ctor.
+     * @param where The HEAP to work with
+     * @param what The message to update
      */
-    String message();
+    public SeeMessageTask(final Heap where, final Message what) {
+        this.heap = where;
+        this.message = what;
+    }
 
     /**
-     * Base URI builder.
-     * @return The builder
+     * {@inheritDoc}
      */
-    UriBuilder base();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
-
-    /**
-     * Request just received.
-     * @return The request
-     */
-    HttpServletRequest httpServletRequest();
+    @Override
+    public void exec() {
+        final Long number = this.message.number();
+        final MsgBuilder builder = new MsgBuilder(this.message);
+        this.heap.put(number, builder.build());
+        this.heap.put(number, builder.rebuild(this.heap.get(number)));
+    }
 
 }

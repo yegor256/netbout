@@ -26,57 +26,75 @@
  */
 package com.netbout.inf;
 
+import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Infinity, with information about bouts and messages.
+ * The task to review one bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+final class SeeBoutTask implements Task {
 
     /**
-     * How long do I need to wait before sending requests?
-     * @param who Who is asking
-     * @return Estimated number of milliseconds
+     * The infinity.
      */
-    Long eta(Urn who);
+    private final transient Infinity infinity;
 
     /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
+     * The bus.
      */
-    Iterable<Long> bouts(String query);
+    private final transient Bus bus;
 
     /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
+     * The bout.
      */
-    Iterable<Long> messages(String query);
+    private final transient Bout bout;
 
     /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
+     * Public ctor.
+     * @param inf The infinity
+     * @param where The BUS to work with
+     * @param what The bout to update
      */
-    void see(Identity identity);
+    public SeeBoutTask(final Infinity inf, final Bus where, final Bout what) {
+        this.infinity = inf;
+        this.bus = where;
+        this.bout = what;
+    }
 
     /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
+     * {@inheritDoc}
      */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    @Override
+    public void exec() {
+        final long start = System.currentTimeMillis();
+        final List<Long> numbers = this.bus
+            .make("get-bout-messages")
+            .synchronously()
+            .arg(this.bout.number())
+            .asDefault(new ArrayList<Long>())
+            .exec();
+        for (Long number : numbers) {
+            try {
+                this.infinity.see(this.bout.message(number));
+            } catch (com.netbout.spi.MessageNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        if (!numbers.isEmpty()) {
+            Logger.info(
+                this,
+                "#run(): cached %d message(s) of bout #%d in %dms",
+                numbers.size(),
+                this.bout.number(),
+                System.currentTimeMillis() - start
+            );
+        }
+    }
 
 }

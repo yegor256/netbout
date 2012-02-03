@@ -26,57 +26,74 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
+import com.netbout.bus.Bus;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Infinity, with information about bouts and messages.
+ * The task to review one identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Infinity {
+final class SeeIdentityTask implements Task {
 
     /**
-     * How long do I need to wait before sending requests?
-     * @param who Who is asking
-     * @return Estimated number of milliseconds
+     * The infinity.
      */
-    Long eta(Urn who);
+    private final transient Infinity infinity;
 
     /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
+     * The bus.
      */
-    Iterable<Long> bouts(String query);
+    private final transient Bus bus;
 
     /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
+     * The identity.
      */
-    Iterable<Long> messages(String query);
+    private final transient Identity identity;
 
     /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
+     * Public ctor.
+     * @param inf The infinity
+     * @param where The BUS to work with
+     * @param what The identity to update
      */
-    void see(Identity identity);
+    public SeeIdentityTask(final Infinity inf, final Bus where,
+        final Identity what) {
+        this.infinity = inf;
+        this.bus = where;
+        this.identity = what;
+    }
 
     /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
+     * {@inheritDoc}
      */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    @Override
+    public void exec() {
+        final long start = System.currentTimeMillis();
+        final List<Long> numbers = this.bus
+            .make("get-bouts-of-identity")
+            .synchronously()
+            .arg(this.identity.name())
+            .asDefault(new ArrayList<Long>())
+            .exec();
+        for (Long number : numbers) {
+            try {
+                this.infinity.see(this.identity.bout(number));
+            } catch (com.netbout.spi.BoutNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        Logger.info(
+            this,
+            "#run(): cached %d bout(s) of '%s' in %dms",
+            numbers.size(),
+            this.identity.name(),
+            System.currentTimeMillis() - start
+        );
+    }
 
 }

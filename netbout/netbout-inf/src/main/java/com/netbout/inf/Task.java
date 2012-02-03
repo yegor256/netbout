@@ -24,68 +24,19 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+package com.netbout.inf;
 
 /**
- * RESTful resource.
+ * The task to execute in {@link Mux}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+interface Task {
 
     /**
-     * When this resource was created, in nano seconds.
-     * @return The time
+     * Execute it.
      */
-    long nano();
-
-    /**
-     * Estimated time to full availability.
-     * @return The time in milliseconds (zero if it's fully ready)
-     */
-    long eta();
-
-    /**
-     * Message to show.
-     * @return The message
-     */
-    String message();
-
-    /**
-     * Base URI builder.
-     * @return The builder
-     */
-    UriBuilder base();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
-
-    /**
-     * Request just received.
-     * @return The request
-     */
-    HttpServletRequest httpServletRequest();
+    void exec();
 
 }

@@ -109,6 +109,14 @@ public abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
+    public final long eta() {
+        return 0l;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Providers providers() {
         if (this.iproviders == null) {
             throw new IllegalStateException(
