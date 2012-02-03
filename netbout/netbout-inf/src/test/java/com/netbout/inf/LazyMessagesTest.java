@@ -30,6 +30,7 @@ import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link LazyMessages}.
@@ -44,15 +45,15 @@ public final class LazyMessagesTest {
      */
     @Test
     public void findsMessagesInStreamOfMsgs() throws Exception {
-        final Iterable<Msg> msgs = Arrays.asList(
-            new Msg[] {new MsgMocker().mock()}
-        );
+        final Msg msg = new MsgMocker().mock();
+        final Iterable<Msg> msgs = Arrays.asList(new Msg[] {msg});
         final Predicate pred = new PredicateMocker().mock();
         final Iterable<Long> messages = new LazyMessages(msgs, pred);
         MatcherAssert.assertThat(
             messages,
             Matchers.<Long>iterableWithSize(1)
         );
+        Mockito.verify(pred).evaluate(msg, 0);
     }
 
     /**
