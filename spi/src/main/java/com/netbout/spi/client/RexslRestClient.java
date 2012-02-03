@@ -33,6 +33,7 @@ import com.rexsl.test.RestTester;
 import com.rexsl.test.TestClient;
 import com.rexsl.test.TestResponse;
 import com.ymock.util.Logger;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
@@ -119,8 +120,10 @@ final class RexslRestClient implements RestClient {
                     new Cookie(RestSession.AUTH_COOKIE, this.token)
                 )
                 .get(message)
-                .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue())
-                .assertXPath("/page/eta");
+                .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue());
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                break;
+            }
             final Long eta = Long.valueOf(
                 response.xpath("/page/eta/text()").get(0)
             );
@@ -128,7 +131,8 @@ final class RexslRestClient implements RestClient {
             if (!ready) {
                 Logger.warn(
                     this,
-                    "get('%s'): ETA=%d reported, will try again in attempt #%d",
+                    // @checkstyle LineLength (1 line)
+                    "get('%s'): ETA=%dms reported, will wait and try again in attempt #%d",
                     message,
                     eta,
                     attempt
