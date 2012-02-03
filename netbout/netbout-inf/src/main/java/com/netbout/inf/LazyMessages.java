@@ -137,13 +137,13 @@ public final class LazyMessages implements Iterable<Long> {
             Long found = null;
             while (this.iterator.hasNext()) {
                 final Msg msg = this.iterator.next();
-                this.position += 1;
                 if ((Boolean) LazyMessages.this.predicate
                     .evaluate(msg, this.position)) {
                     found = msg.number();
                     this.ready = true;
                     break;
                 }
+                this.position += 1;
             }
             return found;
         }

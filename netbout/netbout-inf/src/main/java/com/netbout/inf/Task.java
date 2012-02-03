@@ -26,45 +26,17 @@
  */
 package com.netbout.inf;
 
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 /**
- * Test case of {@link LazyMessages}.
+ * The task to execute in {@link Mux}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyMessagesTest {
+interface Task {
 
     /**
-     * LazyMessages can find messages.
-     * @throws Exception If there is some problem inside
+     * Execute it.
      */
-    @Test
-    public void findsMessagesInStreamOfMsgs() throws Exception {
-        final Msg msg = new MsgMocker().mock();
-        final Iterable<Msg> msgs = Arrays.asList(new Msg[] {msg});
-        final Predicate pred = new PredicateMocker().mock();
-        final Iterable<Long> messages = new LazyMessages(msgs, pred);
-        MatcherAssert.assertThat(
-            messages,
-            Matchers.<Long>iterableWithSize(1)
-        );
-        Mockito.verify(pred).evaluate(msg, 0);
-    }
-
-    /**
-     * LazyMessages throws exception on incorrect call to {@code next()}.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = java.util.NoSuchElementException.class)
-    public void throwsWhenIteratorIsEmpty() throws Exception {
-        new LazyMessages(
-            Arrays.asList(new Msg[] {}), new PredicateMocker().mock()
-        ).iterator().next();
-    }
+    void exec();
 
 }

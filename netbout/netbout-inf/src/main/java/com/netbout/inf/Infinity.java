@@ -29,6 +29,7 @@ package com.netbout.inf;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
 
 /**
  * Infinity, with information about bouts and messages.
@@ -37,6 +38,13 @@ import com.netbout.spi.Message;
  * @version $Id$
  */
 public interface Infinity {
+
+    /**
+     * How long do I need to wait before sending requests?
+     * @param who Who is asking
+     * @return Estimated number of milliseconds
+     */
+    Long eta(Urn who);
 
     /**
      * Find bouts for the given predicate.

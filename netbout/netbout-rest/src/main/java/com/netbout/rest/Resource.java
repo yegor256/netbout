@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.spi.Identity;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
@@ -45,6 +46,13 @@ public interface Resource {
      * @return The time
      */
     long nano();
+
+    /**
+     * Estimated time to full availability.
+     * @param who Who is asking
+     * @return The time in milliseconds (zero if it's fully ready)
+     */
+    long eta(Identity who);
 
     /**
      * Message to show.

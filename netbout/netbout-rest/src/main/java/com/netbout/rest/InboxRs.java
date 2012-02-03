@@ -37,6 +37,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.client.RestSession;
+import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;
@@ -102,7 +103,7 @@ public final class InboxRs extends AbstractRs {
                 show = periods.show(NetboutUtils.dateOf(bout));
             } catch (com.netbout.rest.period.PeriodViolationException ex) {
                 throw new IllegalStateException(
-                    String.format(
+                    Logger.format(
                         "Invalid date of bout #%d after %[list]s",
                         bout.number(),
                         bouts

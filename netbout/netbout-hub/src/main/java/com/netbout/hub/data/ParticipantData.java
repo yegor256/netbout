@@ -94,18 +94,20 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public void setConfirmed(final Boolean flag) {
-        this.confirmed = true;
-        this.hub.make("changed-participant-status")
-            .asap()
-            .arg(this.bout)
-            .arg(this.identity)
-            .arg(flag)
-            .asDefault(true)
-            .exec();
-        Logger.debug(
-            this,
-            "#setConfirmed(): set"
-        );
+        synchronized (this) {
+            this.confirmed = true;
+            this.hub.make("changed-participant-status")
+                .asap()
+                .arg(this.bout)
+                .arg(this.identity)
+                .arg(flag)
+                .asDefault(true)
+                .exec();
+            Logger.debug(
+                this,
+                "#setConfirmed(): set"
+            );
+        }
     }
 
     /**
@@ -113,21 +115,23 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public Boolean isConfirmed() {
-        if (this.confirmed == null) {
-            this.confirmed = this.hub.make("get-participant-status")
-                .synchronously()
-                .arg(this.bout)
-                .arg(this.identity)
-                .exec();
-            Logger.debug(
-                this,
-                "#isConfirmed(): status loaded as %b for dude '%s' in bout #%d",
-                this.confirmed,
-                this.identity,
-                this.bout
-            );
+        synchronized (this) {
+            if (this.confirmed == null) {
+                this.confirmed = this.hub.make("get-participant-status")
+                    .synchronously()
+                    .arg(this.bout)
+                    .arg(this.identity)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#isConfirmed(): status loaded as %b for '%s' in bout #%d",
+                    this.confirmed,
+                    this.identity,
+                    this.bout
+                );
+            }
+            return this.confirmed;
         }
-        return this.confirmed;
     }
 
 }

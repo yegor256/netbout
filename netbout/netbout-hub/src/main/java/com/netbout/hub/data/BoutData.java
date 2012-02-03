@@ -113,14 +113,16 @@ final class BoutData implements BoutDt {
      */
     @Override
     public void kickOff(final Urn identity) {
-        final ParticipantDt dude = this.find(identity);
-        this.participants.remove(dude);
-        this.hub.make("removed-bout-participant")
-            .synchronously()
-            .arg(this.number)
-            .arg(identity)
-            .asDefault(true)
-            .exec();
+        synchronized (this) {
+            final ParticipantDt dude = this.find(identity);
+            this.participants.remove(dude);
+            this.hub.make("removed-bout-participant")
+                .synchronously()
+                .arg(this.number)
+                .arg(identity)
+                .asDefault(true)
+                .exec();
+        }
     }
 
     /**
@@ -194,23 +196,25 @@ final class BoutData implements BoutDt {
      */
     @Override
     public ParticipantDt addParticipant(final Urn name) {
-        final ParticipantDt data =
-            new ParticipantData(this.hub, this.number, name);
-        this.getParticipants().add(data);
-        this.hub.make("added-bout-participant")
-            .synchronously()
-            .arg(this.number)
-            .arg(data.getIdentity())
-            .asDefault(true)
-            .exec();
-        Logger.debug(
-            this,
-            "#addParticipant('%s'): added for bout #%d (%d total)",
-            data.getIdentity(),
-            this.number,
-            this.getParticipants().size()
-        );
-        return data;
+        synchronized (this) {
+            final ParticipantDt data =
+                new ParticipantData(this.hub, this.number, name);
+            this.getParticipants().add(data);
+            this.hub.make("added-bout-participant")
+                .synchronously()
+                .arg(this.number)
+                .arg(data.getIdentity())
+                .asDefault(true)
+                .exec();
+            Logger.debug(
+                this,
+                "#addParticipant('%s'): added for bout #%d (%d total)",
+                data.getIdentity(),
+                this.number,
+                this.getParticipants().size()
+            );
+            return data;
+        }
     }
 
     /**
@@ -249,20 +253,22 @@ final class BoutData implements BoutDt {
      */
     @Override
     public MessageDt addMessage() {
-        final Long num = this.hub.make("create-bout-message")
-            .synchronously()
-            .arg(this.number)
-            .asDefault(1L)
-            .exec();
-        final MessageDt data = new MessageData(this.hub, num);
-        this.messages.put(num, data);
-        Logger.debug(
-            this,
-            "#addMessage(): new empty message #%d added to bout #%d",
-            data.getNumber(),
-            this.number
-        );
-        return data;
+        synchronized (this) {
+            final Long num = this.hub.make("create-bout-message")
+                .synchronously()
+                .arg(this.number)
+                .asDefault(1L)
+                .exec();
+            final MessageDt data = new MessageData(this.hub, num);
+            this.messages.put(num, data);
+            Logger.debug(
+                this,
+                "#addMessage(): new empty message #%d added to bout #%d",
+                data.getNumber(),
+                this.number
+            );
+            return data;
+        }
     }
 
     /**
@@ -272,20 +278,22 @@ final class BoutData implements BoutDt {
     @Override
     public MessageDt findMessage(final Long num)
         throws MessageNotFoundException {
-        if (!this.messages.containsKey(num)) {
-            final Boolean exists = this.hub
-                .make("check-message-existence")
-                .synchronously()
-                .arg(this.number)
-                .arg(num)
-                .asDefault(false)
-                .exec();
-            if (!exists) {
-                throw new MessageNotFoundException(num);
+        synchronized (this) {
+            if (!this.messages.containsKey(num)) {
+                final Boolean exists = this.hub
+                    .make("check-message-existence")
+                    .synchronously()
+                    .arg(this.number)
+                    .arg(num)
+                    .asDefault(false)
+                    .exec();
+                if (!exists) {
+                    throw new MessageNotFoundException(num);
+                }
+                this.messages.put(num, new MessageData(this.hub, num));
             }
-            this.messages.put(num, new MessageData(this.hub, num));
+            return this.messages.get(num);
         }
-        return this.messages.get(num);
     }
 
     /**

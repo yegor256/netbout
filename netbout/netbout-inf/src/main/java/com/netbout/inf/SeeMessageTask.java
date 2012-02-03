@@ -26,45 +26,45 @@
  */
 package com.netbout.inf;
 
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.spi.Message;
 
 /**
- * Test case of {@link LazyMessages}.
+ * The task to review one message.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyMessagesTest {
+final class SeeMessageTask implements Task {
 
     /**
-     * LazyMessages can find messages.
-     * @throws Exception If there is some problem inside
+     * The heap.
      */
-    @Test
-    public void findsMessagesInStreamOfMsgs() throws Exception {
-        final Msg msg = new MsgMocker().mock();
-        final Iterable<Msg> msgs = Arrays.asList(new Msg[] {msg});
-        final Predicate pred = new PredicateMocker().mock();
-        final Iterable<Long> messages = new LazyMessages(msgs, pred);
-        MatcherAssert.assertThat(
-            messages,
-            Matchers.<Long>iterableWithSize(1)
-        );
-        Mockito.verify(pred).evaluate(msg, 0);
+    private final transient Heap heap;
+
+    /**
+     * The bout.
+     */
+    private final transient Message message;
+
+    /**
+     * Public ctor.
+     * @param where The HEAP to work with
+     * @param what The message to update
+     */
+    public SeeMessageTask(final Heap where, final Message what) {
+        this.heap = where;
+        this.message = what;
     }
 
     /**
-     * LazyMessages throws exception on incorrect call to {@code next()}.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test(expected = java.util.NoSuchElementException.class)
-    public void throwsWhenIteratorIsEmpty() throws Exception {
-        new LazyMessages(
-            Arrays.asList(new Msg[] {}), new PredicateMocker().mock()
-        ).iterator().next();
+    @Override
+    public void exec() {
+        final Long number = this.message.number();
+        final MsgBuilder builder = new MsgBuilder(this.message);
+        this.heap.put(number, builder.build());
+        this.heap.put(number, builder.rebuild(this.heap.get(number)));
     }
 
 }

@@ -27,38 +27,74 @@
 package com.netbout.inf;
 
 import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
 import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import java.util.Arrays;
-import org.junit.Test;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Test case of {@link DefaultInfinity}.
+ * The task to review one bout.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultInfinityTest {
+final class SeeBoutTask implements Task {
 
     /**
-     * DefaultInfinity can find messages.
-     * @throws Exception If there is some problem inside
+     * The infinity.
      */
-    @Test
-    public void populatesIndexOnFirstTimeCall() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new Long[] {1L}), "get-bouts-of-identity")
-            .doReturn(Arrays.asList(new Long[] {}), "get-bout-messages")
-            .mock();
-        final Infinity inf = new DefaultInfinity(bus);
-        final Bout bout = new BoutMocker().mock();
-        final Identity identity = new IdentityMocker()
-            .withBout(1L, bout)
-            .mock();
-        inf.see(identity);
-        inf.messages("foo");
+    private final transient Infinity infinity;
+
+    /**
+     * The bus.
+     */
+    private final transient Bus bus;
+
+    /**
+     * The bout.
+     */
+    private final transient Bout bout;
+
+    /**
+     * Public ctor.
+     * @param inf The infinity
+     * @param where The BUS to work with
+     * @param what The bout to update
+     */
+    public SeeBoutTask(final Infinity inf, final Bus where, final Bout what) {
+        this.infinity = inf;
+        this.bus = where;
+        this.bout = what;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void exec() {
+        final long start = System.currentTimeMillis();
+        final List<Long> numbers = this.bus
+            .make("get-bout-messages")
+            .synchronously()
+            .arg(this.bout.number())
+            .asDefault(new ArrayList<Long>())
+            .exec();
+        for (Long number : numbers) {
+            try {
+                this.infinity.see(this.bout.message(number));
+            } catch (com.netbout.spi.MessageNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        if (!numbers.isEmpty()) {
+            Logger.info(
+                this,
+                "#run(): cached %d message(s) of bout #%d in %dms",
+                numbers.size(),
+                this.bout.number(),
+                System.currentTimeMillis() - start
+            );
+        }
     }
 
 }

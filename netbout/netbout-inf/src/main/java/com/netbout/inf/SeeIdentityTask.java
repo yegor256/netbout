@@ -27,38 +27,73 @@
 package com.netbout.inf;
 
 import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import java.util.Arrays;
-import org.junit.Test;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Test case of {@link DefaultInfinity}.
+ * The task to review one identity.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultInfinityTest {
+final class SeeIdentityTask implements Task {
 
     /**
-     * DefaultInfinity can find messages.
-     * @throws Exception If there is some problem inside
+     * The infinity.
      */
-    @Test
-    public void populatesIndexOnFirstTimeCall() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new Long[] {1L}), "get-bouts-of-identity")
-            .doReturn(Arrays.asList(new Long[] {}), "get-bout-messages")
-            .mock();
-        final Infinity inf = new DefaultInfinity(bus);
-        final Bout bout = new BoutMocker().mock();
-        final Identity identity = new IdentityMocker()
-            .withBout(1L, bout)
-            .mock();
-        inf.see(identity);
-        inf.messages("foo");
+    private final transient Infinity infinity;
+
+    /**
+     * The bus.
+     */
+    private final transient Bus bus;
+
+    /**
+     * The identity.
+     */
+    private final transient Identity identity;
+
+    /**
+     * Public ctor.
+     * @param inf The infinity
+     * @param where The BUS to work with
+     * @param what The identity to update
+     */
+    public SeeIdentityTask(final Infinity inf, final Bus where,
+        final Identity what) {
+        this.infinity = inf;
+        this.bus = where;
+        this.identity = what;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void exec() {
+        final long start = System.currentTimeMillis();
+        final List<Long> numbers = this.bus
+            .make("get-bouts-of-identity")
+            .synchronously()
+            .arg(this.identity.name())
+            .asDefault(new ArrayList<Long>())
+            .exec();
+        for (Long number : numbers) {
+            try {
+                this.infinity.see(this.identity.bout(number));
+            } catch (com.netbout.spi.BoutNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        Logger.info(
+            this,
+            "#run(): cached %d bout(s) of '%s' in %dms",
+            numbers.size(),
+            this.identity.name(),
+            System.currentTimeMillis() - start
+        );
     }
 
 }

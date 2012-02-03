@@ -105,18 +105,20 @@ final class MessageData implements MessageDt {
      */
     @Override
     public void setDate(final Date dte) {
-        this.date = dte;
-        this.hub.make("changed-message-date")
-            .synchronously()
-            .arg(this.number)
-            .arg(this.date)
-            .asDefault(true)
-            .exec();
-        Logger.debug(
-            this,
-            "#setDate('%s'): set",
-            this.date
-        );
+        synchronized (this) {
+            this.date = dte;
+            this.hub.make("changed-message-date")
+                .synchronously()
+                .arg(this.number)
+                .arg(this.date)
+                .asDefault(true)
+                .exec();
+            Logger.debug(
+                this,
+                "#setDate('%s'): set",
+                this.date
+            );
+        }
     }
 
     /**
@@ -124,19 +126,21 @@ final class MessageData implements MessageDt {
      */
     @Override
     public Date getDate() {
-        if (this.date == null) {
-            this.date = this.hub.make("get-message-date")
-                .synchronously()
-                .arg(this.number)
-                .exec();
-            Logger.debug(
-                this,
-                "#getDate(): date '%s' loaded for msg #%d",
-                this.date,
-                this.number
-            );
+        synchronized (this) {
+            if (this.date == null) {
+                this.date = this.hub.make("get-message-date")
+                    .synchronously()
+                    .arg(this.number)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#getDate(): date '%s' loaded for msg #%d",
+                    this.date,
+                    this.number
+                );
+            }
+            return this.date;
         }
-        return this.date;
     }
 
     /**
@@ -144,13 +148,15 @@ final class MessageData implements MessageDt {
      */
     @Override
     public void setAuthor(final Urn idnt) {
-        this.author = idnt;
-        this.hub.make("changed-message-author")
-            .synchronously()
-            .arg(this.number)
-            .arg(this.author)
-            .asDefault(true)
-            .exec();
+        synchronized (this) {
+            this.author = idnt;
+            this.hub.make("changed-message-author")
+                .synchronously()
+                .arg(this.number)
+                .arg(this.author)
+                .asDefault(true)
+                .exec();
+        }
         Logger.debug(
             this,
             "#setAuthor('%s'): set for msg #%d",
@@ -164,19 +170,21 @@ final class MessageData implements MessageDt {
      */
     @Override
     public Urn getAuthor() {
-        if (this.author == null) {
-            this.author = this.hub.make("get-message-author")
-                .synchronously()
-                .arg(this.number)
-                .exec();
-            Logger.debug(
-                this,
-                "#getAuthor(): author '%s' loaded for msg #%d",
-                this.author,
-                this.number
-            );
+        synchronized (this) {
+            if (this.author == null) {
+                this.author = this.hub.make("get-message-author")
+                    .synchronously()
+                    .arg(this.number)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#getAuthor(): author '%s' loaded for msg #%d",
+                    this.author,
+                    this.number
+                );
+            }
+            return this.author;
         }
-        return this.author;
     }
 
     /**
@@ -184,13 +192,15 @@ final class MessageData implements MessageDt {
      */
     @Override
     public void setText(final String txt) {
-        this.text = txt;
-        this.hub.make("changed-message-text")
-            .synchronously()
-            .arg(this.number)
-            .arg(this.text)
-            .asDefault(true)
-            .exec();
+        synchronized (this) {
+            this.text = txt;
+            this.hub.make("changed-message-text")
+                .synchronously()
+                .arg(this.number)
+                .arg(this.text)
+                .asDefault(true)
+                .exec();
+        }
         Logger.debug(
             this,
             "#setText('%s'): set for msg #%d",
@@ -204,19 +214,21 @@ final class MessageData implements MessageDt {
      */
     @Override
     public String getText() {
-        if (this.text == null) {
-            this.text = this.hub.make("get-message-text")
-                .synchronously()
-                .arg(this.number)
-                .exec();
-            Logger.debug(
-                this,
-                "#getText(): text '%s' loaded for msg #%d",
-                this.text,
-                this.number
-            );
+        synchronized (this) {
+            if (this.text == null) {
+                this.text = this.hub.make("get-message-text")
+                    .synchronously()
+                    .arg(this.number)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#getText(): text '%s' loaded for msg #%d",
+                    this.text,
+                    this.number
+                );
+            }
+            return this.text;
         }
-        return this.text;
     }
 
     /**
@@ -224,21 +236,23 @@ final class MessageData implements MessageDt {
      */
     @Override
     public void addSeenBy(final Urn identity) {
-        if (!this.isSeenBy(identity)) {
-            this.hub.make("message-was-seen")
-                .asap()
-                .arg(this.number)
-                .arg(identity)
-                .asDefault(true)
-                .exec();
-            Logger.debug(
-                this,
-                "#addSeenBy('%s'): set for msg #%d",
-                identity,
-                this.number
-            );
+        synchronized (this) {
+            if (!this.isSeenBy(identity)) {
+                this.hub.make("message-was-seen")
+                    .asap()
+                    .arg(this.number)
+                    .arg(identity)
+                    .asDefault(true)
+                    .exec();
+                Logger.debug(
+                    this,
+                    "#addSeenBy('%s'): set for msg #%d",
+                    identity,
+                    this.number
+                );
+            }
+            this.seenBy.put(identity, true);
         }
-        this.seenBy.put(identity, true);
     }
 
     /**
@@ -246,23 +260,25 @@ final class MessageData implements MessageDt {
      */
     @Override
     public Boolean isSeenBy(final Urn identity) {
-        if (!this.seenBy.containsKey(identity)) {
-            final Boolean status = this.hub.make("was-message-seen")
-                .synchronously()
-                .arg(this.number)
-                .arg(identity)
-                .asDefault(false)
-                .exec();
-            this.seenBy.put(identity, status);
-            Logger.debug(
-                this,
-                "#isSeenBy('%s'): %b loaded for msg #%d",
-                identity,
-                status,
-                this.number
-            );
+        synchronized (this) {
+            if (!this.seenBy.containsKey(identity)) {
+                final Boolean status = this.hub.make("was-message-seen")
+                    .synchronously()
+                    .arg(this.number)
+                    .arg(identity)
+                    .asDefault(false)
+                    .exec();
+                this.seenBy.put(identity, status);
+                Logger.debug(
+                    this,
+                    "#isSeenBy('%s'): %b loaded for msg #%d",
+                    identity,
+                    status,
+                    this.number
+                );
+            }
+            return this.seenBy.get(identity);
         }
-        return this.seenBy.get(identity);
     }
 
 }

@@ -109,6 +109,14 @@ public abstract class AbstractRs implements Resource {
      * {@inheritDoc}
      */
     @Override
+    public final long eta(final Identity identity) {
+        return this.ihub.infinity().eta(identity.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Providers providers() {
         if (this.iproviders == null) {
             throw new IllegalStateException(
@@ -358,6 +366,7 @@ public abstract class AbstractRs implements Resource {
      * Get current user identity, or throws {@link LoginRequiredException} if
      * no user is logged in at the moment.
      * @return The identity
+     * @todo #226 I think that we should cache this object somewhere here
      */
     protected final Identity identity() {
         try {

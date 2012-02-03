@@ -26,45 +26,45 @@
  */
 package com.netbout.inf;
 
-import java.util.Arrays;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
- * Test case of {@link LazyMessages}.
+ * Test case of {@link Mux}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyMessagesTest {
+public final class MuxTest {
 
     /**
-     * LazyMessages can find messages.
+     * Mux can run tasks in parallel.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void findsMessagesInStreamOfMsgs() throws Exception {
-        final Msg msg = new MsgMocker().mock();
-        final Iterable<Msg> msgs = Arrays.asList(new Msg[] {msg});
-        final Predicate pred = new PredicateMocker().mock();
-        final Iterable<Long> messages = new LazyMessages(msgs, pred);
-        MatcherAssert.assertThat(
-            messages,
-            Matchers.<Long>iterableWithSize(1)
-        );
-        Mockito.verify(pred).evaluate(msg, 0);
-    }
-
-    /**
-     * LazyMessages throws exception on incorrect call to {@code next()}.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = java.util.NoSuchElementException.class)
-    public void throwsWhenIteratorIsEmpty() throws Exception {
-        new LazyMessages(
-            Arrays.asList(new Msg[] {}), new PredicateMocker().mock()
-        ).iterator().next();
+    public void runsTasksInParallel() throws Exception {
+        final Mux mux = new Mux();
+        final Set<Urn> names = new HashSet<Urn>();
+        final Urn name = new UrnMocker().mock();
+        names.add(name);
+        final Task task = new Task() {
+            @Override
+            public void exec() {
+                MatcherAssert.assertThat(
+                    mux.eta(name),
+                    Matchers.greaterThan(0L)
+                );
+            }
+        };
+        mux.submit(names, task);
+        mux.submit(names, task);
+        TimeUnit.SECONDS.sleep(1L);
+        MatcherAssert.assertThat(mux.eta(name), Matchers.equalTo(0L));
     }
 
 }
