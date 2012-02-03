@@ -74,6 +74,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void close() {
+        Logger.info(this, "#close(): will stop Mux in a second");
         this.mux.close();
     }
 

@@ -52,7 +52,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Entry point to Hub.
@@ -109,7 +108,7 @@ public final class DefaultHub implements Hub {
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         StatsFarm.addStats(this);
-        this.start();
+        this.promote();
     }
 
     /**
@@ -117,8 +116,19 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public void close() {
-        IOUtils.closeQuietly(this.inf);
-        IOUtils.closeQuietly(this.ibus);
+        Logger.info(this, "#close(): shutting down INF");
+        try {
+            this.inf.close();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(this, "#close(): shutting down BUS");
+        try {
+            this.ibus.close();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(this, "#close(): closed successfully");
     }
 
     /**
@@ -276,9 +286,9 @@ public final class DefaultHub implements Hub {
     }
 
     /**
-     * Start it.
+     * Promote all helpers.
      */
-    private void start() {
+    private void promote() {
         final long start = System.currentTimeMillis();
         final Identity persister = this.persister();
         final List<Urn> helpers = this.make("get-all-helpers")
@@ -306,8 +316,9 @@ public final class DefaultHub implements Hub {
         }
         Logger.info(
             this,
-            "#start(): done in %dms",
-            System.currentTimeMillis() - start
+            "#promote(): done with all helpers in %dms: %[list]s",
+            System.currentTimeMillis() - start,
+            helpers
         );
     }
 

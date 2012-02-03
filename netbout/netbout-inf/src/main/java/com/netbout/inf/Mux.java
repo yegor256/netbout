@@ -70,6 +70,7 @@ final class Mux implements Closeable {
     @Override
     public void close() {
         this.executor.shutdown();
+        Logger.info(this, "#close(): executor stopped");
     }
 
     /**

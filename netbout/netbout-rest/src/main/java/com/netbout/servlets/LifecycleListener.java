@@ -32,6 +32,7 @@ import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Application-wide listener that initializes the application on start
@@ -59,6 +60,10 @@ public final class LifecycleListener implements ServletContextListener {
         this.hub = new DefaultHub();
         event.getServletContext()
             .setAttribute("com.netbout.rest.HUB", this.hub);
+        Logger.info(
+            this,
+            "contextInitialized(): done"
+        );
     }
 
     /**
@@ -66,7 +71,11 @@ public final class LifecycleListener implements ServletContextListener {
      */
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
-        this.hub.close();
+        IOUtils.closeQuietly(this.hub);
+        Logger.info(
+            this,
+            "contextDestroyed(): done"
+        );
     }
 
 }
