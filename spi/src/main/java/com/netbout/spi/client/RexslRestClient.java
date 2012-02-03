@@ -32,8 +32,10 @@ package com.netbout.spi.client;
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestClient;
 import com.rexsl.test.TestResponse;
+import com.ymock.util.Logger;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -47,6 +49,11 @@ import org.hamcrest.Matchers;
  * @version $Id$
  */
 final class RexslRestClient implements RestClient {
+
+    /**
+     * Max attempts.
+     */
+    private static final int MAX_ATTEMPTS = 5;
 
     /**
      * Test client.
@@ -89,15 +96,50 @@ final class RexslRestClient implements RestClient {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public RestResponse get(final String message) {
-        final TestResponse response = this.client
-            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .header(
-                HttpHeaders.COOKIE,
-                new Cookie(RestSession.AUTH_COOKIE, this.token)
-            )
-            .get(message)
-            .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue());
+        TestResponse response = null;
+        boolean ready = false;
+        int attempt = 0;
+        while (!ready) {
+            if (attempt > this.MAX_ATTEMPTS) {
+                throw new IllegalStateException(
+                    String.format(
+                        "Failed to '%s' after %d attempt(s)",
+                        message,
+                        attempt
+                    )
+                );
+            }
+            attempt += 1;
+            response = this.client
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+                .header(
+                    HttpHeaders.COOKIE,
+                    new Cookie(RestSession.AUTH_COOKIE, this.token)
+                )
+                .get(message)
+                .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue())
+                .assertXPath("/page/eta");
+            final Long eta = Long.valueOf(
+                response.xpath("/page/eta/text()").get(0)
+            );
+            ready = eta == 0;
+            if (!ready) {
+                Logger.warn(
+                    this,
+                    "get('%s'): ETA=%d reported, will try again in attempt #%d",
+                    message,
+                    eta,
+                    attempt
+                );
+                try {
+                    TimeUnit.MILLISECONDS.sleep(eta);
+                } catch (InterruptedException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+        }
         return new RexslRestResponse(this, response);
     }
 
