@@ -83,44 +83,69 @@ final class Mux {
      * @param who Who is waiting for this task
      * @param task The task to execute
      */
-    @SuppressWarnings({
-        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.AvoidCatchingThrowable"
-    })
     public void submit(final Set<Urn> who, final Task task) {
-        synchronized (this.waiting) {
-            for (Urn urn : who) {
-                if (!this.waiting.containsKey(urn)) {
-                    this.waiting.put(urn, new AtomicLong());
-                }
-            }
-        }
-        for (Urn urn : who) {
-            this.waiting.get(urn).incrementAndGet();
-        }
-        final long start = System.currentTimeMillis();
-        this.executor.submit(
-            new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        task.exec();
-                        for (Urn urn : who) {
-                            Mux.this.waiting.get(urn).decrementAndGet();
-                        }
-                        Mux.this.stats.addValue(
-                            (double) System.currentTimeMillis() - start
-                        );
-                    // @checkstyle IllegalCatchCheck (1 line)
-                    } catch (Throwable ex) {
-                        Logger.error(
-                            this,
-                            "run(): %[exception]s",
-                            ex
-                        );
+        this.executor.submit(new TaskShell(who, task));
+    }
+
+    /**
+     * Wrapper of Task.
+     */
+    private final class TaskShell implements Runnable {
+        /**
+         * When we started.
+         */
+        private final transient long start = System.currentTimeMillis();
+        /**
+         * Who are waiting.
+         */
+        private final transient Set<Urn> who;
+        /**
+         * The task to run.
+         */
+        private final transient Task task;
+        /**
+         * Public ctor.
+         * @param urns Who will wait for this result
+         * @param tsk The task
+         */
+        @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+        public TaskShell(final Set<Urn> urns, final Task tsk) {
+            this.task = tsk;
+            this.who = urns;
+            synchronized (Mux.this.waiting) {
+                for (Urn urn : this.who) {
+                    if (!Mux.this.waiting.containsKey(urn)) {
+                        Mux.this.waiting.put(urn, new AtomicLong());
                     }
                 }
             }
-        );
+            for (Urn urn : this.who) {
+                Mux.this.waiting.get(urn).incrementAndGet();
+            }
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        @SuppressWarnings("PMD.AvoidCatchingThrowable")
+        public void run() {
+            try {
+                this.task.exec();
+                for (Urn urn : this.who) {
+                    Mux.this.waiting.get(urn).decrementAndGet();
+                }
+                Mux.this.stats.addValue(
+                    (double) System.currentTimeMillis() - this.start
+                );
+            // @checkstyle IllegalCatchCheck (1 line)
+            } catch (Throwable ex) {
+                Logger.error(
+                    this,
+                    "run(): %[exception]s",
+                    ex
+                );
+            }
+        }
     }
 
 }
