@@ -111,8 +111,10 @@
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
                 </xsl:attribute>
-                <dl><textarea name="text" cols="80" rows="5"></textarea></dl>
-                <dl><input value="Post new message" type="submit" /></dl>
+                <p>
+                    <textarea name="text" cols="80" rows="5"></textarea>
+                    <input value="Post new message" type="submit" />
+                </p>
             </form>
         </xsl:if>
         <xsl:if test="/page/bout/view != ''">
@@ -209,19 +211,21 @@
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='suggest']/@href"/>
                 </xsl:attribute>
-                <input name="mask" autocomplete="off" placeholder="Invite...">
-                    <xsl:attribute name="value">
-                        <xsl:value-of select="/page/mask"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="onblur">
-                        <xsl:text>$("#invite-list").hide(100);</xsl:text>
-                    </xsl:attribute>
-                    <xsl:if test="/page/mask != ''">
-                        <xsl:attribute name="autofocus">
-                            <xsl:text>true</xsl:text>
+                <p>
+                    <input name="mask" autocomplete="off" placeholder="Invite...">
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="/page/mask"/>
                         </xsl:attribute>
-                    </xsl:if>
-                </input>
+                        <xsl:attribute name="onblur">
+                            <xsl:text>$("#invite-list").hide(100);</xsl:text>
+                        </xsl:attribute>
+                        <xsl:if test="/page/mask != ''">
+                            <xsl:attribute name="autofocus">
+                                <xsl:text>true</xsl:text>
+                            </xsl:attribute>
+                        </xsl:if>
+                    </input>
+                </p>
             </form>
             <xsl:if test="/page/invitees[count(invitee) &gt; 0]">
                 <ul id="invite-list">

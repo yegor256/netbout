@@ -158,11 +158,13 @@ public final class Period {
     public boolean fits(final Date date) throws PeriodViolationException {
         if (date.after(this.newest())) {
             throw new PeriodViolationException(
-                String.format(
-                    "New date '%s' can't be newer than START '%s' in '%s'",
+                Logger.format(
+                    // @checkstyle LineLength (1 line)
+                    "New date '%s' can't be newer than START '%s' in '%s': %[list]s",
                     date,
                     this.newest(),
-                    this
+                    this,
+                    this.dates
                 )
             );
         }

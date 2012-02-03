@@ -102,7 +102,11 @@ public final class InboxRs extends AbstractRs {
                 show = periods.show(NetboutUtils.dateOf(bout));
             } catch (com.netbout.rest.period.PeriodViolationException ex) {
                 throw new IllegalStateException(
-                    String.format("Invalid date of bout #%d", bout.number()),
+                    String.format(
+                        "Invalid date of bout #%d after %[list]s",
+                        bout.number(),
+                        bouts
+                    ),
                     ex
                 );
             }
@@ -161,16 +165,16 @@ public final class InboxRs extends AbstractRs {
      * @return The list of them
      */
     private Iterable<Bout> fetch(final String view, final Period period) {
-        final String bundled = String.format(
-            "(and (bundled) %s)",
-            PredicateBuilder.normalize(this.query)
-        );
+        String pred = PredicateBuilder.normalize(this.query);
+        if (!pred.startsWith("(unbundled ")) {
+            pred = String.format("(and (bundled) %s)", pred);
+        }
         Iterable<Bout> list;
         if (view == null) {
-            list = this.identity().inbox(bundled);
+            list = this.identity().inbox(pred);
         } else {
             list = this.identity().inbox(
-                period.query(bundled, "(not (greater-than $bout.recent '%s'))")
+                period.query(pred, "(not (greater-than $bout.recent '%s'))")
             );
         }
         return list;

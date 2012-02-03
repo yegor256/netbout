@@ -24,57 +24,42 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.predicates;
 
-import org.mockito.Mockito;
+import com.netbout.inf.Msg;
+import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Predicate;
+import java.util.Arrays;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 /**
- * Mocker of {@link Msg}.
+ * Test case of {@link UnbundledPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MsgMocker {
+public final class UnbundledPredTest {
 
     /**
-     * The object.
+     * UnbundledPred can pass only unbundled messages.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Msg msg = Mockito.mock(Msg.class);
-
-    /**
-     * Public ctor.
-     */
-    public MsgMocker() {
-        Mockito.doReturn("").when(this.msg).get(Mockito.anyString());
-    }
-
-    /**
-     * With this bout number.
-     * @param num The number
-     * @return This object
-     */
-    public MsgMocker withBoutNumber(final Long num) {
-        Mockito.doReturn(num).when(this.msg).bout();
-        return this;
-    }
-
-    /**
-     * With this property.
-     * @param name Name of prop
-     * @param value Name of prop
-     * @return This object
-     */
-    public MsgMocker with(final String name, final Object value) {
-        Mockito.doReturn(value).when(this.msg).get(name);
-        Mockito.doReturn(true).when(this.msg).has(name);
-        return this;
-    }
-
-    /**
-     * Build it.
-     * @return The msg
-     */
-    public Msg mock() {
-        return this.msg;
+    @Test
+    public void positivelyMatchesUnbundledMessageOnly() throws Exception {
+        final Predicate pred = new UnbundledPred(
+            Arrays.asList(new Predicate[] {new NumberPred(1L)})
+        );
+        final String marker = "abc";
+        final Msg first = new MsgMocker()
+            .withBoutNumber(1L)
+            .with(BundledPred.BUNDLE, marker)
+            .mock();
+        MatcherAssert.assertThat("no!", !(Boolean) pred.evaluate(first, 0));
+        final Msg second = new MsgMocker()
+            .withBoutNumber(2L)
+            .with(BundledPred.BUNDLE, marker)
+            .mock();
+        MatcherAssert.assertThat("yes!", (Boolean) pred.evaluate(second, 0));
     }
 
 }

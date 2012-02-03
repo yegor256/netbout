@@ -126,6 +126,28 @@
                 </xsl:if>
             </div>
             <xsl:apply-templates select="participants" />
+            <aside class="bundled">
+                <xsl:for-each select="bundled/link">
+                    <xsl:if test="position() &gt; 1">
+                        <span><xsl:text>, </xsl:text></span>
+                    </xsl:if>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="@href"/>
+                        </xsl:attribute>
+                        <xsl:value-of select="@label" />
+                    </a>
+                </xsl:for-each>
+                <xsl:if test="bundled/link[@rel='all']">
+                    <span><xsl:text>, and </xsl:text></span>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="bundled/link[@rel='all']/@href"/>
+                        </xsl:attribute>
+                        <xsl:text>all of them</xsl:text>
+                    </a>
+                </xsl:if>
+            </aside>
         </li>
     </xsl:template>
 

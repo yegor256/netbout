@@ -26,50 +26,57 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
-import java.util.List;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
+import java.util.Arrays;
+import java.util.Map;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Allows only messages that unbundle on the specified bout number.
- *
+ * Test case of {@link BundledPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "unbundled")
-public final class UnbundledPred extends AbstractVarargPred {
+public final class BundledPredTest {
 
     /**
-     * Expected marker.
+     * BundledPred can extract marker.
+     * @throws Exception If there is some problem inside
      */
-    private transient String expected;
-
-    /**
-     * Public ctor.
-     * @param args The arguments
-     */
-    public UnbundledPred(final List<Predicate> args) {
-        super(args);
+    @Test
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    public void extractsMarker() throws Exception {
+        final Bout bout = new BoutMocker()
+            .withParticipant("urn:test:somebody")
+            .mock();
+        final Message msg = new MessageMocker()
+            .inBout(bout)
+            .mock();
+        final Map props = Mockito.mock(Map.class);
+        BundledPred.extract(msg, props);
+        Mockito.verify(props).put(BundledPred.BUNDLE, "urn:test:somebody ");
     }
 
     /**
-     * {@inheritDoc}
+     * BundledPred can pass only bundled messages.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final Long bout = Long.valueOf(
-            this.arg(0).evaluate(msg, pos).toString()
+    @Test
+    public void positivelyMatchesBundledMessageOnly() throws Exception {
+        final Predicate pred = new BundledPred(
+            Arrays.asList(new Predicate[] {})
         );
-        final String marker = msg.<String>get(BundledPred.BUNDLE);
-        boolean allow;
-        if (msg.bout().equals(bout)) {
-            this.expected = marker;
-            allow = false;
-        } else {
-            allow = marker.equals(this.expected);
-        }
-        return allow;
+        final String marker = "abc";
+        final Msg msg = new MsgMocker().with(BundledPred.BUNDLE, marker).mock();
+        MatcherAssert.assertThat("matched", (Boolean) pred.evaluate(msg, 0));
+        MatcherAssert.assertThat("no!", !(Boolean) pred.evaluate(msg, 1));
     }
 
 }

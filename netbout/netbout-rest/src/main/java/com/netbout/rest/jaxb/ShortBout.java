@@ -30,8 +30,10 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -83,6 +85,14 @@ public final class ShortBout {
         this.bout = parent;
         this.builder = bldr;
         this.viewer = vwr;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("#%d", this.bout.number());
     }
 
     /**
@@ -150,6 +160,46 @@ public final class ShortBout {
             }
         }
         return count;
+    }
+
+    /**
+     * List of bundled bouts.
+     * @return The collection of links to them
+     */
+    @XmlElement(name = "link")
+    @XmlElementWrapper(name = "bundled")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public Collection<Link> getBundled() {
+        final Collection<Link> links = new ArrayList<Link>();
+        final String query = String.format(
+            "(unbundled %d)",
+            this.bout.number()
+        );
+        final Iterator<Bout> bouts = this.viewer.inbox(query).iterator();
+        // @checkstyle MagicNumber (1 line)
+        int max = 5;
+        while (bouts.hasNext() && max > 0) {
+            final Bout item = bouts.next();
+            max -= 1;
+            links.add(
+                new Link(
+                    "bout",
+                    String.format("#%d: %s", item.number(), item.title()),
+                    this.builder.clone().path("/../{num}").build(item.number())
+                )
+            );
+        }
+        if (max == 0) {
+            links.add(
+                new Link(
+                    "all",
+                    this.builder.clone().path("/..")
+                        .queryParam(RestSession.QUERY_PARAM, "{query}")
+                        .build(query)
+                )
+            );
+        }
+        return links;
     }
 
 }
