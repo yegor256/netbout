@@ -32,6 +32,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -100,6 +101,11 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Identity identity) {
+        Logger.debug(
+            this,
+            "see('%s'): request submitted",
+            identity.name()
+        );
         this.mux.submit(
             new HashSet(Arrays.asList(new Urn[] {identity.name()})),
             new SeeIdentityTask(this, this.bus, identity)
@@ -111,6 +117,11 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Bout bout) {
+        Logger.debug(
+            this,
+            "see(bout #%d): request submitted",
+            bout.number()
+        );
         this.mux.submit(
             this.names(bout),
             new SeeBoutTask(this, this.bus, bout)
@@ -122,6 +133,11 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
+        Logger.debug(
+            this,
+            "see(message #%d): request submitted",
+            message.number()
+        );
         this.mux.submit(
             this.names(message.bout()),
             new SeeMessageTask(this.heap, message)

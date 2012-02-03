@@ -71,6 +71,14 @@ final class SeeBoutTask implements Task {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return String.format("see-bout-#%d", this.bout.number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void exec() {
         final long start = System.currentTimeMillis();
         final List<Long> numbers = this.bus
@@ -86,15 +94,13 @@ final class SeeBoutTask implements Task {
                 throw new IllegalStateException(ex);
             }
         }
-        if (!numbers.isEmpty()) {
-            Logger.info(
-                this,
-                "#run(): cached %d message(s) of bout #%d in %dms",
-                numbers.size(),
-                this.bout.number(),
-                System.currentTimeMillis() - start
-            );
-        }
+        Logger.debug(
+            this,
+            "#exec(): cached %d message(s) of bout #%d in %dms",
+            numbers.size(),
+            this.bout.number(),
+            System.currentTimeMillis() - start
+        );
     }
 
 }

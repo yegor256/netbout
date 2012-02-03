@@ -72,10 +72,13 @@ final class Mux {
         Long eta;
         if (this.waiting.containsKey(who)) {
             eta = this.waiting.get(who).get();
+            if (eta > 0) {
+                eta = this.total() * (long) this.stats.getMean();
+            }
         } else {
             eta = 0L;
         }
-        return eta * (long) this.stats.getMean();
+        return eta;
     }
 
     /**
@@ -122,6 +125,13 @@ final class Mux {
             for (Urn urn : this.who) {
                 Mux.this.waiting.get(urn).incrementAndGet();
             }
+            Logger.debug(
+                this,
+                "TaskShell(%[list]s, %s): %d in queue",
+                urns,
+                tsk,
+                Mux.this.total()
+            );
         }
         /**
          * {@inheritDoc}
@@ -145,7 +155,26 @@ final class Mux {
                     ex
                 );
             }
+            Logger.debug(
+                this,
+                "run(%s): finished, %d still in queue",
+                this.task,
+                Mux.this.total()
+            );
         }
+    }
+
+    /**
+     * How many waiters are here now (approximate number, since this method
+     * is not synchronized)?
+     * @return Total number
+     */
+    private long total() {
+        long total = 0;
+        for (AtomicLong val : this.waiting.values()) {
+            total += val.get();
+        }
+        return total;
     }
 
 }

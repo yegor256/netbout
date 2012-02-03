@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Message;
+import com.ymock.util.Logger;
 
 /**
  * The task to review one message.
@@ -60,11 +61,26 @@ final class SeeMessageTask implements Task {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return String.format("see-message-#%d", this.message.number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void exec() {
+        final long start = System.currentTimeMillis();
         final Long number = this.message.number();
         final MsgBuilder builder = new MsgBuilder(this.message);
         this.heap.put(number, builder.build());
         this.heap.put(number, builder.rebuild(this.heap.get(number)));
+        Logger.debug(
+            this,
+            "#exec(): cached message #%d in %dms",
+            this.message.number(),
+            System.currentTimeMillis() - start
+        );
     }
 
 }
