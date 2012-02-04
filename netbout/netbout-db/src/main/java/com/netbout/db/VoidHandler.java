@@ -27,7 +27,6 @@
 package com.netbout.db;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Handler for nothing..

@@ -26,9 +26,6 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
 import com.ymock.util.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -66,7 +63,7 @@ final class DbSession {
     /**
      * Arguments.
      */
-    private transient List<Object> args = new ArrayList<Object>();
+    private final transient List<Object> args = new ArrayList<Object>();
 
     /**
      * Public ctor.
@@ -81,7 +78,7 @@ final class DbSession {
 
     /**
      * Use this SQL query.
-     * @param query The query to use
+     * @param sql The query to use
      * @return This object
      */
     public DbSession sql(final String sql) {
@@ -103,6 +100,7 @@ final class DbSession {
      * Make INSERT request.
      * @param handler The handler or result
      * @return The result
+     * @param <T> Type of response
      */
     public <T> T insert(final Handler<T> handler) {
         return this.run(
@@ -120,7 +118,6 @@ final class DbSession {
 
     /**
      * Make UPDATE request.
-     * @param handler The handler or result
      */
     public void update() {
         this.run(
@@ -140,6 +137,7 @@ final class DbSession {
      * Make UPDATE request.
      * @param handler The handler or result
      * @return The result
+     * @param <T> Type of response
      */
     public <T> T select(final Handler<T> handler) {
         return this.run(
@@ -172,11 +170,14 @@ final class DbSession {
      * @param handler The handler or result
      * @param fetcher Fetcher of result set
      * @return The result
+     * @param <T> Type of response
+     * @checkstyle NestedTryDepth (40 lines)
      */
+    @SuppressWarnings("PMD.CloseResource")
     private <T> T run(final Handler<T> handler, final Fetcher fetcher) {
         T result;
         try {
-            final PreparedStatement stmt = conn.prepareStatement(
+            final PreparedStatement stmt = this.conn.prepareStatement(
                 this.query,
                 Statement.RETURN_GENERATED_KEYS
             );
@@ -204,7 +205,7 @@ final class DbSession {
             this,
             "#run(): '%s' done [%dms]",
             this.query,
-            System.currentTimeMillis() - start
+            System.currentTimeMillis() - this.start
         );
         return result;
     }

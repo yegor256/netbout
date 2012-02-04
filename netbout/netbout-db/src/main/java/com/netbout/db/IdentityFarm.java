@@ -29,10 +29,7 @@ package com.netbout.db;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -71,24 +68,24 @@ public final class IdentityFarm {
             + "GROUP BY identity.name "
             + "LIMIT 10"
         )
-        .set(keyword.toUpperCase(Locale.ENGLISH))
-        .set(matcher)
-        .select(
-            new Handler<List<Urn>>() {
-                @Override
-                public List<Urn> handle(final ResultSet rset)
-                    throws SQLException {
-                    List<Urn> names = null;
-                    while (rset.next()) {
-                        if (names == null) {
-                            names = new ArrayList<Urn>();
+            .set(keyword.toUpperCase(Locale.ENGLISH))
+            .set(matcher)
+            .select(
+                new Handler<List<Urn>>() {
+                    @Override
+                    public List<Urn> handle(final ResultSet rset)
+                        throws SQLException {
+                        List<Urn> names = null;
+                        while (rset.next()) {
+                            if (names == null) {
+                                names = new ArrayList<Urn>();
+                            }
+                            names.add(Urn.create(rset.getString(1)));
                         }
-                        names.add(Urn.create(rset.getString(1)));
+                        return names;
                     }
-                    return names;
                 }
-            }
-        );
+            );
     }
 
     /**

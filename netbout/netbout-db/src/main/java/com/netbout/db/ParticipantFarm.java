@@ -29,9 +29,6 @@ package com.netbout.db;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -116,7 +113,7 @@ public final class ParticipantFarm {
             .sql("SELECT confirmed FROM participant WHERE bout = ? AND identity = ?")
             .set(bout)
             .set(identity)
-            .insert(
+            .select(
                 new Handler<Boolean>() {
                     @Override
                     public Boolean handle(final ResultSet rset)

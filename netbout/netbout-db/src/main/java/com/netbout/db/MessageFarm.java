@@ -29,12 +29,8 @@ package com.netbout.db;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -215,7 +211,7 @@ public final class MessageFarm {
                         if (!rset.next()) {
                             throw new IllegalArgumentException(
                                 String.format(
-                                    "Message #%d not found, can't get author",
+                                    "Message #%d not found, can't get text",
                                     number
                                 )
                             );

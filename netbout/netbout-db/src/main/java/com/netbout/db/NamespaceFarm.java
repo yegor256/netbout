@@ -29,9 +29,6 @@ package com.netbout.db;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -121,7 +118,7 @@ public final class NamespaceFarm {
                         if (!rset.next()) {
                             throw new IllegalArgumentException(
                                 String.format(
-                                    "Namespace '%s' not found, can't read owner",
+                                    "Namespace '%s' not found can't read owner",
                                     name
                                 )
                             );

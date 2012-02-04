@@ -28,12 +28,8 @@ package com.netbout.db;
 
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -76,6 +72,7 @@ public final class BoutFarm {
     @Operation("check-bout-existence")
     public Boolean checkBoutExistence(final Long number) {
         return new DbSession()
+            // @checkstyle LineLength (1 line)
             .sql("SELECT number FROM bout WHERE number = ? AND title IS NOT NULL")
             .set(number)
             .select(new NotEmptyHandler());
