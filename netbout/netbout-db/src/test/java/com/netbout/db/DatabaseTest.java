@@ -29,11 +29,6 @@ package com.netbout.db;
 import com.rexsl.core.Manifests;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -96,28 +91,6 @@ public final class DatabaseTest {
                 conn.close();
             }
         }
-    }
-
-    /**
-     * Database can handle many simultaneous connections.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void canHandleSimultaneousConnections() throws Exception {
-        final ExecutorService executor = Executors.newFixedThreadPool(20);
-        final Collection<Callable> tasks = new ArrayList<Callable>();
-        for (int num = 0; num < 3; num += 1) {
-            tasks.add(
-                new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() {
-                        new IdentityRowMocker().mock();
-                        return true;
-                    }
-                }
-            );
-        }
-        executor.invokeAll((Collection) tasks);
     }
 
 }
