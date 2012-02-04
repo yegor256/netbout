@@ -33,6 +33,9 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -50,15 +53,19 @@ public final class DataSourceBuilderTest {
     /**
      * DataSourceBuilder can handle many simultaneous connections.
      * @throws Exception If there is some problem inside
+     * @checkstyle MagicNumber (10 lines)
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void canHandleSimultaneousConnections() throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(20);
-        final Collection<Callable> tasks = new ArrayList<Callable>();
+        final Collection<Task> tasks = new ArrayList<Task>();
         for (int num = 0; num < 100; num += 1) {
             tasks.add(new Task(num));
         }
-        executor.invokeAll((Collection) tasks);
+        for (Future<Boolean> future : executor.invokeAll(tasks)) {
+            MatcherAssert.assertThat(future.get(), Matchers.equalTo(true));
+        }
     }
 
     private static final class Task implements Callable<Boolean> {
@@ -77,6 +84,7 @@ public final class DataSourceBuilderTest {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("PMD.AvoidCatchingGenericException")
         public Boolean call() {
             Logger.debug(this, "start #%d", this.number);
             Boolean result;
@@ -84,13 +92,13 @@ public final class DataSourceBuilderTest {
                 new AliasRowMocker(DataSourceBuilderTest.NAME).mock();
                 result = true;
                 Logger.debug(this, "finish #%d", this.number);
+            // @checkstyle IllegalCatch (1 line)
             } catch (Exception ex) {
                 result = false;
-                Logger.debug(this, "fail #%d: %[exception]s", this.number, ex);
+                Logger.error(this, "fail #%d: %[exception]s", this.number, ex);
             }
             return result;
         }
     }
-
 
 }

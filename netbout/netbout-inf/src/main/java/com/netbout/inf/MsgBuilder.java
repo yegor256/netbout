@@ -57,6 +57,7 @@ final class MsgBuilder {
      * Build Msg and return.
      * @return The msg
      */
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     public Msg build() {
         final Map<String, Object> props = new HashMap<String, Object>();
         props.put(VariablePred.TEXT, this.message.text());

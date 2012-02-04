@@ -116,6 +116,7 @@ public final class VariablePred implements Predicate {
 
     /**
      * {@inheritDoc}
+     * @checkstyle CyclomaticComplexity (35 lines)
      */
     @Override
     public Object evaluate(final Msg msg, final int pos) {

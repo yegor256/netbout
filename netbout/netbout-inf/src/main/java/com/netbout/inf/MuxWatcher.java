@@ -101,7 +101,7 @@ final class MuxWatcher implements Closeable, Runnable {
      */
     private void check() {
         final long threshold = System.currentTimeMillis()
-            - TimeUnit.MINUTES.toMillis(1L);
+            - TimeUnit.MINUTES.toMillis(2L);
         final long redline = System.currentTimeMillis()
             // @checkstyle MagicNumber (1 line)
             - TimeUnit.SECONDS.toMillis(30L);

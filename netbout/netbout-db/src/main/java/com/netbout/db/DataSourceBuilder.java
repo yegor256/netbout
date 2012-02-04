@@ -28,15 +28,8 @@ package com.netbout.db;
 
 import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
-import java.util.Properties;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.dbcp.BasicDataSourceFactory;
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DataSourceConnectionFactory;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.pool.impl.GenericObjectPool;
 
 /**
  * Builder of a datasource.
@@ -49,6 +42,8 @@ final class DataSourceBuilder {
     /**
      * Create and return JDBC data source.
      * @return The data source
+     * @checkstyle MagicNumber (30 lines)
+     * @checkstyle ExecutableStatementCount (30 lines)
      */
     public DataSource build() {
         final BasicDataSource data = new BasicDataSource();

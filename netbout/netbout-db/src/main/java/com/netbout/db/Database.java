@@ -75,6 +75,7 @@ public final class Database {
      * @return New JDBC connection
      * @throws SQLException If some SQL error
      */
+    @SuppressWarnings("PMD.CloseResource")
     public static Connection connection() throws SQLException {
         synchronized (Database.class) {
             if (Database.instance == null) {
