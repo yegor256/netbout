@@ -30,6 +30,7 @@ import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import java.util.Properties;
 import javax.sql.DataSource;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DataSourceConnectionFactory;
@@ -46,88 +47,35 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 final class DataSourceBuilder {
 
     /**
-     * Validation query.
-     */
-    private static final String VALIDATION_QUERY =
-        "SELECT 1";
-
-    /**
      * Create and return JDBC data source.
      * @return The data source
      */
     public DataSource build() {
-        final PoolableConnectionFactory factory = new PoolableConnectionFactory(
-            this.factory(),
-            new GenericObjectPool(null),
-            null,
-            this.VALIDATION_QUERY,
-            false,
-            true
-        );
-        final DataSource src = new PoolingDataSource(factory.getPool());
+        final BasicDataSource data = new BasicDataSource();
+        data.setDriverClassName(Manifests.read("Netbout-JdbcDriver"));
+        data.setUrl(Manifests.read("Netbout-JdbcUrl"));
+        data.setUsername(Manifests.read("Netbout-JdbcUser"));
+        data.setPassword(Manifests.read("Netbout-JdbcPassword"));
+        data.setMaxActive(4);
+        data.setMaxIdle(4);
+        data.setInitialSize(2);
+        data.setMaxWait(5000);
+        data.setPoolPreparedStatements(true);
+        data.setMaxOpenPreparedStatements(10);
+        data.setTestOnBorrow(true);
+        data.setTestOnReturn(true);
+        data.setTestWhileIdle(true);
+        data.setTimeBetweenEvictionRunsMillis(5000);
+        data.setNumTestsPerEvictionRun(5);
+        data.setMinEvictableIdleTimeMillis(5000);
+        data.setDefaultAutoCommit(true);
+        data.setDefaultReadOnly(false);
         Logger.info(
             this,
             "#datasource(): created %[type]s",
-            src
+            data
         );
-        return src;
-    }
-
-    /**
-     * Create and return connection factory.
-     * @return The connection factory
-     */
-    @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    private ConnectionFactory factory() {
-        final long start = System.currentTimeMillis();
-        final String driver = Manifests.read("Netbout-JdbcDriver");
-        try {
-            Class.forName(driver);
-        } catch (ClassNotFoundException ex) {
-            throw new IllegalStateException(ex);
-        }
-        ConnectionFactory factory;
-        try {
-            factory = new DataSourceConnectionFactory(
-                BasicDataSourceFactory.createDataSource(this.props())
-            );
-        // @checkstyle IllegalCatch (1 line)
-        } catch (Exception ex) {
-            throw new IllegalStateException(ex);
-        }
-        Logger.info(
-            this,
-            "#factory(): created with '%s' [%dms]",
-            driver,
-            System.currentTimeMillis() - start
-        );
-        return factory;
-    }
-
-    /**
-     * Properties for data source factory.
-     * @return The properties
-     * @see <a href="http://commons.apache.org/dbcp/configuration.html">DBCP configuration</a>
-     */
-    private Properties props() {
-        final Properties props = new Properties();
-        props.setProperty("url", Manifests.read("Netbout-JdbcUrl"));
-        props.setProperty("username", Manifests.read("Netbout-JdbcUser"));
-        props.setProperty("password", Manifests.read("Netbout-JdbcPassword"));
-        props.setProperty("validationQuery", this.VALIDATION_QUERY);
-        props.setProperty("testWhileIdle", Boolean.TRUE.toString());
-        props.setProperty("testOnBorrow", Boolean.TRUE.toString());
-        props.setProperty("testOnReturn", Boolean.TRUE.toString());
-        props.setProperty("maxWait", "5000");
-        props.setProperty("maxActive", "3");
-        props.setProperty("maxIdle", "4");
-        props.setProperty("minEvictableIdleTimeMillis", "5000");
-        props.setProperty("timeBetweenEvictionRunsMillis", "5000");
-        props.setProperty("numTestsPerEvictionRun", "10");
-        props.setProperty("removeAbandoned", Boolean.TRUE.toString());
-        props.setProperty("removeAbandonedTimeout", "5");
-        props.setProperty("logAbandoned", Boolean.TRUE.toString());
-        return props;
+        return data;
     }
 
 }

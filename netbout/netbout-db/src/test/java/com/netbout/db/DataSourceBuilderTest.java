@@ -53,7 +53,7 @@ public final class DataSourceBuilderTest {
      */
     @Test
     public void canHandleSimultaneousConnections() throws Exception {
-        final ExecutorService executor = Executors.newFixedThreadPool(10);
+        final ExecutorService executor = Executors.newFixedThreadPool(20);
         final Collection<Callable> tasks = new ArrayList<Callable>();
         for (int num = 0; num < 100; num += 1) {
             tasks.add(new Task(num));
