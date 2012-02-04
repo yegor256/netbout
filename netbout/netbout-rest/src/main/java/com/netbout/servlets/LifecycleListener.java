@@ -32,7 +32,6 @@ import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Application-wide listener that initializes the application on start

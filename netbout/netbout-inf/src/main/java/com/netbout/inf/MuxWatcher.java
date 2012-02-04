@@ -26,20 +26,12 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.io.Closeable;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
  * Multiplexer of heap updating tasks.
@@ -58,8 +50,13 @@ final class MuxWatcher implements Closeable, Runnable {
 
     /**
      * Still alive.
+     *
+     * <p>This property is volatile because it is accessed by two threads
+     * at the same time. Both threads should read the latest value of the
+     * property, but explicit synchronization will be an overkill here.
      */
-    private volatile transient boolean alive = true;
+    @SuppressWarnings("PMD.AvoidUsingVolatile")
+    private transient volatile boolean alive = true;
 
     /**
      * Public ctor.

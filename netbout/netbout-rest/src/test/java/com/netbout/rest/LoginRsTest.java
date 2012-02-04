@@ -34,7 +34,6 @@ import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
