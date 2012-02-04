@@ -58,7 +58,16 @@ final class Heap {
      * @return The message
      */
     public Msg get(final Long number) {
-        return this.all.get(number);
+        final Msg msg = this.all.get(number);
+        if (msg == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Msg #%d not found in Heap",
+                    number
+                )
+            );
+        }
+        return msg;
     }
 
     /**
