@@ -67,15 +67,15 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
     queries.add(
         'INSERT INTO bout (number, title, date) VALUES'
         + " (${it}, 'test', '2001-01-01')"
-    );
+    )
     queries.add(
         'INSERT INTO participant (bout, identity, confirmed, date) VALUES'
         + " (${it}, 'urn:test:bumper', 1, '2001-01-01')"
-    );
+    )
     queries.add(
         'INSERT INTO message (number, bout, date, author, text) VALUES'
         + " (${it}, ${it}, '2001-01-01', 'urn:test:bumper', 'hi!')"
-    );
+    )
 }
 
 queries.each { query ->
