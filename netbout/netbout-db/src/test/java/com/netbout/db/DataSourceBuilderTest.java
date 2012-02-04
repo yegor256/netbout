@@ -26,6 +26,8 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
@@ -41,25 +43,54 @@ import org.junit.Test;
 public final class DataSourceBuilderTest {
 
     /**
+     * The name to test against.
+     */
+    private static final Urn NAME = new IdentityRowMocker().mock();
+
+    /**
      * DataSourceBuilder can handle many simultaneous connections.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void canHandleSimultaneousConnections() throws Exception {
-        final ExecutorService executor = Executors.newFixedThreadPool(20);
+        final ExecutorService executor = Executors.newFixedThreadPool(10);
         final Collection<Callable> tasks = new ArrayList<Callable>();
         for (int num = 0; num < 100; num += 1) {
-            tasks.add(
-                new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() {
-                        new IdentityRowMocker().mock();
-                        return true;
-                    }
-                }
-            );
+            tasks.add(new Task(num));
         }
         executor.invokeAll((Collection) tasks);
     }
+
+    private static final class Task implements Callable<Boolean> {
+        /**
+         * Unique id.
+         */
+        private final transient int number;
+        /**
+         * Public ctor.
+         * @param num Number of the task
+         */
+        public Task(final int num) {
+            this.number = num;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Boolean call() {
+            Logger.debug(this, "start #%d", this.number);
+            Boolean result;
+            try {
+                new AliasRowMocker(DataSourceBuilderTest.NAME).mock();
+                result = true;
+                Logger.debug(this, "finish #%d", this.number);
+            } catch (Exception ex) {
+                result = false;
+                Logger.debug(this, "fail #%d: %[exception]s", this.number, ex);
+            }
+            return result;
+        }
+    }
+
 
 }

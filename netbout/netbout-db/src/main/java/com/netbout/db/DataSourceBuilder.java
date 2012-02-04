@@ -46,6 +46,12 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 final class DataSourceBuilder {
 
     /**
+     * Validation query.
+     */
+    private static final String VALIDATION_QUERY =
+        "SELECT 1";
+
+    /**
      * Create and return JDBC data source.
      * @return The data source
      */
@@ -54,7 +60,7 @@ final class DataSourceBuilder {
             this.factory(),
             new GenericObjectPool(null),
             null,
-            "SELECT name FROM identity WHERE name = ''",
+            this.VALIDATION_QUERY,
             false,
             true
         );
@@ -108,20 +114,19 @@ final class DataSourceBuilder {
         props.setProperty("url", Manifests.read("Netbout-JdbcUrl"));
         props.setProperty("username", Manifests.read("Netbout-JdbcUser"));
         props.setProperty("password", Manifests.read("Netbout-JdbcPassword"));
+        props.setProperty("validationQuery", this.VALIDATION_QUERY);
         props.setProperty("testWhileIdle", Boolean.TRUE.toString());
         props.setProperty("testOnBorrow", Boolean.TRUE.toString());
         props.setProperty("testOnReturn", Boolean.TRUE.toString());
-        props.setProperty("maxWait", "500");
+        props.setProperty("maxWait", "5000");
         props.setProperty("maxActive", "3");
         props.setProperty("maxIdle", "4");
         props.setProperty("minEvictableIdleTimeMillis", "5000");
-        props.setProperty("timeBetweenEvictionRunsMillis", "15000");
-        props.setProperty("numTestsPerEvictionRun", "2");
-        props.setProperty("poolPreparedStatements", Boolean.TRUE.toString());
-        props.setProperty("maxOpenPreparedStatements", "25");
+        props.setProperty("timeBetweenEvictionRunsMillis", "5000");
+        props.setProperty("numTestsPerEvictionRun", "10");
         props.setProperty("removeAbandoned", Boolean.TRUE.toString());
         props.setProperty("removeAbandonedTimeout", "5");
-        // props.setProperty("logAbandoned", Boolean.TRUE.toString());
+        props.setProperty("logAbandoned", Boolean.TRUE.toString());
         return props;
     }
 
