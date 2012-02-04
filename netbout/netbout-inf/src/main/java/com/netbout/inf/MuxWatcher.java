@@ -100,27 +100,26 @@ final class MuxWatcher implements Closeable, Runnable {
      */
     private void check() {
         final long threshold = System.currentTimeMillis()
-            - TimeUnit.MINUTES.toMillis(1L);
-        synchronized (this) {
-            for (Future future : this.running.keySet()) {
-                if (future.isDone()) {
+            // @checkstyle MagicNumber (1 line)
+            - TimeUnit.SECONDS.toMillis(10L);
+        for (Future future : this.running.keySet()) {
+            if (future.isDone()) {
+                this.running.remove(future);
+            } else if (this.running.get(future) < threshold) {
+                Logger.error(
+                    this,
+                    "#check(): one thread is %dms old, killing it",
+                    System.currentTimeMillis() - this.running.get(future)
+                );
+                try {
+                    future.get(1L, TimeUnit.SECONDS);
+                } catch (java.lang.InterruptedException ex) {
+                    throw new IllegalStateException(ex);
+                } catch (java.util.concurrent.ExecutionException ex) {
+                    throw new IllegalStateException(ex);
+                } catch (java.util.concurrent.TimeoutException ex) {
+                    future.cancel(true);
                     this.running.remove(future);
-                } else if (this.running.get(future) < threshold) {
-                    Logger.error(
-                        this,
-                        "#check(): one thread is older than %dms, killing it",
-                        System.currentTimeMillis() - this.running.get(future)
-                    );
-                    try {
-                        future.get(1L, TimeUnit.SECONDS);
-                    } catch (java.lang.InterruptedException ex) {
-                        throw new IllegalStateException(ex);
-                    } catch (java.util.concurrent.ExecutionException ex) {
-                        throw new IllegalStateException(ex);
-                    } catch (java.util.concurrent.TimeoutException ex) {
-                        future.cancel(true);
-                        this.running.remove(future);
-                    }
                 }
             }
         }

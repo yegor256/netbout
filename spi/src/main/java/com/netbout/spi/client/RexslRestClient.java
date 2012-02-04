@@ -54,7 +54,7 @@ final class RexslRestClient implements RestClient {
     /**
      * Max attempts.
      */
-    private static final int MAX_ATTEMPTS = 5;
+    private static final int MAX_ATTEMPTS = 10;
 
     /**
      * Minimum delay in msec.
@@ -133,7 +133,7 @@ final class RexslRestClient implements RestClient {
                     eta,
                     attempt
                 );
-                if (attempt > this.MAX_ATTEMPTS) {
+                if (attempt >= this.MAX_ATTEMPTS) {
                     throw new IllegalStateException(
                         String.format(
                             "Failed to '%s' after %d attempt(s)",
