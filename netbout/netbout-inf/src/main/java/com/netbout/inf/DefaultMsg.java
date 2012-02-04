@@ -99,6 +99,15 @@ final class DefaultMsg implements Msg {
      */
     @Override
     public <T> T get(final String name) {
+        if (!this.has(name)) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "property '%s' is absent in Msg #%d",
+                    name,
+                    this.num
+                )
+            );
+        }
         return (T) this.properties.get(name);
     }
 

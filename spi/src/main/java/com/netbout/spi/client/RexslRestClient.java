@@ -59,7 +59,12 @@ final class RexslRestClient implements RestClient {
     /**
      * Minimum delay in msec.
      */
-    private static final long MIN_DELAY = 5000L;
+    private static final long MIN_DELAY = 5 * 1000L;
+
+    /**
+     * Maximum delay in msec.
+     */
+    private static final long MAX_DELAY = 60 * 1000L;
 
     /**
      * Test client.
@@ -142,7 +147,10 @@ final class RexslRestClient implements RestClient {
                         )
                     );
                 }
-                final long delay = Math.max(eta * attempt, this.MIN_DELAY);
+                final long delay = Math.min(
+                    Math.max(eta * attempt, this.MIN_DELAY),
+                    this.MAX_DELAY
+                );
                 Logger.warn(
                     this,
                     "get('%s'): let's wait %dms and try again",

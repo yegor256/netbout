@@ -26,7 +26,9 @@
  */
 package com.netbout.inf;
 
+import com.netbout.inf.predicates.VariablePred;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,10 +58,20 @@ final class MsgBuilder {
      * @return The msg
      */
     public Msg build() {
+        final Map<String, Object> props = new HashMap<String, Object>();
+        props.put(VariablePred.TEXT, this.message.text());
+        props.put(VariablePred.DATE, this.message.date());
+        props.put(VariablePred.AUTHOR_NAME, this.message.author().name());
+        props.put(
+            VariablePred.AUTHOR_ALIAS,
+            NetboutUtils.aliasOf(this.message.author())
+        );
+        props.put(VariablePred.BOUT_DATE, this.message.bout().date());
+        props.put(VariablePred.BOUT_TITLE, this.message.bout().title());
         return new DefaultMsg(
             this.message.number(),
             this.message.bout().number(),
-            new HashMap<String, Object>()
+            props
         );
     }
 
