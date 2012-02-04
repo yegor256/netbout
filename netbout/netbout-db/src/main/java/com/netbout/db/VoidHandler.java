@@ -26,48 +26,22 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
-import java.util.Date;
+import java.sql.ResultSet;
 
 /**
- * Seen statuses.
+ * Handler for nothing..
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Farm
-public final class SeenFarm {
+final class VoidHandler implements Handler<Boolean> {
 
     /**
-     * Mark this message as seen by the specified identity.
-     * @param msg The number of the message
-     * @param identity The viewer
+     * {@inheritDoc}
      */
-    @Operation("message-was-seen")
-    public void messageWasSeen(final Long msg, final Urn identity) {
-        new DbSession()
-            .sql("INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)")
-            .set(msg)
-            .set(identity)
-            .set(new Date())
-            .insert(new VoidHandler());
-    }
-
-    /**
-     * This message was seen by this identity?
-     * @param msg The number of the message
-     * @param identity The viewer
-     * @return Was it seen?
-     */
-    @Operation("was-message-seen")
-    public Boolean wasMessageSeen(final Long msg, final Urn identity) {
-        return new DbSession()
-            .sql("SELECT message FROM seen WHERE message = ? AND identity = ?")
-            .set(msg)
-            .set(identity)
-            .select(new NotEmptyHandler());
+    @Override
+    public Boolean handle(final ResultSet rset) {
+        return true;
     }
 
 }

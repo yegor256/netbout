@@ -187,7 +187,6 @@ public final class ResourceMocker {
         if (this.hub == null) {
             final Urn iname = this.identity.name();
             this.hub = new HubMocker()
-                .doReturn("", "pre-render-message")
                 .withIdentity(iname, this.identity)
                 .mock();
             if (this.namespaceUrl != null) {

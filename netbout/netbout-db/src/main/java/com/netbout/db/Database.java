@@ -33,6 +33,7 @@ import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.apache.commons.dbutils.DbUtils;
 
 /**
  * Database-related utility class.
@@ -56,7 +57,7 @@ public final class Database {
      * Protected ctor.
      */
     protected Database() {
-        // empty
+        Logger.info(Database.class, "#Database(): instantiated");
     }
 
     /**
@@ -74,15 +75,14 @@ public final class Database {
      * @return New JDBC connection
      * @throws SQLException If some SQL error
      */
+    @SuppressWarnings("PMD.CloseResource")
     public static Connection connection() throws SQLException {
         synchronized (Database.class) {
             if (Database.instance == null) {
                 Database.instance = new Database();
-                try {
-                    Database.update(Database.instance.connect());
-                } catch (SQLException ex) {
-                    throw new IllegalStateException(ex);
-                }
+                final Connection conn = Database.instance.connect();
+                Database.update(conn);
+                DbUtils.closeQuietly(conn);
             }
             return Database.instance.connect();
         }

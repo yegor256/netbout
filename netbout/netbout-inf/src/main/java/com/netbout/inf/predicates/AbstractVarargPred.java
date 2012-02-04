@@ -104,6 +104,11 @@ public abstract class AbstractVarargPred implements Predicate {
      * @return The predicate/argument
      */
     protected final Predicate arg(final int num) {
+        if (num >= this.arguments.size()) {
+            throw new IllegalArgumentException(
+                String.format("argument #%d is absnet in '%s'", num, this)
+            );
+        }
         return this.arguments.get(num);
     }
 

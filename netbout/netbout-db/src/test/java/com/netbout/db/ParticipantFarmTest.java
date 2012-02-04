@@ -68,6 +68,7 @@ public final class ParticipantFarmTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @org.junit.Ignore
     public void readsBoutParticipants() throws Exception {
         final Long bout = new BoutRowMocker().mock();
         final Urn identity = new ParticipantRowMocker(bout).mock();
@@ -83,6 +84,7 @@ public final class ParticipantFarmTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @org.junit.Ignore
     public void addsAndRemovesParticipants() throws Exception {
         final Long bout = new BoutRowMocker().mock();
         final Urn identity = new ParticipantRowMocker(bout).mock();

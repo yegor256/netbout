@@ -24,61 +24,63 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.servlets;
 
-import com.netbout.spi.Message;
+import com.netbout.hub.DefaultHub;
+import com.netbout.hub.Hub;
+import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
- * The task to review one message.
+ * Application-wide listener that initializes the application on start
+ * and shuts it down on stop.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeMessageTask implements Task {
+public final class LifecycleListener implements ServletContextListener {
 
     /**
-     * The heap.
+     * The hub.
      */
-    private final transient Heap heap;
-
-    /**
-     * The bout.
-     */
-    private final transient Message message;
-
-    /**
-     * Public ctor.
-     * @param where The HEAP to work with
-     * @param what The message to update
-     */
-    public SeeMessageTask(final Heap where, final Message what) {
-        this.heap = where;
-        this.message = what;
-    }
+    private transient Hub hub;
 
     /**
      * {@inheritDoc}
+     *
+     * <p>This attributes is used later in
+     * {@link com.netbout.rest.AbstractRs#setServletContext(ServletContext)}.
      */
     @Override
-    public String toString() {
-        return String.format("see-message-#%d", this.message.number());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void exec() {
+    public void contextInitialized(final ServletContextEvent event) {
         final long start = System.currentTimeMillis();
-        final Long number = this.message.number();
-        final MsgBuilder builder = new MsgBuilder(this.message);
-        this.heap.put(number, builder.build());
-        this.heap.put(number, builder.rebuild(this.heap.get(number)));
-        Logger.debug(
+        Manifests.append(event.getServletContext());
+        this.hub = new DefaultHub();
+        event.getServletContext()
+            .setAttribute("com.netbout.rest.HUB", this.hub);
+        Logger.info(
             this,
-            "#exec(): cached message #%d in %dms",
-            this.message.number(),
+            "contextInitialized(): done in %dms",
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void contextDestroyed(final ServletContextEvent event) {
+        final long start = System.currentTimeMillis();
+        try {
+            this.hub.close();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(
+            this,
+            "contextDestroyed(): done in %dms",
             System.currentTimeMillis() - start
         );
     }

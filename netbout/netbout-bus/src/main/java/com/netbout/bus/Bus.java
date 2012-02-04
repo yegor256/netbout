@@ -28,6 +28,7 @@ package com.netbout.bus;
 
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import java.io.Closeable;
 
 /**
  * Common bus of all transactions processed by helpers.
@@ -52,7 +53,7 @@ import com.netbout.spi.Identity;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Bus {
+public interface Bus extends Closeable {
 
     /**
      * A convenient static method to create a new transaction builder.

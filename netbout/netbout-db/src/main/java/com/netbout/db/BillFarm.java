@@ -26,12 +26,10 @@
  */
 package com.netbout.db;
 
+import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -47,50 +45,48 @@ public final class BillFarm {
     /**
      * Save a collection of incoming bills, from BUS.
      * @param lines Text forms of them
-     * @throws SQLException If some SQL problem inside
+     * @checkstyle MagicNumber (20 lines)
      */
     @Operation("save-bills")
-    public void saveBills(final List<String> lines) throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        try {
-            for (String line : lines) {
-                final PreparedStatement stmt = conn.prepareStatement(
-                    // @checkstyle LineLength (1 line)
-                    "INSERT INTO bill (date, mnemo, helper, msec, bout) VALUES (?, ?, ?, ?, ?)"
-                );
-                final String[] parts = line.split("[ ]+");
-                Utc.setTimestamp(
-                    stmt,
-                    1,
-                    ISODateTimeFormat.dateTime()
-                        .parseDateTime(parts[0])
-                        .toDate()
-                );
-                stmt.setString(2, parts[1]);
-                // @checkstyle MagicNumber (6 lines)
-                stmt.setString(3, parts[2]);
-                stmt.setLong(4, Long.valueOf(parts[3]));
-                if ("null".equals(parts[4])) {
-                    stmt.setString(5, null);
-                } else {
-                    stmt.setLong(5, Long.valueOf(parts[4]));
-                }
-                try {
-                    stmt.execute();
-                } finally {
-                    stmt.close();
-                }
+    public void saveBills(final List<String> lines) {
+        for (String line : lines) {
+            final String[] parts = line.split("[ ]+");
+            Long bout = null;
+            if (!"null".equals(parts[4])) {
+                bout = Long.valueOf(parts[4]);
             }
-        } finally {
-            conn.close();
+            this.bill(
+                ISODateTimeFormat.dateTime()
+                    .parseDateTime(parts[0])
+                    .toDate(),
+                parts[1],
+                Urn.create(parts[2]),
+                Long.valueOf(parts[3]),
+                bout
+            );
         }
-        Logger.debug(
-            this,
-            "#saveBills(%d bills): saved [%dms]",
-            lines.size(),
-            System.currentTimeMillis() - start
-        );
+    }
+
+    /**
+     * Save one bill.
+     * @param date The date
+     * @param mnemo The mnemo
+     * @param helper The helper
+     * @param msec The milliseconds
+     * @param bout The bout
+     * @checkstyle ParameterNumber (3 lines)
+     */
+    private void bill(final Date date, final String mnemo, final Urn helper,
+        final Long msec, final Long bout) {
+        new DbSession()
+            // @checkstyle LineLength (1 line)
+            .sql("INSERT INTO bill (date, mnemo, helper, msec, bout) VALUES (?, ?, ?, ?, ?)")
+            .set(date)
+            .set(mnemo)
+            .set(helper)
+            .set(msec)
+            .set(bout)
+            .insert(new VoidHandler());
     }
 
 }

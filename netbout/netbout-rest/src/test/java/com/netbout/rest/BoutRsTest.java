@@ -63,8 +63,6 @@ public final class BoutRsTest {
             .withIdentity(identity)
             .withHub(
                 new HubMocker()
-                    .doReturn("", "pre-render-message")
-                    .doReturn("", "post-render-change-place")
                     .withIdentity(identity.name(), identity)
                     .mock()
             )

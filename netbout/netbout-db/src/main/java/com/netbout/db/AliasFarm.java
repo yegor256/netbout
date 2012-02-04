@@ -29,12 +29,10 @@ package com.netbout.db;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,87 +48,43 @@ public final class AliasFarm {
      * Primary alias was added to the identity.
      * @param identity The identity
      * @param alias The alias just added
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("added-identity-alias")
-    public void addedIdentityAlias(final Urn identity, final String alias)
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)"
-            );
-            try {
-                stmt.setString(1, identity.toString());
-                stmt.setString(2, alias);
-                // @checkstyle MagicNumber (1 line)
-                Utc.setTimestamp(stmt, 3);
-                stmt.execute();
-            } finally {
-                stmt.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#primaryAliasAdded('%s', '%s'): inserted [%dms]",
-            identity,
-            alias,
-            System.currentTimeMillis() - start
-        );
+    public void addedIdentityAlias(final Urn identity, final String alias) {
+        new DbSession()
+            .sql("INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)")
+            .set(identity)
+            .set(alias)
+            .set(new Date())
+            .insert(new VoidHandler());
     }
 
     /**
      * Get list of aliases that belong to some identity.
      * @param name The identity of bout participant
      * @return List of aliases
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("get-aliases-of-identity")
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public List<String> getAliasesOfIdentity(final Urn name)
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        List<String> aliases = null;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT name FROM alias WHERE identity = ?"
-            );
-            stmt.setString(1, name.toString());
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                while (rset.next()) {
-                    if (aliases == null) {
-                        aliases = new ArrayList<String>();
+    public List<String> getAliasesOfIdentity(final Urn name) {
+        return new DbSession()
+            .sql("SELECT name FROM alias WHERE identity = ?")
+            .set(name)
+            .select(
+                new Handler<List<String>>() {
+                    @Override
+                    public List<String> handle(final ResultSet rset)
+                        throws SQLException {
+                        List<String> aliases = null;
+                        while (rset.next()) {
+                            if (aliases == null) {
+                                aliases = new ArrayList<String>();
+                            }
+                            aliases.add(rset.getString(1));
+                        }
+                        return aliases;
                     }
-                    aliases.add(rset.getString(1));
                 }
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        if (aliases == null) {
-            Logger.debug(
-                this,
-                "#getAliasesOfIdentity('%s'): no aliases found [%dms]",
-                name,
-                System.currentTimeMillis() - start
             );
-        } else {
-            Logger.debug(
-                this,
-                "#getAliasesOfIdentity('%s'): retrieved %d aliase(s) [%dms]",
-                name,
-                aliases.size(),
-                System.currentTimeMillis() - start
-            );
-        }
-        return aliases;
     }
 
 }

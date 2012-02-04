@@ -32,6 +32,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -66,6 +67,16 @@ public final class DefaultInfinity implements Infinity {
      */
     public DefaultInfinity(final Bus ibus) {
         this.bus = ibus;
+        Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", ibus);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        Logger.info(this, "#close(): will stop Mux in a second");
+        this.mux.close();
     }
 
     /**
@@ -104,6 +115,11 @@ public final class DefaultInfinity implements Infinity {
             new HashSet(Arrays.asList(new Urn[] {identity.name()})),
             new SeeIdentityTask(this, this.bus, identity)
         );
+        Logger.debug(
+            this,
+            "see('%s'): request submitted",
+            identity.name()
+        );
     }
 
     /**
@@ -114,6 +130,11 @@ public final class DefaultInfinity implements Infinity {
         this.mux.submit(
             this.names(bout),
             new SeeBoutTask(this, this.bus, bout)
+        );
+        Logger.debug(
+            this,
+            "see(bout #%d): request submitted",
+            bout.number()
         );
     }
 
@@ -126,6 +147,11 @@ public final class DefaultInfinity implements Infinity {
             this.names(message.bout()),
             new SeeMessageTask(this.heap, message)
         );
+        Logger.debug(
+            this,
+            "see(message #%d): request submitted",
+            message.number()
+        );
     }
 
     /**
@@ -133,7 +159,7 @@ public final class DefaultInfinity implements Infinity {
      * @param bout The bout
      * @return Names
      */
-    public Set<Urn> names(final Bout bout) {
+    private static Set<Urn> names(final Bout bout) {
         final Set<Urn> names = new HashSet<Urn>();
         for (Participant dude : bout.participants()) {
             names.add(dude.identity().name());

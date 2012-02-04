@@ -69,7 +69,7 @@ public final class BoutFarmTest {
      * Starting new bout with invalid number should lead to exception.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = java.sql.SQLException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testRecordBoutStartingWithInvalidNumber() throws Exception {
         // @checkstyle MagicNumber (1 line)
         this.farm.startedNewBout(777L);

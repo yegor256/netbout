@@ -32,6 +32,8 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
+import java.io.Closeable;
+import java.net.URL;
 import java.util.Set;
 
 /**
@@ -40,7 +42,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Hub {
+public interface Hub extends Closeable {
 
     /**
      * Find identity by URN.
@@ -79,9 +81,10 @@ public interface Hub {
     /**
      * Promote existing identity to the helper.
      * @param identity The identity to promote
-     * @param helper The helper to use
+     * @param location The location to use
+     * @return The helper just created
      */
-    void promote(Identity identity, Helper helper);
+    Helper promote(Identity identity, URL location);
 
     /**
      * Find identities by keyword.

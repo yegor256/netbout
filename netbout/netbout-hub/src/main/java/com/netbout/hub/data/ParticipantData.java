@@ -103,11 +103,11 @@ final class ParticipantData implements ParticipantDt {
                 .arg(flag)
                 .asDefault(true)
                 .exec();
-            Logger.debug(
-                this,
-                "#setConfirmed(): set"
-            );
         }
+        Logger.debug(
+            this,
+            "#setConfirmed(): set"
+        );
     }
 
     /**
@@ -122,16 +122,9 @@ final class ParticipantData implements ParticipantDt {
                     .arg(this.bout)
                     .arg(this.identity)
                     .exec();
-                Logger.debug(
-                    this,
-                    "#isConfirmed(): status loaded as %b for '%s' in bout #%d",
-                    this.confirmed,
-                    this.identity,
-                    this.bout
-                );
             }
-            return this.confirmed;
         }
+        return this.confirmed;
     }
 
 }

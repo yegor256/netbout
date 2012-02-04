@@ -96,15 +96,11 @@ public final class NamespaceRowMocker {
      */
     public String mock() {
         final NamespaceFarm farm = new NamespaceFarm();
-        try {
-            farm.namespaceWasRegistered(
-                this.identity,
-                this.name,
-                this.template
-            );
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        farm.namespaceWasRegistered(
+            this.identity,
+            this.name,
+            this.template
+        );
         return this.name;
     }
 

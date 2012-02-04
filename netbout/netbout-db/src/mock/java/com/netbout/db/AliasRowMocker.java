@@ -74,11 +74,7 @@ public final class AliasRowMocker {
      */
     public String mock() {
         final AliasFarm afarm = new AliasFarm();
-        try {
-            afarm.addedIdentityAlias(this.identity, this.alias);
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        afarm.addedIdentityAlias(this.identity, this.alias);
         return this.alias;
     }
 

@@ -32,8 +32,11 @@ package com.netbout.spi.client;
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestClient;
 import com.rexsl.test.TestResponse;
+import com.ymock.util.Logger;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -47,6 +50,21 @@ import org.hamcrest.Matchers;
  * @version $Id$
  */
 final class RexslRestClient implements RestClient {
+
+    /**
+     * Max attempts.
+     */
+    private static final int MAX_ATTEMPTS = 10;
+
+    /**
+     * Minimum delay in msec.
+     */
+    private static final long MIN_DELAY = 5 * 1000L;
+
+    /**
+     * Maximum delay in msec.
+     */
+    private static final long MAX_DELAY = 60 * 1000L;
 
     /**
      * Test client.
@@ -89,15 +107,63 @@ final class RexslRestClient implements RestClient {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public RestResponse get(final String message) {
-        final TestResponse response = this.client
-            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .header(
-                HttpHeaders.COOKIE,
-                new Cookie(RestSession.AUTH_COOKIE, this.token)
-            )
-            .get(message)
-            .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue());
+        TestResponse response = null;
+        boolean ready = false;
+        int attempt = 0;
+        while (!ready) {
+            attempt += 1;
+            response = this.client
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+                .header(
+                    HttpHeaders.COOKIE,
+                    new Cookie(RestSession.AUTH_COOKIE, this.token)
+                )
+                .get(message)
+                .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue());
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                break;
+            }
+            final Long eta = Long.valueOf(
+                response.xpath("/page/eta/text()").get(0)
+            );
+            ready = eta == 0;
+            if (!ready) {
+                Logger.warn(
+                    this,
+                    // @checkstyle LineLength (1 line)
+                    "get('%s'): ETA=%dms reported, the page is not ready (it was an attempt #%d)",
+                    message,
+                    eta,
+                    attempt
+                );
+                if (attempt >= this.MAX_ATTEMPTS) {
+                    throw new IllegalStateException(
+                        String.format(
+                            "Failed to '%s' after %d attempt(s)",
+                            message,
+                            attempt
+                        )
+                    );
+                }
+                final long delay = Math.min(
+                    Math.max(eta * attempt, this.MIN_DELAY),
+                    this.MAX_DELAY
+                );
+                Logger.warn(
+                    this,
+                    "get('%s'): let's wait %dms and try again",
+                    message,
+                    delay
+                );
+                try {
+                    TimeUnit.MILLISECONDS.sleep(delay);
+                } catch (InterruptedException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+        }
         return new RexslRestResponse(this, response);
     }
 

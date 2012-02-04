@@ -29,13 +29,11 @@ package com.netbout.db;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.ymock.util.Logger;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,92 +48,58 @@ public final class HelperFarm {
     /**
      * Find all helpers.
      * @return List of identities, which are helpers
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("get-all-helpers")
-    public List<Urn> getAllHelpers()
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        final List<Urn> names = new ArrayList<Urn>();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT identity FROM helper"
-            );
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                while (rset.next()) {
-                    names.add(Urn.create(rset.getString(1)));
+    public List<Urn> getAllHelpers() {
+        return new DbSession()
+            .sql("SELECT identity FROM helper")
+            .select(
+                new Handler<List<Urn>>() {
+                    @Override
+                    public List<Urn> handle(final ResultSet rset)
+                        throws SQLException {
+                        final List<Urn> names = new ArrayList<Urn>();
+                        while (rset.next()) {
+                            names.add(Urn.create(rset.getString(1)));
+                        }
+                        return names;
+                    }
                 }
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#getAllHelpers(): retrieved %d identitie(s) [%dms]",
-            names.size(),
-            System.currentTimeMillis() - start
-        );
-        return names;
+            );
     }
 
     /**
      * Identity was promoted to helper.
      * @param name The name of identity
      * @param url URL of helper
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("identity-promoted")
-    public void identityPromoted(final Urn name, final URL url)
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT url FROM helper WHERE identity = ? "
-            );
-            stmt.setString(1, name.toString());
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (rset.next()) {
-                    final String existing = rset.getString(1);
-                    if (!existing.equals(url.toString())) {
-                        throw new IllegalArgumentException(
-                            String.format(
-                                // @checkstyle LineLength (1 line)
-                                "Identity '%s' is already promoted with '%s', can't change to '%s'",
-                                name,
-                                existing,
-                                url
-                            )
-                        );
-                    }
-                } else {
-                    final PreparedStatement istmt = conn.prepareStatement(
+    public void identityPromoted(final Urn name, final URL url) {
+        final Boolean exists = new DbSession()
+            .sql("SELECT url FROM helper WHERE identity = ? ")
+            .set(name)
+            .select(new NotEmptyHandler());
+        if (exists) {
+            final URL existing = this.getHelperUrl(name);
+            if (!existing.equals(url)) {
+                throw new IllegalArgumentException(
+                    String.format(
                         // @checkstyle LineLength (1 line)
-                        "INSERT INTO helper (identity, url, date) VALUES (?, ?, ?)"
-                    );
-                    istmt.setString(1, name.toString());
-                    istmt.setString(2, url.toString());
-                    // @checkstyle MagicNumber (1 line)
-                    Utc.setTimestamp(istmt, 3);
-                    istmt.executeUpdate();
-                    Logger.debug(
-                        this,
-                        "#identityPromoted('%s', '%s'): inserted [%dms]",
+                        "Identity '%s' is already promoted with '%s', can't change to '%s'",
                         name,
-                        url,
-                        System.currentTimeMillis() - start
-                    );
-                }
-            } finally {
-                rset.close();
+                        existing,
+                        url
+                    )
+                );
             }
-        } finally {
-            conn.close();
+        } else {
+            new DbSession()
+                // @checkstyle LineLength (1 line)
+                .sql("INSERT INTO helper (identity, url, date) VALUES (?, ?, ?)")
+                .set(name)
+                .set(url)
+                .set(new Date())
+                .insert(new VoidHandler());
         }
     }
 
@@ -143,48 +107,28 @@ public final class HelperFarm {
      * Get URL of the helper.
      * @param name The identity of bout participant
      * @return The URL
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("get-helper-url")
-    public URL getHelperUrl(final Urn name) throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        String value;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT url FROM helper WHERE identity = ?"
-            );
-            stmt.setString(1, name.toString());
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (!rset.next()) {
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "Identity '%s' not found, can't get helper's URL",
-                            name
-                        )
-                    );
+    public URL getHelperUrl(final Urn name) {
+        final String location = new DbSession()
+            .sql("SELECT url FROM helper WHERE identity = ?")
+            .set(name)
+            .select(
+                new Handler<String>() {
+                    @Override
+                    public String handle(final ResultSet rset)
+                        throws SQLException {
+                        rset.next();
+                        return rset.getString(1);
+                    }
                 }
-                value = rset.getString(1);
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
+            );
         URL url;
         try {
-            url = new URL(value);
+            url = new URL(location);
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
-        Logger.debug(
-            this,
-            "#getHelperUrl('%s'): retrieved URL '%s' [%dms]",
-            name,
-            url,
-            System.currentTimeMillis() - start
-        );
         return url;
     }
 

@@ -113,12 +113,12 @@ final class MessageData implements MessageDt {
                 .arg(this.date)
                 .asDefault(true)
                 .exec();
-            Logger.debug(
-                this,
-                "#setDate('%s'): set",
-                this.date
-            );
         }
+        Logger.debug(
+            this,
+            "#setDate('%s'): set",
+            this.date
+        );
     }
 
     /**
@@ -132,15 +132,9 @@ final class MessageData implements MessageDt {
                     .synchronously()
                     .arg(this.number)
                     .exec();
-                Logger.debug(
-                    this,
-                    "#getDate(): date '%s' loaded for msg #%d",
-                    this.date,
-                    this.number
-                );
             }
-            return this.date;
         }
+        return this.date;
     }
 
     /**
@@ -176,15 +170,9 @@ final class MessageData implements MessageDt {
                     .synchronously()
                     .arg(this.number)
                     .exec();
-                Logger.debug(
-                    this,
-                    "#getAuthor(): author '%s' loaded for msg #%d",
-                    this.author,
-                    this.number
-                );
             }
-            return this.author;
         }
+        return this.author;
     }
 
     /**
@@ -220,15 +208,9 @@ final class MessageData implements MessageDt {
                     .synchronously()
                     .arg(this.number)
                     .exec();
-                Logger.debug(
-                    this,
-                    "#getText(): text '%s' loaded for msg #%d",
-                    this.text,
-                    this.number
-                );
             }
-            return this.text;
         }
+        return this.text;
     }
 
     /**
@@ -244,15 +226,15 @@ final class MessageData implements MessageDt {
                     .arg(identity)
                     .asDefault(true)
                     .exec();
-                Logger.debug(
-                    this,
-                    "#addSeenBy('%s'): set for msg #%d",
-                    identity,
-                    this.number
-                );
+                this.seenBy.put(identity, true);
             }
-            this.seenBy.put(identity, true);
         }
+        Logger.debug(
+            this,
+            "#addSeenBy('%s'): set for msg #%d",
+            identity,
+            this.number
+        );
     }
 
     /**
@@ -269,16 +251,9 @@ final class MessageData implements MessageDt {
                     .asDefault(false)
                     .exec();
                 this.seenBy.put(identity, status);
-                Logger.debug(
-                    this,
-                    "#isSeenBy('%s'): %b loaded for msg #%d",
-                    identity,
-                    status,
-                    this.number
-                );
             }
-            return this.seenBy.get(identity);
         }
+        return this.seenBy.get(identity);
     }
 
 }

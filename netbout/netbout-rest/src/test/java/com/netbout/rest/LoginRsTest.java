@@ -34,7 +34,6 @@ import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
@@ -81,8 +80,6 @@ public final class LoginRsTest {
         final Identity identity = new IdentityMocker().namedAs(name).mock();
         final Hub hub = new HubMocker()
             .withIdentity(name, identity)
-            .doReturn(new ArrayList<String>(), "get-all-namespaces")
-            .doReturn(new ArrayList<String>(), "get-aliases-of-identity")
             .mock();
         final LoginRs rest = new ResourceMocker()
             .withHub(hub)

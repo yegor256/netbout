@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.bus.Bus;
+import com.netbout.bus.DefaultBus;
 import com.netbout.bus.TxBuilder;
 import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.hub.hh.StatsFarm;
@@ -36,7 +37,9 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
+import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -89,22 +92,48 @@ public final class DefaultHub implements Hub {
         new ConcurrentSkipListSet<Identity>();
 
     /**
-     * Public ctor, for JAXB.
+     * Public ctor.
      */
     public DefaultHub() {
-        throw new IllegalStateException("illegal call");
+        this(new DefaultBus());
     }
 
     /**
-     * Public ctor.
+     * Public ctor, for tests mostly.
      * @param bus The bus
      */
     public DefaultHub(final Bus bus) {
+        StatsFarm.addStats(this);
         this.ibus = bus;
         this.inf = new DefaultInfinity(this.ibus);
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
-        StatsFarm.addStats(this);
+        this.promote(this.persister());
+        Logger.info(
+            this,
+            "#DefaultHub(%[type]s): instantiated",
+            bus
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        Logger.info(this, "#close(): shutting down INF");
+        try {
+            this.inf.close();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(this, "#close(): shutting down BUS");
+        try {
+            this.ibus.close();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(this, "#close(): closed successfully");
     }
 
     /**
@@ -181,7 +210,7 @@ public final class DefaultHub implements Hub {
      * {@inheritDoc}
      */
     @Override
-    public void promote(final Identity identity, final Helper helper) {
+    public Helper promote(final Identity identity, final URL location) {
         if (!(identity instanceof HubIdentity)) {
             throw new IllegalArgumentException(
                 String.format(
@@ -190,6 +219,7 @@ public final class DefaultHub implements Hub {
                 )
             );
         }
+        final CpaHelper helper = new CpaHelper(identity, location);
         this.ibus.register(identity, helper);
         Identity existing;
         try {
@@ -212,6 +242,7 @@ public final class DefaultHub implements Hub {
             .arg(helper.location())
             .asDefault(true)
             .exec();
+        return helper;
     }
 
     /**
@@ -257,6 +288,69 @@ public final class DefaultHub implements Hub {
             .asDefault(true)
             .exec();
         this.infinity().see(identity);
+    }
+
+    /**
+     * Promote all helpers.
+     * @param persister DB helper
+     */
+    private void promote(final Identity persister) {
+        final long start = System.currentTimeMillis();
+        final List<Urn> helpers = this.make("get-all-helpers")
+            .synchronously()
+            .asDefault(new ArrayList<Urn>())
+            .exec();
+        Logger.info(this, "#promote(): promoting %[list]s", helpers);
+        for (Urn name : helpers) {
+            if (name.equals(persister.name())) {
+                continue;
+            }
+            final URL url = this.make("get-helper-url")
+                .synchronously()
+                .arg(name)
+                .exec();
+            try {
+                this.promote(persister.friend(name), url);
+            } catch (com.netbout.spi.UnreachableUrnException ex) {
+                Logger.error(
+                    this,
+                    "#start(): failed to create '%s' identity:\n%[exception]s",
+                    name,
+                    ex
+                );
+            }
+        }
+        Logger.info(
+            this,
+            "#promote(): done with all helpers in %dms: %[list]s",
+            System.currentTimeMillis() - start,
+            helpers
+        );
+    }
+
+    /**
+     * Create persister's identity.
+     * @return The persister
+     */
+    private Identity persister() {
+        final Identity persister;
+        try {
+            persister = this.identity(new Urn("netbout", "db"));
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalStateException(
+                "Failed to create starter's identity",
+                ex
+            );
+        }
+        try {
+            this.promote(
+                persister,
+                new URL("file", "", "com.netbout.db")
+            );
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
+        return persister;
     }
 
     /**

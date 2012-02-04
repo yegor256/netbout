@@ -79,18 +79,10 @@ public final class ParticipantRowMocker {
      */
     public Urn mock() {
         final IdentityFarm ifarm = new IdentityFarm();
-        try {
-            ifarm.identityMentioned(this.identity);
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        ifarm.identityMentioned(this.identity);
         final ParticipantFarm farm = new ParticipantFarm();
-        try {
-            farm.addedBoutParticipant(this.bout, this.identity);
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        return identity;
+        farm.addedBoutParticipant(this.bout, this.identity);
+        return this.identity;
     }
 
 }

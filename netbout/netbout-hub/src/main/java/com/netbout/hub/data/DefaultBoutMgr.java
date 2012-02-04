@@ -131,7 +131,7 @@ public final class DefaultBoutMgr implements BoutMgr {
                     .make("check-bout-existence")
                     .synchronously()
                     .arg(number)
-                    .asDefault(false)
+                    .asDefault(true)
                     .exec();
                 if (!exists) {
                     throw new BoutNotFoundException(number);

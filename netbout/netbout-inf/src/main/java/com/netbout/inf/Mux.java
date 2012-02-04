@@ -28,11 +28,14 @@ package com.netbout.inf;
 
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.io.Closeable;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
@@ -43,13 +46,28 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
  * @version $Id$
  */
 @SuppressWarnings("PMD.DoNotUseThreads")
-final class Mux {
+final class Mux implements Closeable {
+
+    /**
+     * How many threads to run in parallel.
+     */
+    private static final int THREADS = 20;
 
     /**
      * Executor service, with a number of threads working in parallel.
      */
     private final transient ExecutorService executor =
-        Executors.newFixedThreadPool(5);
+        Executors.newFixedThreadPool(Mux.THREADS);
+
+    /**
+     * Watcher of Mux.
+     */
+    private final transient MuxWatcher watcher = new MuxWatcher();
+
+    /**
+     * Are we still ready to accept any tasks?
+     */
+    private final transient AtomicBoolean alive = new AtomicBoolean(true);
 
     /**
      * How many tasks are currently waiting.
@@ -64,6 +82,22 @@ final class Mux {
         new DescriptiveStatistics(100);
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        this.alive.set(false);
+        this.watcher.close();
+        final List<Runnable> unfinished = this.executor.shutdownNow();
+        Logger.info(
+            this,
+            "#close(): stopped with %d unfinished tasks and %d waiting",
+            unfinished.size(),
+            this.total()
+        );
+    }
+
+    /**
      * How long do I need to wait before sending requests?
      * @param who Who is asking
      * @return Estimated number of milliseconds
@@ -72,10 +106,13 @@ final class Mux {
         Long eta;
         if (this.waiting.containsKey(who)) {
             eta = this.waiting.get(who).get();
+            if (eta > 0) {
+                eta = this.total() * (long) this.stats.getMean() / Mux.THREADS;
+            }
         } else {
             eta = 0L;
         }
-        return eta * (long) this.stats.getMean();
+        return eta;
     }
 
     /**
@@ -84,7 +121,15 @@ final class Mux {
      * @param task The task to execute
      */
     public void submit(final Set<Urn> who, final Task task) {
-        this.executor.submit(new TaskShell(who, task));
+        if (this.alive.get()) {
+            this.watcher.watch(this.executor.submit(new TaskShell(who, task)));
+        } else {
+            Logger.warn(
+                this,
+                "#submit(): Mux is closed, %s ignored",
+                task
+            );
+        }
     }
 
     /**
@@ -112,16 +157,17 @@ final class Mux {
         public TaskShell(final Set<Urn> urns, final Task tsk) {
             this.task = tsk;
             this.who = urns;
-            synchronized (Mux.this.waiting) {
-                for (Urn urn : this.who) {
-                    if (!Mux.this.waiting.containsKey(urn)) {
-                        Mux.this.waiting.put(urn, new AtomicLong());
-                    }
-                }
-            }
             for (Urn urn : this.who) {
+                Mux.this.waiting.putIfAbsent(urn, new AtomicLong());
                 Mux.this.waiting.get(urn).incrementAndGet();
             }
+            Logger.debug(
+                this,
+                "TaskShell(%[list]s, %s): %d in queue",
+                urns,
+                tsk,
+                Mux.this.total()
+            );
         }
         /**
          * {@inheritDoc}
@@ -131,12 +177,6 @@ final class Mux {
         public void run() {
             try {
                 this.task.exec();
-                for (Urn urn : this.who) {
-                    Mux.this.waiting.get(urn).decrementAndGet();
-                }
-                Mux.this.stats.addValue(
-                    (double) System.currentTimeMillis() - this.start
-                );
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (Throwable ex) {
                 Logger.error(
@@ -145,7 +185,32 @@ final class Mux {
                     ex
                 );
             }
+            for (Urn urn : this.who) {
+                Mux.this.waiting.get(urn).decrementAndGet();
+            }
+            Mux.this.stats.addValue(
+                (double) System.currentTimeMillis() - this.start
+            );
+            Logger.debug(
+                this,
+                "run(%s): finished, %d still in queue",
+                this.task,
+                Mux.this.total()
+            );
         }
+    }
+
+    /**
+     * How many waiters are here now (approximate number, since this method
+     * is not synchronized)?
+     * @return Total number
+     */
+    private long total() {
+        long total = 0;
+        for (AtomicLong val : this.waiting.values()) {
+            total += val.get();
+        }
+        return total;
     }
 
 }

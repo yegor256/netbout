@@ -72,6 +72,14 @@ final class SeeIdentityTask implements Task {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return String.format("see-identity-%s", this.identity.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void exec() {
         final long start = System.currentTimeMillis();
         final List<Long> numbers = this.bus
@@ -87,9 +95,9 @@ final class SeeIdentityTask implements Task {
                 throw new IllegalStateException(ex);
             }
         }
-        Logger.info(
+        Logger.debug(
             this,
-            "#run(): cached %d bout(s) of '%s' in %dms",
+            "#exec(): cached %d bout(s) of '%s' in %dms",
             numbers.size(),
             this.identity.name(),
             System.currentTimeMillis() - start

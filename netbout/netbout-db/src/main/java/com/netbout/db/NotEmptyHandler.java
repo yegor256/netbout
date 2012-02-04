@@ -24,53 +24,25 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.db;
 
-import com.netbout.hub.Hub;
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
-import com.netbout.spi.cpa.CpaHelper;
-import com.ymock.util.Logger;
-import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * Identity promoter.
+ * Returns TRUE if result set is not empty.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Promoter {
+final class NotEmptyHandler implements Handler<Boolean> {
 
     /**
-     * The hub to work with.
+     * {@inheritDoc}
      */
-    private final transient Hub hub;
-
-    /**
-     * Ctor.
-     * @param ihub The hub
-     */
-    public Promoter(final Hub ihub) {
-        this.hub = ihub;
-    }
-
-    /**
-     * Promote this identity.
-     * @param identity The identity to promote
-     * @param url The URL
-     * @return Helper
-     */
-    public Helper promote(final Identity identity, final URL url) {
-        final CpaHelper helper = new CpaHelper(identity, url);
-        this.hub.promote(identity, helper);
-        Logger.info(
-            this,
-            "#promote('%s', '%s'): promoted with '%[type]s'",
-            identity.name(),
-            url,
-            helper
-        );
-        return helper;
+    @Override
+    public Boolean handle(final ResultSet rset) throws SQLException {
+        return rset.next();
     }
 
 }

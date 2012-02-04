@@ -111,20 +111,12 @@ public final class VariablePred implements Predicate {
      */
     public static void extract(final Message msg,
         final Map<String, Object> props) {
-        props.put(VariablePred.TEXT, msg.text());
-        props.put(VariablePred.DATE, msg.date());
-        props.put(VariablePred.AUTHOR_NAME, msg.author().name());
-        props.put(
-            VariablePred.AUTHOR_ALIAS,
-            NetboutUtils.aliasOf(msg.author())
-        );
-        props.put(VariablePred.BOUT_DATE, msg.bout().date());
-        props.put(VariablePred.BOUT_TITLE, msg.bout().title());
         props.put(VariablePred.BOUT_RECENT, NetboutUtils.dateOf(msg.bout()));
     }
 
     /**
      * {@inheritDoc}
+     * @checkstyle CyclomaticComplexity (35 lines)
      */
     @Override
     public Object evaluate(final Msg msg, final int pos) {
@@ -136,7 +128,11 @@ public final class VariablePred implements Predicate {
         } else if (this.BOUT_DATE.equals(this.name)) {
             value = msg.<Date>get(this.BOUT_DATE);
         } else if (this.BOUT_RECENT.equals(this.name)) {
-            value = msg.<Date>get(this.BOUT_RECENT);
+            if (msg.has(this.BOUT_RECENT)) {
+                value = msg.<Date>get(this.BOUT_RECENT);
+            } else {
+                value = msg.<Date>get(this.BOUT_DATE);
+            }
         } else if (this.BOUT_TITLE.equals(this.name)) {
             value = msg.<String>get(this.BOUT_TITLE);
         } else if (this.NUMBER.equals(this.name)) {

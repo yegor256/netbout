@@ -56,12 +56,8 @@ public final class MessageRowMocker {
     public Long mock() {
         final MessageFarm farm = new MessageFarm();
         Long number;
-        try {
-            number = farm.createBoutMessage(this.bout);
-            farm.changedMessageDate(number, new Date());
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        number = farm.createBoutMessage(this.bout);
+        farm.changedMessageDate(number, new Date());
         return number;
     }
 

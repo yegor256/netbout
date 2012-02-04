@@ -78,6 +78,19 @@ public final class DefaultBus implements Bus {
      * {@inheritDoc}
      */
     @Override
+    public void close() {
+        try {
+            this.scheduler.shutdown();
+        } catch (org.quartz.SchedulerException ex) {
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(this, "#close(): Quartz shutdown, BUS closed");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public TxBuilder make(final String mnemo) {
         return new DefaultTxBuilder(this.controller, mnemo);
     }
