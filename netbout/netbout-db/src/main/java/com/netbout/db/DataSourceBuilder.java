@@ -111,17 +111,17 @@ final class DataSourceBuilder {
         props.setProperty("testWhileIdle", Boolean.TRUE.toString());
         props.setProperty("testOnBorrow", Boolean.TRUE.toString());
         props.setProperty("testOnReturn", Boolean.TRUE.toString());
-        props.setProperty("maxWait", "45000");
+        props.setProperty("maxWait", "15000");
         props.setProperty("maxActive", "3");
         props.setProperty("maxIdle", "4");
-        props.setProperty("minEvictableIdleTimeMillis", "30000");
+        props.setProperty("minEvictableIdleTimeMillis", "5000");
         props.setProperty("timeBetweenEvictionRunsMillis", "15000");
         props.setProperty("numTestsPerEvictionRun", "2");
         props.setProperty("poolPreparedStatements", Boolean.TRUE.toString());
         props.setProperty("maxOpenPreparedStatements", "25");
         props.setProperty("removeAbandoned", Boolean.TRUE.toString());
-        props.setProperty("removeAbandonedTimeout", "30");
-        props.setProperty("logAbandoned", Boolean.TRUE.toString());
+        props.setProperty("removeAbandonedTimeout", "5");
+        // props.setProperty("logAbandoned", Boolean.TRUE.toString());
         return props;
     }
 

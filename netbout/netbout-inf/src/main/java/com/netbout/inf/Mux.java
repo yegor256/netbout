@@ -49,10 +49,15 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 final class Mux implements Closeable {
 
     /**
+     * How many threads to run in parallel.
+     */
+    private static final int THREADS = 3;
+
+    /**
      * Executor service, with a number of threads working in parallel.
      */
     private final transient ExecutorService executor =
-        Executors.newFixedThreadPool(20);
+        Executors.newFixedThreadPool(Mux.THREADS);
 
     /**
      * Watcher of Mux.
@@ -102,7 +107,7 @@ final class Mux implements Closeable {
         if (this.waiting.containsKey(who)) {
             eta = this.waiting.get(who).get();
             if (eta > 0) {
-                eta = this.total() * (long) this.stats.getMean();
+                eta = this.total() * (long) this.stats.getMean() / Mux.THREADS;
             }
         } else {
             eta = 0L;

@@ -87,7 +87,8 @@ final class MuxWatcher implements Closeable, Runnable {
         while (this.alive.get()) {
             this.check();
             try {
-                TimeUnit.SECONDS.sleep(1L);
+                // @checkstyle MagicNumber (1 line)
+                TimeUnit.SECONDS.sleep(10L);
             } catch (java.lang.InterruptedException ex) {
                 throw new IllegalStateException(ex);
             }
@@ -100,16 +101,25 @@ final class MuxWatcher implements Closeable, Runnable {
      */
     private void check() {
         final long threshold = System.currentTimeMillis()
+            - TimeUnit.MINUTES.toMillis(1L);
+        final long redline = System.currentTimeMillis()
             // @checkstyle MagicNumber (1 line)
-            - TimeUnit.SECONDS.toMillis(10L);
+            - TimeUnit.SECONDS.toMillis(30L);
         for (Future future : this.running.keySet()) {
             if (future.isDone()) {
                 this.running.remove(future);
+            } else if (this.running.get(future) < redline) {
+                Logger.warn(
+                    this,
+                    "#check(): one thread is %dms old, looks like a problem",
+                    System.currentTimeMillis() - this.running.get(future)
+                );
             } else if (this.running.get(future) < threshold) {
                 Logger.error(
                     this,
-                    "#check(): one thread is %dms old, killing it",
-                    System.currentTimeMillis() - this.running.get(future)
+                    "#check(): one thread is %dms old (among %d), killing it",
+                    System.currentTimeMillis() - this.running.get(future),
+                    this.running.size()
                 );
                 try {
                     future.get(1L, TimeUnit.SECONDS);

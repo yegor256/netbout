@@ -33,6 +33,7 @@ import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.apache.commons.dbutils.DbUtils;
 
 /**
  * Database-related utility class.
@@ -78,11 +79,9 @@ public final class Database {
         synchronized (Database.class) {
             if (Database.instance == null) {
                 Database.instance = new Database();
-                try {
-                    Database.update(Database.instance.connect());
-                } catch (SQLException ex) {
-                    throw new IllegalStateException(ex);
-                }
+                final Connection conn = Database.instance.connect();
+                Database.update(conn);
+                DbUtils.closeQuietly(conn);
             }
             return Database.instance.connect();
         }

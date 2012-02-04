@@ -222,6 +222,8 @@ final class DbSession {
                 stmt.setString(pos, null);
             } else if (arg instanceof Long) {
                 stmt.setLong(pos, (Long) arg);
+            } else if (arg instanceof Boolean) {
+                stmt.setBoolean(pos, (Boolean) arg);
             } else if (arg instanceof Date) {
                 Utc.setTimestamp(stmt, pos, (Date) arg);
             } else {
