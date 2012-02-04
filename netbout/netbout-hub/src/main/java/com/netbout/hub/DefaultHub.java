@@ -103,12 +103,17 @@ public final class DefaultHub implements Hub {
      * @param bus The bus
      */
     public DefaultHub(final Bus bus) {
+        StatsFarm.addStats(this);
         this.ibus = bus;
         this.inf = new DefaultInfinity(this.ibus);
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
-        StatsFarm.addStats(this);
-        this.promote();
+        this.promote(this.persister());
+        Logger.info(
+            this,
+            "#DefaultHub(%[type]s): instantiated",
+            bus
+        );
     }
 
     /**
@@ -287,14 +292,15 @@ public final class DefaultHub implements Hub {
 
     /**
      * Promote all helpers.
+     * @param persister DB helper
      */
-    private void promote() {
+    private void promote(final Identity persister) {
         final long start = System.currentTimeMillis();
-        final Identity persister = this.persister();
         final List<Urn> helpers = this.make("get-all-helpers")
             .synchronously()
             .asDefault(new ArrayList<Urn>())
             .exec();
+        Logger.info(this, "#promote(): promoting %[list]s", helpers);
         for (Urn name : helpers) {
             if (name.equals(persister.name())) {
                 continue;

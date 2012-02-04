@@ -67,6 +67,7 @@ public final class DefaultInfinity implements Infinity {
      */
     public DefaultInfinity(final Bus ibus) {
         this.bus = ibus;
+        Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", ibus);
     }
 
     /**
@@ -110,14 +111,14 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Identity identity) {
+        this.mux.submit(
+            new HashSet(Arrays.asList(new Urn[] {identity.name()})),
+            new SeeIdentityTask(this, this.bus, identity)
+        );
         Logger.debug(
             this,
             "see('%s'): request submitted",
             identity.name()
-        );
-        this.mux.submit(
-            new HashSet(Arrays.asList(new Urn[] {identity.name()})),
-            new SeeIdentityTask(this, this.bus, identity)
         );
     }
 
@@ -126,14 +127,14 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Bout bout) {
+        this.mux.submit(
+            this.names(bout),
+            new SeeBoutTask(this, this.bus, bout)
+        );
         Logger.debug(
             this,
             "see(bout #%d): request submitted",
             bout.number()
-        );
-        this.mux.submit(
-            this.names(bout),
-            new SeeBoutTask(this, this.bus, bout)
         );
     }
 
@@ -142,14 +143,14 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
+        this.mux.submit(
+            this.names(message.bout()),
+            new SeeMessageTask(this.heap, message)
+        );
         Logger.debug(
             this,
             "see(message #%d): request submitted",
             message.number()
-        );
-        this.mux.submit(
-            this.names(message.bout()),
-            new SeeMessageTask(this.heap, message)
         );
     }
 
@@ -158,7 +159,7 @@ public final class DefaultInfinity implements Infinity {
      * @param bout The bout
      * @return Names
      */
-    public Set<Urn> names(final Bout bout) {
+    private static Set<Urn> names(final Bout bout) {
         final Set<Urn> names = new HashSet<Urn>();
         for (Participant dude : bout.participants()) {
             names.add(dude.identity().name());

@@ -56,13 +56,15 @@ public final class LifecycleListener implements ServletContextListener {
      */
     @Override
     public void contextInitialized(final ServletContextEvent event) {
+        final long start = System.currentTimeMillis();
         Manifests.append(event.getServletContext());
         this.hub = new DefaultHub();
         event.getServletContext()
             .setAttribute("com.netbout.rest.HUB", this.hub);
         Logger.info(
             this,
-            "contextInitialized(): done"
+            "contextInitialized(): done in %dms",
+            System.currentTimeMillis() - start
         );
     }
 
@@ -71,10 +73,16 @@ public final class LifecycleListener implements ServletContextListener {
      */
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
-        IOUtils.closeQuietly(this.hub);
+        final long start = System.currentTimeMillis();
+        try {
+            this.hub.close();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
         Logger.info(
             this,
-            "contextDestroyed(): done"
+            "contextDestroyed(): done in %dms",
+            System.currentTimeMillis() - start
         );
     }
 

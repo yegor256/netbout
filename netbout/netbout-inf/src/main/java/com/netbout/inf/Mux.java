@@ -29,11 +29,18 @@ package com.netbout.inf;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.io.Closeable;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
@@ -53,6 +60,11 @@ final class Mux implements Closeable {
         Executors.newFixedThreadPool(20);
 
     /**
+     * Watcher of Mux.
+     */
+    private final transient MuxWatcher watcher = new MuxWatcher();
+
+    /**
      * How many tasks are currently waiting.
      */
     private final transient ConcurrentMap<Urn, AtomicLong> waiting =
@@ -69,8 +81,14 @@ final class Mux implements Closeable {
      */
     @Override
     public void close() {
-        this.executor.shutdown();
-        Logger.info(this, "#close(): executor stopped");
+        this.watcher.close();
+        final List<Runnable> unfinished = this.executor.shutdownNow();
+        Logger.info(
+            this,
+            "#close(): stopped with %d unfinished tasks and %d waiting",
+            unfinished.size(),
+            this.total()
+        );
     }
 
     /**
@@ -97,7 +115,7 @@ final class Mux implements Closeable {
      * @param task The task to execute
      */
     public void submit(final Set<Urn> who, final Task task) {
-        this.executor.submit(new TaskShell(who, task));
+        this.watcher.watch(this.executor.submit(new TaskShell(who, task)));
     }
 
     /**
@@ -125,14 +143,8 @@ final class Mux implements Closeable {
         public TaskShell(final Set<Urn> urns, final Task tsk) {
             this.task = tsk;
             this.who = urns;
-            synchronized (Mux.this.waiting) {
-                for (Urn urn : this.who) {
-                    if (!Mux.this.waiting.containsKey(urn)) {
-                        Mux.this.waiting.put(urn, new AtomicLong());
-                    }
-                }
-            }
             for (Urn urn : this.who) {
+                Mux.this.waiting.putIfAbsent(urn, new AtomicLong());
                 Mux.this.waiting.get(urn).incrementAndGet();
             }
             Logger.debug(
@@ -151,12 +163,6 @@ final class Mux implements Closeable {
         public void run() {
             try {
                 this.task.exec();
-                for (Urn urn : this.who) {
-                    Mux.this.waiting.get(urn).decrementAndGet();
-                }
-                Mux.this.stats.addValue(
-                    (double) System.currentTimeMillis() - this.start
-                );
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (Throwable ex) {
                 Logger.error(
@@ -165,6 +171,12 @@ final class Mux implements Closeable {
                     ex
                 );
             }
+            for (Urn urn : this.who) {
+                Mux.this.waiting.get(urn).decrementAndGet();
+            }
+            Mux.this.stats.addValue(
+                (double) System.currentTimeMillis() - this.start
+            );
             Logger.debug(
                 this,
                 "run(%s): finished, %d still in queue",

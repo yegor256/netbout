@@ -113,8 +113,8 @@ final class BoutData implements BoutDt {
      */
     @Override
     public void kickOff(final Urn identity) {
+        final ParticipantDt dude = this.find(identity);
         synchronized (this) {
-            final ParticipantDt dude = this.find(identity);
             this.participants.remove(dude);
             this.hub.make("removed-bout-participant")
                 .synchronously()
@@ -136,15 +136,9 @@ final class BoutData implements BoutDt {
                     .synchronously()
                     .arg(this.number)
                     .exec();
-                Logger.debug(
-                    this,
-                    "#getDate(): date '%s' loaded for bout #%d",
-                    this.date,
-                    this.number
-                );
             }
-            return this.date;
         }
+        return this.date;
     }
 
     /**
@@ -158,15 +152,9 @@ final class BoutData implements BoutDt {
                     .synchronously()
                     .arg(this.number)
                     .exec();
-                Logger.debug(
-                    this,
-                    "#getTitle(): title '%s' loaded for bout #%d",
-                    this.title,
-                    this.number
-                );
             }
-            return this.title;
         }
+        return this.title;
     }
 
     /**
@@ -182,13 +170,13 @@ final class BoutData implements BoutDt {
                 .arg(this.title)
                 .asDefault(true)
                 .exec();
-            Logger.debug(
-                this,
-                "#setTitle('%s'): set for bout #%d",
-                this.title,
-                this.number
-            );
         }
+        Logger.debug(
+            this,
+            "#setTitle('%s'): set for bout #%d",
+            this.title,
+            this.number
+        );
     }
 
     /**
@@ -196,9 +184,9 @@ final class BoutData implements BoutDt {
      */
     @Override
     public ParticipantDt addParticipant(final Urn name) {
+        final ParticipantDt data =
+            new ParticipantData(this.hub, this.number, name);
         synchronized (this) {
-            final ParticipantDt data =
-                new ParticipantData(this.hub, this.number, name);
             this.getParticipants().add(data);
             this.hub.make("added-bout-participant")
                 .synchronously()
@@ -206,15 +194,15 @@ final class BoutData implements BoutDt {
                 .arg(data.getIdentity())
                 .asDefault(true)
                 .exec();
-            Logger.debug(
-                this,
-                "#addParticipant('%s'): added for bout #%d (%d total)",
-                data.getIdentity(),
-                this.number,
-                this.getParticipants().size()
-            );
-            return data;
         }
+        Logger.debug(
+            this,
+            "#addParticipant('%s'): added for bout #%d (%d total)",
+            data.getIdentity(),
+            this.number,
+            this.getParticipants().size()
+        );
+        return data;
     }
 
     /**
@@ -237,15 +225,9 @@ final class BoutData implements BoutDt {
                         new ParticipantData(this.hub, this.number, identity)
                     );
                 }
-                Logger.debug(
-                    this,
-                    "#getParticipants(): reloaded %d participants for bout #%d",
-                    this.participants.size(),
-                    this.number
-                );
             }
-            return this.participants;
         }
+        return this.participants;
     }
 
     /**
@@ -253,22 +235,23 @@ final class BoutData implements BoutDt {
      */
     @Override
     public MessageDt addMessage() {
+        MessageDt data;
         synchronized (this) {
             final Long num = this.hub.make("create-bout-message")
                 .synchronously()
                 .arg(this.number)
                 .asDefault(1L)
                 .exec();
-            final MessageDt data = new MessageData(this.hub, num);
+            data = new MessageData(this.hub, num);
             this.messages.put(num, data);
-            Logger.debug(
-                this,
-                "#addMessage(): new empty message #%d added to bout #%d",
-                data.getNumber(),
-                this.number
-            );
-            return data;
         }
+        Logger.debug(
+            this,
+            "#addMessage(): new empty message #%d added to bout #%d",
+            data.getNumber(),
+            this.number
+        );
+        return data;
     }
 
     /**
@@ -292,8 +275,8 @@ final class BoutData implements BoutDt {
                 }
                 this.messages.put(num, new MessageData(this.hub, num));
             }
-            return this.messages.get(num);
         }
+        return this.messages.get(num);
     }
 
     /**

@@ -79,7 +79,12 @@ public final class DefaultBus implements Bus {
      */
     @Override
     public void close() {
-        // nothing to do yet
+        try {
+            this.scheduler.shutdown();
+        } catch (org.quartz.SchedulerException ex) {
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(this, "#close(): Quartz shutdown, BUS closed");
     }
 
     /**
