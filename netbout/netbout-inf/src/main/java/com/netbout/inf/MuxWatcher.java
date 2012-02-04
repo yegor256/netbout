@@ -110,6 +110,11 @@ final class MuxWatcher implements Closeable, Runnable {
                 if (future.isDone()) {
                     this.running.remove(future);
                 } else if (this.running.get(future) < threshold) {
+                    Logger.error(
+                        this,
+                        "#check(): one thread is older than %dms, killing it",
+                        System.currentTimeMillis() - this.running.get(future)
+                    );
                     try {
                         future.get(1L, TimeUnit.SECONDS);
                     } catch (java.lang.InterruptedException ex) {

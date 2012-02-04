@@ -138,7 +138,7 @@ final class RexslRestClient implements RestClient {
                     attempt
                 );
                 try {
-                    TimeUnit.MILLISECONDS.sleep(eta);
+                    TimeUnit.MILLISECONDS.sleep(eta * attempt);
                 } catch (InterruptedException ex) {
                     throw new IllegalStateException(ex);
                 }

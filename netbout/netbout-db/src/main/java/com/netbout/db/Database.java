@@ -56,7 +56,7 @@ public final class Database {
      * Protected ctor.
      */
     protected Database() {
-        // empty
+        Logger.info(Database.class, "#Database(): instantiated");
     }
 
     /**
