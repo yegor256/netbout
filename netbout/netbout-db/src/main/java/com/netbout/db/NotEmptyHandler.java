@@ -26,39 +26,23 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * Mocker of {@code MESSAGE} row in a database.
+ * Returns TRUE if result set is not empty.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MessageRowMocker {
+final class NotEmptyHandler implements Handler<Boolean> {
 
     /**
-     * The bout it is related to.
+     * {@inheritDoc}
      */
-    private final transient Long bout;
-
-    /**
-     * Public ctor.
-     * @param number The bout
-     */
-    public MessageRowMocker(final Long number) {
-        this.bout = number;
-    }
-
-    /**
-     * Mock it and return its number.
-     */
-    public Long mock() {
-        final MessageFarm farm = new MessageFarm();
-        Long number;
-        number = farm.createBoutMessage(this.bout);
-        farm.changedMessageDate(number, new Date());
-        return number;
+    @Override
+    public Boolean handle(final ResultSet rset) throws SQLException {
+        return rset.next();
     }
 
 }

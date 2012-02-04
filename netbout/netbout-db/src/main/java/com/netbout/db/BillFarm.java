@@ -47,50 +47,28 @@ public final class BillFarm {
     /**
      * Save a collection of incoming bills, from BUS.
      * @param lines Text forms of them
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("save-bills")
-    public void saveBills(final List<String> lines) throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        try {
-            for (String line : lines) {
-                final PreparedStatement stmt = conn.prepareStatement(
-                    // @checkstyle LineLength (1 line)
-                    "INSERT INTO bill (date, mnemo, helper, msec, bout) VALUES (?, ?, ?, ?, ?)"
-                );
-                final String[] parts = line.split("[ ]+");
-                Utc.setTimestamp(
-                    stmt,
-                    1,
+    public void saveBills(final List<String> lines) {
+        for (String line : lines) {
+            final String[] parts = line.split("[ ]+");
+            final DbSession session = new DbSession()
+                .sql("INSERT INTO bill (date, mnemo, helper, msec, bout) VALUES (?, ?, ?, ?, ?)")
+                .set(
                     ISODateTimeFormat.dateTime()
                         .parseDateTime(parts[0])
                         .toDate()
-                );
-                stmt.setString(2, parts[1]);
-                // @checkstyle MagicNumber (6 lines)
-                stmt.setString(3, parts[2]);
-                stmt.setLong(4, Long.valueOf(parts[3]));
+                )
+                .set(parts[1])
+                .set(parts[2])
+                .set(Long.valueOf(parts[3]));
                 if ("null".equals(parts[4])) {
-                    stmt.setString(5, null);
+                    session.set(null);
                 } else {
-                    stmt.setLong(5, Long.valueOf(parts[4]));
+                    session.set(Long.valueOf(parts[4]));
                 }
-                try {
-                    stmt.execute();
-                } finally {
-                    stmt.close();
-                }
-            }
-        } finally {
-            conn.close();
+            session.insert(new VoidHandler());
         }
-        Logger.debug(
-            this,
-            "#saveBills(%d bills): saved [%dms]",
-            lines.size(),
-            System.currentTimeMillis() - start
-        );
     }
 
 }

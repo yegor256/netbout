@@ -35,6 +35,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,188 +52,113 @@ public final class NamespaceFarm {
      * @param owner The owner of it
      * @param name The name of namespace
      * @param template The template of it
-     * @throws SQLException If some SQL problem inside
-     * @checkstyle ExecutableStatementCount (70 lines)
      */
     @Operation("namespace-was-registered")
     public void namespaceWasRegistered(final Urn owner, final String name,
-        final String template) throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT name FROM namespace WHERE name = ?"
-            );
-            stmt.setString(1, name);
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (rset.next()) {
-                    final PreparedStatement istmt = conn.prepareStatement(
-                        // @checkstyle LineLength (1 line)
-                        "UPDATE namespace SET identity = ?, template = ? WHERE name = ?"
-                    );
-                    istmt.setString(1, owner.toString());
-                    istmt.setString(2, template);
-                    // @checkstyle MagicNumber (1 line)
-                    istmt.setString(3, name);
-                    istmt.executeUpdate();
-                    Logger.debug(
-                        this,
-                        // @checkstyle LineLength (1 line)
-                        "#namespaceWasRegistered('%s', '%s', '%s'): updated [%dms]",
-                        owner,
-                        name,
-                        template,
-                        System.currentTimeMillis() - start
-                    );
-                } else {
-                    final PreparedStatement istmt = conn.prepareStatement(
-                        // @checkstyle LineLength (1 line)
-                        "INSERT INTO namespace (name, identity, template, date) VALUES (?, ?, ?, ?)"
-                    );
-                    istmt.setString(1, name);
-                    istmt.setString(2, owner.toString());
-                    // @checkstyle MagicNumber (1 line)
-                    istmt.setString(3, template);
-                    // @checkstyle MagicNumber (1 line)
-                    Utc.setTimestamp(istmt, 4);
-                    istmt.executeUpdate();
-                    Logger.debug(
-                        this,
-                        // @checkstyle LineLength (1 line)
-                        "#namespaceWasRegistered('%s', '%s', '%s'): inserted [%dms]",
-                        owner,
-                        name,
-                        template,
-                        System.currentTimeMillis() - start
-                    );
-                }
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
+        final String template) {
+        final Boolean exists = new DbSession()
+            .sql("SELECT name FROM namespace WHERE name = ?")
+            .set(name)
+            .select(new NotEmptyHandler());
+        if (exists) {
+            new DbSession()
+                // @checkstyle LineLength (1 line)
+                .sql("UPDATE namespace SET identity = ?, template = ? WHERE name = ?")
+                .set(owner)
+                .set(template)
+                .set(name)
+                .update();
+        } else {
+            new DbSession()
+                // @checkstyle LineLength (1 line)
+                .sql("INSERT INTO namespace (name, identity, template, date) VALUES (?, ?, ?, ?)")
+                .set(name)
+                .set(owner)
+                .set(template)
+                .set(new Date())
+                .insert(new VoidHandler());
         }
     }
 
     /**
      * Find all namespaces.
      * @return List of them
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("get-all-namespaces")
-    public List<String> getAllNamespaces() throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        final List<String> names = new ArrayList<String>();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT name FROM namespace"
-            );
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                while (rset.next()) {
-                    names.add(rset.getString(1));
+    public List<String> getAllNamespaces() {
+        return new DbSession()
+            .sql("SELECT name FROM namespace")
+            .select(
+                new Handler<List<String>>() {
+                    @Override
+                    public List<String> handle(final ResultSet rset)
+                        throws SQLException {
+                        final List<String> names = new ArrayList<String>();
+                        while (rset.next()) {
+                            names.add(rset.getString(1));
+                        }
+                        return names;
+                    }
                 }
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#getAllNamespaces(): retrieved %d namespace(s) [%dms]",
-            names.size(),
-            System.currentTimeMillis() - start
-        );
-        return names;
+            );
     }
 
     /**
      * Get owner of namespace.
      * @param name The name of namespace
      * @return Photo of the identity
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("get-namespace-owner")
-    public Urn getNamespaceOwner(final String name) throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        Urn owner;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT identity FROM namespace WHERE name = ?"
-            );
-            stmt.setString(1, name);
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (!rset.next()) {
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "Namespace '%s' not found, can't read owner",
-                            name
-                        )
-                    );
+    public Urn getNamespaceOwner(final String name) {
+        return new DbSession()
+            .sql("SELECT identity FROM namespace WHERE name = ?")
+            .set(name)
+            .select(
+                new Handler<Urn>() {
+                    @Override
+                    public Urn handle(final ResultSet rset)
+                        throws SQLException {
+                        if (!rset.next()) {
+                            throw new IllegalArgumentException(
+                                String.format(
+                                    "Namespace '%s' not found, can't read owner",
+                                    name
+                                )
+                            );
+                        }
+                        return Urn.create(rset.getString(1));
+                    }
                 }
-                owner = Urn.create(rset.getString(1));
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#getNamespaceOwner('%s'): retrieved '%s' [%dms]",
-            name,
-            owner,
-            System.currentTimeMillis() - start
-        );
-        return owner;
+            );
     }
 
     /**
      * Get template of namespace.
      * @param name The name of namespace
      * @return Photo of the identity
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("get-namespace-template")
-    public String getNamespaceTemplate(final String name) throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        String template;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT template FROM namespace WHERE name = ?"
-            );
-            stmt.setString(1, name);
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (!rset.next()) {
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "Namespace '%s' not found, can't read template",
-                            name
-                        )
-                    );
+    public String getNamespaceTemplate(final String name) {
+        return new DbSession()
+            .sql("SELECT template FROM namespace WHERE name = ?")
+            .set(name)
+            .select(
+                new Handler<String>() {
+                    @Override
+                    public String handle(final ResultSet rset)
+                        throws SQLException {
+                        if (!rset.next()) {
+                            throw new IllegalArgumentException(
+                                String.format(
+                                    "Namespace '%s' not found, can't read tmpl",
+                                    name
+                                )
+                            );
+                        }
+                        return rset.getString(1);
+                    }
                 }
-                template = rset.getString(1);
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#getNamespaceTemplate('%s'): retrieved '%s' [%dms]",
-            name,
-            template,
-            System.currentTimeMillis() - start
-        );
-        return template;
+            );
     }
 
 }

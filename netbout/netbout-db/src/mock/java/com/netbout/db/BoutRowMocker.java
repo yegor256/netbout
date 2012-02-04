@@ -57,13 +57,8 @@ public final class BoutRowMocker {
      */
     public Long mock() {
         final BoutFarm farm = new BoutFarm();
-        Long bout;
-        try {
-            bout = farm.getNextBoutNumber();
-            farm.startedNewBout(bout);
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        final Long bout = farm.getNextBoutNumber();
+        farm.startedNewBout(bout);
         for (Urn name : this.participants) {
             new ParticipantRowMocker(bout).namedAs(name).mock();
         }

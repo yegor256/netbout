@@ -26,39 +26,24 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * Mocker of {@code MESSAGE} row in a database.
+ * Handler or ResultSet.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @param <T> Type of expected result
  */
-public final class MessageRowMocker {
+interface Handler<T> {
 
     /**
-     * The bout it is related to.
+     * Process the result set and return some value.
+     * @param rset The result set to process
+     * @return The result
+     * @throws SQLException If something goes wrong inside
      */
-    private final transient Long bout;
-
-    /**
-     * Public ctor.
-     * @param number The bout
-     */
-    public MessageRowMocker(final Long number) {
-        this.bout = number;
-    }
-
-    /**
-     * Mock it and return its number.
-     */
-    public Long mock() {
-        final MessageFarm farm = new MessageFarm();
-        Long number;
-        number = farm.createBoutMessage(this.bout);
-        farm.changedMessageDate(number, new Date());
-        return number;
-    }
+    T handle(ResultSet rset) throws SQLException;
 
 }

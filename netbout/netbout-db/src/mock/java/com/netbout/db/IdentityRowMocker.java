@@ -102,8 +102,6 @@ public final class IdentityRowMocker {
                     )
                 )
             );
-        } catch (java.sql.SQLException ex) {
-            throw new IllegalArgumentException(ex);
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(ex);
         }

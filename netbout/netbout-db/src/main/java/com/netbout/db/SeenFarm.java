@@ -34,6 +34,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 /**
  * Seen statuses.
@@ -48,32 +49,15 @@ public final class SeenFarm {
      * Mark this message as seen by the specified identity.
      * @param msg The number of the message
      * @param identity The viewer
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("message-was-seen")
-    public void messageWasSeen(final Long msg, final Urn identity)
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)"
-            );
-            stmt.setLong(1, msg);
-            stmt.setString(2, identity.toString());
-            // @checkstyle MagicNumber (1 line)
-            Utc.setTimestamp(stmt, 3);
-            stmt.execute();
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#messageWasSeen(#%d, '%s'): inserted [%dms]",
-            msg,
-            identity,
-            System.currentTimeMillis() - start
-        );
+    public void messageWasSeen(final Long msg, final Urn identity) {
+        new DbSession()
+            .sql("INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)")
+            .set(msg)
+            .set(identity)
+            .set(new Date())
+            .insert(new VoidHandler());
     }
 
     /**
@@ -81,42 +65,14 @@ public final class SeenFarm {
      * @param msg The number of the message
      * @param identity The viewer
      * @return Was it seen?
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("was-message-seen")
-    public Boolean wasMessageSeen(final Long msg, final Urn identity)
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        Boolean seen;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "SELECT message FROM seen WHERE message = ? AND identity = ?"
-            );
-            stmt.setLong(1, msg);
-            stmt.setString(2, identity.toString());
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (rset.next()) {
-                    seen = true;
-                } else {
-                    seen = false;
-                }
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#wasMessageSeen(#%d, '%s'): retrieved %b [%dms]",
-            msg,
-            identity,
-            seen,
-            System.currentTimeMillis() - start
-        );
-        return seen;
+    public Boolean wasMessageSeen(final Long msg, final Urn identity) {
+        return new DbSession()
+            .sql("SELECT message FROM seen WHERE message = ? AND identity = ?")
+            .set(msg)
+            .set(identity)
+            .select(new NotEmptyHandler());
     }
 
 }

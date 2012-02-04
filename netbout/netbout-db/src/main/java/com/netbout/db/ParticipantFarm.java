@@ -35,6 +35,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,102 +51,56 @@ public final class ParticipantFarm {
      * Get list of names of bout participants.
      * @param bout The number of the bout
      * @return List of names
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("get-bout-participants")
-    public List<Urn> getBoutParticipants(final Long bout)
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        final List<Urn> names = new ArrayList<Urn>();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                // @checkstyle LineLength (1 line)
-                "SELECT identity FROM participant JOIN bout ON bout.number = participant.bout WHERE bout = ?"
-            );
-            stmt.setLong(1, bout);
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                while (rset.next()) {
-                    names.add(Urn.create(rset.getString(1)));
+    public List<Urn> getBoutParticipants(final Long bout) {
+        return new DbSession()
+            // @checkstyle LineLength (1 line)
+            .sql("SELECT identity FROM participant JOIN bout ON bout.number = participant.bout WHERE bout = ?")
+            .set(bout)
+            .select(
+                new Handler<List<Urn>>() {
+                    @Override
+                    public List<Urn> handle(final ResultSet rset)
+                        throws SQLException {
+                        final List<Urn> names = new ArrayList<Urn>();
+                        while (rset.next()) {
+                            names.add(Urn.create(rset.getString(1)));
+                        }
+                        return names;
+                    }
                 }
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#getBoutParticipants('%s'): retrieved %d name(s) [%dms]",
-            bout,
-            names.size(),
-            System.currentTimeMillis() - start
-        );
-        return names;
+            );
     }
 
     /**
      * Added new participant to the bout.
      * @param bout The bout
      * @param identity The name of the person
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("added-bout-participant")
-    public void addedBoutParticipant(final Long bout, final Urn identity)
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                // @checkstyle LineLength (1 line)
-                "INSERT INTO participant (bout, identity, date) VALUES (?, ?, ?)"
-            );
-            stmt.setLong(1, bout);
-            stmt.setString(2, identity.toString());
-            // @checkstyle MagicNumber (1 line)
-            Utc.setTimestamp(stmt, 3);
-            stmt.execute();
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#addedBoutParticipant(#%d, '%s'): added [%dms]",
-            bout,
-            identity,
-            System.currentTimeMillis() - start
-        );
+    public void addedBoutParticipant(final Long bout, final Urn identity) {
+        new DbSession()
+            // @checkstyle LineLength (1 line)
+            .sql("INSERT INTO participant (bout, identity, date) VALUES (?, ?, ?)")
+            .set(bout)
+            .set(identity)
+            .set(new Date())
+            .insert(new VoidHandler());
     }
 
     /**
      * Removed participant of the bout.
      * @param bout The bout
      * @param identity The name of the person
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("removed-bout-participant")
-    public void removedBoutParticipant(final Long bout, final Urn identity)
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                "DELETE FROM participant WHERE bout = ? AND identity = ?"
-            );
-            stmt.setLong(1, bout);
-            stmt.setString(2, identity.toString());
-            stmt.execute();
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#removedBoutParticipant(#%d, '%s'): removed [%dms]",
-            bout,
-            identity,
-            System.currentTimeMillis() - start
-        );
+    public void removedBoutParticipant(final Long bout, final Urn identity) {
+        new DbSession()
+            .sql("DELETE FROM participant WHERE bout = ? AND identity = ?")
+            .set(bout)
+            .set(identity)
+            .update();
     }
 
     /**
@@ -153,48 +108,32 @@ public final class ParticipantFarm {
      * @param bout The number of the bout
      * @param identity The participant
      * @return Status of the participant
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("get-participant-status")
-    public Boolean getParticipantStatus(final Long bout, final Urn identity)
-        throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        Boolean status;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                // @checkstyle LineLength (1 line)
-                "SELECT confirmed FROM participant WHERE bout = ? AND identity = ?"
-            );
-            stmt.setLong(1, bout);
-            stmt.setString(2, identity.toString());
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (!rset.next()) {
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "Participant '%s' not found in bout #%d",
-                            identity,
-                            bout
-                        )
-                    );
+    public Boolean getParticipantStatus(final Long bout, final Urn identity) {
+        return new DbSession()
+            // @checkstyle LineLength (1 line)
+            .sql("SELECT confirmed FROM participant WHERE bout = ? AND identity = ?")
+            .set(bout)
+            .set(identity)
+            .insert(
+                new Handler<Boolean>() {
+                    @Override
+                    public Boolean handle(final ResultSet rset)
+                        throws SQLException {
+                        if (!rset.next()) {
+                            throw new IllegalArgumentException(
+                                String.format(
+                                    "participant %s not found in bout #%d",
+                                    identity,
+                                    bout
+                                )
+                            );
+                        }
+                        return rset.getBoolean(1);
+                    }
                 }
-                status = rset.getBoolean(1);
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#getParticipantStatus(#%d, '%s'): retrieved '%b' [%dms]",
-            bout,
-            identity,
-            status,
-            System.currentTimeMillis() - start
-        );
-        return status;
+            );
     }
 
     /**
@@ -202,44 +141,17 @@ public final class ParticipantFarm {
      * @param bout The number of the bout
      * @param identity The participant
      * @param status The status to set
-     * @throws SQLException If some SQL problem inside
      */
     @Operation("changed-participant-status")
     public void changedParticipantStatus(final Long bout,
-        final Urn identity, final Boolean status) throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(
-                // @checkstyle LineLength (1 line)
-                "UPDATE participant SET confirmed = ? WHERE bout = ? AND identity = ?"
-            );
-            stmt.setBoolean(1, status);
-            stmt.setLong(2, bout);
-            // @checkstyle MagicNumber (1 line)
-            stmt.setString(3, identity.toString());
-            final int updated = stmt.executeUpdate();
-            if (updated != 1) {
-                throw new SQLException(
-                    String.format(
-                        "Participant #%d:'%s' not found, can't set status '%b'",
-                        bout,
-                        identity,
-                        status
-                    )
-                );
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#changedParticipantStatus(#%d, '%s', %b): updated [%dms]",
-            bout,
-            identity,
-            status,
-            System.currentTimeMillis() - start
-        );
+        final Urn identity, final Boolean status) {
+        new DbSession()
+            // @checkstyle LineLength (1 line)
+            .sql("UPDATE participant SET confirmed = ? WHERE bout = ? AND identity = ?")
+            .set(status)
+            .set(bout)
+            .set(identity)
+            .update();
     }
 
 }
