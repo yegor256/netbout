@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
@@ -59,6 +60,11 @@ final class Mux implements Closeable {
     private final transient MuxWatcher watcher = new MuxWatcher();
 
     /**
+     * Are we still ready to accept any tasks?
+     */
+    private final transient AtomicBoolean alive = new AtomicBoolean(true);
+
+    /**
      * How many tasks are currently waiting.
      */
     private final transient ConcurrentMap<Urn, AtomicLong> waiting =
@@ -75,6 +81,7 @@ final class Mux implements Closeable {
      */
     @Override
     public void close() {
+        this.alive.set(false);
         this.watcher.close();
         final List<Runnable> unfinished = this.executor.shutdownNow();
         Logger.info(
@@ -109,7 +116,15 @@ final class Mux implements Closeable {
      * @param task The task to execute
      */
     public void submit(final Set<Urn> who, final Task task) {
-        this.watcher.watch(this.executor.submit(new TaskShell(who, task)));
+        if (this.alive.get()) {
+            this.watcher.watch(this.executor.submit(new TaskShell(who, task)));
+        } else {
+            Logger.warn(
+                this,
+                "#submit(): Mux is closed, %s ignored",
+                task
+            );
+        }
     }
 
     /**

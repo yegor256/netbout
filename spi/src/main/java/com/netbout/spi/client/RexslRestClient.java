@@ -57,6 +57,11 @@ final class RexslRestClient implements RestClient {
     private static final int MAX_ATTEMPTS = 5;
 
     /**
+     * Minimum delay in msec.
+     */
+    private static final long MIN_DELAY = 5000L;
+
+    /**
      * Test client.
      */
     private final transient TestClient client;
@@ -103,15 +108,6 @@ final class RexslRestClient implements RestClient {
         boolean ready = false;
         int attempt = 0;
         while (!ready) {
-            if (attempt > this.MAX_ATTEMPTS) {
-                throw new IllegalStateException(
-                    String.format(
-                        "Failed to '%s' after %d attempt(s)",
-                        message,
-                        attempt
-                    )
-                );
-            }
             attempt += 1;
             response = this.client
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
@@ -132,13 +128,29 @@ final class RexslRestClient implements RestClient {
                 Logger.warn(
                     this,
                     // @checkstyle LineLength (1 line)
-                    "get('%s'): ETA=%dms reported, will wait and try again in attempt #%d",
+                    "get('%s'): ETA=%dms reported, the page is not ready (it was an attempt #%d)",
                     message,
                     eta,
                     attempt
                 );
+                if (attempt > this.MAX_ATTEMPTS) {
+                    throw new IllegalStateException(
+                        String.format(
+                            "Failed to '%s' after %d attempt(s)",
+                            message,
+                            attempt
+                        )
+                    );
+                }
+                final long delay = Math.max(eta * attempt, this.MIN_DELAY);
+                Logger.warn(
+                    this,
+                    "get('%s'): let's wait %dms and try again",
+                    message,
+                    delay
+                );
                 try {
-                    TimeUnit.MILLISECONDS.sleep(eta * attempt);
+                    TimeUnit.MILLISECONDS.sleep(delay);
                 } catch (InterruptedException ex) {
                     throw new IllegalStateException(ex);
                 }

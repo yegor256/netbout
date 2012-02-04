@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Multiplexer of heap updating tasks.
@@ -50,13 +51,8 @@ final class MuxWatcher implements Closeable, Runnable {
 
     /**
      * Still alive.
-     *
-     * <p>This property is volatile because it is accessed by two threads
-     * at the same time. Both threads should read the latest value of the
-     * property, but explicit synchronization will be an overkill here.
      */
-    @SuppressWarnings("PMD.AvoidUsingVolatile")
-    private transient volatile boolean alive = true;
+    private final transient AtomicBoolean alive = new AtomicBoolean(true);
 
     /**
      * Public ctor.
@@ -70,7 +66,7 @@ final class MuxWatcher implements Closeable, Runnable {
      */
     @Override
     public void close() {
-        this.alive = false;
+        this.alive.set(false);
         Logger.info(this, "#close(): no more watching");
     }
 
@@ -88,7 +84,7 @@ final class MuxWatcher implements Closeable, Runnable {
     @Override
     public void run() {
         Logger.info(this, "#run(): starting to watch Mux");
-        while (this.alive) {
+        while (this.alive.get()) {
             this.check();
             try {
                 TimeUnit.SECONDS.sleep(1L);
