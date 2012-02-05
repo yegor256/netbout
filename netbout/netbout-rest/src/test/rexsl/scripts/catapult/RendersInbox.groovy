@@ -30,6 +30,7 @@
 package com.netbout.rest.rexsl.scripts.catapult
 
 import com.netbout.spi.Urn
+import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.netbout.utils.Cipher
@@ -46,7 +47,7 @@ RestTester.start(RestUriBuilder.from(starter).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('read home page')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page[eta=0]')
+    .assertThat(new EtaAssertion())
     .rel('/page/links/link[@rel="helper"]/@href')
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('read helper page')

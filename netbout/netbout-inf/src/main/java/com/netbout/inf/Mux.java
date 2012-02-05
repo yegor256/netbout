@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -50,8 +51,14 @@ final class Mux implements Closeable {
 
     /**
      * How many threads to run in parallel.
+     *
+     * <p>This number shouldn't be too big, becuase tasks will take just
+     * more time to execute, which is not so good. Also keep in mind that
+     * the bottleneck here is that database, since every task is mostly working
+     * with data retrieval from DB. Thus, pay attention to the number of
+     * connections allowed in {@code com.netbout.db.DataSourceBuilder}.
      */
-    private static final int THREADS = 20;
+    private static final int THREADS = 5;
 
     /**
      * Executor service, with a number of threads working in parallel.
@@ -88,11 +95,15 @@ final class Mux implements Closeable {
     public void close() {
         this.alive.set(false);
         this.watcher.close();
-        final List<Runnable> unfinished = this.executor.shutdownNow();
+        this.executor.shutdown();
+        try {
+            this.executor.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            throw new IllegalStateException(ex);
+        }
         Logger.info(
             this,
-            "#close(): stopped with %d unfinished tasks and %d waiting",
-            unfinished.size(),
+            "#close(): stopped with %d waiting tasks (they are ignored)",
             this.total()
         );
     }

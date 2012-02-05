@@ -30,6 +30,7 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.Urn
+import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
@@ -56,7 +57,7 @@ RestTester.start(RestUriBuilder.from(bout))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('read bout page')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page[eta=0]')
+    .assertThat(new EtaAssertion())
     .assertXPath('/page/identity[name="urn:test:Mr%2EMandy"]')
     .assertXPath('/page/bout/participants/participant[identity="urn:test:Mr%2EMandy"]')
     .assertXPath('/page/bout/participants/participant[identity="urn:test:Bob%20Good"]')

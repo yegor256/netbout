@@ -54,7 +54,7 @@ final class DataSourceBuilder {
         data.setMaxActive(4);
         data.setMaxIdle(4);
         data.setInitialSize(2);
-        data.setMaxWait(5000);
+        data.setMaxWait(30000);
         data.setPoolPreparedStatements(true);
         data.setMaxOpenPreparedStatements(10);
         data.setTestOnBorrow(true);
@@ -62,7 +62,7 @@ final class DataSourceBuilder {
         data.setTestWhileIdle(true);
         data.setTimeBetweenEvictionRunsMillis(5000);
         data.setNumTestsPerEvictionRun(5);
-        data.setMinEvictableIdleTimeMillis(5000);
+        data.setMinEvictableIdleTimeMillis(15000);
         data.setDefaultAutoCommit(true);
         data.setDefaultReadOnly(false);
         Logger.info(

@@ -30,6 +30,7 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.Urn
+import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
@@ -42,7 +43,7 @@ RestTester.start(RestUriBuilder.from(leon))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('read first inbox page, with many bouts')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page[eta=0]')
+    .assertThat(new EtaAssertion())
     .assertXPath('/page/identity[name="urn:test:leon"]')
     .assertXPath('/page/bouts[count(bout) > 2]')
     .assertXPath('/page/periods/link[@rel="more"]')

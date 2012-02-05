@@ -44,6 +44,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 final class MuxWatcher implements Closeable, Runnable {
 
     /**
+     * Maximum task execution time, in msec.
+     */
+    private static final long MAX_TIME = 8 * 60 * 1000L;
+
+    /**
+     * When we should issue a warning about the task, in msec.
+     */
+    private static final long WARN_TIME = 2 * 60 * 1000L;
+
+    /**
+     * How often to check, in msec.
+     */
+    private static final long CHECK_TIME = 10 * 1000L;
+
+    /**
      * Set of running futures, and their start moments (in msec).
      */
     private final transient ConcurrentMap<Future, Long> running =
@@ -52,7 +67,7 @@ final class MuxWatcher implements Closeable, Runnable {
     /**
      * Still alive.
      */
-    private final transient AtomicBoolean alive = new AtomicBoolean(true);
+    private final transient AtomicBoolean alive = new AtomicBoolean(false);
 
     /**
      * Public ctor.
@@ -84,12 +99,12 @@ final class MuxWatcher implements Closeable, Runnable {
     @Override
     public void run() {
         Logger.info(this, "#run(): starting to watch Mux");
+        this.alive.set(true);
         while (this.alive.get()) {
             this.check();
             try {
-                // @checkstyle MagicNumber (1 line)
-                TimeUnit.SECONDS.sleep(10L);
-            } catch (java.lang.InterruptedException ex) {
+                TimeUnit.MILLISECONDS.sleep(this.CHECK_TIME);
+            } catch (InterruptedException ex) {
                 throw new IllegalStateException(ex);
             }
         }
@@ -100,11 +115,8 @@ final class MuxWatcher implements Closeable, Runnable {
      * Check all futures.
      */
     private void check() {
-        final long threshold = System.currentTimeMillis()
-            - TimeUnit.MINUTES.toMillis(2L);
-        final long redline = System.currentTimeMillis()
-            // @checkstyle MagicNumber (1 line)
-            - TimeUnit.SECONDS.toMillis(30L);
+        final long threshold = System.currentTimeMillis() - this.MAX_TIME;
+        final long redline = System.currentTimeMillis() - this.WARN_TIME;
         for (Future future : this.running.keySet()) {
             if (future.isDone()) {
                 this.running.remove(future);
@@ -117,7 +129,7 @@ final class MuxWatcher implements Closeable, Runnable {
                 );
                 try {
                     future.get(1L, TimeUnit.SECONDS);
-                } catch (java.lang.InterruptedException ex) {
+                } catch (InterruptedException ex) {
                     throw new IllegalStateException(ex);
                 } catch (java.util.concurrent.ExecutionException ex) {
                     throw new IllegalStateException(ex);
@@ -128,7 +140,7 @@ final class MuxWatcher implements Closeable, Runnable {
             } else if (this.running.get(future) < redline) {
                 Logger.warn(
                     this,
-                    "#check(): one thread is %dms old, looks like a problem",
+                    "#check(): one thread is %dms old, it's a potential problem",
                     System.currentTimeMillis() - this.running.get(future)
                 );
             }
