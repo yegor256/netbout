@@ -33,6 +33,7 @@ import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -118,7 +119,7 @@ public final class ShortBout {
      * @return The number
      */
     @XmlElement
-    public java.util.Date getDate() {
+    public Date getDate() {
         return this.bout.date();
     }
 
