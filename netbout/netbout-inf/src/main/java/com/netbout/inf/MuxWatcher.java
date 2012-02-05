@@ -140,7 +140,7 @@ final class MuxWatcher implements Closeable, Runnable {
             } else if (this.running.get(future) < redline) {
                 Logger.warn(
                     this,
-                    "#check(): one thread is %dms old, it's a potential problem",
+                    "#check(): one thread is %dms old, a potential problem",
                     System.currentTimeMillis() - this.running.get(future)
                 );
             }
