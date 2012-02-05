@@ -29,6 +29,7 @@ package com.netbout.inf;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.io.Closeable;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -95,16 +96,28 @@ final class Mux implements Closeable {
         this.alive.set(false);
         this.watcher.close();
         this.executor.shutdown();
+        boolean terminated;
+        Logger.info(this, "#close(): trying to close Mux tasks gracefully...");
         try {
-            this.executor.awaitTermination(1, TimeUnit.SECONDS);
+            terminated = this.executor.awaitTermination(1, TimeUnit.MINUTES);
         } catch (InterruptedException ex) {
             throw new IllegalStateException(ex);
         }
-        Logger.info(
-            this,
-            "#close(): stopped with %d waiting tasks (they are ignored)",
-            this.total()
-        );
+        if (terminated) {
+            Logger.info(
+                this,
+                "#close(): correctly stopped with %d tasks in the queue",
+                this.total()
+            );
+        } else {
+            final List<Runnable> killed = this.executor.shutdownNow();
+            Logger.warn(
+                this,
+                "#close(): abruptly terminated %d tasks (%d in the queue)",
+                killed.size(),
+                this.total()
+            );
+        }
     }
 
     /**
