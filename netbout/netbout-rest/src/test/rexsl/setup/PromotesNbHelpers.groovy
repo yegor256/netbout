@@ -33,18 +33,25 @@ import com.netbout.spi.Urn
 import com.netbout.spi.client.RestExpert
 import com.netbout.spi.client.RestSession
 import javax.ws.rs.core.UriBuilder
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 
-def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
-[
+def starter = new RestExpert(new RestSession(rexsl.home).authenticate(new Urn(), 'localhost'))
+def namespaces = [
     'test' : '/mock-auth',
     'facebook': '/fb',
     'email': '/email',
-].each {
-    new RestExpert(starter).namespaces().put(
+]
+namespaces.each {
+    starter.namespaces().put(
         it.key,
         UriBuilder.fromUri(rexsl.home).path(it.value).build().toURL()
     )
 }
+MatcherAssert.assertThat(
+    starter.namespaces(),
+    Matchers.hasSize(Matchers.not(Matchers.lessThan(namespaces.size())))
+)
 
 [
     'urn:test:hh' : 'file:com.netbout.hub.hh',

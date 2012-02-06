@@ -36,6 +36,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.AbstractMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.HttpHeaders;
@@ -94,21 +95,30 @@ final class RestNamespaces extends AbstractMap<String, URL> {
     @Override
     public URL put(final String name, final URL url) {
         final Set<Map.Entry<String, URL>> namespaces = this.entrySet();
+        final Iterator<Map.Entry<String, URL>> iterator = namespaces.iterator();
+        while (iterator.hasNext()) {
+            final Map.Entry<String, URL> entry = iterator.next();
+            if (entry.getKey().equals(name)) {
+                iterator.remove();
+            }
+        }
         namespaces.add(new AbstractMap.SimpleEntry<String, URL>(name, url));
         final StringBuilder post = new StringBuilder();
-        post.append("text=");
         for (Map.Entry<String, URL> entry : namespaces) {
             post.append(
                 String.format(
-                    "%s=%s",
-                    URLEncoder.encode(entry.getKey()),
-                    URLEncoder.encode(entry.getValue().toString())
+                    "%s=%s\n",
+                    entry.getKey(),
+                    entry.getValue().toString()
                 )
-            ).append("&");
+            );
         }
         this.entry()
             .rel("//link[@rel='namespaces']/@href")
-            .post("re-register namespaces", post.toString())
+            .post(
+                "re-register namespaces",
+                String.format("text=%s", URLEncoder.encode(post.toString()))
+            )
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
         return url;
     }
