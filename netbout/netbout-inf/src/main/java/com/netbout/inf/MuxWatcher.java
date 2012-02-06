@@ -88,9 +88,9 @@ final class MuxWatcher implements Closeable, Runnable {
 
     /**
      * Show some stats.
-     * @param The text
+     * @return The text
      */
-    public String stats() {
+    public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d running futures", this.running.size()));
         return text.toString();

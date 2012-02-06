@@ -44,7 +44,7 @@ public interface Infinity extends Closeable {
      * Show some stats.
      * @return Text stats
      */
-    String stats();
+    String statistics();
 
     /**
      * How long do I need to wait before sending requests?

@@ -76,12 +76,12 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public String stats() {
+    public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append("Mux stats:\n")
-            .append(this.mux.stats())
+            .append(this.mux.statistics())
             .append("\n\nHeap stats:\n")
-            .append(this.heap.stats());
+            .append(this.heap.statistics());
         return text.toString();
     }
 

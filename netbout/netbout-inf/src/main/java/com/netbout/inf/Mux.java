@@ -90,15 +90,15 @@ final class Mux implements Closeable {
 
     /**
      * Show some stats.
-     * @param The text
+     * @return The text
      */
-    public String stats() {
+    public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d identities\n", this.waiting.size()));
         text.append(String.format("%d waiting tasks\n", this.total()));
         text.append(String.format("%.2fms avg time\n\n", this.stats.getMean()));
         text.append("Watcher's stats:\n");
-        text.append(this.watcher.stats());
+        text.append(this.watcher.statistics());
         return text.toString();
     }
 

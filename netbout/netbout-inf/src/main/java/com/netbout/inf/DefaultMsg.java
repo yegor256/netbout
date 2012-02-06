@@ -93,7 +93,8 @@ final class DefaultMsg implements Msg {
                     "can't find '%s' in Msg #%d",
                     name,
                     this.num
-                )
+                ),
+                ex
             );
         }
     }

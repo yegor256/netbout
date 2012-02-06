@@ -137,7 +137,9 @@ public final class StageFarm implements IdentityAware {
         final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
-            xml = new JaxbPrinter(new Stage(this.infinity.stats())).print();
+            xml = new JaxbPrinter(
+                new Stage(this.infinity.statistics())
+            ).print();
         }
         return xml;
     }

@@ -46,9 +46,9 @@ final class Heap {
 
     /**
      * Show some stats.
-     * @param The text
+     * @return The text
      */
-    public String stats() {
+    public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d messages", this.all.size()));
         return text.toString();
