@@ -87,7 +87,9 @@ public final class NsPred extends AbstractVarargPred {
      */
     @Override
     public Object evaluate(final Msg msg, final int pos) {
-        final String namespace = (String) this.arg(0).evaluate(msg, pos);
+        final Urn namespace = Urn.create(
+            (String) this.arg(0).evaluate(msg, pos)
+        );
         final boolean result = msg.has(this.NAMESPACE, namespace);
         Logger.debug(
             this,

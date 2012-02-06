@@ -146,7 +146,8 @@ final class MuxWatcher implements Closeable, Runnable {
         if (!warnings.isEmpty()) {
             Logger.warn(
                 this,
-                "#futures(): some potential problems: %[list]s",
+                "#futures(): some warnings (among %d futures): %[list]s",
+                this.running.size(),
                 warnings
             );
         }
@@ -207,7 +208,7 @@ final class MuxWatcher implements Closeable, Runnable {
                 this.running.remove(future);
             }
         } else if (age > this.WARN_TIME) {
-            warning = String.format("%s: %dms", future, age);
+            warning = String.format("%s is older than %dms", future, age);
         }
         return warning;
     }

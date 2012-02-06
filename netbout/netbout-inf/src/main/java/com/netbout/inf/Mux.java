@@ -197,11 +197,10 @@ final class Mux implements Closeable {
             }
             Logger.debug(
                 this,
-                "TaskShell(%[list]s, %s): %d in queue (%.2fms average)",
+                "TaskShell(%[list]s, %s): %d in queue",
                 urns,
                 tsk,
-                Mux.this.total(),
-                Mux.this.stats.getMean()
+                Mux.this.total()
             );
         }
         /**

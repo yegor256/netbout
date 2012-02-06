@@ -63,6 +63,7 @@ def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
 [
     'urn:test:hh' : 'file:com.netbout.hub.hh',
     'urn:test:bh' : 'file:com.netbout.bus.bh',
+    'urn:test:ih' : 'file:com.netbout.inf.ih',
     'urn:test:email' : 'file:com.netbout.notifiers.email',
 ].each {
     def helper = new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
