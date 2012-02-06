@@ -46,9 +46,10 @@ final class DataSourceBuilder {
      * @checkstyle ExecutableStatementCount (30 lines)
      */
     public DataSource build() {
+        final String url = Manifests.read("Netbout-JdbcUrl");
         final BasicDataSource data = new BasicDataSource();
         data.setDriverClassName(Manifests.read("Netbout-JdbcDriver"));
-        data.setUrl(Manifests.read("Netbout-JdbcUrl"));
+        data.setUrl(url);
         data.setUsername(Manifests.read("Netbout-JdbcUser"));
         data.setPassword(Manifests.read("Netbout-JdbcPassword"));
         data.setMaxActive(4);
@@ -67,8 +68,9 @@ final class DataSourceBuilder {
         data.setDefaultReadOnly(false);
         Logger.info(
             this,
-            "#datasource(): created %[type]s",
-            data
+            "#datasource(): created %[type]s for %s",
+            data,
+            url
         );
         return data;
     }

@@ -58,7 +58,7 @@ final class Mux implements Closeable {
      * with data retrieval from DB. Thus, pay attention to the number of
      * connections allowed in {@code com.netbout.db.DataSourceBuilder}.
      */
-    private static final int THREADS = 5;
+    private static final int THREADS = 10;
 
     /**
      * Executor service, with a number of threads working in parallel.
@@ -87,6 +87,17 @@ final class Mux implements Closeable {
      */
     private final transient DescriptiveStatistics stats =
         new DescriptiveStatistics(100);
+
+    /**
+     * Show some stats.
+     * @param The text
+     */
+    public String stats() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("%d waiting", this.waiting.size()));
+        text.append(String.format("%.2fms time mean", this.stats.getMean()));
+        return text.toString();
+    }
 
     /**
      * {@inheritDoc}

@@ -41,6 +41,11 @@ import java.util.concurrent.TimeUnit;
 final class DefaultMsg implements Msg {
 
     /**
+     * Maximum wait time, in sec.
+     */
+    private static final int MAX_WAIT = 10;
+
+    /**
      * Number of message.
      */
     private final transient Long num;
@@ -80,7 +85,17 @@ final class DefaultMsg implements Msg {
      */
     @Override
     public <T> T get(final String name) {
-        return this.value(name).<T>get();
+        try {
+            return this.value(name).<T>get();
+        } catch (InterruptedException ex) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "can't find '%s' in Msg #%d",
+                    name,
+                    this.num
+                )
+            );
+        }
     }
 
     /**
@@ -130,14 +145,16 @@ final class DefaultMsg implements Msg {
          * Get value (wait for it if necessary).
          * @return The value
          * @param <T> Type of value
+         * @throws InterruptedException If can't find the value for long time
          */
-        public <T> T get() {
-            while (this.values.isEmpty()) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(1L);
-                } catch (InterruptedException ex) {
-                    throw new IllegalArgumentException(ex);
-                }
+        public <T> T get() throws InterruptedException {
+            int max = DefaultMsg.MAX_WAIT;
+            while (this.values.isEmpty() && max > 0) {
+                max -= 1;
+                TimeUnit.SECONDS.sleep(1L);
+            }
+            if (this.values.isEmpty()) {
+                throw new InterruptedException();
             }
             return (T) this.values.iterator().next();
         }

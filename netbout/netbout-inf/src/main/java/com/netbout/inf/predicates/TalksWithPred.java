@@ -63,6 +63,7 @@ public final class TalksWithPred extends AbstractVarargPred {
      * @param msg Where to extract
      */
     public static void extract(final Message from, final Msg msg) {
+        msg.clear(TalksWithPred.TALKS_WITH);
         for (Participant dude : from.bout().participants()) {
             msg.put(TalksWithPred.TALKS_WITH, dude.identity().name());
         }

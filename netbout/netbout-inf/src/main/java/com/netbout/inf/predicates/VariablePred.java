@@ -117,6 +117,7 @@ public final class VariablePred implements Predicate {
             NetboutUtils.aliasOf(from.author())
         );
         msg.put(VariablePred.BOUT_DATE, from.bout().date());
+        msg.put(VariablePred.BOUT_NUMBER, from.bout().number());
         msg.put(VariablePred.BOUT_TITLE, from.bout().title());
         msg.put(VariablePred.BOUT_RECENT, NetboutUtils.dateOf(from.bout()));
     }

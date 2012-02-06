@@ -24,56 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
-
-import java.util.Collections;
-import java.util.SortedMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * Heap of messages.
+ * Infinity, helper.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Heap {
-
-    /**
-     * All messages.
-     */
-    private final transient SortedMap<Long, Msg> all =
-        new ConcurrentSkipListMap<Long, Msg>(Collections.<Long>reverseOrder());
-
-    /**
-     * Show some stats.
-     * @param The text
-     */
-    public String stats() {
-        final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d messages", this.all.size()));
-        return text.toString();
-    }
-
-    /**
-     * Iterator of messages.
-     * @return The iterator
-     */
-    public Iterable<Msg> messages() {
-        return this.all.values();
-    }
-
-    /**
-     * Get message by number.
-     * @param number The number
-     * @return The message
-     */
-    public Msg get(final Long number) {
-        synchronized (this) {
-            if (!this.all.containsKey(number)) {
-                this.all.put(number, new DefaultMsg(number));
-            }
-            return this.all.get(number);
-        }
-    }
-
-}
+package com.netbout.inf.ih;

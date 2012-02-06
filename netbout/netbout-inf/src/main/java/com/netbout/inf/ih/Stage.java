@@ -24,56 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.ih;
 
-import java.util.Collections;
-import java.util.SortedMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Heap of messages.
+ * The stage to render with JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Heap {
+@XmlType(name = "data")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class Stage {
 
     /**
-     * All messages.
+     * The text to show.
      */
-    private final transient SortedMap<Long, Msg> all =
-        new ConcurrentSkipListMap<Long, Msg>(Collections.<Long>reverseOrder());
+    private final transient String text;
 
     /**
-     * Show some stats.
-     * @param The text
+     * Public ctor, for JAXB.
      */
-    public String stats() {
-        final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d messages", this.all.size()));
-        return text.toString();
+    public Stage() {
+        throw new IllegalStateException("illegal call");
     }
 
     /**
-     * Iterator of messages.
-     * @return The iterator
+     * Public ctor.
+     * @param txt The text to show
      */
-    public Iterable<Msg> messages() {
-        return this.all.values();
+    public Stage(final String txt) {
+        this.text = txt;
     }
 
     /**
-     * Get message by number.
-     * @param number The number
-     * @return The message
+     * Get text.
+     * @return The text
      */
-    public Msg get(final Long number) {
-        synchronized (this) {
-            if (!this.all.containsKey(number)) {
-                this.all.put(number, new DefaultMsg(number));
-            }
-            return this.all.get(number);
-        }
+    @XmlElement
+    public String getText() {
+        return this.text;
     }
 
 }

@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -23,57 +24,24 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.inf;
-
-import java.util.Collections;
-import java.util.SortedMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-
-/**
- * Heap of messages.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
- */
-final class Heap {
+ * @version $Id: stage.xsl 1221 2012-01-30 06:02:11Z yegor256@yahoo.com $
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:nb="http://www.netbout.com"
+    version="2.0" exclude-result-prefixes="xs">
 
-    /**
-     * All messages.
-     */
-    private final transient SortedMap<Long, Msg> all =
-        new ConcurrentSkipListMap<Long, Msg>(Collections.<Long>reverseOrder());
+    <xsl:template match="stage" mode="head">
+        <!-- nothing -->
+    </xsl:template>
 
-    /**
-     * Show some stats.
-     * @param The text
-     */
-    public String stats() {
-        final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d messages", this.all.size()));
-        return text.toString();
-    }
+    <xsl:template match="stage">
+        <p>Infinity statistics:</p>
+        <p class="fixed"><xsl:value-of select="data/text"/></p>
+    </xsl:template>
 
-    /**
-     * Iterator of messages.
-     * @return The iterator
-     */
-    public Iterable<Msg> messages() {
-        return this.all.values();
-    }
-
-    /**
-     * Get message by number.
-     * @param number The number
-     * @return The message
-     */
-    public Msg get(final Long number) {
-        synchronized (this) {
-            if (!this.all.containsKey(number)) {
-                this.all.put(number, new DefaultMsg(number));
-            }
-            return this.all.get(number);
-        }
-    }
-
-}
+</xsl:stylesheet>
