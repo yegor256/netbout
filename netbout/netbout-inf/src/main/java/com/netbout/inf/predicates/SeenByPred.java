@@ -29,6 +29,7 @@ package com.netbout.inf.predicates;
 import com.netbout.inf.Meta;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.List;
 
@@ -57,8 +58,8 @@ public final class SeenByPred extends AbstractVarargPred {
      */
     @Override
     public Object evaluate(final Msg msg, final int pos) {
-        final String name = (String) this.arg(0).evaluate(msg, pos);
-        final boolean seen = msg.has(String.format("seen-by:%s", name));
+        final Urn name = Urn.create(this.arg(0).<String>evaluate(msg, pos));
+        final boolean seen = msg.has("seen-by", name);
         Logger.debug(
             this,
             "#evaluate(#%d, %d): participant '%s' has seen message: %B",

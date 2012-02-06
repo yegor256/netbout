@@ -26,8 +26,9 @@
  */
 package com.netbout.inf;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Default implementation of {@link Msg}.
@@ -48,34 +49,18 @@ final class DefaultMsg implements Msg {
     private final transient Long bnum;
 
     /**
-     * Props.
+     * All properties.
      */
-    private final transient Map<String, Object> properties;
+    private final transient Collection<Pair> pairs = new ArrayList<Pair>();
 
     /**
      * Public ctor.
      * @param msg Number of message
      * @param bout Number of bout
-     * @param props List of properties
      */
-    public DefaultMsg(final Long msg, final Long bout,
-        final Map<String, Object> props) {
+    public DefaultMsg(final Long msg, final Long bout) {
         this.num = msg;
         this.bnum = bout;
-        this.properties = props;
-    }
-
-    /**
-     * Create a copy of this message with additional properties.
-     * @param extra Extra properties to add
-     * @return New Msg
-     */
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
-    public Msg copy(final Map<String, Object> extra) {
-        final Map<String, Object> props = new HashMap<String, Object>();
-        props.putAll(this.properties);
-        props.putAll(extra);
-        return new DefaultMsg(this.num, this.bnum, props);
     }
 
     /**
@@ -99,24 +84,77 @@ final class DefaultMsg implements Msg {
      */
     @Override
     public <T> T get(final String name) {
-        if (!this.has(name)) {
+        this.awaitCompletion();
+        T found = null;
+        for (Pair pair : this.pairs) {
+            if (pair.getKey().equals(name)) {
+                found = (T) pair.getValue();
+                break;
+            }
+        }
+        if (found == null) {
             throw new IllegalArgumentException(
                 String.format(
-                    "property '%s' is absent in Msg #%d",
+                    "property '%s' not found in Msg #%d",
                     name,
                     this.num
                 )
             );
         }
-        return (T) this.properties.get(name);
+        return found;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean has(final String name) {
-        return this.properties.containsKey(name);
+    public <T> boolean has(final String name, final T value) {
+        this.awaitCompletion();
+        boolean has = false;
+        for (Pair pair : this.pairs) {
+            if (pair.getKey().equals(name) && pair.getValue().equals(value)) {
+                has = true;
+                break;
+            }
+        }
+        return has;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> void put(final String name, final T value) {
+        this.pairs.add(new Pair(name, value));
+    }
+
+    /**
+     * Close the object and disallow any more {@code put()} requests.
+     * @see SeeMessageTask#exec()
+     */
+    public void close() {
+    }
+
+    /**
+     * The pair to work with.
+     */
+    private static final class Pair
+        extends AbstractMap.SimpleEntry<String, Object> {
+        /**
+         * Public ctor.
+         * @param name The name
+         * @param value The value
+         */
+        public Pair(final String name, final Object value) {
+            super(name, value);
+        }
+    }
+
+    /**
+     * Wait until the class is ready to return data.
+     */
+    private void awaitCompletion() {
+        // ...
     }
 
 }

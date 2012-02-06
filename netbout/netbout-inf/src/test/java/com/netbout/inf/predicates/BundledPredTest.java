@@ -34,7 +34,6 @@ import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
-import java.util.Map;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -56,12 +55,12 @@ public final class BundledPredTest {
         final Bout bout = new BoutMocker()
             .withParticipant("urn:test:somebody")
             .mock();
-        final Message msg = new MessageMocker()
+        final Message from = new MessageMocker()
             .inBout(bout)
             .mock();
-        final Map props = Mockito.mock(Map.class);
-        BundledPred.extract(msg, props);
-        Mockito.verify(props).put(BundledPred.BUNDLE, "urn:test:somebody ");
+        final Msg msg = Mockito.mock(Msg.class);
+        BundledPred.extract(from, msg);
+        Mockito.verify(msg).put(BundledPred.BUNDLE, "urn:test:somebody ");
     }
 
     /**

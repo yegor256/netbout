@@ -65,7 +65,7 @@ public final class MsgMocker {
      */
     public MsgMocker with(final String name, final Object value) {
         Mockito.doReturn(value).when(this.msg).get(name);
-        Mockito.doReturn(true).when(this.msg).has(name);
+        Mockito.doReturn(true).when(this.msg).has(name, value);
         return this;
     }
 

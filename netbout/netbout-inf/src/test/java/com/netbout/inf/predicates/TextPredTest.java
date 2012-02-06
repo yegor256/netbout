@@ -26,64 +26,35 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.List;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * This participant is in the bout.
- *
+ * Test case of {@link TextPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "talks-with", extracts = true)
-public final class TalksWithPred extends AbstractVarargPred {
+public final class TextPredTest {
 
     /**
-     * The property.
+     * TextPred can retrieve different types on demand.
+     * @throws Exception If there is some problem inside
+     * @todo #231 Doesn't work now. I tried to do this dynamic class
+     *  information retrieval, to no avail
+     *  http://stackoverflow.com/questions/2801267
      */
-    public static final String TALKS_WITH = "talks-with";
-
-    /**
-     * Public ctor.
-     * @param args The arguments
-     */
-    public TalksWithPred(final List<Predicate> args) {
-        super(args);
-    }
-
-    /**
-     * Extracts necessary data from message.
-     * @param from The message to extract from
-     * @param msg Where to extract
-     */
-    public static void extract(final Message from, final Msg msg) {
-        for (Participant dude : from.bout().participants()) {
-            msg.put(TalksWithPred.TALKS_WITH, dude.identity().name());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final Urn name = Urn.create(this.arg(0).<String>evaluate(msg, pos));
-        final boolean talks = msg.has(this.TALKS_WITH, name);
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): talks with participant '%s': %B",
-            msg.number(),
-            pos,
-            name,
-            talks
+    @Test
+    @org.junit.Ignore
+    public void retrievesUrnFromText() throws Exception {
+        final Predicate pred = new TextPred("urn:test:some-text");
+        MatcherAssert.assertThat(
+            pred.<Urn>evaluate(new MsgMocker().mock(), 0),
+            Matchers.instanceOf(Urn.class)
         );
-        return talks;
     }
 
 }

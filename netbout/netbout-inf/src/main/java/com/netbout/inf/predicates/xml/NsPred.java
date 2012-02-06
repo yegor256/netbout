@@ -35,7 +35,6 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
 import com.ymock.util.Logger;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Namespace predicate.
@@ -61,12 +60,11 @@ public final class NsPred extends AbstractVarargPred {
 
     /**
      * Extracts necessary data from message.
-     * @param msg The message to extract from
-     * @param props Where to extract
+     * @param from The message to extract from
+     * @param msg Where to extract
      */
-    public static void extract(final Message msg,
-        final Map<String, Object> props) {
-        final DomParser parser = new DomParser(msg.text());
+    public static void extract(final Message from, final Msg msg) {
+        final DomParser parser = new DomParser(from.text());
         if (parser.isXml()) {
             Urn namespace;
             try {
@@ -74,11 +72,11 @@ public final class NsPred extends AbstractVarargPred {
             } catch (com.netbout.spi.xml.DomValidationException ex) {
                 throw new IllegalStateException(ex);
             }
-            props.put(NsPred.NAMESPACE, namespace);
+            msg.put(NsPred.NAMESPACE, namespace);
             Logger.debug(
                 NsPred.class,
                 "#extract(#%d, ..): namespace '%s' found",
-                msg.number(),
+                from.number(),
                 namespace
             );
         }
@@ -90,8 +88,7 @@ public final class NsPred extends AbstractVarargPred {
     @Override
     public Object evaluate(final Msg msg, final int pos) {
         final String namespace = (String) this.arg(0).evaluate(msg, pos);
-        final boolean result = msg.has(this.NAMESPACE)
-            && msg.<Urn>get(this.NAMESPACE).equals(namespace);
+        final boolean result = msg.has(this.NAMESPACE, namespace);
         Logger.debug(
             this,
             "#evaluate(#%d, %d): namespace '%s' required: %B",

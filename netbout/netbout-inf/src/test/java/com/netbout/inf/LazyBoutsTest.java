@@ -47,8 +47,8 @@ public final class LazyBoutsTest {
     @Test
     public void findsBoutsInStreamOfMessages() throws Exception {
         final Heap heap = new Heap();
-        heap.put(1L, new DefaultMsg(1L, 2L, null));
-        heap.put(2L, new DefaultMsg(2L, 2L, null));
+        heap.put(1L, new DefaultMsg(1L, 2L));
+        heap.put(2L, new DefaultMsg(2L, 2L));
         final Iterable<Long> messages = Arrays.asList(new Long[] {1L});
         final Iterable<Long> bouts = new LazyBouts(heap, messages);
         MatcherAssert.assertThat(
@@ -67,8 +67,8 @@ public final class LazyBoutsTest {
     @Test
     public void returnsHasNextCorrectly() throws Exception {
         final Heap heap = new Heap();
-        heap.put(1L, new DefaultMsg(1L, 2L, null));
-        heap.put(2L, new DefaultMsg(2L, 2L, null));
+        heap.put(1L, new DefaultMsg(1L, 2L));
+        heap.put(2L, new DefaultMsg(2L, 2L));
         final Iterable<Long> messages = Arrays.asList(new Long[] {1L});
         final Iterator<Long> iter = new LazyBouts(heap, messages).iterator();
         MatcherAssert.assertThat("has an item", iter.hasNext());
@@ -94,8 +94,8 @@ public final class LazyBoutsTest {
     @Test
     public void returnsNextValueCorrectly() throws Exception {
         final Heap heap = new Heap();
-        heap.put(2L, new DefaultMsg(2L, 2L, null));
-        heap.put(1L, new DefaultMsg(1L, 2L, null));
+        heap.put(2L, new DefaultMsg(2L, 2L));
+        heap.put(1L, new DefaultMsg(1L, 2L));
         final Iterable<Long> messages = Arrays.asList(new Long[] {1L});
         final Iterator<Long> iter = new LazyBouts(heap, messages).iterator();
         MatcherAssert.assertThat(iter.next(), Matchers.equalTo(2L));

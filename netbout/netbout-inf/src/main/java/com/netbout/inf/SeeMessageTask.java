@@ -72,9 +72,11 @@ final class SeeMessageTask implements Task {
     public void exec() {
         final long start = System.currentTimeMillis();
         final Long number = this.message.number();
-        final MsgBuilder builder = new MsgBuilder(this.message);
-        this.heap.put(number, builder.build());
-        this.heap.put(number, builder.rebuild(this.heap.get(number)));
+        final DefaultMsg msg =
+            new DefaultMsg(number, this.message.bout().number());
+        this.heap.put(number, msg);
+        PredicateBuilder.extract(this.message, msg);
+        msg.close();
         Logger.debug(
             this,
             "#exec(): cached message #%d in %dms",
