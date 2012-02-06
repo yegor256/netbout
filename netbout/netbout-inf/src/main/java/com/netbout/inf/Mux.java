@@ -94,8 +94,9 @@ final class Mux implements Closeable {
      */
     public String stats() {
         final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d waiting\n", this.waiting.size()));
-        text.append(String.format("%.2fms time mean", this.stats.getMean()));
+        text.append(String.format("%d identities\n", this.waiting.size()));
+        text.append(String.format("%d waiting tasks\n", this.total()));
+        text.append(String.format("%.2fms avg time", this.stats.getMean()));
         return text.toString();
     }
 
@@ -159,7 +160,7 @@ final class Mux implements Closeable {
         if (this.alive.get()) {
             this.watcher.watch(this.executor.submit(new TaskShell(who, task)));
         } else {
-            Logger.warn(
+            Logger.debug(
                 this,
                 "#submit(): Mux is closed, %s ignored",
                 task
@@ -171,10 +172,6 @@ final class Mux implements Closeable {
      * Wrapper of Task.
      */
     private final class TaskShell implements Runnable {
-        /**
-         * When we started.
-         */
-        private final transient long start = System.currentTimeMillis();
         /**
          * Who are waiting.
          */
@@ -211,6 +208,7 @@ final class Mux implements Closeable {
         @Override
         @SuppressWarnings("PMD.AvoidCatchingThrowable")
         public void run() {
+            final long start = System.currentTimeMillis();
             try {
                 this.task.exec();
             // @checkstyle IllegalCatchCheck (1 line)
@@ -225,7 +223,7 @@ final class Mux implements Closeable {
                 Mux.this.waiting.get(urn).decrementAndGet();
             }
             Mux.this.stats.addValue(
-                (double) System.currentTimeMillis() - this.start
+                (double) System.currentTimeMillis() - start
             );
             Logger.debug(
                 this,
