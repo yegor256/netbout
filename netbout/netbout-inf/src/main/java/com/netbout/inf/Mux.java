@@ -94,7 +94,7 @@ final class Mux implements Closeable {
      */
     public String stats() {
         final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d waiting", this.waiting.size()));
+        text.append(String.format("%d waiting\n", this.waiting.size()));
         text.append(String.format("%.2fms time mean", this.stats.getMean()));
         return text.toString();
     }
