@@ -92,6 +92,7 @@ final class RexslRestClient implements RestClient {
     public RestResponse get(final String message) {
         final TestResponse response = this.client
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .header(HttpHeaders.USER_AGENT, this.agent())
             .header(
                 HttpHeaders.COOKIE,
                 new Cookie(RestSession.AUTH_COOKIE, this.token)
@@ -118,6 +119,7 @@ final class RexslRestClient implements RestClient {
         }
         final TestResponse response = this.client
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .header(HttpHeaders.USER_AGENT, this.agent())
             .header(
                 HttpHeaders.COOKIE,
                 new Cookie(RestSession.AUTH_COOKIE, this.token)
@@ -163,6 +165,14 @@ final class RexslRestClient implements RestClient {
             .fromUri(this.client.uri())
             .queryParam(RestSession.AUTH_PARAM, this.token)
             .build();
+    }
+
+    /**
+     * Name of us.
+     * @return The name
+     */
+    private String agent() {
+        return "Netbout/1.0";
     }
 
 }
