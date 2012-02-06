@@ -51,12 +51,12 @@ public final class UnbundledPredTest {
         );
         final String marker = "abc";
         final Msg first = new MsgMocker()
-            .withBoutNumber(1L)
+            .with(VariablePred.BOUT_NUMBER, 1L)
             .with(BundledPred.BUNDLE, marker)
             .mock();
         MatcherAssert.assertThat("no!", !(Boolean) pred.evaluate(first, 0));
         final Msg second = new MsgMocker()
-            .withBoutNumber(2L)
+            .with(VariablePred.BOUT_NUMBER, 2L)
             .with(BundledPred.BUNDLE, marker)
             .mock();
         MatcherAssert.assertThat("yes!", (Boolean) pred.evaluate(second, 0));

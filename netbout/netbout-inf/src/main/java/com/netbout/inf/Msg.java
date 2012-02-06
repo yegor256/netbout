@@ -43,10 +43,10 @@ public interface Msg {
     Long number();
 
     /**
-     * Number of bout it's in.
-     * @return The number
+     * Remove this property.
+     * @param name The name of the property to get
      */
-    Long bout();
+    void clear(String name);
 
     /**
      * Has property with this required value.

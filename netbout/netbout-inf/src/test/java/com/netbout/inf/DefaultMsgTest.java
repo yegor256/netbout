@@ -43,11 +43,10 @@ public final class DefaultMsgTest {
      */
     @Test
     public void acceptsNewPropertiesAndFindsThem() throws Exception {
-        final DefaultMsg msg = new DefaultMsg(1L, 1L);
+        final DefaultMsg msg = new DefaultMsg(1L);
         final String name = "property-name";
         final Long value = 2L;
         msg.put(name, value);
-        msg.close();
         MatcherAssert.assertThat("legal prop", msg.has(name, value));
         MatcherAssert.assertThat("illegal value", !msg.has(name, "some value"));
         MatcherAssert.assertThat("absent prop", !msg.has("some name", 1));
@@ -55,28 +54,6 @@ public final class DefaultMsgTest {
             msg.get(name),
             Matchers.<Object>equalTo(value)
         );
-    }
-
-    /**
-     * DefaultMsg can protect against changes after closing.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = IllegalStateException.class)
-    public void rejectsChangesAfterClosing() throws Exception {
-        final DefaultMsg msg = new DefaultMsg(1L, 1L);
-        msg.close();
-        msg.put("name-1", 0);
-    }
-
-    /**
-     * DefaultMsg can protect against duplicated closing.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = IllegalStateException.class)
-    public void rejectsDuplicatedClosing() throws Exception {
-        final DefaultMsg msg = new DefaultMsg(1L, 1L);
-        msg.close();
-        msg.close();
     }
 
 }

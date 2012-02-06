@@ -28,6 +28,8 @@ package com.netbout.inf;
 
 import com.ymock.util.Logger;
 import java.io.Closeable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
@@ -115,16 +117,18 @@ final class MuxWatcher implements Closeable, Runnable {
      * Check all futures.
      */
     private void check() {
-        final long threshold = System.currentTimeMillis() - this.MAX_TIME;
-        final long redline = System.currentTimeMillis() - this.WARN_TIME;
+        final List<String> warned = new ArrayList<String>();
         for (Future future : this.running.keySet()) {
+            final long age = System.currentTimeMillis()
+                - this.running.get(future);
             if (future.isDone()) {
                 this.running.remove(future);
-            } else if (this.running.get(future) < threshold) {
+            } else if (age > this.MAX_TIME) {
                 Logger.error(
                     this,
-                    "#check(): one thread is %dms old (among %d), killing it",
-                    System.currentTimeMillis() - this.running.get(future),
+                    "#check(): future %s is %dms old (among %d), killing it",
+                    future,
+                    age,
                     this.running.size()
                 );
                 try {
@@ -137,13 +141,16 @@ final class MuxWatcher implements Closeable, Runnable {
                     future.cancel(true);
                     this.running.remove(future);
                 }
-            } else if (this.running.get(future) < redline) {
-                Logger.warn(
-                    this,
-                    "#check(): one thread is %dms old, a potential problem",
-                    System.currentTimeMillis() - this.running.get(future)
-                );
+            } else if (age > this.WARN_TIME) {
+                warned.add(String.format("%s: %dms", future, age));
             }
+        }
+        if (!warned.isEmpty()) {
+            Logger.warn(
+                this,
+                "#check(): potential problems: %[list]s",
+                warned
+            );
         }
         Logger.debug(
             this,

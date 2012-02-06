@@ -58,25 +58,12 @@ final class Heap {
      * @return The message
      */
     public Msg get(final Long number) {
-        final Msg msg = this.all.get(number);
-        if (msg == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Msg #%d not found in Heap",
-                    number
-                )
-            );
+        synchronized (this) {
+            if (!this.all.containsKey(number)) {
+                this.all.put(number, new DefaultMsg(number));
+            }
+            return this.all.get(number);
         }
-        return msg;
-    }
-
-    /**
-     * Put message by number.
-     * @param number The number
-     * @param msg The message to put
-     */
-    public void put(final Long number, final Msg msg) {
-        this.all.put(number, msg);
     }
 
 }

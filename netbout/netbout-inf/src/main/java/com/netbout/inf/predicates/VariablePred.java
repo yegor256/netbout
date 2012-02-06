@@ -128,18 +128,18 @@ public final class VariablePred implements Predicate {
     @Override
     public Object evaluate(final Msg msg, final int pos) {
         Object value;
-        if (this.TEXT.equals(this.name)) {
+        if (this.NUMBER.equals(this.name)) {
+            value = msg.number();
+        } else if (this.TEXT.equals(this.name)) {
             value = msg.<String>get(this.TEXT);
         } else if (this.BOUT_NUMBER.equals(this.name)) {
-            value = msg.bout();
+            value = msg.<Long>get(this.BOUT_NUMBER);
         } else if (this.BOUT_DATE.equals(this.name)) {
             value = msg.<Date>get(this.BOUT_DATE);
         } else if (this.BOUT_RECENT.equals(this.name)) {
             value = msg.<Date>get(this.BOUT_RECENT);
         } else if (this.BOUT_TITLE.equals(this.name)) {
             value = msg.<String>get(this.BOUT_TITLE);
-        } else if (this.NUMBER.equals(this.name)) {
-            value = msg.number();
         } else if (this.DATE.equals(this.name)) {
             value = msg.<Date>get(this.DATE);
         } else if (this.AUTHOR_NAME.equals(this.name)) {

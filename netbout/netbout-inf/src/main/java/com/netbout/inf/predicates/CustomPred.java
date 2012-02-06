@@ -69,7 +69,7 @@ public final class CustomPred extends AbstractVarargPred {
             values.add(pred.evaluate(msg, pos));
         }
         final Object result = this.ibus.make("evaluate-predicate")
-            .arg(msg.bout())
+            .arg(msg.<Long>get(VariablePred.BOUT_NUMBER))
             .arg(msg.number())
             .arg(Urn.create(this.name()))
             .arg(values)

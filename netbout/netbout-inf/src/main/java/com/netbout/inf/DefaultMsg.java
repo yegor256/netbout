@@ -26,10 +26,11 @@
  */
 package com.netbout.inf;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Default implementation of {@link Msg}.
@@ -40,33 +41,22 @@ import java.util.concurrent.CountDownLatch;
 final class DefaultMsg implements Msg {
 
     /**
-     * Indicator of message readiness for reading.
-     */
-    private final transient CountDownLatch latch = new CountDownLatch(1);
-
-    /**
      * Number of message.
      */
     private final transient Long num;
 
     /**
-     * Number of bout.
-     */
-    private final transient Long bnum;
-
-    /**
      * All properties.
      */
-    private final transient Collection<Pair> pairs = new ArrayList<Pair>();
+    private final transient ConcurrentMap<String, Value> values =
+        new ConcurrentHashMap<String, Value>();
 
     /**
      * Public ctor.
      * @param msg Number of message
-     * @param bout Number of bout
      */
-    public DefaultMsg(final Long msg, final Long bout) {
+    public DefaultMsg(final Long msg) {
         this.num = msg;
-        this.bnum = bout;
     }
 
     /**
@@ -81,8 +71,8 @@ final class DefaultMsg implements Msg {
      * {@inheritDoc}
      */
     @Override
-    public Long bout() {
-        return this.bnum;
+    public void clear(final String name) {
+        this.value(name).clear();
     }
 
     /**
@@ -90,24 +80,7 @@ final class DefaultMsg implements Msg {
      */
     @Override
     public <T> T get(final String name) {
-        this.awaitCompletion();
-        T found = null;
-        for (Pair pair : this.pairs) {
-            if (pair.getKey().equals(name)) {
-                found = (T) pair.getValue();
-                break;
-            }
-        }
-        if (found == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "property '%s' not found in Msg #%d",
-                    name,
-                    this.num
-                )
-            );
-        }
-        return found;
+        return this.value(name).<T>get();
     }
 
     /**
@@ -115,15 +88,7 @@ final class DefaultMsg implements Msg {
      */
     @Override
     public <T> boolean has(final String name, final T value) {
-        this.awaitCompletion();
-        boolean has = false;
-        for (Pair pair : this.pairs) {
-            if (pair.getKey().equals(name) && pair.getValue().equals(value)) {
-                has = true;
-                break;
-            }
-        }
-        return has;
+        return this.value(name).has(value);
     }
 
     /**
@@ -131,61 +96,67 @@ final class DefaultMsg implements Msg {
      */
     @Override
     public <T> void put(final String name, final T value) {
+        this.value(name).put(value);
+    }
+
+    /**
+     * Get the property from collection.
+     * @param name Its name
+     * @return The value
+     */
+    private Value value(final String name) {
         synchronized (this) {
-            if (this.latch.getCount() == 0) {
-                throw new IllegalStateException(
-                    String.format(
-                        "can't put('%s') to Msg #%d since it's closed already",
-                        name,
-                        this.num
-                    )
-                );
-            }
-            this.pairs.add(new Pair(name, value));
+            this.values.putIfAbsent(name, new Value());
+            return this.values.get(name);
         }
     }
 
     /**
-     * Close the object and disallow any more {@code put()} requests.
-     * @see SeeMessageTask#exec()
+     * The value of one property (thread-safe).
      */
-    public void close() {
-        synchronized (this) {
-            if (this.latch.getCount() == 0) {
-                throw new IllegalStateException(
-                    String.format(
-                        "can't close() Msg #%d since it's already closed",
-                        this.num
-                    )
-                );
-            }
-            this.latch.countDown();
-        }
-    }
-
-    /**
-     * The pair to work with.
-     */
-    private static final class Pair
-        extends AbstractMap.SimpleEntry<String, Object> {
+    private static final class Value {
         /**
-         * Public ctor.
-         * @param name The name
-         * @param value The value
+         * Values.
          */
-        public Pair(final String name, final Object value) {
-            super(name, value);
+        private final transient Collection<Object> values =
+            new CopyOnWriteArrayList<Object>();
+        /**
+         * Clear all values.
+         */
+        public void clear() {
+            this.values.clear();
         }
-    }
-
-    /**
-     * Wait until the class is ready to return data.
-     */
-    private void awaitCompletion() {
-        try {
-            this.latch.await();
-        } catch (InterruptedException ex) {
-            throw new IllegalArgumentException(ex);
+        /**
+         * Get value (wait for it if necessary).
+         * @return The value
+         * @param <T> Type of value
+         */
+        public <T> T get() {
+            while (this.values.isEmpty()) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1L);
+                } catch (InterruptedException ex) {
+                    throw new IllegalArgumentException(ex);
+                }
+            }
+            return (T) this.values.iterator().next();
+        }
+        /**
+         * Has this value.
+         * @param val The value to put
+         * @param <T> Type of value
+         * @return Yes or no
+         */
+        public <T> boolean has(final T val) {
+            return this.values.contains(val);
+        }
+        /**
+         * Put value.
+         * @param val The value to put
+         * @param <T> Type of value
+         */
+        public <T> void put(final T val) {
+            this.values.add(val);
         }
     }
 

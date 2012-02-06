@@ -99,7 +99,8 @@ final class Mux implements Closeable {
         boolean terminated;
         Logger.info(this, "#close(): trying to close Mux tasks gracefully...");
         try {
-            terminated = this.executor.awaitTermination(1, TimeUnit.MINUTES);
+            // @checkstyle MagicNumber (1 line)
+            terminated = this.executor.awaitTermination(5L, TimeUnit.SECONDS);
         } catch (InterruptedException ex) {
             throw new IllegalStateException(ex);
         }

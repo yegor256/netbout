@@ -44,8 +44,8 @@ public final class HeapTest {
     @Test
     public void findsBoutsInStreamOfMessages() throws Exception {
         final Heap heap = new Heap();
-        heap.put(1L, new DefaultMsg(1L, 0L));
-        heap.put(2L, new DefaultMsg(2L, 0L));
+        heap.get(1L);
+        heap.get(2L);
         MatcherAssert.assertThat(
             heap.messages().iterator().next().number(),
             Matchers.equalTo(2L)

@@ -48,16 +48,6 @@ public final class MsgMocker {
     }
 
     /**
-     * With this bout number.
-     * @param num The number
-     * @return This object
-     */
-    public MsgMocker withBoutNumber(final Long num) {
-        Mockito.doReturn(num).when(this.msg).bout();
-        return this;
-    }
-
-    /**
      * With this property.
      * @param name Name of prop
      * @param value Name of prop
