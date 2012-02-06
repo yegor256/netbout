@@ -215,8 +215,8 @@ public final class DefaultHub implements Hub {
             throw new IllegalArgumentException(
                 Logger.format(
                     "Can't promote '%s' (%[type]s) since it's already a helper",
-                    identity,
-                    identity.name()
+                    identity.name(),
+                    identity
                 )
             );
         }
@@ -224,8 +224,8 @@ public final class DefaultHub implements Hub {
             throw new IllegalArgumentException(
                 Logger.format(
                     "Can't promote '%s' (%[type]s) since it's not from Hub",
-                    identity,
-                    identity.name()
+                    identity.name(),
+                    identity
                 )
             );
         }

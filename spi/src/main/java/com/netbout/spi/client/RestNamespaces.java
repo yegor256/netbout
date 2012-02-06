@@ -68,6 +68,7 @@ final class RestNamespaces extends AbstractMap<String, URL> {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Set<Map.Entry<String, URL>> entrySet() {
         final Set<Map.Entry<String, URL>> namespaces =
             new HashSet<Map.Entry<String, URL>>();

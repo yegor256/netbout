@@ -29,15 +29,22 @@
  */
 package com.netbout.rest.rexsl.setup
 
+import com.netbout.spi.Urn
 import com.netbout.spi.client.RestExpert
 import com.netbout.spi.client.RestSession
+import javax.ws.rs.core.UriBuilder
 
 def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
 [
     'test' : '/mock-auth',
     'facebook': '/fb',
-    'email': '/email', // doesn't work yet
-].each { new RestExpert(starter).namespaces().put(it.key, new URL(it.value)) }
+    'email': '/email',
+].each {
+    new RestExpert(starter).namespaces().put(
+        it.key,
+        UriBuilder.fromUri(rexsl.home).path(it.value).build().toURL()
+    )
+}
 
 [
     'urn:test:hh' : 'file:com.netbout.hub.hh',
