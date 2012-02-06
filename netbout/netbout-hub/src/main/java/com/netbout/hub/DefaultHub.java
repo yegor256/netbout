@@ -213,8 +213,9 @@ public final class DefaultHub implements Hub {
     public Helper promote(final Identity identity, final URL location) {
         if (!(identity instanceof HubIdentity)) {
             throw new IllegalArgumentException(
-                String.format(
-                    "Can't promote '%s' since it's not from Hub",
+                Logger.format(
+                    "Can't promote '%s' (%[type]s) since it's not from Hub",
+                    identity,
                     identity.name()
                 )
             );
