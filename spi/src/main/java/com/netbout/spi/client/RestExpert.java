@@ -32,6 +32,7 @@ package com.netbout.spi.client;
 import com.netbout.spi.Identity;
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestResponse;
+import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -74,7 +75,7 @@ public final class RestExpert {
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
             .get("reading promotion page")
             .assertStatus(HttpURLConnection.HTTP_OK);
-        if (entry.xpath("/page/identity[@helper]").isEmpty()) {
+        if (entry.xpath("/page/identity/@helper").isEmpty()) {
             entry
                 .rel("/page/links/link[@rel='promote']/@href")
                 .post(
@@ -86,7 +87,13 @@ public final class RestExpert {
             final String location = entry
                 .xpath("/page/identity/location/text()")
                 .get(0);
-            if (!location.equals(url.toString())) {
+            if (location.equals(url.toString())) {
+                Logger.warn(
+                    this,
+                    "#promote('%s'): already promoted, won't do it again",
+                    url
+                );
+            } else {
                 throw new IllegalStateException(
                     String.format(
                         "You're already a helper with '%s', can't promote",
