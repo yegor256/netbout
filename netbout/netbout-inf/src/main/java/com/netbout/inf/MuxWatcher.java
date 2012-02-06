@@ -111,8 +111,8 @@ final class MuxWatcher implements Closeable, Runnable {
         Logger.info(this, "#run(): starting to watch Mux");
         this.alive.set(true);
         while (this.alive.get()) {
-            this.check();
-            this.reportDeadlocks();
+            this.futures();
+            this.deadlocks();
             try {
                 TimeUnit.MILLISECONDS.sleep(this.CHECK_TIME);
             } catch (InterruptedException ex) {
@@ -125,7 +125,7 @@ final class MuxWatcher implements Closeable, Runnable {
     /**
      * Check all futures.
      */
-    private void check() {
+    private void futures() {
         final List<String> warnings = new ArrayList<String>();
         for (Future future : this.running.keySet()) {
             final String warning = this.check(future);
@@ -136,13 +136,13 @@ final class MuxWatcher implements Closeable, Runnable {
         if (!warnings.isEmpty()) {
             Logger.warn(
                 this,
-                "#check(): some potential problems: %[list]s",
+                "#futures(): some potential problems: %[list]s",
                 warnings
             );
         }
         Logger.debug(
             this,
-            "#check(): Mux is in good state with %d running tasks",
+            "#futures(): Mux is in good state with %d running tasks",
             this.running.size()
         );
     }
@@ -150,15 +150,17 @@ final class MuxWatcher implements Closeable, Runnable {
     /**
      * Check for deadlocks.
      */
-    private void reportDeadlocks() {
+    private void deadlocks() {
         final ThreadMXBean tmx = ManagementFactory.getThreadMXBean();
         final long[] threads = tmx.findDeadlockedThreads();
-        if (threads != null) {
+        if (threads == null) {
+            Logger.debug(this, "#deadlocks(): no deadlocks found");
+        } else {
             final ThreadInfo[] infos = tmx.getThreadInfo(threads, true, true);
             for (ThreadInfo info : infos) {
                 Logger.error(
                     this,
-                    "#reportDeadlocks(): thread in deadlock: %s",
+                    "#deadlocks(): thread in deadlock: %s",
                     info
                 );
             }
