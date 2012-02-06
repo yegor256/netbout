@@ -29,36 +29,15 @@
  */
 package com.netbout.rest.rexsl.setup
 
-import com.netbout.spi.Urn
+import com.netbout.spi.client.RestExpert
 import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
-import com.rexsl.test.RestTester
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.UriBuilder
 
 def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
 [
     'test' : '/mock-auth',
     'facebook': '/fb',
     'email': '/email', // doesn't work yet
-].each {
-    RestTester.start(RestUriBuilder.from(starter).build())
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('home page of starter')
-        .assertStatus(HttpURLConnection.HTTP_OK)
-        .rel('//link[@rel="helper"]/@href')
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('reading helper page')
-        .rel('//link[@rel="namespaces"]/@href')
-        .post(
-            'register new namespace',
-            'text=' + URLEncoder.encode(
-                it.key + '=' + UriBuilder.fromUri(rexsl.home).path(it.value).build()
-            )
-        )
-        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-}
+].each { new RestExpert(starter).namespaces().put(it.key, new URL(it.value)) }
 
 [
     'urn:test:hh' : 'file:com.netbout.hub.hh',
@@ -66,15 +45,7 @@ def starter = new RestSession(rexsl.home).authenticate(new Urn(), 'localhost')
     'urn:test:ih' : 'file:com.netbout.inf.ih',
     'urn:test:email' : 'file:com.netbout.notifiers.email',
 ].each {
-    def helper = new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
-    RestTester.start(RestUriBuilder.from(helper).build())
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('home page')
-        .assertStatus(HttpURLConnection.HTTP_OK)
-        .rel('/page/links/link[@rel="helper"]/@href')
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('reading promotion page')
-        .rel('/page/links/link[@rel="promote"]/@href')
-        .post('promoting helper', 'url=' + URLEncoder.encode(it.value))
-        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+    new RestExpert(
+        new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
+    ).promote(new URL(it.value))
 }
