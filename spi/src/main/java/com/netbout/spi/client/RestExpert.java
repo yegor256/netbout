@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Identity;
 import com.rexsl.test.RestTester;
+import com.rexsl.test.TestResponse;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -65,19 +66,35 @@ public final class RestExpert {
      * @param url The URL of helper
      */
     public void promote(final URL url) {
-        RestTester.start(this.home)
+        final TestResponse entry = RestTester.start(this.home)
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
             .get("home page")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .rel("/page/links/link[@rel='helper']/@href")
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
             .get("reading promotion page")
-            .rel("/page/links/link[@rel='promote']/@href")
-            .post(
-                "promoting helper",
-                String.format("url=%s", URLEncoder.encode(url.toString()))
-            )
-            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+            .assertStatus(HttpURLConnection.HTTP_OK);
+        if (entry.xpath("/page/identity[@helper]").isEmpty()) {
+            entry
+                .rel("/page/links/link[@rel='promote']/@href")
+                .post(
+                    "promoting helper",
+                    String.format("url=%s", URLEncoder.encode(url.toString()))
+                )
+                .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+        } else {
+            final String location = entry
+                .xpath("/page/identity/location/text()")
+                .get(0);
+            if (!location.equals(url.toString())) {
+                throw new IllegalStateException(
+                    String.format(
+                        "You're already a helper with '%s', can't promote",
+                        location
+                    )
+                );
+            }
+        }
     }
 
     /**
