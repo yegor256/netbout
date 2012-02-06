@@ -72,6 +72,7 @@ public final class EtaAssertion implements AssertionPolicy {
                     "assertThat(..): ETA=%dms reported, the page is not ready",
                     this.eta
                 );
+                throw new AssertionError();
             }
         }
     }

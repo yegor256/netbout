@@ -51,6 +51,10 @@ public final class DefaultMsgTest {
         MatcherAssert.assertThat("legal prop", msg.has(name, value));
         MatcherAssert.assertThat("illegal value", !msg.has(name, "some value"));
         MatcherAssert.assertThat("absent prop", !msg.has("some name", 1));
+        MatcherAssert.assertThat(
+            msg.get(name),
+            Matchers.<Object>equalTo(value)
+        );
     }
 
     /**
