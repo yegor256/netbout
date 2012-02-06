@@ -72,6 +72,7 @@ public final class BundledPred extends AbstractVarargPred {
         for (Participant dude : from.bout().participants()) {
             builder.append(dude.identity().name()).append(" ");
         }
+        msg.clear(BundledPred.BUNDLE);
         msg.put(BundledPred.BUNDLE, builder.toString());
     }
 

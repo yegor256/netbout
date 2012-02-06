@@ -214,9 +214,17 @@ final class Mux implements Closeable {
                 this.task.exec();
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (Throwable ex) {
-                Logger.error(
+                Mux.this.submit(this.who, this.task);
+                Logger.warn(
                     this,
-                    "run(): %[exception]s",
+                    "run(): '%s' resubmitted because of %[type]s",
+                    this.task,
+                    ex
+                );
+                Logger.debug(
+                    this,
+                    "run(): '%s' resubmit was done because of %[exception]s",
+                    this.task,
                     ex
                 );
             }

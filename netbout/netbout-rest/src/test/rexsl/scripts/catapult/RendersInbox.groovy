@@ -39,8 +39,6 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-return
-
 def home = new URI(System.getProperty('catapult.home'))
 
 def starter = new RestSession(home).authenticate(new Urn(), 'localhost')
