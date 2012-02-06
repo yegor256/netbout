@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestResponse;
+import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -96,13 +97,52 @@ final class RestNamespaces extends AbstractMap<String, URL> {
     public URL put(final String name, final URL url) {
         final Set<Map.Entry<String, URL>> namespaces = this.entrySet();
         final Iterator<Map.Entry<String, URL>> iterator = namespaces.iterator();
+        boolean exists = false;
         while (iterator.hasNext()) {
             final Map.Entry<String, URL> entry = iterator.next();
             if (entry.getKey().equals(name)) {
-                iterator.remove();
+                if (entry.getValue().equals(url)) {
+                    exists = true;
+                    break;
+                } else {
+                    iterator.remove();
+                }
             }
         }
-        namespaces.add(new AbstractMap.SimpleEntry<String, URL>(name, url));
+        if (exists) {
+            Logger.warn(
+                this,
+                "#put('%s', '%s'): already exists, won't repost",
+                name,
+                url
+            );
+        } else {
+            namespaces.add(new AbstractMap.SimpleEntry<String, URL>(name, url));
+            this.repost(namespaces);
+        }
+        return url;
+    }
+
+    /**
+     * Entry client for namespaces's page.
+     * @return The page
+     */
+    private TestResponse entry() {
+        return RestTester.start(this.home)
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .get("reading home page of the identity")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .rel("//link[@rel='helper']/@href")
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+            .get("reading helper page")
+            .assertStatus(HttpURLConnection.HTTP_OK);
+    }
+
+    /**
+     * Repost these namespaces.
+     * @param namespaces What to repost
+     */
+    private void repost(final Set<Map.Entry<String, URL>> namespaces) {
         final StringBuilder post = new StringBuilder();
         for (Map.Entry<String, URL> entry : namespaces) {
             post.append(
@@ -120,22 +160,6 @@ final class RestNamespaces extends AbstractMap<String, URL> {
                 String.format("text=%s", URLEncoder.encode(post.toString()))
             )
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
-        return url;
-    }
-
-    /**
-     * Entry client for namespaces's page.
-     * @return The page
-     */
-    private TestResponse entry() {
-        return RestTester.start(this.home)
-            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .get("reading home page of the identity")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .rel("//link[@rel='helper']/@href")
-            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .get("reading helper page")
-            .assertStatus(HttpURLConnection.HTTP_OK);
     }
 
 }

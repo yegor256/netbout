@@ -37,20 +37,19 @@ import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 def starter = new RestExpert(new RestSession(rexsl.home).authenticate(new Urn(), 'localhost'))
-def namespaces = [
+def mandatory = [
     'test' : '/mock-auth',
     'facebook': '/fb',
     'email': '/email',
 ]
-namespaces.each {
-    starter.namespaces().put(
-        it.key,
-        UriBuilder.fromUri(rexsl.home).path(it.value).build().toURL()
-    )
+mandatory.each {
+    def url = UriBuilder.fromUri(rexsl.home).path(it.value).build().toURL()
+    starter.namespaces().put(it.key, url)
+    MatcherAssert.assertThat(starter.namespaces(), Matchers.hasEntry(it.key, url))
 }
 MatcherAssert.assertThat(
-    starter.namespaces(),
-    Matchers.hasSize(Matchers.not(Matchers.lessThan(namespaces.size())))
+    starter.namespaces().size(),
+    Matchers.not(Matchers.lessThan(mandatory.size()))
 )
 
 [
