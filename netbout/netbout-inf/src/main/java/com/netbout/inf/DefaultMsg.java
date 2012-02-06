@@ -29,6 +29,7 @@ package com.netbout.inf;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Default implementation of {@link Msg}.
@@ -37,6 +38,11 @@ import java.util.Collection;
  * @version $Id$
  */
 final class DefaultMsg implements Msg {
+
+    /**
+     * Indicator of message readiness for reading.
+     */
+    private final transient CountDownLatch latch = new CountDownLatch(1);
 
     /**
      * Number of message.
@@ -125,7 +131,18 @@ final class DefaultMsg implements Msg {
      */
     @Override
     public <T> void put(final String name, final T value) {
-        this.pairs.add(new Pair(name, value));
+        synchronized (this) {
+            if (this.latch.getCount() == 0) {
+                throw new IllegalStateException(
+                    String.format(
+                        "can't put('%s') to Msg #%d since it's closed already",
+                        name,
+                        this.num
+                    )
+                );
+            }
+            this.pairs.add(new Pair(name, value));
+        }
     }
 
     /**
@@ -133,6 +150,17 @@ final class DefaultMsg implements Msg {
      * @see SeeMessageTask#exec()
      */
     public void close() {
+        synchronized (this) {
+            if (this.latch.getCount() == 0) {
+                throw new IllegalStateException(
+                    String.format(
+                        "can't close() Msg #%d since it's already closed",
+                        this.num
+                    )
+                );
+            }
+            this.latch.countDown();
+        }
     }
 
     /**
@@ -154,7 +182,11 @@ final class DefaultMsg implements Msg {
      * Wait until the class is ready to return data.
      */
     private void awaitCompletion() {
-        // ...
+        try {
+            this.latch.await();
+        } catch (InterruptedException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
 }
