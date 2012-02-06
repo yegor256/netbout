@@ -80,7 +80,12 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
 
 queries.each { query ->
     def stmt = conn.createStatement()
-    stmt.execute(query)
+    try {
+        stmt.execute(query)
+    } catch (java.sql.SQLException ex) {
+        Logger.error(this, 'faiure in: "%s"', query)
+        throw ex
+    }
     Logger.debug(this, 'SQL executed: %s', query)
 }
 conn.close()
