@@ -26,23 +26,47 @@
  */
 package com.netbout.notifiers.email;
 
-import org.junit.Test;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.internet.InternetAddress;
+import org.mockito.Mockito;
 
 /**
- * Test case for {@link RoutineFarm}.
+ * Mocker of Message.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class RoutineFarmTest {
+public final class MessageMocker {
 
     /**
-     * RoutineFarm can grab emails from POP3 inbox.
-     * @throws Exception If there is some problem inside
+     * The mock.
      */
-    @Test
-    public void getsEmailsFromInbox() throws Exception {
-        final RoutineFarm farm = new RoutineFarm();
-        farm.routine();
+    private final transient Message message = Mockito.mock(Message.class);
+
+    /**
+     * Public ctor.
+     */
+    public MessageMocker() {
+        try {
+            final Address[] emails = new Address[] {
+                new InternetAddress("mock@netbout.com", "Mr. Mocker")
+            };
+            Mockito.doReturn(emails).when(this.message).getAllRecipients();
+            Mockito.doReturn(emails).when(this.message).getFrom();
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalArgumentException(ex);
+        } catch (javax.mail.MessagingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Return the mock.
+     * @return The mock
+     */
+    public Message mock() {
+        return this.message;
     }
 
 }

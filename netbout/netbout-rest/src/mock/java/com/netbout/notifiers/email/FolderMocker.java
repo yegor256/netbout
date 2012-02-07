@@ -26,23 +26,43 @@
  */
 package com.netbout.notifiers.email;
 
-import org.junit.Test;
+import javax.mail.Folder;
+import javax.mail.Message;
+import org.mockito.Mockito;
 
 /**
- * Test case for {@link RoutineFarm}.
+ * Dummy folder.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class RoutineFarmTest {
+public final class FolderMocker {
 
     /**
-     * RoutineFarm can grab emails from POP3 inbox.
-     * @throws Exception If there is some problem inside
+     * The mock.
      */
-    @Test
-    public void getsEmailsFromInbox() throws Exception {
-        final RoutineFarm farm = new RoutineFarm();
-        farm.routine();
+    private final transient Folder folder = Mockito.mock(Folder.class);
+
+    /**
+     * Public ctor.
+     */
+    public FolderMocker() {
+        final Message[] messages = new Message[] {
+            new MessageMocker().mock()
+        };
+        try {
+            Mockito.doReturn(messages).when(this.folder).getMessages();
+        } catch (javax.mail.MessagingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /**
+     * Return the mock.
+     * @return The mock
+     */
+    public Folder mock() {
+        return this.folder;
     }
 
 }

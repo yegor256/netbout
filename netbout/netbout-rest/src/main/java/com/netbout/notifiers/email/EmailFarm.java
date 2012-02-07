@@ -49,6 +49,7 @@ import org.apache.velocity.VelocityContext;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Farm
 public final class EmailFarm implements IdentityAware {

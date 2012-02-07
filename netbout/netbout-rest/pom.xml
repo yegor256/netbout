@@ -533,6 +533,8 @@
                                             <Netbout-SmtpPort>2525</Netbout-SmtpPort>
                                             <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
                                             <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
+                                            <Netbout-PopUser>test@netbout.com</Netbout-PopUser>
+                                            <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>

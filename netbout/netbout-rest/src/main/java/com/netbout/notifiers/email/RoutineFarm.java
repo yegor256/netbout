@@ -27,12 +27,8 @@
 package com.netbout.notifiers.email;
 
 import com.netbout.hub.Hub;
-import com.netbout.spi.Identity;
 import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import com.netbout.utils.Cipher;
-import com.netbout.utils.TextUtils;
 import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import java.util.Properties;
@@ -43,7 +39,6 @@ import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -51,6 +46,10 @@ import org.apache.commons.lang.CharEncoding;
 
 /**
  * Grab emails from POP3 mail box.
+ *
+ * <p>At the moment it's gmail.com. In the future we should switch to something
+ * more commercial and reliable. For example: fusemail.com, emailhosting.com,
+ * fastmail.com (google for "email hosting services").
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -78,17 +77,7 @@ public final class RoutineFarm {
      */
     @Operation("routine")
     public void routine() throws Exception {
-        final Properties props = new Properties();
-        props.put("mail.pop3.ssl.enable", "true");
-        props.put("mail.pop3.host", "pop.gmail.com");
-        props.put("mail.pop3.port", "995");
-        final Session session = Session.getDefaultInstance(props, null);
-        Store store;
-        try {
-            store = session.getStore("pop3");
-        } catch (javax.mail.NoSuchProviderException ex) {
-            throw new IllegalStateException(ex);
-        }
+        final Store store = this.session().getStore("pop3");
         try {
             store.connect(
                 Manifests.read("Netbout-PopUser"),
@@ -106,31 +95,26 @@ public final class RoutineFarm {
                     "#routine(): processed %d messages",
                     messages.length
                 );
-            } catch (javax.mail.MessagingException ex) {
-                throw new IllegalStateException(ex);
             } finally {
                 inbox.close(true);
             }
-        } catch (javax.mail.MessagingException ex) {
-            throw new IllegalStateException(ex);
         } finally {
-            this.closeQuietly(store);
+            store.close();
         }
     }
 
     /**
      * Process one message.
      * @param message The message to process
+     * @throws javax.mail.MessagingException If some problem inside
+     * @checkstyle RedundantThrows (3 lines)
      */
-    private void process(final Message message) {
-        try {
-            for (Address email : message.getAllRecipients()) {
-                if (this.attempt(message, (InternetAddress) email)) {
-                    break;
-                }
+    private void process(final Message message)
+        throws javax.mail.MessagingException {
+        for (Address email : message.getAllRecipients()) {
+            if (this.attempt(message, (InternetAddress) email)) {
+                break;
             }
-        } catch (javax.mail.MessagingException ex) {
-            throw new IllegalStateException(ex);
         }
     }
 
@@ -140,6 +124,7 @@ public final class RoutineFarm {
      * @param email The destination
      * @return Successfully?
      * @throws javax.mail.MessagingException If some problem inside
+     * @checkstyle RedundantThrows (3 lines)
      */
     private boolean attempt(final Message message,
         final InternetAddress email) throws javax.mail.MessagingException {
@@ -152,6 +137,7 @@ public final class RoutineFarm {
         } catch (BrokenAnchorException ex) {
             Logger.warn(
                 this,
+                // @checkstyle LineLength (1 line)
                 "#process(): message from '%s' to %[list]s ignored: %[exception]s",
                 message.getFrom()[0],
                 message.getAllRecipients(),
@@ -160,7 +146,6 @@ public final class RoutineFarm {
         } catch (com.netbout.spi.MessagePostException ex) {
             Logger.warn(
                 this,
-                // @checkstyle LineLength (1 line)
                 "#process(): message from '%s' failed to post: %[exception]s",
                 message.getFrom()[0],
                 ex
@@ -173,8 +158,11 @@ public final class RoutineFarm {
      * Read text of email message.
      * @param message The message
      * @return The text of it
+     * @throws javax.mail.MessagingException If some problem inside
+     * @checkstyle RedundantThrows (3 lines)
      */
-    private String textOf(final Message message) {
+    private String textOf(final Message message)
+        throws javax.mail.MessagingException {
         try {
             final Object body = message.getContent();
             final ByteArrayOutputStream text = new ByteArrayOutputStream();
@@ -191,22 +179,19 @@ public final class RoutineFarm {
             return text.toString(CharEncoding.UTF_8);
         } catch (java.io.IOException ex) {
             throw new IllegalArgumentException(ex);
-        } catch (javax.mail.MessagingException ex) {
-            throw new IllegalArgumentException(ex);
         }
     }
 
     /**
-     * Close store quietly.
-     * @param store The store
-     * @return The text of it
+     * Get POP3 session.
+     * @return The session object
      */
-    private void closeQuietly(final Store store) {
-        try {
-            store.close();
-        } catch (javax.mail.MessagingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+    private Session session() {
+        final Properties props = new Properties();
+        props.put("mail.pop3.ssl.enable", "true");
+        props.put("mail.pop3.host", "pop.gmail.com");
+        props.put("mail.pop3.port", "995");
+        return Session.getDefaultInstance(props, null);
     }
 
 }
