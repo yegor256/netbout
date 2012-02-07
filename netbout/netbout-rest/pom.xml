@@ -542,10 +542,14 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>tomcat-maven-plugin</artifactId>
-                        <version since="13 Dec 2011">1.1</version>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                        <version since="7 Feb 2012">2.0-beta-1</version>
                         <configuration>
+                            <systemProperties>
+                                <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
+                            </systemProperties>
+                            <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
                             <fork>true</fork>
                             <path>${catapult.context}</path>
                             <port>${catapult.port}</port>
