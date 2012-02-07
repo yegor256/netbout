@@ -51,7 +51,7 @@ final class MuxWatcher implements Closeable, Runnable {
     /**
      * Maximum task execution time, in msec.
      */
-    private static final long MAX_TIME = 8 * 60 * 1000L;
+    private static final long MAX_TIME = 15 * 60 * 1000L;
 
     /**
      * When we should issue a warning about the task, in msec.
