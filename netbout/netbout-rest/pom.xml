@@ -449,6 +449,8 @@
                                         <Netbout-SmtpPassword>${smtp.password}</Netbout-SmtpPassword>
                                         <Netbout-PopUser>${pop3.user}</Netbout-PopUser>
                                         <Netbout-PopPassword>${pop3.password}</Netbout-PopPassword>
+                                        <Netbout-PopHost>${pop3.host}</Netbout-PopHost>
+                                        <Netbout-PopPort>${pop3.port}</Netbout-PopPort>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
@@ -535,6 +537,8 @@
                                             <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
                                             <Netbout-PopUser>test@netbout.com</Netbout-PopUser>
                                             <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
+                                            <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
+                                            <Netbout-PopPort>995</Netbout-PopPort>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>

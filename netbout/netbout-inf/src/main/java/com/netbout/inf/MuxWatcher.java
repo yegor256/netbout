@@ -51,7 +51,7 @@ final class MuxWatcher implements Closeable, Runnable {
     /**
      * Maximum task execution time, in msec.
      */
-    private static final long MAX_TIME = 8 * 60 * 1000L;
+    private static final long MAX_TIME = 15 * 60 * 1000L;
 
     /**
      * When we should issue a warning about the task, in msec.
@@ -201,6 +201,7 @@ final class MuxWatcher implements Closeable, Runnable {
                 future.get(1L, TimeUnit.SECONDS);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
             } catch (java.util.concurrent.ExecutionException ex) {
                 throw new IllegalStateException(ex);
             } catch (java.util.concurrent.TimeoutException ex) {

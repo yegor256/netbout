@@ -191,8 +191,8 @@ public final class RoutineFarm {
     private Session session() {
         final Properties props = new Properties();
         props.put("mail.pop3.ssl.enable", "true");
-        props.put("mail.pop3.host", "pop.gmail.com");
-        props.put("mail.pop3.port", "995");
+        props.put("mail.pop3.host", Manifests.read("Netbout-PopHost"));
+        props.put("mail.pop3.port", Manifests.read("Netbout-PopPort"));
         return Session.getDefaultInstance(props, null);
     }
 
