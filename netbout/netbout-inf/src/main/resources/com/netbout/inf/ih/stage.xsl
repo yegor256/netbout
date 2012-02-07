@@ -42,10 +42,10 @@
     <xsl:template match="stage">
         <p>Infinity statistics:</p>
         <form method="post">
+            <xsl:attribute name="action">
+                <xsl:value-of select="$stage-home-uri"/>
+            </xsl:attribute>
             <p>
-                <xsl:attribute name="action">
-                    <xsl:value-of select="$stage-home-uri"/>
-                </xsl:attribute>
                 <xsl:text>Msg#: </xsl:text>
                 <input name="id" size="5" maxlength="10"/>
                 <input value="Show" type="submit"/>
