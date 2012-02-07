@@ -113,6 +113,7 @@ public final class RoutineFarm {
         throws javax.mail.MessagingException {
         for (Address email : message.getAllRecipients()) {
             if (this.attempt(message, (InternetAddress) email)) {
+                message.setExpunged(true);
                 break;
             }
         }
