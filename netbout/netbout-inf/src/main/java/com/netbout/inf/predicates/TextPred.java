@@ -54,8 +54,8 @@ public final class TextPred implements Predicate {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        return this.text;
+    public <T> T evaluate(final Msg msg, final int pos) {
+        return (T) this.text;
     }
 
     /**

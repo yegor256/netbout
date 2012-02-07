@@ -43,17 +43,19 @@ public interface Msg {
     Long number();
 
     /**
-     * Number of bout it's in.
-     * @return The number
+     * Remove this property.
+     * @param name The name of the property to get
      */
-    Long bout();
+    void clear(String name);
 
     /**
-     * Has property.
+     * Has property with this required value.
      * @param name The name of the property
+     * @param value The value required
      * @return Yes, it has this property
+     * @param <T> Type of property
      */
-    boolean has(String name);
+    <T> boolean has(String name, T value);
 
     /**
      * Get property.
@@ -62,5 +64,13 @@ public interface Msg {
      * @return Value of the property
      */
     <T> T get(String name);
+
+    /**
+     * Put property.
+     * @param name The name of the property to save
+     * @param value The value to set
+     * @param <T> Type of property
+     */
+    <T> void put(String name, T value);
 
 }

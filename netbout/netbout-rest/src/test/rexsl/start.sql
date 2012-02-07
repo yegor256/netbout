@@ -28,130 +28,119 @@
 -- @version $Id$
 --
 
--- clean the datbase before start
-DELETE FROM bill;
-DELETE FROM namespace WHERE identity != "urn:void:";
-DELETE FROM helper;
-DELETE FROM alias;
-DELETE FROM seen;
-DELETE FROM message;
-DELETE FROM participant;
-DELETE FROM bout;
-DELETE FROM identity WHERE name != "urn:void:";
-
 -- me, in order to allow sensitive helpers to work
-INSERT INTO identity (name, photo, date) VALUES (
+INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'urn:facebook:1531296526',
     'http://img.netbout.com/unknown.png',
     '2008-08-30'
 );
 
 -- bumper helper and identity
-INSERT INTO identity (name, photo, date) VALUES (
+INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'urn:test:bumper',
     'http://img.netbout.com/unknown.png',
     '2008-08-30'
 );
-INSERT INTO helper (identity, url, date) VALUES (
+INSERT IGNORE INTO helper (identity, url, date) VALUES (
     'urn:test:bumper',
     'file:com.netbout.rest.bumper',
     '2009-09-13'
 );
 
 -- a few pre-defined identities
-INSERT INTO identity (name, photo, date) VALUES (
+INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'urn:facebook:4466',
     'http://www.topnews.in/light/files/John-Turturro.jpg',
     '2010-11-22'
 );
-INSERT INTO identity (name, photo, date) VALUES (
+INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'urn:test:cindy',
     'http://img.netbout.com/unknown.png',
     '2010-11-21'
 );
-INSERT INTO alias (identity, name, date) VALUES (
+INSERT IGNORE INTO alias (identity, name, date) VALUES (
     'urn:facebook:4466',
     'John Turturro',
     '2010-11-23'
 );
 
 -- pre-existing bout
-INSERT INTO bout (number, title, date) VALUES (
+INSERT IGNORE INTO bout (number, title, date) VALUES (
     555,
     'ура!',
     '2010-11-13'
 );
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (
     555,
     'urn:facebook:4466',
     1,
     '2010-11-22'
 );
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (
     555, 'urn:test:cindy', 1, '2010-11-22'
 );
-INSERT INTO message (bout, date, author, text) VALUES (
+INSERT IGNORE INTO message (bout, date, author, text) VALUES (
     555, '2011-11-15 03:18:34', 'urn:facebook:4466', 'first message'
 );
-INSERT INTO message (bout, date, author, text) VALUES (
+INSERT IGNORE INTO message (bout, date, author, text) VALUES (
     555, '2011-11-15 04:28:22', 'urn:test:cindy', 'second message'
 );
-INSERT INTO message (bout, date, author, text) VALUES (
+INSERT IGNORE INTO message (bout, date, author, text) VALUES (
     555, '2011-11-15 05:23:11', 'urn:test:cindy', 'у!'
 );
-INSERT INTO namespace (name, identity, template, date) VALUES (
+INSERT IGNORE INTO namespace (name, identity, template, date) VALUES (
     'foo', 'urn:facebook:4466', 'http://localhost/foo', '2010-11-22'
 );
 
 -- identity with a long bout
-INSERT INTO identity (name, photo, date) VALUES (
+INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'urn:test:leon',
     'http://www.roopevintage.com/blog/wp-content/uploads/2011/04/0124_leon.jpg',
     '2006-11-22'
 );
-INSERT INTO bout (number, title, date) VALUES (900, 'test', '2007-05-05');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (900, 'urn:test:leon', 1, '2007-05-05');
+INSERT IGNORE INTO bout (number, title, date) VALUES (900, 'test', '2007-05-05');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (900, 'urn:test:leon', 1, '2007-05-05');
 
-INSERT INTO bout (number, title, date) VALUES (901, 'test', '2008-01-13');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (901, 'urn:test:leon', 1, '2010-01-13');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (901, 'urn:test:cindy', 1, '2010-01-13');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (901, 'urn:facebook:4466', 1, '2010-01-13');
-INSERT INTO message (number, bout, date, author, text) VALUES (55901, 901, '2008-01-14', 'urn:test:leon', 'hi!');
-INSERT INTO seen (message, identity, date) VALUES (55901, 'urn:test:leon', '2011-01-25');
+INSERT IGNORE INTO bout (number, title, date) VALUES (901, 'test', '2008-01-13');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (901, 'urn:test:leon', 1, '2010-01-13');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (901, 'urn:test:cindy', 1, '2010-01-13');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (901, 'urn:facebook:4466', 1, '2010-01-13');
+INSERT IGNORE INTO message (number, bout, date, author, text) VALUES (55901, 901, '2008-01-14', 'urn:test:leon', 'hi!');
+INSERT IGNORE INTO seen (message, identity, date) VALUES (55901, 'urn:test:leon', '2011-01-25');
 
-INSERT INTO bout (number, title, date) VALUES (902, 'test', '2010-01-14');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (902, 'urn:test:leon', 1, '2010-01-14');
-INSERT INTO message (number, bout, date, author, text) VALUES (55902, 902, '2011-01-15', 'urn:test:leon', 'hi!');
+INSERT IGNORE INTO bout (number, title, date) VALUES (902, 'test', '2010-01-14');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (902, 'urn:test:leon', 1, '2010-01-14');
+INSERT IGNORE INTO message (number, bout, date, author, text) VALUES (55902, 902, '2011-01-15', 'urn:test:leon', 'hi!');
 
-INSERT INTO bout (number, title, date) VALUES (903, 'test', '2010-01-15');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (903, 'urn:test:leon', 1, '2010-01-15');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (903, 'urn:test:cindy', 1, '2010-01-13');
-INSERT INTO message (number, bout, date, author, text) VALUES (55903, 903, '2011-01-16', 'urn:test:leon', 'hi!');
+INSERT IGNORE INTO bout (number, title, date) VALUES (903, 'test', '2010-01-15');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (903, 'urn:test:leon', 1, '2010-01-15');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (903, 'urn:test:cindy', 1, '2010-01-13');
+INSERT IGNORE INTO message (number, bout, date, author, text) VALUES (55903, 903, '2011-01-16', 'urn:test:leon', 'hi!');
 
-INSERT INTO bout (number, title, date) VALUES (904, 'test', '2010-01-16');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (904, 'urn:test:leon', 1, '2010-01-16');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (904, 'urn:facebook:4466', 1, '2010-01-13');
-INSERT INTO message (number, bout, date, author, text) VALUES (55904, 904, '2011-01-17', 'urn:test:leon', 'hi!');
+INSERT IGNORE INTO bout (number, title, date) VALUES (904, 'test', '2010-01-16');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (904, 'urn:test:leon', 1, '2010-01-16');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (904, 'urn:facebook:4466', 1, '2010-01-13');
+INSERT IGNORE INTO message (number, bout, date, author, text) VALUES (55904, 904, '2011-01-17', 'urn:test:leon', 'hi!');
 
-INSERT INTO bout (number, title, date) VALUES (905, 'test', '2010-01-17');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (905, 'urn:test:leon', 1, '2010-01-17');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (905, 'urn:test:bumper', 1, '2010-01-13');
-INSERT INTO message (number, bout, date, author, text) VALUES (55905, 905, '2011-01-18', 'urn:test:leon', 'hi!');
+INSERT IGNORE INTO bout (number, title, date) VALUES (905, 'test', '2010-01-17');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (905, 'urn:test:leon', 1, '2010-01-17');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (905, 'urn:test:bumper', 1, '2010-01-13');
+INSERT IGNORE INTO message (number, bout, date, author, text) VALUES (55905, 905, '2011-01-18', 'urn:test:leon', 'hi!');
 
-INSERT INTO bout (number, title, date) VALUES (906, 'test', '2010-01-18');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (906, 'urn:test:leon', 1, '2010-01-18');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (906, 'urn:facebook:1531296526', 1, '2010-01-13');
-INSERT INTO message (number, bout, date, author, text) VALUES (55906, 906, '2011-01-19', 'urn:test:leon', 'hi!');
+INSERT IGNORE INTO bout (number, title, date) VALUES (906, 'test', '2010-01-18');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (906, 'urn:test:leon', 1, '2010-01-18');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (906, 'urn:facebook:1531296526', 1, '2010-01-13');
+INSERT IGNORE INTO message (number, bout, date, author, text) VALUES (55906, 906, '2011-01-19', 'urn:test:leon', 'hi!');
 
-INSERT INTO bout (number, title, date) VALUES (907, 'test', '2010-01-19');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (907, 'urn:test:leon', 1, '2010-01-19');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (907, 'urn:test:bumper', 1, '2010-01-13');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (907, 'urn:facebook:1531296526', 1, '2010-01-13');
-INSERT INTO message (number, bout, date, author, text) VALUES (55907, 907, '2011-01-20', 'urn:test:leon', 'hi!');
+INSERT IGNORE INTO bout (number, title, date) VALUES (907, 'test', '2010-01-19');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (907, 'urn:test:leon', 1, '2010-01-19');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (907, 'urn:test:bumper', 1, '2010-01-13');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (907, 'urn:facebook:1531296526', 1, '2010-01-13');
+INSERT IGNORE INTO message (number, bout, date, author, text) VALUES (55907, 907, '2011-01-20', 'urn:test:leon', 'hi!');
 
-INSERT INTO bout (number, title, date) VALUES (908, 'test', '2010-01-20');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (908, 'urn:test:leon', 1, '2010-01-20');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (908, 'urn:facebook:4466', 1, '2010-01-13');
-INSERT INTO participant (bout, identity, confirmed, date) VALUES (908, 'urn:test:bumper', 1, '2010-01-13');
-INSERT INTO message (number, bout, date, author, text) VALUES (55908, 908, '2011-01-21', 'urn:test:leon', 'hi!');
-INSERT INTO seen (message, identity, date) VALUES (55908, 'urn:test:leon', '2011-01-21');
+INSERT IGNORE INTO bout (number, title, date) VALUES (908, 'test', '2010-01-20');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (908, 'urn:test:leon', 1, '2010-01-20');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (908, 'urn:facebook:4466', 1, '2010-01-13');
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (908, 'urn:test:bumper', 1, '2010-01-13');
+INSERT IGNORE INTO message (number, bout, date, author, text) VALUES (55908, 908, '2011-01-21', 'urn:test:leon', 'hi!');
+INSERT IGNORE INTO seen (message, identity, date) VALUES (55908, 'urn:test:leon', '2011-01-21');

@@ -211,11 +211,21 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public Helper promote(final Identity identity, final URL location) {
+        if (identity instanceof Helper) {
+            throw new IllegalArgumentException(
+                Logger.format(
+                    "Can't promote '%s' (%[type]s) since it's already a helper",
+                    identity.name(),
+                    identity
+                )
+            );
+        }
         if (!(identity instanceof HubIdentity)) {
             throw new IllegalArgumentException(
-                String.format(
-                    "Can't promote '%s' since it's not from Hub",
-                    identity.name()
+                Logger.format(
+                    "Can't promote '%s' (%[type]s) since it's not from Hub",
+                    identity.name(),
+                    identity
                 )
             );
         }

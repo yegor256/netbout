@@ -39,7 +39,8 @@ public interface Predicate {
      * @param msg The message
      * @param pos Its position in the output list
      * @return Result of it
+     * @param <T> The type of expected result
      */
-    Object evaluate(Msg msg, int pos);
+    <T> T evaluate(Msg msg, int pos);
 
 }

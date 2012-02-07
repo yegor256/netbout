@@ -31,9 +31,9 @@ import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This participant is in the bout.
@@ -45,9 +45,9 @@ import java.util.Map;
 public final class TalksWithPred extends AbstractVarargPred {
 
     /**
-     * Pattern for message property.
+     * The property.
      */
-    public static final String PATTERN = "talks-with:%s";
+    public static final String TALKS_WITH = "talks-with";
 
     /**
      * Public ctor.
@@ -59,16 +59,13 @@ public final class TalksWithPred extends AbstractVarargPred {
 
     /**
      * Extracts necessary data from message.
-     * @param msg The message to extract from
-     * @param props Where to extract
+     * @param from The message to extract from
+     * @param msg Where to extract
      */
-    public static void extract(final Message msg,
-        final Map<String, Object> props) {
-        for (Participant dude : msg.bout().participants()) {
-            props.put(
-                String.format(TalksWithPred.PATTERN, dude.identity().name()),
-                true
-            );
+    public static void extract(final Message from, final Msg msg) {
+        msg.clear(TalksWithPred.TALKS_WITH);
+        for (Participant dude : from.bout().participants()) {
+            msg.put(TalksWithPred.TALKS_WITH, dude.identity().name());
         }
     }
 
@@ -77,8 +74,8 @@ public final class TalksWithPred extends AbstractVarargPred {
      */
     @Override
     public Object evaluate(final Msg msg, final int pos) {
-        final String name = (String) this.arg(0).evaluate(msg, pos);
-        final boolean talks = msg.has(String.format(this.PATTERN, name));
+        final Urn name = Urn.create(this.arg(0).<String>evaluate(msg, pos));
+        final boolean talks = msg.has(this.TALKS_WITH, name);
         Logger.debug(
             this,
             "#evaluate(#%d, %d): talks with participant '%s': %B",

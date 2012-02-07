@@ -28,7 +28,6 @@ package com.netbout.inf;
 
 import com.netbout.spi.Message;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Predicate wrapping token.
@@ -76,14 +75,14 @@ public final class PredicateToken {
 
     /**
      * Extract properties from the message.
-     * @param msg The message
-     * @param props Where to extract
+     * @param from The message
+     * @param msg Where to extract
      */
-    public void extract(final Message msg, final Map<String, Object> props) {
+    public void extract(final Message from, final Msg msg) {
         if (this.meta.extracts()) {
             try {
-                this.type.getMethod("extract", Message.class, Map.class)
-                    .invoke(null, msg, props);
+                this.type.getMethod("extract", Message.class, Msg.class)
+                    .invoke(null, from, msg);
             } catch (NoSuchMethodException ex) {
                 throw new PredicateException(ex);
             } catch (IllegalAccessException ex) {

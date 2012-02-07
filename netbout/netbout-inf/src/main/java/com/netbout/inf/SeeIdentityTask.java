@@ -95,7 +95,7 @@ final class SeeIdentityTask implements Task {
                 throw new IllegalStateException(ex);
             }
         }
-        Logger.debug(
+        Logger.info(
             this,
             "#exec(): cached %d bout(s) of '%s' in %dms",
             numbers.size(),

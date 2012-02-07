@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.bus.Bus;
+import com.netbout.inf.ih.StageFarm;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -67,7 +68,21 @@ public final class DefaultInfinity implements Infinity {
      */
     public DefaultInfinity(final Bus ibus) {
         this.bus = ibus;
+        StageFarm.register(this);
         Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", ibus);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append("Mux stats:\n")
+            .append(this.mux.statistics())
+            .append("\n\nHeap stats:\n")
+            .append(this.heap.statistics());
+        return text.toString();
     }
 
     /**

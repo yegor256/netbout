@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.netbout.inf.predicates.VariablePred;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -139,7 +140,8 @@ public final class LazyBouts implements Iterable<Long> {
             Long found = null;
             while (this.iterator.hasNext()) {
                 final Long msg = this.iterator.next();
-                final Long bout = LazyBouts.this.heap.get(msg).bout();
+                final Long bout = LazyBouts.this.heap.get(msg)
+                    .<Long>get(VariablePred.BOUT_NUMBER);
                 if (!this.passed.contains(bout)) {
                     found = bout;
                     this.ready = true;

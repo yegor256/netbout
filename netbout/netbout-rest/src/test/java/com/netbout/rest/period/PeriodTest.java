@@ -119,6 +119,16 @@ public final class PeriodTest {
     }
 
     /**
+     * Period can explain itself.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void explainsItselfToString() throws Exception {
+        final Period period = new Period().next(this.date("2005-03-14"));
+        MatcherAssert.assertThat(period.explain(), Matchers.notNullValue());
+    }
+
+    /**
      * Period can add a date which is the same as newest.
      * @throws Exception If there is some problem inside
      */

@@ -24,42 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.ih;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Predicate;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Test case of {@link UnbundledPred}.
+ * The stage to render with JAXB.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UnbundledPredTest {
+@XmlType(name = "data")
+@XmlAccessorType(XmlAccessType.NONE)
+public final class Stage {
 
     /**
-     * UnbundledPred can pass only unbundled messages.
-     * @throws Exception If there is some problem inside
+     * The text to show.
      */
-    @Test
-    public void positivelyMatchesUnbundledMessageOnly() throws Exception {
-        final Predicate pred = new UnbundledPred(
-            Arrays.asList(new Predicate[] {new NumberPred(1L)})
-        );
-        final String marker = "abc";
-        final Msg first = new MsgMocker()
-            .with(VariablePred.BOUT_NUMBER, 1L)
-            .with(BundledPred.BUNDLE, marker)
-            .mock();
-        MatcherAssert.assertThat("no!", !(Boolean) pred.evaluate(first, 0));
-        final Msg second = new MsgMocker()
-            .with(VariablePred.BOUT_NUMBER, 2L)
-            .with(BundledPred.BUNDLE, marker)
-            .mock();
-        MatcherAssert.assertThat("yes!", (Boolean) pred.evaluate(second, 0));
+    private final transient String text;
+
+    /**
+     * Public ctor, for JAXB.
+     */
+    public Stage() {
+        throw new IllegalStateException("illegal call");
+    }
+
+    /**
+     * Public ctor.
+     * @param txt The text to show
+     */
+    public Stage(final String txt) {
+        this.text = txt;
+    }
+
+    /**
+     * Get text.
+     * @return The text
+     */
+    @XmlElement
+    public String getText() {
+        return this.text;
     }
 
 }

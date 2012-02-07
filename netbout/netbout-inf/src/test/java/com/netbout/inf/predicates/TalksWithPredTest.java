@@ -55,7 +55,7 @@ public final class TalksWithPredTest {
             "matched",
             (Boolean) pred.evaluate(
                 new MsgMocker()
-                    .with(String.format(TalksWithPred.PATTERN, name), true)
+                    .with(TalksWithPred.TALKS_WITH, name)
                     .mock(),
                 0
             )

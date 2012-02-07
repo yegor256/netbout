@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -50,8 +51,14 @@ final class Mux implements Closeable {
 
     /**
      * How many threads to run in parallel.
+     *
+     * <p>This number shouldn't be too big, becuase tasks will take just
+     * more time to execute, which is not so good. Also keep in mind that
+     * the bottleneck here is that database, since every task is mostly working
+     * with data retrieval from DB. Thus, pay attention to the number of
+     * connections allowed in {@code com.netbout.db.DataSourceBuilder}.
      */
-    private static final int THREADS = 20;
+    private static final int THREADS = 10;
 
     /**
      * Executor service, with a number of threads working in parallel.
@@ -82,19 +89,50 @@ final class Mux implements Closeable {
         new DescriptiveStatistics(100);
 
     /**
+     * Show some stats.
+     * @return The text
+     */
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("%d identities\n", this.waiting.size()));
+        text.append(String.format("%d waiting tasks\n", this.total()));
+        text.append(String.format("%.2fms avg time\n\n", this.stats.getMean()));
+        text.append("Watcher's stats:\n");
+        text.append(this.watcher.statistics());
+        return text.toString();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void close() {
         this.alive.set(false);
         this.watcher.close();
-        final List<Runnable> unfinished = this.executor.shutdownNow();
-        Logger.info(
-            this,
-            "#close(): stopped with %d unfinished tasks and %d waiting",
-            unfinished.size(),
-            this.total()
-        );
+        this.executor.shutdown();
+        boolean terminated;
+        Logger.info(this, "#close(): trying to close Mux tasks gracefully...");
+        try {
+            // @checkstyle MagicNumber (1 line)
+            terminated = this.executor.awaitTermination(5L, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            throw new IllegalStateException(ex);
+        }
+        if (terminated) {
+            Logger.info(
+                this,
+                "#close(): correctly stopped with %d tasks in the queue",
+                this.total()
+            );
+        } else {
+            final List<Runnable> killed = this.executor.shutdownNow();
+            Logger.warn(
+                this,
+                "#close(): abruptly terminated %d tasks (%d in the queue)",
+                killed.size(),
+                this.total()
+            );
+        }
     }
 
     /**
@@ -124,7 +162,7 @@ final class Mux implements Closeable {
         if (this.alive.get()) {
             this.watcher.watch(this.executor.submit(new TaskShell(who, task)));
         } else {
-            Logger.warn(
+            Logger.debug(
                 this,
                 "#submit(): Mux is closed, %s ignored",
                 task
@@ -136,10 +174,6 @@ final class Mux implements Closeable {
      * Wrapper of Task.
      */
     private final class TaskShell implements Runnable {
-        /**
-         * When we started.
-         */
-        private final transient long start = System.currentTimeMillis();
         /**
          * Who are waiting.
          */
@@ -175,13 +209,22 @@ final class Mux implements Closeable {
         @Override
         @SuppressWarnings("PMD.AvoidCatchingThrowable")
         public void run() {
+            final long start = System.currentTimeMillis();
             try {
                 this.task.exec();
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (Throwable ex) {
-                Logger.error(
+                Mux.this.submit(this.who, this.task);
+                Logger.warn(
                     this,
-                    "run(): %[exception]s",
+                    "run(): '%s' resubmitted because of %[type]s",
+                    this.task,
+                    ex
+                );
+                Logger.debug(
+                    this,
+                    "run(): '%s' resubmit was done because of %[exception]s",
+                    this.task,
                     ex
                 );
             }
@@ -189,7 +232,7 @@ final class Mux implements Closeable {
                 Mux.this.waiting.get(urn).decrementAndGet();
             }
             Mux.this.stats.addValue(
-                (double) System.currentTimeMillis() - this.start
+                (double) System.currentTimeMillis() - start
             );
             Logger.debug(
                 this,

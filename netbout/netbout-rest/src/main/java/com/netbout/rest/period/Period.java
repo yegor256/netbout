@@ -163,7 +163,7 @@ public final class Period {
                     "New date '%s' can't be newer than START '%s' in '%s': %[list]s",
                     date,
                     this.newest(),
-                    this,
+                    this.explain(),
                     this.dates
                 )
             );
@@ -221,7 +221,7 @@ public final class Period {
                     this.dates.size(),
                     date,
                     this.newest(),
-                    this
+                    this.explain()
                 )
             );
         }
@@ -233,7 +233,7 @@ public final class Period {
                     date,
                     this.dates.first(),
                     this.dates.size(),
-                    this
+                    this.explain()
                 )
             );
         }
@@ -295,6 +295,22 @@ public final class Period {
      */
     public String title() {
         return this.when(this.newest());
+    }
+
+    /**
+     * Explain this period for admin/super-user (mostly used in error
+     * messages to explain you what's inside the object).
+     * @return The text
+     */
+    public String explain() {
+        return Logger.format(
+            "%s as (start=%s, limit=%d, %d dates: %[list]s)",
+            this,
+            this.start,
+            this.limit,
+            this.dates.size(),
+            this.dates
+        );
     }
 
     /**

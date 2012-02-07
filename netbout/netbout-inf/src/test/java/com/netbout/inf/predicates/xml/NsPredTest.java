@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.predicates.xml;
 
+import com.netbout.inf.Msg;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
@@ -33,7 +34,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.rexsl.test.ContainerMocker;
 import java.util.Arrays;
-import java.util.Map;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -80,7 +80,7 @@ public final class NsPredTest {
     @Test
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     public void extractsNamespaceFromXml() throws Exception {
-        final Message msg = Mockito.mock(Message.class);
+        final Message from = Mockito.mock(Message.class);
         Mockito.doReturn(
             // @checkstyle StringLiteralsConcatenation (7 lines)
             "<root xmlns='urn:test:bar'"
@@ -90,10 +90,10 @@ public final class NsPredTest {
                 this.xsd
             )
             + "/>"
-        ).when(msg).text();
-        final Map props = Mockito.mock(Map.class);
-        NsPred.extract(msg, props);
-        Mockito.verify(props).put(NsPred.NAMESPACE, Urn.create("urn:test:bar"));
+        ).when(from).text();
+        final Msg msg = Mockito.mock(Msg.class);
+        NsPred.extract(from, msg);
+        Mockito.verify(msg).put(NsPred.NAMESPACE, Urn.create("urn:test:bar"));
     }
 
     /**
