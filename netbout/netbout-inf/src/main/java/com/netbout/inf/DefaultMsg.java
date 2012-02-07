@@ -97,6 +97,7 @@ final class DefaultMsg implements Msg {
         try {
             return this.value(name).<T>get();
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             throw new IllegalArgumentException(
                 String.format(
                     "can't find '%s' in Msg #%d",
