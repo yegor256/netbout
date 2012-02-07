@@ -201,6 +201,7 @@ final class MuxWatcher implements Closeable, Runnable {
                 future.get(1L, TimeUnit.SECONDS);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
             } catch (java.util.concurrent.ExecutionException ex) {
                 throw new IllegalStateException(ex);
             } catch (java.util.concurrent.TimeoutException ex) {
