@@ -34,6 +34,7 @@ import com.ymock.util.Logger;
 import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Multipart;
@@ -113,7 +114,7 @@ public final class RoutineFarm {
         throws javax.mail.MessagingException {
         for (Address email : message.getAllRecipients()) {
             if (this.attempt(message, (InternetAddress) email)) {
-                message.setExpunged(true);
+                message.setFlag(Flags.Flag.DELETED, true);
                 break;
             }
         }
