@@ -11,3 +11,5 @@ Netbout-SmtpHost: relay.jangosmtp.net
 Netbout-SmtpPort: 2525
 Netbout-SmtpUser: yegor256
 Netbout-SmtpPassword: 201448CX
+Netbout-PopUser: test@netbout.com
+Netbout-PopPassword: netbout-test

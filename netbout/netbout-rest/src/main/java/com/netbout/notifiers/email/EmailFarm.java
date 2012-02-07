@@ -162,18 +162,18 @@ public final class EmailFarm implements IdentityAware {
         );
         final javax.mail.Message email = this.sender.newMessage();
         try {
-            final Address reply = new InternetAddress(
-                String.format(
-                    "%s@netbout.com",
-                    TextUtils.pack(dude.identity().name().toString())
-                ),
+            final InternetAddress reply = new InternetAddress(
+                new AnchorEmail(dude.identity(), dude.bout()).email(),
                 NetboutUtils.aliasOf(message.author())
             );
             email.addFrom(new Address[] {reply});
             email.setReplyTo(new Address[] {reply});
             email.addRecipient(
                 javax.mail.Message.RecipientType.TO,
-                new InternetAddress(dude.identity().name().nss())
+                new InternetAddress(
+                    dude.identity().name().nss(),
+                    NetboutUtils.aliasOf(dude.identity())
+                )
             );
             email.setText(text);
             email.setSubject(

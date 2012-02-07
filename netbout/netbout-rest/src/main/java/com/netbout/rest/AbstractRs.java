@@ -334,6 +334,7 @@ public abstract class AbstractRs implements Resource {
         if (this.ihub == null) {
             throw new IllegalStateException("HUB is not initialized");
         }
+        com.netbout.notifiers.email.RoutineFarm.setHub(this.ihub);
         Logger.debug(
             this,
             "#setServletContext(%[type]s): injected",
