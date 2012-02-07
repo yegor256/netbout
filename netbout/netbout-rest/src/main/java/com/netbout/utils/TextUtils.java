@@ -68,7 +68,6 @@ public final class TextUtils {
      * @return Encoded text
      */
     public static String pack(final String text) {
-        assert text != null;
         try {
             return new Base64().encodeToString(
                 text.getBytes(CharEncoding.UTF_8)
@@ -84,7 +83,6 @@ public final class TextUtils {
      * @return Decoded text
      */
     public static String unpack(final String text) {
-        assert text != null;
         try {
             return new String(new Base64().decode(text), CharEncoding.UTF_8);
         } catch (java.io.UnsupportedEncodingException ex) {

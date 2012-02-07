@@ -35,7 +35,7 @@ import com.ymock.util.Logger
 
 def urlFile = new File(rexsl.basedir, 'jdbc.txt')
 if (urlFile.exists()) {
-    Manifests.inject('Netbout-JdbcUrl', url)
+    Manifests.inject('Netbout-JdbcUrl', urlFile.text)
 }
 
 def conn = Database.connection()
@@ -79,4 +79,4 @@ queries.each { query ->
     Logger.debug(this, 'SQL executed: %s', query)
 }
 conn.close()
-Logger.info(this, 'Test database is ready at %s', url)
+Logger.info(this, 'Test database is ready')
