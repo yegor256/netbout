@@ -44,7 +44,7 @@ public final class HubParticipant implements Participant {
     private final transient Hub hub;
 
     /**
-     * The bout I'm in.
+     * The bout I'm in (from the point of view of current viewer).
      */
     private final transient Bout ibout;
 
@@ -109,6 +109,7 @@ public final class HubParticipant implements Participant {
     public void kickOff() {
         final Identity identity = this.identity();
         this.boutdt.kickOff(identity.name());
+        this.hub.infinity().see(this.ibout);
     }
 
     /**

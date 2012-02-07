@@ -31,9 +31,12 @@ import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Allows only bundled messages.
@@ -68,12 +71,11 @@ public final class BundledPred extends AbstractVarargPred {
      * @param msg Where to extract
      */
     public static void extract(final Message from, final Msg msg) {
-        final StringBuilder builder = new StringBuilder();
+        final Set<Urn> names = new TreeSet<Urn>();
         for (Participant dude : from.bout().participants()) {
-            builder.append(dude.identity().name()).append(" ");
+            names.add(dude.identity().name());
         }
-        msg.clear(BundledPred.BUNDLE);
-        msg.put(BundledPred.BUNDLE, builder.toString());
+        msg.put(BundledPred.BUNDLE, Logger.format("%[list]s", names));
     }
 
     /**
