@@ -126,7 +126,7 @@ final class MuxWatcher implements Closeable, Runnable {
             try {
                 TimeUnit.MILLISECONDS.sleep(this.CHECK_TIME);
             } catch (InterruptedException ex) {
-                throw new IllegalStateException(ex);
+                Thread.currentThread().interrupt();
             }
         }
         Logger.info(this, "#run(): finished to watch Mux");
@@ -200,7 +200,7 @@ final class MuxWatcher implements Closeable, Runnable {
             try {
                 future.get(1L, TimeUnit.SECONDS);
             } catch (InterruptedException ex) {
-                throw new IllegalStateException(ex);
+                Thread.currentThread().interrupt();
             } catch (java.util.concurrent.ExecutionException ex) {
                 throw new IllegalStateException(ex);
             } catch (java.util.concurrent.TimeoutException ex) {
