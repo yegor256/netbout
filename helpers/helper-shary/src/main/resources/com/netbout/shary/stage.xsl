@@ -72,10 +72,10 @@
             <xsl:apply-templates select="data/place"/>
         </xsl:if>
         <form method="post">
+            <xsl:attribute name="action">
+                <xsl:value-of select="$stage-home-uri"/>
+            </xsl:attribute>
             <p>
-                <xsl:attribute name="action">
-                    <xsl:value-of select="$stage-home-uri"/>
-                </xsl:attribute>
                 <xsl:text>Name: </xsl:text>
                 <input name="name" size="22" maxlength="500"/>
                 <xsl:text>URI: </xsl:text>

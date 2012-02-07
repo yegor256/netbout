@@ -26,11 +26,9 @@
  */
 package com.netbout.inf;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Default implementation of {@link Msg}.
@@ -39,11 +37,6 @@ import java.util.concurrent.TimeUnit;
  * @version $Id$
  */
 final class DefaultMsg implements Msg {
-
-    /**
-     * Maximum wait time, in sec.
-     */
-    private static final int MAX_WAIT = 10;
 
     /**
      * Number of message.
@@ -62,6 +55,22 @@ final class DefaultMsg implements Msg {
      */
     public DefaultMsg(final Long msg) {
         this.num = msg;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("Msg #%d:\n", this.num));
+        for (Map.Entry<String, Value> entry : this.values.entrySet()) {
+            text.append(entry.getKey())
+                .append(": ")
+                .append(entry.getValue().statistics())
+                .append("\n");
+        }
+        return text.toString();
     }
 
     /**
@@ -116,6 +125,14 @@ final class DefaultMsg implements Msg {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> void add(final String name, final T value) {
+        this.value(name).add(value);
+    }
+
+    /**
      * Get the property from collection.
      * @param name Its name
      * @return The value
@@ -124,57 +141,6 @@ final class DefaultMsg implements Msg {
         synchronized (this) {
             this.values.putIfAbsent(name, new Value());
             return this.values.get(name);
-        }
-    }
-
-    /**
-     * The value of one property (thread-safe).
-     */
-    private static final class Value {
-        /**
-         * Values.
-         */
-        private final transient Collection<Object> values =
-            new CopyOnWriteArrayList<Object>();
-        /**
-         * Clear all values.
-         */
-        public void clear() {
-            this.values.clear();
-        }
-        /**
-         * Get value (wait for it if necessary).
-         * @return The value
-         * @param <T> Type of value
-         * @throws InterruptedException If can't find the value for long time
-         */
-        public <T> T get() throws InterruptedException {
-            int max = DefaultMsg.MAX_WAIT;
-            while (this.values.isEmpty() && max > 0) {
-                max -= 1;
-                TimeUnit.SECONDS.sleep(1L);
-            }
-            if (this.values.isEmpty()) {
-                throw new InterruptedException();
-            }
-            return (T) this.values.iterator().next();
-        }
-        /**
-         * Has this value.
-         * @param val The value to put
-         * @param <T> Type of value
-         * @return Yes or no
-         */
-        public <T> boolean has(final T val) {
-            return this.values.contains(val);
-        }
-        /**
-         * Put value.
-         * @param val The value to put
-         * @param <T> Type of value
-         */
-        public <T> void put(final T val) {
-            this.values.add(val);
         }
     }
 

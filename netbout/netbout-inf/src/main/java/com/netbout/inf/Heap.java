@@ -76,4 +76,18 @@ final class Heap {
         }
     }
 
+    /**
+     * Peek one message, if it exists (if not throws an exception).
+     * @param number The number
+     * @return The message
+     */
+    public Msg peek(final Long number) {
+        if (!this.all.containsKey(number)) {
+            throw new IllegalArgumentException(
+                String.format("Msg #%d not found", number)
+            );
+        }
+        return this.all.get(number);
+    }
+
 }

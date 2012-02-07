@@ -37,6 +37,12 @@ package com.netbout.inf;
 public interface Msg {
 
     /**
+     * Show some stats.
+     * @return Text stats
+     */
+    String statistics();
+
+    /**
      * Its number.
      * @return The number
      */
@@ -72,5 +78,13 @@ public interface Msg {
      * @param <T> Type of property
      */
     <T> void put(String name, T value);
+
+    /**
+     * Add property.
+     * @param name The name of the property to save
+     * @param value The value to set
+     * @param <T> Type of property
+     */
+    <T> void add(String name, T value);
 
 }

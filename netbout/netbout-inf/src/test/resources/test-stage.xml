@@ -7,6 +7,8 @@
     <stage>
         <data>
             <text>hi</text>
+            <msg>some data
+about message</msg>
         </data>
     </stage>
 </page>
