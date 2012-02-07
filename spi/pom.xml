@@ -130,11 +130,16 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <rexsl.version since="3 Feb 2012">0.3.5.1</rexsl.version>
+        <rexsl.version since="3 Feb 2012">1.0-SNAPSHOT</rexsl.version>
     </properties>
 
     <repositories>
         <!-- intentionally empty -->
+        <repository>
+            <!-- until REXSL is in development -->
+            <id>rexsl.snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
