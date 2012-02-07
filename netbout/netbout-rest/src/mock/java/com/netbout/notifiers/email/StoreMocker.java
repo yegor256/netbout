@@ -27,10 +27,9 @@
 package com.netbout.notifiers.email;
 
 import com.ymock.util.Logger;
-import javax.mail.Address;
-import javax.mail.Message;
+import javax.mail.Folder;
 import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.Store;
 import javax.mail.URLName;
 
 /**
@@ -39,52 +38,58 @@ import javax.mail.URLName;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DummyTransport extends Transport {
+public final class StoreMocker extends Store {
 
     /**
      * Public ctor.
+     * @param session The session
+     * @param name The name
      */
-    public DummyTransport(final Session session, final URLName name) {
+    public StoreMocker(final Session session, final URLName name) {
         super(session, name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void sendMessage(final Message message, final Address[] addrs) {
-        try {
-            Logger.info(
-                this,
-                "#sendMessage(..):\n  From: %[list]s\n  To: %[list]s\n  CC:%s\n  Reply-to: %[list]s\n  Subject: %s\n  Text: %s",
-                message.getFrom(),
-                message.getRecipients(Message.RecipientType.TO),
-                message.getRecipients(Message.RecipientType.CC),
-                message.getReplyTo(),
-                message.getSubject(),
-                message.getContent()
-            );
-        } catch (javax.mail.MessagingException ex) {
-            throw new IllegalArgumentException(ex);
-        } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void connect(final String host, final int port, final String user,
-        final String password) {
         Logger.info(
             this,
-            "#connect('%s', %d, '%s', '%s')",
-            host,
-            port,
+            "#StoreMocker('%[type]s', '%s'): instantiated",
+            session,
+            name
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void connect(final String user, final String password) {
+        Logger.info(
+            this,
+            "#connect('%s', '%s'): connected..",
             user,
             password
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Folder getFolder(final String name) {
+        return new FolderMocker().mock();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Folder getFolder(final URLName name) {
+        return new FolderMocker().mock();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Folder getDefaultFolder() {
+        return new FolderMocker().mock();
     }
 
 }
