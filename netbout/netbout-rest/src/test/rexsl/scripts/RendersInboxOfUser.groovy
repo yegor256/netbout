@@ -30,6 +30,7 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.Urn
+import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
@@ -44,11 +45,11 @@ RestTester.start(RestUriBuilder.from(william))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('render inbox of a user')
     .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertThat(new EtaAssertion())
     // @todo #213 for some reason this stuff doesn't work with rexsl 0.3.2
     // .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
     .assertXPath('/page/identity/name')
     .assertXPath('/page/bouts')
     .assertXPath('/page[@nano]')
-    .assertXPath('/page/eta')
     .assertXPath('/page/view[.=""]')
     .assertXPath('/page/bouts/bout/participants/participant')

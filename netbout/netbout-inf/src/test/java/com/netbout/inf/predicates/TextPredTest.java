@@ -26,40 +26,35 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.Msg;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Predicate;
-import java.util.Arrays;
+import com.netbout.spi.Urn;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link UnbundledPred}.
+ * Test case of {@link TextPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UnbundledPredTest {
+public final class TextPredTest {
 
     /**
-     * UnbundledPred can pass only unbundled messages.
+     * TextPred can retrieve different types on demand.
      * @throws Exception If there is some problem inside
+     * @todo #231 Doesn't work now. I tried to do this dynamic class
+     *  information retrieval, to no avail
+     *  http://stackoverflow.com/questions/2801267
      */
     @Test
-    public void positivelyMatchesUnbundledMessageOnly() throws Exception {
-        final Predicate pred = new UnbundledPred(
-            Arrays.asList(new Predicate[] {new NumberPred(1L)})
+    @org.junit.Ignore
+    public void retrievesUrnFromText() throws Exception {
+        final Predicate pred = new TextPred("urn:test:some-text");
+        MatcherAssert.assertThat(
+            pred.<Urn>evaluate(new MsgMocker().mock(), 0),
+            Matchers.instanceOf(Urn.class)
         );
-        final String marker = "abc";
-        final Msg first = new MsgMocker()
-            .with(VariablePred.BOUT_NUMBER, 1L)
-            .with(BundledPred.BUNDLE, marker)
-            .mock();
-        MatcherAssert.assertThat("no!", !(Boolean) pred.evaluate(first, 0));
-        final Msg second = new MsgMocker()
-            .with(VariablePred.BOUT_NUMBER, 2L)
-            .with(BundledPred.BUNDLE, marker)
-            .mock();
-        MatcherAssert.assertThat("yes!", (Boolean) pred.evaluate(second, 0));
     }
 
 }

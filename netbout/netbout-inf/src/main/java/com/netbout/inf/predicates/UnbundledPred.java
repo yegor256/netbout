@@ -63,7 +63,7 @@ public final class UnbundledPred extends AbstractVarargPred {
         );
         final String marker = msg.<String>get(BundledPred.BUNDLE);
         boolean allow;
-        if (msg.bout().equals(bout)) {
+        if (msg.<Long>get(VariablePred.BOUT_NUMBER).equals(bout)) {
             this.expected = marker;
             allow = false;
         } else {

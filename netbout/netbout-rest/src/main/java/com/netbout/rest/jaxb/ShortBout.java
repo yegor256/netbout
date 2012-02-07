@@ -29,10 +29,12 @@ package com.netbout.rest.jaxb;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -115,11 +117,20 @@ public final class ShortBout {
 
     /**
      * JAXB related method, to return the date of the bout.
-     * @return The number
+     * @return The date
      */
     @XmlElement
-    public java.util.Date getDate() {
+    public Date getDate() {
         return this.bout.date();
+    }
+
+    /**
+     * Most recent date of this bout.
+     * @return The date
+     */
+    @XmlElement
+    public Date getRecent() {
+        return NetboutUtils.dateOf(this.bout);
     }
 
     /**

@@ -33,7 +33,6 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -100,13 +99,13 @@ public final class PredicateBuilder {
 
     /**
      * Extract properties from the message.
-     * @param msg The message
-     * @param props Where to extract
+     * @param from The message
+     * @param msg Where to extract
      */
     @SuppressWarnings("PMD.DefaultPackage")
-    static void extract(final Message msg, final Map<String, Object> props) {
+    static void extract(final Message from, final Msg msg) {
         for (PredicateToken token : PredicateBuilder.PREDICATES) {
-            token.extract(msg, props);
+            token.extract(from, msg);
         }
     }
 

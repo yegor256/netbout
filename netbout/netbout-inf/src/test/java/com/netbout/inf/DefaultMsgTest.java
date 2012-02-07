@@ -24,42 +24,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Predicate;
-import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link UnbundledPred}.
+ * Test case of {@link DefaultMsg}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UnbundledPredTest {
+public final class DefaultMsgTest {
 
     /**
-     * UnbundledPred can pass only unbundled messages.
+     * DefaultMsg can accept changes.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void positivelyMatchesUnbundledMessageOnly() throws Exception {
-        final Predicate pred = new UnbundledPred(
-            Arrays.asList(new Predicate[] {new NumberPred(1L)})
+    public void acceptsNewPropertiesAndFindsThem() throws Exception {
+        final DefaultMsg msg = new DefaultMsg(1L);
+        final String name = "property-name";
+        final Long value = 2L;
+        msg.put(name, value);
+        MatcherAssert.assertThat("legal prop", msg.has(name, value));
+        MatcherAssert.assertThat("illegal value", !msg.has(name, "some value"));
+        MatcherAssert.assertThat("absent prop", !msg.has("some name", 1));
+        MatcherAssert.assertThat(
+            msg.get(name),
+            Matchers.<Object>equalTo(value)
         );
-        final String marker = "abc";
-        final Msg first = new MsgMocker()
-            .with(VariablePred.BOUT_NUMBER, 1L)
-            .with(BundledPred.BUNDLE, marker)
-            .mock();
-        MatcherAssert.assertThat("no!", !(Boolean) pred.evaluate(first, 0));
-        final Msg second = new MsgMocker()
-            .with(VariablePred.BOUT_NUMBER, 2L)
-            .with(BundledPred.BUNDLE, marker)
-            .mock();
-        MatcherAssert.assertThat("yes!", (Boolean) pred.evaluate(second, 0));
     }
 
 }

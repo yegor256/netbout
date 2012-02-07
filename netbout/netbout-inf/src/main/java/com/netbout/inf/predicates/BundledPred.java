@@ -33,7 +33,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -65,16 +64,16 @@ public final class BundledPred extends AbstractVarargPred {
 
     /**
      * Extracts necessary data from message.
-     * @param msg The message to extract from
-     * @param props Where to extract
+     * @param from The message to extract from
+     * @param msg Where to extract
      */
-    public static void extract(final Message msg,
-        final Map<String, Object> props) {
+    public static void extract(final Message from, final Msg msg) {
         final StringBuilder builder = new StringBuilder();
-        for (Participant dude : msg.bout().participants()) {
+        for (Participant dude : from.bout().participants()) {
             builder.append(dude.identity().name()).append(" ");
         }
-        props.put(BundledPred.BUNDLE, builder.toString());
+        msg.clear(BundledPred.BUNDLE);
+        msg.put(BundledPred.BUNDLE, builder.toString());
     }
 
     /**

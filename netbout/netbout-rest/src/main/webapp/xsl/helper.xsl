@@ -82,15 +82,17 @@
                         </xsl:text>
                     </p>
                     <form method="post">
-                        <xsl:attribute name="action">
-                            <xsl:value-of select="/page/links/link[@rel='promote']/@href"/>
-                        </xsl:attribute>
-                        <input name="url" type="url" size="50" autocomplete="off">
-                            <xsl:attribute name="value">
-                                <xsl:value-of select="/page/identity/location"/>
+                        <p>
+                            <xsl:attribute name="action">
+                                <xsl:value-of select="/page/links/link[@rel='promote']/@href"/>
                             </xsl:attribute>
-                        </input>
-                        <input value="promote" type="submit"/>
+                            <input name="url" type="url" size="50" autocomplete="off">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="/page/identity/location"/>
+                                </xsl:attribute>
+                            </input>
+                            <input value="promote" type="submit"/>
+                        </p>
                     </form>
                 </xsl:otherwise>
             </xsl:choose>
@@ -100,19 +102,21 @@
                 <xsl:text> per line):</xsl:text>
             </p>
             <form method="post">
-                <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@rel='namespaces']/@href"/>
-                </xsl:attribute>
-                <textarea name="text" style="width: 50em; height: 6em;">
-                    <xsl:for-each select="/page/namespaces/namespace">
-                        <xsl:value-of select="name"/>
-                        <xsl:text>=</xsl:text>
-                        <xsl:value-of select="template"/>
-                        <xsl:text>&#x0d;</xsl:text>
-                    </xsl:for-each>
-                </textarea>
-                <br/>
-                <input value="register" type="submit"/>
+                <p>
+                    <xsl:attribute name="action">
+                        <xsl:value-of select="/page/links/link[@rel='namespaces']/@href"/>
+                    </xsl:attribute>
+                    <textarea name="text" style="width: 50em; height: 6em;">
+                        <xsl:for-each select="/page/namespaces/namespace">
+                            <xsl:value-of select="name"/>
+                            <xsl:text>=</xsl:text>
+                            <xsl:value-of select="template"/>
+                            <xsl:text>&#x0d;</xsl:text>
+                        </xsl:for-each>
+                    </textarea>
+                    <br/>
+                    <input value="register" type="submit"/>
+                </p>
             </form>
         </article>
     </xsl:template>

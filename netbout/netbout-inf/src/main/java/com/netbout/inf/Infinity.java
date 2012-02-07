@@ -41,6 +41,12 @@ import java.io.Closeable;
 public interface Infinity extends Closeable {
 
     /**
+     * Show some stats.
+     * @return Text stats
+     */
+    String statistics();
+
+    /**
      * How long do I need to wait before sending requests?
      * @param who Who is asking
      * @return Estimated number of milliseconds

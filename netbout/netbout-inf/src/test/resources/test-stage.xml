@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="./test-stage.xsl" type="text/xsl"?>
+<!--
+ * Open this page in Safari or Chrome.
+ -->
+<page>
+    <stage>
+        <data>
+            <text>hi</text>
+        </data>
+    </stage>
+</page>

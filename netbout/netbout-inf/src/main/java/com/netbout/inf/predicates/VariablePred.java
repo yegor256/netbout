@@ -34,7 +34,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * Variable.
@@ -105,13 +104,22 @@ public final class VariablePred implements Predicate {
     }
 
     /**
-     * Extracts necessary data from message.
-     * @param msg The message to extract from
-     * @param props Where to extract
+     * Extracts necessary data from from.
+     * @param from The message to extract from
+     * @param msg Where to extract to
      */
-    public static void extract(final Message msg,
-        final Map<String, Object> props) {
-        props.put(VariablePred.BOUT_RECENT, NetboutUtils.dateOf(msg.bout()));
+    public static void extract(final Message from, final Msg msg) {
+        msg.put(VariablePred.TEXT, from.text());
+        msg.put(VariablePred.DATE, from.date());
+        msg.put(VariablePred.AUTHOR_NAME, from.author().name());
+        msg.put(
+            VariablePred.AUTHOR_ALIAS,
+            NetboutUtils.aliasOf(from.author())
+        );
+        msg.put(VariablePred.BOUT_DATE, from.bout().date());
+        msg.put(VariablePred.BOUT_NUMBER, from.bout().number());
+        msg.put(VariablePred.BOUT_TITLE, from.bout().title());
+        msg.put(VariablePred.BOUT_RECENT, NetboutUtils.dateOf(from.bout()));
     }
 
     /**
@@ -121,22 +129,18 @@ public final class VariablePred implements Predicate {
     @Override
     public Object evaluate(final Msg msg, final int pos) {
         Object value;
-        if (this.TEXT.equals(this.name)) {
+        if (this.NUMBER.equals(this.name)) {
+            value = msg.number();
+        } else if (this.TEXT.equals(this.name)) {
             value = msg.<String>get(this.TEXT);
         } else if (this.BOUT_NUMBER.equals(this.name)) {
-            value = msg.bout();
+            value = msg.<Long>get(this.BOUT_NUMBER);
         } else if (this.BOUT_DATE.equals(this.name)) {
             value = msg.<Date>get(this.BOUT_DATE);
         } else if (this.BOUT_RECENT.equals(this.name)) {
-            if (msg.has(this.BOUT_RECENT)) {
-                value = msg.<Date>get(this.BOUT_RECENT);
-            } else {
-                value = msg.<Date>get(this.BOUT_DATE);
-            }
+            value = msg.<Date>get(this.BOUT_RECENT);
         } else if (this.BOUT_TITLE.equals(this.name)) {
             value = msg.<String>get(this.BOUT_TITLE);
-        } else if (this.NUMBER.equals(this.name)) {
-            value = msg.number();
         } else if (this.DATE.equals(this.name)) {
             value = msg.<Date>get(this.DATE);
         } else if (this.AUTHOR_NAME.equals(this.name)) {

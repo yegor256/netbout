@@ -46,15 +46,16 @@ final class DataSourceBuilder {
      * @checkstyle ExecutableStatementCount (30 lines)
      */
     public DataSource build() {
+        final String url = Manifests.read("Netbout-JdbcUrl");
         final BasicDataSource data = new BasicDataSource();
         data.setDriverClassName(Manifests.read("Netbout-JdbcDriver"));
-        data.setUrl(Manifests.read("Netbout-JdbcUrl"));
+        data.setUrl(url);
         data.setUsername(Manifests.read("Netbout-JdbcUser"));
         data.setPassword(Manifests.read("Netbout-JdbcPassword"));
         data.setMaxActive(4);
         data.setMaxIdle(4);
         data.setInitialSize(2);
-        data.setMaxWait(5000);
+        data.setMaxWait(30000);
         data.setPoolPreparedStatements(true);
         data.setMaxOpenPreparedStatements(10);
         data.setTestOnBorrow(true);
@@ -62,13 +63,14 @@ final class DataSourceBuilder {
         data.setTestWhileIdle(true);
         data.setTimeBetweenEvictionRunsMillis(5000);
         data.setNumTestsPerEvictionRun(5);
-        data.setMinEvictableIdleTimeMillis(5000);
+        data.setMinEvictableIdleTimeMillis(15000);
         data.setDefaultAutoCommit(true);
         data.setDefaultReadOnly(false);
         Logger.info(
             this,
-            "#datasource(): created %[type]s",
-            data
+            "#datasource(): created %[type]s for %s",
+            data,
+            url
         );
         return data;
     }

@@ -28,6 +28,11 @@ package com.netbout.inf;
 
 import com.ymock.util.Logger;
 import java.io.Closeable;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
@@ -44,6 +49,26 @@ import java.util.concurrent.atomic.AtomicBoolean;
 final class MuxWatcher implements Closeable, Runnable {
 
     /**
+     * Maximum task execution time, in msec.
+     */
+    private static final long MAX_TIME = 8 * 60 * 1000L;
+
+    /**
+     * When we should issue a warning about the task, in msec.
+     */
+    private static final long WARN_TIME = 2 * 60 * 1000L;
+
+    /**
+     * How often to check, in msec.
+     */
+    private static final long CHECK_TIME = 20 * 1000L;
+
+    /**
+     * Maximum warnings to show.
+     */
+    private static final long MAX_WARNINGS = 10;
+
+    /**
      * Set of running futures, and their start moments (in msec).
      */
     private final transient ConcurrentMap<Future, Long> running =
@@ -52,13 +77,23 @@ final class MuxWatcher implements Closeable, Runnable {
     /**
      * Still alive.
      */
-    private final transient AtomicBoolean alive = new AtomicBoolean(true);
+    private final transient AtomicBoolean alive = new AtomicBoolean(false);
 
     /**
      * Public ctor.
      */
     public MuxWatcher() {
         new Thread(this).start();
+    }
+
+    /**
+     * Show some stats.
+     * @return The text
+     */
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("%d running futures", this.running.size()));
+        return text.toString();
     }
 
     /**
@@ -84,12 +119,13 @@ final class MuxWatcher implements Closeable, Runnable {
     @Override
     public void run() {
         Logger.info(this, "#run(): starting to watch Mux");
+        this.alive.set(true);
         while (this.alive.get()) {
-            this.check();
+            this.futures();
+            this.deadlocks();
             try {
-                // @checkstyle MagicNumber (1 line)
-                TimeUnit.SECONDS.sleep(10L);
-            } catch (java.lang.InterruptedException ex) {
+                TimeUnit.MILLISECONDS.sleep(this.CHECK_TIME);
+            } catch (InterruptedException ex) {
                 throw new IllegalStateException(ex);
             }
         }
@@ -99,45 +135,82 @@ final class MuxWatcher implements Closeable, Runnable {
     /**
      * Check all futures.
      */
-    private void check() {
-        final long threshold = System.currentTimeMillis()
-            - TimeUnit.MINUTES.toMillis(2L);
-        final long redline = System.currentTimeMillis()
-            // @checkstyle MagicNumber (1 line)
-            - TimeUnit.SECONDS.toMillis(30L);
+    private void futures() {
+        final List<String> warnings = new ArrayList<String>();
         for (Future future : this.running.keySet()) {
-            if (future.isDone()) {
-                this.running.remove(future);
-            } else if (this.running.get(future) < redline) {
-                Logger.warn(
-                    this,
-                    "#check(): one thread is %dms old, looks like a problem",
-                    System.currentTimeMillis() - this.running.get(future)
-                );
-            } else if (this.running.get(future) < threshold) {
-                Logger.error(
-                    this,
-                    "#check(): one thread is %dms old (among %d), killing it",
-                    System.currentTimeMillis() - this.running.get(future),
-                    this.running.size()
-                );
-                try {
-                    future.get(1L, TimeUnit.SECONDS);
-                } catch (java.lang.InterruptedException ex) {
-                    throw new IllegalStateException(ex);
-                } catch (java.util.concurrent.ExecutionException ex) {
-                    throw new IllegalStateException(ex);
-                } catch (java.util.concurrent.TimeoutException ex) {
-                    future.cancel(true);
-                    this.running.remove(future);
-                }
+            final String warning = this.check(future);
+            if (!warning.isEmpty() && warnings.size() < this.MAX_WARNINGS) {
+                warnings.add(warning);
             }
+        }
+        if (!warnings.isEmpty()) {
+            Logger.warn(
+                this,
+                "#futures(): some warnings (among %d futures): %[list]s",
+                this.running.size(),
+                warnings
+            );
         }
         Logger.debug(
             this,
-            "#check(): Mux is in good state with %d running tasks",
+            "#futures(): Mux is in good state with %d running tasks",
             this.running.size()
         );
+    }
+
+    /**
+     * Check for deadlocks.
+     */
+    private void deadlocks() {
+        final ThreadMXBean tmx = ManagementFactory.getThreadMXBean();
+        final long[] threads = tmx.findDeadlockedThreads();
+        if (threads == null) {
+            Logger.debug(this, "#deadlocks(): no deadlocks found");
+        } else {
+            final ThreadInfo[] infos = tmx.getThreadInfo(threads, true, true);
+            for (ThreadInfo info : infos) {
+                Logger.error(
+                    this,
+                    "#deadlocks(): thread in deadlock: %s",
+                    info
+                );
+            }
+        }
+    }
+
+    /**
+     * Check one future.
+     * @param future The future to check
+     * @return Warning, if necessary
+     */
+    private String check(final Future future) {
+        String warning = "";
+        final long age = System.currentTimeMillis()
+            - this.running.get(future);
+        if (future.isDone()) {
+            this.running.remove(future);
+        } else if (age > this.MAX_TIME) {
+            Logger.error(
+                this,
+                "#check(%s): %dms old (among %d), killing it",
+                future,
+                age,
+                this.running.size()
+            );
+            try {
+                future.get(1L, TimeUnit.SECONDS);
+            } catch (InterruptedException ex) {
+                throw new IllegalStateException(ex);
+            } catch (java.util.concurrent.ExecutionException ex) {
+                throw new IllegalStateException(ex);
+            } catch (java.util.concurrent.TimeoutException ex) {
+                future.cancel(true);
+                this.running.remove(future);
+            }
+        } else if (age > this.WARN_TIME) {
+            warning = String.format("%s is older than %dms", future, age);
+        }
+        return warning;
     }
 
 }
