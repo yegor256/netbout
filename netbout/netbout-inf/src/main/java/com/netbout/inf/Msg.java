@@ -79,4 +79,12 @@ public interface Msg {
      */
     <T> void put(String name, T value);
 
+    /**
+     * Add property.
+     * @param name The name of the property to save
+     * @param value The value to set
+     * @param <T> Type of property
+     */
+    <T> void add(String name, T value);
+
 }
