@@ -89,6 +89,14 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
+    public Msg msg(final Long number) {
+        return this.heap.peek(number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void close() {
         Logger.info(this, "#close(): will stop Mux in a second");
         this.mux.close();

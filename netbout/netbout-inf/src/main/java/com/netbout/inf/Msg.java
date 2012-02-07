@@ -37,6 +37,12 @@ package com.netbout.inf;
 public interface Msg {
 
     /**
+     * Show some stats.
+     * @return Text stats
+     */
+    String statistics();
+
+    /**
      * Its number.
      * @return The number
      */

@@ -26,7 +26,9 @@
  */
 package com.netbout.inf;
 
+import com.ymock.util.Logger;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -62,6 +64,22 @@ final class DefaultMsg implements Msg {
      */
     public DefaultMsg(final Long msg) {
         this.num = msg;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("Msg #%d:\n", this.num));
+        for (Map.Entry<String, Value> entry : this.values.entrySet()) {
+            text.append(entry.getKey())
+                .append(": ")
+                .append(entry.getValue().statistics())
+                .append("\n");
+        }
+        return text.toString();
     }
 
     /**
@@ -136,6 +154,13 @@ final class DefaultMsg implements Msg {
          */
         private final transient Collection<Object> values =
             new CopyOnWriteArrayList<Object>();
+        /**
+         * Show some stats.
+         * @return Text
+         */
+        public String statistics() {
+            return Logger.format("%[list]s", this.values);
+        }
         /**
          * Clear all values.
          */

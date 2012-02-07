@@ -127,7 +127,7 @@
             </div>
             <xsl:apply-templates select="participants" />
             <aside class="bundled">
-                <xsl:for-each select="bundled/link">
+                <xsl:for-each select="bundled/link[@rel='bout']">
                     <xsl:if test="position() &gt; 1">
                         <span><xsl:text>, </xsl:text></span>
                     </xsl:if>
