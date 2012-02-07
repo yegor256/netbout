@@ -141,9 +141,9 @@ public final class LazyMessages implements Iterable<Long> {
                     .evaluate(msg, this.position)) {
                     found = msg.number();
                     this.ready = true;
+                    this.position += 1;
                     break;
                 }
-                this.position += 1;
             }
             return found;
         }
