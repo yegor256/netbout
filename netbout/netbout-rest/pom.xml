@@ -447,6 +447,8 @@
                                         <Netbout-SmtpPort>${smtp.port}</Netbout-SmtpPort>
                                         <Netbout-SmtpUser>${smtp.user}</Netbout-SmtpUser>
                                         <Netbout-SmtpPassword>${smtp.password}</Netbout-SmtpPassword>
+                                        <Netbout-PopUser>${pop3.user}</Netbout-PopUser>
+                                        <Netbout-PopPassword>${pop3.password}</Netbout-PopPassword>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
@@ -531,6 +533,8 @@
                                             <Netbout-SmtpPort>2525</Netbout-SmtpPort>
                                             <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
                                             <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
+                                            <Netbout-PopUser>test@netbout.com</Netbout-PopUser>
+                                            <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>
