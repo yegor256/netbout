@@ -89,6 +89,17 @@ final class DefaultTokenExecutor implements TokenExecutor {
                 )
             );
         }
+        for (Map.Entry<Identity, Helper> entry : this.helpers.entrySet()) {
+            if (entry.getValue().location().equals(helper.location())) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Identity '%s' already registered '%s' location",
+                        entry.getKey().name(),
+                        helper.location()
+                    )
+                );
+            }
+        }
         this.helpers.put(identity, helper);
         Logger.info(
             this,

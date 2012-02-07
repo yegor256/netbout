@@ -78,6 +78,9 @@ public final class HelperRs extends AbstractRs {
     @POST
     @Path("/promote")
     public Response promote(@FormParam("url") final String addr) {
+        if (addr == null) {
+            throw new ForwardException(this, this.self(), "'url' missed");
+        }
         URL url;
         try {
             url = new URL(addr);
@@ -103,6 +106,9 @@ public final class HelperRs extends AbstractRs {
     @POST
     @Path("/namespaces")
     public Response register(@FormParam("text") final String text) {
+        if (text == null) {
+            throw new ForwardException(this, this.self(), "'text' missed");
+        }
         final Identity identity = this.identity();
         for (String line : StringUtils.split(text, "\n")) {
             final String[] parts = StringUtils.split(line, "=", 2);

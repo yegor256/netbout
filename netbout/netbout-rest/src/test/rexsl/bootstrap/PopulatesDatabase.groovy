@@ -33,20 +33,10 @@ import com.netbout.db.Database
 import com.rexsl.core.Manifests
 import com.ymock.util.Logger
 
-def driver = 'com.mysql.jdbc.Driver'
-def url = 'jdbc:mysql://test-db.netbout.com:3306/netbout-test?useUnicode=true&characterEncoding=utf-8'
-def user = 'netbout-test'
-def password = 'secret'
-
 def urlFile = new File(rexsl.basedir, 'jdbc.txt')
 if (urlFile.exists()) {
-    url = urlFile.text
+    Manifests.inject('Netbout-JdbcUrl', urlFile.text)
 }
-
-Manifests.inject('Netbout-JdbcDriver', driver)
-Manifests.inject('Netbout-JdbcUrl', url)
-Manifests.inject('Netbout-JdbcUser', user)
-Manifests.inject('Netbout-JdbcPassword', password)
 
 def conn = Database.connection()
 def line = new StringBuilder()
@@ -89,4 +79,4 @@ queries.each { query ->
     Logger.debug(this, 'SQL executed: %s', query)
 }
 conn.close()
-Logger.info(this, 'Test database is ready at %s', url)
+Logger.info(this, 'Test database is ready')
