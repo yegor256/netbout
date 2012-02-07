@@ -60,7 +60,7 @@ public final class BundledPredTest {
             .mock();
         final Msg msg = Mockito.mock(Msg.class);
         BundledPred.extract(from, msg);
-        Mockito.verify(msg).put(BundledPred.BUNDLE, "urn:test:somebody ");
+        Mockito.verify(msg).put(BundledPred.BUNDLE, "[\"urn:test:somebody\"]");
     }
 
     /**
