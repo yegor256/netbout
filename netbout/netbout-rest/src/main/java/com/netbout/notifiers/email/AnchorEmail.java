@@ -86,6 +86,9 @@ final class AnchorEmail {
         try {
             final String[] parts = new Cipher().decrypt(TextUtils.unpack(hash))
                 .split(Pattern.quote(this.SEPARATOR), 2);
+            if (parts.length != 2) {
+                throw new BrokenAnchorException("Invalid text inside hash");
+            }
             this.receiver = hub.identity(new Urn(parts[1]));
             this.where = this.receiver.bout(Long.valueOf(parts[0]));
         } catch (java.net.URISyntaxException ex) {

@@ -36,6 +36,7 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import javax.mail.internet.InternetAddress;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case for {@link AnchorEmail}.
@@ -62,6 +63,8 @@ public final class AnchorEmailTest {
             .withIdentity(name, identity)
             .mock();
         new AnchorEmail(new InternetAddress(email), hub).bout();
+        Mockito.verify(hub).identity(name);
+        Mockito.verify(identity).bout(bout.number());
     }
 
 }
