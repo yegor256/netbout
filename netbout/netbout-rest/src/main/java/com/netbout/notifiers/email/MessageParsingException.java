@@ -1,4 +1,3 @@
-<?php
 /**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
@@ -25,25 +24,30 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.notifiers.email;
 
-// Deploy this file to logs.netbout.com (it's in Hostgator platform at
-// the moment). REST logger will post all log data to this URL, and this
-// script will allow you to see this log online. Just go to
-// http://logs.netbout.com
+/**
+ * When message can't be parsed.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ */
+final class MessageParsingException extends Exception {
 
-$file = dirname(__FILE__) . '/log-' . date('Y-M-d') . '.txt';
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $handle = fopen($file, 'a+');
-    if ($handle === false) {
-        echo "can't open file '${file}' for writing";
-    } else {
-        fwrite($handle, file_get_contents('php://input'));
+    /**
+     * Public ctor.
+     * @param cause The cause of it
+     */
+    public MessageParsingException(final String cause) {
+        super(cause);
     }
-} else {
-    echo "<html><head>
-        <meta http-equiv='refresh' content='5; URL=http://logs.netbout.com'/>
-        <body style='font-family: monospace; white-space: pre-wrap;'>";
-    echo $file . ":\n\n";
-    passthru("tail -50 ${file} | tac");
-    echo "</body></html>";
+
+    /**
+     * Public ctor.
+     * @param cause The cause of it
+     */
+    public MessageParsingException(final Throwable cause) {
+        super(cause);
+    }
+
 }

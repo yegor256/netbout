@@ -227,6 +227,10 @@ final class DefaultTokenExecutor implements TokenExecutor {
      */
     private static final class Bill {
         /**
+         * Minimum amount of msec to report.
+         */
+        private static final long MIN_MSEC = 10L;
+        /**
          * When it happened.
          */
         private final transient Date date = new Date();
@@ -274,7 +278,10 @@ final class DefaultTokenExecutor implements TokenExecutor {
          * @return Yes or no
          */
         public boolean isDone() {
-            return this.helper != null && this.number != null;
+            return this.millis != null
+                && this.millis >= this.MIN_MSEC
+                && this.helper != null
+                && this.number != null;
         }
         /**
          * {@inheritDoc}
@@ -282,7 +289,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
         @Override
         public String toString() {
             return String.format(
-                "%s %-30s %-25s %4d %5d",
+                "%s %-30s %-25s %6d #%-5d",
                 ISODateTimeFormat.dateTime().print(new DateTime(this.date)),
                 this.mnemo,
                 this.helper,
