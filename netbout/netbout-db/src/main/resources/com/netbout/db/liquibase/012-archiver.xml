@@ -37,14 +37,18 @@
 
     <changeSet id="12" author="yegor" dbms="mysql">
         <!-- see http://dev.mysql.com/doc/refman/5.1/en/create-event.html -->
-        <sql><![CDATA[
+        <sql splitStatements="false"><![CDATA[
             CREATE EVENT archiver
             ON SCHEDULE EVERY 4 HOUR
             COMMENT 'Archive old bills and convert them to invoices'
             DO BEGIN
                 REPLACE INTO invoice (day, helper, bout, msec)
-                    SELECT DATE(date), helper, bout, SUM(msec)
-                    FROM bill WHERE bout IS NOT NULL AND date < NOW() - INTERVAL 1 DAY;
+                    SELECT DATE(bill.date), bill.helper, bill.bout, IF(invoice.msec IS NULL, SUM(bill.msec), SUM(bill.msec) + invoice.msec) AS ms
+                    FROM bill
+                    LEFT JOIN invoice ON invoice.helper = bill.helper AND invoice.bout = bill.bout
+                    WHERE bill.bout IS NOT NULL AND bill.date < NOW() - INTERVAL 1 DAY
+                    GROUP BY bill.helper, bill.bout
+                    HAVING ms > 0;
                 DELETE FROM bill WHERE date < NOW() - INTERVAL 1 DAY;
             END
         ]]></sql>
