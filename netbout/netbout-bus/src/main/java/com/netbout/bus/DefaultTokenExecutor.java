@@ -278,7 +278,8 @@ final class DefaultTokenExecutor implements TokenExecutor {
          * @return Yes or no
          */
         public boolean isDone() {
-            return this.millis >= this.MIN_MSEC
+            return this.millis != null
+                && this.millis >= this.MIN_MSEC
                 && this.helper != null
                 && this.number != null;
         }

@@ -42,8 +42,6 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.core.MediaType;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang.CharEncoding;
 
 /**
  * Grab emails from POP3 mail box.
@@ -163,6 +161,13 @@ public final class RoutineFarm {
                 message.getAllRecipients(),
                 ex.getMessage()
             );
+        } catch (MessageParsingException ex) {
+            Logger.warn(
+                this,
+                "#process(): message from '%s' can't be parsed, ignored: %s",
+                message.getFrom()[0],
+                ex.getMessage()
+            );
         } catch (com.netbout.spi.MessagePostException ex) {
             Logger.warn(
                 this,
@@ -178,28 +183,28 @@ public final class RoutineFarm {
      * Read text of email message.
      * @param message The message
      * @return The text of it
-     * @throws javax.mail.MessagingException If some problem inside
-     * @checkstyle RedundantThrows (3 lines)
+     * @throws MessageParsingException If some problem inside
      */
     private String textOf(final Message message)
-        throws javax.mail.MessagingException {
+        throws MessageParsingException {
         try {
             final Object body = message.getContent();
-            final ByteArrayOutputStream text = new ByteArrayOutputStream();
-            if (body instanceof Multipart) {
-                final Multipart parts = (Multipart) body;
-                for (int pos = 0; pos < parts.getCount(); pos += 1) {
-                    final BodyPart part = parts.getBodyPart(pos);
-                    if (part.getContentType()
-                        .startsWith(MediaType.TEXT_PLAIN)) {
-                        part.writeTo(text);
-                    }
+            if (!(body instanceof Multipart)) {
+                throw new MessageParsingException("body is not Multipart");
+            }
+            final Multipart parts = (Multipart) body;
+            for (int pos = 0; pos < parts.getCount(); pos += 1) {
+                final BodyPart part = parts.getBodyPart(pos);
+                if (part.getContentType().startsWith(MediaType.TEXT_PLAIN)) {
+                    return part.getContent().toString();
                 }
             }
-            return text.toString(CharEncoding.UTF_8);
         } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new MessageParsingException(ex);
+        } catch (javax.mail.MessagingException ex) {
+            throw new MessageParsingException(ex);
         }
+        throw new MessageParsingException("no plain/text part found");
     }
 
     /**
