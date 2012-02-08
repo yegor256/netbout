@@ -27,6 +27,7 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Plain;
+import com.netbout.spi.plain.PlainVoid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -137,7 +138,7 @@ final class DefaultTxToken implements TxToken {
      */
     @Override
     public boolean isCompleted() {
-        return this.done != null;
+        return this.done != null && !(this.done instanceof PlainVoid);
     }
 
     /**
