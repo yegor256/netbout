@@ -114,7 +114,8 @@
                             <xsl:text>&#x0d;</xsl:text>
                         </xsl:for-each>
                     </textarea>
-                    <br/>
+                </p>
+                <p>
                     <input value="register" type="submit"/>
                 </p>
             </form>
