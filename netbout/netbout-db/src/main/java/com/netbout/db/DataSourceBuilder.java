@@ -52,8 +52,8 @@ final class DataSourceBuilder {
         data.setUrl(url);
         data.setUsername(Manifests.read("Netbout-JdbcUser"));
         data.setPassword(Manifests.read("Netbout-JdbcPassword"));
-        data.setMaxActive(4);
-        data.setMaxIdle(4);
+        data.setMaxActive(8);
+        data.setMaxIdle(8);
         data.setInitialSize(2);
         data.setMaxWait(30000);
         data.setPoolPreparedStatements(true);
