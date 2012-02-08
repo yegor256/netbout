@@ -324,6 +324,12 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version since="2 Dec 2010">2.1</version>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -351,12 +357,9 @@
             <activation>
                 <property><name>ci</name></property>
             </activation>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>bees-plugins-snapshots</id>
-                    <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot/</url>
-                </pluginRepository>
-            </pluginRepositories>
+            <properties>
+                <beanstalk.app>${project.build.finalName}-${buildNumber}.${project.packaging}</beanstalk.app>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -382,24 +385,38 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>com.cloudbees</groupId>
-                        <artifactId>bees-maven-plugin</artifactId>
-                        <version since="30 Oct 2011">1.0-SNAPSHOT</version>
+                        <groupId>br.com.ingenieux</groupId>
+                        <artifactId>beanstalk-maven-plugin</artifactId>
+                        <version since="15 Aug 2011">0.2.5</version>
                         <configuration>
-                            <appid>${bees.appid}</appid>
-                            <apikey>${bees.apikey}</apikey>
-                            <secret>${bees.secret}</secret>
-                            <message>${buildNumber}</message>
+                            <applicationName>netbout</applicationName>
+                            <applicationDescription>netbout</applicationDescription>
+                            <cnamePrefix>netbout</cnamePrefix>
+                            <environmentName>netbout</environmentName>
+                            <s3Bucket>webapps.netbout.com</s3Bucket>
+                            <s3Key>${beanstalk.app}</s3Key>
+                            <versionLabel>${beanstalk.app}</versionLabel>
+                            <daysToKeep>10</daysToKeep>
+                            <dryRun>false</dryRun>
                         </configuration>
                         <executions>
                             <execution>
-                                <id>deploy-to-production</id>
                                 <phase>deploy</phase>
                                 <goals>
-                                    <goal>deploy</goal>
+                                    <goal>upload-source-bundle</goal>
+                                    <goal>create-application-version</goal>
+                                    <goal>update-environment</goal>
+                                    <goal>clean-previous-versions</goal>
                                 </goals>
                             </execution>
                         </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.rexsl</groupId>
+                                <artifactId>rexsl-core</artifactId>
+                                <version>${rexsl.version}</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                     <!-- <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
