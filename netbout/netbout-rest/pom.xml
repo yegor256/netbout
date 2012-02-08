@@ -125,20 +125,6 @@
             <version since="5 Dec 2011">1.8</version>
         </dependency>
         <dependency>
-            <!-- Java Mail reference implementation from Sun -->
-            <groupId>com.sun.mail</groupId>
-            <artifactId>pop3</artifactId>
-            <version since="7 Feb 2012">1.4.4</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <!-- Java Mail reference implementation from Sun -->
-            <groupId>com.sun.mail</groupId>
-            <artifactId>smtp</artifactId>
-            <version since="7 Feb 2012">1.4.4</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <!-- Text formatting tool -->
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
@@ -180,6 +166,31 @@
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version since="7 Dec 2011">1.4.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version since="8 Feb 2012">1.1.1</version>
+        </dependency>
+        <dependency>
+            <!-- Java Mail reference implementation from Sun -->
+            <groupId>com.sun.mail</groupId>
+            <artifactId>pop3</artifactId>
+            <version since="7 Feb 2012">1.4.4</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <!-- Java Mail reference implementation from Sun -->
+            <groupId>com.sun.mail</groupId>
+            <artifactId>smtp</artifactId>
+            <version since="7 Feb 2012">1.4.4</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- Base64 codec -->
@@ -585,7 +596,7 @@
                                 <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
                             </systemProperties>
                             <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
-                            <fork>true</fork>
+                            <!-- <fork>true</fork> -->
                             <path>${catapult.context}</path>
                             <port>${catapult.port}</port>
                             <uriEncoding>UTF-8</uriEncoding>

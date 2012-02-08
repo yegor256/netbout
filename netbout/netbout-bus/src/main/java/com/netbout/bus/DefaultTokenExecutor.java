@@ -274,7 +274,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
          * @return Yes or no
          */
         public boolean isDone() {
-            return this.helper != null;
+            return this.helper != null && this.number != null;
         }
         /**
          * {@inheritDoc}
