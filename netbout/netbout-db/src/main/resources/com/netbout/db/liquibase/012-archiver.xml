@@ -38,7 +38,6 @@
     <changeSet id="12" author="yegor" dbms="mysql">
         <!-- see http://dev.mysql.com/doc/refman/5.1/en/create-event.html -->
         <sql><![CDATA[
-            DELIMITER |
             CREATE EVENT archiver
             ON SCHEDULE EVERY 4 HOUR
             COMMENT 'Archive old bills and convert them to invoices'
@@ -47,8 +46,7 @@
                     SELECT DATE(date), helper, bout, SUM(msec)
                     FROM bill WHERE bout IS NOT NULL AND date < NOW() - INTERVAL 1 DAY;
                 DELETE FROM bill WHERE date < NOW() - INTERVAL 1 DAY;
-            END |
-            DELIMITER ;
+            END
         ]]></sql>
     </changeSet>
 

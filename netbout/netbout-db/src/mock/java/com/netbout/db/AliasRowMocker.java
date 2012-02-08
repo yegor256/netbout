@@ -38,6 +38,11 @@ import java.util.Random;
 public final class AliasRowMocker {
 
     /**
+     * Random base.
+     */
+    private static final Random RANDOM = new Random();
+
+    /**
      * The identity it is related to.
      */
     private final transient Urn identity;
@@ -55,7 +60,7 @@ public final class AliasRowMocker {
         this.identity = name;
         this.alias = String.format(
             "Captain William Bones no.%d",
-            Math.abs(new Random().nextLong())
+            Math.abs(this.RANDOM.nextLong())
         );
     }
 
