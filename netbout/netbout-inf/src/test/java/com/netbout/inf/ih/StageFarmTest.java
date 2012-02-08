@@ -24,63 +24,59 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.db;
+package com.netbout.inf.ih;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Random;
+import com.netbout.inf.InfinityMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Mocker of {@code ALIAS} row in a database.
+ * Test case of {@link StageFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasRowMocker {
+public final class StageFarmTest {
 
     /**
-     * Random base.
+     * StageFarm can render stage XML.
+     * @throws Exception If there is some problem inside
      */
-    private static final Random RANDOM = new Random();
-
-    /**
-     * The identity it is related to.
-     */
-    private final transient Urn identity;
-
-    /**
-     * The alias.
-     */
-    private transient String alias;
-
-    /**
-     * Public ctor.
-     * @param name The identity
-     */
-    public AliasRowMocker(final Urn name) {
-        this.identity = name;
-        this.alias = String.format(
-            "Captain William Bones no.%d",
-            Math.abs(this.RANDOM.nextLong())
+    @Test
+    public void rendersStageXml() throws Exception {
+        final StageFarm farm = new StageFarm();
+        final Identity identity = new IdentityMocker().mock();
+        farm.init(identity);
+        farm.register(new InfinityMocker().mock());
+        final String xml = farm.renderStageXml(
+            1L, identity.name(), identity.name(), ""
+        );
+        MatcherAssert.assertThat(
+            XhtmlConverter.the(xml),
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("/data/server")
+            )
         );
     }
 
     /**
-     * With this name.
-     * @param name The alias
-     * @return This object
+     * StageFarm can render XSL.
+     * @throws Exception If there is some problem inside
      */
-    public AliasRowMocker namedAs(final String name) {
-        this.alias = name;
-        return this;
-    }
-
-    /**
-     * Mock it and return its text.
-     */
-    public String mock() {
-        final AliasFarm afarm = new AliasFarm();
-        afarm.addedIdentityAlias(this.identity, this.alias);
-        return this.alias;
+    @Test
+    public void testRenderingOfXslStylesheet() throws Exception {
+        final StageFarm farm = new StageFarm();
+        final Identity identity = new IdentityMocker().mock();
+        farm.init(identity);
+        final String xsl = farm.renderStageXsl(1L, identity.name());
+        MatcherAssert.assertThat(
+            XhtmlConverter.the(xsl),
+            XhtmlMatchers.hasXPath("/xsl:stylesheet")
+        );
     }
 
 }

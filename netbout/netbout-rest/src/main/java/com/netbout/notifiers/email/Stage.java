@@ -49,11 +49,16 @@ public final class Stage {
     @XmlElement
     public String getText() {
         return String.format(
-            "Host: %s\nPort: %s\nUser: %s\nPassword: %s",
+            // @checkstyle LineLength (1 line)
+            "SMTP\nHost: %s\nPort: %s\nUser: %s\nPassword: %s\n\nPOP3\nHost: %s\nPort: %s\nUser: %s\nPassword: %s",
             Manifests.read("Netbout-SmtpHost"),
             Manifests.read("Netbout-SmtpPort"),
             Manifests.read("Netbout-SmtpUser"),
-            Manifests.read("Netbout-SmtpPassword")
+            Manifests.read("Netbout-SmtpPassword"),
+            Manifests.read("Netbout-PopHost"),
+            Manifests.read("Netbout-PopPort"),
+            Manifests.read("Netbout-PopUser"),
+            Manifests.read("Netbout-PopPassword")
         );
     }
 

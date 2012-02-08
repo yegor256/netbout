@@ -24,63 +24,35 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.db;
+package com.netbout.inf.ih;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Random;
+import com.rexsl.test.JaxbConverter;
+import com.rexsl.test.XhtmlMatchers;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Mocker of {@code ALIAS} row in a database.
+ * Test case for {@link Stage}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasRowMocker {
+public final class StageTest {
 
     /**
-     * Random base.
+     * Stage can be converted to XML.
+     * @throws Exception If there is some problem inside
      */
-    private static final Random RANDOM = new Random();
-
-    /**
-     * The identity it is related to.
-     */
-    private final transient Urn identity;
-
-    /**
-     * The alias.
-     */
-    private transient String alias;
-
-    /**
-     * Public ctor.
-     * @param name The identity
-     */
-    public AliasRowMocker(final Urn name) {
-        this.identity = name;
-        this.alias = String.format(
-            "Captain William Bones no.%d",
-            Math.abs(this.RANDOM.nextLong())
+    @Test
+    public void convertsToXml() throws Exception {
+        final Stage obj = new Stage("some text");
+        MatcherAssert.assertThat(
+            JaxbConverter.the(obj),
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("/data[text != '']"),
+                XhtmlMatchers.hasXPath("/data[server != '']")
+            )
         );
-    }
-
-    /**
-     * With this name.
-     * @param name The alias
-     * @return This object
-     */
-    public AliasRowMocker namedAs(final String name) {
-        this.alias = name;
-        return this;
-    }
-
-    /**
-     * Mock it and return its text.
-     */
-    public String mock() {
-        final AliasFarm afarm = new AliasFarm();
-        afarm.addedIdentityAlias(this.identity, this.alias);
-        return this.alias;
     }
 
 }

@@ -24,63 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.db;
-
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Random;
 
 /**
- * Mocker of {@code ALIAS} row in a database.
+ * Infinity, helper, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AliasRowMocker {
-
-    /**
-     * Random base.
-     */
-    private static final Random RANDOM = new Random();
-
-    /**
-     * The identity it is related to.
-     */
-    private final transient Urn identity;
-
-    /**
-     * The alias.
-     */
-    private transient String alias;
-
-    /**
-     * Public ctor.
-     * @param name The identity
-     */
-    public AliasRowMocker(final Urn name) {
-        this.identity = name;
-        this.alias = String.format(
-            "Captain William Bones no.%d",
-            Math.abs(this.RANDOM.nextLong())
-        );
-    }
-
-    /**
-     * With this name.
-     * @param name The alias
-     * @return This object
-     */
-    public AliasRowMocker namedAs(final String name) {
-        this.alias = name;
-        return this;
-    }
-
-    /**
-     * Mock it and return its text.
-     */
-    public String mock() {
-        final AliasFarm afarm = new AliasFarm();
-        afarm.addedIdentityAlias(this.identity, this.alias);
-        return this.alias;
-    }
-
-}
+package com.netbout.inf.ih;

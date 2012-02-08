@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.io.IOUtils;
 
 /**
  * The stage to render with JAXB.
@@ -95,6 +96,23 @@ public final class Stage {
      */
     public void setMsg(final Msg message) {
         this.msg = message;
+    }
+
+    /**
+     * Get server statistics.
+     * @return The text
+     * @throws Exception If some problem
+     */
+    @XmlElement
+    public String getServer() throws Exception {
+        final String cmd = "uptime && df && free -m";
+        final Process proc = new ProcessBuilder("sh", "-c", cmd).start();
+        proc.waitFor();
+        final StringBuilder buf = new StringBuilder();
+        buf.append(IOUtils.toString(proc.getInputStream()));
+        buf.append("\n");
+        buf.append(IOUtils.toString(proc.getErrorStream()));
+        return buf.toString();
     }
 
 }

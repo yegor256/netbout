@@ -547,7 +547,7 @@
                                             <!-- see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-configuration-properties.html -->
                                             <Netbout-JdbcUrl>jdbc:mysql://test-db.netbout.com:3306/netbout-test?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true</Netbout-JdbcUrl>
                                             <Netbout-JdbcUser>netbout-test</Netbout-JdbcUser>
-                                            <Netbout-JdbcPassword>secret</Netbout-JdbcPassword>
+                                            <Netbout-JdbcPassword>netbout-test</Netbout-JdbcPassword>
                                             <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
                                             <Netbout-SmtpPort>2525</Netbout-SmtpPort>
                                             <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
