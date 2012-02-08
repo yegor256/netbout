@@ -35,7 +35,7 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet id="12" author="yegor" dbms="mysql">
+    <changeSet id="12" author="yegor" dbms="mysql" failOnError="false">
         <!-- see http://dev.mysql.com/doc/refman/5.1/en/create-event.html -->
         <sql splitStatements="false"><![CDATA[
             CREATE EVENT archiver
