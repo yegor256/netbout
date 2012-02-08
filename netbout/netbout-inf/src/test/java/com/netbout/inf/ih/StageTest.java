@@ -24,40 +24,34 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.notifiers.email;
+package com.netbout.inf.ih;
 
-import com.rexsl.core.Manifests;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import com.rexsl.test.JaxbConverter;
+import com.rexsl.test.XhtmlMatchers;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * The stage to render with JAXB.
- *
+ * Test case for {@link Stage}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "data")
-@XmlAccessorType(XmlAccessType.NONE)
-public final class Stage {
+public final class StageTest {
 
     /**
-     * Get text.
-     * @return The text
+     * Stage can be converted to XML.
+     * @throws Exception If there is some problem inside
      */
-    @XmlElement
-    public String getText() {
-        return String.format(
-            "SMTP\nHost: %s\nPort: %s\nUser: %s\nPassword: %s\n\nPOP3\nHost: %s\nPort: %s\nUser: %s\nPassword: %s",
-            Manifests.read("Netbout-SmtpHost"),
-            Manifests.read("Netbout-SmtpPort"),
-            Manifests.read("Netbout-SmtpUser"),
-            Manifests.read("Netbout-SmtpPassword"),
-            Manifests.read("Netbout-PopHost"),
-            Manifests.read("Netbout-PopPort"),
-            Manifests.read("Netbout-PopUser"),
-            Manifests.read("Netbout-PopPassword")
+    @Test
+    public void convertsToXml() throws Exception {
+        final Stage obj = new Stage("some text");
+        MatcherAssert.assertThat(
+            JaxbConverter.the(obj),
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("/data[text != '']"),
+                XhtmlMatchers.hasXPath("/data[server != '']")
+            )
         );
     }
 
