@@ -129,12 +129,14 @@
             <groupId>com.sun.mail</groupId>
             <artifactId>pop3</artifactId>
             <version since="7 Feb 2012">1.4.4</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- Java Mail reference implementation from Sun -->
             <groupId>com.sun.mail</groupId>
             <artifactId>smtp</artifactId>
             <version since="7 Feb 2012">1.4.4</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- Text formatting tool -->
