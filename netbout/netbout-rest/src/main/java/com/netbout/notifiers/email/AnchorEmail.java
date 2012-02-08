@@ -32,6 +32,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.utils.Cipher;
 import com.netbout.utils.TextUtils;
+import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
 
 /**
@@ -84,7 +85,7 @@ final class AnchorEmail {
         final String hash = email.substring(0, email.lastIndexOf('@'));
         try {
             final String[] parts = new Cipher().decrypt(TextUtils.unpack(hash))
-                .split(this.SEPARATOR, 2);
+                .split(Pattern.quote(this.SEPARATOR), 2);
             this.receiver = hub.identity(new Urn(parts[1]));
             this.where = this.receiver.bout(Long.valueOf(parts[0]));
         } catch (java.net.URISyntaxException ex) {

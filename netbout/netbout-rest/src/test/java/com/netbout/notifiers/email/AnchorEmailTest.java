@@ -32,6 +32,8 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import javax.mail.internet.InternetAddress;
 import org.junit.Test;
 
@@ -48,11 +50,17 @@ public final class AnchorEmailTest {
      */
     @Test
     public void convertsToTextAndBack() throws Exception {
-        final Identity identity = new IdentityMocker().mock();
+        final Urn name = new UrnMocker().mock();
         final Bout bout = new BoutMocker().mock();
+        final Identity identity = new IdentityMocker()
+            .namedAs(name)
+            .withBout(bout.number(), bout)
+            .mock();
         final AnchorEmail anchor = new AnchorEmail(identity, bout);
         final String email = anchor.email();
-        final Hub hub = new HubMocker().mock();
+        final Hub hub = new HubMocker()
+            .withIdentity(name, identity)
+            .mock();
         new AnchorEmail(new InternetAddress(email), hub).bout();
     }
 
