@@ -51,6 +51,7 @@ public final class Stage {
      * @throws SQLException If some SQL problem inside
      */
     @XmlElement
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public String getText() throws SQLException {
         final StringBuilder text = new StringBuilder();
         final String[] queries = new String[] {
@@ -68,7 +69,8 @@ public final class Stage {
             text.append(query).append(":\n");
             try {
                 text.append(this.query(query));
-            } catch (IllegalArgumentException ex) {
+            // @checkstyle IllegalCatch (1 line)
+            } catch (Exception ex) {
                 text.append(ex.getMessage());
             }
             text.append("\n ");
