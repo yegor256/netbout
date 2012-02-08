@@ -43,7 +43,7 @@ import org.apache.commons.dbutils.DbUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class DbSession {
+public final class DbSession {
 
     /**
      * When we started.
@@ -197,7 +197,7 @@ final class DbSession {
                 DbUtils.closeQuietly(stmt);
             }
         } catch (SQLException ex) {
-            throw new IllegalStateException(ex);
+            throw new IllegalArgumentException(ex);
         } finally {
             DbUtils.closeQuietly(this.conn);
         }

@@ -125,20 +125,6 @@
             <version since="5 Dec 2011">1.8</version>
         </dependency>
         <dependency>
-            <!-- Java Mail reference implementation from Sun -->
-            <groupId>com.sun.mail</groupId>
-            <artifactId>pop3</artifactId>
-            <version since="7 Feb 2012">1.4.4</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <!-- Java Mail reference implementation from Sun -->
-            <groupId>com.sun.mail</groupId>
-            <artifactId>smtp</artifactId>
-            <version since="7 Feb 2012">1.4.4</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <!-- Text formatting tool -->
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
@@ -178,8 +164,16 @@
         <dependency>
             <!-- JavaMail API 1.4 -->
             <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version since="7 Dec 2011">1.4.4</version>
+            <artifactId>mailapi</artifactId>
+            <version since="8 Feb 2012">1.4.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <!-- Java Mail reference implementation from Sun -->
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version since="7 Feb 2012">1.4.4</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- Base64 codec -->

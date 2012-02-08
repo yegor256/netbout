@@ -72,6 +72,22 @@ public final class StoreMocker extends Store {
      * {@inheritDoc}
      */
     @Override
+    public void connect(final String host, final int port,
+        final String user, final String password) {
+        Logger.debug(
+            this,
+            "#connect('%s', '%s', '%s', '%s'): connected..",
+            host,
+            port,
+            user,
+            password
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Folder getFolder(final String name) {
         return new FolderMocker().mock();
     }
