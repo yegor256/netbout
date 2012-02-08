@@ -49,6 +49,7 @@ public final class Stage {
     @XmlElement
     public String getText() {
         return String.format(
+            // @checkstyle LineLength (1 line)
             "SMTP\nHost: %s\nPort: %s\nUser: %s\nPassword: %s\n\nPOP3\nHost: %s\nPort: %s\nUser: %s\nPassword: %s",
             Manifests.read("Netbout-SmtpHost"),
             Manifests.read("Netbout-SmtpPort"),
