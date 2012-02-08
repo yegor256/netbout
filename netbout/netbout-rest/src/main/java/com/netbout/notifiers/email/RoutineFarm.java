@@ -78,11 +78,13 @@ public final class RoutineFarm {
      */
     @Operation("routine")
     public void routine() throws Exception {
-        final Store store = this.session().getStore("pop3");
-        Logger.info(this, "#routine(): POP3 store: %[type]s", store);
+        final Store store = this.session().getStore("pop3s");
+        final String user = Manifests.read("Netbout-PopUser");
         try {
             store.connect(
-                Manifests.read("Netbout-PopUser"),
+                Manifests.read("Netbout-PopHost"),
+                Integer.valueOf(Manifests.read("Netbout-PopPort")),
+                user,
                 Manifests.read("Netbout-PopPassword")
             );
             final Folder inbox = store.getFolder("inbox");
@@ -94,8 +96,9 @@ public final class RoutineFarm {
                 }
                 Logger.info(
                     this,
-                    "#routine(): processed %d email message(s) via POP3",
-                    messages.length
+                    "#routine(): processed %d email message(s) of '%s'",
+                    messages.length,
+                    user
                 );
             } finally {
                 inbox.close(true);
@@ -207,8 +210,6 @@ public final class RoutineFarm {
         final Properties props = new Properties();
         props.put("mail.pop3.ssl.enable", true);
         props.put("mail.pop3.auth.plain.disable", true);
-        props.put("mail.pop3s.host", Manifests.read("Netbout-PopHost"));
-        props.put("mail.pop3s.port", Manifests.read("Netbout-PopPort"));
         return Session.getDefaultInstance(props);
     }
 
