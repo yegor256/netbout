@@ -73,7 +73,8 @@ public final class RoutineFarm {
      */
     @Operation("routine")
     public void routine() throws Exception {
-        final Store store = this.session().getStore("pop3s");
+        final Store store = Session.getInstance(new Properties())
+            .getStore("pop3s");
         final String user = Manifests.read("Netbout-PopUser");
         try {
             store.connect(
@@ -174,17 +175,6 @@ public final class RoutineFarm {
             );
         }
         return success;
-    }
-
-    /**
-     * Get POP3 session.
-     * @return The session object
-     */
-    private Session session() {
-        final Properties props = new Properties();
-        props.put("mail.pop3.ssl.enable", true);
-        props.put("mail.pop3.auth.plain.disable", true);
-        return Session.getDefaultInstance(props);
     }
 
 }
