@@ -209,7 +209,7 @@ public final class RoutineFarm {
         props.put("mail.pop3.auth.plain.disable", true);
         props.put("mail.pop3s.host", Manifests.read("Netbout-PopHost"));
         props.put("mail.pop3s.port", Manifests.read("Netbout-PopPort"));
-        return Session.getDefaultInstance(props, null);
+        return Session.getDefaultInstance(props);
     }
 
 }

@@ -26,65 +26,29 @@
  */
 package com.netbout.db.helper;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
+import com.rexsl.test.JaxbConverter;
+import com.rexsl.test.XhtmlMatchers;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 /**
- * One total summary in stage.
- *
+ * Test case for {@link Stage}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "total")
-@XmlAccessorType(XmlAccessType.NONE)
-public final class Total {
+public final class StageTest {
 
     /**
-     * The name.
+     * Stage can be converted to XML.
+     * @throws Exception If there is some problem inside
      */
-    private final transient String table;
-
-    /**
-     * The name.
-     */
-    private final transient Long count;
-
-    /**
-     * Public ctor, for JAXB.
-     */
-    public Total() {
-        throw new IllegalArgumentException("illegal call");
-    }
-
-    /**
-     * Public ctor, for JAXB.
-     * @param tbl Name of table
-     * @param cnt Count of rows in it
-     */
-    public Total(final String tbl, final Long cnt) {
-        this.table = tbl;
-        this.count = cnt;
-    }
-
-    /**
-     * Get name of table.
-     * @return The name of it
-     */
-    @XmlAttribute
-    public String getTable() {
-        return this.table;
-    }
-
-    /**
-     * Get count.
-     * @return The count
-     */
-    @XmlValue
-    public Long getCount() {
-        return this.count;
+    @Test
+    public void convertsToXml() throws Exception {
+        final Stage obj = new Stage();
+        MatcherAssert.assertThat(
+            JaxbConverter.the(obj),
+            XhtmlMatchers.hasXPath("/data[text != '']")
+        );
     }
 
 }

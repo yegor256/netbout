@@ -36,7 +36,7 @@ import java.sql.SQLException;
  * @version $Id$
  * @param <T> Type of expected result
  */
-interface Handler<T> {
+public interface Handler<T> {
 
     /**
      * Process the result set and return some value.

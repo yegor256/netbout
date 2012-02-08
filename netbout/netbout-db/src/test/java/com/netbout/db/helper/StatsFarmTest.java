@@ -33,7 +33,6 @@ import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -63,10 +62,7 @@ public final class StatsFarmTest {
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(xml),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/data/totals/total"),
-                XhtmlMatchers.hasXPath("//total[@table='identity']")
-            )
+            XhtmlMatchers.hasXPath("/data/text")
         );
     }
 

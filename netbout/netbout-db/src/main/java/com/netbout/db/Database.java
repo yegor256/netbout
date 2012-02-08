@@ -41,7 +41,7 @@ import org.apache.commons.dbutils.DbUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Database {
+final class Database {
 
     /**
      * Singleton instance, lazy loaded in {@link #connection()}.

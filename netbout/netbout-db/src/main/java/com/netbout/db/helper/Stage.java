@@ -26,18 +26,13 @@
  */
 package com.netbout.db.helper;
 
-import com.netbout.db.Database;
-import com.ymock.util.Logger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import com.netbout.db.DbSession;
+import com.netbout.db.Handler;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -51,33 +46,34 @@ import javax.xml.bind.annotation.XmlType;
 public final class Stage {
 
     /**
-     * Collection of totals.
-     * @return The totals
+     * Get the text.
+     * @return The text.
      * @throws SQLException If some SQL problem inside
      */
-    @XmlElement(name = "total")
-    @XmlElementWrapper(name = "totals")
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Collection<Total> getTotals() throws SQLException {
-        final Collection<Total> totals = new ArrayList<Total>();
-        final String[] tables = new String[] {
-            "alias",
-            "bill",
-            "bout",
-            "helper",
-            "identity",
-            "invoice",
-            "message",
-            "namespace",
-            "participant",
+    @XmlElement
+    public String getText() throws SQLException {
+        final StringBuilder text = new StringBuilder();
+        final String[] queries = new String[] {
+            "SELECT COUNT(*) FROM alias",
+            "SELECT COUNT(*) FROM bill",
+            "SELECT COUNT(*) FROM bout",
+            "SELECT COUNT(*) FROM helper",
+            "SELECT COUNT(*) FROM identity",
+            "SELECT COUNT(*) FROM invoice",
+            "SELECT COUNT(*) FROM namespace",
+            "SELECT COUNT(*) FROM seen",
+            "SHOW EVENTS",
         };
-        for (String table : tables) {
-            final Long count = Long.valueOf(
-                this.query(String.format("SELECT COUNT(*) FROM %s", table))
-            );
-            totals.add(new Total(table, count));
+        for (String query : queries) {
+            text.append(query).append(":\n");
+            try {
+                text.append(this.query(query));
+            } catch (IllegalArgumentException ex) {
+                text.append(ex.getMessage());
+            }
+            text.append("\n ");
         }
-        return totals;
+        return text.toString();
     }
 
     /**
@@ -87,33 +83,26 @@ public final class Stage {
      * @throws SQLException If some SQL problem inside
      */
     private String query(final String sql) throws SQLException {
-        final long start = System.currentTimeMillis();
-        final Connection conn = Database.connection();
-        String result;
-        try {
-            final PreparedStatement stmt = conn.prepareStatement(sql);
-            final ResultSet rset = stmt.executeQuery();
-            try {
-                if (!rset.next()) {
-                    throw new IllegalArgumentException(
-                        String.format("Nothing for %s", sql)
-                    );
+        return new DbSession()
+            .sql(sql)
+            .select(
+                new Handler<String>() {
+                    @Override
+                    public String handle(final ResultSet rset)
+                        throws SQLException {
+                        final StringBuilder text = new StringBuilder();
+                        final int total = rset.getMetaData().getColumnCount();
+                        while (rset.next()) {
+                            for (int col = 0; col < total; col += 1) {
+                                text.append(rset.getString(col + 1))
+                                    .append(" | ");
+                            }
+                            text.append("\n");
+                        }
+                        return text.toString();
+                    }
                 }
-                result = rset.getString(1);
-            } finally {
-                rset.close();
-            }
-        } finally {
-            conn.close();
-        }
-        Logger.debug(
-            this,
-            "#query('%s'): retrieved %s [%dms]",
-            sql,
-            result,
-            System.currentTimeMillis() - start
-        );
-        return result;
+            );
     }
 
 }
