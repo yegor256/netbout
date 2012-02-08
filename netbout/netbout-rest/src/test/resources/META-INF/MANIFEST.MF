@@ -6,7 +6,7 @@ Netbout-FbSecret: secret
 Netbout-JdbcDriver: com.mysql.jdbc.Driver
 Netbout-JdbcUrl: jdbc:mysql://test-db.netbout.com:3306/netbout-test?useUnicode=true&characterEncoding=utf-8
 Netbout-JdbcUser: netbout-test
-Netbout-JdbcPassword: secret
+Netbout-JdbcPassword: netbout-test
 Netbout-SmtpHost: relay.jangosmtp.net
 Netbout-SmtpPort: 2525
 Netbout-SmtpUser: yegor256
