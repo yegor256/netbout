@@ -31,7 +31,7 @@
 // script will allow you to see this log online. Just go to
 // http://logs.netbout.com
 
-$file = dirname(__FILE__) . '/log.txt';
+$file = dirname(__FILE__) . '/log-' . date('Y-M-d') . '.txt';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $handle = fopen($file, 'a+');
     if ($handle === false) {
