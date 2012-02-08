@@ -33,15 +33,12 @@ import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import java.util.Properties;
 import javax.mail.Address;
-import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
-import javax.ws.rs.core.MediaType;
 
 /**
  * Grab emails from POP3 mail box.
@@ -151,7 +148,7 @@ public final class RoutineFarm {
         try {
             new AnchorEmail(email, this.hub)
                 .bout()
-                .post(this.textOf(message));
+                .post(new EmailMessage(message).text());
             success = true;
         } catch (BrokenAnchorException ex) {
             Logger.warn(
@@ -177,34 +174,6 @@ public final class RoutineFarm {
             );
         }
         return success;
-    }
-
-    /**
-     * Read text of email message.
-     * @param message The message
-     * @return The text of it
-     * @throws MessageParsingException If some problem inside
-     */
-    private String textOf(final Message message)
-        throws MessageParsingException {
-        try {
-            final Object body = message.getContent();
-            if (!(body instanceof Multipart)) {
-                throw new MessageParsingException("body is not Multipart");
-            }
-            final Multipart parts = (Multipart) body;
-            for (int pos = 0; pos < parts.getCount(); pos += 1) {
-                final BodyPart part = parts.getBodyPart(pos);
-                if (part.getContentType().startsWith(MediaType.TEXT_PLAIN)) {
-                    return part.getContent().toString();
-                }
-            }
-        } catch (java.io.IOException ex) {
-            throw new MessageParsingException(ex);
-        } catch (javax.mail.MessagingException ex) {
-            throw new MessageParsingException(ex);
-        }
-        throw new MessageParsingException("no plain/text part found");
     }
 
     /**
