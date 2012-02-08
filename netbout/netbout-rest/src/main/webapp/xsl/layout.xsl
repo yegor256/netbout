@@ -51,7 +51,7 @@
                 <link href="/css/layout.css" rel="stylesheet" type="text/css"
                     media="all"/>
                 <link rel="icon" type="image/gif"
-                    href="http://img.netbout.com/favicon.ico"/>
+                    href="http://cdn.netbout.com/favicon.ico"/>
                 <xsl:call-template name="head" />
             </head>
             <body>

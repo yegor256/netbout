@@ -79,6 +79,7 @@ public final class RoutineFarm {
     @Operation("routine")
     public void routine() throws Exception {
         final Store store = this.session().getStore("pop3");
+        Logger.info(this, "#routine(): POP3 store: %[type]s", store);
         try {
             store.connect(
                 Manifests.read("Netbout-PopUser"),

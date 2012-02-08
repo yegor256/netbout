@@ -38,8 +38,6 @@
     <xsl:include href="/xsl/templates.xsl" />
 
     <xsl:template match="/">
-        <!-- see http://stackoverflow.com/questions/3387127 -->
-        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <html>
             <head>
                 <link href="/css/global.css" rel="stylesheet" type="text/css"
@@ -47,7 +45,7 @@
                 <link href="/css/login.css" rel="stylesheet" type="text/css"
                     media="all"></link>
                 <link rel="icon" type="image/gif"
-                    href="http://img.netbout.com/favicon.ico"/>
+                    href="http://cdn.netbout.com/favicon.ico"/>
                 <title>login</title>
             </head>
             <body>
@@ -59,24 +57,29 @@
                         <xsl:with-param name="nano" select="/page/@nano" />
                     </xsl:call-template>
                 </aside>
-                <div id="wrapper">
-                    <section id="content">
-                        <img src="http://img.netbout.com/logo-white.png"
-                            id="logo" alt="logo" />
-                        <br/>
-                        <xsl:if test="/page/message != ''">
-                            <aside id="error-message">
-                                <xsl:value-of select="/page/message"/>
-                            </aside>
-                        </xsl:if>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
-                            </xsl:attribute>
-                            <img src="http://img.netbout.com/facebook.png" id="facebook"/>
-                        </a>
-                    </section>
-                </div>
+                <table id="wrapper">
+                    <tr>
+                        <td id="content">
+                            <p>
+                                <img src="http://img.netbout.com/logo-white.png"
+                                    id="logo" alt="logo" />
+                            </p>
+                            <xsl:if test="/page/message != ''">
+                                <aside id="error-message">
+                                    <xsl:value-of select="/page/message"/>
+                                </aside>
+                            </xsl:if>
+                            <p>
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
+                                    </xsl:attribute>
+                                    <img src="http://img.netbout.com/facebook.png" id="facebook"/>
+                                </a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
             </body>
         </html>
     </xsl:template>
