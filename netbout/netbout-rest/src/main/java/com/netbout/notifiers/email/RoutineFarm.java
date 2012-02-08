@@ -93,7 +93,7 @@ public final class RoutineFarm {
                 }
                 Logger.info(
                     this,
-                    "#routine(): processed %d messages",
+                    "#routine(): processed %d email message(s) via POP3",
                     messages.length
                 );
             } finally {
@@ -112,12 +112,27 @@ public final class RoutineFarm {
      */
     private void process(final Message message)
         throws javax.mail.MessagingException {
+        boolean understood = false;
         for (Address email : message.getAllRecipients()) {
             if (this.attempt(message, (InternetAddress) email)) {
-                message.setFlag(Flags.Flag.DELETED, true);
+                understood = true;
                 break;
             }
         }
+        if (understood) {
+            Logger.info(
+                this,
+                "#process(..): understood email from '%s'",
+                message.getFrom()[0]
+            );
+        } else {
+            Logger.warn(
+                this,
+                "#process(): ignored and deleted email from '%s'",
+                message.getFrom()[0]
+            );
+        }
+        message.setFlag(Flags.Flag.DELETED, true);
     }
 
     /**
@@ -139,11 +154,10 @@ public final class RoutineFarm {
         } catch (BrokenAnchorException ex) {
             Logger.warn(
                 this,
-                // @checkstyle LineLength (1 line)
-                "#process(): message from '%s' to %[list]s ignored: %[exception]s",
+                "#process(): message from '%s' to %[list]s ignored: %s",
                 message.getFrom()[0],
                 message.getAllRecipients(),
-                ex
+                ex.getMessage()
             );
         } catch (com.netbout.spi.MessagePostException ex) {
             Logger.warn(

@@ -61,11 +61,14 @@ public final class Stage {
     public Collection<Total> getTotals() throws SQLException {
         final Collection<Total> totals = new ArrayList<Total>();
         final String[] tables = new String[] {
-            "identity",
-            "bout",
-            "message",
-            "helper",
             "alias",
+            "bill",
+            "bout",
+            "helper",
+            "identity",
+            "invoice",
+            "message",
+            "namespace",
             "participant",
         };
         for (String table : tables) {

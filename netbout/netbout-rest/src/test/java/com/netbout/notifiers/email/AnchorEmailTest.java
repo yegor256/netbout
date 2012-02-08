@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,36 +23,37 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.notifiers.email;
+
+import com.netbout.hub.Hub;
+import com.netbout.hub.HubMocker;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import javax.mail.internet.InternetAddress;
+import org.junit.Test;
+
+/**
+ * Test case for {@link AnchorEmail}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: stage.xsl 1221 2012-01-30 06:02:11Z yegor256@yahoo.com $
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:nb="http://www.netbout.com"
-    version="2.0" exclude-result-prefixes="xs">
+ * @version $Id$
+ */
+public final class AnchorEmailTest {
 
-    <xsl:template match="stage" mode="head">
-        <!-- nothing -->
-    </xsl:template>
+    /**
+     * AnchorEmail can convert identity to text and back.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsToTextAndBack() throws Exception {
+        final Identity identity = new IdentityMocker().mock();
+        final Bout bout = new BoutMocker().mock();
+        final AnchorEmail anchor = new AnchorEmail(identity, bout);
+        final String email = anchor.email();
+        final Hub hub = new HubMocker().mock();
+        new AnchorEmail(new InternetAddress(email), hub).bout();
+    }
 
-    <xsl:template match="stage">
-        <p>Infinity statistics:</p>
-        <form method="post">
-            <xsl:attribute name="action">
-                <xsl:value-of select="$stage-home-uri"/>
-            </xsl:attribute>
-            <p>
-                <xsl:text>Msg#: </xsl:text>
-                <input name="id" size="5" maxlength="10"/>
-                <input value="Show" type="submit"/>
-            </p>
-        </form>
-        <p class="fixed"><xsl:value-of select="data/text"/></p>
-        <p class="fixed"><xsl:value-of select="data/msg"/></p>
-        <p class="fixed"><xsl:value-of select="data/server"/></p>
-    </xsl:template>
-
-</xsl:stylesheet>
+}

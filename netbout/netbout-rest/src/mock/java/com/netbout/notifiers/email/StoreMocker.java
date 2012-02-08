@@ -47,7 +47,7 @@ public final class StoreMocker extends Store {
      */
     public StoreMocker(final Session session, final URLName name) {
         super(session, name);
-        Logger.info(
+        Logger.debug(
             this,
             "#StoreMocker('%[type]s', '%s'): instantiated",
             session,
@@ -60,7 +60,7 @@ public final class StoreMocker extends Store {
      */
     @Override
     public void connect(final String user, final String password) {
-        Logger.info(
+        Logger.debug(
             this,
             "#connect('%s', '%s'): connected..",
             user,
