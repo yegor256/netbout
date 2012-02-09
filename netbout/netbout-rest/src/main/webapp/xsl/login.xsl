@@ -65,7 +65,7 @@
                                     id="logo" alt="logo" />
                             </p>
                             <xsl:if test="/page/identity">
-                                <p>
+                                <p id="message">
                                     <xsl:text>You're logged in already as "</xsl:text>
                                     <xsl:value-of select="/page/identity/alias"/>
                                     <xsl:text>"</xsl:text>
