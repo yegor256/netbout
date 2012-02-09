@@ -259,6 +259,15 @@ public final class DefaultHub implements Hub {
      * {@inheritDoc}
      */
     @Override
+    public Identity join(final Identity main, final Identity child) {
+        // todo
+        return main;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Set<Identity> findByKeyword(final String keyword) {
         final Set<Identity> found = new HashSet<Identity>();
         if (!keyword.isEmpty()) {

@@ -157,8 +157,9 @@ public abstract class AbstractPage implements Page {
         this.append(new JaxbBundle("auth", new Cryptor().encrypt(identity)));
         this.append(new JaxbBundle("eta", this.home.eta(identity)));
         this.link("logout", "/g/out");
-        this.link("start", "/s");
-        if (!this.trusted(identity)) {
+        if (this.trusted(identity)) {
+            this.link("start", "/s");
+        } else {
             this.link("re-login", "/g/re");
         }
         this.extend();
@@ -258,6 +259,21 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
+     * Can we fully trust this guy or he should re-login?
+     * @param identity The person
+     * @return Trusted?
+     * @todo #249 We should find a better place for this method, and its
+     *  implementation is just a skeleton for now. We should implement it
+     *  somehow properly.
+     */
+    public static boolean trusted(final Identity identity) {
+        final String nid = identity.name().nid();
+        return nid.equals(FacebookRs.NAMESPACE)
+            || "test".equals(nid)
+            || "netbout".equals(nid);
+    }
+
+    /**
      * Extend page with mandatory elements.
      */
     private void extend() {
@@ -287,15 +303,6 @@ public abstract class AbstractPage implements Page {
             this.home.base().build().getHost(),
             this.home.httpServletRequest().getContextPath()
         );
-    }
-
-    /**
-     * Can we fully trust this guy or he should re-login?
-     * @param identity The person
-     * @return Trusted?
-     */
-    private boolean trusted(final Identity identity) {
-        return identity.name().nid().equals(FacebookRs.NAMESPACE);
     }
 
 }

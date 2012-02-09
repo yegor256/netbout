@@ -87,6 +87,14 @@ public interface Hub extends Closeable {
     Helper promote(Identity identity, URL location);
 
     /**
+     * Join two identities, make the first one primary one.
+     * @param main The identity to make primary
+     * @param child The secondary one
+     * @return The primary identity
+     */
+    Identity join(Identity main, Identity child);
+
+    /**
      * Find identities by keyword.
      * @param keyword The keyword
      * @return The identities found
