@@ -267,8 +267,10 @@ public abstract class AbstractPage implements Page {
      *  somehow properly.
      */
     public static boolean trusted(final Identity identity) {
-        return identity.name().nid().equals(FacebookRs.NAMESPACE)
-            || identity.name().nid().equals("test");
+        final String nid = identity.name().nid();
+        return nid.equals(FacebookRs.NAMESPACE)
+            || nid.equals("test")
+            || nid.equals("netbout");
     }
 
     /**
