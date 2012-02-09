@@ -154,17 +154,19 @@
                                 <span><xsl:text>&#160;(h)</xsl:text></span>
                             </xsl:if>
                         </li>
-                        <li>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="links/link[@rel='start']/@href"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:text>start new bout</xsl:text>
-                                </xsl:attribute>
-                                <span><xsl:text>Start</xsl:text></span>
-                            </a>
-                        </li>
+                        <xsl:if test="links/link[@rel='start']">
+                            <li>
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="links/link[@rel='start']/@href"/>
+                                    </xsl:attribute>
+                                    <xsl:attribute name="title">
+                                        <xsl:text>start new bout</xsl:text>
+                                    </xsl:attribute>
+                                    <span><xsl:text>Start</xsl:text></span>
+                                </a>
+                            </li>
+                        </xsl:if>
                         <li>
                             <a>
                                 <xsl:attribute name="href">
