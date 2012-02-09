@@ -247,7 +247,8 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public Identity join(final Identity main, final Identity child) {
-        // todo
+        this.all.remove(main.name());
+        this.all.remove(child.name());
         this.make("identities-joined")
             .arg(main.name())
             .arg(child.name())

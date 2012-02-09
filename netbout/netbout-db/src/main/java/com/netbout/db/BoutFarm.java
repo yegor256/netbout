@@ -49,7 +49,7 @@ public final class BoutFarm {
      */
     @Operation("get-next-bout-number")
     public Long getNextBoutNumber() {
-        return new DbSession()
+        return new DbSession(true)
             .sql("INSERT INTO bout (date) VALUES (?)")
             .set(new Date())
             .insert(
@@ -71,7 +71,7 @@ public final class BoutFarm {
      */
     @Operation("check-bout-existence")
     public Boolean checkBoutExistence(final Long number) {
-        return new DbSession()
+        return new DbSession(true)
             // @checkstyle LineLength (1 line)
             .sql("SELECT number FROM bout WHERE number = ? AND title IS NOT NULL")
             .set(number)
@@ -84,7 +84,7 @@ public final class BoutFarm {
      */
     @Operation("started-new-bout")
     public void startedNewBout(final Long number) {
-        final Boolean exists = new DbSession()
+        final Boolean exists = new DbSession(true)
             .sql("SELECT number FROM bout WHERE number = ?")
             .set(number)
             .select(new NotEmptyHandler());
@@ -103,7 +103,7 @@ public final class BoutFarm {
      */
     @Operation("get-bout-messages")
     public List<Long> getBoutMessages(final Long bout) {
-        return new DbSession()
+        return new DbSession(true)
             // @checkstyle LineLength (1 line)
             .sql("SELECT number FROM message WHERE bout = ? AND date IS NOT NULL ORDER BY date")
             .set(bout)
@@ -129,7 +129,7 @@ public final class BoutFarm {
      */
     @Operation("get-bout-title")
     public String getBoutTitle(final Long number) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT title FROM bout WHERE number = ?")
             .set(number)
             .select(
@@ -158,7 +158,7 @@ public final class BoutFarm {
      */
     @Operation("get-bout-date")
     public Date getBoutDate(final Long number) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT date FROM bout WHERE number = ?")
             .set(number)
             .select(
@@ -187,7 +187,7 @@ public final class BoutFarm {
      */
     @Operation("changed-bout-title")
     public void changedBoutTitle(final Long number, final String title) {
-        new DbSession()
+        new DbSession(true)
             .sql("UPDATE bout SET title = ? WHERE number = ?")
             .set(title)
             .set(number)

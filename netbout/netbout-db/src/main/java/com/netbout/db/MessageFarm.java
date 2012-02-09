@@ -51,7 +51,7 @@ public final class MessageFarm {
      */
     @Operation("create-bout-message")
     public Long createBoutMessage(final Long bout) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("INSERT INTO message (bout) VALUES (?)")
             .set(bout)
             .insert(
@@ -74,7 +74,7 @@ public final class MessageFarm {
      */
     @Operation("check-message-existence")
     public Boolean checkMessageExistence(final Long bout, final Long msg) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT number FROM message WHERE number = ? AND bout = ?")
             .set(msg)
             .set(bout)
@@ -88,7 +88,7 @@ public final class MessageFarm {
      */
     @Operation("get-bout-messages")
     public List<Long> getBoutMessages(final Long bout) {
-        return new DbSession()
+        return new DbSession(true)
             // @checkstyle LineLength (1 line)
             .sql("SELECT number FROM message WHERE bout = ? AND date IS NOT NULL")
             .set(bout)
@@ -114,7 +114,7 @@ public final class MessageFarm {
      */
     @Operation("get-message-date")
     public Date getMessageDate(final Long number) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT date FROM message WHERE number = ?")
             .set(number)
             .select(
@@ -143,7 +143,7 @@ public final class MessageFarm {
      */
     @Operation("changed-message-date")
     public void changedMessageDate(final Long number, final Date date) {
-        new DbSession()
+        new DbSession(true)
             .sql("UPDATE message SET date = ? WHERE number = ?")
             .set(date)
             .set(number)
@@ -157,7 +157,7 @@ public final class MessageFarm {
      */
     @Operation("get-message-author")
     public Urn getMessageAuthor(final Long number) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT author FROM message WHERE number = ?")
             .set(number)
             .select(
@@ -186,7 +186,7 @@ public final class MessageFarm {
      */
     @Operation("changed-message-author")
     public void changedMessageAuthor(final Long number, final Urn author) {
-        new DbSession()
+        new DbSession(true)
             .sql("UPDATE message SET author = ? WHERE number = ?")
             .set(author)
             .set(number)
@@ -200,7 +200,7 @@ public final class MessageFarm {
      */
     @Operation("get-message-text")
     public String getMessageText(final Long number) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT text FROM message WHERE number = ?")
             .set(number)
             .select(
@@ -229,7 +229,7 @@ public final class MessageFarm {
      */
     @Operation("changed-message-text")
     public void changedMessageText(final Long number, final String text) {
-        new DbSession()
+        new DbSession(true)
             .sql("UPDATE message SET text = ? WHERE number = ?")
             .set(text)
             .set(number)

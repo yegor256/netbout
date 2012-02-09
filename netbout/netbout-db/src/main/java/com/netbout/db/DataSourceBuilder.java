@@ -64,7 +64,7 @@ final class DataSourceBuilder {
         data.setTimeBetweenEvictionRunsMillis(5000);
         data.setNumTestsPerEvictionRun(5);
         data.setMinEvictableIdleTimeMillis(15000);
-        data.setDefaultAutoCommit(true);
+        data.setDefaultAutoCommit(false);
         data.setDefaultReadOnly(false);
         Logger.info(
             this,

@@ -51,7 +51,7 @@ public final class AliasFarm {
      */
     @Operation("added-identity-alias")
     public void addedIdentityAlias(final Urn identity, final String alias) {
-        new DbSession()
+        new DbSession(true)
             .sql("INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)")
             .set(identity)
             .set(alias)
@@ -66,7 +66,7 @@ public final class AliasFarm {
      */
     @Operation("get-aliases-of-identity")
     public List<String> getAliasesOfIdentity(final Urn name) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT name FROM alias WHERE identity = ?")
             .set(name)
             .select(

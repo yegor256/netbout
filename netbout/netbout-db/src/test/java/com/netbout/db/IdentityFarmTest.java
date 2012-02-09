@@ -139,4 +139,18 @@ public final class IdentityFarmTest {
         );
     }
 
+    /**
+     * IdentityFarm can join identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void joinsIdentityOnDemand() throws Exception {
+        final Urn main = new IdentityRowMocker().mock();
+        final Urn child = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().withParticipant(child).mock();
+        new AliasRowMocker(child).mock();
+        new MessageRowMocker(bout).mock();
+        this.farm.identitiesJoined(main, child);
+    }
+
 }

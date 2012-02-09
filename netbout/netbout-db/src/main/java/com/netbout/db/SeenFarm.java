@@ -47,7 +47,7 @@ public final class SeenFarm {
      */
     @Operation("message-was-seen")
     public void messageWasSeen(final Long msg, final Urn identity) {
-        new DbSession()
+        new DbSession(true)
             .sql("INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)")
             .set(msg)
             .set(identity)
@@ -63,7 +63,7 @@ public final class SeenFarm {
      */
     @Operation("was-message-seen")
     public Boolean wasMessageSeen(final Long msg, final Urn identity) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT message FROM seen WHERE message = ? AND identity = ?")
             .set(msg)
             .set(identity)

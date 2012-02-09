@@ -85,7 +85,7 @@ public final class Stage {
      * @throws SQLException If some SQL problem inside
      */
     private String query(final String sql) throws SQLException {
-        return new DbSession()
+        return new DbSession(true)
             .sql(sql)
             .select(
                 new Handler<String>() {

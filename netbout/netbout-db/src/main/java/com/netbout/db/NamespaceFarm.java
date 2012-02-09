@@ -53,12 +53,12 @@ public final class NamespaceFarm {
     @Operation("namespace-was-registered")
     public void namespaceWasRegistered(final Urn owner, final String name,
         final String template) {
-        final Boolean exists = new DbSession()
+        final Boolean exists = new DbSession(true)
             .sql("SELECT name FROM namespace WHERE name = ?")
             .set(name)
             .select(new NotEmptyHandler());
         if (exists) {
-            new DbSession()
+            new DbSession(true)
                 // @checkstyle LineLength (1 line)
                 .sql("UPDATE namespace SET identity = ?, template = ? WHERE name = ?")
                 .set(owner)
@@ -66,7 +66,7 @@ public final class NamespaceFarm {
                 .set(name)
                 .update();
         } else {
-            new DbSession()
+            new DbSession(true)
                 // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO namespace (name, identity, template, date) VALUES (?, ?, ?, ?)")
                 .set(name)
@@ -83,7 +83,7 @@ public final class NamespaceFarm {
      */
     @Operation("get-all-namespaces")
     public List<String> getAllNamespaces() {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT name FROM namespace")
             .select(
                 new Handler<List<String>>() {
@@ -107,7 +107,7 @@ public final class NamespaceFarm {
      */
     @Operation("get-namespace-owner")
     public Urn getNamespaceOwner(final String name) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT identity FROM namespace WHERE name = ?")
             .set(name)
             .select(
@@ -136,7 +136,7 @@ public final class NamespaceFarm {
      */
     @Operation("get-namespace-template")
     public String getNamespaceTemplate(final String name) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT template FROM namespace WHERE name = ?")
             .set(name)
             .select(

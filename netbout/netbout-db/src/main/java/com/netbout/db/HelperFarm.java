@@ -51,7 +51,7 @@ public final class HelperFarm {
      */
     @Operation("get-all-helpers")
     public List<Urn> getAllHelpers() {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT identity FROM helper")
             .select(
                 new Handler<List<Urn>>() {
@@ -75,7 +75,7 @@ public final class HelperFarm {
      */
     @Operation("identity-promoted")
     public void identityPromoted(final Urn name, final URL url) {
-        final Boolean exists = new DbSession()
+        final Boolean exists = new DbSession(true)
             .sql("SELECT url FROM helper WHERE identity = ? ")
             .set(name)
             .select(new NotEmptyHandler());
@@ -93,7 +93,7 @@ public final class HelperFarm {
                 );
             }
         } else {
-            new DbSession()
+            new DbSession(true)
                 // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO helper (identity, url, date) VALUES (?, ?, ?)")
                 .set(name)
@@ -110,7 +110,7 @@ public final class HelperFarm {
      */
     @Operation("get-helper-url")
     public URL getHelperUrl(final Urn name) {
-        final String location = new DbSession()
+        final String location = new DbSession(true)
             .sql("SELECT url FROM helper WHERE identity = ?")
             .set(name)
             .select(
