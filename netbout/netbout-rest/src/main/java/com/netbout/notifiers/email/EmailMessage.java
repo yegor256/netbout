@@ -26,11 +26,15 @@
  */
 package com.netbout.notifiers.email;
 
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.regex.Pattern;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -50,12 +54,27 @@ final class EmailMessage {
      * Stoppers of content.
      * @checkstyle LineLength (7 lines)
      */
-    private static final Pattern[] STOPPERS = new Pattern[] {
-        Pattern.compile("from:.*"),
-        Pattern.compile(".*<.*@.*>"),
-        Pattern.compile("-+original\\s+message-+"),
-        Pattern.compile("On \\w{3}, \\w{3} \\d{1,2}, \\d{4} at \\d{2}:\\d{2} (AM|PM), .* wrote:"),
-    };
+    private static final Collection<Pattern> STOPPERS =
+        new ArrayList<Pattern>();
+
+    /**
+     * Build patterns.
+     */
+    static {
+        final String[] regexs = new String[] {
+            "from:.*",
+            ".*<.*@.*>",
+            "Sent via Netbout: https?://.*",
+            "-+original\\s+message-+",
+            ">.*",
+            "On \\w{3}, \\w{3} \\d{1,2}, \\d{4} at \\d{2}:\\d{2} (AM|PM), .* wrote:",
+        };
+        for (String regex : regexs) {
+            EmailMessage.STOPPERS.add(
+                Pattern.compile(regex, Pattern.CASE_INSENSITIVE)
+            );
+        }
+    }
 
     /**
      * The message.
@@ -76,11 +95,11 @@ final class EmailMessage {
      * @throws MessageParsingException If some problem inside
      */
     public String text() throws MessageParsingException {
+        final String raw = this.raw();
         final StringBuilder text = new StringBuilder();
-        for (String line
-            : StringUtils.splitPreserveAllTokens(this.raw(), this.EOL)) {
+        boolean found = false;
+        for (String line : StringUtils.splitPreserveAllTokens(raw, this.EOL)) {
             final String polished = line.trim().replaceAll("[\\s\r\t]+", " ");
-            boolean found = false;
             for (Pattern pattern : this.STOPPERS) {
                 if (pattern.matcher(polished).matches()) {
                     found = true;
@@ -88,9 +107,21 @@ final class EmailMessage {
                 }
             }
             if (found) {
+                Logger.info(
+                    this,
+                    "#text(): email stopper found at line: \"%s\"",
+                    line
+                );
                 break;
             }
             text.append(polished).append(this.EOL);
+        }
+        if (!found) {
+            Logger.warn(
+                this,
+                "#text(): failed to find a stopper line in:\n%s",
+                StringEscapeUtils.escapeJava(raw)
+            );
         }
         return text.toString().trim();
     }
