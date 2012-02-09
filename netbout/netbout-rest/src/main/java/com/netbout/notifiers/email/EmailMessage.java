@@ -99,7 +99,7 @@ final class EmailMessage {
         final StringBuilder text = new StringBuilder();
         boolean found = false;
         for (String line : raw.split(Pattern.quote(this.CRLF))) {
-            final String polished = line.trim().replaceAll("[\\s\r\t]+", " ");
+            final String polished = line.replaceAll("[\\s\r\t]+", " ").trim();
             for (Pattern pattern : this.STOPPERS) {
                 if (pattern.matcher(polished).matches()) {
                     found = true;
