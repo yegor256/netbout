@@ -95,20 +95,8 @@ final class RestParticipant implements Participant {
         this.client
             .get("reading 'kickoff' rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath(
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "/page/bout/participants/participant[@identity='%s']/link[@rel='kickoff']",
-                    this.name
-                )
-            )
-            .rel(
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "/page/bout/participants/participant[@identity='%s']/link[@rel='kickoff']/@href",
-                    this.name
-                )
-            )
+            .assertXPath(this.xpath("/link[@rel='kickoff']"))
+            .rel(this.xpath("/link[@rel='kickoff']/@href"))
             .get(String.format("kicking off '%s' participant", this.name))
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
@@ -120,22 +108,24 @@ final class RestParticipant implements Participant {
      */
     public String bySuffix(final String suffix) {
         return this.client
-            .get(String.format("reading %s of a participant", suffix))
+            .get(String.format("reading '%s' of a participant", suffix))
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath(
-                String.format(
-                    "/page/bout/participants/participant[@identity='%s']",
-                    this.name
-                )
-            )
-            .xpath(
-                String.format(
-                    "/page/bout/participants/participant[@identity='%s']%s",
-                    this.name,
-                    suffix
-                )
-            )
+            .assertXPath(this.xpath(suffix))
+            .xpath(this.xpath(suffix))
             .get(0);
+    }
+
+    /**
+     * Build XPath.
+     * @param suffix The suffix of XPath
+     * @return The XPath path
+     */
+    private String xpath(final String suffix) {
+        return String.format(
+            "/page/bout/participants/participant[identity='%s']%s",
+            this.name,
+            suffix
+        );
     }
 
 }
