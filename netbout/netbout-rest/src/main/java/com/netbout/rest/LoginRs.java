@@ -57,13 +57,6 @@ public final class LoginRs extends AbstractRs {
     @GET
     @SuppressWarnings("PMD.EmptyCatchBlock")
     public Response login() {
-        try {
-            this.identity();
-            throw new ForwardException(this, this.base(), "Already logged in");
-            // @checkstyle EmptyBlock (3 lines)
-        } catch (LoginRequiredException ex) {
-            // swallow it, it's normal situation
-        }
         final UriBuilder fburi = UriBuilder.fromUri(
             UriBuilder
                 .fromPath("https://www.facebook.com/dialog/oauth")
@@ -79,7 +72,7 @@ public final class LoginRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .link("facebook", fburi)
-            .anonymous()
+            .preserved()
             .build();
     }
 

@@ -201,6 +201,20 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Response.ResponseBuilder preserved() {
+        Response.ResponseBuilder builder;
+        try {
+            builder = this.authenticated(this.home.identity());
+        } catch (LoginRequiredException ex) {
+            builder = this.anonymous();
+        }
+        return builder;
+    }
+
+    /**
      * Get all elements.
      * @return Full list of injected elements
      */

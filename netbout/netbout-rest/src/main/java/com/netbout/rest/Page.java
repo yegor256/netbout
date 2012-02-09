@@ -83,4 +83,11 @@ public interface Page {
      */
     Response.ResponseBuilder anonymous();
 
+    /**
+     * Create and return a JAX-RS response for the same user as logged in now
+     * (if nobody is logged in - make it anonymous).
+     * @return The response builder
+     */
+    Response.ResponseBuilder preserved();
+
 }

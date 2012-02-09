@@ -64,8 +64,15 @@
                                 <img src="http://img.netbout.com/logo-white.png"
                                     id="logo" alt="logo" />
                             </p>
+                            <xsl:if test="/page/identity">
+                                <p>
+                                    <xsl:text>You're logged in already as "</xsl:text>
+                                    <xsl:value-of select="/page/identity/alias"/>
+                                    <xsl:text>"</xsl:text>
+                                </p>
+                            </xsl:if>
                             <xsl:if test="/page/message != ''">
-                                <aside id="error-message">
+                                <aside class="error-message">
                                     <xsl:value-of select="/page/message"/>
                                 </aside>
                             </xsl:if>
