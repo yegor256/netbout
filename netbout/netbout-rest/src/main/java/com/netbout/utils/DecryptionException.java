@@ -38,7 +38,7 @@ public final class DecryptionException extends Exception {
      * Public ctor.
      */
     public DecryptionException() {
-        super();
+        super("");
     }
 
     /**

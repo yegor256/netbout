@@ -150,10 +150,11 @@ final class DefaultTokenExecutor implements TokenExecutor {
         final StringBuilder text = new StringBuilder();
         for (Map.Entry<Identity, Helper> entry : this.helpers.entrySet()) {
             text.append(
-                String.format(
-                    "%s as %s\n",
+                Logger.format(
+                    "%s as %s with %[list]s\n",
                     entry.getKey().name(),
-                    entry.getValue().location()
+                    entry.getValue().location(),
+                    entry.getValue().supports()
                 )
             );
         }
