@@ -255,6 +255,12 @@ public final class DefaultHub implements Hub {
             .arg(child.name())
             .asDefault(true)
             .exec();
+        Logger.info(
+            this,
+            "#join('%s', '%s'): joined successfully",
+            main,
+            child
+        );
         return main;
     }
 
