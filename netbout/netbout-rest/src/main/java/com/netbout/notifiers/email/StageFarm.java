@@ -82,15 +82,15 @@ public final class StageFarm implements IdentityAware {
      * Somebody was just invited to the bout.
      * @param number Bout where it is happening
      * @param who Who was invited
-     * @return Confirm invitation?
+     * @return Confirm participation?
      */
     @Operation("just-invited")
     public Boolean justInvited(final Long number, final Urn who) {
-        Boolean allow = null;
+        Boolean confirm = null;
         if (who.equals(this.identity.name())) {
-            allow = true;
+            confirm = true;
         }
-        return allow;
+        return confirm;
     }
 
     /**

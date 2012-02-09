@@ -58,15 +58,15 @@ public final class MiscFarm implements IdentityAware {
      * Somebody was just invited to the bout.
      * @param number Bout where it is happening
      * @param who Who was invited
-     * @return Allow invitation?
+     * @return Confirm participation immediately?
      */
     @Operation("just-invited")
     public Boolean justInvited(final Long number, final Urn who) {
-        Boolean allow = null;
+        Boolean confirm = null;
         if (who.equals(this.identity.name())) {
-            allow = true;
+            confirm = true;
         }
-        return allow;
+        return confirm;
     }
 
 }
