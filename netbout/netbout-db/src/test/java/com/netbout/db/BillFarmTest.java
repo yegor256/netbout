@@ -60,7 +60,7 @@ public final class BillFarmTest {
         );
         lines.add(
             String.format(
-                "2012-01-24T21:08:41.405-05:00 txt %s 543 %d",
+                "2012-01-24T21:08:41.405-05:00 txt %s 543 #%d",
                 name,
                 bout
             )
