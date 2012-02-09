@@ -66,8 +66,9 @@ final class EmailMessage {
             "Sent via Netbout: https?://.*",
             "-+original\\s+message-+",
             ">.*",
+            "\u8212",
             // @checkstyle LineLength (1 line)
-            "On \\w{3}, \\w{3} \\d{1,2}, \\d{4} at \\d{2}:\\d{2} (AM|PM), .* wrote:",
+            "On \\w{3}, \\w{3} \\d{1,2}, \\d{4} at \\d{2}:\\d{2} (AM|PM),.*",
         };
         for (String regex : regexs) {
             EmailMessage.STOPPERS.add(

@@ -108,11 +108,12 @@ public final class LoginRsTest {
     }
 
     /**
-     * LoginRs can detect a situation when a logged in user is trying to login.
+     * LoginRs can detect a situation when a logged in user is trying to login,
+     * and still allow him to see the login page.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = ForwardException.class)
-    public void forwardsIfUserAlreadyLoggedIn() throws Exception {
+    @Test
+    public void doesntForwardIfUserAlreadyLoggedIn() throws Exception {
         ((LoginRs) new ResourceMocker().mock(LoginRs.class)).login();
     }
 

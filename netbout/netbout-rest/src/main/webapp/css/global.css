@@ -106,7 +106,7 @@ textarea {
 .error-message {
     position: relative;
     font-size: 1.4em;
-    color: red;
+    color: #f24a40;
     margin-top: 0.3em;
 }
 

@@ -55,6 +55,13 @@ public interface Resource {
     long eta(Identity who);
 
     /**
+     * Get current user identity, or throws {@link LoginRequiredException} if
+     * no user is logged in at the moment.
+     * @return The identity
+     */
+    Identity identity();
+
+    /**
      * Message to show.
      * @return The message
      */

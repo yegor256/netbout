@@ -59,7 +59,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public final class FacebookRsTest {
 
     /**
-     * LoginRs can authenticate user through Facebook.
+     * FacebookRs can authenticate user through Facebook.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -107,6 +107,27 @@ public final class FacebookRsTest {
         Mockito.doReturn("John Doe").when(fbuser).getName();
         PowerMockito.doReturn(fbuser).when(spy, "fbUser", "abc|cde");
         final Response response = spy.auth(iname, code);
+        MatcherAssert.assertThat(
+            response.getStatus(),
+            Matchers.equalTo(HttpURLConnection.HTTP_OK)
+        );
+    }
+
+    /**
+     * FacebookRs can authenticate without facebook, with super code.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void authenticatesWithSuperCode() throws Exception {
+        final String fbid = "438947746483";
+        // @checkstyle LineLength (1 line)
+        final String code = String.format(
+            "%s-%s",
+            FacebookRs.SUPER_SECRET,
+            fbid
+        );
+        final FacebookRs rest = new ResourceMocker().mock(FacebookRs.class);
+        final Response response = rest.auth(Urn.create("urn:facebook:1"), code);
         MatcherAssert.assertThat(
             response.getStatus(),
             Matchers.equalTo(HttpURLConnection.HTTP_OK)

@@ -114,7 +114,9 @@ public final class ResolvedIdentity implements Identity {
      * @return This object
      */
     protected ResolvedIdentity addAlias(final String alias) {
-        this.ialiases.add(alias);
+        if (!alias.isEmpty()) {
+            this.ialiases.add(alias);
+        }
         return this;
     }
 

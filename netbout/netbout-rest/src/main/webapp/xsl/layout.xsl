@@ -88,6 +88,18 @@
                             <xsl:text>.</xsl:text>
                         </aside>
                     </xsl:if>
+                    <xsl:if test="links/link[@rel='re-login']">
+                        <aside class="error-message">
+                            <xsl:text>We recommend you to re-authenticate yourself: </xsl:text>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="links/link[@rel='re-login']/@href"/>
+                                </xsl:attribute>
+                                <xsl:text>click here</xsl:text>
+                            </a>
+                            <xsl:text>.</xsl:text>
+                        </aside>
+                    </xsl:if>
                     <xsl:call-template name="content" />
                 </section>
             </body>
@@ -154,17 +166,19 @@
                                 <span><xsl:text>&#160;(h)</xsl:text></span>
                             </xsl:if>
                         </li>
-                        <li>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="links/link[@rel='start']/@href"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:text>start new bout</xsl:text>
-                                </xsl:attribute>
-                                <span><xsl:text>Start</xsl:text></span>
-                            </a>
-                        </li>
+                        <xsl:if test="links/link[@rel='start']">
+                            <li>
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="links/link[@rel='start']/@href"/>
+                                    </xsl:attribute>
+                                    <xsl:attribute name="title">
+                                        <xsl:text>start new bout</xsl:text>
+                                    </xsl:attribute>
+                                    <span><xsl:text>Start</xsl:text></span>
+                                </a>
+                            </li>
+                        </xsl:if>
                         <li>
                             <a>
                                 <xsl:attribute name="href">

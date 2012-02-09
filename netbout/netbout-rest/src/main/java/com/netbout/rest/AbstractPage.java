@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.auth.FacebookRs;
 import com.netbout.rest.jaxb.Link;
 import com.netbout.rest.jaxb.LongHelper;
 import com.netbout.rest.jaxb.LongIdentity;
@@ -63,6 +64,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
+@SuppressWarnings("PMD.TooManyMethods")
 public abstract class AbstractPage implements Page {
 
     /**
@@ -156,6 +158,9 @@ public abstract class AbstractPage implements Page {
         this.append(new JaxbBundle("eta", this.home.eta(identity)));
         this.link("logout", "/g/out");
         this.link("start", "/s");
+        if (!this.trusted(identity)) {
+            this.link("re-login", "/g/re");
+        }
         this.extend();
         return Response.ok()
             .entity(this)
@@ -198,6 +203,20 @@ public abstract class AbstractPage implements Page {
                 this.nocookie(RestSession.AUTH_COOKIE)
             )
             .type(MediaType.TEXT_XML);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Response.ResponseBuilder preserved() {
+        Response.ResponseBuilder builder;
+        try {
+            builder = this.authenticated(this.home.identity());
+        } catch (LoginRequiredException ex) {
+            builder = this.anonymous();
+        }
+        return builder;
     }
 
     /**
@@ -268,6 +287,15 @@ public abstract class AbstractPage implements Page {
             this.home.base().build().getHost(),
             this.home.httpServletRequest().getContextPath()
         );
+    }
+
+    /**
+     * Can we fully trust this guy or he should re-login?
+     * @param identity The person
+     * @return Trusted?
+     */
+    private boolean trusted(final Identity identity) {
+        return identity.name().nid().equals(FacebookRs.NAMESPACE);
     }
 
 }

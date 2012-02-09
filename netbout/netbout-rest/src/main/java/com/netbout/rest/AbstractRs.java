@@ -115,6 +115,26 @@ public abstract class AbstractRs implements Resource {
 
     /**
      * {@inheritDoc}
+     * @todo #226 I think that we should cache this object somewhere here
+     */
+    @Override
+    public final Identity identity() {
+        try {
+            return new Cryptor().decrypt(this.ihub, this.icookie);
+        } catch (com.netbout.utils.DecryptionException ex) {
+            Logger.debug(
+                this,
+                "Decryption failure from %s calling '%s': %[exception]s",
+                this.httpServletRequest().getRemoteAddr(),
+                this.httpServletRequest().getRequestURI(),
+                ex
+            );
+            throw new LoginRequiredException(this, ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public final Providers providers() {
@@ -361,27 +381,6 @@ public abstract class AbstractRs implements Resource {
             this.setCookie(((AbstractRs) res).icookie);
         }
         return (T) this;
-    }
-
-    /**
-     * Get current user identity, or throws {@link LoginRequiredException} if
-     * no user is logged in at the moment.
-     * @return The identity
-     * @todo #226 I think that we should cache this object somewhere here
-     */
-    protected final Identity identity() {
-        try {
-            return new Cryptor().decrypt(this.ihub, this.icookie);
-        } catch (com.netbout.utils.DecryptionException ex) {
-            Logger.debug(
-                this,
-                "Decryption failure from %s calling '%s': %[exception]s",
-                this.httpServletRequest().getRemoteAddr(),
-                this.httpServletRequest().getRequestURI(),
-                ex
-            );
-            throw new LoginRequiredException(this, ex);
-        }
     }
 
     /**
