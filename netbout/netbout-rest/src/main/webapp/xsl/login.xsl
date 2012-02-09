@@ -66,9 +66,25 @@
                             </p>
                             <xsl:if test="/page/identity">
                                 <p id="message">
-                                    <xsl:text>You're logged in already as "</xsl:text>
-                                    <xsl:value-of select="/page/identity/alias"/>
-                                    <xsl:text>"</xsl:text>
+                                    <xsl:choose>
+                                        <xsl:when test="/page/links/link[@rel='re-login']">
+                                            <xsl:text>We know you as "</xsl:text>
+                                            <xsl:value-of select="/page/identity/alias"/>
+                                            <xsl:text>", please authenticate yourself through one of:</xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>You're logged in already as "</xsl:text>
+                                            <xsl:value-of select="/page/identity/alias"/>
+                                            <xsl:text>", </xsl:text>
+                                            <a>
+                                                <xsl:attribute name="href">
+                                                    <xsl:value-of select="/page/links/link[@rel='home']/@href"/>
+                                                </xsl:attribute>
+                                                <xsl:text>go back home</xsl:text>
+                                            </a>
+                                            <xsl:text> or click one those links if you're somebody else.</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </p>
                             </xsl:if>
                             <xsl:if test="/page/message != ''">
