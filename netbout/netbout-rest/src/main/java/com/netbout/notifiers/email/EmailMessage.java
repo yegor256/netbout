@@ -46,9 +46,10 @@ import org.apache.commons.lang.StringUtils;
 final class EmailMessage {
 
     /**
-     * End of line to use.
+     * Line separator used in emails.
+     * @link <a href="http://www.ietf.org/rfc/rfc2822.txt">RFC2822</a>
      */
-    private static final String EOL = "\n";
+    public static final String CRLF = "\r\n";
 
     /**
      * Stoppers of content.
@@ -98,7 +99,7 @@ final class EmailMessage {
         final String raw = this.raw();
         final StringBuilder text = new StringBuilder();
         boolean found = false;
-        for (String line : StringUtils.splitPreserveAllTokens(raw, this.EOL)) {
+        for (String line : raw.split(Pattern.quote(this.CRLF))) {
             final String polished = line.trim().replaceAll("[\\s\r\t]+", " ");
             for (Pattern pattern : this.STOPPERS) {
                 if (pattern.matcher(polished).matches()) {
@@ -114,7 +115,7 @@ final class EmailMessage {
                 );
                 break;
             }
-            text.append(polished).append(this.EOL);
+            text.append(polished).append("\n");
         }
         if (!found) {
             Logger.warn(
