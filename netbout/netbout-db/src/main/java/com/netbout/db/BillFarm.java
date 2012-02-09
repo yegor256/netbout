@@ -53,7 +53,7 @@ public final class BillFarm {
             final String[] parts = line.split("[ ]+");
             Long bout = null;
             if (!"null".equals(parts[4])) {
-                bout = Long.valueOf(parts[4]);
+                bout = Long.valueOf(parts[4].replaceAll("[^\\d]+", ""));
             }
             this.bill(
                 ISODateTimeFormat.dateTime()
