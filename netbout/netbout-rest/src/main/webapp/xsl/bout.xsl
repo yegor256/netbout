@@ -99,7 +99,7 @@
         </header>
         <header id="top2">
             <xsl:apply-templates select="/page/bout/participants" />
-            <xsl:if test="$participant/@confirmed = 'true'">
+            <xsl:if test="$participant/@confirmed = 'true' and not(/page/links/link[@rel='re-login'])">
                 <xsl:call-template name="invite" />
                 <xsl:call-template name="rename" />
             </xsl:if>
