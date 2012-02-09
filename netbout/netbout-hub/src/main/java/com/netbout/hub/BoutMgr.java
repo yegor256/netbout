@@ -38,6 +38,12 @@ import com.netbout.spi.Urn;
 public interface BoutMgr {
 
     /**
+     * Get some statistics, for the stage.
+     * @return The text
+     */
+    String statistics();
+
+    /**
      * Create new bout.
      * @param author Who is creating it
      * @return It's number (unique)

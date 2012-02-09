@@ -76,6 +76,16 @@ final class DefaultUrnResolver implements UrnResolver {
      * {@inheritDoc}
      */
     @Override
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        // todo
+        return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void register(final Identity owner, final String namespace,
         final String template) {
         if (!namespace.matches("^[a-z]{1,31}$")) {

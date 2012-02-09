@@ -6,16 +6,7 @@
 <page>
     <stage>
         <data>
-            <stats>
-                <stat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="hub">
-                    <identities>
-                        <identity>urn:test:bumper</identity>
-                    </identities>
-                </stat>
-                <stat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="manager">
-                    <bouts>4</bouts>
-                </stat>
-            </stats>
+            <text>Some stats</text>
         </data>
     </stage>
 </page>

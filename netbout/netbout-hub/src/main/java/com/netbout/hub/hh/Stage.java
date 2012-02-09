@@ -26,13 +26,9 @@
  */
 package com.netbout.hub.hh;
 
-import com.netbout.hub.DefaultHub;
-import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -43,13 +39,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "data")
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlSeeAlso(DefaultHub.class)
 public final class Stage {
 
     /**
-     * Collection of objects.
+     * The text to show.
      */
-    private final transient Collection stats;
+    private final transient String text;
 
     /**
      * Public ctor, for JAXB.
@@ -60,20 +55,19 @@ public final class Stage {
 
     /**
      * Public ctor.
-     * @param list The list of them
+     * @param txt The text to show
      */
-    public Stage(final Collection list) {
-        this.stats = list;
+    public Stage(final String txt) {
+        this.text = txt;
     }
 
     /**
-     * Collection of totals.
-     * @return The totals
+     * The text to show.
+     * @return The text
      */
-    @XmlElement(name = "stat")
-    @XmlElementWrapper(name = "stats")
-    public Collection getStats() {
-        return this.stats;
+    @XmlElement
+    public String getText() {
+        return this.text;
     }
 
 }

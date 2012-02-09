@@ -46,6 +46,12 @@ public interface UrnResolver {
     String MARKER = "{nss}";
 
     /**
+     * Get some statistics, for the stage.
+     * @return The text
+     */
+    String statistics();
+
+    /**
      * Register namespace.
      * @param owner Who is registering
      * @param namespace The namespace to register

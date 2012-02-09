@@ -34,7 +34,6 @@ import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -52,7 +51,7 @@ public final class StatsFarmTest {
     public void rendersStageXml() throws Exception {
         final Bus bus = new BusMocker().mock();
         final StatsFarm farm = new StatsFarm();
-        farm.addStats(new DefaultHub(bus));
+        farm.register(new DefaultHub(bus));
         final Identity identity = new IdentityMocker().mock();
         farm.init(identity);
         final String xml = farm.renderStageXml(
@@ -60,11 +59,7 @@ public final class StatsFarmTest {
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(xml),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/data/stats/stat")
-                // XhtmlMatchers.hasXPath("//stat[xsi:type='hub']/identities"),
-                // XhtmlMatchers.hasXPath("//stat[xsi:type='manager']/bouts")
-            )
+            XhtmlMatchers.hasXPath("/data/text")
         );
     }
 
