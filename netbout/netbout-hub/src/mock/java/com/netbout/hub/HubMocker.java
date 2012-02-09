@@ -88,6 +88,16 @@ public final class HubMocker {
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalArgumentException(ex);
         }
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    return (Identity) invocation.getArguments()[0];
+                }
+            }
+        ).when(this.hub).join(
+            Mockito.any(Identity.class),
+            Mockito.any(Identity.class)
+        );
     }
 
     /**

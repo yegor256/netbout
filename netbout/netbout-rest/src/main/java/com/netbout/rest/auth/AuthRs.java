@@ -69,8 +69,17 @@ public final class AuthRs extends AbstractRs {
                 "'identity' and 'secret' query params are mandatory"
             );
         }
-        this.logoff();
-        final Identity identity = this.authenticate(iname, secret);
+        Identity identity;
+        try {
+            final Identity previous = this.identity();
+            this.logoff();
+            identity = this.authenticate(iname, secret);
+            if (!AbstractPage.trusted(previous)) {
+                identity = this.hub().join(identity, previous);
+            }
+        } catch (LoginRequiredException ex) {
+            identity = this.authenticate(iname, secret);
+        }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

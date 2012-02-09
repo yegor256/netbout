@@ -63,12 +63,12 @@ final class EmailMessage {
         final String[] regexs = new String[] {
             "from:.*",
             ".*<.*@.*>",
-            "Sent via Netbout: https?://.*",
+            "sent via netbout: https?://.*",
             "-+original\\s+message-+",
             ">.*",
             "\u8212",
             // @checkstyle LineLength (1 line)
-            "On \\w{3}, \\w{3} \\d{1,2}, \\d{4} at \\d{2}:\\d{2} (AM|PM),.*",
+            "on [a-z]{3}, [a-z]{3} \\d{1,2}, \\d{4} at \\d{1,2}:\\d{2} (am|pm),.*",
         };
         for (String regex : regexs) {
             EmailMessage.STOPPERS.add(

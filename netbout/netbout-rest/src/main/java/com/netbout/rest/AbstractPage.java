@@ -258,6 +258,16 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
+     * Can we fully trust this guy or he should re-login?
+     * @param identity The person
+     * @return Trusted?
+     * @todo #249 We should find a better place for this method
+     */
+    public static boolean trusted(final Identity identity) {
+        return identity.name().nid().equals(FacebookRs.NAMESPACE);
+    }
+
+    /**
      * Extend page with mandatory elements.
      */
     private void extend() {
@@ -287,15 +297,6 @@ public abstract class AbstractPage implements Page {
             this.home.base().build().getHost(),
             this.home.httpServletRequest().getContextPath()
         );
-    }
-
-    /**
-     * Can we fully trust this guy or he should re-login?
-     * @param identity The person
-     * @return Trusted?
-     */
-    private boolean trusted(final Identity identity) {
-        return identity.name().nid().equals(FacebookRs.NAMESPACE);
     }
 
 }
