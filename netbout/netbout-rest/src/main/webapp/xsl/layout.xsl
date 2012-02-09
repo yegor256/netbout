@@ -88,6 +88,19 @@
                             <xsl:text>.</xsl:text>
                         </aside>
                     </xsl:if>
+                    <xsl:if test="links/link[@rel='re-login']">
+                        <aside class="error-message">
+                            <xsl:text>We recommend you to re-authenticate
+                                yourself in the system: </xsl:text>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="links/link[@rel='re-login']/@href"/>
+                                </xsl:attribute>
+                                <xsl:text>click here</xsl:text>
+                            </a>
+                            <xsl:text>.</xsl:text>
+                        </aside>
+                    </xsl:if>
                     <xsl:call-template name="content" />
                 </section>
             </body>

@@ -77,6 +77,17 @@ public final class LoginRs extends AbstractRs {
     }
 
     /**
+     * Login page for those who are already logged in, but want to upgrade
+     * identity (or just to change it).
+     * @return The JAX-RS response
+     */
+    @GET
+    @Path("/re")
+    public Response relogin() {
+        return this.login();
+    }
+
+    /**
      * Facebook authentication page (callback hits it).
      * @param code Facebook "authorization code"
      * @return The JAX-RS response
