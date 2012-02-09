@@ -38,7 +38,7 @@
     <xsl:include href="/xsl/templates.xsl" />
 
     <xsl:template match="/">
-        <html>
+        <html lang="en-US">
             <head>
                 <link href="/css/global.css" rel="stylesheet" type="text/css"
                     media="all"></link>

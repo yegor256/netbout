@@ -54,7 +54,7 @@ final class Sender {
         final Properties props = new Properties();
         props.put("mail.smtp.starttls.enable", true);
         props.put("mail.smtp.auth", true);
-        this.session = Session.getDefaultInstance(props, null);
+        this.session = Session.getInstance(props);
     }
 
     /**
@@ -80,15 +80,16 @@ final class Sender {
             );
             transport.sendMessage(message, message.getAllRecipients());
             transport.close();
+            Logger.info(
+                this,
+                "#send(..): email sent to %[list]s",
+                message.getAllRecipients()
+            );
         } catch (javax.mail.NoSuchProviderException ex) {
             throw new IllegalArgumentException(ex);
         } catch (javax.mail.MessagingException ex) {
             throw new IllegalArgumentException(ex);
         }
-        Logger.info(
-            this,
-            "#send(..): email delivered"
-        );
     }
 
 }

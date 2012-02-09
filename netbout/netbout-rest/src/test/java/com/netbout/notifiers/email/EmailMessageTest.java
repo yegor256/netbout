@@ -82,9 +82,7 @@ public final class EmailMessageTest {
      */
     @Test
     public void extractsPureTextFromMessage() throws Exception {
-        final String raw = IOUtils.toString(
-            this.getClass().getResourceAsStream(this.resource)
-        );
+        final String raw = this.raw();
         final BodyPart body = Mockito.mock(BodyPart.class);
         Mockito.doReturn(raw).when(body).getContent();
         Mockito.doReturn(MediaType.TEXT_PLAIN).when(body).getContentType();
@@ -100,6 +98,17 @@ public final class EmailMessageTest {
                 Matchers.endsWith("\nlast line")
             )
         );
+    }
+
+    /**
+     * Get raw text of the email.
+     * @return The raw email text
+     * @throws Exception If there is some problem inside
+     */
+    private String raw() throws Exception {
+        return IOUtils.toString(
+            this.getClass().getResourceAsStream(this.resource)
+        ).replace("\n", EmailMessage.CRLF);
     }
 
 }

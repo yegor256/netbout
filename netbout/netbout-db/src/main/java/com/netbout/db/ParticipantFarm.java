@@ -45,6 +45,27 @@ import java.util.List;
 public final class ParticipantFarm {
 
     /**
+     * Can this person be invited to the bout?
+     *
+     * <p>We can't accept names longer than 250 chars, because this is the
+     * length of NAME field in IDENTITY table. We don't return TRUE here
+     * allowing other helpers to dispatch this event.
+     *
+     * @param bout The bout
+     * @param identity The name of the person
+     * @return Should it be rejected (FALSE) or it can be (NULL)
+     */
+    @Operation("can-be-invited")
+    public Boolean canBeInvited(final Long bout, final Urn identity) {
+        Boolean can = null;
+        // @checkstyle MagicNumber (1 line)
+        if (identity.toString().length() > 250) {
+            can = Boolean.FALSE;
+        }
+        return can;
+    }
+
+    /**
      * Get list of names of bout participants.
      * @param bout The number of the bout
      * @return List of names
