@@ -182,6 +182,9 @@
                 <header class="meta">
                     <b>
                         <xsl:choose>
+                            <xsl:when test="$msg/author = /page/identity/name">
+                                <xsl:text>you</xsl:text>
+                            </xsl:when>
                             <xsl:when test="/page/bout/participants/participant[$msg/author=identity]">
                                 <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
                             </xsl:when>
@@ -215,9 +218,6 @@
                     <input name="mask" autocomplete="off" placeholder="Invite...">
                         <xsl:attribute name="value">
                             <xsl:value-of select="/page/mask"/>
-                        </xsl:attribute>
-                        <xsl:attribute name="onblur">
-                            <xsl:text>$("#invite-list").hide(100);</xsl:text>
                         </xsl:attribute>
                         <xsl:if test="/page/mask != ''">
                             <xsl:attribute name="autofocus">
@@ -282,12 +282,14 @@
             <span>
                 <xsl:choose>
                     <xsl:when test="$participant/@confirmed = 'true'">
+                        <!--
                         <a>
                             <xsl:attribute name="href">
                                 <xsl:value-of select="/page/links/link[@rel='leave']/@href"/>
                             </xsl:attribute>
                             <xsl:text>I want to leave this bout</xsl:text>
                         </a>
+                        -->
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:text>Do you agree to join this bout: </xsl:text>
