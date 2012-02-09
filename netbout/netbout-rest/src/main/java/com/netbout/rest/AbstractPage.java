@@ -64,6 +64,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
+@SuppressWarnings("PMD.TooManyMethods")
 public abstract class AbstractPage implements Page {
 
     /**

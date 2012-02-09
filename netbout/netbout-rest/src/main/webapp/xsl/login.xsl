@@ -77,12 +77,12 @@
                                     <xsl:choose>
                                         <xsl:when test="/page/links/link[@rel='re-login']">
                                             <xsl:text>We know you as "</xsl:text>
-                                            <xsl:value-of select="/page/identity/alias"/>
+                                            <b><xsl:value-of select="/page/identity/alias"/></b>
                                             <xsl:text>", please authenticate yourself through one of:</xsl:text>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <xsl:text>You're logged in already as "</xsl:text>
-                                            <xsl:value-of select="/page/identity/alias"/>
+                                            <b><xsl:value-of select="/page/identity/alias"/></b>
                                             <xsl:text>", </xsl:text>
                                             <a>
                                                 <xsl:attribute name="href">
