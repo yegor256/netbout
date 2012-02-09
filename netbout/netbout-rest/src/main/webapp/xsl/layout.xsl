@@ -90,8 +90,7 @@
                     </xsl:if>
                     <xsl:if test="links/link[@rel='re-login']">
                         <aside class="error-message">
-                            <xsl:text>We recommend you to re-authenticate
-                                yourself in the system: </xsl:text>
+                            <xsl:text>We recommend you to re-authenticate yourself: </xsl:text>
                             <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="links/link[@rel='re-login']/@href"/>

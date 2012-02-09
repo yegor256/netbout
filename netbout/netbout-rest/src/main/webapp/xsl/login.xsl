@@ -61,8 +61,16 @@
                     <tr>
                         <td id="content">
                             <p>
-                                <img src="http://img.netbout.com/logo-white.png"
-                                    id="logo" alt="logo" />
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="/page/links/link[@rel='home']/@href"/>
+                                    </xsl:attribute>
+                                    <xsl:attribute name="title">
+                                        <xsl:text>back home</xsl:text>
+                                    </xsl:attribute>
+                                    <img src="http://img.netbout.com/logo-white.png"
+                                        id="logo" alt="back home" />
+                                </a>
                             </p>
                             <xsl:if test="/page/identity">
                                 <p id="message">
@@ -96,6 +104,9 @@
                                 <a>
                                     <xsl:attribute name="href">
                                         <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
+                                    </xsl:attribute>
+                                    <xsl:attribute name="title">
+                                        <xsl:text>click to authenticate yourself via Facebook</xsl:text>
                                     </xsl:attribute>
                                     <img src="http://img.netbout.com/facebook.png" id="facebook"/>
                                 </a>
