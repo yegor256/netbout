@@ -102,6 +102,7 @@ public final class EmailMessageTest {
 
     /**
      * Get raw text of the email.
+     * @return The raw email text
      * @throws Exception If there is some problem inside
      */
     private String raw() throws Exception {

@@ -35,7 +35,6 @@ import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * One email message.
@@ -53,7 +52,6 @@ final class EmailMessage {
 
     /**
      * Stoppers of content.
-     * @checkstyle LineLength (7 lines)
      */
     private static final Collection<Pattern> STOPPERS =
         new ArrayList<Pattern>();
@@ -68,6 +66,7 @@ final class EmailMessage {
             "Sent via Netbout: https?://.*",
             "-+original\\s+message-+",
             ">.*",
+            // @checkstyle LineLength (1 line)
             "On \\w{3}, \\w{3} \\d{1,2}, \\d{4} at \\d{2}:\\d{2} (AM|PM), .* wrote:",
         };
         for (String regex : regexs) {
