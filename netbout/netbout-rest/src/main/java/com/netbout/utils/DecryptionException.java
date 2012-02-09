@@ -36,6 +36,13 @@ public final class DecryptionException extends Exception {
 
     /**
      * Public ctor.
+     */
+    public DecryptionException() {
+        super();
+    }
+
+    /**
+     * Public ctor.
      * @param cause Cause of it
      */
     public DecryptionException(final Throwable cause) {

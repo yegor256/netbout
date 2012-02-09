@@ -63,7 +63,7 @@ public final class Cryptor {
     public Identity decrypt(final Hub hub, final String hash)
         throws DecryptionException {
         if (hash == null) {
-            throw new DecryptionException(hash, "Hash is NULL");
+            throw new DecryptionException();
         }
         final String iname = this.CIPHER.decrypt(TextUtils.unpack(hash));
         Identity identity;
