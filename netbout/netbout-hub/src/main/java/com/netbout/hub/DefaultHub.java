@@ -250,6 +250,7 @@ public final class DefaultHub implements Hub {
         this.all.remove(main.name());
         this.all.remove(child.name());
         this.make("identities-joined")
+            .synchronously()
             .arg(main.name())
             .arg(child.name())
             .asDefault(true)

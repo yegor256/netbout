@@ -215,17 +215,14 @@ public final class DbSession {
                 final ResultSet rset = fetcher.fetch(stmt);
                 try {
                     result = handler.handle(rset);
-                } catch (SQLException ex) {
-                    throw new IllegalStateException(ex);
                 } finally {
                     DbUtils.closeQuietly(rset);
                 }
-            } catch (SQLException ex) {
-                throw new IllegalStateException(ex);
             } finally {
                 DbUtils.closeQuietly(stmt);
             }
         } catch (SQLException ex) {
+            DbUtils.closeQuietly(this.conn);
             throw new IllegalArgumentException(ex);
         } finally {
             if (this.auto) {
