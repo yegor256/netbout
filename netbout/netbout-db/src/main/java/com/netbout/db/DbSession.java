@@ -218,7 +218,11 @@ public final class DbSession {
                 DbUtils.closeQuietly(stmt);
             }
         } catch (SQLException ex) {
-            DbUtils.closeQuietly(this.conn);
+            if (this.auto) {
+                DbUtils.closeQuietly(this.conn);
+            } else {
+                DbUtils.rollbackAndCloseQuietly(this.conn);
+            }
             Logger.error(
                 this,
                 "#run(..): '%s':\n%[exception]s",

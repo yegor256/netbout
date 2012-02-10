@@ -135,9 +135,11 @@ final class OpDiscoverer {
                 if (targets.containsKey(entry.getKey())) {
                     throw new IllegalStateException(
                         String.format(
-                            "duplicate operation '%s' in %s",
+                            // @checkstyle LineLength (1 line)
+                            "duplicate operation '%s' in '%s' (already exists in '%s')",
                             entry.getKey(),
-                            entry.getValue()
+                            entry.getValue(),
+                            targets.get(entry.getKey())
                         )
                     );
                 }
