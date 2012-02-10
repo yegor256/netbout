@@ -33,9 +33,6 @@ import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.netbout.spi.UrnMocker;
-import com.netbout.spi.xml.JaxbPrinter;
-import com.rexsl.test.XhtmlConverter;
-import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -49,18 +46,14 @@ import org.junit.Test;
 public final class DefaultBoutMgrTest {
 
     /**
-     * DefaultBoutMgr can produce stats in XML.
+     * DefaultBoutMgr can produce stats.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void producesStatisticsAsXmlElement() throws Exception {
+    public void producesStatistics() throws Exception {
         MatcherAssert.assertThat(
-            XhtmlConverter.the(
-                new JaxbPrinter(
-                    new DefaultBoutMgr(new HubMocker().mock())
-                ).print()
-            ),
-            XhtmlMatchers.hasXPath("/manager/bouts")
+            new DefaultBoutMgr(new HubMocker().mock()).statistics(),
+            Matchers.notNullValue()
         );
     }
 

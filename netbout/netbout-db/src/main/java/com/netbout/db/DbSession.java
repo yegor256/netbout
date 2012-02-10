@@ -43,17 +43,18 @@ import org.apache.commons.dbutils.DbUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class DbSession {
-
-    /**
-     * When we started.
-     */
-    private final transient long start = System.currentTimeMillis();
 
     /**
      * Connection to use.
      */
     private final transient Connection conn;
+
+    /**
+     * Shall we close/autocommit automatically?
+     */
+    private final transient boolean auto;
 
     /**
      * The query to use.
@@ -67,10 +68,16 @@ public final class DbSession {
 
     /**
      * Public ctor.
+     * @param autocommit Shall we commit it automatically?
      */
-    public DbSession() {
+    public DbSession(final boolean autocommit) {
+        this.auto = autocommit;
         try {
             this.conn = Database.connection();
+            this.conn.setAutoCommit(this.auto);
+            this.conn.setTransactionIsolation(
+                Connection.TRANSACTION_SERIALIZABLE
+            );
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
@@ -83,6 +90,7 @@ public final class DbSession {
      */
     public DbSession sql(final String sql) {
         this.query = sql;
+        this.args.clear();
         return this;
     }
 
@@ -93,6 +101,20 @@ public final class DbSession {
      */
     public DbSession set(final Object value) {
         this.args.add(value);
+        return this;
+    }
+
+    /**
+     * Commit it.
+     * @return This object
+     */
+    public DbSession commit() {
+        try {
+            this.conn.commit();
+        } catch (SQLException ex) {
+            throw new IllegalStateException(ex);
+        }
+        DbUtils.closeQuietly(this.conn);
         return this;
     }
 
@@ -118,8 +140,9 @@ public final class DbSession {
 
     /**
      * Make UPDATE request.
+     * @return This object
      */
-    public void update() {
+    public DbSession update() {
         this.run(
             new VoidHandler(),
             new Fetcher() {
@@ -131,6 +154,7 @@ public final class DbSession {
                 }
             }
         );
+        return this;
     }
 
     /**
@@ -175,6 +199,7 @@ public final class DbSession {
      */
     @SuppressWarnings("PMD.CloseResource")
     private <T> T run(final Handler<T> handler, final Fetcher fetcher) {
+        final long start = System.currentTimeMillis();
         T result;
         try {
             final PreparedStatement stmt = this.conn.prepareStatement(
@@ -186,26 +211,31 @@ public final class DbSession {
                 final ResultSet rset = fetcher.fetch(stmt);
                 try {
                     result = handler.handle(rset);
-                } catch (SQLException ex) {
-                    throw new IllegalStateException(ex);
                 } finally {
                     DbUtils.closeQuietly(rset);
                 }
-            } catch (SQLException ex) {
-                throw new IllegalStateException(ex);
             } finally {
                 DbUtils.closeQuietly(stmt);
             }
         } catch (SQLException ex) {
+            DbUtils.closeQuietly(this.conn);
+            Logger.error(
+                this,
+                "#run(..): '%s':\n%[exception]s",
+                this.query,
+                ex
+            );
             throw new IllegalArgumentException(ex);
         } finally {
-            DbUtils.closeQuietly(this.conn);
+            if (this.auto) {
+                DbUtils.closeQuietly(this.conn);
+            }
         }
         Logger.debug(
             this,
             "#run(): '%s' done [%dms]",
             this.query,
-            System.currentTimeMillis() - this.start
+            System.currentTimeMillis() - start
         );
         return result;
     }

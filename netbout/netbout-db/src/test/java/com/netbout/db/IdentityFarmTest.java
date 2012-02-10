@@ -37,6 +37,7 @@ import org.junit.Test;
  * Test case of {@link IdentityFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class IdentityFarmTest {
 
@@ -137,6 +138,26 @@ public final class IdentityFarmTest {
             this.farm.findIdentitiesByKeyword("DOM"),
             Matchers.nullValue()
         );
+    }
+
+    /**
+     * IdentityFarm can join identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void joinsIdentityOnDemand() throws Exception {
+        final Urn main = new IdentityRowMocker().mock();
+        final Urn child = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().withParticipant(child).mock();
+        new ParticipantRowMocker(bout).namedAs(main).mock();
+        final String alias = "the-same-alias-for-both-identities";
+        new AliasRowMocker(child).namedAs(alias).mock();
+        new AliasRowMocker(main).namedAs(alias).mock();
+        new AliasRowMocker(child).mock();
+        final Long msg = new MessageRowMocker(bout).mock();
+        new SeenRowMocker(msg, main).mock();
+        new SeenRowMocker(msg, child).mock();
+        this.farm.identitiesJoined(main, child);
     }
 
 }

@@ -90,12 +90,14 @@ public final class RoutineFarm {
                 for (Message message : messages) {
                     this.process(message);
                 }
-                Logger.info(
-                    this,
-                    "#routine(): processed %d email message(s) of '%s'",
-                    messages.length,
-                    user
-                );
+                if (messages.length > 0) {
+                    Logger.info(
+                        this,
+                        "#routine(): processed %d email message(s) of '%s'",
+                        messages.length,
+                        user
+                    );
+                }
             } finally {
                 inbox.close(true);
             }

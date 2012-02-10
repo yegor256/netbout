@@ -45,6 +45,12 @@ import java.util.Set;
 public interface Hub extends Closeable {
 
     /**
+     * Get some statistics, for the stage.
+     * @return The text
+     */
+    String statistics();
+
+    /**
      * Find identity by URN.
      * @param name The name of the identity
      * @return The identity found

@@ -34,10 +34,6 @@ import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Manager of all bouts.
@@ -45,8 +41,6 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "manager")
-@XmlAccessorType(XmlAccessType.NONE)
 public final class DefaultBoutMgr implements BoutMgr {
 
     /**
@@ -76,12 +70,13 @@ public final class DefaultBoutMgr implements BoutMgr {
     }
 
     /**
-     * Get total number of cached bouts.
-     * @return The total
+     * {@inheritDoc}
      */
-    @XmlElement(name = "bouts")
-    public int getBouts() {
-        return this.bouts.size();
+    @Override
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        // todo
+        return text.toString();
     }
 
     /**

@@ -196,7 +196,6 @@ public final class HubBout implements Bout {
             friend
         );
         final Boolean confirm = this.hub.make("just-invited")
-            .inBout(this)
             .arg(this.number())
             .arg(friend.name())
             .asDefault(false)

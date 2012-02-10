@@ -33,7 +33,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import com.netbout.spi.xml.JaxbPrinter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +40,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.xmlmatchers.XmlMatchers;
-import org.xmlmatchers.transform.XmlConverters;
 
 /**
  * Test case of {@link DefaultHub}.
@@ -71,15 +68,15 @@ public final class DefaultHubTest {
     }
 
     /**
-     * DefaultHub produces its statistics as XML element.
+     * DefaultHub produces its statistics.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void producesStatisticsAsXmlElement() throws Exception {
+    public void producesStatistics() throws Exception {
         final Bus bus = new BusMocker().mock();
         MatcherAssert.assertThat(
-            XmlConverters.the(new JaxbPrinter(new DefaultHub(bus)).print()),
-            XmlMatchers.hasXPath("/hub")
+            new DefaultHub(bus).statistics(),
+            Matchers.notNullValue()
         );
     }
 

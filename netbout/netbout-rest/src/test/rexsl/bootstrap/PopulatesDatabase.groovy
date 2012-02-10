@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.bootstrap
 
-import com.netbout.db.Database
+import com.netbout.db.DbSession
 import com.rexsl.core.Manifests
 import com.ymock.util.Logger
 
@@ -38,7 +38,6 @@ if (urlFile.exists()) {
     Manifests.inject('Netbout-JdbcUrl', urlFile.text)
 }
 
-def conn = Database.connection()
 def line = new StringBuilder()
 def queries = []
 new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text ->
@@ -68,15 +67,5 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
     )
 }
 
-queries.each { query ->
-    def stmt = conn.createStatement()
-    try {
-        stmt.execute(query)
-    } catch (java.sql.SQLException ex) {
-        Logger.error(this, 'faiure in: "%s"', query)
-        throw ex
-    }
-    Logger.debug(this, 'SQL executed: %s', query)
-}
-conn.close()
-Logger.info(this, 'Test database is ready')
+queries.each { new DbSession(true).sql(it).update() }
+Logger.info(this, 'Test database is ready (%d queries)', queries.size())

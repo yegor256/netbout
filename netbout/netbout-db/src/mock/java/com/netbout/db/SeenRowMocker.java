@@ -27,47 +27,42 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
-import java.util.Date;
+import com.netbout.spi.UrnMocker;
+import java.util.Random;
 
 /**
- * Seen statuses.
- *
+ * Mocker of {@code SEEN} row in a database.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Farm
-public final class SeenFarm {
+public final class SeenRowMocker {
 
     /**
-     * Mark this message as seen by the specified identity.
-     * @param msg The number of the message
-     * @param identity The viewer
+     * The message.
      */
-    @Operation("message-was-seen")
-    public void messageWasSeen(final Long msg, final Urn identity) {
-        new DbSession(true)
-            .sql("INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)")
-            .set(msg)
-            .set(identity)
-            .set(new Date())
-            .insert(new VoidHandler());
+    private final transient Long message;
+
+    /**
+     * The identity it is related to.
+     */
+    private final transient Urn identity;
+
+    /**
+     * Public ctor.
+     * @param msg The number of message
+     * @param name The identity
+     */
+    public SeenRowMocker(final Long msg, final Urn name) {
+        this.message = msg;
+        this.identity = name;
     }
 
     /**
-     * This message was seen by this identity?
-     * @param msg The number of the message
-     * @param identity The viewer
-     * @return Was it seen?
+     * Mock it.
      */
-    @Operation("was-message-seen")
-    public Boolean wasMessageSeen(final Long msg, final Urn identity) {
-        return new DbSession(true)
-            .sql("SELECT message FROM seen WHERE message = ? AND identity = ?")
-            .set(msg)
-            .set(identity)
-            .select(new NotEmptyHandler());
+    public void mock() {
+        final SeenFarm farm = new SeenFarm();
+        farm.messageWasSeen(this.message, this.identity);
     }
 
 }

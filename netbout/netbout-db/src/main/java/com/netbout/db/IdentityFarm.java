@@ -57,7 +57,7 @@ public final class IdentityFarm {
             "%%%s%%",
             keyword.toUpperCase(Locale.ENGLISH)
         );
-        return new DbSession().sql(
+        return new DbSession(true).sql(
             // @checkstyle StringLiteralsConcatenation (8 lines)
             "SELECT identity.name FROM identity "
             + "LEFT JOIN alias ON alias.identity = identity.name "
@@ -95,7 +95,7 @@ public final class IdentityFarm {
      */
     @Operation("get-bouts-of-identity")
     public List<Long> getBoutsOfIdentity(final Urn name) {
-        return new DbSession()
+        return new DbSession(true)
             // @checkstyle LineLength (1 line)
             .sql("SELECT number FROM bout JOIN participant ON bout.number = participant.bout WHERE identity = ?")
             .set(name)
@@ -121,7 +121,7 @@ public final class IdentityFarm {
      */
     @Operation("get-identity-photo")
     public URL getIdentityPhoto(final Urn name) {
-        return new DbSession()
+        return new DbSession(true)
             .sql("SELECT photo FROM identity WHERE name = ?")
             .set(name)
             .select(
@@ -153,12 +153,12 @@ public final class IdentityFarm {
      */
     @Operation("identity-mentioned")
     public void identityMentioned(final Urn name) {
-        final Boolean exists = new DbSession()
+        final Boolean exists = new DbSession(true)
             .sql("SELECT name FROM identity WHERE name = ?")
             .set(name)
             .select(new NotEmptyHandler());
         if (!exists) {
-            new DbSession()
+            new DbSession(true)
                 // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO identity (name, photo, date) VALUES (?, ?, ?)")
                 .set(name)
@@ -169,13 +169,58 @@ public final class IdentityFarm {
     }
 
     /**
+     * Identities were joined.
+     * @param main The name of main identity
+     * @param child The name of child identity
+     */
+    @Operation("identities-joined")
+    public void identitiesJoined(final Urn main, final Urn child) {
+        new DbSession(false)
+            // @checkstyle LineLength (1 line)
+            .sql("INSERT INTO alias (name, identity) SELECT name, ? FROM alias WHERE identity = ? OR identity = ? GROUP BY name HAVING COUNT(name) = 1")
+            .set(main)
+            .set(main)
+            .set(child)
+            .update()
+            .sql("DELETE FROM alias WHERE identity = ?")
+            .set(child)
+            .update()
+            .sql("UPDATE message SET author = ? WHERE author = ?")
+            .set(main)
+            .set(child)
+            .update()
+            // @checkstyle LineLength (1 line)
+            .sql("INSERT INTO participant (bout, identity, confirmed) SELECT bout, ?, confirmed FROM participant WHERE identity = ? OR identity = ? GROUP BY bout HAVING COUNT(bout) = 1")
+            .set(main)
+            .set(main)
+            .set(child)
+            .update()
+            .sql("DELETE FROM participant WHERE identity = ?")
+            .set(child)
+            .update()
+            // @checkstyle LineLength (1 line)
+            .sql("INSERT INTO seen (message, identity) SELECT message, ? FROM seen WHERE identity = ? OR identity = ? GROUP BY message HAVING COUNT(message) = 1")
+            .set(main)
+            .set(main)
+            .set(child)
+            .update()
+            .sql("DELETE FROM seen WHERE identity = ?")
+            .set(child)
+            .update()
+            .sql("DELETE FROM identity WHERE name = ?")
+            .set(child)
+            .update()
+            .commit();
+    }
+
+    /**
      * Changed identity photo.
      * @param name The name of identity
      * @param photo The photo to set
      */
     @Operation("changed-identity-photo")
     public void changedIdentityPhoto(final Urn name, final URL photo) {
-        new DbSession()
+        new DbSession(true)
             .sql("UPDATE identity SET photo = ? WHERE name = ?")
             .set(photo)
             .set(name)

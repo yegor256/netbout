@@ -72,7 +72,7 @@ public final class ParticipantFarm {
      */
     @Operation("get-bout-participants")
     public List<Urn> getBoutParticipants(final Long bout) {
-        return new DbSession()
+        return new DbSession(true)
             // @checkstyle LineLength (1 line)
             .sql("SELECT identity FROM participant JOIN bout ON bout.number = participant.bout WHERE bout = ?")
             .set(bout)
@@ -98,7 +98,7 @@ public final class ParticipantFarm {
      */
     @Operation("added-bout-participant")
     public void addedBoutParticipant(final Long bout, final Urn identity) {
-        new DbSession()
+        new DbSession(true)
             // @checkstyle LineLength (1 line)
             .sql("INSERT INTO participant (bout, identity, date) VALUES (?, ?, ?)")
             .set(bout)
@@ -114,7 +114,7 @@ public final class ParticipantFarm {
      */
     @Operation("removed-bout-participant")
     public void removedBoutParticipant(final Long bout, final Urn identity) {
-        new DbSession()
+        new DbSession(true)
             .sql("DELETE FROM participant WHERE bout = ? AND identity = ?")
             .set(bout)
             .set(identity)
@@ -129,7 +129,7 @@ public final class ParticipantFarm {
      */
     @Operation("get-participant-status")
     public Boolean getParticipantStatus(final Long bout, final Urn identity) {
-        return new DbSession()
+        return new DbSession(true)
             // @checkstyle LineLength (1 line)
             .sql("SELECT confirmed FROM participant WHERE bout = ? AND identity = ?")
             .set(bout)
@@ -163,7 +163,7 @@ public final class ParticipantFarm {
     @Operation("changed-participant-status")
     public void changedParticipantStatus(final Long bout,
         final Urn identity, final Boolean status) {
-        new DbSession()
+        new DbSession(true)
             // @checkstyle LineLength (1 line)
             .sql("UPDATE participant SET confirmed = ? WHERE bout = ? AND identity = ?")
             .set(status)

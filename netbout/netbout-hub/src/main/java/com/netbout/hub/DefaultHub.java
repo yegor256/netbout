@@ -41,17 +41,11 @@ import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.NavigableSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlType;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Entry point to Hub.
@@ -61,8 +55,6 @@ import javax.xml.bind.annotation.XmlType;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
-@XmlType(name = "hub")
-@XmlAccessorType(XmlAccessType.NONE)
 public final class DefaultHub implements Hub {
 
     /**
@@ -88,8 +80,8 @@ public final class DefaultHub implements Hub {
     /**
      * All identities known for us at the moment.
      */
-    private final transient NavigableSet all =
-        new ConcurrentSkipListSet<Identity>();
+    private final transient ConcurrentMap<Urn, Identity> all =
+        new ConcurrentHashMap<Urn, Identity>();
 
     /**
      * Public ctor.
@@ -103,7 +95,7 @@ public final class DefaultHub implements Hub {
      * @param bus The bus
      */
     public DefaultHub(final Bus bus) {
-        StatsFarm.addStats(this);
+        StatsFarm.register(this);
         this.ibus = bus;
         this.inf = new DefaultInfinity(this.ibus);
         this.imanager = new DefaultBoutMgr(this);
@@ -114,6 +106,17 @@ public final class DefaultHub implements Hub {
             "#DefaultHub(%[type]s): instantiated",
             bus
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append(this.imanager.statistics());
+        text.append(this.iresolver.statistics());
+        return text.toString();
     }
 
     /**
@@ -175,10 +178,9 @@ public final class DefaultHub implements Hub {
     @Override
     public Identity identity(final Urn name) throws UnreachableUrnException {
         this.resolver().authority(name);
-        final DefaultHub.Token token = new DefaultHub.Token(name);
         Identity identity;
-        if (this.all.contains(token)) {
-            identity = (Identity) this.all.floor(token);
+        if (this.all.containsKey(name)) {
+            identity = this.all.get(name);
         } else {
             identity = new HubIdentity(this, name);
             this.save(identity);
@@ -190,20 +192,6 @@ public final class DefaultHub implements Hub {
             );
         }
         return identity;
-    }
-
-    /**
-     * Get list of identities.
-     * @return The list
-     */
-    @XmlElement(name = "identity")
-    @XmlElementWrapper(name = "identities")
-    public Collection<String> getIdentities() {
-        final Collection<String> identities = new ArrayList<String>();
-        for (Object object : this.all) {
-            identities.add(((Identity) object).name().toString());
-        }
-        return identities;
     }
 
     /**
@@ -247,7 +235,6 @@ public final class DefaultHub implements Hub {
             existing
         );
         this.make("identity-promoted")
-            .synchronously()
             .arg(identity.name())
             .arg(helper.location())
             .asDefault(true)
@@ -260,7 +247,20 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public Identity join(final Identity main, final Identity child) {
-        // todo
+        this.all.remove(main.name());
+        this.all.remove(child.name());
+        this.make("identities-joined")
+            .synchronously()
+            .arg(main.name())
+            .arg(child.name())
+            .asDefault(true)
+            .exec();
+        Logger.info(
+            this,
+            "#join('%s', '%s'): joined successfully",
+            main,
+            child
+        );
         return main;
     }
 
@@ -300,7 +300,7 @@ public final class DefaultHub implements Hub {
      * @param identity The identity
      */
     private void save(final Identity identity) {
-        this.all.add(identity);
+        this.all.put(identity.name(), identity);
         this.make("identity-mentioned")
             .synchronously()
             .arg(identity.name())
@@ -370,47 +370,6 @@ public final class DefaultHub implements Hub {
             throw new IllegalStateException(ex);
         }
         return persister;
-    }
-
-    /**
-     * Token for searching of identities in storage.
-     * @todo #181 I don't understand what this mechanism is for. Let's either
-     *  document it properly or destroy
-     */
-    private static final class Token implements Comparable<Identity> {
-        /**
-         * Name of identity.
-         */
-        private final transient Urn name;
-        /**
-         * Public ctor.
-         * @param urn The name of identity
-         */
-        public Token(final Urn urn) {
-            this.name = urn;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int compareTo(final Identity identity) {
-            return this.name.compareTo(identity.name());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean equals(final Object obj) {
-            return obj.hashCode() == this.hashCode();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int hashCode() {
-            return this.name.hashCode();
-        }
     }
 
 }

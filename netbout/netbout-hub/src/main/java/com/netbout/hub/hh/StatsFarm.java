@@ -26,6 +26,7 @@
  */
 package com.netbout.hub.hh;
 
+import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
@@ -33,9 +34,6 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import com.netbout.spi.xml.JaxbPrinter;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -49,9 +47,9 @@ import org.apache.commons.lang.CharEncoding;
 public final class StatsFarm implements IdentityAware {
 
     /**
-     * Stats for Hub.
+     * The Hub.
      */
-    private static final Collection<Object> STATS = new ArrayList<Object>();
+    private static Hub hub;
 
     /**
      * Me.
@@ -60,15 +58,10 @@ public final class StatsFarm implements IdentityAware {
 
     /**
      * Set data provider.
-     * @param sts The stats
+     * @param ihub The hub
      */
-    public static void addStats(final Object sts) {
-        StatsFarm.STATS.add(sts);
-        Logger.debug(
-            StatsFarm.class,
-            "#addStats('%[type]s'): injected",
-            sts
-        );
+    public static void register(final Hub ihub) {
+        StatsFarm.hub = ihub;
     }
 
     /**
@@ -103,15 +96,15 @@ public final class StatsFarm implements IdentityAware {
      * Somebody was just invited to the bout.
      * @param number Bout where it is happening
      * @param who Who was invited
-     * @return Confirm invitation?
+     * @return Confirm participation?
      */
     @Operation("just-invited")
     public Boolean justInvited(final Long number, final Urn who) {
-        Boolean allow = null;
+        Boolean confirm = null;
         if (who.equals(this.identity.name())) {
-            allow = true;
+            confirm = true;
         }
-        return allow;
+        return confirm;
     }
 
     /**
@@ -144,7 +137,7 @@ public final class StatsFarm implements IdentityAware {
         final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
-            xml = new JaxbPrinter(new Stage(this.STATS)).print();
+            xml = new JaxbPrinter(new Stage(this.hub.statistics())).print();
         }
         return xml;
     }

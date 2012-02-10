@@ -29,7 +29,6 @@ package com.netbout.db;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import java.util.Date;
 import java.util.List;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -45,48 +44,32 @@ public final class BillFarm {
     /**
      * Save a collection of incoming bills, from BUS.
      * @param lines Text forms of them
-     * @checkstyle MagicNumber (20 lines)
+     * @checkstyle MagicNumber (30 lines)
      */
     @Operation("save-bills")
     public void saveBills(final List<String> lines) {
+        final DbSession session = new DbSession(false);
+        final Handler handler = new VoidHandler();
         for (String line : lines) {
             final String[] parts = line.split("[ ]+");
             Long bout = null;
             if (!"null".equals(parts[4])) {
                 bout = Long.valueOf(parts[4].replaceAll("[^\\d]+", ""));
             }
-            this.bill(
-                ISODateTimeFormat.dateTime()
+            session
+                // @checkstyle LineLength (1 line)
+                .sql("INSERT INTO bill (date, mnemo, helper, msec, bout) VALUES (?, ?, ?, ?, ?)")
+                .set(ISODateTimeFormat.dateTime()
                     .parseDateTime(parts[0])
-                    .toDate(),
-                parts[1],
-                Urn.create(parts[2]),
-                Long.valueOf(parts[3]),
-                bout
-            );
+                    .toDate()
+                )
+                .set(parts[1])
+                .set(Urn.create(parts[2]))
+                .set(Long.valueOf(parts[3]))
+                .set(bout)
+                .insert(handler);
         }
-    }
-
-    /**
-     * Save one bill.
-     * @param date The date
-     * @param mnemo The mnemo
-     * @param helper The helper
-     * @param msec The milliseconds
-     * @param bout The bout
-     * @checkstyle ParameterNumber (3 lines)
-     */
-    private void bill(final Date date, final String mnemo, final Urn helper,
-        final Long msec, final Long bout) {
-        new DbSession()
-            // @checkstyle LineLength (1 line)
-            .sql("INSERT INTO bill (date, mnemo, helper, msec, bout) VALUES (?, ?, ?, ?, ?)")
-            .set(date)
-            .set(mnemo)
-            .set(helper)
-            .set(msec)
-            .set(bout)
-            .insert(new VoidHandler());
+        session.commit();
     }
 
 }
