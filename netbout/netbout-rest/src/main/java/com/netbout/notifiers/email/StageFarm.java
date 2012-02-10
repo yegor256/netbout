@@ -90,7 +90,7 @@ public final class StageFarm implements IdentityAware {
         if (who.equals(this.identity.name())) {
             confirm = true;
         }
-        if (who.nid().equals(this.NID)) {
+        if (who.nid().equals(EmailFarm.NID)) {
             confirm = true;
         }
         return confirm;
