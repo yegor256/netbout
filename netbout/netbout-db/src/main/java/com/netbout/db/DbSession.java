@@ -47,11 +47,6 @@ import org.apache.commons.dbutils.DbUtils;
 public final class DbSession {
 
     /**
-     * When we started.
-     */
-    private final transient long start = System.currentTimeMillis();
-
-    /**
      * Connection to use.
      */
     private final transient Connection conn;
@@ -204,6 +199,7 @@ public final class DbSession {
      */
     @SuppressWarnings("PMD.CloseResource")
     private <T> T run(final Handler<T> handler, final Fetcher fetcher) {
+        final long start = System.currentTimeMillis();
         T result;
         try {
             final PreparedStatement stmt = this.conn.prepareStatement(
@@ -223,6 +219,12 @@ public final class DbSession {
             }
         } catch (SQLException ex) {
             DbUtils.closeQuietly(this.conn);
+            Logger.error(
+                this,
+                "#run(..): '%s':\n%[exception]s",
+                this.query,
+                ex
+            );
             throw new IllegalArgumentException(ex);
         } finally {
             if (this.auto) {
@@ -233,7 +235,7 @@ public final class DbSession {
             this,
             "#run(): '%s' done [%dms]",
             this.query,
-            System.currentTimeMillis() - this.start
+            System.currentTimeMillis() - start
         );
         return result;
     }
