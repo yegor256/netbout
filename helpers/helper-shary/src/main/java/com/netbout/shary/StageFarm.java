@@ -153,7 +153,7 @@ public final class StageFarm implements IdentityAware {
             final Slip slip = this.slip(author, body);
             if (slip.getName().isEmpty() || slip.getUri().isEmpty()) {
                 dest = "empty-args";
-            } else if (slip.getUri().matches("^http://.*$")) {
+            } else if (slip.getUri().matches("(http|s3)://.*")) {
                 dest = "";
                 this.identity.bout(number).post(new JaxbPrinter(slip).print());
             } else {

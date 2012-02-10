@@ -67,7 +67,7 @@ final class EmailMessage {
             "-+original\\s+message-+",
             ">.*",
             "-+",
-            "\u8212",
+            "\\u8212",
             // @checkstyle LineLength (1 line)
             "on [a-z]{3}, [a-z]{3} \\d{1,2}, \\d{4} at \\d{1,2}:\\d{2} (am|pm),.*",
         };

@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jet.JetBuilder;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import java.net.URL;
@@ -38,7 +39,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Stage dispatcher.
+ * Stage dispatcher, instantiated by {@link BoutRs}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -112,16 +113,8 @@ public final class StageRs extends AbstractRs {
                 .location(this.base().path("/{bout}").build(this.bout.number()))
                 .build();
         } else if (response.startsWith("through")) {
-            resp = new PageBuilder()
-                .build(AbstractPage.class)
-                .init(this)
-                .authenticated(this.identity())
-                .status(Response.Status.SEE_OTHER)
-                .location(
-                    UriBuilder.fromUri(response.substring("through ".length()))
-                        .build()
-                )
-                .build();
+            final String url = response.substring("through ".length());
+            resp = new JetBuilder(url).build();
         } else {
             resp = StageRs.build(response);
         }
