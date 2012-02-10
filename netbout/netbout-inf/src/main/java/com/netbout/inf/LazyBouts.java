@@ -27,10 +27,8 @@
 package com.netbout.inf;
 
 import com.netbout.inf.predicates.VariablePred;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * Lazy list of bout numbers.
@@ -74,10 +72,6 @@ public final class LazyBouts implements Iterable<Long> {
      * Iterator.
      */
     private final class BoutsIterator implements Iterator<Long> {
-        /**
-         * Found bout numbers already.
-         */
-        private final transient Set<Long> passed = new HashSet<Long>();
         /**
          * The iterator to work with.
          */
@@ -142,12 +136,9 @@ public final class LazyBouts implements Iterable<Long> {
                 final Long msg = this.iterator.next();
                 final Long bout = LazyBouts.this.heap.get(msg)
                     .<Long>get(VariablePred.BOUT_NUMBER);
-                if (!this.passed.contains(bout)) {
-                    found = bout;
-                    this.ready = true;
-                    this.passed.add(bout);
-                    break;
-                }
+                found = bout;
+                this.ready = true;
+                break;
             }
             return found;
         }
