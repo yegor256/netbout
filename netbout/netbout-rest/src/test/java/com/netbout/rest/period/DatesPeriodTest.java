@@ -40,7 +40,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class PeriodTest {
+public final class DatesPeriodTest {
 
     /**
      * Period can accept dates and return title.
@@ -50,7 +50,7 @@ public final class PeriodTest {
     public static void currentDateIsCorrect() throws Exception {
         MatcherAssert.assertThat(
             "current date is configured correctly on this machine",
-            new Date().after(PeriodTest.date("2012-01-01"))
+            new Date().after(DatesPeriodTest.date("2012-01-01"))
         );
     }
 
@@ -60,7 +60,7 @@ public final class PeriodTest {
      */
     @Test
     public void concumesDatesAndReturnsTitle() throws Exception {
-        final Period period = new Period().next(this.date("2008-08-24"));
+        final Period period = new DatesPeriod().next(this.date("2008-08-24"));
         period.add(this.date("2008-08-22"));
         // MatcherAssert.assertThat(
         //     period.title(),
@@ -74,8 +74,9 @@ public final class PeriodTest {
      */
     @Test
     public void nextPeriodIsEarlierThanCurrentOne() throws Exception {
-        final Period period = new Period();
-        final Period next = period.next(this.date("2008-05-13"));
+        final DatesPeriod period = new DatesPeriod();
+        final DatesPeriod next =
+            (DatesPeriod) period.next(this.date("2008-05-13"));
         MatcherAssert.assertThat(
             "next period is older",
             next.newest().before(period.newest())
@@ -88,7 +89,7 @@ public final class PeriodTest {
      */
     @Test(expected = PeriodViolationException.class)
     public void throwsWhenNextIsNewerThanCurrent() throws Exception {
-        new Period()
+        new DatesPeriod()
             .next(this.date("2000-05-13"))
             .next(this.date("2001-01-24"));
     }
@@ -99,7 +100,7 @@ public final class PeriodTest {
      */
     @Test(expected = PeriodViolationException.class)
     public void throwsWhenNewDateIsNotInARow() throws Exception {
-        new Period()
+        new DatesPeriod()
             .next(this.date("2001-01-18"))
             .add(this.date("2004-01-17"));
     }
@@ -110,10 +111,10 @@ public final class PeriodTest {
      */
     @Test
     public void serializesToStringAndBack() throws Exception {
-        final Period period = new Period().next(this.date("2007-04-14"));
+        final Period period = new DatesPeriod().next(this.date("2007-04-14"));
         final String text = period.toString();
         MatcherAssert.assertThat(
-            Period.valueOf(text),
+            PeriodsBuilder.parse(text),
             Matchers.equalTo(period)
         );
     }
@@ -124,7 +125,7 @@ public final class PeriodTest {
      */
     @Test
     public void explainsItselfToString() throws Exception {
-        final Period period = new Period().next(this.date("2005-03-14"));
+        final Period period = new DatesPeriod().next(this.date("2005-03-14"));
         MatcherAssert.assertThat(period.explain(), Matchers.notNullValue());
     }
 
@@ -134,7 +135,7 @@ public final class PeriodTest {
      */
     @Test
     public void addsNewestTwice() throws Exception {
-        final Period period = new Period();
+        final DatesPeriod period = new DatesPeriod();
         MatcherAssert.assertThat(
             "newest fits in",
             period.fits(period.newest())
@@ -147,7 +148,7 @@ public final class PeriodTest {
      */
     @Test
     public void fitsNewDatesCorrectly() throws Exception {
-        final Period period = new Period().next(this.date("2011-03-20"));
+        final Period period = new DatesPeriod().next(this.date("2011-03-20"));
         MatcherAssert.assertThat(
             "new date fits in",
             period.fits(this.date("2011-03-18"))
@@ -160,8 +161,8 @@ public final class PeriodTest {
      */
     @Test
     public void rejectsDateOnOverflow() throws Exception {
-        final Period period = new Period().next(this.date("2011-05-01"));
-        for (int day = Period.MAX; day > 0; day -= 1) {
+        final Period period = new DatesPeriod().next(this.date("2011-05-01"));
+        for (int day = DatesPeriod.MAX; day > 0; day -= 1) {
             final Date date = this.date(String.format("2011-03-%02d", day));
             MatcherAssert.assertThat("fits in", period.fits(date));
             period.add(date);
@@ -178,7 +179,7 @@ public final class PeriodTest {
      */
     @Test
     public void revertsFromNull() throws Exception {
-        final Period period = Period.valueOf(null);
+        final Period period = PeriodsBuilder.parse(null);
         MatcherAssert.assertThat(period, Matchers.notNullValue());
     }
 

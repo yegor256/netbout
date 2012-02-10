@@ -27,7 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
-import com.netbout.rest.period.Period;
+import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import java.util.Date;
@@ -142,7 +142,7 @@ public final class LongMessage {
      */
     @XmlElement
     public String getWhen() {
-        return Period.when(this.message.date());
+        return PeriodsBuilder.when(this.message.date());
     }
 
     /**
