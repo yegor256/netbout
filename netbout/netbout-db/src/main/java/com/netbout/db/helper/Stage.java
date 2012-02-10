@@ -64,6 +64,7 @@ public final class Stage {
             "SELECT COUNT(*) FROM namespace",
             "SELECT COUNT(*) FROM seen",
             "SHOW EVENTS",
+            "SHOW PROCESSLIST",
         };
         for (String query : queries) {
             text.append(query).append(":\n");
