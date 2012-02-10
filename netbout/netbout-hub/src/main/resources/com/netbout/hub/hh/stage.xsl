@@ -39,6 +39,7 @@
     </xsl:template>
 
     <xsl:template match="stage">
+        <p>Hub statistics:</p>
         <p class="fixed"><xsl:value-of select="data/text"/></p>
     </xsl:template>
 

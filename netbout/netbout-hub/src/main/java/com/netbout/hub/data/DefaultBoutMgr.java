@@ -75,7 +75,7 @@ public final class DefaultBoutMgr implements BoutMgr {
     @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
-        // todo
+        text.append(Logger.format("%d bouts cached", this.bouts.size()));
         return text.toString();
     }
 

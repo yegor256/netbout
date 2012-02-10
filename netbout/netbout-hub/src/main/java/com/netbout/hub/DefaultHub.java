@@ -114,6 +114,7 @@ public final class DefaultHub implements Hub {
     @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
+        text.append(Logger.format("%d identities total\n", this.all.size()));
         text.append(this.imanager.statistics());
         text.append(this.iresolver.statistics());
         return text.toString();
