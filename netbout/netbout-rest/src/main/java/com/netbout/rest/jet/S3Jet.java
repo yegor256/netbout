@@ -26,7 +26,13 @@
  */
 package com.netbout.rest.jet;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -39,36 +45,31 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Http jet.
+ * S3 jet.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class HttpJet implements Jet {
+final class S3Jet implements Jet {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Response build(final URI uri) throws IOException {
-        final HttpURLConnection conn = (HttpURLConnection)
-            uri.toURL().openConnection();
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-        conn.connect();
-        Response.ResponseBuilder builder = Response.ok(new Output(conn));
-        final Map<String, List<String>> headers = conn.getHeaderFields();
-        for (String name : headers.keySet()) {
-            if (!StringUtils.equalsIgnoreCase(name, HttpHeaders.CONTENT_TYPE)
-                && !StringUtils.equalsIgnoreCase(name, HttpHeaders.CONTENT_LENGTH)) {
-                continue;
-            }
-            for (String value : headers.get(name)) {
-                builder.header(name, value);
-            }
-        }
-        return builder.build();
+        final String[] info = uri.getUserInfo().split(":", 2);
+        final AWSCredentials creds = new BasicAWSCredentials(info[0], info[1]);
+        AmazonS3Client client = new AmazonS3Client(creds);
+        final S3Object object = client.getObject(
+            uri.getHost(),
+            StringUtils.substringAfter(uri.getPath(), "/")
+        );
+        final ObjectMetadata meta = object.getObjectMetadata();
+        return Response
+            .ok(new Output(object.getObjectContent()))
+            .header(HttpHeaders.CONTENT_TYPE, meta.getContentType())
+            .header(HttpHeaders.CONTENT_LENGTH, meta.getContentLength())
+            .build();
     }
 
     /**
@@ -76,15 +77,15 @@ final class HttpJet implements Jet {
      */
     private final class Output implements StreamingOutput {
         /**
-         * The connection to use.
+         * The input stream with data.
          */
-        private final transient HttpURLConnection connection;
+        private final transient InputStream input;
         /**
          * Public ctor.
-         * @param conn The connection
+         * @param stream The stream with data
          */
-        public Output(final HttpURLConnection conn) {
-            this.connection = conn;
+        public Output(final InputStream stream) {
+            this.input = stream;
         }
         /**
          * {@inheritDoc}
@@ -92,9 +93,9 @@ final class HttpJet implements Jet {
         @Override
         public void write(final OutputStream stream) throws IOException {
             try {
-                IOUtils.copy(this.connection.getInputStream(), stream);
+                IOUtils.copy(this.input, stream);
             } finally {
-                this.connection.disconnect();
+                this.input.close();
             }
         }
     }

@@ -61,8 +61,8 @@ public final class JetBuilder {
         Jet jet;
         if ("http".equals(scheme)) {
             jet = new HttpJet();
-        // } else if ("s3".equals(scheme)) {
-        //     jet = new S3Jet();
+        } else if ("s3".equals(scheme)) {
+            jet = new S3Jet();
         } else {
             throw new IllegalArgumentException(
                 String.format("unknown scheme '%s'", scheme)
