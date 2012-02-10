@@ -214,14 +214,9 @@ public final class LongBout {
     @XmlElementWrapper(name = "messages")
     public List<LongMessage> getMessages() {
         final Period period = PeriodsBuilder.parse(this.view);
-        Iterable<Message> discussion;
-        if (this.view == null) {
-            discussion = this.bout.messages(this.query);
-        } else {
-            discussion = this.bout.messages(
-                period.query(this.query, "(not (greater-than $date '%s'))")
-            );
-        }
+        Iterable<Message> discussion = this.bout.messages(
+            period.query(this.query)
+        );
         final PeriodsBuilder pbld = new PeriodsBuilder(
             period,
             UriBuilder.fromUri(

@@ -75,10 +75,9 @@ public interface Period {
     /**
      * Create query from this period.
      * @param query Original query
-     * @param formula The formula to use for predicate building
      * @return The query
      */
-    String query(String query, String formula);
+    String query(String query);
 
     /**
      * Convert it to text.

@@ -204,7 +204,7 @@ final class DatesPeriod implements Period {
      * {@inheritDoc}
      */
     @Override
-    public String query(final String query, final String formula) {
+    public String query(final String query) {
         String original = "";
         if (!query.isEmpty() && query.charAt(0) == '(') {
             original = query;
@@ -214,20 +214,16 @@ final class DatesPeriod implements Period {
             }
         }
         final String text = String.format(
-            "(and %s %s)",
-            String.format(
-                formula,
-                ISODateTimeFormat.dateTime().print(
-                    new DateTime(this.newest().getTime())
-                )
-            ),
-            original
+            "(and %s (not (greater-than $date '%s')))",
+            original,
+            ISODateTimeFormat.dateTime().print(
+                new DateTime(this.newest().getTime())
+            )
         );
         Logger.debug(
             this,
-            "#format(%s, %s): '%s'",
+            "#query(%s): '%s'",
             query,
-            this,
             text
         );
         return text;

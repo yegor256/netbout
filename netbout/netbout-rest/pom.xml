@@ -243,11 +243,10 @@
             <version since="2 Sep 2011">2.0</version>
         </dependency>
         <dependency>
-            <!-- HTTP related constants, for testing only -->
+            <!-- HTTP related constants, for testing and for AWS SDK -->
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
             <version>4.1.2</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.ymock</groupId>

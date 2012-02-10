@@ -170,15 +170,7 @@ public final class InboxRs extends AbstractRs {
         if (!pred.startsWith("(unbundled ")) {
             pred = String.format("(and %s (bundled))", pred);
         }
-        Iterable<Bout> list;
-        if (view == null) {
-            list = this.identity().inbox(pred);
-        } else {
-            list = this.identity().inbox(
-                period.query(pred, "(not (greater-than $bout.recent '%s'))")
-            );
-        }
-        return list;
+        return this.identity().inbox(period.query(pred));
     }
 
 }
