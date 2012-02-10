@@ -24,70 +24,51 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.notifiers.email;
+package com.netbout.rest.jet;
 
-import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
-import java.util.Properties;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.MimeMessage;
+import java.net.URI;
+import javax.ws.rs.core.Response;
 
 /**
- * Email sender.
+ * Build JAX-RX response builder.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Sender {
+public final class JetBuilder {
 
     /**
-     * Mail sending session.
+     * The URI of the source.
      */
-    private final transient Session session;
+    private final transient URI source;
 
     /**
      * Public ctor.
+     * @param src The source
      */
-    public Sender() {
-        final Properties props = new Properties();
-        props.put("mail.smtp.starttls.enable", true);
-        props.put("mail.smtp.auth", true);
-        this.session = Session.getInstance(props);
+    public JetBuilder(final String src) {
+        this.source = URI.create(src);
     }
 
     /**
-     * Create new message.
-     * @return The message
+     * Build the streaming output.
+     * @return The output
      */
-    public Message newMessage() {
-        return new MimeMessage(this.session);
-    }
-
-    /**
-     * Send message by email.
-     * @param message The message
-     */
-    public void send(final Message message) {
+    public Response build() {
+        final String scheme = this.source.getScheme();
+        Jet jet;
+        if ("http".equals(scheme)) {
+            jet = new HttpJet();
+        } else if ("s3".equals(scheme)) {
+            jet = new S3Jet();
+        } else {
+            throw new IllegalArgumentException(
+                String.format("unknown scheme '%s'", scheme)
+            );
+        }
         try {
-            final Transport transport = this.session.getTransport("smtp");
-            transport.connect(
-                Manifests.read("Netbout-SmtpHost"),
-                Integer.valueOf(Manifests.read("Netbout-SmtpPort")),
-                Manifests.read("Netbout-SmtpUser"),
-                Manifests.read("Netbout-SmtpPassword")
-            );
-            transport.sendMessage(message, message.getAllRecipients());
-            transport.close();
-            Logger.info(
-                this,
-                "#send(..): email sent to '%s'",
-                message.getAllRecipients()[0]
-            );
-        } catch (javax.mail.NoSuchProviderException ex) {
-            throw new IllegalArgumentException(ex);
-        } catch (javax.mail.MessagingException ex) {
+            return jet.build(this.source);
+        } catch (java.io.IOException ex) {
             throw new IllegalArgumentException(ex);
         }
     }

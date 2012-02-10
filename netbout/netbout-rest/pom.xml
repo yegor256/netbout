@@ -203,6 +203,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version since="9 Feb 2012">1.3.2</version>
+        </dependency>
+        <dependency>
             <!--
             Facebook Client
             @see http://restfb.com/
