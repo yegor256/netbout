@@ -50,6 +50,7 @@ final class HttpJet implements Jet {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     public Response build(final URI uri) throws IOException {
         final HttpURLConnection conn = (HttpURLConnection)
             uri.toURL().openConnection();
@@ -57,11 +58,12 @@ final class HttpJet implements Jet {
         conn.setDoInput(true);
         conn.setDoOutput(true);
         conn.connect();
-        Response.ResponseBuilder builder = Response.ok(new Output(conn));
+        final Response.ResponseBuilder builder = Response.ok(new Output(conn));
         final Map<String, List<String>> headers = conn.getHeaderFields();
         for (String name : headers.keySet()) {
             if (!StringUtils.equalsIgnoreCase(name, HttpHeaders.CONTENT_TYPE)
-                && !StringUtils.equalsIgnoreCase(name, HttpHeaders.CONTENT_LENGTH)) {
+                && !StringUtils
+                    .equalsIgnoreCase(name, HttpHeaders.CONTENT_LENGTH)) {
                 continue;
             }
             for (String value : headers.get(name)) {

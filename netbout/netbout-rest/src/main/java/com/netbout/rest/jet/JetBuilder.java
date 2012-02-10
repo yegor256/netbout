@@ -28,7 +28,6 @@ package com.netbout.rest.jet;
 
 import java.net.URI;
 import javax.ws.rs.core.Response;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Build JAX-RX response builder.
@@ -56,7 +55,6 @@ public final class JetBuilder {
      * @return The output
      */
     public Response build() {
-        Response response;
         final String scheme = this.source.getScheme();
         Jet jet;
         if ("http".equals(scheme)) {

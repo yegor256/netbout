@@ -24,26 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.jet;
-
-import java.io.IOException;
-import java.net.URI;
-import javax.ws.rs.core.Response;
 
 /**
- * The jet.
+ * Jets.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Jet {
-
-    /**
-     * Build the response from this URI.
-     * @param uri The URI to load from
-     * @return The response
-     * @throws IOException If some problem inside
-     */
-    Response build(URI uri) throws IOException;
-
-}
+package com.netbout.rest.jet;

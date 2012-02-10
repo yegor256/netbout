@@ -34,10 +34,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -59,7 +56,7 @@ final class S3Jet implements Jet {
     public Response build(final URI uri) throws IOException {
         final String[] info = uri.getUserInfo().split(":", 2);
         final AWSCredentials creds = new BasicAWSCredentials(info[0], info[1]);
-        AmazonS3Client client = new AmazonS3Client(creds);
+        final AmazonS3Client client = new AmazonS3Client(creds);
         final S3Object object = client.getObject(
             uri.getHost(),
             StringUtils.substringAfter(uri.getPath(), "/")
