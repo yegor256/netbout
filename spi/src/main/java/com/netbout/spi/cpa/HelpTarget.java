@@ -74,6 +74,14 @@ final class HelpTarget {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.method.toGenericString();
+    }
+
+    /**
      * Execute it with arguments.
      * @param token The token
      */

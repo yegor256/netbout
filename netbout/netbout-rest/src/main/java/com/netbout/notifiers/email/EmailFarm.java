@@ -104,21 +104,6 @@ public final class EmailFarm implements IdentityAware {
     }
 
     /**
-     * Somebody was just invited to the bout.
-     * @param number Bout where it is happening
-     * @param who Who was invited
-     * @return Confirm invitation?
-     */
-    @Operation("just-invited")
-    public Boolean justInvited(final Long number, final Urn who) {
-        Boolean confirm = null;
-        if (who.nid().equals(this.NID)) {
-            confirm = true;
-        }
-        return confirm;
-    }
-
-    /**
      * Construct extra identities, if necessary.
      * @param keyword The keyword they are searching for
      * @return List of URNs
