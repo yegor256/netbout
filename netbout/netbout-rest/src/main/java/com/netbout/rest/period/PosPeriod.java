@@ -31,8 +31,6 @@ import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Period, calculating position.

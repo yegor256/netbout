@@ -35,7 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -59,7 +58,7 @@ final class Mux implements Closeable {
      * with data retrieval from DB. Thus, pay attention to the number of
      * connections allowed in {@code com.netbout.db.DataSourceBuilder}.
      */
-    private static final int THREADS = 10;
+    private static final int THREADS = 20;
 
     /**
      * Executor service, with a number of threads working in parallel.
@@ -161,11 +160,12 @@ final class Mux implements Closeable {
      */
     public void submit(final Set<Urn> who, final Runnable task) {
         if (this.alive.get()) {
-            this.executor.submit(new TaskShell(who, task));
+            this.watcher.watch(this.executor.submit(new TaskShell(who, task)));
         } else {
             Logger.debug(
                 this,
-                "#submit(): Mux is closed, %s ignored",
+                "#submit(%[list]s, '%s'): Mux is closed, task ignored",
+                who,
                 task
             );
         }
@@ -174,7 +174,7 @@ final class Mux implements Closeable {
     /**
      * Wrapper of Task.
      */
-    private final class TaskShell extends FutureTask {
+    private final class TaskShell implements Runnable {
         /**
          * Who are waiting.
          */
@@ -190,7 +190,6 @@ final class Mux implements Closeable {
          */
         @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
         public TaskShell(final Set<Urn> urns, final Runnable tsk) {
-            super(tsk, null);
             this.task = tsk;
             this.who = urns;
             for (Urn urn : this.who) {
@@ -212,7 +211,6 @@ final class Mux implements Closeable {
         @SuppressWarnings("PMD.AvoidCatchingThrowable")
         public void run() {
             final long start = System.currentTimeMillis();
-            Mux.this.watcher.watch(this);
             try {
                 this.task.run();
             // @checkstyle IllegalCatchCheck (1 line)

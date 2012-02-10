@@ -214,7 +214,7 @@ public final class LongBout {
     @XmlElementWrapper(name = "messages")
     public List<LongMessage> getMessages() {
         final Period period = PeriodsBuilder.parse(this.view);
-        Iterable<Message> discussion = this.bout.messages(
+        final Iterable<Message> discussion = this.bout.messages(
             period.query(this.query)
         );
         final PeriodsBuilder pbld = new PeriodsBuilder(

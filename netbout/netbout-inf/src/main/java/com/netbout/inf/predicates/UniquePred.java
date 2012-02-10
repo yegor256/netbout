@@ -60,7 +60,7 @@ public final class UniquePred extends AbstractVarargPred {
      */
     @Override
     public Object evaluate(final Msg msg, final int pos) {
-        final String marker = this.arg(0).<String>evaluate(msg, pos);
+        final String marker = this.arg(0).evaluate(msg, pos).toString();
         boolean allow;
         if (this.passed.contains(marker)) {
             allow = false;
