@@ -55,6 +55,9 @@
                             </xsl:call-template>
                         </span>
                         <xsl:if test="@me != 'true'">
+                            <xsl:if test="@confirmed != 'true'">
+                                <xsl:text> (invited)</xsl:text>
+                            </xsl:if>
                             <xsl:text> </xsl:text>
                             <a>
                                 <xsl:attribute name="href">

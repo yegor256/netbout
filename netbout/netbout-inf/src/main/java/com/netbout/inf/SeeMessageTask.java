@@ -35,7 +35,8 @@ import com.ymock.util.Logger;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeMessageTask implements Task {
+@SuppressWarnings("PMD.DoNotUseThreads")
+final class SeeMessageTask implements Runnable {
 
     /**
      * The heap.
@@ -69,7 +70,7 @@ final class SeeMessageTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public void exec() {
+    public void run() {
         final long start = System.currentTimeMillis();
         final Long number = this.message.number();
         final Msg msg = this.heap.get(number);
