@@ -107,7 +107,7 @@ public final class EmailRs extends AbstractRs {
             identity = new ResolvedIdentity(
                 new URL("http://www.netbout.com/email"),
                 iname,
-                new URL("http://img.netbout.com/email.png")
+                new URL("http://cdn.netbout.com/email.png")
             );
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(ex);
