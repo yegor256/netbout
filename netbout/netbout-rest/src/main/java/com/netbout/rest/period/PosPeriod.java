@@ -40,7 +40,6 @@ import org.joda.time.format.ISODateTimeFormat;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
 final class PosPeriod implements Period {
 
     /**
@@ -77,7 +76,26 @@ final class PosPeriod implements Period {
      */
     public PosPeriod(final Long from, final Long lmt) {
         this.start = from;
-        this.limit = lmt;
+        this.limit = Math.min(lmt, Period.MAX);
+    }
+
+    /**
+     * Build it back from text.
+     * @param text The text
+     * @return The period discovered
+     */
+    public static PosPeriod valueOf(final Object text) {
+        PosPeriod period;
+        if (text != null && text.toString().matches("\\d+\\-\\d+")) {
+            final String[] parts = text.toString().split("-");
+            period = new PosPeriod(
+                Long.valueOf(parts[0]),
+                Long.valueOf(parts[1])
+            );
+        } else {
+            period = new PosPeriod();
+        }
+        return period;
     }
 
     /**
@@ -150,7 +168,7 @@ final class PosPeriod implements Period {
         );
         Logger.debug(
             this,
-            "#format(%s, %s): '%s'",
+            "#format(%s): '%s'",
             query,
             text
         );

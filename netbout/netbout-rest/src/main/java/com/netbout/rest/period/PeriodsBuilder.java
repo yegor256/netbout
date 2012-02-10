@@ -122,17 +122,7 @@ public final class PeriodsBuilder {
      * @return The period discovered
      */
     public static Period parse(final Object text) {
-        Period period;
-        if (text != null && text.toString().matches("^\\d+t\\d+$")) {
-            final String[] parts = text.toString().split("t");
-            period = new DatesPeriod(
-                new Date(Long.valueOf(parts[0])),
-                Long.valueOf(parts[1])
-            );
-        } else {
-            period = new DatesPeriod();
-        }
-        return period;
+        return PosPeriod.valueOf(text);
     }
 
     /**
