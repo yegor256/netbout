@@ -153,6 +153,7 @@ public final class RemoteIdentity implements Identity {
      * @param names List of them
      */
     public void setAliases(final Collection<String> names) {
+        this.ialiases.clear();
         this.ialiases.addAll(names);
     }
 
