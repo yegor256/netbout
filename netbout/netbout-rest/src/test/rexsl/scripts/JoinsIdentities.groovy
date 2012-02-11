@@ -38,13 +38,11 @@ import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
 import org.mockito.Mockito
 
 def email = 'son@example.com'
 def name = new Urn('email', email)
-def identity = Mockito.mock(Identity.class)
+def identity = Mockito.mock(Identity)
 Mockito.doReturn(name).when(identity).name()
 def secret = new Cipher().encrypt(name.toString())
 def son = new RestSession(rexsl.home).authenticate(name, secret)
