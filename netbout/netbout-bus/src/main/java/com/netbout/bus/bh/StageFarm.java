@@ -26,7 +26,6 @@
  */
 package com.netbout.bus.bh;
 
-import com.netbout.bus.Bus;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
@@ -49,7 +48,7 @@ public final class StageFarm implements IdentityAware {
     /**
      * The executor.
      */
-    private static Bus bus;
+    private static StatsProvider bus;
 
     /**
      * Me.
@@ -60,7 +59,7 @@ public final class StageFarm implements IdentityAware {
      * Set data provider.
      * @param ibus The bus
      */
-    public static void register(final Bus ibus) {
+    public static void register(final StatsProvider ibus) {
         if (StageFarm.bus != null) {
             throw new IllegalStateException("BUS was already injected");
         }
@@ -140,7 +139,7 @@ public final class StageFarm implements IdentityAware {
         final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
-            xml = new JaxbPrinter(new Stage(this.bus.stats())).print();
+            xml = new JaxbPrinter(new Stage(this.bus.statistics())).print();
         }
         return xml;
     }

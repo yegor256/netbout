@@ -70,6 +70,16 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
+    public Long eta() {
+        throw new UnsupportedOperationException(
+            "#eta() can't be called on a friend"
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public URL authority() {
         throw new UnsupportedOperationException(
             "#authority() can't be called on a friend"

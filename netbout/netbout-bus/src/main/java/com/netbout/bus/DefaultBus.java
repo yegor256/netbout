@@ -27,6 +27,7 @@
 package com.netbout.bus;
 
 import com.netbout.bus.bh.StageFarm;
+import com.netbout.bus.bh.StatsProvider;
 import com.netbout.bus.cache.EmptyTokenCache;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
@@ -47,7 +48,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultBus implements Bus {
+public final class DefaultBus implements Bus, StatsProvider {
 
     /**
      * Transaction controller.
@@ -122,8 +123,8 @@ public final class DefaultBus implements Bus {
      * {@inheritDoc}
      */
     @Override
-    public String stats() {
-        return this.controller.stats();
+    public String statistics() {
+        return ((StatsProvider) this.controller).statistics();
     }
 
     /**

@@ -64,8 +64,10 @@ public final class EtaAssertion implements AssertionPolicy {
     @Override
     public void assertThat(final TestResponse response) {
         if (response.getStatus() == HttpURLConnection.HTTP_OK) {
-            response.assertXPath("/page/eta");
-            this.eta = Long.valueOf(response.xpath("/page/eta/text()").get(0));
+            response.assertXPath("/page/identity/eta");
+            this.eta = Long.valueOf(
+                response.xpath("/page/identity/eta/text()").get(0)
+            );
             if (this.eta > 0) {
                 Logger.warn(
                     this,

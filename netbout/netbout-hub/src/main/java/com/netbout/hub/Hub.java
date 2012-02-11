@@ -27,14 +27,12 @@
 package com.netbout.hub;
 
 import com.netbout.bus.TxBuilder;
-import com.netbout.inf.Infinity;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.io.Closeable;
 import java.net.URL;
-import java.util.Set;
 
 /**
  * Hub.
@@ -45,10 +43,10 @@ import java.util.Set;
 public interface Hub extends Closeable {
 
     /**
-     * Get some statistics, for the stage.
-     * @return The text
+     * Get URN resolver.
+     * @return The resolver
      */
-    String statistics();
+    UrnResolver resolver();
 
     /**
      * Find identity by URN.
@@ -60,29 +58,11 @@ public interface Hub extends Closeable {
     Identity identity(Urn name) throws UnreachableUrnException;
 
     /**
-     * Get URN resolver.
-     * @return The resolver
-     */
-    UrnResolver resolver();
-
-    /**
      * Start new transaction.
      * @param mnemo Transaction mnemo
      * @return The transaction builder
      */
     TxBuilder make(final String mnemo);
-
-    /**
-     * Get manager of bouts.
-     * @return The manager
-     */
-    BoutMgr manager();
-
-    /**
-     * Get infinity.
-     * @return The infinity
-     */
-    Infinity infinity();
 
     /**
      * Promote existing identity to the helper.
@@ -99,12 +79,5 @@ public interface Hub extends Closeable {
      * @return The primary identity
      */
     Identity join(Identity main, Identity child);
-
-    /**
-     * Find identities by keyword.
-     * @param keyword The keyword
-     * @return The identities found
-     */
-    Set<Identity> findByKeyword(String keyword);
 
 }

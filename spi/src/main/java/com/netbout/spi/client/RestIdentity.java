@@ -82,6 +82,21 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
+    public Long eta() {
+        return Long.valueOf(
+            this.client
+                .get("reading ETA value of identity")
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .assertXPath("/page/identity/eta")
+                .xpath("/page/identity/eta/text()")
+                .get(0)
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public URL authority() {
         try {
             return new URL(

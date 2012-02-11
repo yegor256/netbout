@@ -107,14 +107,6 @@ public abstract class AbstractRs implements Resource {
 
     /**
      * {@inheritDoc}
-     */
-    @Override
-    public final long eta(final Identity identity) {
-        return this.ihub.infinity().eta(identity.name());
-    }
-
-    /**
-     * {@inheritDoc}
      * @todo #226 I think that we should cache this object somewhere here
      */
     @Override

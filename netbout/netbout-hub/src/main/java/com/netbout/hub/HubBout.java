@@ -56,7 +56,7 @@ public final class HubBout implements Bout {
     /**
      * The hub.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * The viewer.
@@ -74,7 +74,7 @@ public final class HubBout implements Bout {
      * @param idnt The viewer
      * @param dat The data
      */
-    public HubBout(final Hub ihub, final Identity idnt, final BoutDt dat) {
+    public HubBout(final PowerHub ihub, final Identity idnt, final BoutDt dat) {
         this.hub = ihub;
         this.viewer = idnt;
         this.data = dat;

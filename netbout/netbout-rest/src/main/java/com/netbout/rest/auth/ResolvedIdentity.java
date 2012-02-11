@@ -132,6 +132,14 @@ public final class ResolvedIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
+    public Long eta() {
+        return 0L;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Bout start() {
         throw new UnsupportedOperationException("#start()");
     }

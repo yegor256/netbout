@@ -24,38 +24,20 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus;
-
-import com.netbout.spi.Bout;
-import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
+package com.netbout.hub.hh;
 
 /**
- * Executor of a token.
+ * Provider of statistics.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface TokenExecutor {
+public interface StatsProvider {
 
     /**
-     * Register a new helper in this executor.
-     * @param identity Who is the owner of this helper
-     * @param helper The helper to register
+     * Get some statistics, for the stage.
+     * @return The text
      */
-    void register(Identity identity, Helper helper);
-
-    /**
-     * Execute one token.
-     * @param token The token to execute
-     */
-    void exec(TxToken token);
-
-    /**
-     * Execute one token, only with helpers in this particular bout.
-     * @param token The transaction to execute
-     * @param bout The bout to work in
-     */
-    void exec(TxToken token, Bout bout);
+    String statistics();
 
 }

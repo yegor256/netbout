@@ -26,6 +26,7 @@
  */
 package com.netbout.bus;
 
+import com.netbout.bus.bh.StatsProvider;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
@@ -54,7 +55,7 @@ import org.joda.time.format.ISODateTimeFormat;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-final class DefaultTokenExecutor implements TokenExecutor {
+final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
 
     /**
      * List of registered helpers.
@@ -146,7 +147,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
      * {@inheritDoc}
      */
     @Override
-    public String stats() {
+    public String statistics() {
         final StringBuilder text = new StringBuilder();
         for (Map.Entry<Identity, Helper> entry : this.helpers.entrySet()) {
             text.append(

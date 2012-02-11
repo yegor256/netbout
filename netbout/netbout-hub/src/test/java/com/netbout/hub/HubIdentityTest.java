@@ -46,7 +46,7 @@ public final class HubIdentityTest {
      */
     @Test
     public void createsProperRequestForInfinity() throws Exception {
-        final Hub hub = Mockito.mock(Hub.class);
+        final PowerHub hub = Mockito.mock(PowerHub.class);
         final Infinity infinity = Mockito.mock(Infinity.class);
         Mockito.doReturn(infinity).when(hub).infinity();
         final Urn name = new UrnMocker().mock();

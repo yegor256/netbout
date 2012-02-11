@@ -76,6 +76,15 @@ public class LongIdentity {
     }
 
     /**
+     * Get ETA.
+     * @return The value in milliseconds
+     */
+    @XmlElement
+    public final Long getEta() {
+        return this.person.eta();
+    }
+
+    /**
      * Get authority.
      * @return The name
      */
