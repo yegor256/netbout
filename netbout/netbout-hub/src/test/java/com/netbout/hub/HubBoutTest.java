@@ -58,7 +58,7 @@ public final class HubBoutTest {
     /**
      * The hub.
      */
-    private transient Hub hub;
+    private transient PowerHub hub;
 
     /**
      * Prepare all mocks.
@@ -67,7 +67,7 @@ public final class HubBoutTest {
     @Before
     public void prepare() throws Exception {
         this.viewer = new IdentityMocker().mock();
-        this.hub = new HubMocker()
+        this.hub = new PowerHubMocker()
             .withIdentity(this.viewer.name(), this.viewer)
             .mock();
         this.boutDtMocker = new BoutDtMocker()
@@ -127,7 +127,7 @@ public final class HubBoutTest {
      */
     @Test
     public void createsProperRequestForInfinity() throws Exception {
-        final Hub ihub = Mockito.mock(Hub.class);
+        final PowerHub ihub = Mockito.mock(PowerHub.class);
         final Infinity infinity = Mockito.mock(Infinity.class);
         Mockito.doReturn(infinity).when(ihub).infinity();
         final Identity identity = new IdentityMocker().mock();

@@ -58,7 +58,7 @@ final class Mux implements Closeable {
      * with data retrieval from DB. Thus, pay attention to the number of
      * connections allowed in {@code com.netbout.db.DataSourceBuilder}.
      */
-    private static final int THREADS = 20;
+    private static final int THREADS = 50;
 
     /**
      * Executor service, with a number of threads working in parallel.

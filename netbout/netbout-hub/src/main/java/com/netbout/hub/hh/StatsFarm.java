@@ -26,7 +26,6 @@
  */
 package com.netbout.hub.hh;
 
-import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
@@ -49,7 +48,7 @@ public final class StatsFarm implements IdentityAware {
     /**
      * The Hub.
      */
-    private static Hub hub;
+    private static StatsProvider hub;
 
     /**
      * Me.
@@ -60,7 +59,7 @@ public final class StatsFarm implements IdentityAware {
      * Set data provider.
      * @param ihub The hub
      */
-    public static void register(final Hub ihub) {
+    public static void register(final StatsProvider ihub) {
         StatsFarm.hub = ihub;
     }
 

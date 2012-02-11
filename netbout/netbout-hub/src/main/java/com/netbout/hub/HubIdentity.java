@@ -58,7 +58,7 @@ public final class HubIdentity implements Identity {
     /**
      * The hub.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * The name.
@@ -80,7 +80,7 @@ public final class HubIdentity implements Identity {
      * @param ihub The hub
      * @param name The identity's name
      */
-    public HubIdentity(final Hub ihub, final Urn name) {
+    public HubIdentity(final PowerHub ihub, final Urn name) {
         this.hub = ihub;
         this.iname = name;
     }
@@ -116,6 +116,14 @@ public final class HubIdentity implements Identity {
     @Override
     public int hashCode() {
         return this.name().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long eta() {
+        return ((DefaultHub) this.hub).eta(this.name());
     }
 
     /**

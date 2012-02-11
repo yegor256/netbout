@@ -69,10 +69,4 @@ public interface Bus extends Closeable {
      */
     void register(Identity identity, Helper helper);
 
-    /**
-     * Summary of current stats.
-     * @return Summary
-     */
-    String stats();
-
 }

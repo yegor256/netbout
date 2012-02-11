@@ -101,6 +101,14 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
+    public Long eta() {
+        return this.identity.eta();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public URL authority() {
         return this.identity.authority();
     }

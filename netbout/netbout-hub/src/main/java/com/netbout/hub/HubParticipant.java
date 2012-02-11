@@ -41,7 +41,7 @@ public final class HubParticipant implements Participant {
     /**
      * The hub.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * The bout I'm in (from the point of view of current viewer).
@@ -66,7 +66,7 @@ public final class HubParticipant implements Participant {
      * @param bdt Bout data
      * @checkstyle ParameterNumber (3 lines)
      */
-    public HubParticipant(final Hub ihub, final Bout bout,
+    public HubParticipant(final PowerHub ihub, final Bout bout,
         final ParticipantDt dat, final BoutDt bdt) {
         this.hub = ihub;
         this.ibout = bout;

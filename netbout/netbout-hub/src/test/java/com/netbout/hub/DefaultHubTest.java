@@ -59,7 +59,7 @@ public final class DefaultHubTest {
     public void createsIdentityByName() throws Exception {
         final Urn name = new UrnMocker().mock();
         final Bus bus = new BusMocker().mock();
-        final Hub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus);
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://abc"
         );
@@ -88,7 +88,7 @@ public final class DefaultHubTest {
     public void promotesIdentityToHelper() throws Exception {
         final Urn name = new UrnMocker().mock();
         final Bus bus = new BusMocker().mock();
-        final Hub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus);
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://cde"
         );
@@ -107,7 +107,7 @@ public final class DefaultHubTest {
     @Test
     public void doesntDuplicateIdentities() throws Exception {
         final Bus bus = new BusMocker().mock();
-        final Hub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus);
         final Urn name = new UrnMocker().mock();
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://foo"
@@ -123,7 +123,7 @@ public final class DefaultHubTest {
     @Test
     public void informsBusAboutIdentityBeingMentioned() throws Exception {
         final Bus bus = new BusMocker().mock();
-        final Hub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus);
         final Urn name = new UrnMocker().mock();
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://bar"
@@ -140,7 +140,7 @@ public final class DefaultHubTest {
     @Test(expected = com.netbout.spi.UnreachableUrnException.class)
     public void doesntAllowUnreachableIdentities() throws Exception {
         final Bus bus = new BusMocker().mock();
-        final Hub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus);
         final Urn name = new UrnMocker().mock();
         hub.identity(name);
     }
@@ -157,7 +157,7 @@ public final class DefaultHubTest {
         final Bus bus = new BusMocker()
             .doReturn(names, "find-identities-by-keyword")
             .mock();
-        final Hub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus);
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://foo-foo"
         );

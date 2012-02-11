@@ -44,10 +44,14 @@ import java.util.Set;
 public interface Identity extends Comparable<Identity> {
 
     /**
-     * {@inheritDoc}
+     * How many milliseconds we should way before this object becomes fully
+     * available for requests (if you make a request earlier you may receive
+     * invalid data or even a runtime exception).
+     * @return The number of milliseconds we recommend to wait before making
+     *  any manipulations with this object (and all other child objects, like
+     *  its bouts, messages, etc.)
      */
-    @Override
-    int compareTo(Identity identity);
+    Long eta();
 
     /**
      * Who validated this user.

@@ -26,6 +26,7 @@
  */
 package com.netbout.bus;
 
+import com.netbout.bus.bh.StatsProvider;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Plain;
@@ -36,7 +37,7 @@ import com.netbout.spi.Plain;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class DefaultTxController implements TxController {
+final class DefaultTxController implements TxController, StatsProvider {
 
     /**
      * Token executor.
@@ -96,8 +97,8 @@ final class DefaultTxController implements TxController {
      * {@inheritDoc}
      */
     @Override
-    public String stats() {
-        return this.executor.stats();
+    public String statistics() {
+        return ((StatsProvider) this.executor).statistics();
     }
 
     /**

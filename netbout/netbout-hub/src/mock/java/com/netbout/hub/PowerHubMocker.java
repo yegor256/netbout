@@ -39,16 +39,16 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 /**
- * Mocker of {@link Hub}.
+ * Mocker of {@link PowerHub}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HubMocker {
+public final class PowerHubMocker {
 
     /**
      * The object.
      */
-    private final transient Hub hub = Mockito.mock(Hub.class);
+    private final transient PowerHub hub = Mockito.mock(PowerHub.class);
 
     /**
      * Mocked bus.
@@ -58,15 +58,26 @@ public final class HubMocker {
     /**
      * Public ctor.
      */
-    public HubMocker() {
+    public PowerHubMocker() {
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
                     final String mnemo = (String) invocation.getArguments()[0];
-                    return HubMocker.this.bmocker.mock().make(mnemo);
+                    return PowerHubMocker.this.bmocker.mock().make(mnemo);
                 }
             }
         ).when(this.hub).make(Mockito.anyString());
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    return new DefaultInfinity(
+                        PowerHubMocker.this.bmocker.mock()
+                    );
+                }
+            }
+        ).when(this.hub).infinity();
+        this.withUrnResolver(new UrnResolverMocker().mock());
+        this.withBoutMgr(new BoutMgrMocker().mock());
         try {
             Mockito.doAnswer(
                 new Answer() {
@@ -79,7 +90,6 @@ public final class HubMocker {
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalArgumentException(ex);
         }
-        this.withUrnResolver(new UrnResolverMocker().mock());
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
@@ -99,7 +109,7 @@ public final class HubMocker {
      * @param args Optional arguments
      * @return This object
      */
-    public HubMocker doReturn(final Object val, final String mnemo,
+    public PowerHubMocker doReturn(final Object val, final String mnemo,
         final Object... args) {
         this.bmocker.doReturn(val, mnemo, args);
         return this;
@@ -110,8 +120,18 @@ public final class HubMocker {
      * @param resolver The resolver to use
      * @return This object
      */
-    public HubMocker withUrnResolver(final UrnResolver resolver) {
+    public PowerHubMocker withUrnResolver(final UrnResolver resolver) {
         Mockito.doReturn(resolver).when(this.hub).resolver();
+        return this;
+    }
+
+    /**
+     * With this BoutMgr.
+     * @param mgr The manager to use
+     * @return This object
+     */
+    public PowerHubMocker withBoutMgr(final BoutMgr mgr) {
+        Mockito.doReturn(mgr).when(this.hub).manager();
         return this;
     }
 
@@ -120,7 +140,7 @@ public final class HubMocker {
      * @param name The name of it
      * @return This object
      */
-    public HubMocker withIdentity(final String name) {
+    public PowerHubMocker withIdentity(final String name) {
         return this.withIdentity(
             Urn.create(name),
             new IdentityMocker().namedAs(name).mock()
@@ -133,7 +153,8 @@ public final class HubMocker {
      * @param identity The identity
      * @return This object
      */
-    public HubMocker withIdentity(final Urn name, final Identity identity) {
+    public PowerHubMocker withIdentity(final Urn name,
+        final Identity identity) {
         try {
             Mockito.doReturn(identity).when(this.hub).identity(name);
         } catch (com.netbout.spi.UnreachableUrnException ex) {
@@ -146,7 +167,7 @@ public final class HubMocker {
      * Build it.
      * @return The bout
      */
-    public Hub mock() {
+    public PowerHub mock() {
         return this.hub;
     }
 

@@ -31,6 +31,7 @@ import com.netbout.bus.DefaultBus;
 import com.netbout.bus.TxBuilder;
 import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.hub.hh.StatsFarm;
+import com.netbout.hub.hh.StatsProvider;
 import com.netbout.inf.DefaultInfinity;
 import com.netbout.inf.Infinity;
 import com.netbout.spi.Helper;
@@ -55,7 +56,7 @@ import java.util.concurrent.ConcurrentMap;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class DefaultHub implements Hub {
+public final class DefaultHub implements PowerHub, StatsProvider {
 
     /**
      * The bus.
@@ -162,6 +163,14 @@ public final class DefaultHub implements Hub {
     @Override
     public BoutMgr manager() {
         return this.imanager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long eta(final Urn who) {
+        return this.inf.eta(who);
     }
 
     /**

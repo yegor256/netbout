@@ -48,13 +48,6 @@ public interface Resource {
     long nano();
 
     /**
-     * Estimated time to full availability.
-     * @param who Who is asking
-     * @return The time in milliseconds (zero if it's fully ready)
-     */
-    long eta(Identity who);
-
-    /**
      * Get current user identity, or throws {@link LoginRequiredException} if
      * no user is logged in at the moment.
      * @return The identity
