@@ -151,8 +151,8 @@ public final class IdentityFarmTest {
         final Long bout = new BoutRowMocker().withParticipant(child).mock();
         new ParticipantRowMocker(bout).namedAs(main).mock();
         final String alias = "the-same-alias-for-both-identities";
-        new AliasRowMocker(child).namedAs(alias).mock();
         new AliasRowMocker(main).namedAs(alias).mock();
+        new AliasRowMocker(child).namedAs(alias).mock();
         new AliasRowMocker(child).mock();
         final Long msg = new MessageRowMocker(bout).mock();
         new SeenRowMocker(msg, main).mock();

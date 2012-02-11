@@ -30,13 +30,14 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.Urn
+import com.netbout.spi.UrnMocker
 import com.netbout.spi.client.RestSession
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
 def random = new RestSession(rexsl.home).authenticate(
-    new Urn('test', new Random().nextLong().toString()), ''
+    new UrnMocker().withNid('test').mock(), ''
 )
 
 def bout = jeff.start()
