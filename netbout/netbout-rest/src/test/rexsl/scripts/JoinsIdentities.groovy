@@ -29,13 +29,28 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.utils.Cipher
+import com.netbout.utils.Cryptor
+import com.netbout.spi.Identity
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import com.rexsl.test.RestTester
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
+import org.mockito.Mockito
+
+def email = 'son@example.com'
+def name = new Urn('email', email)
+def identity = Mockito.mock(Identity.class)
+Mockito.doReturn(name).when(identity).name()
+def secret = new Cipher().encrypt(name.toString())
+def son = new RestSession(rexsl.home).authenticate(name, secret)
 
 def father = new RestSession(rexsl.home).authenticate(new Urn('urn:test:father'), '')
-def son = new RestSession(rexsl.home).authenticate(new Urn('urn:email:son%40example.com'), '')
 
 def auth = RestTester.start(RestUriBuilder.from(son))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
@@ -44,7 +59,7 @@ def auth = RestTester.start(RestUriBuilder.from(son))
     .xpath('/page/auth/text()')
     .get(0)
 
-def uri = RestUriBuilder.from(rexsl.home)
+def uri = UriBuilder.fromUri(rexsl.home)
     .path('/auth')
     .queryParam(RestSession.AUTH_PARAM, auth)
     .queryParam('identity', father.name())
@@ -54,5 +69,5 @@ RestTester.start(uri)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('logging in as father, in order to join with son')
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-    .assertXPath('/page/identity[name="urn:test:father"]')
-    .assertXPath('/page/identity/aliases[alias="urn:email:son%40example.com"]')
+    .assertXPath("/page/identity[name='${father.name()}']")
+    .assertXPath("/page/identity/aliases[alias='${email}']")

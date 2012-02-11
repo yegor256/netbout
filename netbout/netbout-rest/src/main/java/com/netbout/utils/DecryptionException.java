@@ -26,6 +26,8 @@
  */
 package com.netbout.utils;
 
+import com.ymock.util.Logger;
+
 /**
  * When decryption can't build an identity.
  *
@@ -47,6 +49,11 @@ public final class DecryptionException extends Exception {
      */
     public DecryptionException(final Throwable cause) {
         super(cause);
+        Logger.warn(
+            this,
+            "#DecryptionException('%s'): thrown",
+            cause.getMessage()
+        );
     }
 
     /**
@@ -58,7 +65,13 @@ public final class DecryptionException extends Exception {
     public DecryptionException(final String hash, final String message,
         final Object... args) {
         super(
-            String.format("%s [%s]", String.format(message, args), hash)
+            Logger.format("%s [%s]", String.format(message, args), hash)
+        );
+        Logger.warn(
+            this,
+            "#DecryptionException('%s', '%s'): thrown",
+            hash,
+            message
         );
     }
 

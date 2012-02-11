@@ -35,14 +35,16 @@ import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
+def random = new RestSession(rexsl.home).authenticate(
+    new Urn('test', new Random().nextLong().toString()), ''
+)
 
 def bout = jeff.start()
 bout.post('hi there')
 def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-def before = walter.inbox('').size()
-walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(before - 1))
+bout.invite(random)
+random.bout(number).confirm()
+MatcherAssert.assertThat(random.inbox('').size(), Matchers.equalTo(1))
+random.bout(number).leave()
+MatcherAssert.assertThat(random.inbox('').size(), Matchers.equalTo(0))
 

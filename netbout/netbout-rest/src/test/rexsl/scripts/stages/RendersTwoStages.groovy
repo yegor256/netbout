@@ -43,7 +43,7 @@ bout.rename('Two stages in one bout')
 bout.invite(rita.friend(new Urn('urn:facebook:1531296526')))
 
 // invite two helpers there
-['urn:test:hh', 'urn:netbout:db'].each { bout.invite(rita.friend(new Urn(it))) }
+['urn:test:hh', 'urn:test:dh'].each { bout.invite(rita.friend(new Urn(it))) }
 
 // validate that there are really two stages in the XML
 RestTester.start(RestUriBuilder.from(bout))

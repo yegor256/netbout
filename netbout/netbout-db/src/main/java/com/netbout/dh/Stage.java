@@ -63,18 +63,18 @@ public final class Stage {
             "SELECT COUNT(*) FROM invoice",
             "SELECT COUNT(*) FROM namespace",
             "SELECT COUNT(*) FROM seen",
+            "SELECT * FROM invoice LIMIT 5 ORDER BY day DESC",
             "SHOW EVENTS",
             "SHOW PROCESSLIST",
         };
         for (String query : queries) {
             text.append(query).append(":\n");
             try {
-                text.append(this.query(query));
+                text.append("  ").append(this.query(query));
             // @checkstyle IllegalCatch (1 line)
             } catch (Exception ex) {
-                text.append(ex.getMessage());
+                text.append(ex.getMessage()).append(" \n");
             }
-            text.append("\n ");
         }
         return text.toString();
     }
