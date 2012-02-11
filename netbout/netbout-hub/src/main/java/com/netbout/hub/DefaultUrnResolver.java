@@ -78,7 +78,19 @@ final class DefaultUrnResolver implements UrnResolver {
     @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
-        // todo
+        text.append("Registered namespaces:");
+        for (Urn owner : this.slots.keySet()) {
+            text.append(String.format("%s\n", owner));
+            for (Map.Entry<String, String> entry
+                : this.slots.get(owner).entrySet()) {
+                text.append(
+                    String.format(
+                        "  %s: %s\n",
+                        entry.getKey(),
+                        entry.getValue())
+                );
+            }
+        }
         return text.toString();
     }
 

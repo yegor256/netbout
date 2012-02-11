@@ -181,7 +181,7 @@ public final class HubIdentity implements Identity {
         return new LazyBouts(
             this.hub.infinity().bouts(
                 String.format(
-                    "(and (talks-with '%s') %s)",
+                    "(and (talks-with '%s') (unique $bout.number) %s)",
                     this.name(),
                     PredicateBuilder.normalize(query)
                 )

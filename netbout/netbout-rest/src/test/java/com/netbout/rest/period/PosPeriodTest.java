@@ -31,123 +31,60 @@ import java.util.Date;
 import java.util.Locale;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test case for {@link Period}.
+ * Test case for {@link PosPeriod}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public final class PeriodTest {
+public final class PosPeriodTest {
 
     /**
-     * Period can accept dates and return title.
-     * @throws Exception If there is some problem inside
-     */
-    @BeforeClass
-    public static void currentDateIsCorrect() throws Exception {
-        MatcherAssert.assertThat(
-            "current date is configured correctly on this machine",
-            new Date().after(PeriodTest.date("2012-01-01"))
-        );
-    }
-
-    /**
-     * Period can accept dates and return title.
+     * PosPeriod can accept dates and return title.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void concumesDatesAndReturnsTitle() throws Exception {
-        final Period period = new Period().next(this.date("2008-08-24"));
+        final Period period = new PosPeriod().next(this.date("2008-08-24"));
         period.add(this.date("2008-08-22"));
-        // MatcherAssert.assertThat(
-        //     period.title(),
-        //     Matchers.equalTo("August 2008")
-        // );
-    }
-
-    /**
-     * Period can create its next one.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void nextPeriodIsEarlierThanCurrentOne() throws Exception {
-        final Period period = new Period();
-        final Period next = period.next(this.date("2008-05-13"));
         MatcherAssert.assertThat(
-            "next period is older",
-            next.newest().before(period.newest())
+            period.title(),
+            Matchers.notNullValue()
         );
     }
 
     /**
-     * Period throws exception if next period is newer.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = PeriodViolationException.class)
-    public void throwsWhenNextIsNewerThanCurrent() throws Exception {
-        new Period()
-            .next(this.date("2000-05-13"))
-            .next(this.date("2001-01-24"));
-    }
-
-    /**
-     * Period throws exception if a date is not following existing dates.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = PeriodViolationException.class)
-    public void throwsWhenNewDateIsNotInARow() throws Exception {
-        new Period()
-            .next(this.date("2001-01-18"))
-            .add(this.date("2004-01-17"));
-    }
-
-    /**
-     * Period can be serialized to string and back.
+     * PosPeriod can be serialized to string and back.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void serializesToStringAndBack() throws Exception {
-        final Period period = new Period().next(this.date("2007-04-14"));
+        final Period period = new PosPeriod().next(this.date("2007-04-14"));
         final String text = period.toString();
         MatcherAssert.assertThat(
-            Period.valueOf(text),
+            PeriodsBuilder.parse(text),
             Matchers.equalTo(period)
         );
     }
 
     /**
-     * Period can explain itself.
+     * PosPeriod can explain itself.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void explainsItselfToString() throws Exception {
-        final Period period = new Period().next(this.date("2005-03-14"));
+        final Period period = new PosPeriod().next(this.date("2005-03-14"));
         MatcherAssert.assertThat(period.explain(), Matchers.notNullValue());
     }
 
     /**
-     * Period can add a date which is the same as newest.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void addsNewestTwice() throws Exception {
-        final Period period = new Period();
-        MatcherAssert.assertThat(
-            "newest fits in",
-            period.fits(period.newest())
-        );
-    }
-
-    /**
-     * Period can fit new dates correctly.
+     * PosPeriod can fit new dates correctly.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void fitsNewDatesCorrectly() throws Exception {
-        final Period period = new Period().next(this.date("2011-03-20"));
+        final Period period = new PosPeriod().next(this.date("2011-03-20"));
         MatcherAssert.assertThat(
             "new date fits in",
             period.fits(this.date("2011-03-18"))
@@ -155,12 +92,12 @@ public final class PeriodTest {
     }
 
     /**
-     * Period can reject a date when it is overflowed.
+     * PosPeriod can reject a date when it is overflowed.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void rejectsDateOnOverflow() throws Exception {
-        final Period period = new Period().next(this.date("2011-05-01"));
+        final Period period = new PosPeriod().next(this.date("2011-05-01"));
         for (int day = Period.MAX; day > 0; day -= 1) {
             final Date date = this.date(String.format("2011-03-%02d", day));
             MatcherAssert.assertThat("fits in", period.fits(date));
@@ -173,12 +110,12 @@ public final class PeriodTest {
     }
 
     /**
-     * Period can understand NULL gracefully.
+     * PosPeriod can understand NULL gracefully.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void revertsFromNull() throws Exception {
-        final Period period = Period.valueOf(null);
+        final Period period = PeriodsBuilder.parse(null);
         MatcherAssert.assertThat(period, Matchers.notNullValue());
     }
 

@@ -87,8 +87,8 @@ public final class InboxRs extends AbstractRs {
     public Response inbox(@QueryParam(InboxRs.PERIOD_PARAM) final String view) {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
-        final Period period = Period.valueOf(view);
-        final Iterable<Bout> inbox = this.fetch(view, period);
+        final Period period = PeriodsBuilder.parse(view);
+        final Iterable<Bout> inbox = this.fetch(period);
         final PeriodsBuilder periods = new PeriodsBuilder(
             period,
             UriBuilder.fromUri(
@@ -161,24 +161,15 @@ public final class InboxRs extends AbstractRs {
 
     /**
      * Fetch bouts.
-     * @param view The view
      * @param period The period
      * @return The list of them
      */
-    private Iterable<Bout> fetch(final String view, final Period period) {
+    private Iterable<Bout> fetch(final Period period) {
         String pred = PredicateBuilder.normalize(this.query);
         if (!pred.startsWith("(unbundled ")) {
             pred = String.format("(and %s (bundled))", pred);
         }
-        Iterable<Bout> list;
-        if (view == null) {
-            list = this.identity().inbox(pred);
-        } else {
-            list = this.identity().inbox(
-                period.query(pred, "(not (greater-than $bout.recent '%s'))")
-            );
-        }
-        return list;
+        return this.identity().inbox(period.query(pred));
     }
 
 }

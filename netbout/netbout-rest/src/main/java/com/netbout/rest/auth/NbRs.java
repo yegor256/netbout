@@ -108,7 +108,7 @@ public final class NbRs extends AbstractRs {
                 iname,
                 new URL(
                     String.format(
-                        "http://img.netbout.com/nb/%s.png",
+                        "http://cdn.netbout.com/nb/%s.png",
                         iname.nss()
                     )
                 )

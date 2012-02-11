@@ -130,7 +130,21 @@ final class OpDiscoverer {
             if (farm instanceof IdentityAware) {
                 ((IdentityAware) farm).init(this.identity);
             }
-            targets.putAll(this.inFarm(farm));
+            for (ConcurrentMap.Entry<String, HelpTarget> entry
+                : this.inFarm(farm).entrySet()) {
+                if (targets.containsKey(entry.getKey())) {
+                    throw new IllegalStateException(
+                        String.format(
+                            // @checkstyle LineLength (1 line)
+                            "duplicate operation '%s' in '%s' (already exists in '%s')",
+                            entry.getKey(),
+                            entry.getValue(),
+                            targets.get(entry.getKey())
+                        )
+                    );
+                }
+                targets.put(entry.getKey(), entry.getValue());
+            }
         }
         return targets;
     }

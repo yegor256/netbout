@@ -114,6 +114,7 @@ public final class DefaultHub implements Hub {
     @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
+        text.append(Logger.format("%d identities total\n", this.all.size()));
         text.append(this.imanager.statistics());
         text.append(this.iresolver.statistics());
         return text.toString();
@@ -247,14 +248,20 @@ public final class DefaultHub implements Hub {
      */
     @Override
     public Identity join(final Identity main, final Identity child) {
-        this.all.remove(main.name());
-        this.all.remove(child.name());
-        this.make("identities-joined")
-            .synchronously()
-            .arg(main.name())
-            .arg(child.name())
-            .asDefault(true)
-            .exec();
+        synchronized (this.all) {
+            final Set<String> aliases = child.aliases();
+            this.make("identities-joined")
+                .synchronously()
+                .arg(main.name())
+                .arg(child.name())
+                .asDefault(true)
+                .exec();
+            this.all.remove(child.name());
+            for (String alias : aliases) {
+                main.alias(alias);
+            }
+            this.all.remove(main.name());
+        }
         Logger.info(
             this,
             "#join('%s', '%s'): joined successfully",

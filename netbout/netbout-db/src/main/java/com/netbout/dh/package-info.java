@@ -24,19 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
 
 /**
- * The task to execute in {@link Mux}.
+ * Helper.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Task {
-
-    /**
-     * Execute it.
-     */
-    void exec();
-
-}
+package com.netbout.dh;

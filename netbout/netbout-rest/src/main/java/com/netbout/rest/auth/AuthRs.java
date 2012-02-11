@@ -74,8 +74,12 @@ public final class AuthRs extends AbstractRs {
             final Identity previous = this.identity();
             this.logoff();
             identity = this.authenticate(iname, secret);
-            if (!AbstractPage.trusted(previous)) {
+            if (AbstractPage.trusted(identity)
+                && !AbstractPage.trusted(previous)) {
                 identity = this.hub().join(identity, previous);
+            } else if (AbstractPage.trusted(previous)
+                && !AbstractPage.trusted(identity)) {
+                identity = this.hub().join(previous, identity);
             }
         } catch (LoginRequiredException ex) {
             identity = this.authenticate(iname, secret);

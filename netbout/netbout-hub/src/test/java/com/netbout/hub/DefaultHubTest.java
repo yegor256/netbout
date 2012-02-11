@@ -93,7 +93,7 @@ public final class DefaultHubTest {
             new IdentityMocker().mock(), name.nid(), "http://cde"
         );
         final Identity identity = hub.identity(name);
-        hub.promote(identity, new URL("file:com.netbout"));
+        hub.promote(identity, new URL("file:com.netbout.hub.hh"));
         MatcherAssert.assertThat(
             hub.identity(name),
             Matchers.instanceOf(Helper.class)

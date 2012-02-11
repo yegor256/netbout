@@ -68,7 +68,7 @@
                                     <xsl:attribute name="title">
                                         <xsl:text>back home</xsl:text>
                                     </xsl:attribute>
-                                    <img src="http://img.netbout.com/logo-white.png"
+                                    <img src="http://cdn.netbout.com/logo-white.png"
                                         id="logo" alt="back home" />
                                 </a>
                             </p>
@@ -108,7 +108,7 @@
                                     <xsl:attribute name="title">
                                         <xsl:text>click to authenticate yourself via Facebook</xsl:text>
                                     </xsl:attribute>
-                                    <img src="http://img.netbout.com/facebook.png" id="facebook"/>
+                                    <img src="http://cdn.netbout.com/facebook.png" id="facebook"/>
                                 </a>
                             </p>
                         </td>

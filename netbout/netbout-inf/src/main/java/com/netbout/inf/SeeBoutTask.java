@@ -38,7 +38,8 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeBoutTask implements Task {
+@SuppressWarnings("PMD.DoNotUseThreads")
+final class SeeBoutTask implements Runnable {
 
     /**
      * The infinity.
@@ -79,7 +80,7 @@ final class SeeBoutTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public void exec() {
+    public void run() {
         final long start = System.currentTimeMillis();
         final List<Long> numbers = this.bus
             .make("get-bout-messages")

@@ -102,12 +102,21 @@ public final class EmailRs extends AbstractRs {
         } catch (com.netbout.utils.DecryptionException ex) {
             throw new LoginRequiredException(this, ex);
         }
+        return this.resolve(iname);
+    }
+
+    /**
+     * Resolve it.
+     * @param iname Name of identity
+     * @return The identity just authenticated
+     */
+    private Identity resolve(final Urn iname) {
         ResolvedIdentity identity;
         try {
             identity = new ResolvedIdentity(
                 new URL("http://www.netbout.com/email"),
                 iname,
-                new URL("http://img.netbout.com/email.png")
+                new URL("http://cdn.netbout.com/email.png")
             );
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(ex);

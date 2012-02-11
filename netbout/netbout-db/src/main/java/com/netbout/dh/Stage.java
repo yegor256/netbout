@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.db.helper;
+package com.netbout.dh;
 
 import com.netbout.db.DbSession;
 import com.netbout.db.Handler;
@@ -63,17 +63,18 @@ public final class Stage {
             "SELECT COUNT(*) FROM invoice",
             "SELECT COUNT(*) FROM namespace",
             "SELECT COUNT(*) FROM seen",
+            "SELECT * FROM invoice ORDER BY `day` DESC LIMIT 5",
             "SHOW EVENTS",
+            "SHOW PROCESSLIST",
         };
         for (String query : queries) {
             text.append(query).append(":\n");
             try {
-                text.append(this.query(query));
+                text.append("  ").append(this.query(query));
             // @checkstyle IllegalCatch (1 line)
             } catch (Exception ex) {
-                text.append(ex.getMessage());
+                text.append(ex.getMessage()).append(" \n");
             }
-            text.append("\n ");
         }
         return text.toString();
     }

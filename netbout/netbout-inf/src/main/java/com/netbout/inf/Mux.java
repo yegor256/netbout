@@ -58,7 +58,7 @@ final class Mux implements Closeable {
      * with data retrieval from DB. Thus, pay attention to the number of
      * connections allowed in {@code com.netbout.db.DataSourceBuilder}.
      */
-    private static final int THREADS = 10;
+    private static final int THREADS = 20;
 
     /**
      * Executor service, with a number of threads working in parallel.
@@ -158,13 +158,14 @@ final class Mux implements Closeable {
      * @param who Who is waiting for this task
      * @param task The task to execute
      */
-    public void submit(final Set<Urn> who, final Task task) {
+    public void submit(final Set<Urn> who, final Runnable task) {
         if (this.alive.get()) {
             this.watcher.watch(this.executor.submit(new TaskShell(who, task)));
         } else {
             Logger.debug(
                 this,
-                "#submit(): Mux is closed, %s ignored",
+                "#submit(%[list]s, '%s'): Mux is closed, task ignored",
+                who,
                 task
             );
         }
@@ -181,14 +182,14 @@ final class Mux implements Closeable {
         /**
          * The task to run.
          */
-        private final transient Task task;
+        private final transient Runnable task;
         /**
          * Public ctor.
          * @param urns Who will wait for this result
          * @param tsk The task
          */
         @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-        public TaskShell(final Set<Urn> urns, final Task tsk) {
+        public TaskShell(final Set<Urn> urns, final Runnable tsk) {
             this.task = tsk;
             this.who = urns;
             for (Urn urn : this.who) {
@@ -211,7 +212,7 @@ final class Mux implements Closeable {
         public void run() {
             final long start = System.currentTimeMillis();
             try {
-                this.task.exec();
+                this.task.run();
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (Throwable ex) {
                 Mux.this.submit(this.who, this.task);

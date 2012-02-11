@@ -230,7 +230,7 @@ final class DefaultTokenExecutor implements TokenExecutor {
         /**
          * Minimum amount of msec to report.
          */
-        private static final long MIN_MSEC = 10L;
+        private static final long MIN_MSEC = 1L;
         /**
          * When it happened.
          */

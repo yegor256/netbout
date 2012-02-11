@@ -53,7 +53,7 @@ public final class PeriodsBuilderTest {
      */
     @Before
     public void prepareBuilder() throws Exception {
-        final Period period = new Period().next(this.date("2008-08-24"));
+        final Period period = new PosPeriod().next(this.date("2008-08-24"));
         this.builder = new PeriodsBuilder(period, UriBuilder.fromPath("/"))
             .setQueryParam("abc");
     }

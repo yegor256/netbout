@@ -30,9 +30,7 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Bout manipulations.
@@ -94,32 +92,6 @@ public final class BoutFarm {
             );
         }
         this.changedBoutTitle(number, "");
-    }
-
-    /**
-     * Get list of messages that belong to the specified bout.
-     * @param bout Number of the bout to work with
-     * @return List of message numbers
-     */
-    @Operation("get-bout-messages")
-    public List<Long> getBoutMessages(final Long bout) {
-        return new DbSession(true)
-            // @checkstyle LineLength (1 line)
-            .sql("SELECT number FROM message WHERE bout = ? AND date IS NOT NULL ORDER BY date")
-            .set(bout)
-            .select(
-                new Handler<List<Long>>() {
-                    @Override
-                    public List<Long> handle(final ResultSet rset)
-                        throws SQLException {
-                        final List<Long> numbers = new ArrayList<Long>();
-                        while (rset.next()) {
-                            numbers.add(rset.getLong(1));
-                        }
-                        return numbers;
-                    }
-                }
-            );
     }
 
     /**

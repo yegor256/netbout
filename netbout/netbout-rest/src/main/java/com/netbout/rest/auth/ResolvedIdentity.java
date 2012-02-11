@@ -113,7 +113,7 @@ public final class ResolvedIdentity implements Identity {
      * @param alias The alias to add
      * @return This object
      */
-    protected ResolvedIdentity addAlias(final String alias) {
+    public ResolvedIdentity addAlias(final String alias) {
         if (!alias.isEmpty()) {
             this.ialiases.add(alias);
         }

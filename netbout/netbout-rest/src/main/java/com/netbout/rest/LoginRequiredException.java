@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.ymock.util.Logger;
 import javax.ws.rs.core.UriBuilder;
 
 /**
@@ -43,6 +44,12 @@ public final class LoginRequiredException extends ForwardException {
      */
     public LoginRequiredException(final Resource res, final String cause) {
         super(res, LoginRequiredException.path(res), cause);
+        Logger.debug(
+            this,
+            "#LoginRequiredException('%[type]s', '%s'): thrown",
+            res,
+            cause
+        );
     }
 
     /**
@@ -52,6 +59,12 @@ public final class LoginRequiredException extends ForwardException {
      */
     public LoginRequiredException(final Resource res, final Exception cause) {
         super(res, LoginRequiredException.path(res), cause);
+        Logger.debug(
+            this,
+            "#LoginRequiredException('%[type]s', ..): thrown:\n%[exception]s",
+            res,
+            cause
+        );
     }
 
     /**

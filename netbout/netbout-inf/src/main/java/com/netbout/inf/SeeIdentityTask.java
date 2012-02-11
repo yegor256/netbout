@@ -38,7 +38,8 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeIdentityTask implements Task {
+@SuppressWarnings("PMD.DoNotUseThreads")
+final class SeeIdentityTask implements Runnable {
 
     /**
      * The infinity.
@@ -80,7 +81,7 @@ final class SeeIdentityTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public void exec() {
+    public void run() {
         final long start = System.currentTimeMillis();
         final List<Long> numbers = this.bus
             .make("get-bouts-of-identity")

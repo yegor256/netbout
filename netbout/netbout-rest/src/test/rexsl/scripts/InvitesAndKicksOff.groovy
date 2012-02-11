@@ -31,17 +31,21 @@ package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
+import java.security.SecureRandom
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
-def walter = new RestSession(rexsl.home).authenticate(new Urn('urn:test:walter'), '')
+def random = new RestSession(rexsl.home).authenticate(
+    new Urn('test', new SecureRandom().nextLong().toString()), ''
+)
 
 def bout = jeff.start()
 bout.post('hi there')
 def number = bout.number()
-bout.invite(walter)
-walter.bout(number).confirm()
-walter.bout(number).leave()
-MatcherAssert.assertThat(walter.inbox('').size(), Matchers.equalTo(0))
+bout.invite(random)
+random.bout(number).confirm()
+MatcherAssert.assertThat(random.inbox('').size(), Matchers.equalTo(1))
+random.bout(number).leave()
+MatcherAssert.assertThat(random.inbox('').size(), Matchers.equalTo(0))
 

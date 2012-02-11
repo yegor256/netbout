@@ -37,6 +37,7 @@ import com.netbout.spi.client.RestSession;
 import com.netbout.utils.Cryptor;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -61,6 +62,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
+ * @todo #254 Somehow we should specify PORT in the cookie. Without this param
+ *  the site doesn't work in localhost:9099 in Chrome. Works fine in Safari,
+ *  but not in Chrome. see http://stackoverflow.com/questions/1612177
  */
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -163,6 +167,7 @@ public abstract class AbstractPage implements Page {
             this.link("re-login", "/g/re");
         }
         this.extend();
+        final URI base = this.home.base().build();
         return Response.ok()
             .entity(this)
             .header(
@@ -173,8 +178,8 @@ public abstract class AbstractPage implements Page {
                 new NewCookie(
                     RestSession.AUTH_COOKIE,
                     new Cryptor().encrypt(identity),
-                    this.home.base().build().getPath(),
-                    this.home.base().build().getHost(),
+                    base.getPath(),
+                    base.getHost(),
                     // @checkstyle MultipleStringLiterals (1 line)
                     Integer.valueOf(Manifests.read("Netbout-Revision")),
                     "Netbout.com logged-in user",
@@ -296,11 +301,12 @@ public abstract class AbstractPage implements Page {
      * @return Value of the HTTP header
      */
     private String nocookie(final String name) {
+        final URI base = this.home.base().build();
         return String.format(
             // @checkstyle LineLength (1 line)
-            "%s=deleted;Domain=.%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
+            "%s=deleted;Domain=%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
             name,
-            this.home.base().build().getHost(),
+            base.getHost(),
             this.home.httpServletRequest().getContextPath()
         );
     }

@@ -24,11 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.dh;
+
+import com.rexsl.test.JaxbConverter;
+import com.rexsl.test.XhtmlMatchers;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 /**
- * Helper.
- *
+ * Test case for {@link Stage}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.db.helper;
+public final class StageTest {
+
+    /**
+     * Stage can be converted to XML.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsToXml() throws Exception {
+        final Stage obj = new Stage();
+        MatcherAssert.assertThat(
+            JaxbConverter.the(obj),
+            XhtmlMatchers.hasXPath("/data[text != '']")
+        );
+    }
+
+}

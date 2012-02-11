@@ -31,7 +31,10 @@ import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.lang.ArrayUtils;
+import org.joda.time.Interval;
 
 /**
  * Groups dates together.
@@ -111,6 +114,45 @@ public final class PeriodsBuilder {
     public PeriodsBuilder setQueryParam(final String prm) {
         this.param = prm;
         return this;
+    }
+
+    /**
+     * Build it back from text.
+     * @param text The text
+     * @return The period discovered
+     */
+    public static Period parse(final Object text) {
+        return PosPeriod.valueOf(text);
+    }
+
+    /**
+     * Textual explanation of when this date happened (this method is
+     * used in other places in the module, not only in periods).
+     * @param date The date
+     * @return Text explanation
+     */
+    public static String when(final Date date) {
+        final org.joda.time.Period distance = new Interval(
+            date.getTime(),
+            new Date().getTime()
+        ).toPeriod();
+        String title;
+        if (distance.getYears() > 0) {
+            title = PeriodsBuilder.plural("year", distance.getYears());
+        } else if (distance.getMonths() > 0) {
+            title = PeriodsBuilder.plural("month", distance.getMonths());
+        } else if (distance.getWeeks() > 0) {
+            title = PeriodsBuilder.plural("week", distance.getWeeks());
+        } else if (distance.getDays() > 0) {
+            title = PeriodsBuilder.plural("day", distance.getDays());
+        } else if (distance.getHours() > 0) {
+            title = PeriodsBuilder.plural("hour", distance.getHours());
+        } else if (distance.getMinutes() > 0) {
+            title = PeriodsBuilder.plural("minute", distance.getMinutes());
+        } else {
+            title = "a few seconds";
+        }
+        return String.format("%s ago", title);
     }
 
     /**
@@ -201,6 +243,43 @@ public final class PeriodsBuilder {
             this.periods.add(this.link(this.REL_MORE, this.period.title()));
         }
         return this.periods;
+    }
+
+    /**
+     * Create a plural form of the noun.
+     * @param noun The noun
+     * @param num How many of them
+     * @return The text
+     */
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    private static String plural(final String noun, final int num) {
+        final Map<String, String> digits = ArrayUtils.toMap(
+            new String[][] {
+                {"1", "a"},
+                {"2", "two"},
+                {"3", "three"},
+                {"4", "four"},
+                {"5", "five"},
+                {"6", "six"},
+                {"7", "seven"},
+                {"8", "eight"},
+                {"9", "nine"},
+                {"10", "ten"},
+                {"11", "eleven"},
+                {"12", "twelve"},
+            }
+        );
+        String count = Integer.toString(num);
+        if (digits.containsKey(count)) {
+            count = digits.get(count);
+        }
+        return String.format(
+            "%s %s%s",
+            count,
+            noun,
+            // @checkstyle AvoidInlineConditionals (1 line)
+            num == 1 ? "" : "s"
+        );
     }
 
     /**

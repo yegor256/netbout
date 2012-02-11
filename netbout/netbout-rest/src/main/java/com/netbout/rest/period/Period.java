@@ -26,16 +26,7 @@
  */
 package com.netbout.rest.period;
 
-import com.netbout.inf.PredicateBuilder;
-import com.ymock.util.Logger;
 import java.util.Date;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import org.apache.commons.lang.ArrayUtils;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Period.
@@ -43,109 +34,17 @@ import org.joda.time.format.ISODateTimeFormat;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public final class Period {
+public interface Period {
 
     /**
      * Maximum number of items to show, no matter what.
      */
-    public static final int MAX = 5;
+    int MAX = 5;
 
     /**
      * Minimum number of items to show, no matter what.
      */
-    public static final int MIN = 3;
-
-    /**
-     * Default limit, in milliseconds.
-     */
-    public static final long DEFAULT_LIMIT = 12L * 30 * 24 * 60 * 60 * 1000;
-
-    /**
-     * Duration in milliseconds, which we never break.
-     */
-    public static final long UNBREAKEN = 1000 * 60L;
-
-    /**
-     * Add dates in it.
-     */
-    private final transient SortedSet<Date> dates = new TreeSet<Date>();
-
-    /**
-     * Start of the period, the newest date, or NULL if it's NOW.
-     */
-    private final transient Date start;
-
-    /**
-     * Maximum distance between dates, in milliseconds.
-     */
-    private final transient Long limit;
-
-    /**
-     * Public ctor.
-     */
-    public Period() {
-        this(null, Period.DEFAULT_LIMIT);
-    }
-
-    /**
-     * Public ctor.
-     * @param from When to start
-     * @param lmt The limit
-     */
-    private Period(final Date from, final long lmt) {
-        this.start = from;
-        this.limit = lmt;
-    }
-
-    /**
-     * Build it back from text.
-     * @param text The text
-     * @return The period discovered
-     */
-    public static Period valueOf(final Object text) {
-        Period period;
-        if (text != null && text.toString().matches("^\\d+t\\d+$")) {
-            final String[] parts = text.toString().split("t");
-            period = new Period(
-                new Date(Long.valueOf(parts[0])),
-                Long.valueOf(parts[1])
-            );
-        } else {
-            period = new Period();
-        }
-        return period;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format(
-            "%dt%d",
-            this.newest().getTime(),
-            this.limit
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        return (obj instanceof Period)
-            && ((Period) obj).newest().equals(this.newest())
-            && ((Period) obj).limit.equals(this.limit);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.newest().hashCode() + this.limit.hashCode();
-    }
+    int MIN = 3;
 
     /**
      * This date fits into this period?
@@ -155,56 +54,14 @@ public final class Period {
      *  the next one
      * @throws PeriodViolationException If this date is out of this period
      */
-    public boolean fits(final Date date) throws PeriodViolationException {
-        if (date.after(this.newest())) {
-            throw new PeriodViolationException(
-                Logger.format(
-                    // @checkstyle LineLength (1 line)
-                    "New date '%s' can't be newer than START '%s' in '%s': %[list]s",
-                    date,
-                    this.newest(),
-                    this.explain(),
-                    this.dates
-                )
-            );
-        }
-        final boolean offlimit = date.before(
-            new Date(this.newest().getTime() - this.limit)
-        );
-        final boolean overflow = this.dates.size() >= this.MAX
-            && (this.dates.last().getTime() - this.dates.first().getTime())
-                > this.UNBREAKEN;
-        final boolean fits = !overflow
-            && !date.after(this.newest())
-            && (this.dates.size() < this.MIN || !offlimit);
-        Logger.debug(
-            this,
-            "#fits(%s): offlimit=%B, overflow=%B, size=%d -> %B",
-            date,
-            offlimit,
-            overflow,
-            this.dates.size(),
-            fits
-        );
-        return fits;
-    }
+    boolean fits(Date date) throws PeriodViolationException;
 
     /**
      * Add new date to it.
      * @param date The date
      * @throws PeriodViolationException If this new date is against the rules
      */
-    public void add(final Date date) throws PeriodViolationException {
-        if (!this.fits(date)) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Can't add '%s', call #fits() first",
-                    date
-                )
-            );
-        }
-        this.dates.add(date);
-    }
+    void add(Date date) throws PeriodViolationException;
 
     /**
      * Get next period.
@@ -213,170 +70,26 @@ public final class Period {
      *  one size bigger
      * @throws PeriodViolationException If this new date is against the rules
      */
-    public Period next(final Date date) throws PeriodViolationException {
-        if (date.after(this.newest())) {
-            throw new PeriodViolationException(
-                String.format(
-                    "NEXT #%d '%s' should be older than START '%s' in '%s'",
-                    this.dates.size(),
-                    date,
-                    this.newest(),
-                    this.explain()
-                )
-            );
-        }
-        if (!this.dates.isEmpty() && date.after(this.dates.first())) {
-            throw new PeriodViolationException(
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "NEXT '%s' should be older than '%s' (among %d dates) in '%s'",
-                    date,
-                    this.dates.first(),
-                    this.dates.size(),
-                    this.explain()
-                )
-            );
-        }
-        return new Period(date, this.limit * 2);
-    }
-
-    /**
-     * Newest date.
-     * @return The date
-     */
-    public Date newest() {
-        Date newest;
-        if (this.start == null) {
-            newest = new Date();
-        } else {
-            newest = this.start;
-        }
-        return newest;
-    }
+    Period next(Date date) throws PeriodViolationException;
 
     /**
      * Create query from this period.
      * @param query Original query
-     * @param formula The formula to use for predicate building
      * @return The query
      */
-    public String query(final String query, final String formula) {
-        String original = "";
-        if (!query.isEmpty() && query.charAt(0) == '(') {
-            original = query;
-        } else {
-            if (!query.isEmpty()) {
-                original = PredicateBuilder.normalize(query);
-            }
-        }
-        final String text = String.format(
-            "(and %s %s)",
-            String.format(
-                formula,
-                ISODateTimeFormat.dateTime().print(
-                    new DateTime(this.newest().getTime())
-                )
-            ),
-            original
-        );
-        Logger.debug(
-            this,
-            "#format(%s, %s): '%s'",
-            query,
-            this,
-            text
-        );
-        return text;
-    }
+    String query(String query);
 
     /**
      * Convert it to text.
      * @return Text presentation of this period
      */
-    public String title() {
-        return this.when(this.newest());
-    }
+    String title();
 
     /**
      * Explain this period for admin/super-user (mostly used in error
      * messages to explain you what's inside the object).
      * @return The text
      */
-    public String explain() {
-        return Logger.format(
-            "%s as (start=%s, limit=%d, %d dates: %[list]s)",
-            this,
-            this.start,
-            this.limit,
-            this.dates.size(),
-            this.dates
-        );
-    }
-
-    /**
-     * Textual explanation of when this date happened.
-     * @param date The date
-     * @return Text explanation
-     */
-    public static String when(final Date date) {
-        final org.joda.time.Period distance = new Interval(
-            date.getTime(),
-            new Date().getTime()
-        ).toPeriod();
-        String title;
-        if (distance.getYears() > 0) {
-            title = Period.plural("year", distance.getYears());
-        } else if (distance.getMonths() > 0) {
-            title = Period.plural("month", distance.getMonths());
-        } else if (distance.getWeeks() > 0) {
-            title = Period.plural("week", distance.getWeeks());
-        } else if (distance.getDays() > 0) {
-            title = Period.plural("day", distance.getDays());
-        } else if (distance.getHours() > 0) {
-            title = Period.plural("hour", distance.getHours());
-        } else if (distance.getMinutes() > 0) {
-            title = Period.plural("minute", distance.getMinutes());
-        } else {
-            title = "a few seconds";
-        }
-        return String.format("%s ago", title);
-    }
-
-    /**
-     * Create a plural form of the noun.
-     * @param noun The noun
-     * @param num How many of them
-     * @return The text
-     */
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
-    private static String plural(final String noun, final int num) {
-        final Map<String, String> digits = ArrayUtils.toMap(
-            new String[][] {
-                {"1", "a"},
-                {"2", "two"},
-                {"3", "three"},
-                {"4", "four"},
-                {"5", "five"},
-                {"6", "six"},
-                {"7", "seven"},
-                {"8", "eight"},
-                {"9", "nine"},
-                {"10", "ten"},
-                {"11", "eleven"},
-                {"12", "twelve"},
-            }
-        );
-        String count = Integer.toString(num);
-        if (digits.containsKey(count)) {
-            count = digits.get(count);
-        }
-        return String.format(
-            "%s %s%s",
-            count,
-            noun,
-            // @checkstyle AvoidInlineConditionals (1 line)
-            num == 1 ? "" : "s"
-        );
-    }
+    String explain();
 
 }

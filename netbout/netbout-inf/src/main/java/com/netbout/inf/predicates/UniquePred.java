@@ -23,43 +23,52 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.inf.predicates;
+
+import com.netbout.inf.Meta;
+import com.netbout.inf.Msg;
+import com.netbout.inf.Predicate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Allows messages with unique value of parameter.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.setup
+@Meta(name = "unique")
+public final class UniquePred extends AbstractVarargPred {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestExpert
-import com.netbout.spi.client.RestSession
-import javax.ws.rs.core.UriBuilder
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * List of already passed values.
+     */
+    private final transient Set<String> passed = new HashSet<String>();
 
-def starter = new RestExpert(new RestSession(rexsl.home).authenticate(new Urn(), 'localhost'))
-def mandatory = [
-    'test' : '/mock-auth',
-    'facebook': '/fb',
-    'email': '/email',
-]
-mandatory.each {
-    def url = UriBuilder.fromUri(rexsl.home).path(it.value).build().toURL()
-    starter.namespaces().put(it.key, url)
-    MatcherAssert.assertThat(starter.namespaces(), Matchers.hasEntry(it.key, url))
-}
-MatcherAssert.assertThat(
-    starter.namespaces().size(),
-    Matchers.not(Matchers.lessThan(mandatory.size()))
-)
+    /**
+     * Public ctor.
+     * @param args The arguments
+     */
+    public UniquePred(final List<Predicate> args) {
+        super(args);
+    }
 
-[
-    'urn:test:dh' : 'file:com.netbout.dh',
-    'urn:test:hh' : 'file:com.netbout.hub.hh',
-    'urn:test:bh' : 'file:com.netbout.bus.bh',
-    'urn:test:ih' : 'file:com.netbout.inf.ih',
-    'urn:test:email' : 'file:com.netbout.notifiers.email',
-].each {
-    new RestExpert(
-        new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
-    ).promote(new URL(it.value))
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object evaluate(final Msg msg, final int pos) {
+        final String marker = this.arg(0).evaluate(msg, pos).toString();
+        boolean allow;
+        if (this.passed.contains(marker)) {
+            allow = false;
+        } else {
+            this.passed.add(marker);
+            allow = true;
+        }
+        return allow;
+    }
+
 }

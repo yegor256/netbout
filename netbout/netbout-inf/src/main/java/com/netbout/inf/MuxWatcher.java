@@ -61,12 +61,12 @@ final class MuxWatcher implements Closeable, Runnable {
     /**
      * How often to check, in msec.
      */
-    private static final long CHECK_TIME = 20 * 1000L;
+    private static final long CHECK_TIME = 60 * 1000L;
 
     /**
      * Maximum warnings to show.
      */
-    private static final long MAX_WARNINGS = 10;
+    private static final long MAX_WARNINGS = 2;
 
     /**
      * Set of running futures, and their start moments (in msec).
@@ -139,14 +139,17 @@ final class MuxWatcher implements Closeable, Runnable {
         final List<String> warnings = new ArrayList<String>();
         for (Future future : this.running.keySet()) {
             final String warning = this.check(future);
-            if (!warning.isEmpty() && warnings.size() < this.MAX_WARNINGS) {
+            if (!warning.isEmpty()) {
                 warnings.add(warning);
+            }
+            if (warnings.size() >= this.MAX_WARNINGS) {
+                break;
             }
         }
         if (!warnings.isEmpty()) {
             Logger.warn(
                 this,
-                "#futures(): some warnings (among %d futures): %[list]s",
+                "#futures(): some warnings (among %d futures): %[list]s...",
                 this.running.size(),
                 warnings
             );
@@ -209,7 +212,7 @@ final class MuxWatcher implements Closeable, Runnable {
                 this.running.remove(future);
             }
         } else if (age > this.WARN_TIME) {
-            warning = String.format("%s is older than %dms", future, age);
+            warning = String.format("older than %dms", age);
         }
         return warning;
     }

@@ -71,19 +71,16 @@
                         <aside class="error-message">
                             <xsl:text>The server is currently updating your account,
                                 some data may not look as fresh as they should be. Try
-                                to refresh the page in </xsl:text>
+                                to refresh the page</xsl:text>
                             <xsl:choose>
                                 <xsl:when test="eta &gt; 60000">
-                                    <xsl:text>a few minutes</xsl:text>
+                                    <xsl:text> in a few minutes</xsl:text>
                                 </xsl:when>
                                 <xsl:when test="eta &gt; 5000">
+                                    <xsl:text> in </xsl:text>
                                     <xsl:value-of select="round(eta div 1000)"/>
-                                    <xsl:text>seconds</xsl:text>
+                                    <xsl:text> seconds</xsl:text>
                                 </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="eta"/>
-                                    <xsl:text>ms</xsl:text>
-                                </xsl:otherwise>
                             </xsl:choose>
                             <xsl:text>.</xsl:text>
                         </aside>

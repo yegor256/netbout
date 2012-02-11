@@ -40,6 +40,7 @@ import org.junit.Test;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.DoNotUseThreads")
 public final class MuxTest {
 
     /**
@@ -52,9 +53,9 @@ public final class MuxTest {
         final Set<Urn> names = new HashSet<Urn>();
         final Urn name = new UrnMocker().mock();
         names.add(name);
-        final Task task = new Task() {
+        final Runnable task = new Runnable() {
             @Override
-            public void exec() {
+            public void run() {
                 MatcherAssert.assertThat(
                     mux.eta(name),
                     Matchers.greaterThan(0L)

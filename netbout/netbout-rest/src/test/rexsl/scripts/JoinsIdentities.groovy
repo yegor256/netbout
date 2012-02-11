@@ -27,39 +27,49 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.setup
+package com.netbout.rest.rexsl.scripts
 
+import com.netbout.utils.Cipher
+import com.netbout.spi.Identity
 import com.netbout.spi.Urn
-import com.netbout.spi.client.RestExpert
 import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import com.rexsl.test.RestTester
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+import org.mockito.Mockito
 
-def starter = new RestExpert(new RestSession(rexsl.home).authenticate(new Urn(), 'localhost'))
-def mandatory = [
-    'test' : '/mock-auth',
-    'facebook': '/fb',
-    'email': '/email',
-]
-mandatory.each {
-    def url = UriBuilder.fromUri(rexsl.home).path(it.value).build().toURL()
-    starter.namespaces().put(it.key, url)
-    MatcherAssert.assertThat(starter.namespaces(), Matchers.hasEntry(it.key, url))
-}
-MatcherAssert.assertThat(
-    starter.namespaces().size(),
-    Matchers.not(Matchers.lessThan(mandatory.size()))
-)
+def email = 'son@example.com'
+def name = new Urn('email', email)
+def identity = Mockito.mock(Identity)
+Mockito.doReturn(name).when(identity).name()
+def secret = new Cipher().encrypt(name.toString())
+def son = new RestSession(rexsl.home).authenticate(name, secret)
 
-[
-    'urn:test:dh' : 'file:com.netbout.dh',
-    'urn:test:hh' : 'file:com.netbout.hub.hh',
-    'urn:test:bh' : 'file:com.netbout.bus.bh',
-    'urn:test:ih' : 'file:com.netbout.inf.ih',
-    'urn:test:email' : 'file:com.netbout.notifiers.email',
-].each {
-    new RestExpert(
-        new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
-    ).promote(new URL(it.value))
-}
+def father = new RestSession(rexsl.home).authenticate(new Urn('urn:test:father'), '')
+father.start().invite(son)
+
+def auth = RestTester.start(RestUriBuilder.from(son))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read from page to get AUTH param')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .xpath('/page/auth/text()')
+    .get(0)
+
+def uri = UriBuilder.fromUri(rexsl.home)
+    .path('/auth')
+    .queryParam(RestSession.AUTH_PARAM, auth)
+    .queryParam('identity', father.name())
+    .queryParam('secret', '')
+
+RestTester.start(uri)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('logging in as father, in order to join with son')
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+
+RestTester.start(RestUriBuilder.from(father))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('reading home page of main identity')
+    .assertXPath("/page/identity[name='${father.name()}']")
+    .assertXPath("/page/identity/aliases[alias='${email}']")

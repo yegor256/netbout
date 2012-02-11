@@ -76,7 +76,7 @@ public final class SeeMessageTaskTest {
                                 .withDate(new Date())
                                 .inBout(bout)
                                 .mock();
-                            new SeeMessageTask(heap, msg).exec();
+                            new SeeMessageTask(heap, msg).run();
                         // @checkstyle IllegalCatch (1 line)
                         } catch (Throwable ex) {
                             Logger.error(this, "%[exception]s", ex);
