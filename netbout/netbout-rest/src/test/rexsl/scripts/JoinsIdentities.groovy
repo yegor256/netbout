@@ -50,6 +50,7 @@ def secret = new Cipher().encrypt(name.toString())
 def son = new RestSession(rexsl.home).authenticate(name, secret)
 
 def father = new RestSession(rexsl.home).authenticate(new Urn('urn:test:father'), '')
+father.start().invite(son)
 
 def auth = RestTester.start(RestUriBuilder.from(son))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
@@ -68,5 +69,9 @@ RestTester.start(uri)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('logging in as father, in order to join with son')
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+
+RestTester.start(RestUriBuilder.from(father))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('reading home page of main identity')
     .assertXPath("/page/identity[name='${father.name()}']")
     .assertXPath("/page/identity/aliases[alias='${email}']")

@@ -63,7 +63,7 @@ public final class Stage {
             "SELECT COUNT(*) FROM invoice",
             "SELECT COUNT(*) FROM namespace",
             "SELECT COUNT(*) FROM seen",
-            "SELECT * FROM invoice LIMIT 5 ORDER BY `day` DESC",
+            "SELECT * FROM invoice ORDER BY `day` DESC LIMIT 5",
             "SHOW EVENTS",
             "SHOW PROCESSLIST",
         };
