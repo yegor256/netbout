@@ -30,7 +30,6 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.netbout.utils.Cipher
-import com.netbout.utils.Cryptor
 import com.netbout.spi.Identity
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
@@ -63,7 +62,7 @@ def uri = UriBuilder.fromUri(rexsl.home)
     .path('/auth')
     .queryParam(RestSession.AUTH_PARAM, auth)
     .queryParam('identity', father.name())
-    .queryParam('secret', new Cryptor().encrypt(father))
+    .queryParam('secret', '')
 
 RestTester.start(uri)
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)

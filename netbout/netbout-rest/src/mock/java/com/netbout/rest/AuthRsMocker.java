@@ -50,10 +50,11 @@ public final class AuthRsMocker extends AbstractRs {
      * @param iname Name of identity
      * @param secret The secret code
      * @return The JAX-RS response
+     * @throws Exception If some problem
      */
     @GET
     public Response auth(@QueryParam("identity") final Urn iname,
-        @QueryParam("secret") final String secret) {
+        @QueryParam("secret") final String secret) throws Exception {
         if ((iname == null) || (secret == null)) {
             throw new ForwardException(this, this.base(), "NULL inputs");
         }
@@ -63,16 +64,12 @@ public final class AuthRsMocker extends AbstractRs {
         if (!secret.isEmpty()) {
             throw new ForwardException(this, this.base(), "Wrong secret");
         }
-        Identity identity;
-        try {
-            identity = new ResolvedIdentity(
-                this.base().path("/mock-auth").build().toURL(),
-                iname,
-                new URL("http://img.netbout.com/unknown.png")
-            );
-        } catch (java.net.MalformedURLException ex) {
-            throw new ForwardException(this, ex);
-        }
+        final ResolvedIdentity identity = new ResolvedIdentity(
+            this.base().path("/mock-auth").build().toURL(),
+            iname,
+            new URL("http://img.netbout.com/unknown.png")
+        );
+        identity.addAlias(iname.nss());
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
