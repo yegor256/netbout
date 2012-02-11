@@ -78,11 +78,21 @@ public final class PageBuilder {
 
     /**
      * Configure the stylesheet to be used.
+     *
+     * <p>We should convert this absolute path provided into a relative URI,
+     * in order to avoid security problems in browsers. Stylesheet should
+     * always be in the same domain as the main page. see ticket #257
+     *
      * @param builder URI builder
      * @return This object
      */
     public PageBuilder stylesheet(final UriBuilder builder) {
-        this.xsl = builder.build();
+        final URI original = builder.build();
+        if (original.getQuery() == null) {
+            this.xsl = UriBuilder.fromPath(original.getPath()).build();
+        } else {
+            this.xsl = original;
+        }
         return this;
     }
 
