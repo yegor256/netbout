@@ -49,7 +49,8 @@ public final class Cipher {
      * @return Encrypted string
      */
     public String encrypt(final String text) {
-        return Base64.encodeBase64String(this.xor(text.getBytes()));
+        return Base64.encodeBase64String(this.xor(text.getBytes()))
+            .replace("=", "");
     }
 
     /**
