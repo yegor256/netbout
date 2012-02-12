@@ -34,6 +34,7 @@ import com.netbout.utils.Cipher;
 import com.netbout.utils.TextUtils;
 import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * The email we use to identify senders and recipients.
@@ -81,8 +82,17 @@ final class AnchorEmail {
      */
     public AnchorEmail(final InternetAddress recipient, final Hub hub)
         throws BrokenAnchorException {
-        final String email = recipient.getAddress();
-        final String hash = email.substring(0, email.lastIndexOf('@'));
+        this(StringUtils.substringBefore(recipient.getAddress(), "@"), hub);
+    }
+
+    /**
+     * Public ctor.
+     * @param hash The has we received
+     * @param hub Where this happened
+     * @throws BrokenAnchorException If can't parse it
+     */
+    public AnchorEmail(final String hash, final Hub hub)
+        throws BrokenAnchorException {
         try {
             final String[] parts = new Cipher().decrypt(TextUtils.unpack(hash))
                 .split(Pattern.quote(this.SEPARATOR), 2);
@@ -107,7 +117,15 @@ final class AnchorEmail {
      * @return The address
      */
     public String email() {
-        final String hash = TextUtils.pack(
+        return String.format("%s@%s", this.hash(), AnchorEmail.DOMAIN);
+    }
+
+    /**
+     * Get hash.
+     * @return The hash
+     */
+    public String hash() {
+        return TextUtils.pack(
             new Cipher().encrypt(
                 String.format(
                     "%d%s%s",
@@ -117,7 +135,14 @@ final class AnchorEmail {
                 )
             )
         );
-        return String.format("%s@%s", hash, AnchorEmail.DOMAIN);
+    }
+
+    /**
+     * Who is the person.
+     * @return The identity
+     */
+    public Identity identity() {
+        return this.receiver;
     }
 
     /**
@@ -127,4 +152,5 @@ final class AnchorEmail {
     public Bout bout() {
         return this.where;
     }
+
 }

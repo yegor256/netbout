@@ -53,7 +53,8 @@ public final class PeriodsBuilderTest {
      */
     @Before
     public void prepareBuilder() throws Exception {
-        final Period period = new PosPeriod().next(this.date("2008-08-24"));
+        final Period period = new PosPeriod(0L, Period.MAX)
+            .next(this.date("2008-08-24"));
         this.builder = new PeriodsBuilder(period, UriBuilder.fromPath("/"))
             .setQueryParam("abc");
     }
@@ -84,7 +85,7 @@ public final class PeriodsBuilderTest {
      */
     @Test
     public void returnsOneLinkForTwoGroups() throws Exception {
-        for (int day = Period.MAX; day > 0; day -= 1) {
+        for (long day = Period.MAX; day > 0; day -= 1) {
             MatcherAssert.assertThat(
                 "should be visible",
                 this.builder.show(this.date(String.format("2008-08-%02d", day)))
@@ -115,7 +116,7 @@ public final class PeriodsBuilderTest {
      */
     @Test
     public void returnsTwoLinksForThreeGroups() throws Exception {
-        for (int day = Period.MAX * 2; day > 0; day -= 1) {
+        for (long day = Period.MAX * 2; day > 0; day -= 1) {
             this.builder.show(this.date(String.format("2008-07-%02d", day)));
             MatcherAssert.assertThat("still have space", this.builder.more());
         }

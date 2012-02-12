@@ -23,21 +23,56 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest;
+
+/**
+ * Text with meta commands.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle MultipleStringLiterals (200 lines)
  */
-package com.netbout.rest.rexsl.xhtml
+public final class MetaText {
 
-import com.rexsl.test.XhtmlConverter
-import com.rexsl.test.XhtmlMatchers
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * The source text.
+     */
+    private final transient String text;
 
-MatcherAssert.assertThat(
-    XhtmlConverter.the(rexsl.document),
-    Matchers.allOf(
-        XhtmlMatchers.hasXPath('//xhtml:ul[@class="bouts"]/xhtml:li'),
-        XhtmlMatchers.hasXPath('//xhtml:aside[@id="version" and contains(.,"r789") and contains(.,"5.500s")]')
-    )
-)
+    /**
+     * Public ctor.
+     * @param txt The raw source text, with meta commands
+     */
+    public MetaText(final String txt) {
+        this.text = txt;
+    }
+
+    /**
+     * Convert it to HTML.
+     * @return The HTML
+     */
+    public String html() {
+        return this.text
+            .replaceAll(
+                "\\[(.*?)\\]\\((http://.*?)\\)",
+                "<a href='$2'>$1</a>"
+        )
+            .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
+            .replaceAll("`(.*?)`", "<span class='tt'>$1</span>")
+            .replaceAll("_(.*?)_", "<i>$1</i>");
+    }
+
+    /**
+     * Convert it to plain text.
+     * @return The plain text
+     */
+    public String plain() {
+        return this.text
+            .replaceAll("\\[(.*?)\\]\\((http://.*?)\\)", "$1 ($2)")
+            .replaceAll("\\*\\*(.*?)\\*\\*", "$1")
+            .replaceAll("`(.*?)`", "$1")
+            .replaceAll("_(.*?)_", "$1");
+    }
+
+}

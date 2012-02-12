@@ -39,12 +39,12 @@ public interface Period {
     /**
      * Maximum number of items to show, no matter what.
      */
-    int MAX = 5;
+    long MAX = 50;
 
     /**
      * Minimum number of items to show, no matter what.
      */
-    int MIN = 3;
+    long MIN = 3;
 
     /**
      * This date fits into this period?

@@ -25,6 +25,8 @@
  * SUCH DAMAGE.
  */
 
+/* JIGSAW IGNORE: there is some problem in w3c server now */
+
 /* header with title */
 #top1 {
     width: 70em;
@@ -75,10 +77,7 @@
                     margin-left: 0.5em;
                     height: 2.6em;
                     width: 2.6em;
-                    box-shadow: 0.1em 0.1em 0.1em gray;
-                    -moz-box-shadow: 0.1em 0.1em 0.1em gray;
-                    -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
-                    -o-box-shadow: 0.1em 0.1em 0.1em gray;
+                    box-shadow: 0.1em 0.1em 0.1em gray; /* JIGSAW: it's CSS3 feature */
                 }
 
     /* options below invite sector */
@@ -120,7 +119,7 @@
     padding: 1em;
     background-color: #f3f3f1;
     border: 0.1em solid #e4e5e3;
-    box-shadow: 0 0.1em 0.1em #e4e5e3;
+    box-shadow: 0em 0.1em 0.1em #e4e5e3; /* JIGSAW: it's CSS3 feature */
     overflow-y: auto;
 }
 
@@ -150,10 +149,7 @@
     .message .left img {
         height: 5em;
         width: 5em;
-        box-shadow: 0.1em 0.1em 0.1em gray;
-        -moz-box-shadow: 0.1em 0.1em 0.1em gray;
-        -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
-        -o-box-shadow: 0.1em 0.1em 0.1em gray;
+        box-shadow: 0.1em 0.1em 0.1em gray; /* JIGSAW: it's CSS3 feature */
     }
 
     .message .right {

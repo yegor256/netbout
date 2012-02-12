@@ -81,7 +81,32 @@ public final class DefaultInfinity implements Infinity {
         text.append("Mux stats:\n")
             .append(this.mux.statistics())
             .append("\n\nHeap stats:\n")
-            .append(this.heap.statistics());
+            .append(this.heap.statistics())
+            .append("\n\njava.lang.Runtime:\n")
+            .append(
+                String.format(
+                    "  availableProcessors(): %d\n",
+                    Runtime.getRuntime().availableProcessors()
+                )
+            )
+            .append(
+                String.format(
+                    "  freeMemory(): %d\n",
+                    Runtime.getRuntime().freeMemory()
+                )
+            )
+            .append(
+                String.format(
+                    "  maxMemory(): %d\n",
+                    Runtime.getRuntime().maxMemory()
+                )
+            )
+            .append(
+                String.format(
+                    "  totalMemory(): %d\n",
+                    Runtime.getRuntime().totalMemory()
+                )
+            );
         return text.toString();
     }
 

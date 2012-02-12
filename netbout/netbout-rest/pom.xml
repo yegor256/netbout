@@ -348,9 +348,7 @@
             <plugin>
                 <groupId>com.rexsl</groupId>
                 <artifactId>rexsl-maven-plugin</artifactId>
-                <version>0.3</version>
-                <!-- HTML and CSS files are not W3C compliant yet -->
-                <!-- <version>${rexsl.version}</version> -->
+                <version>${rexsl.version}</version>
                 <executions>
                     <execution>
                         <goals>

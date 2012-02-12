@@ -23,21 +23,51 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.notifiers.email;
+
+import com.netbout.rest.AbstractRs;
+import com.netbout.rest.LoginRequiredException;
+import com.netbout.utils.Cipher;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
+
+/**
+ * Shortcut for emails.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.xhtml
+@Path("/e")
+public final class ShortcutRs extends AbstractRs {
 
-import com.rexsl.test.XhtmlConverter
-import com.rexsl.test.XhtmlMatchers
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
+    /**
+     * Front page of the shortcut.
+     * @param hash The text of the anchor
+     * @return The JAX-RS response
+     */
+    @GET
+    @Path("/{hash}")
+    public Response front(@PathParam("hash") final String hash) {
+        AnchorEmail anchor;
+        try {
+            anchor = new AnchorEmail(hash, this.hub());
+        } catch (BrokenAnchorException ex) {
+            throw new LoginRequiredException(this, ex);
+        }
+        return Response.seeOther(
+            this.base().path("/auth")
+                .queryParam("identity", "{who}")
+                .queryParam("secret", "{secret}")
+                .queryParam("goto", "/{bout}")
+                .build(
+                    anchor.identity().name(),
+                    new Cipher().encrypt(anchor.identity().name().toString()),
+                    anchor.bout().number()
+            )
+        ).build();
+    }
 
-MatcherAssert.assertThat(
-    XhtmlConverter.the(rexsl.document),
-    Matchers.allOf(
-        XhtmlMatchers.hasXPath('//xhtml:ul[@class="bouts"]/xhtml:li'),
-        XhtmlMatchers.hasXPath('//xhtml:aside[@id="version" and contains(.,"r789") and contains(.,"5.500s")]')
-    )
-)
+}

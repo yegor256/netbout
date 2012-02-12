@@ -23,21 +23,23 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
- * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
  */
-package com.netbout.rest.rexsl.xhtml
 
-import com.rexsl.test.XhtmlConverter
-import com.rexsl.test.XhtmlMatchers
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
-
-MatcherAssert.assertThat(
-    XhtmlConverter.the(rexsl.document),
-    Matchers.allOf(
-        XhtmlMatchers.hasXPath('//xhtml:ul[@class="bouts"]/xhtml:li'),
-        XhtmlMatchers.hasXPath('//xhtml:aside[@id="version" and contains(.,"r789") and contains(.,"5.500s")]')
-    )
-)
+$(document).ready(
+    function() {
+        $('header#top1 span.title')
+            .blur(
+                function() {
+                    $("#rename input[name='title']").val($(this).text());
+                    $("#rename").submit();
+                }
+            )
+            .keydown(
+                function() {
+                    if (arguments[0].keyCode == 13) {
+                        $(this).blur();
+                    }
+                }
+            );
+    }
+);

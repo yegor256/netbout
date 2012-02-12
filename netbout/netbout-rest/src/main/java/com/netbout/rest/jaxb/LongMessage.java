@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
+import com.netbout.rest.MetaText;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
@@ -124,7 +125,7 @@ public final class LongMessage {
             .arg(txt)
             .asDefault(txt)
             .exec();
-        return LongMessage.formatted(StringEscapeUtils.escapeXml(render));
+        return new MetaText(StringEscapeUtils.escapeXml(render)).html();
     }
 
     /**
@@ -152,22 +153,6 @@ public final class LongMessage {
     @XmlAttribute
     public Boolean getSeen() {
         return this.message.seen();
-    }
-
-    /**
-     * Format the text.
-     * @param text The text to format
-     * @return Formatted text
-     */
-    public static String formatted(final String text) {
-        return text
-            .replaceAll(
-                "\\[(.*?)\\]\\((http://.*?)\\)",
-                "<a href='$2'>$1</a>"
-        )
-            .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
-            .replaceAll("`(.*?)`", "<span class='tt'>$1</span>")
-            .replaceAll("_(.*?)_", "<i>$1</i>");
     }
 
 }

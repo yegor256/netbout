@@ -28,6 +28,7 @@ package com.netbout.servlets;
 
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
+import com.netbout.notifiers.email.EmailFarm;
 import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContextEvent;
@@ -60,6 +61,7 @@ public final class LifecycleListener implements ServletContextListener {
         this.hub = new DefaultHub();
         event.getServletContext()
             .setAttribute("com.netbout.rest.HUB", this.hub);
+        EmailFarm.setHub(this.hub);
         Logger.info(
             this,
             "contextInitialized(): done in %dms",

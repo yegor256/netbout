@@ -43,12 +43,6 @@
                             <xsl:value-of select="(position()-1) * 5.7"/>
                             <xsl:text>em;</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="onmouseover">
-                            <xsl:text>$(this).show();</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="onmouseout">
-                            <xsl:text>$(this).hide();</xsl:text>
-                        </xsl:attribute>
                         <span>
                             <xsl:call-template name="alias">
                                 <xsl:with-param name="alias" select="alias" />
@@ -77,12 +71,6 @@
                             <xsl:text>left: </xsl:text>
                             <xsl:value-of select="(position()-1) * 5.7"/>
                             <xsl:text>em;</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="onmouseover">
-                            <xsl:text>$(this).parent().find(".bar").show();</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="onmouseout">
-                            <xsl:text>$(this).parent().find(".bar").hide();</xsl:text>
                         </xsl:attribute>
                         <img>
                             <xsl:attribute name="alt">

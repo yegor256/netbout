@@ -39,7 +39,7 @@
         <link href="/xml/inbox.xml" rel="home" />
         <link href="/" rel="logout" />
         <link href="/xml/bout.xml" rel="start" />
-        <link href="/" rel="self" />
+        <link href="/xml/bout.xml" rel="self" />
     </links>
     <identity>
         <alias>Willy</alias>
@@ -51,8 +51,8 @@
     <bout>
         <number>6252</number>
         <title>PHP programming in Netbout project</title>
-        <stage name="Recent Payments" place="abc">
-            <payments>
+        <stage name="urn:test:payments" place="abc" alias="Recent Payments">
+            <!-- <payments>
                 <payment>
                     <date>23-08-2011</date>
                     <amount>123</amount>
@@ -65,12 +65,12 @@
                     <currency>USD</currency>
                     <details>paid to Javier for something else</details>
                 </payment>
-            </payments>
+            </payments> -->
         </stage>
         <stages>
-            <stage name="urn:test:123" href="/xml/PageBout.xml" />
-            <stage name="urn:test:Files" href="/xml/PageBout.xml" />
-            <stage name="urn:test:Meetings" href="/xml/PageBout.xml" />
+            <stage name="urn:test:123" href="/xml/PageBout.xml" alias="123" />
+            <stage name="urn:test:Files" href="/xml/PageBout.xml" alias="123" />
+            <stage name="urn:test:Meetings" href="/xml/PageBout.xml" alias="123" />
         </stages>
         <participants>
             <participant href="/xml/PageBout.xml" confirmed="1">
@@ -114,7 +114,7 @@
                 <text>
                     Yeah, I agree, let's talk about it today!
                 </text>
-                <render></render>
+                <render>some text</render>
             </message>
             <message seen="true">
                 <number>3</number>
@@ -122,7 +122,7 @@
                 <text>
                     It's [a link](http://example.com)
                 </text>
-                <render></render>
+                <render>some text</render>
             </message>
             <message>
                 <number>4</number>
@@ -130,7 +130,7 @@
                 <text>
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                 </text>
-                <render></render>
+                <render>some text</render>
             </message>
         </messages>
     </bout>

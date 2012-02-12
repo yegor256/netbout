@@ -33,7 +33,7 @@
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:output method="html"/>
+    <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:include href="/xsl/layout.xsl" />
 

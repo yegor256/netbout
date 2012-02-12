@@ -33,7 +33,7 @@
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:output method="html"/>
+    <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
@@ -59,6 +59,12 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="$title"/>
         </title>
+        <script src="/js/dudes.js">
+            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+        </script>
+        <script src="/js/bout.js">
+            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+        </script>
         <link href="/css/bout.css" rel="stylesheet" type="text/css"/>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
         <link href="/css/periods.css" rel="stylesheet" type="text/css"/>
@@ -78,19 +84,6 @@
                     <xsl:if test="$participant/@confirmed = 'true'">
                         <xsl:attribute name="contenteditable">
                             <xsl:text>true</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="onblur">
-                            <xsl:text>
-                                $("#rename input[name='title']").val($(this).text());
-                                $("#rename").submit();
-                            </xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="onkeydown">
-                            <xsl:text>
-                                if (arguments[0].keyCode == 13) {
-                                    $(this).blur();
-                                }
-                            </xsl:text>
                         </xsl:attribute>
                     </xsl:if>
                     <xsl:value-of select="$title"/>
@@ -112,7 +105,9 @@
                     <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
                 </xsl:attribute>
                 <p>
-                    <textarea name="text" cols="80" rows="5"></textarea>
+                    <textarea name="text" cols="80" rows="5">
+                        <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+                    </textarea>
                     <input value="Post new message" type="submit" />
                 </p>
             </form>
@@ -130,23 +125,25 @@
             </ul>
         </xsl:if>
         <xsl:apply-templates select="/page/bout/messages/message" />
-        <nav>
-            <ul class="periods">
-                <xsl:for-each select="/page/bout/periods/link">
-                    <li>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="@href"/>
-                            </xsl:attribute>
-                            <xsl:value-of select="@label" />
-                            <xsl:if test="@rel='earliest'">
-                                <xsl:text>...</xsl:text>
-                            </xsl:if>
-                        </a>
-                    </li>
-                </xsl:for-each>
-            </ul>
-        </nav>
+        <xsl:if test="/page/bout/periods[count(link) &gt; 0]">
+            <nav>
+                <ul class="periods">
+                    <xsl:for-each select="/page/bout/periods/link">
+                        <li>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="@href"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="@label" />
+                                <xsl:if test="@rel='earliest'">
+                                    <xsl:text>...</xsl:text>
+                                </xsl:if>
+                            </a>
+                        </li>
+                    </xsl:for-each>
+                </ul>
+            </nav>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="message">
@@ -212,7 +209,7 @@
         <aside id="invite-aside">
             <form method="get" id="invite">
                 <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@rel='suggest']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                 </xsl:attribute>
                 <p>
                     <input name="mask" autocomplete="off" placeholder="Invite...">
