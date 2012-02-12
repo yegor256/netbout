@@ -26,35 +26,22 @@
  */
 package com.netbout.utils;
 
-// import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
-// import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.CharEncoding;
+
 /**
  * Cipher and de-cipher texts.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see <a href="http://en.wikipedia.org/wiki/One-time_pad">One Time Pad</a>
  */
 public final class Cipher {
 
-    // /**
-    //  * Password to use in encryption.
-    //  */
-    // private static final String PASSWORD = "j&^%hgfRR43$#&==_ )(00(0}{-~";
-    //
-    // /**
-    //  * Encryptor.
-    //  */
-    // private final StandardPBEStringEncryptor encryptor =
-    //     new StandardPBEStringEncryptor();
-
-    // /**
-    //  * Public ctor.
-    //  */
-    // public Cryptor() {
-    //     this.encryptor.setPassword(this.PASSWORD);
-    //     this.encryptor
-    //        .setAlgorithm(StandardPBEByteEncryptor.DEFAULT_ALGORITHM);
-    // }
+    /**
+     * Password to use in encryption.
+     */
+    private static final String KEY = "j&^%hgfRR43$#&==_ )(00(0}{-~";
 
     /**
      * Encrypt some text.
@@ -62,7 +49,7 @@ public final class Cipher {
      * @return Encrypted string
      */
     public String encrypt(final String text) {
-        return text;
+        return Base64.encodeBase64String(this.xor(text.getBytes()));
     }
 
     /**
@@ -72,7 +59,33 @@ public final class Cipher {
      * @throws DecryptionException If we can't decrypt it
      */
     public String decrypt(final String hash) throws DecryptionException {
-        return hash;
+        try {
+            return new String(
+                this.xor(Base64.decodeBase64(hash.getBytes())),
+                CharEncoding.UTF_8
+            );
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * XOR array of bytes.
+     * @param input The input to XOR
+     * @return Encrypted output
+     */
+    private byte[] xor(final byte[] input) {
+        final byte[] output = new byte[input.length];
+        final byte[] secret = this.KEY.getBytes();
+        int spos = 0;
+        for (int pos = 0; pos < input.length; pos += 1) {
+            output[pos] = (byte) (input[pos] ^ secret[spos]);
+            spos += 1;
+            if (spos >= secret.length) {
+                spos = 0;
+            }
+        }
+        return output;
     }
 
 }
