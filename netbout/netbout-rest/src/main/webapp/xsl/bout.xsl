@@ -33,7 +33,7 @@
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:output method="html"/>
+    <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
@@ -59,7 +59,9 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="$title"/>
         </title>
-        <script src="/js/dudes.js"/>
+        <script src="/js/dudes.js">
+            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+        </script>
         <link href="/css/bout.css" rel="stylesheet" type="text/css"/>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
         <link href="/css/periods.css" rel="stylesheet" type="text/css"/>
@@ -131,23 +133,25 @@
             </ul>
         </xsl:if>
         <xsl:apply-templates select="/page/bout/messages/message" />
-        <nav>
-            <ul class="periods">
-                <xsl:for-each select="/page/bout/periods/link">
-                    <li>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="@href"/>
-                            </xsl:attribute>
-                            <xsl:value-of select="@label" />
-                            <xsl:if test="@rel='earliest'">
-                                <xsl:text>...</xsl:text>
-                            </xsl:if>
-                        </a>
-                    </li>
-                </xsl:for-each>
-            </ul>
-        </nav>
+        <xsl:if test="/page/bout/periods[count(link) &gt; 0]">
+            <nav>
+                <ul class="periods">
+                    <xsl:for-each select="/page/bout/periods/link">
+                        <li>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="@href"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="@label" />
+                                <xsl:if test="@rel='earliest'">
+                                    <xsl:text>...</xsl:text>
+                                </xsl:if>
+                            </a>
+                        </li>
+                    </xsl:for-each>
+                </ul>
+            </nav>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="message">
@@ -213,7 +217,7 @@
         <aside id="invite-aside">
             <form method="get" id="invite">
                 <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@rel='suggest']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                 </xsl:attribute>
                 <p>
                     <input name="mask" autocomplete="off" placeholder="Invite...">

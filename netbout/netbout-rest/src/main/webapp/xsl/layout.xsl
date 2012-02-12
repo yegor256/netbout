@@ -44,8 +44,11 @@
     <xsl:template match="page">
         <html lang="en-US">
             <head>
+                <meta charset="UTF-8" />
                 <script type="text/javascript"
-                    src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"/>
+                    src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
+                    <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+                </script>
                 <link href="/css/global.css" rel="stylesheet" type="text/css"
                     media="all"/>
                 <link href="/css/layout.css" rel="stylesheet" type="text/css"
@@ -124,6 +127,7 @@
                     <xsl:attribute name="title">
                         <xsl:text>back to inbox</xsl:text>
                     </xsl:attribute>
+                    <xsl:text> </xsl:text> <!-- for W3C compliance -->
                 </a>
                 <form id="search" method="get" role="search">
                     <xsl:attribute name="action">

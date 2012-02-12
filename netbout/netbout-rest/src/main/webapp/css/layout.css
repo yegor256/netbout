@@ -25,34 +25,25 @@
  * SUCH DAMAGE.
  */
 
+/* JIGSAW IGNORE: there is some problem in w3c server now */
+
 body {
     font-size: 10px; /* the same as 7.8pt or 2.646mm or 10px */
 }
 
 /* top header */
 #cap {
-    /* IE hack, see http://www.jakpsatweb.cz/css/css-vertical-center-solution.html */
-    #position: relative;
-    /* other hacks, see http://css-tricks.com/snippets/css/css-box-shadow/ */
-    -moz-box-shadow: 0 0.1em #e4e5e3;
-    -webkit-box-shadow: 0 0.1em #e4e5e3;
-    -o-box-shadow: 0 0.1em #e4e5e3;
-    /* normal CSS3 code */
     width: 100%;
     position: relative;
     background-color: #f3f3f1;
     height: 6.9em;
-    box-shadow: 0 0.1em #e4e5e3;
+    box-shadow: 0em 0.1em #e4e5e3; /* JIGSAW: it's CSS3 feature */
     display: table;
     overflow: hidden;
 }
 
 /* wrapping element in DIV.CAP */
 #incap {
-    /* IE hack */
-    #position: absolute;
-    #top: 50%;
-    /* normal CSS3 code */
     display: table-cell;
     position: static;
     vertical-align: middle;
@@ -61,10 +52,6 @@ body {
 
 /* wrappind element inside the CAP, that contains two DIV's: #left and #right */
 #header {
-    /* IE hack */
-    #position: relative;
-    #top: -50%;
-    /* normal CSS3 code */
     display: table;
     margin-left: auto;
     margin-right: auto;

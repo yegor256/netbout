@@ -218,9 +218,10 @@ final class Mux implements Closeable {
                 Mux.this.submit(this.who, this.task);
                 Logger.warn(
                     this,
-                    "run(): '%s' resubmitted because of %[type]s",
+                    "run(): '%s' resubmitted because of %[type]s: '%s'",
                     this.task,
-                    ex
+                    ex,
+                    ex.getMessage()
                 );
                 Logger.debug(
                     this,

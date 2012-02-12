@@ -30,20 +30,14 @@
 package com.netbout.rest.rexsl.xhtml
 
 import com.rexsl.test.XhtmlConverter
+import com.rexsl.test.XhtmlMatchers
 import org.hamcrest.MatcherAssert
-import org.xmlmatchers.XmlMatchers
-import org.xmlmatchers.namespace.SimpleNamespaceContext
+import org.hamcrest.Matchers
 
-[
-    '//xhtml:ul[@class="bouts"]/xhtml:li',
-    '//xhtml:aside[@id="version" and contains(.,"r789") and contains(.,"5.500s")]',
-].each { xpath ->
-    MatcherAssert.assertThat(
-        XhtmlConverter.the(rexsl.document),
-        XmlMatchers.hasXPath(
-            xpath,
-            new SimpleNamespaceContext()
-            .withBinding('xhtml', 'http://www.w3.org/1999/xhtml')
-        )
+MatcherAssert.assertThat(
+    XhtmlConverter.the(rexsl.document),
+    Matchers.allOf(
+        XhtmlMatchers.hasXPath('//xhtml:ul[@class="bouts"]/xhtml:li'),
+        XhtmlMatchers.hasXPath('//xhtml:aside[@id="version" and contains(.,"r789") and contains(.,"5.500s")]')
     )
-}
+)

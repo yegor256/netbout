@@ -38,8 +38,12 @@
     <xsl:include href="/xsl/templates.xsl" />
 
     <xsl:template match="/">
+        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html PUBLIC
+            "-//W3C//DTD XHTML 1.1//EN"
+            "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;</xsl:text>
         <html lang="en-US">
             <head>
+                <meta http-equiv="Content-type" content="application/xhtml+xml;charset=UTF-8" />
                 <link href="/css/global.css" rel="stylesheet" type="text/css"
                     media="all"></link>
                 <link href="/css/login.css" rel="stylesheet" type="text/css"
@@ -49,14 +53,14 @@
                 <title>login</title>
             </head>
             <body>
-                <aside id="version">
+                <div id="version">
                     <xsl:text>r</xsl:text>
                     <xsl:value-of select="/page/version/revision"/>
                     <xsl:text> </xsl:text>
                     <xsl:call-template name="nano">
                         <xsl:with-param name="nano" select="/page/@nano" />
                     </xsl:call-template>
-                </aside>
+                </div>
                 <table id="wrapper">
                     <tr>
                         <td id="content">
@@ -108,7 +112,8 @@
                                     <xsl:attribute name="title">
                                         <xsl:text>click to authenticate yourself via Facebook</xsl:text>
                                     </xsl:attribute>
-                                    <img src="http://cdn.netbout.com/facebook.png" id="facebook"/>
+                                    <img src="http://cdn.netbout.com/facebook.png" id="facebook"
+                                        alt="login through facebook"/>
                                 </a>
                             </p>
                         </td>

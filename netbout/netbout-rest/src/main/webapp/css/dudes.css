@@ -25,6 +25,8 @@
  * SUCH DAMAGE.
  */
 
+/* JIGSAW IGNORE: there is some problem in w3c server now */
+
 /* row of photos and names */
 .dudes {
     position: relative;
@@ -39,10 +41,7 @@
             height: 5em;
             width: 5em;
             display: block;
-            box-shadow: 0.1em 0.1em 0.1em gray;
-            -moz-box-shadow: 0.1em 0.1em 0.1em gray;
-            -webkit-box-shadow: 0.1em 0.1em 0.1em gray;
-            -o-box-shadow: 0.1em 0.1em 0.1em gray;
+            box-shadow: 0.1em 0.1em 0.1em gray; /* JIGSAW: it's CSS3 feature */
         }
 
             .dudes .dude img.pending {
@@ -54,10 +53,7 @@
         top: 5em;
         left: 0;
         background-color: #f3f3f1;
-        box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
-        -moz-box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
-        -webkit-box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
-        -o-box-shadow: 0.1em 0.1em 0.1em #e4e5e3;
+        box-shadow: 0.1em 0.1em 0.1em #e4e5e3; /* JIGSAW: it's CSS3 feature */
         padding: 0.3em 1em 0.3em 0.5em;
         display: none;
     }
