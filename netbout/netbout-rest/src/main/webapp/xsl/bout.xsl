@@ -59,6 +59,7 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="$title"/>
         </title>
+        <script src="/js/dudes.js"/>
         <link href="/css/bout.css" rel="stylesheet" type="text/css"/>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
         <link href="/css/periods.css" rel="stylesheet" type="text/css"/>

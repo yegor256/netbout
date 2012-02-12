@@ -50,6 +50,7 @@
                 <xsl:text>)</xsl:text>
             </xsl:if>
         </title>
+        <script src="/js/dudes.js"/>
         <link href="/css/inbox.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
         <link href="/css/periods.css" rel="stylesheet" type="text/css"></link>
