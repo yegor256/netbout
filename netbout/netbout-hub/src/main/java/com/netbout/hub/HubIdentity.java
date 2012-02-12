@@ -258,6 +258,9 @@ public final class HubIdentity implements Identity {
     @Override
     public Set<Identity> friends(final String keyword) {
         final Set<Identity> friends = this.hub.findByKeyword(keyword);
+        if (friends.contains(this)) {
+            friends.remove(this);
+        }
         Logger.debug(
             this,
             "#friends('%s'): found %d friends",
