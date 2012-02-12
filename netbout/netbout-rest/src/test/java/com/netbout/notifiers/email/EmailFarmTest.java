@@ -26,6 +26,7 @@
  */
 package com.netbout.notifiers.email;
 
+import com.netbout.hub.HubMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
@@ -34,6 +35,7 @@ import com.netbout.spi.Urn;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -43,6 +45,14 @@ import org.mockito.Mockito;
  * @version $Id$
  */
 public final class EmailFarmTest {
+
+    /**
+     * Inject hub.
+     */
+    @BeforeClass
+    public static void injectHub() {
+        EmailFarm.setHub(new HubMocker().mock());
+    }
 
     /**
      * EmailFarm can send notify bout participants.

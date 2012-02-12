@@ -1,4 +1,4 @@
-${message.text()}
+${text}
 
 --
 Sent via Netbout: ${href}

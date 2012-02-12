@@ -97,8 +97,9 @@ public final class PosPeriodTest {
      */
     @Test
     public void rejectsDateOnOverflow() throws Exception {
-        final Period period = new PosPeriod().next(this.date("2011-05-01"));
-        for (int day = Period.MAX; day > 0; day -= 1) {
+        final Period period = new PosPeriod(0L, Period.MAX)
+            .next(this.date("2011-05-01"));
+        for (long day = Period.MAX; day > 0; day -= 1) {
             final Date date = this.date(String.format("2011-03-%02d", day));
             MatcherAssert.assertThat("fits in", period.fits(date));
             period.add(date);

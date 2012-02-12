@@ -70,7 +70,7 @@ public final class Stage {
         for (String query : queries) {
             text.append(query).append(":\n");
             try {
-                text.append("  ").append(this.query(query));
+                text.append(this.query(query));
             // @checkstyle IllegalCatch (1 line)
             } catch (Exception ex) {
                 text.append(ex.getMessage()).append(" \n");
@@ -96,6 +96,7 @@ public final class Stage {
                         final StringBuilder text = new StringBuilder();
                         final int total = rset.getMetaData().getColumnCount();
                         while (rset.next()) {
+                            text.append("  ");
                             for (int col = 0; col < total; col += 1) {
                                 text.append(rset.getString(col + 1))
                                     .append(" | ");

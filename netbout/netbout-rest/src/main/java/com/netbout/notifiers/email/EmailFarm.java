@@ -26,6 +26,8 @@
  */
 package com.netbout.notifiers.email;
 
+import com.netbout.hub.Hub;
+import com.netbout.rest.MetaText;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -35,7 +37,6 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import com.netbout.utils.Cipher;
 import com.netbout.utils.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,11 @@ public final class EmailFarm implements IdentityAware {
         "[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})";
 
     /**
+     * The hub, to be injected by {@link #setHub(Hub)}.
+     */
+    private static transient Hub hub;
+
+    /**
      * Email sender.
      */
     private final transient Sender sender = new Sender();
@@ -75,6 +81,15 @@ public final class EmailFarm implements IdentityAware {
      * Me.
      */
     private transient Identity identity;
+
+    /**
+     * Inject Hub instance, to be called by
+     * {@link com.netbout.servlets.LifecycleListener}.
+     * @param ihub The hub to inject
+     */
+    public static void setHub(final Hub ihub) {
+        EmailFarm.hub = ihub;
+    }
 
     /**
      * {@inheritDoc}
@@ -142,20 +157,13 @@ public final class EmailFarm implements IdentityAware {
         assert dude != null;
         final VelocityContext context = new VelocityContext();
         context.put("bout", dude.bout());
-        context.put("message", message);
+        context.put("text", this.textOf(message));
         context.put("author", NetboutUtils.aliasOf(message.author()));
         context.put(
             "href",
-            UriBuilder.fromUri("http://www.netbout.com/")
-                .path("/auth")
-                .queryParam("identity", "{urn}")
-                .queryParam("secret", "{secret}")
-                .queryParam("goto", "{path}")
-                .build(
-                    dude.identity().name(),
-                    new Cipher().encrypt(dude.identity().name().toString()),
-                    String.format("/%d", dude.bout().number())
-                )
+            UriBuilder.fromUri("http://www.netbout.com/e")
+                .path("/{hash}")
+                .build(new AnchorEmail(dude.identity(), dude.bout()).hash())
                 .toString()
         );
         final String text = TextUtils.format(
@@ -178,13 +186,7 @@ public final class EmailFarm implements IdentityAware {
                 )
             );
             email.setText(text);
-            email.setSubject(
-                String.format(
-                    "#%d: %s",
-                    dude.bout().number(),
-                    dude.bout().title()
-                )
-            );
+            email.setSubject(String.format("Re: %s", dude.bout().title()));
             this.sender.send(email);
         } catch (javax.mail.internet.AddressException ex) {
             throw new IllegalArgumentException(ex);
@@ -193,6 +195,24 @@ public final class EmailFarm implements IdentityAware {
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(ex);
         }
+    }
+
+    /**
+     * Get text of message.
+     * @param message The message
+     * @return The text to show in email
+     */
+    private String textOf(final Message message) {
+        final String text = message.text();
+        final String render = this.hub.make("pre-render-message")
+            .synchronously()
+            .inBout(message.bout())
+            .arg(message.bout().number())
+            .arg(message.number())
+            .arg(text)
+            .asDefault(text)
+            .exec();
+        return new MetaText(render).plain();
     }
 
 }
