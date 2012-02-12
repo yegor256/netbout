@@ -489,7 +489,7 @@
         <profile>
             <id>catapult</id>
             <activation>
-                <file><exists>pom-off.xml</exists></file>
+                <file><exists>pom.xml</exists></file>
             </activation>
             <properties>
                 <catapult.warName>${project.build.finalName}-catapult</catapult.warName>
