@@ -62,6 +62,9 @@
         <script src="/js/dudes.js">
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
+        <script src="/js/bout.js">
+            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+        </script>
         <link href="/css/bout.css" rel="stylesheet" type="text/css"/>
         <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
         <link href="/css/periods.css" rel="stylesheet" type="text/css"/>
@@ -81,19 +84,6 @@
                     <xsl:if test="$participant/@confirmed = 'true'">
                         <xsl:attribute name="contenteditable">
                             <xsl:text>true</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="onblur">
-                            <xsl:text>
-                                $("#rename input[name='title']").val($(this).text());
-                                $("#rename").submit();
-                            </xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="onkeydown">
-                            <xsl:text>
-                                if (arguments[0].keyCode == 13) {
-                                    $(this).blur();
-                                }
-                            </xsl:text>
                         </xsl:attribute>
                     </xsl:if>
                     <xsl:value-of select="$title"/>
@@ -115,7 +105,9 @@
                     <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
                 </xsl:attribute>
                 <p>
-                    <textarea name="text" cols="80" rows="5"></textarea>
+                    <textarea name="text" cols="80" rows="5">
+                        <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+                    </textarea>
                     <input value="Post new message" type="submit" />
                 </p>
             </form>

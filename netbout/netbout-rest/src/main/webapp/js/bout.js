@@ -27,11 +27,19 @@
 
 $(document).ready(
     function() {
-        $('aside.bar')
-            .mouseover(function() { $(this).show(); })
-            .mouseout(function() { $(this).hide(); });
-        $('article.dude')
-            .mouseover(function() { $(this).parent().find('.bar').show(); })
-            .mouseout(function() { $(this).parent().find('.bar').hide(); });
+        $('header#top1 span.title')
+            .blur(
+                function() {
+                    $("#rename input[name='title']").val($(this).text());
+                    $("#rename").submit();
+                }
+            )
+            .keydown(
+                function() {
+                    if (arguments[0].keyCode == 13) {
+                        $(this).blur();
+                    }
+                }
+            );
     }
 );
