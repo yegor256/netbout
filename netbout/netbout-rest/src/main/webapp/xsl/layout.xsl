@@ -70,18 +70,18 @@
                             <xsl:value-of select="message"/>
                         </aside>
                     </xsl:if>
-                    <xsl:if test="eta != 0">
+                    <xsl:if test="identity/eta != 0">
                         <aside class="error-message">
                             <xsl:text>The server is currently updating your account,
                                 some data may not look as fresh as they should be. Try
                                 to refresh the page</xsl:text>
                             <xsl:choose>
-                                <xsl:when test="eta &gt; 60000">
+                                <xsl:when test="identity/eta &gt; 60000">
                                     <xsl:text> in a few minutes</xsl:text>
                                 </xsl:when>
-                                <xsl:when test="eta &gt; 5000">
+                                <xsl:when test="identity/eta &gt; 5000">
                                     <xsl:text> in </xsl:text>
-                                    <xsl:value-of select="round(eta div 1000)"/>
+                                    <xsl:value-of select="round(identity/eta div 1000)"/>
                                     <xsl:text> seconds</xsl:text>
                                 </xsl:when>
                             </xsl:choose>
