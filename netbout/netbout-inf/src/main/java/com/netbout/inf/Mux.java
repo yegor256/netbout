@@ -139,7 +139,8 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      * @param task The task to execute
      */
     public void submit(final Task task) {
-        if (!this.isTerminated()) {
+        if (!this.isTerminated() && !this.isShutdown()
+            && !this.isTerminating()) {
             synchronized (this) {
                 if (!this.getQueue().contains(task)) {
                     this.getQueue().add(task);
