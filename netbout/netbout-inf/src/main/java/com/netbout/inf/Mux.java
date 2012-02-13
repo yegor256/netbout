@@ -30,13 +30,12 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.io.Closeable;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
@@ -47,35 +46,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
  * @version $Id$
  */
 @SuppressWarnings("PMD.DoNotUseThreads")
-final class Mux implements Closeable {
-
-    /**
-     * How many threads to run in parallel.
-     *
-     * <p>This number shouldn't be too big, becuase tasks will take just
-     * more time to execute, which is not so good. Also keep in mind that
-     * the bottleneck here is that database, since every task is mostly working
-     * with data retrieval from DB. Thus, pay attention to the number of
-     * connections allowed in {@code com.netbout.db.DataSourceBuilder}.
-     */
-    private static final int THREADS =
-        Runtime.getRuntime().availableProcessors() * 2;
-
-    /**
-     * Executor service, with a number of threads working in parallel.
-     */
-    private final transient ExecutorService executor =
-        Executors.newFixedThreadPool(Mux.THREADS);
-
-    /**
-     * Watcher of Mux.
-     */
-    private final transient MuxWatcher watcher = new MuxWatcher();
-
-    /**
-     * Are we still ready to accept any tasks?
-     */
-    private final transient AtomicBoolean alive = new AtomicBoolean(true);
+final class Mux extends ThreadPoolExecutor implements Closeable {
 
     /**
      * How many tasks are currently waiting.
@@ -90,16 +61,29 @@ final class Mux implements Closeable {
         new DescriptiveStatistics(100);
 
     /**
+     * Public ctor.
+     */
+    public Mux() {
+        super(
+            Runtime.getRuntime().availableProcessors(),
+            Runtime.getRuntime().availableProcessors() * 2,
+            1L,
+            TimeUnit.MINUTES,
+            (BlockingQueue) new LinkedBlockingQueue<Task>()
+        );
+    }
+
+    /**
      * Show some stats.
      * @return The text
      */
     public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d identities\n", this.waiting.size()));
-        text.append(String.format("%d waiting tasks\n", this.total()));
+        text.append(String.format("%d in queue\n", this.getQueue().size()));
         text.append(String.format("%.2fms avg time\n\n", this.stats.getMean()));
-        text.append("Watcher's stats:\n");
-        text.append(this.watcher.statistics());
+        // text.append("Watcher's stats:\n");
+        // text.append(this.watcher.statistics());
         return text.toString();
     }
 
@@ -108,32 +92,14 @@ final class Mux implements Closeable {
      */
     @Override
     public void close() {
-        this.alive.set(false);
-        this.watcher.close();
-        this.executor.shutdown();
-        boolean terminated = false;
-        Logger.info(this, "#close(): trying to close Mux tasks gracefully...");
-        try {
-            // @checkstyle MagicNumber (1 line)
-            terminated = this.executor.awaitTermination(5L, TimeUnit.SECONDS);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
-        if (terminated) {
-            Logger.info(
-                this,
-                "#close(): correctly stopped with %d tasks in the queue",
-                this.total()
-            );
-        } else {
-            final List<Runnable> killed = this.executor.shutdownNow();
-            Logger.warn(
-                this,
-                "#close(): abruptly terminated %d tasks (%d in the queue)",
-                killed.size(),
-                this.total()
-            );
-        }
+        // this.watcher.close();
+        final List<Runnable> killed = this.shutdownNow();
+        Logger.warn(
+            this,
+            "#close(): abruptly terminated %d tasks (%d remained in the queue)",
+            killed.size(),
+            this.getQueue().size()
+        );
     }
 
     /**
@@ -146,7 +112,8 @@ final class Mux implements Closeable {
         if (this.waiting.containsKey(who)) {
             eta = this.waiting.get(who).get();
             if (eta > 0) {
-                eta = this.total() * (long) this.stats.getMean() / Mux.THREADS;
+                eta = this.getQueue().size() * (long) this.stats.getMean()
+                    / (1 + this.getActiveCount());
             }
         } else {
             eta = 0L;
@@ -156,107 +123,57 @@ final class Mux implements Closeable {
 
     /**
      * Add new task to be executed ASAP.
-     * @param who Who is waiting for this task
      * @param task The task to execute
      */
-    public void submit(final Set<Urn> who, final Runnable task) {
-        if (this.alive.get()) {
-            this.watcher.watch(this.executor.submit(new TaskShell(who, task)));
-        } else {
-            Logger.debug(
-                this,
-                "#submit(%[list]s, '%s'): Mux is closed, task ignored",
-                who,
-                task
-            );
+    public void submit(final Task task) {
+        synchronized (this) {
+            if (!this.getQueue().contains(task)) {
+                this.getQueue().add(task);
+            }
         }
     }
 
     /**
-     * Wrapper of Task.
+     * {@inheritDoc}
      */
-    private final class TaskShell implements Runnable {
-        /**
-         * Who are waiting.
-         */
-        private final transient Set<Urn> who;
-        /**
-         * The task to run.
-         */
-        private final transient Runnable task;
-        /**
-         * Public ctor.
-         * @param urns Who will wait for this result
-         * @param tsk The task
-         */
-        @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-        public TaskShell(final Set<Urn> urns, final Runnable tsk) {
-            this.task = tsk;
-            this.who = urns;
-            for (Urn urn : this.who) {
-                Mux.this.waiting.putIfAbsent(urn, new AtomicLong());
-                Mux.this.waiting.get(urn).incrementAndGet();
+    @Override
+    protected void beforeExecute(final Thread thread, final Runnable task) {
+        for (Urn who : ((Task) task).dependants()) {
+            synchronized (this) {
+                this.waiting.putIfAbsent(who, new AtomicLong());
+                this.waiting.get(who).incrementAndGet();
             }
-            Logger.debug(
-                this,
-                "TaskShell(%[list]s, %s): %d in queue",
-                urns,
-                tsk,
-                Mux.this.total()
-            );
         }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        @SuppressWarnings("PMD.AvoidCatchingThrowable")
-        public void run() {
-            final long start = System.currentTimeMillis();
-            try {
-                this.task.run();
-            // @checkstyle IllegalCatchCheck (1 line)
-            } catch (Throwable ex) {
-                Mux.this.submit(this.who, this.task);
-                Logger.warn(
-                    this,
-                    "run(): '%s' resubmitted because of %[type]s: '%s'",
-                    this.task,
-                    ex,
-                    ex.getMessage()
-                );
-                Logger.debug(
-                    this,
-                    "run(): '%s' resubmit was done because of %[exception]s",
-                    this.task,
-                    ex
-                );
-            }
-            for (Urn urn : this.who) {
-                Mux.this.waiting.get(urn).decrementAndGet();
-            }
-            Mux.this.stats.addValue(
-                (double) System.currentTimeMillis() - start
-            );
-            Logger.debug(
-                this,
-                "run(%s): finished, %d still in queue",
-                this.task,
-                Mux.this.total()
-            );
-        }
+        // this.watcher.started(thread, task);
     }
 
     /**
-     * How many waiters are here now (approximate number, since this method
-     * is not synchronized)?
-     * @return Total number
+     * {@inheritDoc}
      */
-    private long total() {
-        long total = 0;
-        for (AtomicLong val : this.waiting.values()) {
-            total += val.get();
+    @Override
+    protected void afterExecute(final Runnable task, final Throwable problem) {
+        for (Urn who : ((Task) task).dependants()) {
+            synchronized (this) {
+                this.waiting.get(who).decrementAndGet();
+            }
         }
-        return total;
+        // this.watcher.finished(task);
+        if (problem != null) {
+            this.submit(task);
+            Logger.warn(
+                this,
+                "#afterExecute('%s'): resubmitted because of %[type]s: '%s'",
+                task,
+                problem,
+                problem.getMessage()
+            );
+            Logger.debug(
+                this,
+                "#afterExecute('%s'): resubmit because of:\n%[exception]s",
+                task,
+                problem
+            );
+        }
     }
 
 }

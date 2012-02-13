@@ -27,46 +27,21 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 /**
- * Test case of {@link Mux}.
+ * One task to be executed in Mux.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @SuppressWarnings("PMD.DoNotUseThreads")
-public final class MuxTest {
+interface Task extends Runnable {
 
     /**
-     * Mux can run tasks in parallel.
-     * @throws Exception If there is some problem inside
+     * Who is waiting for the result of this task?
+     * @return List of URNs of identities
      */
-    @Test
-    public void runsTasksInParallel() throws Exception {
-        final Mux mux = new Mux();
-        final Urn name = new UrnMocker().mock();
-        final Task task = new Task() {
-            @Override
-            public void run() {
-                // do nothing
-            }
-            @Override
-            public Set<Urn> dependants() {
-                final Set<Urn> names = new HashSet<Urn>();
-                names.add(name);
-                return names;
-            }
-        };
-        mux.submit(task);
-        mux.submit(task);
-        TimeUnit.SECONDS.sleep(1L);
-        MatcherAssert.assertThat(mux.eta(name), Matchers.equalTo(0L));
-    }
+    Set<Urn> dependants();
 
 }

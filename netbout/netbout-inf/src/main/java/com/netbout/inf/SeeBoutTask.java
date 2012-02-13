@@ -28,9 +28,13 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The task to review one bout.
@@ -38,8 +42,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
-final class SeeBoutTask implements Runnable {
+final class SeeBoutTask implements Task {
 
     /**
      * The infinity.
@@ -72,8 +75,28 @@ final class SeeBoutTask implements Runnable {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return String.format("see-bout-#%d", this.bout.number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Urn> dependants() {
+        final Set<Urn> names = new HashSet<Urn>();
+        for (Participant dude : this.bout.participants()) {
+            names.add(dude.identity().name());
+        }
+        return names;
     }
 
     /**

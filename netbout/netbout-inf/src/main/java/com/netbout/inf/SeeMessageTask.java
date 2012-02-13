@@ -27,7 +27,11 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The task to review one message.
@@ -35,8 +39,7 @@ import com.ymock.util.Logger;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
-final class SeeMessageTask implements Runnable {
+final class SeeMessageTask implements Task {
 
     /**
      * The heap.
@@ -56,6 +59,26 @@ final class SeeMessageTask implements Runnable {
     public SeeMessageTask(final Heap where, final Message what) {
         this.heap = where;
         this.message = what;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Urn> dependants() {
+        final Set<Urn> names = new HashSet<Urn>();
+        for (Participant dude : this.message.bout().participants()) {
+            names.add(dude.identity().name());
+        }
+        return names;
     }
 
     /**

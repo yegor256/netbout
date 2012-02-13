@@ -28,9 +28,13 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The task to review one identity.
@@ -38,8 +42,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
-final class SeeIdentityTask implements Runnable {
+final class SeeIdentityTask implements Task {
 
     /**
      * The infinity.
@@ -67,6 +70,22 @@ final class SeeIdentityTask implements Runnable {
         this.infinity = inf;
         this.bus = where;
         this.identity = what;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Urn> dependants() {
+        return new HashSet(Arrays.asList(new Urn[] {this.identity.name()}));
     }
 
     /**
