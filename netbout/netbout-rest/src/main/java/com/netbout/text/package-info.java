@@ -26,9 +26,9 @@
  */
 
 /**
- * Supplementary utils.
+ * Text-related entities.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.utils;
+package com.netbout.text;

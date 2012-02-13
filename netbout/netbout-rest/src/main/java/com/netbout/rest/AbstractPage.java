@@ -34,7 +34,6 @@ import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
-import com.netbout.utils.Cryptor;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import java.net.URI;

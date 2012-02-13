@@ -24,50 +24,55 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.notifiers.email;
+package com.netbout.rest;
 
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.LoginRequiredException;
-import com.netbout.text.SecureString;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
+import com.ymock.util.Logger;
 
 /**
- * Shortcut for emails.
+ * When decryption can't build an identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/e")
-public final class ShortcutRs extends AbstractRs {
+public final class DecryptionException extends Exception {
 
     /**
-     * Front page of the shortcut.
-     * @param hash The text of the anchor
-     * @return The JAX-RS response
+     * Public ctor.
      */
-    @GET
-    @Path("/{hash}")
-    public Response front(@PathParam("hash") final String hash) {
-        AnchorEmail anchor;
-        try {
-            anchor = new AnchorEmail(hash, this.hub());
-        } catch (BrokenAnchorException ex) {
-            throw new LoginRequiredException(this, ex);
-        }
-        return Response.seeOther(
-            this.base().path("/auth")
-                .queryParam("identity", "{who}")
-                .queryParam("secret", "{secret}")
-                .queryParam("goto", "/{bout}")
-                .build(
-                    anchor.identity().name(),
-                    new SecureString(anchor.identity().name()),
-                    anchor.bout().number()
-            )
-        ).build();
+    public DecryptionException() {
+        super("");
+    }
+
+    /**
+     * Public ctor.
+     * @param cause Cause of it
+     */
+    public DecryptionException(final Throwable cause) {
+        super(cause);
+        Logger.warn(
+            this,
+            "#DecryptionException('%s'): thrown",
+            cause.getMessage()
+        );
+    }
+
+    /**
+     * Public ctor.
+     * @param hash The source of problem
+     * @param message Error message
+     * @param args Optional arguments
+     */
+    public DecryptionException(final String hash, final String message,
+        final Object... args) {
+        super(
+            Logger.format("%s [%s]", String.format(message, args), hash)
+        );
+        Logger.warn(
+            this,
+            "#DecryptionException('%s', '%s'): thrown",
+            hash,
+            message
+        );
     }
 
 }

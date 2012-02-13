@@ -34,7 +34,6 @@ import com.netbout.hub.UrnResolver;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
-import com.netbout.utils.Cryptor;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.XhtmlConverter;
 import java.io.StringWriter;

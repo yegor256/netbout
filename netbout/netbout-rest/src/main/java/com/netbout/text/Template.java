@@ -24,82 +24,58 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.text;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URI;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.CharEncoding;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 /**
- * Text utils.
+ * Template to be filled with values.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextUtils {
+public final class Template {
 
     /**
-     * It's utility class.
+     * Name of resource.
      */
-    private TextUtils() {
-        // empty
+    private final transient String name;
+
+    /**
+     * The context.
+     */
+    private final transient VelocityContext context = new VelocityContext();
+
+    /**
+     * Public ctor.
+     * @param res Name of resource with template
+     */
+    public Template(final String res) {
+        assert res != null;
+        this.name = res;
     }
 
     /**
-     * URI encode.
-     * @param uri The URI to encode
-     * @return Encoded text
+     * Add new value.
+     * @param prop Name of the property to set
+     * @param value The value
+     * @return This object
      */
-    public static String ucode(final URI uri) {
-        return StringEscapeUtils.escapeXml(uri.toString());
+    public Template set(final String prop, final Object value) {
+        this.context.put(prop, value);
+        return this;
     }
 
     /**
-     * Encode string into packed form.
-     * @param text The text to encode
-     * @return Encoded text
+     * {@inheritDoc}
      */
-    public static String pack(final String text) {
-        try {
-            return new Base64().encodeToString(
-                text.getBytes(CharEncoding.UTF_8)
-            ).replaceAll("[\t\n\r]+", "");
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
-     * Decode string from packed form.
-     * @param text The text to decode
-     * @return Decoded text
-     */
-    public static String unpack(final String text) {
-        try {
-            return new String(new Base64().decode(text), CharEncoding.UTF_8);
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
-     * Convert velocity context and template name into text.
-     * @param name Name of template
-     * @param context Velocity context
-     * @return The text
-     */
-    public static String format(final String name,
-        final VelocityContext context) {
-        assert name != null;
-        assert context != null;
+    @Override
+    public String toString() {
         final VelocityEngine engine = new VelocityEngine();
         engine.setProperty("resource.loader", "cp");
         engine.setProperty(
@@ -115,9 +91,10 @@ public final class TextUtils {
             "org.apache.velocity"
         );
         engine.init();
-        final Template template = engine.getTemplate(name);
+        final org.apache.velocity.Template template =
+            engine.getTemplate(this.name);
         final StringWriter writer = new StringWriter();
-        template.merge(context, new PrintWriter(writer));
+        template.merge(this.context, new PrintWriter(writer));
         return writer.toString();
     }
 

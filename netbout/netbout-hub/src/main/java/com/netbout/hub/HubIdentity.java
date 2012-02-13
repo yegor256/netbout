@@ -289,6 +289,9 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public void alias(final String alias) {
+        if (alias == null || alias.isEmpty()) {
+            throw new IllegalArgumentException("alias can't be empty");
+        }
         synchronized (this) {
             if (this.myAliases().contains(alias)) {
                 Logger.debug(

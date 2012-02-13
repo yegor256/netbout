@@ -27,7 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.spi.client.RestSession;
-import com.netbout.utils.TextUtils;
+import com.netbout.text.SecureString;
 import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import javax.ws.rs.WebApplicationException;
@@ -101,7 +101,7 @@ public class ForwardException extends WebApplicationException {
         final UriBuilder builder, final String msg) {
         final NewCookie cookie = new NewCookie(
             RestSession.MESSAGE_COOKIE,
-            TextUtils.pack(msg),
+            new SecureString(msg).toString(),
             res.base().build().getPath(),
             res.base().build().getHost(),
             Integer.valueOf(Manifests.read("Netbout-Revision")),

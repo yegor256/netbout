@@ -24,28 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.text;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link Cipher}.
+ * Test case for {@link SecureString}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CipherTest {
+public final class SecureStringTest {
 
     /**
-     * Cipher can encrypt and decrypt back.
+     * SecureString can encrypt and decrypt back.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void encryptsAndDecryptsBack() throws Exception {
         final String message = "hello, world!";
-        final String encrypted = new Cipher().encrypt(message);
-        final String decrypted = new Cipher().decrypt(encrypted);
+        final String encrypted = new SecureString(message).toString();
+        MatcherAssert.assertThat(
+            encrypted.matches("[a-zA-Z0-9]+"),
+            Matchers.describedAs(encrypted, Matchers.is(true))
+        );
+        final String decrypted = SecureString.valueOf(encrypted).text();
         MatcherAssert.assertThat(decrypted, Matchers.equalTo(message));
     }
 

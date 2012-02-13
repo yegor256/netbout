@@ -26,12 +26,11 @@
  */
 package com.netbout.servlets;
 
-import com.netbout.utils.TextUtils;
+import com.netbout.text.Template;
 import com.ymock.util.Logger;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.velocity.VelocityContext;
 
 /**
  * All uncaught exceptions will be catched here.
@@ -48,31 +47,30 @@ public final class ExceptionTrap extends HttpServlet {
     public void service(final HttpServletRequest request,
         final HttpServletResponse response) throws java.io.IOException {
         response.setContentType("text/html");
-        final VelocityContext context = new VelocityContext();
-        this.extend(context, request, "code");
-        this.extend(context, request, "message");
-        this.extend(context, request, "exception_type");
-        this.extend(context, request, "request_uri");
-        context.put(
+        final Template template =
+            new Template("com/netbout/servlets/re.html.vm");
+        this.extend(template, request, "code");
+        this.extend(template, request, "message");
+        this.extend(template, request, "exception_type");
+        this.extend(template, request, "request_uri");
+        template.set(
             "stacktrace",
             Logger.format(
                 "%[exception]s",
                 request.getAttribute("javax.servlet.error.exception")
             )
         );
-        response.getWriter().print(
-            TextUtils.format("com/netbout/servlets/re.html.vm", context)
-        );
+        response.getWriter().print(template.toString());
         response.getWriter().close();
     }
 
     /**
      * Extend velocity context with a value from java servlet.
-     * @param context The context
+     * @param template The template to extend
      * @param request The request to get attributes from
      * @param suffix The suffix of java attribute
      */
-    private void extend(final VelocityContext context,
+    private void extend(final Template template,
         final HttpServletRequest request, final String suffix) {
         Object attr = request.getAttribute(
             String.format("javax.servlet.error.%s", suffix)
@@ -80,7 +78,7 @@ public final class ExceptionTrap extends HttpServlet {
         if (attr == null) {
             attr = "NULL";
         }
-        context.put(suffix, attr.toString());
+        template.set(suffix, attr.toString());
     }
 
 }

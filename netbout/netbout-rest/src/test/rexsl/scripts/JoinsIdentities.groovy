@@ -29,11 +29,11 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.utils.Cipher
 import com.netbout.spi.Identity
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
+import com.netbout.text.SecureString
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
@@ -44,7 +44,7 @@ def email = 'son@example.com'
 def name = new Urn('email', email)
 def identity = Mockito.mock(Identity)
 Mockito.doReturn(name).when(identity).name()
-def secret = new Cipher().encrypt(name.toString())
+def secret = new SecureString(name).toString()
 def son = new RestSession(rexsl.home).authenticate(name, secret)
 
 def father = new RestSession(rexsl.home).authenticate(new Urn('urn:test:father'), '')

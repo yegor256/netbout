@@ -24,11 +24,29 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.text;
+
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Supplementary utils, tests.
- *
+ * Test case for {@link Template}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.utils;
+public final class TemplateTest {
+
+    /**
+     * Template can format Velocity template.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void formatsVelocityTemplate() throws Exception {
+        MatcherAssert.assertThat(
+            new Template("com/netbout/rest/wrapper.xsl.vm").toString(),
+            Matchers.containsString("xsl:include")
+        );
+    }
+
+}

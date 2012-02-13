@@ -31,7 +31,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.netbout.utils.TextUtils;
+import com.netbout.text.SecureString;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -132,21 +132,21 @@ public final class StageCoordinates {
             try {
                 coords.setStage(
                     new Urn(
-                        TextUtils.unpack(
+                        SecureString.valueOf(
                             pair.substring(
                                 0,
                                 pair.indexOf(StageCoordinates.SEPARATOR)
                             )
-                        )
+                        ).text()
                     )
                 );
                 coords.setPlace(
-                    TextUtils.unpack(
+                    SecureString.valueOf(
                         pair.substring(
                             pair.indexOf(StageCoordinates.SEPARATOR)
                             + StageCoordinates.SEPARATOR.length()
                         )
-                    )
+                    ).text()
                 );
             } catch (java.net.URISyntaxException ex) {
                 coords.setStage(new Urn());
@@ -166,9 +166,9 @@ public final class StageCoordinates {
         }
         return String.format(
             "%s%s%s",
-            TextUtils.pack(this.stage().toString()),
+            new SecureString(this.stage()),
             this.SEPARATOR,
-            TextUtils.pack(this.place())
+            new SecureString(this.place())
         );
     }
 

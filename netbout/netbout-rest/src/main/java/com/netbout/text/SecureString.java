@@ -24,19 +24,21 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.text;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 
 /**
- * Cipher and de-cipher texts.
+ * String, which encrypts itself.
+ *
+ * <p>Objects of this class are immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @see <a href="http://en.wikipedia.org/wiki/One-time_pad">One Time Pad</a>
  */
-public final class Cipher {
+public final class SecureString {
 
     /**
      * Password to use in encryption.
@@ -44,26 +46,39 @@ public final class Cipher {
     private static final String KEY = "j&^%hgfRR43$#&==_ )(00(0}{-~";
 
     /**
-     * Encrypt some text.
-     * @param text The text to encrypt
-     * @return Encrypted string
+     * Open content (without encryption).
      */
-    public String encrypt(final String text) {
-        return Base64.encodeBase64String(this.xor(text.getBytes()))
+    private final transient String raw;
+
+    /**
+     * Public ctor.
+     * @param text The text (without encryption)
+     */
+    public SecureString(final Object text) {
+        this.raw = text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return Base64.encodeBase64String(this.xor(this.raw.getBytes()))
             .replace("=", "");
     }
 
     /**
-     * Decrypt from hash.
+     * Create it from encrypted input.
      * @param hash The hash to use
-     * @return The original text
-     * @throws DecryptionException If we can't decrypt it
+     * @return The string
      */
-    public String decrypt(final String hash) throws DecryptionException {
+    public static SecureString valueOf(final String hash) {
         try {
-            return new String(
-                this.xor(Base64.decodeBase64(hash.getBytes())),
-                CharEncoding.UTF_8
+            return new SecureString(
+                new String(
+                    SecureString.xor(Base64.decodeBase64(hash.getBytes())),
+                    CharEncoding.UTF_8
+                )
             );
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalStateException(ex);
@@ -71,13 +86,21 @@ public final class Cipher {
     }
 
     /**
+     * Get its original text, without encryption.
+     * @return The text
+     */
+    public String text() {
+        return this.raw;
+    }
+
+    /**
      * XOR array of bytes.
      * @param input The input to XOR
      * @return Encrypted output
      */
-    private byte[] xor(final byte[] input) {
+    private static byte[] xor(final byte[] input) {
         final byte[] output = new byte[input.length];
-        final byte[] secret = this.KEY.getBytes();
+        final byte[] secret = SecureString.KEY.getBytes();
         int spos = 0;
         for (int pos = 0; pos < input.length; pos += 1) {
             output[pos] = (byte) (input[pos] ^ secret[spos]);

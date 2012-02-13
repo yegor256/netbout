@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.rest;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
@@ -42,18 +42,6 @@ import org.mockito.Mockito;
  * @version $Id$
  */
 public final class CryptorTest {
-
-    /**
-     * Encryption + decryption.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void testIt() throws Exception {
-        // for (Object obj : java.security.Security.getAlgorithms("Cipher")) {
-        //     System.out.println((String) obj);
-        // }
-        // javax.crypto.SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-    }
 
     /**
      * Cryptor can encrypt identity and decrypt.
