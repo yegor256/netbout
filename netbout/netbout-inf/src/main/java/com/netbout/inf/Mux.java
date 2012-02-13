@@ -71,6 +71,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
             TimeUnit.MINUTES,
             (BlockingQueue) new LinkedBlockingQueue<Task>()
         );
+        this.prestartCoreThread();
     }
 
     /**
@@ -110,7 +111,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
             eta = this.waiting.get(who).get();
             if (eta > 0) {
                 eta = this.getQueue().size() * (long) this.stats.getMean()
-                    / (1 + this.getActiveCount());
+                    / this.getActiveCount();
             }
         } else {
             eta = 0L;
