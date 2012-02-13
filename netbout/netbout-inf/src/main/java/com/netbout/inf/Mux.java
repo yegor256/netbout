@@ -49,6 +49,15 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 final class Mux extends ThreadPoolExecutor implements Closeable {
 
     /**
+     * How many threads to use.
+     *
+     * <p>I don't know how to calculate this number correctly. Let's try to
+     * experiment.
+     */
+    private static final int THREADS =
+        Runtime.getRuntime().availableProcessors() * 4;
+
+    /**
      * How many tasks are currently waiting.
      */
     private final transient ConcurrentMap<Urn, AtomicLong> waiting =
@@ -65,13 +74,13 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      */
     public Mux() {
         super(
-            Runtime.getRuntime().availableProcessors(),
-            Runtime.getRuntime().availableProcessors() * 2,
+            Mux.THREADS,
+            Mux.THREADS * 2,
             1L,
             TimeUnit.MINUTES,
             (BlockingQueue) new LinkedBlockingQueue<Task>()
         );
-        this.prestartCoreThread();
+        this.prestartAllCoreThreads();
     }
 
     /**
