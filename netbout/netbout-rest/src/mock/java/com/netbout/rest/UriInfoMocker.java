@@ -29,7 +29,6 @@ package com.netbout.rest;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.utils.Cryptor;
 import com.rexsl.core.XslResolver;
 import com.rexsl.test.XhtmlConverter;
 import java.io.StringWriter;

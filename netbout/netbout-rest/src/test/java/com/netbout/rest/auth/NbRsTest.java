@@ -30,7 +30,7 @@ import com.netbout.rest.ForwardException;
 import com.netbout.rest.Page;
 import com.netbout.rest.ResourceMocker;
 import com.netbout.spi.Urn;
-import com.netbout.utils.Cipher;
+import com.netbout.text.SecureString;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -52,7 +52,7 @@ public final class NbRsTest {
     public void authenticatesByNamesAndSecret() throws Exception {
         final Urn iname = new Urn("netbout", "hh");
         final NbRs rest = new ResourceMocker().mock(NbRs.class);
-        final String secret = new Cipher().encrypt(iname.toString());
+        final String secret = new SecureString(iname).toString();
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),

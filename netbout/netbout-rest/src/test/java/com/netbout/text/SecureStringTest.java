@@ -44,12 +44,12 @@ public final class SecureStringTest {
     @Test
     public void encryptsAndDecryptsBack() throws Exception {
         final String message = "hello, world!";
-        final SecureString encrypted = new SecureString(message);
+        final String encrypted = new SecureString(message).toString();
         MatcherAssert.assertThat(
             encrypted.matches("[a-zA-Z0-9]+"),
             Matchers.describedAs(encrypted, Matchers.is(true))
         );
-        final String decrypted = SecureString.valueOf(encrypted);
+        final String decrypted = SecureString.valueOf(encrypted).text();
         MatcherAssert.assertThat(decrypted, Matchers.equalTo(message));
     }
 
