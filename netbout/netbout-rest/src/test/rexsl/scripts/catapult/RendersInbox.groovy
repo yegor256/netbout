@@ -33,7 +33,7 @@ import com.netbout.spi.Urn
 import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
-import com.netbout.utils.Cipher
+import com.netbout.text.SecureString
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
@@ -55,9 +55,8 @@ RestTester.start(RestUriBuilder.from(starter).build())
     .post('register namespace', 'text=' + URLEncoder.encode(text))
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
-def cipher = new Cipher()
 def name = new Urn('urn:netbout:bobby')
-def bobby = new RestSession(home).authenticate(name, cipher.encrypt(name.toString()))
+def bobby = new RestSession(home).authenticate(name, new SecureString(name).toString())
 def bout = bobby.start()
 bout.rename('Catapult inbox testing')
 
