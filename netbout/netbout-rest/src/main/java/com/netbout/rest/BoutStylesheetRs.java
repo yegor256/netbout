@@ -86,8 +86,8 @@ public final class BoutStylesheetRs extends AbstractRs {
                 "boutXsl",
                 StringEscapeUtils.escapeXml(
                     this.base().path("/xsl/bout.xsl").build().toString()
-                )
             )
+        )
             .set(
                 "stageXsl",
                 StringEscapeUtils.escapeXml(

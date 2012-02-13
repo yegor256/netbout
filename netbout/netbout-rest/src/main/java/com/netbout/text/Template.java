@@ -28,10 +28,6 @@ package com.netbout.text;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URI;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.CharEncoding;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
@@ -66,11 +62,12 @@ public final class Template {
 
     /**
      * Add new value.
-     * @param name Name of it
+     * @param prop Name of the property to set
      * @param value The value
+     * @return This object
      */
-    public Template set(final String name, final Object value) {
-        this.context.put(name, value);
+    public Template set(final String prop, final Object value) {
+        this.context.put(prop, value);
         return this;
     }
 
@@ -97,7 +94,7 @@ public final class Template {
         final org.apache.velocity.Template template =
             engine.getTemplate(this.name);
         final StringWriter writer = new StringWriter();
-        template.merge(context, new PrintWriter(writer));
+        template.merge(this.context, new PrintWriter(writer));
         return writer.toString();
     }
 

@@ -45,7 +45,9 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
+@SuppressWarnings({
+    "PMD.DoNotUseThreads", "PMD.AvoidInstantiatingObjectsInLoops"
+})
 final class Mux extends ThreadPoolExecutor implements Closeable {
 
     /**
@@ -78,7 +80,6 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     /**
      * Public ctor.
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Mux() {
         super(
             Mux.THREADS,
@@ -154,6 +155,12 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                     );
                 } else {
                     this.queue.add(task);
+                    for (Urn who : task.dependants()) {
+                        synchronized (this) {
+                            this.dependants.putIfAbsent(who, new AtomicLong());
+                            this.dependants.get(who).incrementAndGet();
+                        }
+                    }
                     Logger.debug(
                         this,
                         // @checkstyle LineLength (1 line)
@@ -177,7 +184,6 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
          * {@inheritDoc}
          */
         @Override
-        @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
         public void run() {
             while (true) {
                 Task task;
@@ -186,12 +192,6 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                     throw new IllegalStateException(ex);
-                }
-                for (Urn who : task.dependants()) {
-                    synchronized (Mux.this) {
-                        Mux.this.dependants.putIfAbsent(who, new AtomicLong());
-                        Mux.this.dependants.get(who).incrementAndGet();
-                    }
                 }
                 this.run(task);
                 for (Urn who : task.dependants()) {

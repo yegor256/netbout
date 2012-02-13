@@ -66,7 +66,7 @@ public final class ExceptionTrap extends HttpServlet {
 
     /**
      * Extend velocity context with a value from java servlet.
-     * @param context The context
+     * @param template The template to extend
      * @param request The request to get attributes from
      * @param suffix The suffix of java attribute
      */

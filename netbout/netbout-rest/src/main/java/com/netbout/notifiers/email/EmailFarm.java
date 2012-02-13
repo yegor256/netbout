@@ -40,10 +40,10 @@ import com.netbout.spi.cpa.Operation;
 import com.netbout.text.Template;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.velocity.VelocityContext;
 
 /**
  * Email farm.
@@ -128,7 +128,7 @@ public final class EmailFarm implements IdentityAware {
         List<Urn> urns = null;
         if (keyword.matches(this.EMAIL_REGEX)) {
             urns = new ArrayList<Urn>();
-            urns.add(new Urn(this.NID, keyword));
+            urns.add(new Urn(this.NID, keyword.toLowerCase(Locale.ENGLISH)));
         }
         return urns;
     }
