@@ -82,8 +82,6 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         text.append(String.format("%d identities\n", this.waiting.size()));
         text.append(String.format("%d in queue\n", this.getQueue().size()));
         text.append(String.format("%.2fms avg time\n\n", this.stats.getMean()));
-        // text.append("Watcher's stats:\n");
-        // text.append(this.watcher.statistics());
         return text.toString();
     }
 
@@ -92,11 +90,10 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      */
     @Override
     public void close() {
-        // this.watcher.close();
         final List<Runnable> killed = this.shutdownNow();
-        Logger.warn(
+        Logger.info(
             this,
-            "#close(): abruptly terminated %d tasks (%d remained in the queue)",
+            "#close(): terminated %d tasks (%d remained in the queue)",
             killed.size(),
             this.getQueue().size()
         );
@@ -137,6 +134,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     protected void beforeExecute(final Thread thread, final Runnable task) {
         for (Urn who : ((Task) task).dependants()) {
             synchronized (this) {
@@ -144,7 +142,6 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 this.waiting.get(who).incrementAndGet();
             }
         }
-        // this.watcher.started(thread, task);
     }
 
     /**
@@ -157,7 +154,6 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 this.waiting.get(who).decrementAndGet();
             }
         }
-        // this.watcher.finished(task);
         if (problem != null) {
             this.submit(task);
             Logger.warn(

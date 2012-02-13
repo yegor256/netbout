@@ -83,6 +83,14 @@ final class SeeBoutTask implements Task {
      * {@inheritDoc}
      */
     @Override
+    public boolean equals(final Object task) {
+        return this.hashCode() == task.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return String.format("see-bout-#%d", this.bout.number());
     }

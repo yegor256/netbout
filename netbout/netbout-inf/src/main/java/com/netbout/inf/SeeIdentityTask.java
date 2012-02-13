@@ -84,6 +84,14 @@ final class SeeIdentityTask implements Task {
      * {@inheritDoc}
      */
     @Override
+    public boolean equals(final Object task) {
+        return this.hashCode() == task.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Set<Urn> dependants() {
         return new HashSet(Arrays.asList(new Urn[] {this.identity.name()}));
     }

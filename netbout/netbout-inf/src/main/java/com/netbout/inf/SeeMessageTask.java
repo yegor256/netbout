@@ -73,6 +73,14 @@ final class SeeMessageTask implements Task {
      * {@inheritDoc}
      */
     @Override
+    public boolean equals(final Object task) {
+        return this.hashCode() == task.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Set<Urn> dependants() {
         final Set<Urn> names = new HashSet<Urn>();
         for (Participant dude : this.message.bout().participants()) {
