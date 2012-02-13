@@ -26,76 +26,67 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * The task to review one message.
+ * Abstract task.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeMessageTask extends AbstractTask {
+abstract class AbstractTask implements Task {
 
     /**
-     * The heap.
+     * When started.
      */
-    private final transient Heap heap;
+    private transient Long started;
 
     /**
-     * The bout.
+     * When finished (or NULL if still running).
      */
-    private final transient Message message;
+    private transient Long finished;
 
     /**
-     * Public ctor.
-     * @param where The HEAP to work with
-     * @param what The message to update
+     * {@inheritDoc}
      */
-    public SeeMessageTask(final Heap where, final Message what) {
-        super();
-        this.heap = where;
-        this.message = what;
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<Urn> dependants() {
-        final Set<Urn> names = new HashSet<Urn>();
-        for (Participant dude : this.message.bout().participants()) {
-            names.add(dude.identity().name());
+    public boolean equals(final Object task) {
+        return this.hashCode() == task.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+        this.started = System.currentTimeMillis();
+        this.execute();
+        this.finished = System.currentTimeMillis();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long time() {
+        Long time;
+        if (this.finished == null) {
+            time = System.currentTimeMillis() - this.started;
+        } else {
+            time = this.finished - this.started;
         }
-        return names;
+        return time;
     }
 
     /**
-     * {@inheritDoc}
+     * Execute task.
      */
-    @Override
-    public String toString() {
-        return String.format("see-message-#%d", this.message.number());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void execute() {
-        final Long number = this.message.number();
-        final Msg msg = this.heap.get(number);
-        PredicateBuilder.extract(this.message, msg);
-        Logger.debug(
-            this,
-            "#exec(): cached message #%d in %dms",
-            number,
-            this.time()
-        );
-    }
+    protected abstract void execute();
 
 }

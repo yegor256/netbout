@@ -28,9 +28,13 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The task to review one identity.
@@ -38,8 +42,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
-final class SeeIdentityTask implements Runnable {
+final class SeeIdentityTask extends AbstractTask {
 
     /**
      * The infinity.
@@ -64,9 +67,18 @@ final class SeeIdentityTask implements Runnable {
      */
     public SeeIdentityTask(final Infinity inf, final Bus where,
         final Identity what) {
+        super();
         this.infinity = inf;
         this.bus = where;
         this.identity = what;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Urn> dependants() {
+        return new HashSet(Arrays.asList(new Urn[] {this.identity.name()}));
     }
 
     /**
@@ -81,8 +93,7 @@ final class SeeIdentityTask implements Runnable {
      * {@inheritDoc}
      */
     @Override
-    public void run() {
-        final long start = System.currentTimeMillis();
+    protected void execute() {
         final List<Long> numbers = this.bus
             .make("get-bouts-of-identity")
             .synchronously()
@@ -101,7 +112,7 @@ final class SeeIdentityTask implements Runnable {
             "#exec(): cached %d bout(s) of '%s' in %dms",
             numbers.size(),
             this.identity.name(),
-            System.currentTimeMillis() - start
+            this.time()
         );
     }
 

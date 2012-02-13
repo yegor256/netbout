@@ -50,17 +50,25 @@ public final class MuxTest {
     @Test
     public void runsTasksInParallel() throws Exception {
         final Mux mux = new Mux();
-        final Set<Urn> names = new HashSet<Urn>();
         final Urn name = new UrnMocker().mock();
-        names.add(name);
-        final Runnable task = new Runnable() {
+        final Task task = new AbstractTask() {
             @Override
-            public void run() {
+            protected void execute() {
                 // do nothing
             }
+            @Override
+            public String toString() {
+                return "foo";
+            }
+            @Override
+            public Set<Urn> dependants() {
+                final Set<Urn> names = new HashSet<Urn>();
+                names.add(name);
+                return names;
+            }
         };
-        mux.submit(names, task);
-        mux.submit(names, task);
+        mux.submit(task);
+        mux.submit(task);
         TimeUnit.SECONDS.sleep(1L);
         MatcherAssert.assertThat(mux.eta(name), Matchers.equalTo(0L));
     }

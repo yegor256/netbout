@@ -31,12 +31,8 @@ import com.netbout.inf.ih.StageFarm;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Default implementation of Infitity.
@@ -159,10 +155,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Identity identity) {
-        this.mux.submit(
-            new HashSet(Arrays.asList(new Urn[] {identity.name()})),
-            new SeeIdentityTask(this, this.bus, identity)
-        );
+        this.mux.submit(new SeeIdentityTask(this, this.bus, identity));
         Logger.debug(
             this,
             "see('%s'): request submitted",
@@ -175,10 +168,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Bout bout) {
-        this.mux.submit(
-            this.names(bout),
-            new SeeBoutTask(this, this.bus, bout)
-        );
+        this.mux.submit(new SeeBoutTask(this, this.bus, bout));
         Logger.debug(
             this,
             "see(bout #%d): request submitted",
@@ -191,28 +181,12 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
-        this.mux.submit(
-            this.names(message.bout()),
-            new SeeMessageTask(this.heap, message)
-        );
+        this.mux.submit(new SeeMessageTask(this.heap, message));
         Logger.debug(
             this,
             "see(message #%d): request submitted",
             message.number()
         );
-    }
-
-    /**
-     * Names of bout participants.
-     * @param bout The bout
-     * @return Names
-     */
-    private static Set<Urn> names(final Bout bout) {
-        final Set<Urn> names = new HashSet<Urn>();
-        for (Participant dude : bout.participants()) {
-            names.add(dude.identity().name());
-        }
-        return names;
     }
 
 }

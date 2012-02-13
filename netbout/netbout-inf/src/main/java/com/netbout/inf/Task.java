@@ -26,76 +26,28 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The task to review one message.
+ * One task to be executed in Mux.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeMessageTask extends AbstractTask {
+@SuppressWarnings("PMD.DoNotUseThreads")
+interface Task extends Runnable {
 
     /**
-     * The heap.
+     * Who is waiting for the result of this task?
+     * @return List of URNs of identities
      */
-    private final transient Heap heap;
+    Set<Urn> dependants();
 
     /**
-     * The bout.
+     * How much time this task consumed.
+     * @return In milliseconds
      */
-    private final transient Message message;
-
-    /**
-     * Public ctor.
-     * @param where The HEAP to work with
-     * @param what The message to update
-     */
-    public SeeMessageTask(final Heap where, final Message what) {
-        super();
-        this.heap = where;
-        this.message = what;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Urn> dependants() {
-        final Set<Urn> names = new HashSet<Urn>();
-        for (Participant dude : this.message.bout().participants()) {
-            names.add(dude.identity().name());
-        }
-        return names;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("see-message-#%d", this.message.number());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void execute() {
-        final Long number = this.message.number();
-        final Msg msg = this.heap.get(number);
-        PredicateBuilder.extract(this.message, msg);
-        Logger.debug(
-            this,
-            "#exec(): cached message #%d in %dms",
-            number,
-            this.time()
-        );
-    }
+    Long time();
 
 }

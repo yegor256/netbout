@@ -28,9 +28,13 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The task to review one bout.
@@ -38,8 +42,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
-final class SeeBoutTask implements Runnable {
+final class SeeBoutTask extends AbstractTask {
 
     /**
      * The infinity.
@@ -63,6 +66,7 @@ final class SeeBoutTask implements Runnable {
      * @param what The bout to update
      */
     public SeeBoutTask(final Infinity inf, final Bus where, final Bout what) {
+        super();
         this.infinity = inf;
         this.bus = where;
         this.bout = what;
@@ -80,8 +84,19 @@ final class SeeBoutTask implements Runnable {
      * {@inheritDoc}
      */
     @Override
-    public void run() {
-        final long start = System.currentTimeMillis();
+    public Set<Urn> dependants() {
+        final Set<Urn> names = new HashSet<Urn>();
+        for (Participant dude : this.bout.participants()) {
+            names.add(dude.identity().name());
+        }
+        return names;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void execute() {
         final List<Long> numbers = this.bus
             .make("get-bout-messages")
             .synchronously()
@@ -100,7 +115,7 @@ final class SeeBoutTask implements Runnable {
             "#exec(): cached %d message(s) of bout #%d in %dms",
             numbers.size(),
             this.bout.number(),
-            System.currentTimeMillis() - start
+            this.time()
         );
     }
 
