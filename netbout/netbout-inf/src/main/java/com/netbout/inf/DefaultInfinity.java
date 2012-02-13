@@ -155,7 +155,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Identity identity) {
-        this.mux.submit(new SeeIdentityTask(this, this.bus, identity));
+        this.mux.add(new SeeIdentityTask(this, this.bus, identity));
         Logger.debug(
             this,
             "see('%s'): request submitted",
@@ -168,7 +168,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Bout bout) {
-        this.mux.submit(new SeeBoutTask(this, this.bus, bout));
+        this.mux.add(new SeeBoutTask(this, this.bus, bout));
         Logger.debug(
             this,
             "see(bout #%d): request submitted",
@@ -181,7 +181,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
-        this.mux.submit(new SeeMessageTask(this.heap, message));
+        this.mux.add(new SeeMessageTask(this.heap, message));
         Logger.debug(
             this,
             "see(message #%d): request submitted",

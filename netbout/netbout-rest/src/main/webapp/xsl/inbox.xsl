@@ -53,9 +53,9 @@
         <script src="/js/dudes.js">
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <link href="/css/inbox.css" rel="stylesheet" type="text/css"></link>
-        <link href="/css/dudes.css" rel="stylesheet" type="text/css"></link>
-        <link href="/css/periods.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/inbox.css" rel="stylesheet" type="text/css"/>
+        <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
+        <link href="/css/periods.css" rel="stylesheet" type="text/css"/>
     </xsl:template>
 
     <xsl:template name="content">
