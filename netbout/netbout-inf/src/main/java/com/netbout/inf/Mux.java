@@ -30,9 +30,11 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.io.Closeable;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +64,12 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      */
     private final transient ConcurrentMap<Urn, AtomicLong> dependants =
         new ConcurrentHashMap<Urn, AtomicLong>();
+
+    /**
+     * Actively running tasks, at the moment.
+     */
+    private final transient Set<Runnable> active =
+        new CopyOnWriteArraySet<Runnable>();
 
     /**
      * Stats on performance.
@@ -136,12 +144,25 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         if (!this.isTerminated() && !this.isShutdown()
             && !this.isTerminating()) {
             synchronized (this) {
-                if (!this.getQueue().contains(task)) {
-                    this.submit(new Shell(task));
+                final Runnable shell = new Shell(task);
+                if (this.getQueue().contains(shell)) {
+                    Logger.warn(
+                        this,
+                        "#add('%s'): in the queue already, ignored dup",
+                        task
+                    );
+                } else if (this.active.contains(shell)) {
+                    Logger.warn(
+                        this,
+                        "#add('%s'): running at the moment, ignored dup",
+                        task
+                    );
+                } else {
+                    this.submit(shell);
                     Logger.debug(
                         this,
                         // @checkstyle LineLength (1 line)
-                        "#submit('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
+                        "#add('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
                         task,
                         this.getQueue().size(),
                         this.getActiveCount(),
@@ -190,6 +211,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
             "PMD.AvoidInstantiatingObjectsInLoops", "PMD.AvoidCatchingThrowable"
         })
         public void run() {
+            Mux.this.active.add(this);
             for (Urn who : this.task.dependants()) {
                 synchronized (Mux.this) {
                     Mux.this.dependants.putIfAbsent(who, new AtomicLong());
@@ -221,6 +243,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 }
             }
             Mux.this.stats.addValue((double) this.task.time());
+            Mux.this.active.remove(this);
         }
     }
 
