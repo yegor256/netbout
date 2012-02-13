@@ -24,59 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
-
-import com.netbout.hub.Hub;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 
 /**
- * Encrypts and decrypts.
+ * Text-related entities.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Cryptor {
-
-    /**
-     * Encrypt user+identity into text.
-     * @param identity The identity
-     * @return Encrypted string
-     */
-    public String encrypt(final Identity identity) {
-        return new Cipher().encrypt(identity.name().toString());
-    }
-
-    /**
-     * Get identity from hash.
-     * @param hub Hub where to get identities
-     * @param hash The hash to use
-     * @return The name found in it
-     * @throws DecryptionException If we can't decrypt it
-     */
-    public Identity decrypt(final Hub hub, final String hash)
-        throws DecryptionException {
-        if (hash == null) {
-            throw new DecryptionException();
-        }
-        final String iname = new Cipher().decrypt(hash);
-        Identity identity;
-        try {
-            identity = hub.identity(new Urn(iname));
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new DecryptionException(ex);
-        } catch (java.net.URISyntaxException ex) {
-            throw new DecryptionException(ex);
-        }
-        Logger.debug(
-            this,
-            "#decrypt(%[type]s, %s): identity '%s' found",
-            hub,
-            hash,
-            identity.name()
-        );
-        return identity;
-    }
-
-}
+package com.netbout.text;

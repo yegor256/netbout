@@ -24,29 +24,29 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.text;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link Cipher}.
+ * Test case for {@link Template}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CipherTest {
+public final class TemplateTest {
 
     /**
-     * Cipher can encrypt and decrypt back.
+     * Template can format Velocity template.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void encryptsAndDecryptsBack() throws Exception {
-        final String message = "hello, world!";
-        final String encrypted = new Cipher().encrypt(message);
-        final String decrypted = new Cipher().decrypt(encrypted);
-        MatcherAssert.assertThat(decrypted, Matchers.equalTo(message));
+    public void formatsVelocityTemplate() throws Exception {
+        MatcherAssert.assertThat(
+            new Template("com/netbout/rest/wrapper.xsl.vm").toString(),
+            Matchers.containsString("xsl:include")
+        );
     }
 
 }
