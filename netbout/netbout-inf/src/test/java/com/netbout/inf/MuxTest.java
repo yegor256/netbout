@@ -28,8 +28,11 @@ package com.netbout.inf;
 
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import java.security.SecureRandom;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -40,8 +43,13 @@ import org.junit.Test;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
+@SuppressWarnings({ "PMD.DoNotUseThreads", "PMD.TestClassWithoutTestCases" })
 public final class MuxTest {
+
+    /**
+     * The random to use.
+     */
+    private static final Random RANDOM = new SecureRandom();
 
     /**
      * Mux can run tasks in parallel.
@@ -51,26 +59,59 @@ public final class MuxTest {
     public void runsTasksInParallel() throws Exception {
         final Mux mux = new Mux();
         final Urn name = new UrnMocker().mock();
-        final Task task = new AbstractTask() {
-            @Override
-            protected void execute() {
-                // do nothing
-            }
-            @Override
-            public String toString() {
-                return "foo";
-            }
-            @Override
-            public Set<Urn> dependants() {
-                final Set<Urn> names = new HashSet<Urn>();
-                names.add(name);
-                return names;
-            }
-        };
-        mux.submit(task);
-        mux.submit(task);
-        TimeUnit.SECONDS.sleep(1L);
+        final CountDownLatch latch = new CountDownLatch(100);
+        final Task task = new FooTask(name, latch);
+        for (int idx = 0; idx < latch.getCount(); idx += 1) {
+            mux.add(task);
+        }
+        try {
+            latch.await(1, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            throw new IllegalStateException(ex);
+        }
         MatcherAssert.assertThat(mux.eta(name), Matchers.equalTo(0L));
+        mux.close();
     }
+
+    private static final class FooTask extends AbstractTask {
+        /**
+         * My name.
+         */
+        private final transient Urn name;
+        /**
+         * The latch to count down.
+         */
+        private final transient CountDownLatch latch;
+        /**
+         * Public ctor.
+         * @param urn My name
+         * @param ltch Latch to count down
+         */
+        public FooTask(final Urn urn, final CountDownLatch ltch) {
+            super();
+            this.name = urn;
+            this.latch = ltch;
+        }
+        @Override
+        protected void execute() {
+            try {
+                // @checkstyle MagicNumber (1 line)
+                TimeUnit.MILLISECONDS.sleep((long) MuxTest.RANDOM.nextInt(10));
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+            this.latch.countDown();
+        }
+        @Override
+        public String toString() {
+            return this.name.toString();
+        }
+        @Override
+        public Set<Urn> dependants() {
+            final Set<Urn> names = new HashSet<Urn>();
+            names.add(this.name);
+            return names;
+        }
+    };
 
 }

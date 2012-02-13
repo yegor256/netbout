@@ -58,6 +58,12 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         Runtime.getRuntime().availableProcessors() * 4;
 
     /**
+     * Tasks to execute.
+     */
+    private final transient BlockingQueue<Task> queue =
+        new LinkedBlockingQueue<Task>();
+
+    /**
      * How many tasks are currently dependants.
      */
     private final transient ConcurrentMap<Urn, AtomicLong> dependants =
@@ -72,15 +78,19 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     /**
      * Public ctor.
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Mux() {
         super(
             Mux.THREADS,
-            Mux.THREADS * 2,
+            Mux.THREADS,
             1L,
             TimeUnit.DAYS,
-            (BlockingQueue) new LinkedBlockingQueue<Task>()
+            new LinkedBlockingQueue<Runnable>()
         );
         this.prestartAllCoreThreads();
+        for (int thread = 0; thread < Mux.THREADS; thread += 1) {
+            this.submit(new Routine());
+        }
     }
 
     /**
@@ -105,7 +115,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
             this,
             "#close(): terminated %d tasks (%d remained in the queue)",
             killed.size(),
-            this.getQueue().size()
+            this.queue.size()
         );
     }
 
@@ -119,7 +129,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         if (this.dependants.containsKey(who)) {
             eta = this.dependants.get(who).get();
             if (eta > 0) {
-                eta = this.getQueue().size() * (long) this.stats.getMean()
+                eta = this.queue.size() * (long) this.stats.getMean()
                     / this.getActiveCount();
             }
         } else {
@@ -136,21 +146,20 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         if (!this.isTerminated() && !this.isShutdown()
             && !this.isTerminating()) {
             synchronized (this) {
-                final Runnable shell = new Shell(task);
-                if (this.getQueue().contains(shell)) {
+                if (this.queue.contains(task)) {
                     Logger.warn(
                         this,
                         "#add('%s'): in the queue already, ignored dup",
                         task
                     );
                 } else {
-                    this.submit(shell);
+                    this.queue.add(task);
                     Logger.debug(
                         this,
                         // @checkstyle LineLength (1 line)
                         "#add('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
                         task,
-                        this.getQueue().size(),
+                        this.queue.size(),
                         this.getActiveCount(),
                         this.getCompletedTaskCount(),
                         this.getCorePoolSize()
@@ -161,73 +170,63 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     }
 
     /**
-     * Task executing shell.
+     * Task executing routine.
      */
-    private final class Shell implements Runnable {
-        /**
-         * The task to execute.
-         */
-        private final transient Task task;
-        /**
-         * Public ctor.
-         * @param tsk The task to execute
-         */
-        public Shell(final Task tsk) {
-            this.task = tsk;
-        }
+    private final class Routine implements Runnable {
         /**
          * {@inheritDoc}
          */
         @Override
-        public int hashCode() {
-            return this.task.hashCode();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean equals(final Object obj) {
-            return this.hashCode() == obj.hashCode();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        @SuppressWarnings({
-            "PMD.AvoidInstantiatingObjectsInLoops", "PMD.AvoidCatchingThrowable"
-        })
+        @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
         public void run() {
-            for (Urn who : this.task.dependants()) {
-                synchronized (Mux.this) {
-                    Mux.this.dependants.putIfAbsent(who, new AtomicLong());
-                    Mux.this.dependants.get(who).incrementAndGet();
+            while (true) {
+                Task task;
+                try {
+                    task = Mux.this.queue.take();
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(ex);
                 }
+                for (Urn who : task.dependants()) {
+                    synchronized (Mux.this) {
+                        Mux.this.dependants.putIfAbsent(who, new AtomicLong());
+                        Mux.this.dependants.get(who).incrementAndGet();
+                    }
+                }
+                this.run(task);
+                for (Urn who : task.dependants()) {
+                    synchronized (Mux.this) {
+                        Mux.this.dependants.get(who).decrementAndGet();
+                    }
+                }
+                Mux.this.stats.addValue((double) task.time());
             }
+        }
+        /**
+         * Run one task.
+         * @param task The task to run
+         */
+        @SuppressWarnings("PMD.AvoidCatchingThrowable")
+        private void run(final Task task) {
             try {
-                this.task.run();
+                task.run();
             // @checkstyle IllegalCatch (1 line)
             } catch (Throwable ex) {
-                Mux.this.add(this.task);
+                Mux.this.add(task);
                 Logger.warn(
                     this,
                     "#run('%s'): resubmitted because of %[type]s: '%s'",
-                    this.task,
+                    task,
                     ex,
                     ex.getMessage()
                 );
                 Logger.debug(
                     this,
                     "#run('%s'): resubmit because of:\n%[exception]s",
-                    this.task,
+                    task,
                     ex
                 );
             }
-            for (Urn who : this.task.dependants()) {
-                synchronized (Mux.this) {
-                    Mux.this.dependants.get(who).decrementAndGet();
-                }
-            }
-            Mux.this.stats.addValue((double) this.task.time());
         }
     }
 
