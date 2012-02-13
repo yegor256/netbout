@@ -106,7 +106,7 @@
                 </xsl:attribute>
                 <p>
                     <textarea name="text" cols="80" rows="5">
-                        <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+                        <xsl:comment>empty text area</xsl:comment>
                     </textarea>
                     <input value="Post new message" type="submit" />
                 </p>

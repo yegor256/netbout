@@ -23,44 +23,28 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
  */
+package com.netbout.rest.rexsl.scripts
 
-html {
-    height: 100%;
+import com.rexsl.test.RestTester
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
+
+// In this script we are trying to download all static resources - they
+// should be available
+
+[
+    '/robots.txt',
+    '/css/global.css',
+    '/js/bout.js',
+    '/xsl/login.xsl',
+].each { path ->
+    RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
+        .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)
+        .get('reading static resource')
+        .assertStatus(HttpURLConnection.HTTP_OK)
 }
-
-body {
-    background-color: #f3f3f1;
-    height: 100%;
-    min-height: 100%;
-    font-size: 7.8pt;
-}
-
-/* wrapper */
-#wrapper {
-    width: 100%;
-    height: 100%;
-    font-size: 1em;
-}
-
-/* content */
-#content {
-    text-align: center;
-    vertical-align: middle;
-}
-
-#logo {
-    width: 11.3em;
-    height: 2.7em;
-    margin-bottom: 2em;
-}
-
-#facebook {
-    width: 17.3em;
-    height: 2.8em;
-}
-
-#message {
-    font-size: 1.4em;
-}
-

@@ -38,9 +38,7 @@
     <xsl:include href="/xsl/templates.xsl" />
 
     <xsl:template match="/">
-        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html PUBLIC
-            "-//W3C//DTD XHTML 1.1//EN"
-            "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;</xsl:text>
+        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <html lang="en-US">
             <head>
                 <meta http-equiv="Content-type" content="application/xhtml+xml;charset=UTF-8" />
@@ -53,14 +51,14 @@
                 <title>login</title>
             </head>
             <body>
-                <div id="version">
+                <aside id="version">
                     <xsl:text>r</xsl:text>
                     <xsl:value-of select="/page/version/revision"/>
                     <xsl:text> </xsl:text>
                     <xsl:call-template name="nano">
                         <xsl:with-param name="nano" select="/page/@nano" />
                     </xsl:call-template>
-                </div>
+                </aside>
                 <table id="wrapper">
                     <tr>
                         <td id="content">
