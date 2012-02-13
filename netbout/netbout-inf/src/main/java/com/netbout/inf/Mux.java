@@ -128,6 +128,15 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 this.getQueue().add(task);
             }
         }
+        Logger.debug(
+            this,
+            "#submit('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
+            task,
+            this.getQueue().size(),
+            this.getActiveCount(),
+            this.getCompletedTaskCount(),
+            this.getCorePoolSize()
+        );
     }
 
     /**
@@ -142,6 +151,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 this.waiting.get(who).incrementAndGet();
             }
         }
+        thread.setName(task.toString());
     }
 
     /**
@@ -154,7 +164,13 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 this.waiting.get(who).decrementAndGet();
             }
         }
-        if (problem != null) {
+        if (problem == null) {
+            Logger.debug(
+                this,
+                "#afterExecute('%s'): done",
+                task
+            );
+        } else {
             this.submit(task);
             Logger.warn(
                 this,
