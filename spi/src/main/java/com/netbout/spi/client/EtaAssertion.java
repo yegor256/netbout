@@ -71,8 +71,10 @@ public final class EtaAssertion implements AssertionPolicy {
             if (this.eta > 0) {
                 Logger.warn(
                     this,
-                    "assertThat(..): ETA=%dms reported, the page is not ready",
-                    this.eta
+                    // @checkstyle LineLength (1 line)
+                    "assertThat(..): ETA=%dms reported for '%s', the page is not ready",
+                    this.eta,
+                    response.xpath("/page/identity/name/text()").get(0)
                 );
                 throw new AssertionError();
             }

@@ -147,7 +147,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
             && !this.isTerminating()) {
             synchronized (this) {
                 if (this.queue.contains(task)) {
-                    Logger.warn(
+                    Logger.debug(
                         this,
                         "#add('%s'): in the queue already, ignored dup",
                         task
