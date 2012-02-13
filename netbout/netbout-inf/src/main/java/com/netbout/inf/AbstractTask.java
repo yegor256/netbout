@@ -26,28 +26,67 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Urn;
-import java.util.Set;
-
 /**
- * One task to be executed in Mux.
+ * Abstract task.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
-interface Task extends Runnable {
+abstract class AbstractTask implements Task {
 
     /**
-     * Who is waiting for the result of this task?
-     * @return List of URNs of identities
+     * When started.
      */
-    Set<Urn> dependants();
+    private transient Long started;
 
     /**
-     * How much time this task consumed.
-     * @return In milliseconds
+     * When finished (or NULL if still running).
      */
-    Long time();
+    private transient Long finished;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object task) {
+        return this.hashCode() == task.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+        this.started = System.currentTimeMillis();
+        this.execute();
+        this.finished = System.currentTimeMillis();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long time() {
+        Long time;
+        if (this.finished == null) {
+            time = System.currentTimeMillis() - this.started;
+        } else {
+            time = this.finished - this.started;
+        }
+        return time;
+    }
+
+    /**
+     * Execute task.
+     */
+    protected abstract void execute();
 
 }

@@ -42,7 +42,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeBoutTask implements Task {
+final class SeeBoutTask extends AbstractTask {
 
     /**
      * The infinity.
@@ -66,25 +66,10 @@ final class SeeBoutTask implements Task {
      * @param what The bout to update
      */
     public SeeBoutTask(final Infinity inf, final Bus where, final Bout what) {
+        super();
         this.infinity = inf;
         this.bus = where;
         this.bout = what;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.toString().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object task) {
-        return this.hashCode() == task.hashCode();
     }
 
     /**
@@ -111,8 +96,7 @@ final class SeeBoutTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public void run() {
-        final long start = System.currentTimeMillis();
+    protected void execute() {
         final List<Long> numbers = this.bus
             .make("get-bout-messages")
             .synchronously()
@@ -131,7 +115,7 @@ final class SeeBoutTask implements Task {
             "#exec(): cached %d message(s) of bout #%d in %dms",
             numbers.size(),
             this.bout.number(),
-            System.currentTimeMillis() - start
+            this.time()
         );
     }
 

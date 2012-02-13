@@ -42,7 +42,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeIdentityTask implements Task {
+final class SeeIdentityTask extends AbstractTask {
 
     /**
      * The infinity.
@@ -67,25 +67,10 @@ final class SeeIdentityTask implements Task {
      */
     public SeeIdentityTask(final Infinity inf, final Bus where,
         final Identity what) {
+        super();
         this.infinity = inf;
         this.bus = where;
         this.identity = what;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.toString().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object task) {
-        return this.hashCode() == task.hashCode();
     }
 
     /**
@@ -108,8 +93,7 @@ final class SeeIdentityTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public void run() {
-        final long start = System.currentTimeMillis();
+    protected void execute() {
         final List<Long> numbers = this.bus
             .make("get-bouts-of-identity")
             .synchronously()
@@ -128,7 +112,7 @@ final class SeeIdentityTask implements Task {
             "#exec(): cached %d bout(s) of '%s' in %dms",
             numbers.size(),
             this.identity.name(),
-            System.currentTimeMillis() - start
+            this.time()
         );
     }
 

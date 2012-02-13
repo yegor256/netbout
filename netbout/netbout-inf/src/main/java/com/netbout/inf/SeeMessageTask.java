@@ -39,7 +39,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeMessageTask implements Task {
+final class SeeMessageTask extends AbstractTask {
 
     /**
      * The heap.
@@ -57,24 +57,9 @@ final class SeeMessageTask implements Task {
      * @param what The message to update
      */
     public SeeMessageTask(final Heap where, final Message what) {
+        super();
         this.heap = where;
         this.message = what;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.toString().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object task) {
-        return this.hashCode() == task.hashCode();
     }
 
     /**
@@ -101,8 +86,7 @@ final class SeeMessageTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public void run() {
-        final long start = System.currentTimeMillis();
+    protected void execute() {
         final Long number = this.message.number();
         final Msg msg = this.heap.get(number);
         PredicateBuilder.extract(this.message, msg);
@@ -110,7 +94,7 @@ final class SeeMessageTask implements Task {
             this,
             "#exec(): cached message #%d in %dms",
             number,
-            System.currentTimeMillis() - start
+            this.time()
         );
     }
 

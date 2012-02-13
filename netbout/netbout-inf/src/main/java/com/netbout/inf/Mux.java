@@ -182,9 +182,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 this.dependants.get(who).decrementAndGet();
             }
         }
-        this.stats.addValue(
-            (double) System.currentTimeMillis() - this.active.get(task)
-        );
+        this.stats.addValue((double) ((Task) task).time());
         this.active.remove(task);
         if (problem == null) {
             Logger.debug(

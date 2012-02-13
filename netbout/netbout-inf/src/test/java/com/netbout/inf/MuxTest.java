@@ -51,10 +51,14 @@ public final class MuxTest {
     public void runsTasksInParallel() throws Exception {
         final Mux mux = new Mux();
         final Urn name = new UrnMocker().mock();
-        final Task task = new Task() {
+        final Task task = new AbstractTask() {
             @Override
-            public void run() {
+            protected void execute() {
                 // do nothing
+            }
+            @Override
+            public String toString() {
+                return "foo";
             }
             @Override
             public Set<Urn> dependants() {
