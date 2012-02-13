@@ -138,12 +138,12 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      * Add new task to be executed ASAP.
      * @param task The task to execute
      */
-    public void submit(final Task task) {
+    public void add(final Task task) {
         if (!this.isTerminated() && !this.isShutdown()
             && !this.isTerminating()) {
             synchronized (this) {
                 if (!this.getQueue().contains(task)) {
-                    this.getQueue().add(task);
+                    this.submit(task);
                     Logger.debug(
                         this,
                         // @checkstyle LineLength (1 line)
@@ -194,7 +194,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 task
             );
         } else {
-            this.submit(task);
+            this.add((Task) task);
             Logger.warn(
                 this,
                 "#afterExecute('%s'): resubmitted because of %[type]s: '%s'",
