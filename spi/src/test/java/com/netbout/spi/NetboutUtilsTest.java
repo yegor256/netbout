@@ -48,14 +48,14 @@ public final class NetboutUtilsTest {
     @Test
     public void calculatesDateOfBout() throws Exception {
         final Date bdate = new Date();
-        final Date mdate = new Date();
+        final Date mdate = new Date(bdate.getTime() + 1);
         final Bout bout = new BoutMocker()
             .withDate(bdate)
             .withMessage(new MessageMocker().withDate(mdate).mock())
             .mock();
         MatcherAssert.assertThat(
             NetboutUtils.dateOf(bout),
-            Matchers.equalTo(bdate)
+            Matchers.equalTo(mdate)
         );
     }
 
