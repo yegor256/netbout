@@ -58,10 +58,16 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         Runtime.getRuntime().availableProcessors() * 4;
 
     /**
-     * How many tasks are currently waiting.
+     * How many tasks are currently dependants.
      */
-    private final transient ConcurrentMap<Urn, AtomicLong> waiting =
+    private final transient ConcurrentMap<Urn, AtomicLong> dependants =
         new ConcurrentHashMap<Urn, AtomicLong>();
+
+    /**
+     * Actively running tasks.
+     */
+    private final transient ConcurrentMap<Runnable, Long> active =
+        new ConcurrentHashMap<Runnable, Long>();
 
     /**
      * Stats on performance.
@@ -77,7 +83,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
             Mux.THREADS,
             Mux.THREADS * 2,
             1L,
-            TimeUnit.MINUTES,
+            TimeUnit.DAYS,
             (BlockingQueue) new LinkedBlockingQueue<Task>()
         );
         this.prestartAllCoreThreads();
@@ -89,7 +95,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      */
     public String statistics() {
         final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d identities\n", this.waiting.size()));
+        text.append(String.format("%d identities\n", this.dependants.size()));
         text.append(String.format("%d in queue\n", this.getQueue().size()));
         text.append(String.format("%.2fms avg time\n\n", this.stats.getMean()));
         return text.toString();
@@ -116,8 +122,8 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      */
     public Long eta(final Urn who) {
         Long eta;
-        if (this.waiting.containsKey(who)) {
-            eta = this.waiting.get(who).get();
+        if (this.dependants.containsKey(who)) {
+            eta = this.dependants.get(who).get();
             if (eta > 0) {
                 eta = this.getQueue().size() * (long) this.stats.getMean()
                     / this.getActiveCount();
@@ -158,11 +164,12 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     protected void beforeExecute(final Thread thread, final Runnable task) {
         for (Urn who : ((Task) task).dependants()) {
             synchronized (this) {
-                this.waiting.putIfAbsent(who, new AtomicLong());
-                this.waiting.get(who).incrementAndGet();
+                this.dependants.putIfAbsent(who, new AtomicLong());
+                this.dependants.get(who).incrementAndGet();
             }
         }
         thread.setName(task.toString());
+        this.active.put(task, System.currentTimeMillis());
     }
 
     /**
@@ -172,9 +179,13 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     protected void afterExecute(final Runnable task, final Throwable problem) {
         for (Urn who : ((Task) task).dependants()) {
             synchronized (this) {
-                this.waiting.get(who).decrementAndGet();
+                this.dependants.get(who).decrementAndGet();
             }
         }
+        this.stats.addValue(
+            (double) System.currentTimeMillis() - this.active.get(task)
+        );
+        this.active.remove(task);
         if (problem == null) {
             Logger.debug(
                 this,
