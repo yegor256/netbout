@@ -29,7 +29,6 @@ package com.netbout.rest;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
-import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -113,7 +112,7 @@ public abstract class AbstractRs implements Resource {
     public final Identity identity() {
         try {
             return new Cryptor().decrypt(this.ihub, this.icookie);
-        } catch (com.netbout.utils.DecryptionException ex) {
+        } catch (DecryptionException ex) {
             Logger.debug(
                 this,
                 "Decryption failure from %s calling '%s': %[exception]s",

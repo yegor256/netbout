@@ -28,12 +28,12 @@ package com.netbout.rest.auth;
 
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
+import com.netbout.rest.Cryptor;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
-import com.netbout.utils.Cryptor;
 import com.ymock.util.Logger;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;

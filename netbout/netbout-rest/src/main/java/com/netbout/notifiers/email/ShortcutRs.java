@@ -28,7 +28,7 @@ package com.netbout.notifiers.email;
 
 import com.netbout.rest.AbstractRs;
 import com.netbout.rest.LoginRequiredException;
-import com.netbout.utils.Cipher;
+import com.netbout.text.SecureString;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -64,7 +64,7 @@ public final class ShortcutRs extends AbstractRs {
                 .queryParam("goto", "/{bout}")
                 .build(
                     anchor.identity().name(),
-                    new Cipher().encrypt(anchor.identity().name().toString()),
+                    new SecureString(anchor.identity().name()),
                     anchor.bout().number()
             )
         ).build();

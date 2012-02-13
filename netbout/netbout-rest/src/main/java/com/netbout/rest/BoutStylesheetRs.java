@@ -28,12 +28,12 @@ package com.netbout.rest;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Urn;
-import com.netbout.utils.TextUtils;
+import com.netbout.text.Template;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import org.apache.velocity.VelocityContext;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Stage-related requests.
@@ -81,30 +81,34 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/wrapper.xsl")
     @Produces("text/xsl")
     public String boutXsl() {
-        final VelocityContext context = new VelocityContext();
-        context.put(
-            "boutXsl",
-            TextUtils.ucode(this.base().path("/xsl/bout.xsl").build())
-        );
-        context.put(
-            "stageXsl",
-            TextUtils.ucode(
-                this.base()
-                    .path("/{bout}/xsl/{stage}/stage.xsl")
-                    .build(this.bout().number(), this.stage)
+        return new Template("com/netbout/rest/wrapper.xsl.vm")
+            .set(
+                "boutXsl",
+                StringEscapeUtils.escapeXml(
+                    this.base().path("/xsl/bout.xsl").build().toString()
+                )
             )
-        );
-        context.put(
-            "boutHome",
-            TextUtils.ucode(
-                this.uriInfo()
-                    .getBaseUriBuilder()
-                    .clone()
-                    .path("/{bout}/")
-                    .build(this.bout().number())
+            .set(
+                "stageXsl",
+                StringEscapeUtils.escapeXml(
+                    this.base()
+                        .path("/{bout}/xsl/{stage}/stage.xsl")
+                        .build(this.bout().number(), this.stage)
+                        .toString()
+                )
             )
-        );
-        return TextUtils.format("com/netbout/rest/wrapper.xsl.vm", context);
+            .set(
+                "boutHome",
+                StringEscapeUtils.escapeXml(
+                    this.uriInfo()
+                        .getBaseUriBuilder()
+                        .clone()
+                        .path("/{bout}/")
+                        .build(this.bout().number())
+                        .toString()
+                )
+            )
+            .toString();
     }
 
     /**

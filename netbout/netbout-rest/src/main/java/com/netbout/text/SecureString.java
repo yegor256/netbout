@@ -48,14 +48,14 @@ public final class SecureString {
     /**
      * Open content (without encryption).
      */
-    private final transient String text;
+    private final transient String raw;
 
     /**
      * Public ctor.
-     * @param txt The text (without encryption)
+     * @param text The text (without encryption)
      */
-    public SecureString(final String txt) {
-        this.text = txt;
+    public SecureString(final Object text) {
+        this.raw = text.toString();
     }
 
     /**
@@ -63,7 +63,7 @@ public final class SecureString {
      */
     @Override
     public String toString() {
-        return Base64.encodeBase64String(this.xor(this.text.getBytes()))
+        return Base64.encodeBase64String(this.xor(this.raw.getBytes()))
             .replace("=", "");
     }
 
@@ -74,9 +74,11 @@ public final class SecureString {
      */
     public static SecureString valueOf(final String hash) {
         try {
-            this.text = new String(
-                SecureString.xor(Base64.decodeBase64(hash.getBytes())),
-                CharEncoding.UTF_8
+            return new SecureString(
+                new String(
+                    SecureString.xor(Base64.decodeBase64(hash.getBytes())),
+                    CharEncoding.UTF_8
+                )
             );
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new IllegalStateException(ex);
@@ -87,8 +89,8 @@ public final class SecureString {
      * Get its original text, without encryption.
      * @return The text
      */
-    public String decrypted() {
-        return this.text;
+    public String text() {
+        return this.raw;
     }
 
     /**

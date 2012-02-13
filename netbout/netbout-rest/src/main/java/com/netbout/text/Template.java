@@ -32,7 +32,6 @@ import java.net.URI;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
@@ -61,8 +60,8 @@ public final class Template {
      * @param res Name of resource with template
      */
     public Template(final String res) {
-        assert rex != null;
-        this.name = tmpl;
+        assert res != null;
+        this.name = res;
     }
 
     /**
@@ -95,7 +94,8 @@ public final class Template {
             "org.apache.velocity"
         );
         engine.init();
-        final Template template = engine.getTemplate(this.name);
+        final org.apache.velocity.Template template =
+            engine.getTemplate(this.name);
         final StringWriter writer = new StringWriter();
         template.merge(context, new PrintWriter(writer));
         return writer.toString();

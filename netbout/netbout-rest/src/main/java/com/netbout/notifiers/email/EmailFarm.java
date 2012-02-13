@@ -37,7 +37,7 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import com.netbout.utils.TextUtils;
+import com.netbout.text.Template;
 import java.util.ArrayList;
 import java.util.List;
 import javax.mail.Address;
@@ -155,21 +155,20 @@ public final class EmailFarm implements IdentityAware {
      */
     private void send(final Participant dude, final Message message) {
         assert dude != null;
-        final VelocityContext context = new VelocityContext();
-        context.put("bout", dude.bout());
-        context.put("text", this.textOf(message));
-        context.put("author", NetboutUtils.aliasOf(message.author()));
-        context.put(
-            "href",
-            UriBuilder.fromUri("http://www.netbout.com/e")
-                .path("/{hash}")
-                .build(new AnchorEmail(dude.identity(), dude.bout()).hash())
-                .toString()
-        );
-        final String text = TextUtils.format(
-            "com/netbout/notifiers/email/email-notification.vm",
-            context
-        );
+        final String text = new Template(
+            "com/netbout/notifiers/email/email-notification.vm"
+        )
+            .set("bout", dude.bout())
+            .set("text", this.textOf(message))
+            .set("author", NetboutUtils.aliasOf(message.author()))
+            .set(
+                "href",
+                UriBuilder.fromUri("http://www.netbout.com/e")
+                    .path("/{hash}")
+                    .build(new AnchorEmail(dude.identity(), dude.bout()).hash())
+                    .toString()
+            )
+            .toString();
         final javax.mail.Message email = this.sender.newMessage();
         try {
             final InternetAddress reply = new InternetAddress(

@@ -32,7 +32,7 @@ import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.utils.Cipher;
+import com.netbout.text.SecureString;
 import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -91,15 +91,11 @@ public final class NbRs extends AbstractRs {
                 String.format("Invalid name '%s' in '%s'", iname.nss(), iname)
             );
         }
-        try {
-            if (!new Cipher().decrypt(secret).equals(iname.toString())) {
-                throw new LoginRequiredException(
-                    this,
-                    String.format("Wrong secret '%s' for '%s'", secret, iname)
-                );
-            }
-        } catch (com.netbout.utils.DecryptionException ex) {
-            throw new LoginRequiredException(this, ex);
+        if (!SecureString.valueOf(secret).text().equals(iname.toString())) {
+            throw new LoginRequiredException(
+                this,
+                String.format("Wrong secret '%s' for '%s'", secret, iname)
+            );
         }
         ResolvedIdentity identity;
         try {

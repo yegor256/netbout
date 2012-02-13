@@ -30,8 +30,7 @@ import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.utils.Cipher;
-import com.netbout.utils.TextUtils;
+import com.netbout.text.SecureString;
 import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
 import org.apache.commons.lang.StringUtils;
@@ -94,7 +93,7 @@ final class AnchorEmail {
     public AnchorEmail(final String hash, final Hub hub)
         throws BrokenAnchorException {
         try {
-            final String[] parts = new Cipher().decrypt(TextUtils.unpack(hash))
+            final String[] parts = SecureString.valueOf(hash).text()
                 .split(Pattern.quote(this.SEPARATOR), 2);
             if (parts.length != 2) {
                 throw new BrokenAnchorException("Invalid text inside hash");
@@ -102,8 +101,6 @@ final class AnchorEmail {
             this.receiver = hub.identity(new Urn(parts[1]));
             this.where = this.receiver.bout(Long.valueOf(parts[0]));
         } catch (java.net.URISyntaxException ex) {
-            throw new BrokenAnchorException(ex);
-        } catch (com.netbout.utils.DecryptionException ex) {
             throw new BrokenAnchorException(ex);
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new BrokenAnchorException(ex);
@@ -125,16 +122,14 @@ final class AnchorEmail {
      * @return The hash
      */
     public String hash() {
-        return TextUtils.pack(
-            new Cipher().encrypt(
-                String.format(
-                    "%d%s%s",
-                    this.where.number(),
-                    this.SEPARATOR,
-                    this.receiver.name()
-                )
+        return new SecureString(
+            String.format(
+                "%d%s%s",
+                this.where.number(),
+                this.SEPARATOR,
+                this.receiver.name()
             )
-        );
+        ).toString();
     }
 
     /**

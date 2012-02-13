@@ -24,11 +24,55 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.rest;
+
+import com.ymock.util.Logger;
 
 /**
- * Supplementary utils, tests.
+ * When decryption can't build an identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.utils;
+public final class DecryptionException extends Exception {
+
+    /**
+     * Public ctor.
+     */
+    public DecryptionException() {
+        super("");
+    }
+
+    /**
+     * Public ctor.
+     * @param cause Cause of it
+     */
+    public DecryptionException(final Throwable cause) {
+        super(cause);
+        Logger.warn(
+            this,
+            "#DecryptionException('%s'): thrown",
+            cause.getMessage()
+        );
+    }
+
+    /**
+     * Public ctor.
+     * @param hash The source of problem
+     * @param message Error message
+     * @param args Optional arguments
+     */
+    public DecryptionException(final String hash, final String message,
+        final Object... args) {
+        super(
+            Logger.format("%s [%s]", String.format(message, args), hash)
+        );
+        Logger.warn(
+            this,
+            "#DecryptionException('%s', '%s'): thrown",
+            hash,
+            message
+        );
+    }
+
+}

@@ -24,11 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.utils;
+package com.netbout.rest;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
+import com.netbout.text.SecureString;
 import com.ymock.util.Logger;
 
 /**
@@ -45,7 +46,7 @@ public final class Cryptor {
      * @return Encrypted string
      */
     public String encrypt(final Identity identity) {
-        return new Cipher().encrypt(identity.name().toString());
+        return new SecureString(identity.name()).toString();
     }
 
     /**
@@ -60,7 +61,7 @@ public final class Cryptor {
         if (hash == null) {
             throw new DecryptionException();
         }
-        final String iname = new Cipher().decrypt(hash);
+        final String iname = SecureString.valueOf(hash).text();
         Identity identity;
         try {
             identity = hub.identity(new Urn(iname));
