@@ -31,6 +31,7 @@ import com.ymock.util.Logger;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * All uncaught exceptions will be catched here.
@@ -55,9 +56,11 @@ public final class ExceptionTrap extends HttpServlet {
         this.extend(template, request, "request_uri");
         template.set(
             "stacktrace",
-            Logger.format(
-                "%[exception]s",
-                request.getAttribute("javax.servlet.error.exception")
+            StringEscapeUtils.escapeHtml(
+                Logger.format(
+                    "%[exception]s",
+                    request.getAttribute("javax.servlet.error.exception")
+                )
             )
         );
         response.getWriter().print(template.toString());
@@ -78,7 +81,7 @@ public final class ExceptionTrap extends HttpServlet {
         if (attr == null) {
             attr = "NULL";
         }
-        template.set(suffix, attr.toString());
+        template.set(suffix, StringEscapeUtils.escapeHtml(attr.toString()));
     }
 
 }

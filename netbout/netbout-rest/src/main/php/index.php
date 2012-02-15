@@ -44,6 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <meta http-equiv='refresh' content='5; URL=http://logs.netbout.com'/>
         <body style='font-family: monospace; white-space: pre-wrap;'>";
     echo $file . ":\n\n";
-    passthru("tail -50 ${file} | tac");
+    echo htmlspecialchars(`tail -50 ${file} | tac`);
     echo "</body></html>";
 }
