@@ -50,7 +50,7 @@ final class Heap {
      */
     public String statistics() {
         final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d messages", this.all.size()));
+        text.append(String.format("%d messages\n", this.all.size()));
         return text.toString();
     }
 

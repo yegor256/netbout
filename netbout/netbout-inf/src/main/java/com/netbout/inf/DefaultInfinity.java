@@ -76,9 +76,9 @@ public final class DefaultInfinity implements Infinity {
         final StringBuilder text = new StringBuilder();
         text.append("Mux stats:\n")
             .append(this.mux.statistics())
-            .append("\n\nHeap stats:\n")
+            .append("\nHeap stats:\n")
             .append(this.heap.statistics())
-            .append("\n\njava.lang.Runtime:\n")
+            .append("\njava.lang.Runtime:\n")
             .append(
                 String.format(
                     "  availableProcessors(): %d\n",
