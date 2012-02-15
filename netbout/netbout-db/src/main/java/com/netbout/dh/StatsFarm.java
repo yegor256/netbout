@@ -29,6 +29,7 @@ package com.netbout.dh;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
+import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -124,7 +125,7 @@ public final class StatsFarm implements IdentityAware {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             assert viewer != null;
-            xml = new JaxbPrinter(new Stage()).print();
+            xml = new JaxbPrinter(new Stage(place)).print();
         }
         return xml;
     }
@@ -147,6 +148,49 @@ public final class StatsFarm implements IdentityAware {
             );
         }
         return xsl;
+    }
+
+    /**
+     * Process POST request of the stage.
+     * @param number Bout where it is happening
+     * @param author Author of the message
+     * @param stage Name of stage to render
+     * @param place The place in the stage to render
+     * @param body Body of POST request
+     * @return New place in this stage
+     * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (5 lines)
+     */
+    @Operation("stage-post-request")
+    public String stagePostRequest(final Long number, final Urn author,
+        final Urn stage, final String place, final String body)
+        throws Exception {
+        String dest = null;
+        if (this.identity.name().equals(stage)) {
+            dest = CpaUtils.decodeBody(body).get("query");
+        }
+        return dest;
+    }
+
+    /**
+     * Change place after rendering, if necessary.
+     * @param number Bout where it is happening
+     * @param author Author of the message
+     * @param stage Name of stage to render
+     * @param place The place in the stage to render
+     * @return New place in this stage
+     * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (5 lines)
+     */
+    @Operation("post-render-change-place")
+    public String postRenderChangePlace(final Long number, final Urn author,
+        final Urn stage, final String place)
+        throws Exception {
+        String dest = null;
+        if (this.identity.name().equals(stage)) {
+            dest = "";
+        }
+        return dest;
     }
 
 }

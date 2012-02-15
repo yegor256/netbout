@@ -46,15 +46,43 @@ import javax.xml.bind.annotation.XmlType;
 public final class Stage {
 
     /**
+     * The query to render (or empty if nothing to render).
+     */
+    private final transient String requested;
+
+    /**
+     * Public ctor, for JAXB.
+     */
+    public Stage() {
+        throw new IllegalStateException("illegal call");
+    }
+
+    /**
+     * Public ctor.
+     * @param sql The query to render
+     */
+    public Stage(final String sql) {
+        if (sql == null) {
+            this.requested = "";
+        } else {
+            this.requested = sql;
+        }
+    }
+
+    /**
      * Get the text.
      * @return The text.
      * @throws SQLException If some SQL problem inside
      */
     @XmlElement
-    @SuppressWarnings("PMD.AvoidCatchingGenericException")
+    @SuppressWarnings({
+        "PMD.AvoidCatchingGenericException",
+        "PMD.AvoidInstantiatingObjectsInLoops"
+    })
     public String getText() throws SQLException {
         final StringBuilder text = new StringBuilder();
         final String[] queries = new String[] {
+            this.requested,
             "SELECT COUNT(*) FROM alias",
             "SELECT COUNT(*) FROM bill",
             "SELECT COUNT(*) FROM bout",
@@ -67,10 +95,14 @@ public final class Stage {
             "SHOW EVENTS",
             "SHOW PROCESSLIST",
         };
+        final Handler<String> handler = new DataHandler();
         for (String query : queries) {
+            if (query.isEmpty()) {
+                continue;
+            }
             text.append(query).append(":\n");
             try {
-                text.append(this.query(query));
+                text.append(new DbSession(true).sql(query).select(handler));
             // @checkstyle IllegalCatch (1 line)
             } catch (Exception ex) {
                 text.append(ex.getMessage()).append(" \n");
@@ -80,33 +112,33 @@ public final class Stage {
     }
 
     /**
-     * Build text summary.
-     * @param sql SQL query with single expected result
-     * @return The result
-     * @throws SQLException If some SQL problem inside
+     * The handler.
      */
-    private String query(final String sql) throws SQLException {
-        return new DbSession(true)
-            .sql(sql)
-            .select(
-                new Handler<String>() {
-                    @Override
-                    public String handle(final ResultSet rset)
-                        throws SQLException {
-                        final StringBuilder text = new StringBuilder();
-                        final int total = rset.getMetaData().getColumnCount();
-                        while (rset.next()) {
-                            text.append("  ");
-                            for (int col = 0; col < total; col += 1) {
-                                text.append(rset.getString(col + 1))
-                                    .append(" | ");
-                            }
-                            text.append("\n");
-                        }
-                        return text.toString();
-                    }
+    private static final class DataHandler implements Handler<String> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String handle(final ResultSet rset) throws SQLException {
+            final StringBuilder text = new StringBuilder();
+            final int total = rset.getMetaData().getColumnCount();
+            int row = 0;
+            while (rset.next()) {
+                // @checkstyle MagicNumber (1 line)
+                if (row > 50) {
+                    text.append("  and more...");
+                    break;
                 }
-            );
+                row += 1;
+                text.append("  ");
+                for (int col = 0; col < total; col += 1) {
+                    text.append(rset.getString(col + 1))
+                        .append(" | ");
+                }
+                text.append("\n");
+            }
+            return text.toString();
+        }
     }
 
 }

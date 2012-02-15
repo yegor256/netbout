@@ -44,7 +44,7 @@ public final class StageTest {
      */
     @Test
     public void convertsToXml() throws Exception {
-        final Stage obj = new Stage();
+        final Stage obj = new Stage("");
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),
             XhtmlMatchers.hasXPath("/data[text != '']")
