@@ -101,8 +101,8 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d identities\n", this.dependants.size()));
-        text.append(String.format("%d in queue\n", this.getQueue().size()));
-        text.append(String.format("%.2fms avg time\n\n", this.stats.getMean()));
+        text.append(String.format("%d in the queue\n", this.queue.size()));
+        text.append(String.format("%.2fms avg time\n", this.stats.getMean()));
         return text.toString();
     }
 

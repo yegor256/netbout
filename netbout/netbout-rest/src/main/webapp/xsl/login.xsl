@@ -70,7 +70,7 @@
                                     <xsl:attribute name="title">
                                         <xsl:text>back home</xsl:text>
                                     </xsl:attribute>
-                                    <img src="http://cdn.netbout.com/logo-white.png"
+                                    <img src="http://cdn.netbout.com/logo-beta.png"
                                         id="logo" alt="back home" />
                                 </a>
                             </p>

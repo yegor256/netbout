@@ -32,8 +32,7 @@ html {
 body {
     background-color: #f3f3f1;
     height: 100%;
-    min-height: 100%;
-    font-size: 7.8pt;
+    font-size: 10px; /* the same as 7.8pt or 2.646mm or 10px */
 }
 
 /* wrapper */
@@ -51,7 +50,7 @@ body {
 
 #logo {
     width: 11.3em;
-    height: 2.7em;
+    height: 3.7em;
     margin-bottom: 2em;
 }
 
