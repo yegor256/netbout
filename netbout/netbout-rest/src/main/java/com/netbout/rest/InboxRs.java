@@ -36,11 +36,14 @@ import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -156,6 +159,29 @@ public final class InboxRs extends AbstractRs {
             .status(Response.Status.SEE_OTHER)
             .location(this.base().path("/{num}").build(bout.number()))
             .header("Bout-number", bout.number())
+            .build();
+    }
+
+    /**
+     * Start a bout with a starter.
+     * @param text The text of the first message
+     * @return The JAX-RS response
+     * @throws Exception If something goes wrong inside (it shouldn't)
+     */
+    @Path("/")
+    @POST
+    public Response starter(@FormParam("starter") final String text)
+        throws Exception {
+        final Identity identity = this.identity();
+        final Bout bout = identity.start();
+        bout.post(text);
+        bout.invite(identity.friend(new Urn("facebook", "1531296526")));
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(identity)
+            .status(Response.Status.SEE_OTHER)
+            .location(this.base().build())
             .build();
     }
 

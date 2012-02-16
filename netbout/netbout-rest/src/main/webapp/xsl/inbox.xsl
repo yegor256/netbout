@@ -59,44 +59,86 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <xsl:if test="/page/view != ''">
-            <ul class="periods">
-                <li>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
-                        </xsl:attribute>
-                        <xsl:text>back to recent bouts</xsl:text>
-                    </a>
-                </li>
-            </ul>
-        </xsl:if>
-        <nav>
-            <ul class="bouts">
-                <xsl:for-each select="/page/bouts/bout">
-                    <xsl:apply-templates select="." />
-                </xsl:for-each>
-            </ul>
-        </nav>
-        <xsl:if test="/page/periods[count(link) &gt; 0]">
-            <nav>
-                <ul class="periods">
-                    <xsl:for-each select="/page/periods/link">
+        <xsl:choose>
+            <xsl:when test="count(/page/bouts/bout) = 0 and /page/query = ''">
+                <header>
+                    <h1>
+                        <span class="title"><xsl:text>Welcome to Netbout!</xsl:text></span>
+                    </h1>
+                </header>
+                <p>
+                    <xsl:text>
+                        Netbout is the first system in the world
+                        that makes software help us to talk online (not vise versa).
+                    </xsl:text>
+                </p>
+                <p>
+                    <xsl:text>
+                        Let's start with a simple conversation with someone from
+                        our team:
+                    </xsl:text>
+                </p>
+                <form method="post">
+                    <xsl:attribute name="action">
+                        <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                    </xsl:attribute>
+                    <p>
+                        <div><xsl:text>We know who you are:</xsl:text></div>
+                        <div><input name="name" size="40" disabled="true">
+                            <xsl:attribute name="value">
+                                <xsl:value-of select="/page/identity/alias"/>
+                            </xsl:attribute>
+                        </input></div>
+                        <div><xsl:text>What we will talk about?</xsl:text></div>
+                        <div><textarea name="starter" style="width: 30em; height: 5em;"></textarea></div>
+                        <div><input type="submit" value="Start"/></div>
+                    </p>
+                </form>
+                <p>
+                    <xsl:text>Keep in mind, we are still testing :)</xsl:text>
+                </p>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:if test="/page/view != ''">
+                    <ul class="periods">
                         <li>
                             <a>
                                 <xsl:attribute name="href">
-                                    <xsl:value-of select="@href"/>
+                                    <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                                 </xsl:attribute>
-                                <xsl:value-of select="@label" />
-                                <xsl:if test="@rel='earliest'">
-                                    <xsl:text>...</xsl:text>
-                                </xsl:if>
+                                <xsl:text>back to recent bouts</xsl:text>
                             </a>
                         </li>
-                    </xsl:for-each>
-                </ul>
-            </nav>
-        </xsl:if>
+                    </ul>
+                </xsl:if>
+                <nav>
+                    <ul class="bouts">
+                        <xsl:for-each select="/page/bouts/bout">
+                            <xsl:apply-templates select="." />
+                        </xsl:for-each>
+                    </ul>
+                </nav>
+                <xsl:if test="/page/periods[count(link) &gt; 0]">
+                    <nav>
+                        <ul class="periods">
+                            <xsl:for-each select="/page/periods/link">
+                                <li>
+                                    <a>
+                                        <xsl:attribute name="href">
+                                            <xsl:value-of select="@href"/>
+                                        </xsl:attribute>
+                                        <xsl:value-of select="@label" />
+                                        <xsl:if test="@rel='earliest'">
+                                            <xsl:text>...</xsl:text>
+                                        </xsl:if>
+                                    </a>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                    </nav>
+                </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template match="bout">
