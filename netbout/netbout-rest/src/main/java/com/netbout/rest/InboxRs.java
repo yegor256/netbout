@@ -174,6 +174,7 @@ public final class InboxRs extends AbstractRs {
         throws Exception {
         final Identity identity = this.identity();
         final Bout bout = identity.start();
+        bout.rename("Welcome to Netbout!");
         bout.post(text);
         bout.invite(identity.friend(new Urn("facebook", "1531296526")));
         return new PageBuilder()
