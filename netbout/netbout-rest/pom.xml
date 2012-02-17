@@ -562,7 +562,7 @@
                                             <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
                                             <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
                                             <Netbout-PopPort>995</Netbout-PopPort>
-                                            <Netbout-SecurityKey>some-value</Netbout-SecurityKey>
+                                            <Netbout-SecurityKey>test-security-key</Netbout-SecurityKey>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>

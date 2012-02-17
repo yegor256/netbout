@@ -39,6 +39,7 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  * @see <a href="http://en.wikipedia.org/wiki/One-time_pad">One Time Pad</a>
  * @see <a href="http://en.wikipedia.org/wiki/Base64">Base64</a>
+ * @checkstyle MultipleStringLiterals (100 lines)
  */
 public final class SecureString {
 
