@@ -61,7 +61,12 @@ public final class Cryptor {
         if (hash == null) {
             throw new DecryptionException();
         }
-        final String iname = SecureString.valueOf(hash).text();
+        String iname;
+        try {
+            iname = SecureString.valueOf(hash).text();
+        } catch (com.netbout.text.StringDecryptionException ex) {
+            throw new DecryptionException(ex);
+        }
         Identity identity;
         try {
             identity = hub.identity(new Urn(iname));
