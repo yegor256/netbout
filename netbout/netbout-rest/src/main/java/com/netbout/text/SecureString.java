@@ -26,6 +26,7 @@
  */
 package com.netbout.text;
 
+import com.rexsl.core.Manifests;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 
@@ -37,13 +38,10 @@ import org.apache.commons.lang.CharEncoding;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @see <a href="http://en.wikipedia.org/wiki/One-time_pad">One Time Pad</a>
+ * @see <a href="http://en.wikipedia.org/wiki/Base64">Base64</a>
+ * @checkstyle MultipleStringLiterals (100 lines)
  */
 public final class SecureString {
-
-    /**
-     * Password to use in encryption.
-     */
-    private static final String KEY = "j&^%hgfRR43$#&==_ )(00(0}{-~";
 
     /**
      * Open content (without encryption).
@@ -64,7 +62,9 @@ public final class SecureString {
     @Override
     public String toString() {
         return Base64.encodeBase64String(this.xor(this.raw.getBytes()))
-            .replace("=", "");
+            .replace("=", "")
+            .replace("+", "-")
+            .replace("/", ".");
     }
 
     /**
@@ -76,7 +76,11 @@ public final class SecureString {
         try {
             return new SecureString(
                 new String(
-                    SecureString.xor(Base64.decodeBase64(hash.getBytes())),
+                    SecureString.xor(
+                        Base64.decodeBase64(
+                            hash.replace("-", "+").replace(".", "/")
+                        )
+                    ),
                     CharEncoding.UTF_8
                 )
             );
@@ -100,7 +104,7 @@ public final class SecureString {
      */
     private static byte[] xor(final byte[] input) {
         final byte[] output = new byte[input.length];
-        final byte[] secret = SecureString.KEY.getBytes();
+        final byte[] secret = Manifests.read("Netbout-SecurityKey").getBytes();
         int spos = 0;
         for (int pos = 0; pos < input.length; pos += 1) {
             output[pos] = (byte) (input[pos] ^ secret[spos]);

@@ -42,15 +42,22 @@ public final class SecureStringTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void encryptsAndDecryptsBack() throws Exception {
-        final String message = "hello, world!";
-        final String encrypted = new SecureString(message).toString();
-        MatcherAssert.assertThat(
-            encrypted.matches("[a-zA-Z0-9]+"),
-            Matchers.describedAs(encrypted, Matchers.is(true))
-        );
-        final String decrypted = SecureString.valueOf(encrypted).text();
-        MatcherAssert.assertThat(decrypted, Matchers.equalTo(message));
+        final String[] messages = new String[] {
+            "hello, world!",
+            "4800|urn:email:yegor%40netbout%2Ecom",
+            "\u8524\u0433 - yes?",
+        };
+        for (String message : messages) {
+            final String encrypted = new SecureString(message).toString();
+            MatcherAssert.assertThat(
+                encrypted.matches("[a-zA-Z0-9\\-\\.]+"),
+                Matchers.describedAs(encrypted, Matchers.is(true))
+            );
+            final String decrypted = SecureString.valueOf(encrypted).text();
+            MatcherAssert.assertThat(decrypted, Matchers.equalTo(message));
+        }
     }
 
 }
