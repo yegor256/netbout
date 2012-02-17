@@ -91,11 +91,15 @@ public final class NbRs extends AbstractRs {
                 String.format("Invalid name '%s' in '%s'", iname.nss(), iname)
             );
         }
-        if (!SecureString.valueOf(secret).text().equals(iname.toString())) {
-            throw new LoginRequiredException(
-                this,
-                String.format("Wrong secret '%s' for '%s'", secret, iname)
-            );
+        try {
+            if (!SecureString.valueOf(secret).text().equals(iname.toString())) {
+                throw new LoginRequiredException(
+                    this,
+                    String.format("Wrong secret '%s' for '%s'", secret, iname)
+                );
+            }
+        } catch (com.netbout.text.StringDecryptionException ex) {
+            throw new LoginRequiredException(this, ex);
         }
         ResolvedIdentity identity;
         try {

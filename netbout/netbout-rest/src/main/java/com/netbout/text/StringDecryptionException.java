@@ -26,43 +26,20 @@
  */
 package com.netbout.text;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
 /**
- * Test case for {@link SecureString}.
+ * When string can't be decrypted.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class SecureStringTest {
+public final class StringDecryptionException extends Exception {
 
     /**
-     * SecureString can encrypt and decrypt back.
-     * @throws Exception If there is some problem inside
+     * Public ctor.
+     * @param cause The cause of it
      */
-    @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public void encryptsAndDecryptsBack() throws Exception {
-        final String[] messages = new String[] {
-            "",
-            "ab",
-            "foo",
-            "\u0433",
-            "\u0433dd",
-            "hello, world!",
-            "4800|urn:email:yegor%40netbout%2Ecom",
-            "\u8524\u0433 - yes?",
-        };
-        for (String message : messages) {
-            final String encrypted = new SecureString(message).toString();
-            MatcherAssert.assertThat(
-                encrypted.matches("[A-Z0-6]*"),
-                Matchers.describedAs(encrypted, Matchers.is(true))
-            );
-            final String decrypted = SecureString.valueOf(encrypted).text();
-            MatcherAssert.assertThat(decrypted, Matchers.equalTo(message));
-        }
+    public StringDecryptionException(final String cause) {
+        super(cause);
     }
 
 }

@@ -151,6 +151,9 @@ public final class StageCoordinates {
             } catch (java.net.URISyntaxException ex) {
                 coords.setStage(new Urn());
                 coords.setPlace("");
+            } catch (com.netbout.text.StringDecryptionException ex) {
+                coords.setStage(new Urn());
+                coords.setPlace("");
             }
         }
         return coords;

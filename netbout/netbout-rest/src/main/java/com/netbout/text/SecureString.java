@@ -66,8 +66,10 @@ public final class SecureString {
      * Create it from encrypted input.
      * @param hash The hash to use
      * @return The string
+     * @throws StringDecryptionException When can't decrypt
      */
-    public static SecureString valueOf(final String hash) {
+    public static SecureString valueOf(final String hash)
+        throws StringDecryptionException {
         try {
             return new SecureString(
                 new String(
@@ -140,8 +142,10 @@ public final class SecureString {
      * Unpack sting into array of bytes.
      * @param input The packed string
      * @return Unpacked output
+     * @throws StringDecryptionException When can't unpack
      */
-    private static byte[] unpack(final String input) {
+    private static byte[] unpack(final String input)
+        throws StringDecryptionException {
         final int length = input.length();
         final byte[] output = new byte[(int) length * 5 / 8];
         long buffer = 0;
@@ -182,15 +186,17 @@ public final class SecureString {
      * Convert char to 5 bits.
      * @param symbol The character
      * @return The bits
+     * @throws StringDecryptionException When can't decrypt
      */
-    private static byte toBits(final char symbol) {
+    private static byte toBits(final char symbol)
+        throws StringDecryptionException {
         byte output;
         if (symbol >= 'A' && symbol <= 'Z') {
             output = (byte) (symbol - 'A' + 7);
         } else if (symbol >= '0' && symbol <= '6') {
             output = (byte) (symbol - '0');
         } else {
-            throw new IllegalArgumentException(
+            throw new StringDecryptionException(
                 String.format("Illegal character in Base32: '%s'", symbol)
             );
         }
