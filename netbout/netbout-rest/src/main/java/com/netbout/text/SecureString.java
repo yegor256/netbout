@@ -27,7 +27,6 @@
 package com.netbout.text;
 
 import com.rexsl.core.Manifests;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 
 /**
@@ -39,7 +38,6 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  * @see <a href="http://en.wikipedia.org/wiki/One-time_pad">One Time Pad</a>
  * @see <a href="http://en.wikipedia.org/wiki/Base64">Base64</a>
- * @checkstyle MultipleStringLiterals (100 lines)
  */
 public final class SecureString {
 
@@ -61,10 +59,7 @@ public final class SecureString {
      */
     @Override
     public String toString() {
-        return Base64.encodeBase64String(this.xor(this.raw.getBytes()))
-            .replace("=", "")
-            .replace("+", "-")
-            .replace("/", ".");
+        return this.pack(this.xor(this.raw.getBytes()));
     }
 
     /**
@@ -76,11 +71,7 @@ public final class SecureString {
         try {
             return new SecureString(
                 new String(
-                    SecureString.xor(
-                        Base64.decodeBase64(
-                            hash.replace("-", "+").replace(".", "/")
-                        )
-                    ),
+                    SecureString.xor(SecureString.unpack(hash)),
                     CharEncoding.UTF_8
                 )
             );
@@ -112,6 +103,96 @@ public final class SecureString {
             if (spos >= secret.length) {
                 spos = 0;
             }
+        }
+        return output;
+    }
+
+    /**
+     * Pack array of bytes into string.
+     * @param input The array of bytes
+     * @return Packed output
+     */
+    private static String pack(final byte[] input) {
+        final StringBuilder text = new StringBuilder();
+        int buffer = 0;
+        int bits = 0;
+        for (int pos = 0; pos < input.length; pos += 1) {
+            buffer = (buffer << 8) | (0xFF & input[pos]);
+            bits += 8;
+            while (bits >= 5) {
+                text.append(
+                    SecureString.toChar(
+                        (byte) ((buffer >> (bits - 5)) & 0x1F)
+                    )
+                );
+                bits -= 5;
+            }
+        }
+        if (bits > 0) {
+            text.append(
+                SecureString.toChar((byte) ((buffer << (5 - bits)) & 0x1F))
+            );
+        }
+        return text.toString();
+    }
+
+    /**
+     * Unpack sting into array of bytes.
+     * @param input The packed string
+     * @return Unpacked output
+     */
+    private static byte[] unpack(final String input) {
+        final int length = input.length();
+        final byte[] output = new byte[(int) length * 5 / 8];
+        long buffer = 0;
+        int bits = 0;
+        int opos = 0;
+        for (int pos = 0; pos < length; pos += 1) {
+            buffer = (buffer << 5) + SecureString.toBits(input.charAt(pos));
+            bits += 5;
+            while (bits >= 8) {
+                output[opos] = (byte) (buffer >> (bits - 8));
+                opos += 1;
+                bits -= 8;
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Convert 5 bits to one char.
+     * @param bits The bits
+     * @return The char
+     */
+    private static char toChar(final byte bits) {
+        char output;
+        if (bits >= 0 && bits <= 6) {
+            output = (char) ('0' + bits);
+        } else if (bits >= 7 && bits <= 32) {
+            output = (char) ('A' + bits - 7);
+        } else {
+            throw new IllegalArgumentException(
+                String.format("Illegal bits value: '%d'", bits)
+            );
+        }
+        return output;
+    }
+
+    /**
+     * Convert char to 5 bits.
+     * @param symbol The character
+     * @return The bits
+     */
+    private static byte toBits(final char symbol) {
+        byte output;
+        if (symbol >= 'A' && symbol <= 'Z') {
+            output = (byte) (symbol - 'A' + 7);
+        } else if (symbol >= '0' && symbol <= '6') {
+            output = (byte) (symbol - '0');
+        } else {
+            throw new IllegalArgumentException(
+                String.format("Illegal character in Base32: '%s'", symbol)
+            );
         }
         return output;
     }

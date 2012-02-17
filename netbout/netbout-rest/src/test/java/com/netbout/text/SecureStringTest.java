@@ -45,6 +45,11 @@ public final class SecureStringTest {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void encryptsAndDecryptsBack() throws Exception {
         final String[] messages = new String[] {
+            "",
+            "ab",
+            "foo",
+            "\u0433",
+            "\u0433dd",
             "hello, world!",
             "4800|urn:email:yegor%40netbout%2Ecom",
             "\u8524\u0433 - yes?",
@@ -52,9 +57,10 @@ public final class SecureStringTest {
         for (String message : messages) {
             final String encrypted = new SecureString(message).toString();
             MatcherAssert.assertThat(
-                encrypted.matches("[a-zA-Z0-9\\-\\.]+"),
+                encrypted.matches("[A-Z0-6]*"),
                 Matchers.describedAs(encrypted, Matchers.is(true))
             );
+            System.out.println(encrypted);
             final String decrypted = SecureString.valueOf(encrypted).text();
             MatcherAssert.assertThat(decrypted, Matchers.equalTo(message));
         }
