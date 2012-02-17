@@ -42,6 +42,7 @@ public final class SecureStringTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void encryptsAndDecryptsBack() throws Exception {
         final String[] messages = new String[] {
             "hello, world!",
