@@ -35,10 +35,12 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Pattern;
 
 /**
  * Identity.
@@ -275,7 +277,25 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Set<String> aliases() {
-        final Set<String> list = new HashSet<String>(this.myAliases());
+        final Set<String> list = new TreeSet<String>(
+            new Comparator<String>() {
+                private final transient Pattern pattern =
+                    Pattern.compile("[a-zA-Z ]+");
+                @Override
+                public int compare(final String left, final String right) {
+                    int result;
+                    if (this.pattern.matcher(left).matches()) {
+                        result = -1;
+                    } else if (this.pattern.matcher(right).matches()) {
+                        result = 1;
+                    } else {
+                        result = 0;
+                    }
+                    return result;
+                }
+            }
+        );
+        list.addAll(this.myAliases());
         Logger.debug(
             this,
             "#aliases(): %d returned",
