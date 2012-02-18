@@ -28,6 +28,7 @@ package com.netbout.hub.data;
 
 import com.netbout.hub.BoutMgr;
 import com.netbout.hub.Hub;
+import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
@@ -139,6 +140,28 @@ public final class DefaultBoutMgr implements BoutMgr {
                 );
             }
             return this.bouts.get(number);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void destroy(final Urn author) {
+        synchronized (this) {
+            for (Long number : this.bouts.keySet()) {
+                boolean found = false;
+                for (ParticipantDt dude
+                    : this.bouts.get(number).getParticipants()) {
+                    if (dude.getIdentity().equals(author)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    this.bouts.remove(number);
+                }
+            }
         }
     }
 
