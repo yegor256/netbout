@@ -190,11 +190,7 @@ public final class HubBout implements Bout {
             );
         }
         final ParticipantDt dude = this.data.addParticipant(friend.name());
-        Logger.debug(
-            this,
-            "#invite('%s'): success",
-            friend
-        );
+        Logger.info(this, "'%s' invited to bout #%d", friend, this.number());
         final Boolean confirm = this.hub.make("just-invited")
             .arg(this.number())
             .arg(friend.name())
@@ -301,11 +297,7 @@ public final class HubBout implements Bout {
             msg.setDate(new Date());
             msg.setAuthor(this.viewer.name());
             msg.setText(text);
-            Logger.debug(
-                this,
-                "#post('%s'): message posted",
-                text
-            );
+            Logger.info(this, "Message posted to bout #%d", this.number());
             message = new HubMessage(
                 this.hub,
                 this.viewer,

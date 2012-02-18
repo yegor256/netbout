@@ -40,7 +40,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
@@ -55,7 +54,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Page.
@@ -187,7 +185,7 @@ public abstract class AbstractPage implements Page {
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
-            )
+        )
             .cookie(
                 new NewCookie(
                     RestSession.LOG_COOKIE,
@@ -230,7 +228,7 @@ public abstract class AbstractPage implements Page {
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
-            )
+        )
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.LOG_COOKIE)
@@ -247,13 +245,13 @@ public abstract class AbstractPage implements Page {
      */
     @Override
     public final Response.ResponseBuilder preserved() {
-        Response.ResponseBuilder builder;
+        Response.ResponseBuilder bldr;
         try {
-            builder = this.authenticated(this.home.identity());
+            bldr = this.authenticated(this.home.identity());
         } catch (LoginRequiredException ex) {
-            builder = this.anonymous();
+            bldr = this.anonymous();
         }
-        return builder;
+        return bldr;
     }
 
     /**

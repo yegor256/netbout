@@ -137,6 +137,8 @@ body {
     position: relative;
     color: #c3c3c3;
     margin-top: 0.3em;
+    font-family: 'Courier New', monospace;
+    white-space: pre;
 }
 
 /* everything between header and footer */

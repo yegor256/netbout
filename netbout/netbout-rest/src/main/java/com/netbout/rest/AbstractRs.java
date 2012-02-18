@@ -32,8 +32,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.netbout.text.SecureString;
 import com.ymock.util.Logger;
-import java.util.LinkedList;
-import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
@@ -43,8 +41,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Abstract RESTful resource.

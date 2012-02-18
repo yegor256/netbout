@@ -28,8 +28,6 @@ package com.netbout.rest.log;
 
 import com.netbout.text.SecureString;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.collections.ListUtils;
