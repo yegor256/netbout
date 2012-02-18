@@ -72,6 +72,7 @@ public final class LoginRs extends AbstractRs {
             .build(AbstractPage.class)
             .init(this)
             .link("facebook", fburi)
+            .render()
             .preserved()
             .build();
     }
@@ -106,6 +107,7 @@ public final class LoginRs extends AbstractRs {
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
+            .render()
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())

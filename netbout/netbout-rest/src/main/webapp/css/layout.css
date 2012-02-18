@@ -37,7 +37,7 @@ body {
     position: relative;
     background-color: #f3f3f1;
     height: 6.9em;
-    box-shadow: 0em 0.1em #e4e5e3; /* JIGSAW: it's CSS3 feature */
+    border-bottom: 1px solid #dadbd9;
     display: table;
     overflow: hidden;
 }
@@ -131,6 +131,15 @@ body {
                 #right ul li a:hover {
                     text-decoration: underline;
                 }
+
+/* log message to show */
+#log {
+    position: relative;
+    color: #c3c3c3;
+    margin-top: 0.3em;
+    font-family: 'Courier New', monospace;
+    white-space: pre;
+}
 
 /* everything between header and footer */
 #content {

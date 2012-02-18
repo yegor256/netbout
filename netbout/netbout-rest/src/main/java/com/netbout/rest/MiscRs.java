@@ -76,6 +76,7 @@ public final class MiscRs extends AbstractRs {
                     .add("message", message)
                     .up()
             )
+            .render()
             .preserved()
             .status(code)
             .build();

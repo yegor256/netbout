@@ -63,6 +63,7 @@ public final class EmailRs extends AbstractRs {
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
+            .render()
             .authenticated(this.authenticate(iname, secret))
             .build();
     }

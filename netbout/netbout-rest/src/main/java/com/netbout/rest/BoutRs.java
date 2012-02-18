@@ -182,7 +182,7 @@ public final class BoutRs extends AbstractRs {
     @GET
     public Response front() {
         final Response.ResponseBuilder resp =
-            this.page().authenticated(this.identity());
+            this.page().render().authenticated(this.identity());
         final String place = this.hub().make("post-render-change-place")
             .inBout(this.bout())
             .arg(this.bout().number())

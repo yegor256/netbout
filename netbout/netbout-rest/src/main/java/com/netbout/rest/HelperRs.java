@@ -66,6 +66,7 @@ public final class HelperRs extends AbstractRs {
             // @checkstyle MultipleStringLiterals (2 lines)
             .link("namespaces", this.base().path("/h/namespaces"))
             .append(JaxbGroup.build(this.namespaces(), "namespaces"))
+            .render()
             .authenticated(this.identity())
             .build();
     }

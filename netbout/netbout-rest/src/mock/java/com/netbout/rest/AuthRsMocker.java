@@ -73,6 +73,7 @@ public final class AuthRsMocker extends AbstractRs {
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
+            .render()
             .authenticated(identity)
             .build();
     }
