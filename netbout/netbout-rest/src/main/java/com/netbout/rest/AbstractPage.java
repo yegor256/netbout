@@ -91,6 +91,11 @@ public abstract class AbstractPage implements Page {
     private final transient Collection<Link> links = new ArrayList<Link>();
 
     /**
+     * Collection of log events.
+     */
+    private transient Collection<String> log;
+
+    /**
      * Initializer.
      * @param res Home of this page
      * @return This object
@@ -157,6 +162,7 @@ public abstract class AbstractPage implements Page {
     @Override
     public final Page render() {
         this.builder.entity(this);
+        this.log = this.home.log().events();
         this.home.log().clear();
         return this;
     }
@@ -281,7 +287,7 @@ public abstract class AbstractPage implements Page {
     @XmlElement(name = "event")
     @XmlElementWrapper(name = "log")
     public final Collection<String> getLog() {
-        return this.home.log().events();
+        return this.log;
     }
 
     /**

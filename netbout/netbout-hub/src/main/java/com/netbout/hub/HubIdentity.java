@@ -165,9 +165,9 @@ public final class HubIdentity implements Identity {
             throw new IllegalStateException(ex);
         }
         this.hub.infinity().see(bout);
-        Logger.debug(
+        Logger.info(
             this,
-            "#start(): bout #%d started by '%s'",
+            "Bout #%d started successfully by '%s'",
             bout.number(),
             this.name()
         );
@@ -327,9 +327,9 @@ public final class HubIdentity implements Identity {
                     .arg(alias)
                     .asDefault(true)
                     .exec();
-                Logger.debug(
+                Logger.info(
                     this,
-                    "#alias('%s'): added for '%s'",
+                    "Alias '%s' added for '%s'",
                     alias,
                     this.name()
                 );

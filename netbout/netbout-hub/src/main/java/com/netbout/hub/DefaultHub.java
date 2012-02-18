@@ -273,7 +273,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         }
         Logger.info(
             this,
-            "#join('%s', '%s'): joined successfully",
+            "'%s' and '%s' were joined successfully",
             main,
             child
         );

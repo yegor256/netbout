@@ -130,9 +130,9 @@ final class DefaultUrnResolver implements UrnResolver {
             .exec();
         Logger.info(
             this,
-            "#register('%s', '%s', '%s'): namespace registered",
-            owner.name(),
+            "namespace '%s' registered by '%s' ('%s')",
             namespace,
+            owner.name(),
             template
         );
     }
