@@ -40,6 +40,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
@@ -54,6 +55,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Page.
@@ -74,6 +76,11 @@ public abstract class AbstractPage implements Page {
      * Home resource of this page.
      */
     private transient Resource home;
+
+    /**
+     * The response builder to return.
+     */
+    private final transient Response.ResponseBuilder builder = Response.ok();
 
     /**
      * Collection of elements.
@@ -150,6 +157,16 @@ public abstract class AbstractPage implements Page {
      * {@inheritDoc}
      */
     @Override
+    public final Page render() {
+        this.builder.entity(this);
+        this.home.log().clear();
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
         if (identity instanceof Helper) {
@@ -166,11 +183,24 @@ public abstract class AbstractPage implements Page {
         }
         this.extend();
         final URI base = this.home.base().build();
-        return Response.ok()
-            .entity(this)
+        return this.builder
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
+            )
+            .cookie(
+                new NewCookie(
+                    RestSession.LOG_COOKIE,
+                    this.home.log().toString(),
+                    base.getPath(),
+                    base.getHost(),
+                    // @checkstyle MultipleStringLiterals (1 line)
+                    Integer.valueOf(Manifests.read("Netbout-Revision")),
+                    "Netbout.com log",
+                    // @checkstyle MagicNumber (1 line)
+                    60 * 60 * 24 * 90,
+                    false
+                )
             )
             .cookie(
                 new NewCookie(
@@ -196,11 +226,14 @@ public abstract class AbstractPage implements Page {
     public final Response.ResponseBuilder anonymous() {
         this.link("login", "/g");
         this.extend();
-        return Response.ok()
-            .entity(this)
+        return this.builder
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
+            )
+            .header(
+                HttpHeaders.SET_COOKIE,
+                this.nocookie(RestSession.LOG_COOKIE)
             )
             .header(
                 HttpHeaders.SET_COOKIE,
@@ -241,6 +274,16 @@ public abstract class AbstractPage implements Page {
     @XmlElementWrapper(name = "links")
     public final Collection<Link> getLinks() {
         return this.links;
+    }
+
+    /**
+     * Get all log events.
+     * @return Full list of events
+     */
+    @XmlElement(name = "event")
+    @XmlElementWrapper(name = "log")
+    public final Collection<String> getLog() {
+        return this.home.log().events();
     }
 
     /**

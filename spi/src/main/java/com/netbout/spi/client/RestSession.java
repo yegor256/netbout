@@ -67,6 +67,11 @@ public final class RestSession {
     public static final String AUTH_COOKIE = "netbout";
 
     /**
+     * Log holder cookie.
+     */
+    public static final String LOG_COOKIE = "netbout-log";
+
+    /**
      * Name of the message transferring cookie.
      */
     public static final String MESSAGE_COOKIE = "netbout-msg";

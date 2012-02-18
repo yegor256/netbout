@@ -62,6 +62,7 @@ public final class NbRs extends AbstractRs {
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
+            .render()
             .authenticated(this.authenticate(iname, secret))
             .build();
     }

@@ -100,6 +100,13 @@
                             <xsl:text>.</xsl:text>
                         </aside>
                     </xsl:if>
+                    <xsl:if test="count(log/event) &gt; 0">
+                        <aside id="log">
+                            <xsl:for-each select="log/event">
+                                <p><xsl:value-of select="."/></p>
+                            </xsl:for-each>
+                        </aside>
+                    </xsl:if>
                     <xsl:call-template name="content" />
                 </section>
             </body>

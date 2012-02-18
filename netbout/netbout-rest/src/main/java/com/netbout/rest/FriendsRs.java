@@ -74,6 +74,7 @@ public final class FriendsRs extends AbstractRs {
             .init(this)
             .append(new JaxbBundle("mask", mask))
             .append(JaxbGroup.build(invitees, "invitees"))
+            .render()
             .authenticated(this.identity())
             .build();
     }

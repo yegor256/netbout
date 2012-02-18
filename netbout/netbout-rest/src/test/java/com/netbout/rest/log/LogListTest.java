@@ -24,77 +24,29 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.log;
 
-import com.netbout.rest.log.LogList;
-import com.netbout.spi.Identity;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * RESTful resource.
- *
+ * Test case for {@link LogList}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+public final class LogListTest {
 
     /**
-     * When this resource was created, in nano seconds.
-     * @return The time
+     * LogList can be empty.
+     * @throws Exception If there is some problem inside
      */
-    long nano();
-
-    /**
-     * Get current user identity, or throws {@link LoginRequiredException} if
-     * no user is logged in at the moment.
-     * @return The identity
-     */
-    Identity identity();
-
-    /**
-     * Message to show.
-     * @return The message
-     */
-    String message();
-
-    /**
-     * Log list.
-     * @return The log
-     */
-    LogList log();
-
-    /**
-     * Base URI builder.
-     * @return The builder
-     */
-    UriBuilder base();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
-
-    /**
-     * Request just received.
-     * @return The request
-     */
-    HttpServletRequest httpServletRequest();
+    @Test
+    public void emptyListReturnsEmptyString() throws Exception {
+        MatcherAssert.assertThat(
+            new LogList().toString(),
+            Matchers.equalTo("")
+        );
+    }
 
 }
