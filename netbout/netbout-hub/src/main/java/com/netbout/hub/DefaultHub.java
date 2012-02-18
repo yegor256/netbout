@@ -266,10 +266,12 @@ public final class DefaultHub implements PowerHub, StatsProvider {
                 .asDefault(true)
                 .exec();
             this.all.remove(child.name());
+            this.manager().destroy(child.name());
             for (String alias : aliases) {
                 main.alias(alias);
             }
             this.all.remove(main.name());
+            this.manager().destroy(main.name());
         }
         Logger.info(
             this,
