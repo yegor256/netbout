@@ -81,7 +81,7 @@ final class Sender {
             transport.close();
             Logger.info(
                 this,
-                "#send(..): email sent to '%s'",
+                "Email sent to '%s'",
                 message.getAllRecipients()[0]
             );
         } catch (javax.mail.NoSuchProviderException ex) {
