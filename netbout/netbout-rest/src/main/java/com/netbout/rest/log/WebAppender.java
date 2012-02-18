@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
@@ -76,7 +77,8 @@ public final class WebAppender extends AppenderSkeleton {
      */
     @Override
     public void append(final LoggingEvent event) {
-        if (this.EVENTS.containsKey(event.getThreadName())) {
+        if (this.EVENTS.containsKey(event.getThreadName())
+            && event.getLevel().isGreaterOrEqual(Level.INFO)) {
             this.EVENTS.get(event.getThreadName()).add(
                 this.getLayout().format(event)
             );
