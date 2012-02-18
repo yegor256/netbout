@@ -180,4 +180,17 @@ public final class DefaultHubTest {
         );
     }
 
+    /**
+     * DefaultHub can join two identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void joinsTwoIdentities() throws Exception {
+        final Bus bus = new BusMocker().mock();
+        final PowerHub hub = new DefaultHub(bus);
+        final Identity main = hub.identity(new Urn("urn:netbout:a"));
+        final Identity child = hub.identity(new Urn("urn:netbout:b"));
+        hub.join(main, child);
+    }
+
 }
