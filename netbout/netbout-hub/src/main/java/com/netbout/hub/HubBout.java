@@ -119,6 +119,12 @@ public final class HubBout implements Bout {
     public void confirm() {
         this.data.confirm(this.viewer.name());
         this.hub.infinity().see(this);
+        Logger.info(
+            this,
+            "Participant '%s' confirmed participation in bout #%d",
+            this.viewer,
+            this.number()
+        );
     }
 
     /**
@@ -128,6 +134,12 @@ public final class HubBout implements Bout {
     public void leave() {
         this.data.kickOff(this.viewer.name());
         this.hub.infinity().see(this);
+        Logger.info(
+            this,
+            "Participant '%s' just left bout #%d",
+            this.viewer,
+            this.number()
+        );
     }
 
     /**
@@ -146,6 +158,12 @@ public final class HubBout implements Bout {
         }
         this.data.setTitle(text);
         this.hub.infinity().see(this);
+        Logger.info(
+            this,
+            "Bout #%d was successfully renamed to '%s'",
+            this.number(),
+            text
+        );
     }
 
     /**
