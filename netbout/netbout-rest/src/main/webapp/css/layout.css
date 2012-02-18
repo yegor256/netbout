@@ -141,6 +141,11 @@ body {
     white-space: pre;
 }
 
+    #log p {
+        margin-top: 0.1em;
+        margin-bottom: 0.1em;
+    }
+
 /* everything between header and footer */
 #content {
     position: relative;
