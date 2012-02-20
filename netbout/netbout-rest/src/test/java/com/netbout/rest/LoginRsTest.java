@@ -71,43 +71,6 @@ public final class LoginRsTest {
     }
 
     /**
-     * LoginRs can authenticate through facebook.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void authenticateWithFacebook() throws Exception {
-        final Urn name = new UrnMocker().withNid("netbout").mock();
-        final Identity identity = new IdentityMocker().namedAs(name).mock();
-        final Hub hub = new HubMocker()
-            .withIdentity(name, identity)
-            .mock();
-        final LoginRs rest = new ResourceMocker()
-            .withHub(hub)
-            .mock(LoginRs.class);
-        final LoginRs spy = PowerMockito.spy(rest);
-        final RemoteIdentity remote = new RemoteIdentity();
-        final URL photo = new URL("http://localhost/some-picture.png");
-        final String alias = "some identity alias";
-        remote.setAuthority("http://localhost/authority");
-        remote.setName(name.toString());
-        remote.setJaxbPhoto(photo.toString());
-        remote.setAliases(Arrays.asList(new String[] {alias}));
-        final String code = "some-auth-code";
-        PowerMockito.doReturn(remote).when(spy, "remote", Mockito.eq(code));
-        MatcherAssert.assertThat(
-            ResourceMocker.the((Page) spy.fbauth(code).getEntity(), rest),
-            Matchers.allOf(
-                XmlMatchers.hasXPath(
-                    String.format("/page/identity[name='%s']", name)
-                ),
-                XmlMatchers.hasXPath("/page/identity/aliases[count(alias) > 0]")
-            )
-        );
-        Mockito.verify(identity).setPhoto(photo);
-        Mockito.verify(identity).alias(alias);
-    }
-
-    /**
      * LoginRs can detect a situation when a logged in user is trying to login,
      * and still allow him to see the login page.
      * @throws Exception If there is some problem inside

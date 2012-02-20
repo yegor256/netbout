@@ -64,7 +64,7 @@ public final class LoginRs extends AbstractRs {
                 .queryParam("redirect_uri", "{uri}")
                 .build(
                     Manifests.read("Netbout-FbId"),
-                    this.base().path("/g/fb").build()
+                    this.base().path("/fb/back").build()
                 )
         );
         return new PageBuilder()
@@ -89,32 +89,6 @@ public final class LoginRs extends AbstractRs {
     }
 
     /**
-     * Facebook authentication page (callback hits it).
-     * @param code Facebook "authorization code"
-     * @return The JAX-RS response
-     */
-    @GET
-    @Path("/fb")
-    public Response fbauth(@QueryParam("code") final String code) {
-        final RemoteIdentity remote = this.remote(code);
-        this.logoff();
-        Identity identity;
-        try {
-            identity = remote.findIn(this.hub());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new LoginRequiredException(this, ex);
-        }
-        return new PageBuilder()
-            .build(AbstractPage.class)
-            .init(this)
-            .render()
-            .authenticated(identity)
-            .status(Response.Status.SEE_OTHER)
-            .location(this.base().build())
-            .build();
-    }
-
-    /**
      * Logout page.
      * @return The JAX-RS response
      * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
@@ -135,23 +109,6 @@ public final class LoginRs extends AbstractRs {
                 )
             )
             .build();
-    }
-
-    /**
-     * Authenticate with a code.
-     * @param code Facebook "authorization code"
-     * @return The identity
-     */
-    private RemoteIdentity remote(final String code) {
-        RemoteIdentity remote;
-        try {
-            remote = new AuthMediator(this.hub().resolver())
-                .authenticate(new Urn(FacebookRs.NAMESPACE, ""), code);
-        } catch (java.io.IOException ex) {
-            Logger.warn(this, "%[exception]s", ex);
-            throw new LoginRequiredException(this, ex);
-        }
-        return remote;
     }
 
 }
