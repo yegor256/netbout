@@ -96,18 +96,13 @@ public final class LoginRs extends AbstractRs {
     @Path("/out")
     @GET
     public Response logout() {
-        return Response
-            .status(Response.Status.TEMPORARY_REDIRECT)
+        return new PageBuilder()
+            .stylesheet(this.base().path("/xsl/none.xsl"))
+            .build(AbstractPage.class)
+            .init(this)
+            .anonymous()
+            .status(Response.Status.SEE_OTHER)
             .location(this.base().build())
-            .header(
-                "Set-Cookie",
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "netbout=deleted;Domain=%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
-                    this.base().build().getHost(),
-                    this.httpServletRequest().getContextPath()
-                )
-            )
             .build();
     }
 
