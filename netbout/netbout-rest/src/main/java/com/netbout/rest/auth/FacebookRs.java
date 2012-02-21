@@ -83,8 +83,8 @@ public final class FacebookRs extends AbstractRs {
             .preserved()
             .status(Response.Status.SEE_OTHER)
             .location(
-                this.base().path("/fb")
-                    .queryParam("identity", "urn:facebook:")
+                this.base().path("/auth")
+                    .queryParam("identity", new Urn(this.NAMESPACE, ""))
                     .queryParam("secret", "{fbcode}")
                     .build(code)
             )
