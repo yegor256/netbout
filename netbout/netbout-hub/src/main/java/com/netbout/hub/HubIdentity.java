@@ -159,11 +159,6 @@ public final class HubIdentity implements Identity {
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        try {
-            bout.post("Welcome to a new bout!");
-        } catch (com.netbout.spi.MessagePostException ex) {
-            throw new IllegalStateException(ex);
-        }
         this.hub.infinity().see(bout);
         Logger.info(
             this,

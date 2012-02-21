@@ -36,6 +36,7 @@ import com.rexsl.test.RestTester
 
 def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
 def bout = jeff.start()
+bout.post('hi there!')
 bout.rename('Stage stylesheet validation')
 def helper = new Urn('urn:test:hh')
 bout.invite(jeff.friend(new Urn('urn:facebook:1531296526')))

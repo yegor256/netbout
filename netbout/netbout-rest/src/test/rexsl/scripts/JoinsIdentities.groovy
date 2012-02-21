@@ -51,7 +51,9 @@ def secret = new SecureString(name).toString()
 def son = new RestSession(rexsl.home).authenticate(name, secret)
 
 def father = new RestSession(rexsl.home).authenticate(new Urn('urn:test:father'), '')
-father.start().invite(son)
+def bout = father.start()
+bout.post('Hi there!')
+bout.invite(son)
 
 def auth = RestTester.start(RestUriBuilder.from(son))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)

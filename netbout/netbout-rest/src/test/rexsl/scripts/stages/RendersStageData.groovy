@@ -38,6 +38,7 @@ import javax.ws.rs.core.MediaType
 
 def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
 def bout = jeff.start()
+bout.post('hi there!')
 def maria = new RestSession(rexsl.home).authenticate(new Urn('urn:test:maria'), '')
 bout.rename('Rendering urn:test:hh stage data')
 bout.invite(maria)
