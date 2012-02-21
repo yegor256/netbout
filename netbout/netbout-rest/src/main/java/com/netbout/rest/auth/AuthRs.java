@@ -83,7 +83,7 @@ public final class AuthRs extends AbstractRs {
             } else {
                 Logger.info(
                     this,
-                    "Previous authentication '%s' was ignored in favor of '%s'",
+                    "Previous authentication of '%s' was replaced by '%s'",
                     previous.name(),
                     identity.name()
                 );

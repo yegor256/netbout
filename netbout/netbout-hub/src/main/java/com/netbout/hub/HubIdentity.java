@@ -286,10 +286,8 @@ public final class HubIdentity implements Identity {
                     int result;
                     if (this.pattern.matcher(left).matches()) {
                         result = -1;
-                    } else if (this.pattern.matcher(right).matches()) {
-                        result = 1;
                     } else {
-                        result = 0;
+                        result = 1;
                     }
                     return result;
                 }

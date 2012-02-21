@@ -70,13 +70,15 @@ public final class HubIdentityTest {
     @Test
     public void returnsPlainAliasesFirst() throws Exception {
         final String clean = "John Doe";
+        final String[] names = new String[] {"b@b.com", clean, "a@a.com"};
         final PowerHub hub = new PowerHubMocker().doReturn(
-            Arrays.asList(new String[] {"b@b.com", clean, "a@a.com"}),
+            Arrays.asList(names),
             "get-aliases-of-identity"
         )
             .mock();
         final Urn name = new UrnMocker().mock();
         final Set<String> aliases = new HubIdentity(hub, name).aliases();
+        MatcherAssert.assertThat(aliases, Matchers.hasSize(names.length));
         MatcherAssert.assertThat(
             aliases.iterator().next(),
             Matchers.equalTo(clean)
