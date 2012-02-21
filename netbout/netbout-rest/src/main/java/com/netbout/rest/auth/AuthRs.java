@@ -83,7 +83,7 @@ public final class AuthRs extends AbstractRs {
             } else if (identity.name().equals(previous.name())) {
                 Logger.info(
                     this,
-                    "Redundant re-authentication of '%s'",
+                    "Successfull re-authentication of '%s'",
                     identity.name()
                 );
             } else {
