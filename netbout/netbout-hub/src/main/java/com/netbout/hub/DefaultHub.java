@@ -277,7 +277,11 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             mname,
             cname
         );
-        return this.identity(mname);
+        try {
+            return this.identity(mname);
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
