@@ -39,6 +39,7 @@ import javax.ws.rs.core.MediaType
 
 def rita = new RestSession(rexsl.home).authenticate(new Urn('urn:test:rita'), '')
 def bout = rita.start()
+bout.post('hi there!')
 bout.rename('Two stages in one bout')
 bout.invite(rita.friend(new Urn('urn:facebook:1531296526')))
 

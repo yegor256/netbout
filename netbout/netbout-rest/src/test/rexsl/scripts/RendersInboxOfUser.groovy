@@ -38,7 +38,8 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 
 def william = new RestSession(rexsl.home).authenticate(new Urn('urn:test:willy'), '')
-william.start()
+def bout = william.start()
+bout.post('Hi there!')
 
 // validate content of the inbox
 RestTester.start(RestUriBuilder.from(william))

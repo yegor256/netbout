@@ -39,6 +39,7 @@ import javax.ws.rs.core.UriBuilder
 
 def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
 def bout = jeff.start()
+bout.post('hi there!')
 bout.rename('Trying to render an empty stage')
 
 // call some stage that DOESN'T exist in this bout - it should
