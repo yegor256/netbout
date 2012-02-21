@@ -2,7 +2,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:nb="http://www.netbout.com"
     version="2.0" exclude-result-prefixes="xs">
     <xsl:variable name="stage-home-uri">
         <xsl:text>${boutHome}s/</xsl:text>
@@ -10,6 +9,6 @@
     <xsl:variable name="bout-home-uri">
         <xsl:text>${boutHome}</xsl:text>
     </xsl:variable>
-    <xsl:include href="${boutXsl}" />
+    <xsl:include href="/xsl/bout.xsl" />
     <xsl:include href="${stageXsl}" />
 </xsl:stylesheet>

@@ -129,7 +129,7 @@ public final class InboxRs extends AbstractRs {
         }
         return new PageBuilder()
             .schema("")
-            .stylesheet(this.base().path("/xsl/inbox.xsl"))
+            .stylesheet("/xsl/inbox.xsl")
             .build(AbstractPage.class)
             .init(this)
             .append(new JaxbBundle("query", this.query))

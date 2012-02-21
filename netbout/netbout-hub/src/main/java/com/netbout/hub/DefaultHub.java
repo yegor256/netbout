@@ -258,7 +258,6 @@ public final class DefaultHub implements PowerHub, StatsProvider {
     @Override
     public Identity join(final Identity main, final Identity child) {
         synchronized (this.all) {
-            final Set<String> aliases = child.aliases();
             this.make("identities-joined")
                 .synchronously()
                 .arg(main.name())
@@ -267,9 +266,6 @@ public final class DefaultHub implements PowerHub, StatsProvider {
                 .exec();
             this.all.remove(child.name());
             this.manager().destroy(child.name());
-            for (String alias : aliases) {
-                main.alias(alias);
-            }
             this.all.remove(main.name());
             this.manager().destroy(main.name());
         }

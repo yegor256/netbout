@@ -26,24 +26,9 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.Hub;
-import com.netbout.hub.HubMocker;
-import com.netbout.rest.auth.RemoteIdentity;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.net.URL;
-import java.util.Arrays;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlmatchers.XmlMatchers;
 
 /**
@@ -51,8 +36,6 @@ import org.xmlmatchers.XmlMatchers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(LoginRs.class)
 public final class LoginRsTest {
 
     /**

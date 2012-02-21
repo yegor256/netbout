@@ -85,7 +85,7 @@ public final class JaxbBundleTest {
                 .up()
             .up();
         final Page page = new PageBuilder()
-            .stylesheet(UriBuilder.fromUri("test"))
+            .stylesheet("test")
             .build(AbstractPage.class)
             .init((Resource) new ResourceMocker().mock(BoutRs.class))
             .append(bundle.element())

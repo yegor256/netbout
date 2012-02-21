@@ -58,11 +58,11 @@ public final class PageBuilderTest {
     public void testJaxbIsWorking() throws Exception {
         final String stylesheet = "test-stylesheet";
         final Page page = new PageBuilder()
-            .stylesheet(UriBuilder.fromUri(stylesheet))
+            .stylesheet(stylesheet)
             .build(AbstractPage.class)
             .init((Resource) new ResourceMocker().mock(BoutRs.class));
         new PageBuilder()
-            .stylesheet(UriBuilder.fromUri(stylesheet))
+            .stylesheet(stylesheet)
             .build(AbstractPage.class);
         MatcherAssert.assertThat(
             page.getClass().getAnnotation(Stylesheet.class),

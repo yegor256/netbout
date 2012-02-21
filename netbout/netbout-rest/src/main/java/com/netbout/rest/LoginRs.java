@@ -26,17 +26,10 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.auth.AuthMediator;
-import com.netbout.rest.auth.FacebookRs;
-import com.netbout.rest.auth.RemoteIdentity;
 import com.netbout.rest.page.PageBuilder;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -68,7 +61,7 @@ public final class LoginRs extends AbstractRs {
                 )
         );
         return new PageBuilder()
-            .stylesheet(this.base().path("/xsl/login.xsl"))
+            .stylesheet("/xsl/login.xsl")
             .build(AbstractPage.class)
             .init(this)
             .link("facebook", fburi)
@@ -91,13 +84,11 @@ public final class LoginRs extends AbstractRs {
     /**
      * Logout page.
      * @return The JAX-RS response
-     * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @Path("/out")
     @GET
     public Response logout() {
         return new PageBuilder()
-            .stylesheet(this.base().path("/xsl/none.xsl"))
             .build(AbstractPage.class)
             .init(this)
             .anonymous()

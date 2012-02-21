@@ -59,7 +59,7 @@ public final class HelperRs extends AbstractRs {
     public Response front() {
         return new PageBuilder()
             .schema("")
-            .stylesheet(this.base().path("/xsl/helper.xsl"))
+            .stylesheet("/xsl/helper.xsl")
             .build(AbstractPage.class)
             .init(this)
             .link("promote", this.base().path("/h/promote"))

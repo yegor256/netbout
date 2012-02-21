@@ -33,6 +33,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -83,16 +84,9 @@ public final class BoutStylesheetRs extends AbstractRs {
     public String boutXsl() {
         return new Template("com/netbout/rest/wrapper.xsl.vm")
             .set(
-                "boutXsl",
-                StringEscapeUtils.escapeXml(
-                    this.base().path("/xsl/bout.xsl").build().toString()
-            )
-        )
-            .set(
                 "stageXsl",
                 StringEscapeUtils.escapeXml(
-                    this.base()
-                        .path("/{bout}/xsl/{stage}/stage.xsl")
+                    UriBuilder.fromPath("/{bout}/xsl/{stage}/stage.xsl")
                         .build(this.bout().number(), this.stage)
                         .toString()
                 )
@@ -100,10 +94,7 @@ public final class BoutStylesheetRs extends AbstractRs {
             .set(
                 "boutHome",
                 StringEscapeUtils.escapeXml(
-                    this.uriInfo()
-                        .getBaseUriBuilder()
-                        .clone()
-                        .path("/{bout}/")
+                    UriBuilder.fromPath("/{bout}/")
                         .build(this.bout().number())
                         .toString()
                 )
