@@ -26,14 +26,12 @@
  */
 package com.netbout.rest;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Urn;
 import com.netbout.text.Template;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -87,8 +85,8 @@ public final class BoutStylesheetRs extends AbstractRs {
                 "boutXsl",
                 StringEscapeUtils.escapeXml(
                     this.base().path("/xsl/bout.xsl").build().toString()
-                )
             )
+        )
             .set(
                 "stageXsl",
                 StringEscapeUtils.escapeXml(

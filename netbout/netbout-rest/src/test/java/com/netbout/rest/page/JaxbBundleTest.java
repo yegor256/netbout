@@ -32,7 +32,6 @@ import com.netbout.rest.Page;
 import com.netbout.rest.Resource;
 import com.netbout.rest.ResourceMocker;
 import com.rexsl.test.JaxbConverter;
-import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.xmlmatchers.XmlMatchers;

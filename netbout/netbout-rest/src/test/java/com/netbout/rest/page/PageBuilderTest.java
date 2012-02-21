@@ -33,7 +33,6 @@ import com.netbout.rest.Resource;
 import com.netbout.rest.ResourceMocker;
 import com.rexsl.core.Stylesheet;
 import com.rexsl.test.JaxbConverter;
-import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;

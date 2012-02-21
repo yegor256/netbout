@@ -189,19 +189,16 @@ public final class DefaultHub implements PowerHub, StatsProvider {
     public Identity identity(final Urn name) throws UnreachableUrnException {
         this.resolver().authority(name);
         Identity identity;
-        synchronized (this) {
-            if (this.all.containsKey(name)) {
-                identity = this.all.get(name);
-            } else {
-                identity = new HubIdentity(this, name);
-                this.save(identity);
-                Logger.debug(
-                    this,
-                    "#identity('%s'): created new (%d total)",
-                    name,
-                    this.all.size()
-                );
-            }
+        if (this.all.containsKey(name)) {
+            identity = this.all.get(name);
+        } else {
+            identity = this.save(new HubIdentity(this, name));
+            Logger.debug(
+                this,
+                "#identity('%s'): created new (%d total)",
+                name,
+                this.all.size()
+            );
         }
         return identity;
     }
@@ -320,8 +317,9 @@ public final class DefaultHub implements PowerHub, StatsProvider {
     /**
      * Save identity to storage.
      * @param identity The identity
+     * @return The identity to use
      */
-    private void save(final Identity identity) {
+    private Identity save(final Identity identity) {
         this.all.put(identity.name(), identity);
         this.make("identity-mentioned")
             .synchronously()
@@ -329,6 +327,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             .asDefault(true)
             .exec();
         this.infinity().see(identity);
+        return this.all.get(identity.name());
     }
 
     /**
