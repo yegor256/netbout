@@ -257,25 +257,27 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      */
     @Override
     public Identity join(final Identity main, final Identity child) {
+        final Urn mname = main.name();
+        final Urn cname = child.name();
         synchronized (this.all) {
             this.make("identities-joined")
                 .synchronously()
-                .arg(main.name())
-                .arg(child.name())
+                .arg(mname)
+                .arg(cname)
                 .asDefault(true)
                 .exec();
-            this.all.remove(child.name());
-            this.manager().destroy(child.name());
-            this.all.remove(main.name());
-            this.manager().destroy(main.name());
+            this.all.remove(cname);
+            this.manager().destroy(cname);
+            this.all.remove(mname);
+            this.manager().destroy(mname);
         }
         Logger.info(
             this,
             "'%s' and '%s' were joined successfully",
-            main,
-            child
+            mname,
+            cname
         );
-        return main;
+        return this.identity(mname);
     }
 
     /**
