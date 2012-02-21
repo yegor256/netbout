@@ -70,6 +70,28 @@ public final class FacebookRs extends AbstractRs {
         "PR45-IU6Y-23ER-9IMW-PAQ2-OO6T-EF5G-PLM6";
 
     /**
+     * Facebook authentication page (callback hits it).
+     * @param code Facebook "authorization code"
+     * @return The JAX-RS response
+     */
+    @GET
+    @Path("/back")
+    public Response fbauth(@QueryParam("code") final String code) {
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .preserved()
+            .status(Response.Status.SEE_OTHER)
+            .location(
+                this.base().path("/fb")
+                    .queryParam("identity", "urn:facebook:")
+                    .queryParam("secret", "{fbcode}")
+                    .build(code)
+            )
+            .build();
+    }
+
+    /**
      * Authentication page.
      * @param iname Name of identity
      * @param secret The secret code
@@ -185,7 +207,7 @@ public final class FacebookRs extends AbstractRs {
                 .queryParam("code", "{code}")
                 .build(
                     Manifests.read("Netbout-FbId"),
-                    this.base().path("/g/fb").build(),
+                    this.base().path("/fb/back").build(),
                     Manifests.read("Netbout-FbSecret"),
                     code
                 )

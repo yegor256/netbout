@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Urn;
 import com.netbout.text.Template;
 import javax.ws.rs.GET;
@@ -47,7 +46,7 @@ public final class BoutStylesheetRs extends AbstractRs {
     /**
      * Number of the bout.
      */
-    private transient Long number;
+    private transient Long bout;
 
     /**
      * Name of the stage.
@@ -61,7 +60,7 @@ public final class BoutStylesheetRs extends AbstractRs {
      */
     @PathParam("num")
     public void setBout(final Long num) {
-        this.number = num;
+        this.bout = num;
     }
 
     /**
@@ -91,20 +90,16 @@ public final class BoutStylesheetRs extends AbstractRs {
             .set(
                 "stageXsl",
                 StringEscapeUtils.escapeXml(
-                    this.base()
-                        .path("/{bout}/xsl/{stage}/stage.xsl")
-                        .build(this.bout().number(), this.stage)
+                    this.base().path("/{bout}/xsl/{stage}/stage.xsl")
+                        .build(this.bout, this.stage)
                         .toString()
                 )
             )
             .set(
                 "boutHome",
                 StringEscapeUtils.escapeXml(
-                    this.uriInfo()
-                        .getBaseUriBuilder()
-                        .clone()
-                        .path("/{bout}/")
-                        .build(this.bout().number())
+                    this.base().path("/{bout}/")
+                        .build(this.bout)
                         .toString()
                 )
             )
@@ -124,24 +119,12 @@ public final class BoutStylesheetRs extends AbstractRs {
         if (!this.stage.isEmpty()) {
             xsl = this.hub().make("render-stage-xsl")
                 .synchronously()
-                .arg(this.bout().number())
+                .arg(this.bout)
                 .arg(this.stage)
                 .asDefault(xsl)
                 .exec();
         }
         return xsl;
-    }
-
-    /**
-     * Get bout to work with.
-     * @return The bout
-     */
-    private Bout bout() {
-        try {
-            return this.identity().bout(this.number);
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
-            throw new ForwardException(this, this.base(), ex);
-        }
     }
 
 }

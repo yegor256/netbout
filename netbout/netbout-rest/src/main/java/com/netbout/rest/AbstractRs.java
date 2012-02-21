@@ -423,15 +423,4 @@ public abstract class AbstractRs implements Resource {
         return this.ihub;
     }
 
-    /**
-     * Get base with auth token.
-     * @return The builder
-     */
-    protected final UriBuilder baseWithToken() {
-        return this.uriInfo()
-            .getBaseUriBuilder()
-            .queryParam(RestSession.AUTH_PARAM, this.icookie)
-            .clone();
-    }
-
 }
