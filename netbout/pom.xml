@@ -152,6 +152,11 @@
 
     <pluginRepositories>
         <!-- intentionally empty -->
+        <pluginRepository>
+            <!-- until SPI is in development -->
+            <id>netbout.snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </pluginRepository>
     </pluginRepositories>
 
     <dependencyManagement>
