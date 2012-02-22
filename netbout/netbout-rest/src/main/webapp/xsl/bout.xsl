@@ -38,17 +38,6 @@
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
 
-    <xsl:variable name="title">
-        <xsl:choose>
-            <xsl:when test="/page/bout/title != ''">
-                <xsl:value-of select="/page/bout/title"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>untitled</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
-
     <xsl:variable name="participant"
         select="/page/bout/participants/participant[identity=/page/identity/name]"/>
 
@@ -57,7 +46,7 @@
             <xsl:text>#</xsl:text>
             <xsl:value-of select="/page/bout/number"/>
             <xsl:text>: </xsl:text>
-            <xsl:value-of select="$title"/>
+            <xsl:value-of select="/page/bout/title"/>
         </title>
         <script src="/js/dudes.js">
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
@@ -86,7 +75,7 @@
                             <xsl:text>true</xsl:text>
                         </xsl:attribute>
                     </xsl:if>
-                    <xsl:value-of select="$title"/>
+                    <xsl:value-of select="/page/bout/title"/>
                 </span>
             </h1>
         </header>
@@ -134,7 +123,7 @@
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="@href"/>
                                 </xsl:attribute>
-                                <xsl:value-of select="@label" />
+                                <xsl:value-of select="label" />
                                 <xsl:if test="@rel='earliest'">
                                     <xsl:text>...</xsl:text>
                                 </xsl:if>
@@ -265,11 +254,6 @@
                 <xsl:attribute name="value">
                     <xsl:value-of select="/page/bout/title"/>
                 </xsl:attribute>
-                <xsl:if test="/page/bout/title = ''">
-                    <xsl:attribute name="placeholder">
-                        <xsl:text>give this bout a title</xsl:text>
-                    </xsl:attribute>
-                </xsl:if>
             </input>
         </form>
     </xsl:template>

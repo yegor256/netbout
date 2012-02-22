@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.rest.page.JaxbBundle;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.MediaType;
@@ -47,19 +48,19 @@ public final class LinkTest {
      */
     @Test
     public void convertsToXml() throws Exception {
-        final Link obj = new Link(
+        final Link link = new Link(
             "foo",
-            "some label",
             UriBuilder.fromUri("http://bar").build(),
             MediaType.TEXT_XML
         );
+        link.add(new JaxbBundle("label", "some label").element());
         MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
+            JaxbConverter.the(link),
             Matchers.allOf(
                 XhtmlMatchers.hasXPath("/link[@rel='foo']"),
                 XhtmlMatchers.hasXPath("/link[@href='http://bar']"),
                 XhtmlMatchers.hasXPath("/link[@type='text/xml']"),
-                XhtmlMatchers.hasXPath("/link[@label='some label']")
+                XhtmlMatchers.hasXPath("/link[label='some label']")
             )
         );
     }
