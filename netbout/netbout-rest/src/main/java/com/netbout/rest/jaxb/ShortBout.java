@@ -197,7 +197,7 @@ public final class ShortBout {
                 "bout",
                 this.builder.clone().path("/../{num}").build(item.number())
             );
-            link.add(new JaxbBundle("bout", item.number()).element());
+            link.add(new JaxbBundle("number", item.number()).element());
             link.add(new JaxbBundle("title", item.title()).element());
             links.add(link);
         }

@@ -176,7 +176,7 @@
                             <xsl:attribute name="href">
                                 <xsl:value-of select="@href"/>
                             </xsl:attribute>
-                            <xsl:value-of select="bout" />
+                            <xsl:value-of select="number" />
                         </a>
                         <span><xsl:text>: </xsl:text></span>
                         <xsl:value-of select="title" />

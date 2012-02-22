@@ -98,10 +98,8 @@ public final class Link {
     /**
      * Public ctor.
      * @param rname The "rel" of it
-     * @param name The label of it
      * @param uri The href
      * @param tpe Media type of destination
-     * @checkstyle ParameterNumber (3 lines)
      */
     public Link(final String rname, final URI uri, final String tpe) {
         assert rname != null;
@@ -145,7 +143,7 @@ public final class Link {
      */
     @XmlAnyElement(lax = true)
     @XmlMixed
-    public final List<Element> getElements() {
+    public List<Element> getElements() {
         return this.elements;
     }
 
