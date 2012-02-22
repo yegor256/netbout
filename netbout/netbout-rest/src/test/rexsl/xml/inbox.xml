@@ -49,7 +49,9 @@
     </identity>
     <keyword>some text</keyword>
     <periods>
-        <link rel="more" href="/xml/bout.xml" label="5 days ago" />
+        <link rel="more" href="/xml/bout.xml">
+            <label>5 days ago</label>
+        </link>
     </periods>
     <bouts>
         <bout href="/xml/bout.xml" seen="3" messages="6">
