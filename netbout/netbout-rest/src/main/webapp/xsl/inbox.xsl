@@ -156,7 +156,14 @@
                     <xsl:attribute name="href">
                         <xsl:value-of select="link[@rel='page']/@href"/>
                     </xsl:attribute>
-                    <xsl:value-of select="title" />
+                    <xsl:choose>
+                        <xsl:when test="title = ''">
+                            <xsl:text>(no title)</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="title" />
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </a>
                 <xsl:if test="@unseen &gt; 0">
                     <span class="red">
@@ -178,8 +185,17 @@
                             </xsl:attribute>
                             <xsl:value-of select="number" />
                         </a>
-                        <span><xsl:text>: </xsl:text></span>
-                        <xsl:value-of select="title" />
+                        <span>
+                            <xsl:text>: </xsl:text>
+                            <xsl:choose>
+                                <xsl:when test="title = ''">
+                                    <xsl:text>(no title)</xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="title" />
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </span>
                     </xsl:for-each>
                     <xsl:if test="bundled/link[@rel='all']">
                         <span><xsl:text>, and </xsl:text></span>
