@@ -95,6 +95,7 @@ public final class StageCoordinates {
      */
     public StageCoordinates setStage(final Urn name) {
         this.istage = name;
+        this.iplace = "";
         return this;
     }
 
