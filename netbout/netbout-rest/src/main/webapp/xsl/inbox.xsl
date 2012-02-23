@@ -127,7 +127,7 @@
                                         <xsl:attribute name="href">
                                             <xsl:value-of select="@href"/>
                                         </xsl:attribute>
-                                        <xsl:value-of select="label" />
+                                        <xsl:value-of select="title" />
                                         <xsl:if test="@rel='earliest'">
                                             <xsl:text>...</xsl:text>
                                         </xsl:if>

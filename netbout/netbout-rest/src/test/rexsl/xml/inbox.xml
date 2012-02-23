@@ -50,7 +50,7 @@
     <keyword>some text</keyword>
     <periods>
         <link rel="more" href="/xml/bout.xml">
-            <label>5 days ago</label>
+            <title>5 days ago</title>
         </link>
     </periods>
     <bouts>
