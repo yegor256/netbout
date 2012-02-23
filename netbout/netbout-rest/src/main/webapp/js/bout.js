@@ -30,8 +30,13 @@ $(document).ready(
         $('header#top1 span.title')
             .blur(
                 function() {
-                    $("#rename input[name='title']").val($(this).text());
-                    $("#rename").submit();
+                    var $input = $("#rename input[name='title']");
+                    var previous = $input.val();
+                    var entered = $(this).text();
+                    if (entered != previous) {
+                        $input.val(entered);
+                        $("#rename").submit();
+                    }
                 }
             )
             .keydown(
