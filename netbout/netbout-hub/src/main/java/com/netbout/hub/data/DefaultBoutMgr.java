@@ -104,7 +104,7 @@ public final class DefaultBoutMgr implements BoutMgr {
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        data.setTitle("");
+        data.setTitle("(no title)");
         data.addParticipant(author).setConfirmed(true);
         Logger.debug(
             this,

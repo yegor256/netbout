@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -192,13 +193,13 @@ public final class ShortBout {
         while (bouts.hasNext() && max > 0) {
             final Bout item = bouts.next();
             max -= 1;
-            links.add(
-                new Link(
-                    "bout",
-                    String.format("#%d: %s", item.number(), item.title()),
-                    this.builder.clone().path("/../{num}").build(item.number())
-                )
+            final Link link = new Link(
+                "bout",
+                this.builder.clone().path("/../{num}").build(item.number())
             );
+            link.add(new JaxbBundle("number", item.number()).element());
+            link.add(new JaxbBundle("title", item.title()).element());
+            links.add(link);
         }
         if (max == 0) {
             links.add(

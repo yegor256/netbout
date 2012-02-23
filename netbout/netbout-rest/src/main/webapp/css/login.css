@@ -40,12 +40,14 @@ body {
     width: 100%;
     height: 100%;
     font-size: 1em;
+    display: table;
 }
 
 /* content */
 #content {
     text-align: center;
     vertical-align: middle;
+    display: table-cell;
 }
 
 #logo {
