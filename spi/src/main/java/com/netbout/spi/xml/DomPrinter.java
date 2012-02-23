@@ -30,6 +30,8 @@
 package com.netbout.spi.xml;
 
 import java.io.StringWriter;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -78,7 +80,9 @@ public final class DomPrinter {
     public String print() {
         final StringWriter writer = new StringWriter();
         try {
-            this.FACTORY.newTransformer().transform(
+            final Transformer transformer = this.FACTORY.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(
                 new DOMSource(this.element),
                 new StreamResult(writer)
             );
