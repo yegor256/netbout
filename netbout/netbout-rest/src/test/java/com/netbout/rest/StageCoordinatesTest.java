@@ -111,4 +111,19 @@ public final class StageCoordinatesTest {
         MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(new Urn()));
     }
 
+    /**
+     * StageCoordinates can set place to "empty" when stage is changed.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void resetsPlaceWhenStageIsChanging() throws Exception {
+        final Hub hub = new HubMocker().mock();
+        final Bout bout = new BoutMocker().mock();
+        final StageCoordinates coords = new StageCoordinates();
+        coords.normalize(hub, bout);
+        coords.setPlace("abc");
+        coords.setStage(new Urn("urn:test:"));
+        MatcherAssert.assertThat(coords.place(), Matchers.equalTo(""));
+    }
+
 }

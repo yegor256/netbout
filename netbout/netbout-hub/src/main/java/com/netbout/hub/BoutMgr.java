@@ -59,4 +59,10 @@ public interface BoutMgr {
      */
     BoutDt find(Long number) throws BoutNotFoundException;
 
+    /**
+     * Destroy all bouts that are related to this identity.
+     * @param author The identity
+     */
+    void destroy(Urn author);
+
 }

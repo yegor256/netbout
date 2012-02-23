@@ -70,6 +70,13 @@ public interface Page {
     Page append(JaxbBundle bundle);
 
     /**
+     * Render content, if this method is not called the
+     * page will be empty.
+     * @return This object
+     */
+    Page render();
+
+    /**
      * Create and return a JAX-RS response, for a page that is viewed by an
      * athenticated user (we know who is logged in now).
      * @param identity The identity

@@ -80,6 +80,19 @@ public final class AuthRs extends AbstractRs {
             } else if (AbstractPage.trusted(previous)
                 && !AbstractPage.trusted(identity)) {
                 identity = this.hub().join(previous, identity);
+            } else if (identity.name().equals(previous.name())) {
+                Logger.info(
+                    this,
+                    "Successfull re-authentication of '%s'",
+                    identity.name()
+                );
+            } else {
+                Logger.info(
+                    this,
+                    "Authentication of '%s' was replaced by '%s'",
+                    previous.name(),
+                    identity.name()
+                );
             }
         } catch (LoginRequiredException ex) {
             identity = this.authenticate(iname, secret);

@@ -78,21 +78,13 @@ public final class PageBuilder {
 
     /**
      * Configure the stylesheet to be used.
-     *
-     * <p>We should convert this absolute path provided into a relative URI,
-     * in order to avoid security problems in browsers. Stylesheet should
-     * always be in the same domain as the main page. see ticket #257
-     *
-     * @param builder URI builder
+     * @param uri The URI of the stylesheet
      * @return This object
      */
-    public PageBuilder stylesheet(final UriBuilder builder) {
-        final URI original = builder.build();
-        if (original.getQuery() == null) {
-            this.xsl = UriBuilder.fromPath(original.getPath()).build();
-        } else {
-            this.xsl = original;
-        }
+    public PageBuilder stylesheet(final String uri) {
+        this.xsl = UriBuilder.fromUri(uri)
+            .replaceQuery("")
+            .build();
         return this;
     }
 
@@ -142,7 +134,7 @@ public final class PageBuilder {
             final String name = String.format(
                 "%s$%s",
                 base.getName(),
-                this.xsl.getPath().replaceAll("[^\\w]", "")
+                this.xsl.getPath().replaceAll("[^a-zA-Z0-9]", "")
             );
             Class cls;
             if (ClassPool.getDefault().getOrNull(name) == null) {
@@ -153,10 +145,18 @@ public final class PageBuilder {
                 } catch (ClassNotFoundException ex) {
                     throw new IllegalStateException(ex);
                 }
-                // let's double check that the class found really is the
-                // class we're looking for
-                assert ((Stylesheet) cls.getAnnotation(Stylesheet.class))
-                    .value().equals(this.xsl.toString());
+                if (!((Stylesheet) cls.getAnnotation(Stylesheet.class))
+                    .value().equals(this.xsl.toString())) {
+                    throw new IllegalStateException(
+                        String.format(
+                            "Class %s has '%s' stylesheet while %s expected",
+                            cls.getName(),
+                            ((Stylesheet) cls.getAnnotation(Stylesheet.class))
+                                .value(),
+                            this.xsl.toString()
+                        )
+                    );
+                }
             }
             return cls;
         }

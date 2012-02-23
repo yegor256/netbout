@@ -257,12 +257,20 @@ public final class Urn implements Comparable {
     }
 
     /**
+     * Get all params.
+     * @return The params
+     */
+    public Map<String, String> params() {
+        return Urn.demap(this.toString());
+    }
+
+    /**
      * Get query param by name.
      * @param name Name of parameter
      * @return The value of it
      */
     public String param(final String name) {
-        final Map<String, String> params = Urn.demap(this.toString());
+        final Map<String, String> params = this.params();
         if (!params.containsKey(name)) {
             throw new IllegalArgumentException(
                 String.format(
@@ -283,7 +291,7 @@ public final class Urn implements Comparable {
      * @return New URN
      */
     public Urn param(final String name, final Object value) {
-        final Map<String, String> params = Urn.demap(this.toString());
+        final Map<String, String> params = this.params();
         params.put(name, value.toString());
         return Urn.create(
             String.format(

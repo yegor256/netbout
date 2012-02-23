@@ -35,10 +35,12 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Pattern;
 
 /**
  * Identity.
@@ -157,15 +159,10 @@ public final class HubIdentity implements Identity {
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        try {
-            bout.post("Welcome to a new bout!");
-        } catch (com.netbout.spi.MessagePostException ex) {
-            throw new IllegalStateException(ex);
-        }
         this.hub.infinity().see(bout);
-        Logger.debug(
+        Logger.info(
             this,
-            "#start(): bout #%d started by '%s'",
+            "Bout #%d started successfully by '%s'",
             bout.number(),
             this.name()
         );
@@ -275,7 +272,23 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Set<String> aliases() {
-        final Set<String> list = new HashSet<String>(this.myAliases());
+        final Set<String> list = new TreeSet<String>(
+            new Comparator<String>() {
+                private final transient Pattern pattern =
+                    Pattern.compile("[a-zA-Z ]+");
+                @Override
+                public int compare(final String left, final String right) {
+                    int result;
+                    if (this.pattern.matcher(left).matches()) {
+                        result = -1;
+                    } else {
+                        result = 1;
+                    }
+                    return result;
+                }
+            }
+        );
+        list.addAll(this.myAliases());
         Logger.debug(
             this,
             "#aliases(): %d returned",
@@ -307,9 +320,9 @@ public final class HubIdentity implements Identity {
                     .arg(alias)
                     .asDefault(true)
                     .exec();
-                Logger.debug(
+                Logger.info(
                     this,
-                    "#alias('%s'): added for '%s'",
+                    "Alias '%s' added for '%s'",
                     alias,
                     this.name()
                 );

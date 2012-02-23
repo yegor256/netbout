@@ -24,77 +24,83 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.log;
 
-import com.netbout.rest.log.LogList;
-import com.netbout.spi.Identity;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
+import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * RESTful resource.
+ * Global web log appender.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
+public final class WebAppender extends AppenderSkeleton {
 
     /**
-     * When this resource was created, in nano seconds.
-     * @return The time
+     * List of log events (keys are thread names).
      */
-    long nano();
+    private static final ConcurrentMap<String, List<String>> EVENTS =
+        new ConcurrentHashMap<String, List<String>>();
 
     /**
-     * Get current user identity, or throws {@link LoginRequiredException} if
-     * no user is logged in at the moment.
-     * @return The identity
+     * {@inheritDoc}
      */
-    Identity identity();
+    @Override
+    public boolean requiresLayout() {
+        return true;
+    }
 
     /**
-     * Message to show.
-     * @return The message
+     * {@inheritDoc}
      */
-    String message();
+    @Override
+    public void activateOptions() {
+        // nothing to do
+    }
 
     /**
-     * Log list.
-     * @return The log
+     * {@inheritDoc}
      */
-    LogList log();
+    @Override
+    public void close() {
+        // nothing to do
+    }
 
     /**
-     * Base URI builder.
-     * @return The builder
+     * {@inheritDoc}
      */
-    UriBuilder base();
+    @Override
+    public void append(final LoggingEvent event) {
+        if (this.EVENTS.containsKey(event.getThreadName())
+            && event.getLevel().isGreaterOrEqual(Level.INFO)) {
+            this.EVENTS.get(event.getThreadName()).add(
+                this.getLayout().format(event)
+            );
+        }
+    }
 
     /**
-     * Get URI Info.
-     * @return URI info
+     * Start recording events for this thread.
      */
-    UriInfo uriInfo();
+    public static void start() {
+        WebAppender.EVENTS.put(
+            Thread.currentThread().getName(),
+            new LinkedList<String>()
+        );
+    }
 
     /**
-     * All registered JAX-RS providers.
-     * @return Providers
+     * Get all recorded events, for current thread.
+     * @return The list of events
      */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
-
-    /**
-     * Request just received.
-     * @return The request
-     */
-    HttpServletRequest httpServletRequest();
+    public static List<String> get() {
+        return WebAppender.EVENTS.get(Thread.currentThread().getName());
+    }
 
 }

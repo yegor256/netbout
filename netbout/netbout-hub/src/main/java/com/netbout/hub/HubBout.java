@@ -119,6 +119,12 @@ public final class HubBout implements Bout {
     public void confirm() {
         this.data.confirm(this.viewer.name());
         this.hub.infinity().see(this);
+        Logger.info(
+            this,
+            "Participant '%s' confirmed participation in bout #%d",
+            this.viewer,
+            this.number()
+        );
     }
 
     /**
@@ -128,6 +134,12 @@ public final class HubBout implements Bout {
     public void leave() {
         this.data.kickOff(this.viewer.name());
         this.hub.infinity().see(this);
+        Logger.info(
+            this,
+            "Participant '%s' just left bout #%d",
+            this.viewer,
+            this.number()
+        );
     }
 
     /**
@@ -146,6 +158,12 @@ public final class HubBout implements Bout {
         }
         this.data.setTitle(text);
         this.hub.infinity().see(this);
+        Logger.info(
+            this,
+            "Bout #%d was successfully renamed to '%s'",
+            this.number(),
+            text
+        );
     }
 
     /**
@@ -190,11 +208,7 @@ public final class HubBout implements Bout {
             );
         }
         final ParticipantDt dude = this.data.addParticipant(friend.name());
-        Logger.debug(
-            this,
-            "#invite('%s'): success",
-            friend
-        );
+        Logger.info(this, "'%s' invited to bout #%d", friend, this.number());
         final Boolean confirm = this.hub.make("just-invited")
             .arg(this.number())
             .arg(friend.name())
@@ -301,11 +315,7 @@ public final class HubBout implements Bout {
             msg.setDate(new Date());
             msg.setAuthor(this.viewer.name());
             msg.setText(text);
-            Logger.debug(
-                this,
-                "#post('%s'): message posted",
-                text
-            );
+            Logger.info(this, "Message posted to bout #%d", this.number());
             message = new HubMessage(
                 this.hub,
                 this.viewer,

@@ -24,44 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.text;
 
-html {
-    height: 100%;
+/**
+ * When string can't be decrypted.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ */
+public final class StringDecryptionException extends Exception {
+
+    /**
+     * Public ctor.
+     * @param cause The cause of it
+     */
+    public StringDecryptionException(final String cause) {
+        super(cause);
+    }
+
 }
-
-body {
-    background-color: #f3f3f1;
-    height: 100%;
-    font-size: 10px; /* the same as 7.8pt or 2.646mm or 10px */
-}
-
-/* wrapper */
-#wrapper {
-    width: 100%;
-    height: 100%;
-    font-size: 1em;
-    display: table;
-}
-
-/* content */
-#content {
-    text-align: center;
-    vertical-align: middle;
-    display: table-cell;
-}
-
-#logo {
-    width: 11.3em;
-    height: 3.7em;
-    margin-bottom: 2em;
-}
-
-#facebook {
-    width: 17.3em;
-    height: 2.8em;
-}
-
-#message {
-    font-size: 1.4em;
-}
-

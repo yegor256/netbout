@@ -27,8 +27,10 @@
 package com.netbout.rest;
 
 import com.netbout.hub.Hub;
+import com.netbout.rest.log.LogList;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
+import com.netbout.text.SecureString;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -39,8 +41,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.CharEncoding;
 
 /**
  * Abstract RESTful resource.
@@ -55,6 +55,11 @@ public abstract class AbstractRs implements Resource {
      * When this resource was started, in nanoseconds.
      */
     private final transient long inano = System.nanoTime();
+
+    /**
+     * List of log events.
+     */
+    private final transient LogList loglist = new LogList();
 
     /**
      * Hub to work with.
@@ -102,6 +107,14 @@ public abstract class AbstractRs implements Resource {
     @Override
     public final long nano() {
         return this.inano;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final LogList log() {
+        return this.loglist;
     }
 
     /**
@@ -218,21 +231,34 @@ public abstract class AbstractRs implements Resource {
     @CookieParam("netbout-msg")
     public final void setMessage(final String msg) {
         if (msg != null) {
-            String decoded;
             try {
-                decoded = new String(
-                    new Base64().decode(msg),
-                    CharEncoding.UTF_8
-                );
-            } catch (java.io.UnsupportedEncodingException ex) {
-                throw new IllegalArgumentException(ex);
+                this.imessage = SecureString.valueOf(msg).text();
+            } catch (com.netbout.text.StringDecryptionException ex) {
+                this.imessage = ex.getMessage();
             }
-            this.imessage = decoded;
             Logger.debug(
                 this,
                 "#setMessage('%s'): injected as '%s'",
                 msg,
-                decoded
+                this.imessage
+            );
+        }
+    }
+
+    /**
+     * Set list of log events from previous page rendering.
+     * Should be called by JAX-RS implemenation
+     * because of <tt>&#64;CookieParam</tt> annotation.
+     * @param text Packed text
+     */
+    @CookieParam(RestSession.LOG_COOKIE)
+    public final void setLog(final String text) {
+        if (text != null) {
+            this.loglist.append(text);
+            Logger.debug(
+                this,
+                "#setLog('%s'): injected",
+                text
             );
         }
     }
@@ -395,17 +421,6 @@ public abstract class AbstractRs implements Resource {
             );
         }
         return this.ihub;
-    }
-
-    /**
-     * Get base with auth token.
-     * @return The builder
-     */
-    protected final UriBuilder baseWithToken() {
-        return this.uriInfo()
-            .getBaseUriBuilder()
-            .queryParam(RestSession.AUTH_PARAM, this.icookie)
-            .clone();
     }
 
 }

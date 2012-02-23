@@ -29,6 +29,9 @@ package com.netbout.hub;
 import com.netbout.inf.Infinity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import java.util.Arrays;
+import java.util.Set;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -57,6 +60,28 @@ public final class HubIdentityTest {
                     String.format("(talks-with '%s')", name)
                 )
             )
+        );
+    }
+
+    /**
+     * HubIdentity can return plain aliases first.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void returnsPlainAliasesFirst() throws Exception {
+        final String clean = "John Doe";
+        final String[] names = new String[] {"b@b.com", clean, "a@a.com"};
+        final PowerHub hub = new PowerHubMocker().doReturn(
+            Arrays.asList(names),
+            "get-aliases-of-identity"
+        )
+            .mock();
+        final Urn name = new UrnMocker().mock();
+        final Set<String> aliases = new HubIdentity(hub, name).aliases();
+        MatcherAssert.assertThat(aliases, Matchers.hasSize(names.length));
+        MatcherAssert.assertThat(
+            aliases.iterator().next(),
+            Matchers.equalTo(clean)
         );
     }
 

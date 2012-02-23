@@ -95,6 +95,7 @@ public final class StageCoordinates {
      */
     public StageCoordinates setStage(final Urn name) {
         this.istage = name;
+        this.iplace = "";
         return this;
     }
 
@@ -149,6 +150,9 @@ public final class StageCoordinates {
                     ).text()
                 );
             } catch (java.net.URISyntaxException ex) {
+                coords.setStage(new Urn());
+                coords.setPlace("");
+            } catch (com.netbout.text.StringDecryptionException ex) {
                 coords.setStage(new Urn());
                 coords.setPlace("");
             }

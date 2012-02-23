@@ -37,6 +37,7 @@ import org.hamcrest.Matchers
 def ozzie = new RestSession(rexsl.home).authenticate(new Urn('urn:test:ozzie'), '')
 
 def bout = ozzie.start()
+bout.post('Hi there!')
 bout.rename('Ozzie talking by email, \u0443\u0440\u0430!')
 def email = 'test@example.com'
 def friends = ozzie.friends(email)

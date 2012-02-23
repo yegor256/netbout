@@ -32,7 +32,6 @@ import com.netbout.rest.Page;
 import com.netbout.rest.Resource;
 import com.netbout.rest.ResourceMocker;
 import com.rexsl.test.JaxbConverter;
-import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.xmlmatchers.XmlMatchers;
@@ -85,7 +84,7 @@ public final class JaxbBundleTest {
                 .up()
             .up();
         final Page page = new PageBuilder()
-            .stylesheet(UriBuilder.fromUri("test"))
+            .stylesheet("test")
             .build(AbstractPage.class)
             .init((Resource) new ResourceMocker().mock(BoutRs.class))
             .append(bundle.element())

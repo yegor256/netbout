@@ -43,6 +43,7 @@ def paul = new RestSession(rexsl.home).authenticate(new Urn('urn:test:paul'), ''
 
 def bout = paul.start()
 bout.rename('Posting XML messages to bumper')
+bout.post('hi there!')
 bout.invite(paul.friend(new Urn('urn:test:bumper')))
 
 def xsd = UriBuilder.fromUri(rexsl.home).path('/bumper/ns.xsd').build()

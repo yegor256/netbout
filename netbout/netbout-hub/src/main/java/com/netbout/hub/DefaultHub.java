@@ -192,8 +192,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         if (this.all.containsKey(name)) {
             identity = this.all.get(name);
         } else {
-            identity = new HubIdentity(this, name);
-            this.save(identity);
+            identity = this.save(new HubIdentity(this, name));
             Logger.debug(
                 this,
                 "#identity('%s'): created new (%d total)",
@@ -257,27 +256,31 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      */
     @Override
     public Identity join(final Identity main, final Identity child) {
+        final Urn mname = main.name();
+        final Urn cname = child.name();
         synchronized (this.all) {
-            final Set<String> aliases = child.aliases();
             this.make("identities-joined")
                 .synchronously()
-                .arg(main.name())
-                .arg(child.name())
+                .arg(mname)
+                .arg(cname)
                 .asDefault(true)
                 .exec();
-            this.all.remove(child.name());
-            for (String alias : aliases) {
-                main.alias(alias);
-            }
-            this.all.remove(main.name());
+            this.all.remove(cname);
+            this.manager().destroy(cname);
+            this.all.remove(mname);
+            this.manager().destroy(mname);
         }
         Logger.info(
             this,
-            "#join('%s', '%s'): joined successfully",
-            main,
-            child
+            "'%s' and '%s' were joined successfully",
+            mname,
+            cname
         );
-        return main;
+        try {
+            return this.identity(mname);
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -314,8 +317,9 @@ public final class DefaultHub implements PowerHub, StatsProvider {
     /**
      * Save identity to storage.
      * @param identity The identity
+     * @return The identity to use
      */
-    private void save(final Identity identity) {
+    private Identity save(final Identity identity) {
         this.all.put(identity.name(), identity);
         this.make("identity-mentioned")
             .synchronously()
@@ -323,6 +327,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             .asDefault(true)
             .exec();
         this.infinity().see(identity);
+        return this.all.get(identity.name());
     }
 
     /**

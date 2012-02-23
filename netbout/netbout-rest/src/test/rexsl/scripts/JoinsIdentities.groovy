@@ -34,11 +34,14 @@ import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.netbout.text.SecureString
+import com.rexsl.core.Manifests
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 import org.mockito.Mockito
+
+Manifests.append(new File(rexsl.basedir, 'src/test/resources/META-INF/MANIFEST.MF'))
 
 def email = 'son@example.com'
 def name = new Urn('email', email)
@@ -48,7 +51,9 @@ def secret = new SecureString(name).toString()
 def son = new RestSession(rexsl.home).authenticate(name, secret)
 
 def father = new RestSession(rexsl.home).authenticate(new Urn('urn:test:father'), '')
-father.start().invite(son)
+def bout = father.start()
+bout.post('Hi there!')
+bout.invite(son)
 
 def auth = RestTester.start(RestUriBuilder.from(son))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)

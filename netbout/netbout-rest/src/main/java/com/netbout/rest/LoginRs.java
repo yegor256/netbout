@@ -26,17 +26,10 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.auth.AuthMediator;
-import com.netbout.rest.auth.FacebookRs;
-import com.netbout.rest.auth.RemoteIdentity;
 import com.netbout.rest.page.PageBuilder;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -64,14 +57,15 @@ public final class LoginRs extends AbstractRs {
                 .queryParam("redirect_uri", "{uri}")
                 .build(
                     Manifests.read("Netbout-FbId"),
-                    this.base().path("/g/fb").build()
+                    this.base().path("/fb/back").build()
                 )
         );
         return new PageBuilder()
-            .stylesheet(this.base().path("/xsl/login.xsl"))
+            .stylesheet("/xsl/login.xsl")
             .build(AbstractPage.class)
             .init(this)
             .link("facebook", fburi)
+            .render()
             .preserved()
             .build();
     }
@@ -88,68 +82,19 @@ public final class LoginRs extends AbstractRs {
     }
 
     /**
-     * Facebook authentication page (callback hits it).
-     * @param code Facebook "authorization code"
-     * @return The JAX-RS response
-     */
-    @GET
-    @Path("/fb")
-    public Response fbauth(@QueryParam("code") final String code) {
-        final RemoteIdentity remote = this.remote(code);
-        this.logoff();
-        Identity identity;
-        try {
-            identity = remote.findIn(this.hub());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new LoginRequiredException(this, ex);
-        }
-        return new PageBuilder()
-            .build(AbstractPage.class)
-            .init(this)
-            .authenticated(identity)
-            .status(Response.Status.SEE_OTHER)
-            .location(this.base().build())
-            .build();
-    }
-
-    /**
      * Logout page.
      * @return The JAX-RS response
-     * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @Path("/out")
     @GET
     public Response logout() {
-        return Response
-            .status(Response.Status.TEMPORARY_REDIRECT)
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .anonymous()
+            .status(Response.Status.SEE_OTHER)
             .location(this.base().build())
-            .header(
-                "Set-Cookie",
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "netbout=deleted;Domain=%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
-                    this.base().build().getHost(),
-                    this.httpServletRequest().getContextPath()
-                )
-            )
             .build();
-    }
-
-    /**
-     * Authenticate with a code.
-     * @param code Facebook "authorization code"
-     * @return The identity
-     */
-    private RemoteIdentity remote(final String code) {
-        RemoteIdentity remote;
-        try {
-            remote = new AuthMediator(this.hub().resolver())
-                .authenticate(new Urn(FacebookRs.NAMESPACE, ""), code);
-        } catch (java.io.IOException ex) {
-            Logger.warn(this, "%[exception]s", ex);
-            throw new LoginRequiredException(this, ex);
-        }
-        return remote;
     }
 
 }

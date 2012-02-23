@@ -52,7 +52,6 @@ final class Sender {
      */
     public Sender() {
         final Properties props = new Properties();
-        props.put("mail.smtp.starttls.enable", true);
         props.put("mail.smtp.auth", true);
         this.session = Session.getInstance(props);
     }
@@ -71,7 +70,7 @@ final class Sender {
      */
     public void send(final Message message) {
         try {
-            final Transport transport = this.session.getTransport("smtp");
+            final Transport transport = this.session.getTransport("smtps");
             transport.connect(
                 Manifests.read("Netbout-SmtpHost"),
                 Integer.valueOf(Manifests.read("Netbout-SmtpPort")),
@@ -82,7 +81,7 @@ final class Sender {
             transport.close();
             Logger.info(
                 this,
-                "#send(..): email sent to '%s'",
+                "Email sent to '%s'",
                 message.getAllRecipients()[0]
             );
         } catch (javax.mail.NoSuchProviderException ex) {

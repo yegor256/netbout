@@ -27,12 +27,17 @@
 package com.netbout.rest.jaxb;
 
 import java.net.URI;
+import java.util.LinkedList;
+import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.w3c.dom.Element;
 
 /**
  * HATEOAS link.
@@ -50,11 +55,6 @@ public final class Link {
     private final transient String rel;
 
     /**
-     * Optional label.
-     */
-    private final transient String label;
-
-    /**
      * The URI.
      */
     private final transient URI href;
@@ -63,6 +63,12 @@ public final class Link {
      * The type of resource there.
      */
     private final transient String type;
+
+    /**
+     * Optional sub-elements.
+     */
+    private final transient List<Element> elements =
+        new LinkedList<Element>();
 
     /**
      * Public ctor for JAXB.
@@ -77,7 +83,7 @@ public final class Link {
      * @param uri The href
      */
     public Link(final String rname, final URI uri) {
-        this(rname, "", uri, MediaType.TEXT_XML);
+        this(rname, uri, MediaType.TEXT_XML);
     }
 
     /**
@@ -86,46 +92,20 @@ public final class Link {
      * @param builder URI builder
      */
     public Link(final String rname, final UriBuilder builder) {
-        this(rname, "", builder.build(), MediaType.TEXT_XML);
+        this(rname, builder.build(), MediaType.TEXT_XML);
     }
 
     /**
      * Public ctor.
      * @param rname The "rel" of it
-     * @param name The label of it
-     * @param builder URI builder
-     */
-    public Link(final String rname, final String name,
-        final UriBuilder builder) {
-        this(rname, name, builder.build(), MediaType.TEXT_XML);
-    }
-
-    /**
-     * Public ctor.
-     * @param rname The "rel" of it
-     * @param name The label of it
-     * @param uri URI
-     */
-    public Link(final String rname, final String name, final URI uri) {
-        this(rname, name, uri, MediaType.TEXT_XML);
-    }
-
-    /**
-     * Public ctor.
-     * @param rname The "rel" of it
-     * @param name The label of it
      * @param uri The href
      * @param tpe Media type of destination
-     * @checkstyle ParameterNumber (3 lines)
      */
-    public Link(final String rname, final String name, final URI uri,
-        final String tpe) {
+    public Link(final String rname, final URI uri, final String tpe) {
         assert rname != null;
-        assert name != null;
         assert uri != null;
         assert tpe != null;
         this.rel = rname;
-        this.label = name;
         this.href = uri;
         this.type = tpe;
     }
@@ -137,19 +117,6 @@ public final class Link {
     @XmlAttribute
     public String getRel() {
         return this.rel;
-    }
-
-    /**
-     * Label of the link.
-     * @return The label
-     */
-    @XmlAttribute
-    public String getLabel() {
-        String text = null;
-        if (!this.label.isEmpty()) {
-            text = this.label;
-        }
-        return text;
     }
 
     /**
@@ -168,6 +135,24 @@ public final class Link {
     @XmlAttribute
     public String getType() {
         return this.type;
+    }
+
+    /**
+     * Get all elements.
+     * @return Full list of injected elements
+     */
+    @XmlAnyElement(lax = true)
+    @XmlMixed
+    public List<Element> getElements() {
+        return this.elements;
+    }
+
+    /**
+     * Add new element.
+     * @param element The element to add
+     */
+    public void add(final Element element) {
+        this.elements.add(element);
     }
 
 }

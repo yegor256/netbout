@@ -26,7 +26,7 @@
  */
 package com.netbout.text;
 
-import org.apache.commons.codec.binary.Base64;
+import com.rexsl.core.Manifests;
 import org.apache.commons.lang.CharEncoding;
 
 /**
@@ -37,13 +37,10 @@ import org.apache.commons.lang.CharEncoding;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @see <a href="http://en.wikipedia.org/wiki/One-time_pad">One Time Pad</a>
+ * @see <a href="http://en.wikipedia.org/wiki/Base64">Base64</a>
+ * @checkstyle MagicNumber (500 lines)
  */
 public final class SecureString {
-
-    /**
-     * Password to use in encryption.
-     */
-    private static final String KEY = "j&^%hgfRR43$#&==_ )(00(0}{-~";
 
     /**
      * Open content (without encryption).
@@ -63,20 +60,21 @@ public final class SecureString {
      */
     @Override
     public String toString() {
-        return Base64.encodeBase64String(this.xor(this.raw.getBytes()))
-            .replace("=", "");
+        return this.pack(this.xor(this.raw.getBytes()));
     }
 
     /**
      * Create it from encrypted input.
      * @param hash The hash to use
      * @return The string
+     * @throws StringDecryptionException When can't decrypt
      */
-    public static SecureString valueOf(final String hash) {
+    public static SecureString valueOf(final String hash)
+        throws StringDecryptionException {
         try {
             return new SecureString(
                 new String(
-                    SecureString.xor(Base64.decodeBase64(hash.getBytes())),
+                    SecureString.xor(SecureString.unpack(hash)),
                     CharEncoding.UTF_8
                 )
             );
@@ -100,7 +98,7 @@ public final class SecureString {
      */
     private static byte[] xor(final byte[] input) {
         final byte[] output = new byte[input.length];
-        final byte[] secret = SecureString.KEY.getBytes();
+        final byte[] secret = Manifests.read("Netbout-SecurityKey").getBytes();
         int spos = 0;
         for (int pos = 0; pos < input.length; pos += 1) {
             output[pos] = (byte) (input[pos] ^ secret[spos]);
@@ -108,6 +106,100 @@ public final class SecureString {
             if (spos >= secret.length) {
                 spos = 0;
             }
+        }
+        return output;
+    }
+
+    /**
+     * Pack array of bytes into string.
+     * @param input The array of bytes
+     * @return Packed output
+     */
+    private static String pack(final byte[] input) {
+        final StringBuilder text = new StringBuilder();
+        int buffer = 0;
+        int bits = 0;
+        for (int pos = 0; pos < input.length; pos += 1) {
+            buffer = (buffer << 8) | (0xFF & input[pos]);
+            bits += 8;
+            while (bits >= 5) {
+                text.append(
+                    SecureString.toChar(
+                        (byte) ((buffer >> (bits - 5)) & 0x1F)
+                    )
+                );
+                bits -= 5;
+            }
+        }
+        if (bits > 0) {
+            text.append(
+                SecureString.toChar((byte) ((buffer << (5 - bits)) & 0x1F))
+            );
+        }
+        return text.toString();
+    }
+
+    /**
+     * Unpack sting into array of bytes.
+     * @param input The packed string
+     * @return Unpacked output
+     * @throws StringDecryptionException When can't unpack
+     */
+    private static byte[] unpack(final String input)
+        throws StringDecryptionException {
+        final int length = input.length();
+        final byte[] output = new byte[(int) length * 5 / 8];
+        long buffer = 0;
+        int bits = 0;
+        int opos = 0;
+        for (int pos = 0; pos < length; pos += 1) {
+            buffer = (buffer << 5) + SecureString.toBits(input.charAt(pos));
+            bits += 5;
+            while (bits >= 8) {
+                output[opos] = (byte) (buffer >> (bits - 8));
+                opos += 1;
+                bits -= 8;
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Convert 5 bits to one char.
+     * @param bits The bits
+     * @return The char
+     */
+    private static char toChar(final byte bits) {
+        char output;
+        if (bits >= 0 && bits <= 6) {
+            output = (char) ('0' + bits);
+        } else if (bits >= 7 && bits <= 32) {
+            output = (char) ('A' + bits - 7);
+        } else {
+            throw new IllegalArgumentException(
+                String.format("Illegal bits value: '%d'", bits)
+            );
+        }
+        return output;
+    }
+
+    /**
+     * Convert char to 5 bits.
+     * @param symbol The character
+     * @return The bits
+     * @throws StringDecryptionException When can't decrypt
+     */
+    private static byte toBits(final char symbol)
+        throws StringDecryptionException {
+        byte output;
+        if (symbol >= 'A' && symbol <= 'Z') {
+            output = (byte) (symbol - 'A' + 7);
+        } else if (symbol >= '0' && symbol <= '6') {
+            output = (byte) (symbol - '0');
+        } else {
+            throw new StringDecryptionException(
+                String.format("Illegal character in Base32: '%s'", symbol)
+            );
         }
         return output;
     }

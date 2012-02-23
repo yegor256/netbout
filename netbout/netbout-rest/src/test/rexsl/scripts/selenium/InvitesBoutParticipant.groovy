@@ -39,6 +39,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 def boris = new RestSession(rexsl.home).authenticate(new Urn('urn:test:boris'), '')
 def bout = boris.start()
+bout.post('hi there!')
 bout.rename('Selenimum test')
 
 def driver = new HtmlUnitDriver()

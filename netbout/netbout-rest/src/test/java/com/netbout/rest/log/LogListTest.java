@@ -24,44 +24,29 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.rest.log;
 
-html {
-    height: 100%;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+/**
+ * Test case for {@link LogList}.
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ */
+public final class LogListTest {
+
+    /**
+     * LogList can be empty.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void emptyListReturnsEmptyString() throws Exception {
+        MatcherAssert.assertThat(
+            new LogList().toString(),
+            Matchers.equalTo("")
+        );
+    }
+
 }
-
-body {
-    background-color: #f3f3f1;
-    height: 100%;
-    font-size: 10px; /* the same as 7.8pt or 2.646mm or 10px */
-}
-
-/* wrapper */
-#wrapper {
-    width: 100%;
-    height: 100%;
-    font-size: 1em;
-    display: table;
-}
-
-/* content */
-#content {
-    text-align: center;
-    vertical-align: middle;
-    display: table-cell;
-}
-
-#logo {
-    width: 11.3em;
-    height: 3.7em;
-    margin-bottom: 2em;
-}
-
-#facebook {
-    width: 17.3em;
-    height: 2.8em;
-}
-
-#message {
-    font-size: 1.4em;
-}
-

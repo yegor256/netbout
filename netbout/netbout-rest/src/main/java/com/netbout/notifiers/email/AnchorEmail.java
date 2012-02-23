@@ -100,6 +100,8 @@ final class AnchorEmail {
             }
             this.receiver = hub.identity(new Urn(parts[1]));
             this.where = this.receiver.bout(Long.valueOf(parts[0]));
+        } catch (com.netbout.text.StringDecryptionException ex) {
+            throw new BrokenAnchorException(ex);
         } catch (java.net.URISyntaxException ex) {
             throw new BrokenAnchorException(ex);
         } catch (com.netbout.spi.UnreachableUrnException ex) {

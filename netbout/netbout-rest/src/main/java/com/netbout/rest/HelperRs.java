@@ -59,13 +59,14 @@ public final class HelperRs extends AbstractRs {
     public Response front() {
         return new PageBuilder()
             .schema("")
-            .stylesheet(this.base().path("/xsl/helper.xsl"))
+            .stylesheet("/xsl/helper.xsl")
             .build(AbstractPage.class)
             .init(this)
             .link("promote", this.base().path("/h/promote"))
             // @checkstyle MultipleStringLiterals (2 lines)
             .link("namespaces", this.base().path("/h/namespaces"))
             .append(JaxbGroup.build(this.namespaces(), "namespaces"))
+            .render()
             .authenticated(this.identity())
             .build();
     }

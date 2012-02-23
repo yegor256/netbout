@@ -182,7 +182,7 @@ public final class BoutRs extends AbstractRs {
     @GET
     public Response front() {
         final Response.ResponseBuilder resp =
-            this.page().authenticated(this.identity());
+            this.page().render().authenticated(this.identity());
         final String place = this.hub().make("post-render-change-place")
             .inBout(this.bout())
             .arg(this.bout().number())
@@ -390,12 +390,9 @@ public final class BoutRs extends AbstractRs {
         final Page page = new PageBuilder()
             .schema("")
             .stylesheet(
-                this.baseWithToken()
-                    // @checkstyle MultipleStringLiterals (1 line)
-                    .path(String.format("/%d", this.bout().number()))
-                    .path("/xsl")
-                    .path(String.format("/%s", this.coords.stage()))
-                    .path("/wrapper.xsl")
+                this.base().path("/{bout}/xsl/{stage}/wrapper.xsl")
+                    .build(this.bout().number(), this.coords.stage())
+                    .toString()
             )
             .build(AbstractPage.class)
             .init(this)

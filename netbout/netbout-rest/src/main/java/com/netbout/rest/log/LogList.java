@@ -24,65 +24,85 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.log;
 
-import com.netbout.hub.Hub;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.text.SecureString;
 import com.ymock.util.Logger;
+import java.util.LinkedList;
+import java.util.List;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * Encrypts and decrypts.
+ * List of log events.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Cryptor {
+public final class LogList {
 
     /**
-     * Encrypt user+identity into text.
-     * @param identity The identity
-     * @return Encrypted string
+     * Separator.
      */
-    public String encrypt(final Identity identity) {
-        return new SecureString(identity.name()).toString();
+    private static final String SEP = "><";
+
+    /**
+     * List of log events.
+     */
+    private final transient List<String> list = new LinkedList<String>();
+
+    /**
+     * Public ctor.
+     */
+    public LogList() {
+        WebAppender.start();
     }
 
     /**
-     * Get identity from hash.
-     * @param hub Hub where to get identities
-     * @param hash The hash to use
-     * @return The name found in it
-     * @throws DecryptionException If we can't decrypt it
+     * {@inheritDoc}
      */
-    public Identity decrypt(final Hub hub, final String hash)
-        throws DecryptionException {
-        if (hash == null) {
-            throw new DecryptionException();
+    @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        for (Object event : ListUtils.union(this.list, WebAppender.get())) {
+            text.append(StringEscapeUtils.escapeXml(event.toString()))
+                .append(this.SEP);
         }
-        String iname;
+        return new SecureString(text.toString()).toString();
+    }
+
+    /**
+     * Append events from text.
+     * @param text The text
+     */
+    public void append(final String text) {
         try {
-            iname = SecureString.valueOf(hash).text();
+            final String[] events = StringUtils.splitPreserveAllTokens(
+                SecureString.valueOf(text).text(),
+                this.SEP
+            );
+            for (String event : events) {
+                this.list.add(StringEscapeUtils.unescapeXml(event));
+            }
         } catch (com.netbout.text.StringDecryptionException ex) {
-            throw new DecryptionException(ex);
+            Logger.warn(this, "#append(%s): %[exception]s", text, ex);
         }
-        Identity identity;
-        try {
-            identity = hub.identity(new Urn(iname));
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new DecryptionException(ex);
-        } catch (java.net.URISyntaxException ex) {
-            throw new DecryptionException(ex);
-        }
-        Logger.debug(
-            this,
-            "#decrypt(%[type]s, %s): identity '%s' found",
-            hub,
-            hash,
-            identity.name()
-        );
-        return identity;
+    }
+
+    /**
+     * Get list of events.
+     * @return The list
+     */
+    public List<String> events() {
+        return ListUtils.union(this.list, WebAppender.get());
+    }
+
+    /**
+     * Clear the list.
+     */
+    public void clear() {
+        this.list.clear();
     }
 
 }

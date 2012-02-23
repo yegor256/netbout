@@ -171,12 +171,6 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!-- Base64 codec -->
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version since="8 Nov 2011">1.5</version>
-        </dependency>
-        <dependency>
             <!-- In-memory JDBC database to be used in unit tests -->
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -473,6 +467,7 @@
                                         <Netbout-PopPassword>${pop3.password}</Netbout-PopPassword>
                                         <Netbout-PopHost>${pop3.host}</Netbout-PopHost>
                                         <Netbout-PopPort>${pop3.port}</Netbout-PopPort>
+                                        <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
@@ -561,6 +556,7 @@
                                             <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
                                             <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
                                             <Netbout-PopPort>995</Netbout-PopPort>
+                                            <Netbout-SecurityKey>test-security-key</Netbout-SecurityKey>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>

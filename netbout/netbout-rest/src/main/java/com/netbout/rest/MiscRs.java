@@ -66,7 +66,7 @@ public final class MiscRs extends AbstractRs {
             this.uriInfo().getAbsolutePath()
         );
         return new PageBuilder()
-            .stylesheet(this.base().path("/xsl/error.xsl"))
+            .stylesheet("/xsl/error.xsl")
             .build(AbstractPage.class)
             .init(this)
             .append(
@@ -76,6 +76,7 @@ public final class MiscRs extends AbstractRs {
                     .add("message", message)
                     .up()
             )
+            .render()
             .preserved()
             .status(code)
             .build();

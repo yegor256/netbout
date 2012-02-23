@@ -73,7 +73,7 @@
                     <xsl:if test="identity/eta != 0">
                         <aside class="error-message">
                             <xsl:text>The server is currently updating your account,
-                                some data may not look as fresh as they should be. Try
+                                some data may look not as fresh as they should be. Try
                                 to refresh the page</xsl:text>
                             <xsl:choose>
                                 <xsl:when test="identity/eta &gt; 60000">
@@ -98,6 +98,13 @@
                                 <xsl:text>click here</xsl:text>
                             </a>
                             <xsl:text>.</xsl:text>
+                        </aside>
+                    </xsl:if>
+                    <xsl:if test="count(log/event) &gt; 0">
+                        <aside id="log">
+                            <xsl:for-each select="log/event">
+                                <p><xsl:value-of select="."/></p>
+                            </xsl:for-each>
                         </aside>
                     </xsl:if>
                     <xsl:call-template name="content" />

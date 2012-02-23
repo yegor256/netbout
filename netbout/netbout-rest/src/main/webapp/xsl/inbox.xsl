@@ -127,7 +127,7 @@
                                         <xsl:attribute name="href">
                                             <xsl:value-of select="@href"/>
                                         </xsl:attribute>
-                                        <xsl:value-of select="@label" />
+                                        <xsl:value-of select="title" />
                                         <xsl:if test="@rel='earliest'">
                                             <xsl:text>...</xsl:text>
                                         </xsl:if>
@@ -157,11 +157,11 @@
                         <xsl:value-of select="link[@rel='page']/@href"/>
                     </xsl:attribute>
                     <xsl:choose>
-                        <xsl:when test="title != ''">
-                            <xsl:value-of select="title" />
+                        <xsl:when test="title = ''">
+                            <xsl:text>(no title)</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:text>untitled</xsl:text>
+                            <xsl:value-of select="title" />
                         </xsl:otherwise>
                     </xsl:choose>
                 </a>
@@ -183,8 +183,19 @@
                             <xsl:attribute name="href">
                                 <xsl:value-of select="@href"/>
                             </xsl:attribute>
-                            <xsl:value-of select="@label" />
+                            <xsl:value-of select="number" />
                         </a>
+                        <span>
+                            <xsl:text>: </xsl:text>
+                            <xsl:choose>
+                                <xsl:when test="title = ''">
+                                    <xsl:text>(no title)</xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="title" />
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </span>
                     </xsl:for-each>
                     <xsl:if test="bundled/link[@rel='all']">
                         <span><xsl:text>, and </xsl:text></span>

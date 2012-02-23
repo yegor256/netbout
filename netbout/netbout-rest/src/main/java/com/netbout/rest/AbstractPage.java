@@ -76,6 +76,11 @@ public abstract class AbstractPage implements Page {
     private transient Resource home;
 
     /**
+     * The response builder to return.
+     */
+    private final transient Response.ResponseBuilder builder = Response.ok();
+
+    /**
      * Collection of elements.
      */
     private final transient Collection elements = new ArrayList();
@@ -84,6 +89,11 @@ public abstract class AbstractPage implements Page {
      * Collection of links.
      */
     private final transient Collection<Link> links = new ArrayList<Link>();
+
+    /**
+     * Collection of log events.
+     */
+    private transient Collection<String> log;
 
     /**
      * Initializer.
@@ -150,6 +160,17 @@ public abstract class AbstractPage implements Page {
      * {@inheritDoc}
      */
     @Override
+    public final Page render() {
+        this.builder.entity(this);
+        this.log = this.home.log().events();
+        this.home.log().clear();
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
         if (identity instanceof Helper) {
@@ -166,11 +187,24 @@ public abstract class AbstractPage implements Page {
         }
         this.extend();
         final URI base = this.home.base().build();
-        return Response.ok()
-            .entity(this)
+        return this.builder
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
+        )
+            .cookie(
+                new NewCookie(
+                    RestSession.LOG_COOKIE,
+                    this.home.log().toString(),
+                    base.getPath(),
+                    base.getHost(),
+                    // @checkstyle MultipleStringLiterals (1 line)
+                    Integer.valueOf(Manifests.read("Netbout-Revision")),
+                    "Netbout.com log",
+                    // @checkstyle MagicNumber (1 line)
+                    60 * 60 * 24 * 90,
+                    false
+                )
             )
             .cookie(
                 new NewCookie(
@@ -196,11 +230,14 @@ public abstract class AbstractPage implements Page {
     public final Response.ResponseBuilder anonymous() {
         this.link("login", "/g");
         this.extend();
-        return Response.ok()
-            .entity(this)
+        return this.builder
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
+        )
+            .header(
+                HttpHeaders.SET_COOKIE,
+                this.nocookie(RestSession.LOG_COOKIE)
             )
             .header(
                 HttpHeaders.SET_COOKIE,
@@ -214,13 +251,13 @@ public abstract class AbstractPage implements Page {
      */
     @Override
     public final Response.ResponseBuilder preserved() {
-        Response.ResponseBuilder builder;
+        Response.ResponseBuilder bldr;
         try {
-            builder = this.authenticated(this.home.identity());
+            bldr = this.authenticated(this.home.identity());
         } catch (LoginRequiredException ex) {
-            builder = this.anonymous();
+            bldr = this.anonymous();
         }
-        return builder;
+        return bldr;
     }
 
     /**
@@ -241,6 +278,16 @@ public abstract class AbstractPage implements Page {
     @XmlElementWrapper(name = "links")
     public final Collection<Link> getLinks() {
         return this.links;
+    }
+
+    /**
+     * Get all log events.
+     * @return Full list of events
+     */
+    @XmlElement(name = "event")
+    @XmlElementWrapper(name = "log")
+    public final Collection<String> getLog() {
+        return this.log;
     }
 
     /**

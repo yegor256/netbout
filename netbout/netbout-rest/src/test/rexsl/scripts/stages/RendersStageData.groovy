@@ -38,7 +38,10 @@ import javax.ws.rs.core.MediaType
 
 def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
 def bout = jeff.start()
+bout.post('hi there!')
+def maria = new RestSession(rexsl.home).authenticate(new Urn('urn:test:maria'), '')
 bout.rename('Rendering urn:test:hh stage data')
+bout.invite(maria)
 bout.invite(jeff.friend(new Urn('urn:facebook:1531296526')))
 bout.invite(jeff.friend(new Urn('urn:test:hh')))
 
@@ -48,3 +51,10 @@ RestTester.start(RestUriBuilder.from(bout))
     .get('read bout page')
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('//xhtml:section[@id="stage"]//xhtml:p')
+
+// validate the same stage from Maria's point of view
+RestTester.start(RestUriBuilder.from(maria.bout(bout.number())))
+    .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
+    .get('read bout page for Maria')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('//xhtml:section[@id = "stage"]//xhtml:p')
