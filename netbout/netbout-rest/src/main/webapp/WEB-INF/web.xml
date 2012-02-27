@@ -65,7 +65,15 @@
 
     <servlet>
         <servlet-name>ExceptionTrap</servlet-name>
-        <servlet-class>com.netbout.servlets.ExceptionTrap</servlet-class>
+        <servlet-class>com.rexsl.trap.ExceptionTrap</servlet-class>
+        <init-param>
+            <param-name>com.rexsl.trap.Template</param-name>
+            <param-value>com.rexsl.trap.StaticTemplate?uri=/com/netbout/servlets/re.html.vm</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.rexsl.trap.Notifier</param-name>
+            <param-value>com.rexsl.trap.SmtpNotifier?to=yegor@netbout.com&amp;subject=runtime%20exception&amp;transport=smtps&amp;host=smtp.gmail.com&amp;port=495&amp;user=abc&amp;password=cde&amp;reply-to=no-reply@netbout.com</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>ExceptionTrap</servlet-name>
