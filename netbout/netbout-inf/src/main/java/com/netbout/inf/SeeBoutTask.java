@@ -32,9 +32,11 @@ import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * The task to review one bout.
@@ -97,12 +99,13 @@ final class SeeBoutTask extends AbstractTask {
      */
     @Override
     protected void execute() {
-        final List<Long> numbers = this.bus
-            .make("get-bout-messages")
-            .synchronously()
-            .arg(this.bout.number())
-            .asDefault(new ArrayList<Long>())
-            .exec();
+        final Collection<Long> numbers = new TreeSet<Long>(
+            (List<Long>) this.bus.make("get-bout-messages")
+                .synchronously()
+                .arg(this.bout.number())
+                .asDefault(new ArrayList<Long>())
+                .exec()
+        );
         for (Long number : numbers) {
             try {
                 this.infinity.see(this.bout.message(number));

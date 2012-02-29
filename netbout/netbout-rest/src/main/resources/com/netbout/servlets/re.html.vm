@@ -3,13 +3,13 @@
     <head>
         <title>internal application error</title>
         <link href="/css/global.css" rel="stylesheet" type="text/css"></link>
-        <link rel="icon" type="image/gif" href="http://img.netbout.com/favicon.ico"/>
+        <link rel="icon" type="image/gif" href="http://cdn.netbout.com/favicon.ico"/>
     </head>
     <body style="padding: 1em;">
         <section>
             <p>
                 <a href="http://www.netbout.com/">
-                    <img src="http://img.netbout.com/logo-small.png"/>
+                    <img src="http://cdn.netbout.com/logo-small.png"/>
                 </a>
             </p>
             <p>
@@ -21,13 +21,7 @@
                 mean time click "Back" button in your browser and try
                 to do something else.
             </p>
-            <p>
-                code: <span class="tt">${code}</span><br/>
-                message: <span class="tt">${message}</span><br/>
-                request_uri: <span class="tt">${request_uri}</span><br/>
-                exception_type: <span class="tt">${exception_type}</span>
-            </p>
-            <pre>${stacktrace}</pre>
+            <pre>${text}</pre>
         </section>
     </body>
 </html>

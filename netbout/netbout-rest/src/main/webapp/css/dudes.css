@@ -35,30 +35,61 @@
 
     .dudes .dude {
         position: absolute;
+        height: 5em;
+        width: 5em;
+        border-bottom: 0.1em solid #9c9c9c;
+        border-right: 0.1em solid #9c9c9c;
     }
 
         .dudes .dude img {
-            height: 5em;
-            width: 5em;
+            height: 100%;
+            width: 100%;
             display: block;
-            box-shadow: 0.1em 0.1em 0.1em gray; /* JIGSAW: it's CSS3 feature */
+            z-index: 5;
         }
 
             .dudes .dude img.pending {
                 opacity: 0.4;
             }
 
+        .dudes .dude a.corner {
+            background-image: url('http://cdn.netbout.com/corner.png');
+            background-repeat: no-repeat;
+            background-position: left top;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            position: absolute;
+            /* this is actual size of the image in background */
+            width: 50px;
+            height: 50px;
+        }
+
+            .dudes .dude a.active {
+                background-image: url('http://cdn.netbout.com/corner-active.png');
+            }
+
     .dudes .bar {
         position: absolute;
-        top: 5em;
+        top: 5.1em;
         left: 0;
+        font-weight: 500;
         background-color: #f3f3f1;
-        box-shadow: 0.1em 0.1em 0.1em #e4e5e3; /* JIGSAW: it's CSS3 feature */
+        border-bottom: 0.1em solid #dadbd9;
+        border-right: 0.1em solid #dadbd9;
         padding: 0.3em 1em 0.3em 0.5em;
         display: none;
+        z-index: 100;
     }
 
         .dudes .bar span {
             font-size: 1.4em;
+        }
+
+        .dudes .bar a.kickoff {
+            font-size: 1.4em;
+            color: #f24a40; /* red */
+            text-decoration: none;
+            font-weight: bold;
         }
 

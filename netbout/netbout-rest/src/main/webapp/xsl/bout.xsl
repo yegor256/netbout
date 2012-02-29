@@ -75,7 +75,10 @@
                             <xsl:text>true</xsl:text>
                         </xsl:attribute>
                     </xsl:if>
-                    <xsl:value-of select="/page/bout/title"/>
+                    <xsl:call-template name="crop">
+                        <xsl:with-param name="text" select="/page/bout/title" />
+                        <xsl:with-param name="length" select="50" />
+                    </xsl:call-template>
                 </span>
             </h1>
         </header>
@@ -97,6 +100,8 @@
                     <textarea name="text" cols="80" rows="5">
                         <xsl:comment>empty text area</xsl:comment>
                     </textarea>
+                </p>
+                <p>
                     <input value="Post new message" type="submit" />
                 </p>
             </form>
@@ -123,7 +128,7 @@
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="@href"/>
                                 </xsl:attribute>
-                                <xsl:value-of select="label" />
+                                <xsl:value-of select="title" />
                                 <xsl:if test="@rel='earliest'">
                                     <xsl:text>...</xsl:text>
                                 </xsl:if>
@@ -226,8 +231,9 @@
                                     <xsl:value-of select="alias"/>
                                     <xsl:text>" to this bout</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="alias">
-                                    <xsl:with-param name="alias" select="alias" />
+                                <xsl:call-template name="crop">
+                                    <xsl:with-param name="text" select="alias" />
+                                    <xsl:with-param name="length" select="25" />
                                 </xsl:call-template>
                             </a>
                             <img>
@@ -294,31 +300,6 @@
     </xsl:template>
 
     <xsl:template name="stages">
-        <xsl:if test="count(/page/bout/stages/stage) &gt; 1">
-            <nav>
-                <ul id="titles">
-                    <xsl:for-each select="/page/bout/stages/stage">
-                        <xsl:choose>
-                            <xsl:when test=". = /page/bout/stage/@name">
-                                <li class="active">
-                                    <xsl:value-of select="@alias"/>
-                                </li>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <li>
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="@href"/>
-                                        </xsl:attribute>
-                                        <xsl:value-of select="@alias"/>
-                                    </a>
-                                </li>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:for-each>
-                </ul>
-            </nav>
-        </xsl:if>
         <xsl:if test="/page/bout/stage">
             <section id="stage">
                 <xsl:apply-templates select="/page/bout/stage"/>

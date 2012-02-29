@@ -161,12 +161,15 @@
                             <xsl:text>(no title)</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="title" />
+                            <xsl:call-template name="crop">
+                                <xsl:with-param name="text" select="title" />
+                                <xsl:with-param name="length" select="50" />
+                            </xsl:call-template>
                         </xsl:otherwise>
                     </xsl:choose>
                 </a>
                 <xsl:if test="@unseen &gt; 0">
-                    <span class="red">
+                    <span class="new">
                         <xsl:value-of select="@unseen"/>
                         <xsl:text> new</xsl:text>
                     </span>
@@ -174,10 +177,10 @@
             </div>
             <xsl:apply-templates select="participants" />
             <xsl:if test="bundled">
-                <aside class="bundled">
+                <nav class="bundled">
                     <xsl:for-each select="bundled/link[@rel='bout']">
                         <xsl:if test="position() &gt; 1">
-                            <span><xsl:text>, </xsl:text></span>
+                            <span><xsl:text>; </xsl:text></span>
                         </xsl:if>
                         <a>
                             <xsl:attribute name="href">
@@ -198,15 +201,15 @@
                         </span>
                     </xsl:for-each>
                     <xsl:if test="bundled/link[@rel='all']">
-                        <span><xsl:text>, and </xsl:text></span>
+                        <span><xsl:text>; </xsl:text></span>
                         <a>
                             <xsl:attribute name="href">
                                 <xsl:value-of select="bundled/link[@rel='all']/@href"/>
                             </xsl:attribute>
-                            <xsl:text>all of them</xsl:text>
+                            <xsl:text>all of them...</xsl:text>
                         </a>
                     </xsl:if>
-                </aside>
+                </nav>
             </xsl:if>
         </li>
     </xsl:template>
