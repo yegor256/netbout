@@ -24,55 +24,21 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
-
-import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.MessageNotFoundException;
-import com.netbout.spi.Urn;
+package com.netbout.hub.data;
 
 /**
- * Manager of all bouts.
+ * Listener of msg events.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutMgr {
+interface MsgListener {
 
     /**
-     * Get some statistics, for the stage.
-     * @return The text
+     * New message just created in the bout.
+     * @param msg The message
+     * @param bout The bout
      */
-    String statistics();
-
-    /**
-     * Create new bout.
-     * @param author Who is creating it
-     * @return It's number (unique)
-     */
-    Long create(Urn author);
-
-    /**
-     * Find and return bout from collection.
-     * @param number Number of the bout
-     * @return The bout found or restored
-     * @throws BoutNotFoundException If this bout is not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    BoutDt find(Long number) throws BoutNotFoundException;
-
-    /**
-     * Find and return bout from collection, by message number.
-     * @param number Number of the message
-     * @return The bout found or restored
-     * @throws MessageNotFoundException If this bout is not found
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    BoutDt boutOf(Long msg) throws MessageNotFoundException;
-
-    /**
-     * Destroy all bouts that are related to this identity.
-     * @param author The identity
-     */
-    void destroy(Urn author);
+    void messageCreated(Long msg, Long bout);
 
 }

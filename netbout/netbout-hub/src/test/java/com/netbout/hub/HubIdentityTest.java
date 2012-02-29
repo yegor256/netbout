@@ -54,7 +54,7 @@ public final class HubIdentityTest {
         Mockito.doReturn(infinity).when(hub).infinity();
         final Urn name = new UrnMocker().mock();
         new HubIdentity(hub, name).inbox("");
-        Mockito.verify(infinity).bouts(
+        Mockito.verify(infinity).messages(
             Mockito.argThat(
                 Matchers.containsString(
                     String.format("(talks-with '%s')", name)
