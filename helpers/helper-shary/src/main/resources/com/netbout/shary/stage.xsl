@@ -89,7 +89,7 @@
         <p>
             <img style="width: 2.5em; height: 2.5em; display: block;">
                 <xsl:attribute name="src">
-                    <xsl:text>http://img.netbout.com/shary/</xsl:text>
+                    <xsl:text>http://cdn.netbout.com/shary/</xsl:text>
                     <xsl:choose>
                         <xsl:when test="substring(type, 0, 6) = 'text/'">
                             <xsl:text>text</xsl:text>
