@@ -104,7 +104,7 @@ public final class NsPredTest {
         final Predicate pred = new NsPred(
             Arrays.asList(new Atom[] {new TextAtom(namespace)})
         );
-        MatcherAssert.assertThat("matched", pred.contains(1L));
+        MatcherAssert.assertThat("not matched", !pred.contains(1L));
     }
 
     /**
@@ -118,7 +118,7 @@ public final class NsPredTest {
         );
         MatcherAssert.assertThat(
             "not matched",
-            pred.contains(1L)
+            !pred.contains(1L)
         );
     }
 

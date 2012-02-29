@@ -51,7 +51,7 @@ public final class LimitPred extends AbstractVarargPred {
     /**
      * Current position.
      */
-    private transient Long position;
+    private transient Long position = 0L;
 
     /**
      * Public ctor.

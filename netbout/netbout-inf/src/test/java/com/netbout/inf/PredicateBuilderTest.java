@@ -46,15 +46,11 @@ public final class PredicateBuilderTest {
         final String[] queries = new String[] {
             "",
             "it's my story: \"\n\t\r \u0435\"",
-            "(and 1)",
-            "(and (equal 1 1) (or (matches $text $date)))",
+            "(and (equal $bout.number 1) (or (matches 'some text' $text)))",
             "(equal $bout.title 'test')",
-            "(urn:test:some-custom-predicate)",
-            "(talks-with 'abc')",
-            "(not (less-than 5 6))",
-            "(and (ns 'test-me') (limit 2))",
+            "(talks-with 'urn:abc:')",
+            "(and (ns 'urn:test:test-me') (limit 2))",
             "(and (from 5) (limit 2) (unique $bout.number))",
-            "(greater-than 'test-1' \"test-2\")",
             "just simple text: \u0435",
         };
         final PredicateBuilder builder = new PredicateBuilder();

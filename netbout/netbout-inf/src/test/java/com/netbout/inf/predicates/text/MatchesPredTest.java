@@ -61,7 +61,7 @@ public final class MatchesPredTest {
                 }
             )
         );
-        MatcherAssert.assertThat("not matched", pred.contains(1L));
+        MatcherAssert.assertThat("not matched", !pred.contains(1L));
     }
 
     /**
@@ -94,7 +94,7 @@ public final class MatchesPredTest {
                     entry.getKey(),
                     entry.getValue()
                 ),
-                pred.contains(1L)
+                !pred.contains(1L)
             );
         }
     }

@@ -52,7 +52,7 @@ public final class TalksWithPredTest {
         final Predicate pred = new TalksWithPred(
             Arrays.asList(new Atom[] {new TextAtom(name.toString())})
         );
-        MatcherAssert.assertThat("not matched", pred.contains(1L));
+        MatcherAssert.assertThat("not matched", !pred.contains(1L));
     }
 
 }

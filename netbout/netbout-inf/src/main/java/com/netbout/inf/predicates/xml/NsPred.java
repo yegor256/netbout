@@ -34,13 +34,14 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
 import com.ymock.util.Logger;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Namespace predicate.
@@ -73,9 +74,12 @@ public final class NsPred extends AbstractVarargPred {
      */
     public NsPred(final List<Atom> args) {
         super(args);
-        this.messages = this.CACHE.get(
-            Urn.create(this.arg(0).value().toString())
-        );
+        final Urn namespace = Urn.create(this.arg(0).value().toString());
+        if (this.CACHE.containsKey(namespace)) {
+            this.messages = this.CACHE.get(namespace);
+        } else {
+            this.messages = new ConcurrentSkipListSet<Long>();
+        }
         this.iterator = this.messages.iterator();
     }
 
@@ -92,7 +96,7 @@ public final class NsPred extends AbstractVarargPred {
                 namespace = parser.namespace();
                 NsPred.CACHE.putIfAbsent(
                     namespace,
-                    new CopyOnWriteArraySet<Long>()
+                    new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
                 );
                 NsPred.CACHE.get(namespace).add(from.number());
                 Logger.debug(

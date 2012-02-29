@@ -75,7 +75,12 @@ public final class EqualPred extends AbstractVarargPred {
      */
     public EqualPred(final List<Atom> args) {
         super(args);
-        this.messages = this.CACHE.get(this.arg(0)).get(this.arg(1));
+        if (this.CACHE.containsKey(this.arg(0))
+            && this.CACHE.get(this.arg(0)).containsKey(this.arg(1))) {
+            this.messages = this.CACHE.get(this.arg(0)).get(this.arg(1));
+        } else {
+            this.messages = new ConcurrentSkipListSet<Long>();
+        }
         this.iterator = this.messages.iterator();
     }
 

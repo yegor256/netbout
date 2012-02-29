@@ -26,48 +26,47 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
-import org.mockito.Mockito;
+import java.util.NoSuchElementException;
 
 /**
- * Test case of {@link BundledPred}.
+ * False predicate.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BundledPredTest {
+public final class FalsePred implements Predicate {
 
     /**
-     * BundledPred can extract marker.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
-    public void extractsMarker() throws Exception {
-        final Bout bout = new BoutMocker()
-            .withParticipant("urn:test:somebody")
-            .mock();
-        final Message from = new MessageMocker()
-            .inBout(bout)
-            .mock();
-        BundledPred.extract(from);
+    @Override
+    public Long next() {
+        throw new NoSuchElementException();
     }
 
     /**
-     * BundledPred can pass only bundled messages.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void positivelyMatchesBundledMessageOnly() throws Exception {
-        final Predicate pred = new BundledPred(Arrays.asList(new Atom[] {}));
-        MatcherAssert.assertThat("no", pred.contains(1L));
+    @Override
+    public boolean hasNext() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String value() {
+        throw new IllegalStateException("#value()");
     }
 
 }

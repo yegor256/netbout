@@ -49,7 +49,7 @@ public final class UnbundledPredTest {
         final Predicate pred = new UnbundledPred(
             Arrays.asList(new Atom[] {new NumberAtom(1L)})
         );
-        MatcherAssert.assertThat("no!", pred.hasNext());
+        MatcherAssert.assertThat("no!", !pred.contains(1L));
     }
 
 }

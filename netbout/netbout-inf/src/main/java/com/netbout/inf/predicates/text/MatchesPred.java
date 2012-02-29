@@ -32,6 +32,7 @@ import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.predicates.AbstractVarargPred;
+import com.netbout.inf.predicates.FalsePred;
 import com.netbout.inf.predicates.logic.AndPred;
 import com.netbout.spi.Message;
 import java.util.ArrayList;
@@ -91,9 +92,14 @@ public final class MatchesPred extends AbstractVarargPred {
             }
             this.predicate = new AndPred(atoms);
         } else {
-            predicate = new MatchingPred(
-                this.CACHE.get(this.arg(1)).get(this.arg(0))
-            );
+            if (this.CACHE.containsKey(this.arg(1))
+                && this.CACHE.get(this.arg(1)).containsKey(this.arg(0))) {
+                predicate = new MatchingPred(
+                    this.CACHE.get(this.arg(1)).get(this.arg(0))
+                );
+            } else {
+                predicate = new FalsePred();
+            }
         }
     }
 

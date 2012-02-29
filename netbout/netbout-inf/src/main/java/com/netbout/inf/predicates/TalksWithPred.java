@@ -79,9 +79,12 @@ public final class TalksWithPred extends AbstractVarargPred {
      */
     public TalksWithPred(final List<Atom> args) {
         super(args);
-        this.messages = this.DUDES.get(
-            Urn.create(this.arg(0).value().toString())
-        );
+        final Urn urn = Urn.create(this.arg(0).value().toString());
+        if (this.DUDES.containsKey(urn)) {
+            this.messages = this.DUDES.get(urn);
+        } else {
+            this.messages = new ConcurrentSkipListSet<Long>();
+        }
         this.iterator = this.messages.iterator();
     }
 
