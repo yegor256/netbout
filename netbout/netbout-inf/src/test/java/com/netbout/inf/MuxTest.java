@@ -114,4 +114,14 @@ public final class MuxTest {
         }
     };
 
+    /**
+     * Mux can render statistics.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void rendersStatistics() throws Exception {
+        final Mux mux = new Mux();
+        MatcherAssert.assertThat(mux.statistics(), Matchers.notNull());
+    }
+
 }

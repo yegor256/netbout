@@ -26,12 +26,17 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
+import com.netbout.spi.Message;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Allows messages with unique value of parameter.
@@ -39,33 +44,68 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "unique")
+@Meta(name = "unique", extracts = true)
 public final class UniquePred extends AbstractVarargPred {
 
     /**
-     * List of already passed values.
+     * Cached messages and their bout numbers.
      */
-    private final transient Set<String> passed = new HashSet<String>();
+    public static final ConcurrentMap<Long, Long> NUMBERS =
+        new ConcurrentHashMap<Long, Long>();
+
+    /**
+     * List of already passed bout numbers.
+     */
+    private final transient Set<Long> passed = new HashSet<Long>();
 
     /**
      * Public ctor.
      * @param args The arguments
      */
-    public UniquePred(final List<Predicate> args) {
+    public UniquePred(final List<Atom> args) {
         super(args);
+        if (!"bout.number".equals(this.arg(0).value())) {
+            throw new PredicateException(
+                "Only $bout.number can be used in (unique)"
+            );
+        }
+    }
+
+    /**
+     * Extracts necessary data from message.
+     * @param msg The message to extract from
+     */
+    public static void extract(final Message msg) {
+        UniquePred.NUMBERS.putIfAbsent(msg.number(), msg.bout().number());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final String marker = this.arg(0).evaluate(msg, pos).toString();
+    public Long next() {
+        throw new PredicateException("UNIQUE#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("UNIQUE#hasNext()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        final Long bout = this.NUMBERS.get(message);
         boolean allow;
-        if (this.passed.contains(marker)) {
+        if (this.passed.contains(bout)) {
             allow = false;
         } else {
-            this.passed.add(marker);
+            this.passed.add(bout);
             allow = true;
         }
         return allow;

@@ -115,7 +115,7 @@ final class SeeBoutTask extends AbstractTask {
         }
         Logger.debug(
             this,
-            "#exec(): cached %d message(s) of bout #%d in %dms",
+            "#execute(): cached %d message(s) of bout #%d in %dms",
             numbers.size(),
             this.bout.number(),
             this.time()

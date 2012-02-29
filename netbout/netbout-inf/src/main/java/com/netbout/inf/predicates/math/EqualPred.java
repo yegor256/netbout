@@ -26,13 +26,22 @@
  */
 package com.netbout.inf.predicates.math;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
+import com.netbout.spi.Message;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * All arguments should be equal to each other.
@@ -40,43 +49,88 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "equal")
+@Meta(name = "equal", extracts = true)
 public final class EqualPred extends AbstractVarargPred {
+
+    /**
+     * Cached messages and their values.
+     * @checkstyle LineLength (3 lines)
+     */
+    public static final ConcurrentMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>> CACHE =
+        new ConcurrentHashMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>>();
+
+    /**
+     * Found set of message numbers.
+     */
+    public final transient SortedSet<Long> messages;
+
+    /**
+     * Iterator of them.
+     */
+    public final transient Iterator<Long> iterator;
 
     /**
      * Public ctor.
      * @param args The arguments
      */
-    public EqualPred(final List<Predicate> args) {
+    public EqualPred(final List<Atom> args) {
         super(args);
+        this.messages = this.CACHE.get(this.arg(0)).get(this.arg(1));
+        this.iterator = this.messages.iterator();
+    }
+
+    /**
+     * Extracts necessary data from message.
+     * @param msg The message to extract from
+     */
+    public static void extract(final Message msg) {
+        EqualPred.var("bout.number", new NumberAtom(msg.bout().number()))
+            .add(msg.number());
+        EqualPred.var("author.name", new TextAtom(msg.author().name()))
+            .add(msg.number());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final List<Object> values = new ArrayList<Object>();
-        for (Predicate arg : this.args()) {
-            values.add(arg.evaluate(msg, pos));
-        }
-        boolean equal = true;
-        for (int num = 1; num < values.size(); num += 1) {
-            if (!values.get(num).toString()
-                .equals(values.get(num - 1).toString())) {
-                equal = false;
-                break;
-            }
-        }
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): comparing %[list]s: %B",
-            msg.number(),
-            pos,
-            values,
-            equal
+    public Long next() {
+        return this.iterator.next();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        return this.iterator.hasNext();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return this.messages.contains(message);
+    }
+
+    /**
+     * Get access to list of message numbers.
+     * @param name Name of variable
+     * @param atom Value of it
+     * @return Set of numbers
+     */
+    private static Set<Long> var(final String name, final Atom atom) {
+        final VariableAtom var = new VariableAtom(name);
+        EqualPred.CACHE.putIfAbsent(
+            var,
+            new ConcurrentHashMap<Atom, SortedSet<Long>>()
         );
-        return equal;
+        EqualPred.CACHE.get(var).putIfAbsent(
+            atom,
+            new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
+        );
+        return EqualPred.CACHE.get(var).get(atom);
     }
 
 }

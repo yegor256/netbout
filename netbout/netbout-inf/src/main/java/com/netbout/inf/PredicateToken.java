@@ -78,11 +78,11 @@ public final class PredicateToken {
      * @param from The message
      * @param msg Where to extract
      */
-    public void extract(final Message from, final Msg msg) {
+    public void extract(final Message from) {
         if (this.meta.extracts()) {
             try {
-                this.type.getMethod("extract", Message.class, Msg.class)
-                    .invoke(null, from, msg);
+                this.type.getMethod("extract", Message.class)
+                    .invoke(null, from);
             } catch (NoSuchMethodException ex) {
                 throw new PredicateException(ex);
             } catch (IllegalAccessException ex) {
@@ -95,15 +95,15 @@ public final class PredicateToken {
 
     /**
      * Build a predicate from list of preds.
-     * @param preds List of arguments
+     * @param atoms List of arguments
      * @return The predicate
      */
-    public Predicate build(final List<Predicate> preds) {
+    public Predicate build(final List<Atom> atoms) {
         Predicate predicate;
         try {
             predicate = (Predicate) this.type
                 .getConstructor(List.class)
-                .newInstance(preds);
+                .newInstance(atoms);
         } catch (NoSuchMethodException ex) {
             throw new PredicateException(ex);
         } catch (InstantiationException ex) {

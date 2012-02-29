@@ -24,64 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.atoms;
 
-import com.netbout.bus.Bus;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.List;
+import com.netbout.inf.Atom;
 
 /**
- * Call predicate by name in Hub.
+ * Variable atom.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CustomPred extends AbstractVarargPred {
+public final class VariableAtom implements Atom<String> {
 
     /**
-     * Bus to work with.
+     * The name of it.
      */
-    private final transient Bus ibus;
+    private final transient String name;
 
     /**
      * Public ctor.
-     * @param bus The bus to work with
-     * @param name Name of the predicate
-     * @param args The arguments
+     * @param value The value of it
      */
-    public CustomPred(final Bus bus, final Urn name,
-        final List<Predicate> args) {
-        super(name.toString(), args);
-        this.ibus = bus;
+    public VariableAtom(final String value) {
+        this.name = value;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final List<Object> values = new ArrayList<Object>();
-        for (Predicate pred : this.args()) {
-            values.add(pred.evaluate(msg, pos));
-        }
-        final Object result = this.ibus.make("evaluate-predicate")
-            .arg(msg.<Long>get(VariablePred.BOUT_NUMBER))
-            .arg(msg.number())
-            .arg(Urn.create(this.name()))
-            .arg(values)
-            .asDefault(false)
-            .exec();
-        Logger.debug(
-            this,
-            "#evaluate(): evaluated '%s': %[type]s",
-            this.name(),
-            result
-        );
-        return result;
+    public String value() {
+        return this.name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("$%s", this.name);
     }
 
 }

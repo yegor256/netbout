@@ -26,7 +26,11 @@
  */
 package com.netbout.inf;
 
+import java.util.Collection;
+import java.util.Iterator;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link Predicate}.
@@ -41,20 +45,52 @@ public final class PredicateMocker {
     private final transient Predicate predicate = Mockito.mock(Predicate.class);
 
     /**
+     * The messages.
+     */
+    private transient Collection<Long> messages;
+
+    /**
+     * The iterator.
+     */
+    private transient Iterator<Long> iterator;
+
+    /**
      * Public ctor.
      */
     public PredicateMocker() {
-        this.doReturn(Boolean.TRUE);
+        this.withMessages(Arrays.asList(new Long[] {}));
     }
 
     /**
-     * Return this object as {@code evaluate()} result.
-     * @param ret What to return
+     * With this list of messages.
+     * @param msgs The list of them
      * @return This object
      */
-    public PredicateMocker doReturn(final Object ret) {
-        Mockito.doReturn(ret).when(this.predicate)
-            .evaluate(Mockito.any(Msg.class), Mockito.anyInt());
+    public PredicateMocker withMessages(final Collection<Long> msgs) {
+        this.messages = msgs;
+        this.iterator = msgs.iterator();
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    return PredicateMocker.this.iterator.hasNext();
+                }
+            }
+        ).when(this.predicate).hasNext();
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    return PredicateMocker.this.iterator.next();
+                }
+            }
+        ).when(this.predicate).next();
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    final Long msg = (Long) invocation.getArguments()[0];
+                    return PredicateMocker.this.iterator.contains(msg);
+                }
+            }
+        ).when(this.predicate).contains(Mockito.any(Long.class));
         return this;
     }
 

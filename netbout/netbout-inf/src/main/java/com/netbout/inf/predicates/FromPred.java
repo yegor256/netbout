@@ -26,9 +26,11 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
+import com.netbout.inf.atoms.NumberAtom;
 import com.ymock.util.Logger;
 import java.util.List;
 
@@ -42,44 +44,48 @@ import java.util.List;
 public final class FromPred extends AbstractVarargPred {
 
     /**
-     * How many we already disallowed to go?
+     * Minimum position to show.
      */
-    private transient int blocked;
+    private final transient Long from;
+
+    /**
+     * Current position.
+     */
+    private transient Long position;
 
     /**
      * Public ctor.
      * @param args The arguments
      */
-    public FromPred(final List<Predicate> args) {
+    public FromPred(final List<Atom> args) {
         super(args);
+        this.from = ((NumberAtom) this.arg(0)).value();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final int from = Integer.valueOf(
-            this.arg(0).evaluate(msg, pos).toString()
-        );
-        boolean matches;
-        synchronized (this) {
-            matches = this.blocked >= from;
-            if (!matches) {
-                this.blocked += 1;
-            }
-        }
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): %d blocked already, 'from' is #%d: %B",
-            msg.number(),
-            pos,
-            msg.number(),
-            this.blocked,
-            from,
-            matches
-        );
-        return matches;
+    public Long next() {
+        throw new PredicateException("FROM#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("FROM#hasNext()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        final boolean allow = this.position >= this.from;
+        this.position += 1;
+        return allow;
     }
 
 }

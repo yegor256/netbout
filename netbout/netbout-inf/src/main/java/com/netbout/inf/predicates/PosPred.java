@@ -26,10 +26,11 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.ymock.util.Logger;
+import com.netbout.inf.PredicateException;
+import com.netbout.inf.atoms.NumberAtom;
 import java.util.List;
 
 /**
@@ -42,31 +43,48 @@ import java.util.List;
 public final class PosPred extends AbstractVarargPred {
 
     /**
+     * Expected position.
+     */
+    private final transient Long expected;
+
+    /**
+     * Current position.
+     */
+    private transient Long position;
+
+    /**
      * Public ctor.
      * @param args The arguments
      */
-    public PosPred(final List<Predicate> args) {
+    public PosPred(final List<Atom> args) {
         super(args);
+        this.expected = ((NumberAtom) this.arg(0)).value();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final int required = Integer.valueOf(
-            this.arg(0).evaluate(msg, pos).toString()
-        );
-        final boolean matches = pos == required;
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): required #%d: %B",
-            msg.number(),
-            pos,
-            required,
-            matches
-        );
-        return matches;
+    public Long next() {
+        throw new PredicateException("POS#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("POS#hasNext()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        final boolean allow = this.position == this.expected;
+        this.position += 1;
+        return allow;
     }
 
 }

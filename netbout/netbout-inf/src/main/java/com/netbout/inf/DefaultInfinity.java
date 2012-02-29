@@ -49,11 +49,6 @@ public final class DefaultInfinity implements Infinity {
     private final transient Bus bus;
 
     /**
-     * The heap.
-     */
-    private final transient Heap heap = new Heap();
-
-    /**
      * Multiplexer of tasks.
      */
     private final transient Mux mux = new Mux();
@@ -76,8 +71,6 @@ public final class DefaultInfinity implements Infinity {
         final StringBuilder text = new StringBuilder();
         text.append("Mux stats:\n")
             .append(this.mux.statistics())
-            .append("\nHeap stats:\n")
-            .append(this.heap.statistics())
             .append("\njava.lang.Runtime:\n")
             .append(
                 String.format(
@@ -110,14 +103,6 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public Msg msg(final Long number) {
-        return this.heap.peek(number);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void close() {
         Logger.info(this, "#close(): will stop Mux in a second");
         this.mux.close();
@@ -135,19 +120,8 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Long> bouts(final String query) {
-        return new LazyBouts(this.heap, this.messages(query));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Iterable<Long> messages(final String query) {
-        return new LazyMessages(
-            this.heap.messages(),
-            new PredicateBuilder(this.bus).parse(query)
-        );
+        return new LazyMessages(new PredicateBuilder().parse(query));
     }
 
     /**
@@ -181,7 +155,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
-        this.mux.add(new SeeMessageTask(this.heap, message));
+        this.mux.add(new SeeMessageTask(message));
         Logger.debug(
             this,
             "see(message #%d): request submitted",

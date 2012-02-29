@@ -108,7 +108,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                     String.format(
                         "  %s: %d\n",
                         entry.getKey(),
-                        entry.getValue()
+                        entry.getValue().get()
                     )
                 );
             }

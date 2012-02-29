@@ -26,15 +26,21 @@
  */
 package com.netbout.inf.predicates.xml;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
 import com.ymock.util.Logger;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Namespace predicate.
@@ -46,16 +52,31 @@ import java.util.List;
 public final class NsPred extends AbstractVarargPred {
 
     /**
-     * Message property.
+     * Cached messages and their namespaces.
      */
-    public static final String NAMESPACE = "namespace";
+    public static final ConcurrentMap<Urn, Set<Long>> CACHE =
+        new ConcurrentHashMap<Urn, Set<Long>>();
+
+    /**
+     * Found set of message numbers.
+     */
+    public final transient Set<Long> messages;
+
+    /**
+     * Iterator of them.
+     */
+    public final transient Iterator<Long> iterator;
 
     /**
      * Public ctor.
      * @param args The arguments
      */
-    public NsPred(final List<Predicate> args) {
+    public NsPred(final List<Atom> args) {
         super(args);
+        this.messages = this.CACHE.get(
+            Urn.create(this.arg(0).value().toString())
+        );
+        this.iterator = this.messages.iterator();
     }
 
     /**
@@ -63,22 +84,31 @@ public final class NsPred extends AbstractVarargPred {
      * @param from The message to extract from
      * @param msg Where to extract
      */
-    public static void extract(final Message from, final Msg msg) {
+    public static void extract(final Message from) {
         final DomParser parser = new DomParser(from.text());
         if (parser.isXml()) {
             Urn namespace;
             try {
                 namespace = parser.namespace();
+                NsPred.CACHE.putIfAbsent(
+                    namespace,
+                    new CopyOnWriteArraySet<Long>()
+                );
+                NsPred.CACHE.get(namespace).add(from.number());
+                Logger.debug(
+                    NsPred.class,
+                    "#extract(#%d, ..): namespace '%s' found",
+                    from.number(),
+                    namespace
+                );
             } catch (com.netbout.spi.xml.DomValidationException ex) {
-                throw new IllegalStateException(ex);
+                Logger.warn(
+                    NsPred.class,
+                    "#extract(#%d, ..): %[exception]s",
+                    from.number(),
+                    ex
+                );
             }
-            msg.put(NsPred.NAMESPACE, namespace);
-            Logger.debug(
-                NsPred.class,
-                "#extract(#%d, ..): namespace '%s' found",
-                from.number(),
-                namespace
-            );
         }
     }
 
@@ -86,20 +116,24 @@ public final class NsPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final Urn namespace = Urn.create(
-            (String) this.arg(0).evaluate(msg, pos)
-        );
-        final boolean result = msg.has(this.NAMESPACE, namespace);
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): namespace '%s' required: %B",
-            msg.number(),
-            pos,
-            namespace,
-            result
-        );
-        return result;
+    public Long next() {
+        return this.iterator.next();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        return this.iterator.hasNext();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return this.messages.contains(message);
     }
 
 }

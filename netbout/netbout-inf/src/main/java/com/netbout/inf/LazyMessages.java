@@ -40,22 +40,15 @@ import java.util.NoSuchElementException;
 public final class LazyMessages implements Iterable<Long> {
 
     /**
-     * List of messages.
-     */
-    private final transient Iterable<Msg> messages;
-
-    /**
      * The predicate.
      */
     private final transient Predicate predicate;
 
     /**
      * Public ctor.
-     * @param msgs The list of messages
      * @param pred The predicate
      */
-    public LazyMessages(final Iterable<Msg> msgs, final Predicate pred) {
-        this.messages = msgs;
+    public LazyMessages(final Predicate pred) {
         this.predicate = pred;
     }
 
@@ -64,7 +57,7 @@ public final class LazyMessages implements Iterable<Long> {
      */
     @Override
     public Iterator<Long> iterator() {
-        return new MessagesIterator(this.messages.iterator());
+        return new MessagesIterator();
     }
 
     /**
@@ -72,55 +65,18 @@ public final class LazyMessages implements Iterable<Long> {
      */
     private final class MessagesIterator implements Iterator<Long> {
         /**
-         * The iterator to work with.
-         */
-        private final transient Iterator<Msg> iterator;
-        /**
-         * Head of the list, recently loaded (or NULL if it's the end).
-         */
-        private transient Long head;
-        /**
-         * Position in the list.
-         */
-        private transient int position;
-        /**
-         * Current value of {@code head} is vital?
-         */
-        private transient boolean ready;
-        /**
-         * Public ctor.
-         * @param iter The iterator
-         */
-        public MessagesIterator(final Iterator<Msg> iter) {
-            this.iterator = iter;
-        }
-        /**
          * {@inheritDoc}
          */
         @Override
         public boolean hasNext() {
-            synchronized (this) {
-                if (!this.ready) {
-                    this.head = this.fetch();
-                }
-                return this.ready;
-            }
+            return LazyMessages.this.predicate.hasNext();
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public Long next() {
-            synchronized (this) {
-                if (!this.ready) {
-                    this.head = this.fetch();
-                }
-                if (!this.ready) {
-                    throw new NoSuchElementException();
-                }
-                this.ready = false;
-                return this.head;
-            }
+            return LazyMessages.this.predicate.next();
         }
         /**
          * {@inheritDoc}
@@ -128,24 +84,6 @@ public final class LazyMessages implements Iterable<Long> {
         @Override
         public void remove() {
             throw new UnsupportedOperationException("#remove()");
-        }
-        /**
-         * Fetch the next element or return NULL.
-         * @return The message number or NULL
-         */
-        private Long fetch() {
-            Long found = null;
-            while (this.iterator.hasNext()) {
-                final Msg msg = this.iterator.next();
-                if (msg != null && (Boolean) LazyMessages.this.predicate
-                    .evaluate(msg, this.position)) {
-                    found = msg.number();
-                    this.ready = true;
-                    this.position += 1;
-                    break;
-                }
-            }
-            return found;
         }
     }
 

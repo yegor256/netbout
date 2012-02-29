@@ -26,8 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.bus.Bus;
-import com.netbout.inf.predicates.CustomPred;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
@@ -53,19 +51,6 @@ public final class PredicateBuilder {
      */
     private static final List<PredicateToken> PREDICATES =
         PredicateBuilder.discover();
-
-    /**
-     * BUS to find custom predicates.
-     */
-    private final transient Bus ibus;
-
-    /**
-     * Public ctor.
-     * @param bus The bus to work with
-     */
-    public PredicateBuilder(final Bus bus) {
-        this.ibus = bus;
-    }
 
     /**
      * Build a predicate from a query string.
@@ -103,9 +88,9 @@ public final class PredicateBuilder {
      * @param msg Where to extract
      */
     @SuppressWarnings("PMD.DefaultPackage")
-    static void extract(final Message from, final Msg msg) {
+    static void extract(final Message from) {
         for (PredicateToken token : PredicateBuilder.PREDICATES) {
-            token.extract(from, msg);
+            token.extract(from);
         }
     }
 
@@ -134,25 +119,21 @@ public final class PredicateBuilder {
     /**
      * Build a predicate from name and list of preds.
      * @param name Its name
-     * @param preds List of arguments
+     * @param atoms List of arguments
      * @return The predicate
      */
-    protected Predicate build(final String name, final List<Predicate> preds) {
+    protected Predicate build(final String name, final List<Atom> atoms) {
         Predicate predicate = null;
         for (PredicateToken token : this.PREDICATES) {
             if (token.namedAs(name)) {
-                predicate = token.build(preds);
+                predicate = token.build(atoms);
                 break;
             }
         }
         if (predicate == null) {
-            if (Urn.isValid(name)) {
-                predicate = new CustomPred(this.ibus, Urn.create(name), preds);
-            } else {
-                throw new PredicateException(
-                    String.format("Unknown function '%s'", name)
-                );
-            }
+            throw new PredicateException(
+                String.format("Unknown predicate name '%s'", name)
+            );
         }
         return predicate;
     }

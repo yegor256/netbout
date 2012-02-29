@@ -47,29 +47,11 @@ public interface Infinity extends Closeable {
     String statistics();
 
     /**
-     * Get one msg by ID (throws {@link IllegalArgumentException} if not found).
-     *
-     * <p>This method is used mostly for admin functions
-     * (see {@link com.netbout.inf.ih.StageFarm}).
-     *
-     * @param number Its number
-     * @return The msg found
-     */
-    Msg msg(Long number);
-
-    /**
      * How long do I need to wait before sending requests?
      * @param who Who is asking
      * @return Estimated number of milliseconds
      */
     Long eta(Urn who);
-
-    /**
-     * Find bouts for the given predicate.
-     * @param query The predicate to use
-     * @return The list of bouts, ordered
-     */
-    Iterable<Long> bouts(String query);
 
     /**
      * Find messages for the given predicate.

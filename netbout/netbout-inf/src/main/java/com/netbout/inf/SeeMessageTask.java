@@ -42,23 +42,16 @@ import java.util.Set;
 final class SeeMessageTask extends AbstractTask {
 
     /**
-     * The heap.
-     */
-    private final transient Heap heap;
-
-    /**
      * The bout.
      */
     private final transient Message message;
 
     /**
      * Public ctor.
-     * @param where The HEAP to work with
      * @param what The message to update
      */
-    public SeeMessageTask(final Heap where, final Message what) {
+    public SeeMessageTask(final Message what) {
         super();
-        this.heap = where;
         this.message = what;
     }
 
@@ -84,16 +77,17 @@ final class SeeMessageTask extends AbstractTask {
 
     /**
      * {@inheritDoc}
+     *
+     * <p>There is no synchronization, intentionally. Msg class is thread-safe
+     * and we don't worry about concurrent changes to it.
      */
     @Override
     protected void execute() {
-        final Long number = this.message.number();
-        final Msg msg = this.heap.get(number);
-        PredicateBuilder.extract(this.message, msg);
+        PredicateBuilder.extract(this.message);
         Logger.debug(
             this,
-            "#exec(): cached message #%d in %dms",
-            number,
+            "#execute(): cached message #%d in %dms",
+            this.message.number(),
             this.time()
         );
     }

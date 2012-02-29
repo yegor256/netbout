@@ -24,37 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.logic;
+package com.netbout.inf.atoms;
 
-import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.predicates.AbstractVarargPred;
-import java.util.List;
+import com.netbout.inf.Atom;
 
 /**
- * Logical NOT.
+ * Text atom.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "not")
-public final class NotPred extends AbstractVarargPred {
+public final class TextAtom implements Atom<String> {
+
+    /**
+     * The value of it.
+     */
+    private final transient String text;
 
     /**
      * Public ctor.
-     * @param args Arguments/predicates
+     * @param value The value of it
      */
-    public NotPred(final List<Predicate> args) {
-        super(args);
+    public TextAtom(final Object value) {
+        this.text = value.toString();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Boolean evaluate(final Msg msg, final int pos) {
-        return !(Boolean) this.arg(0).evaluate(msg, pos);
+    public String value() {
+        return this.text;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("\"%s\"", this.text.replace("\"", "\\\""));
     }
 
 }

@@ -24,61 +24,20 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.math;
-
-import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.predicates.AbstractVarargPred;
-import com.ymock.util.Logger;
-import java.util.Date;
-import java.util.List;
-import org.joda.time.format.ISODateTimeFormat;
+package com.netbout.inf;
 
 /**
- * First argument is greater than the second.
+ * One atom.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "greater-than")
-public final class GreaterThanPred extends AbstractVarargPred {
+public interface Atom<T> {
 
     /**
-     * Public ctor.
-     * @param args The arguments
+     * Value of atom.
+     * @return The value of it
      */
-    public GreaterThanPred(final List<Predicate> args) {
-        super(args);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final Object left = this.arg(0).evaluate(msg, pos);
-        final String right = this.arg(1).evaluate(msg, pos).toString();
-        boolean greater;
-        if (left instanceof Date) {
-            greater = ((Date) left).after(
-                ISODateTimeFormat.dateTime().parseDateTime(right).toDate()
-            );
-        } else if (left instanceof Long) {
-            greater = ((Long) left) > Long.valueOf(right);
-        } else {
-            greater = left.toString().compareTo(right) > 0;
-        }
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): is %[type]s > '%s': %B",
-            msg.number(),
-            pos,
-            left,
-            right,
-            greater
-        );
-        return greater;
-    }
+    T value();
 
 }

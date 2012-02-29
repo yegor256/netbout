@@ -26,9 +26,10 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
 import java.util.List;
 
 /**
@@ -49,27 +50,33 @@ public final class UnbundledPred extends AbstractVarargPred {
      * Public ctor.
      * @param args The arguments
      */
-    public UnbundledPred(final List<Predicate> args) {
+    public UnbundledPred(final List<Atom> args) {
         super(args);
+        this.expected = this.arg(0).value().toString();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final Long bout = Long.valueOf(
-            this.arg(0).evaluate(msg, pos).toString()
-        );
-        final String marker = msg.<String>get(BundledPred.BUNDLE);
-        boolean allow;
-        if (msg.<Long>get(VariablePred.BOUT_NUMBER).equals(bout)) {
-            this.expected = marker;
-            allow = false;
-        } else {
-            allow = marker.equals(this.expected);
-        }
-        return allow;
+    public Long next() {
+        throw new PredicateException("UNBUNDLED#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("UNBUNDLED#hasNext()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return this.expected.equals(BundledPred.marker(message));
     }
 
 }

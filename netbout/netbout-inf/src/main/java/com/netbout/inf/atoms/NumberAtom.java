@@ -24,50 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.math;
+package com.netbout.inf.atoms;
 
-import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.predicates.AbstractVarargPred;
-import com.ymock.util.Logger;
-import java.util.List;
+import com.netbout.inf.Atom;
 
 /**
- * First argument is less than the second.
+ * Number atom.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "less-than")
-public final class LessThanPred extends AbstractVarargPred {
+public final class NumberAtom implements Atom<Long> {
+
+    /**
+     * The value of it.
+     */
+    private final transient Long number;
 
     /**
      * Public ctor.
-     * @param args The arguments
+     * @param value The value of it
      */
-    public LessThanPred(final List<Predicate> args) {
-        super(args);
+    public NumberAtom(final Long value) {
+        this.number = value;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final boolean equal = (Boolean) new EqualPred(this.args())
-            .evaluate(msg, pos);
-        final boolean greater = (Boolean) new GreaterThanPred(this.args())
-            .evaluate(msg, pos);
-        final boolean less = !equal && !greater;
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): %B",
-            msg.number(),
-            pos,
-            less
-        );
-        return less;
+    public Long value() {
+        return this.number;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.number.toString();
     }
 
 }
