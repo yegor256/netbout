@@ -40,7 +40,7 @@
                 <xsl:value-of select="format-number($nano div (1000 * 1000 * 1000), '0.000')"/>
                 <xsl:text>s</xsl:text>
             </xsl:when>
-            <xsl:when test="$nano &gt; 1000 * 1000">
+            <xsl:when test="$nano &gt; 10 * 1000 * 1000">
                 <xsl:value-of select="round($nano div (1000 * 1000))"/>
                 <xsl:text>ms</xsl:text>
             </xsl:when>

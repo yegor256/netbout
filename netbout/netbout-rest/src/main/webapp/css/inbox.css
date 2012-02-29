@@ -43,17 +43,24 @@ li.bout {
     }
 
         li.bout div.header span {
-            font-size: 1.4em;
         }
 
-        li.bout div.header span.num {
-            margin-right: 0.3em;
-        }
+            li.bout div.header span.new {
+                font-size: 1.7em;
+                font-weight: 500;
+                color: #f24a40; /* red */
+            }
+
+            li.bout div.header span.num {
+                margin-right: 0.3em;
+                font-size: 1.6em;
+            }
 
         li.bout div.header a.title {
-            font-size: 2.2em;
-            font-weight: bold;
+            font-size: 2.7em;
+            font-weight: 500;
             margin-right: 0.3em;
+            line-height: 1em;
         }
 
 .bundled {

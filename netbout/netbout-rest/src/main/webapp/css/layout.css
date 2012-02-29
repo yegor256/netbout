@@ -36,8 +36,8 @@ body {
     width: 100%;
     position: relative;
     background-color: #f3f3f1;
-    height: 6.9em;
-    border-bottom: 1px solid #dadbd9;
+    height: 7.1em;
+    border-bottom: 2px solid #dadbd9;
     display: table;
     overflow: hidden;
 }
@@ -97,15 +97,9 @@ body {
         display: table-cell;
         text-align: right;
         vertical-align: middle;
+        height: 3.2em;
+        position: relative;
     }
-
-        #photo {
-            height: 2.6em;
-            width: 2.6em;
-            vertical-align: middle;
-            margin-right: 0.6em;
-            display: inline;
-        }
 
         #right ul {
             margin: 0 !important;
@@ -115,22 +109,37 @@ body {
             #right ul li {
                 list-style: none;
                 display: inline;
-                margin-left: 2.3em;
+                margin-left: 2.7em;
             }
 
-            #right ul li span {
-                font-size: 1.4em;
-                font-weight: bold;
-            }
-
-            #right ul li a {
-                color: #4b4250;
-                text-decoration: none;
-            }
-
-                #right ul li a:hover {
-                    text-decoration: underline;
+                #photo {
+                    height: 100%;
+                    margin-right: 0.6em;
+                    display: inline;
+                    vertical-align: middle;
                 }
+
+                #right ul li {
+                    font-size: 1.4em;
+                    font-weight: 500;
+                    vertical-align: middle;
+                }
+
+                    #right ul li span.start {
+                        font-weight: bolder;
+                        color: #f24a40; /* red */
+                        padding-left: 0.5em;
+                    }
+
+                #right ul li a {
+                    font-weight: 500;
+                    color: #4b4250;
+                    text-decoration: none;
+                }
+
+                    #right ul li a:hover {
+                        text-decoration: underline;
+                    }
 
 /* log message to show */
 #log {

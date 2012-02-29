@@ -166,7 +166,7 @@
                     </xsl:choose>
                 </a>
                 <xsl:if test="@unseen &gt; 0">
-                    <span class="red">
+                    <span class="new">
                         <xsl:value-of select="@unseen"/>
                         <xsl:text> new</xsl:text>
                     </span>

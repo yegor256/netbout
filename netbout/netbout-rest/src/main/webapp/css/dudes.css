@@ -41,7 +41,8 @@
             height: 5em;
             width: 5em;
             display: block;
-            box-shadow: 0.1em 0.1em 0.1em gray; /* JIGSAW: it's CSS3 feature */
+            border-bottom: 1px solid #9c9c9c;
+            border-right: 1px solid #9c9c9c;
         }
 
             .dudes .dude img.pending {
@@ -52,13 +53,22 @@
         position: absolute;
         top: 5em;
         left: 0;
+        font-weight: 500;
         background-color: #f3f3f1;
-        box-shadow: 0.1em 0.1em 0.1em #e4e5e3; /* JIGSAW: it's CSS3 feature */
+        border-bottom: 1px solid #dadbd9;
+        border-right: 1px solid #dadbd9;
         padding: 0.3em 1em 0.3em 0.5em;
         display: none;
     }
 
         .dudes .bar span {
             font-size: 1.4em;
+        }
+
+        .dudes .bar a.kickoff {
+            font-size: 1.4em;
+            color: #f24a40; /* red */
+            text-decoration: none;
+            font-weight: bold;
         }
 

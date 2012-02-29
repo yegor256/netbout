@@ -53,7 +53,7 @@
                                 <xsl:text> (invited)</xsl:text>
                             </xsl:if>
                             <xsl:text> </xsl:text>
-                            <a>
+                            <a class="kickoff">
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="link[@rel='kickoff']/@href"/>
                                 </xsl:attribute>
@@ -62,7 +62,7 @@
                                     <xsl:value-of select="alias"/>
                                     <xsl:text>" off this bout</xsl:text>
                                 </xsl:attribute>
-                                <xsl:text>off</xsl:text>
+                                <xsl:text>x</xsl:text>
                             </a>
                         </xsl:if>
                     </aside>

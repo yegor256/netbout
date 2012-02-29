@@ -165,20 +165,18 @@
                                     <xsl:value-of select="identity/alias"/>
                                 </xsl:attribute>
                             </img>
-                            <span>
-                                <xsl:call-template name="alias">
-                                    <xsl:with-param name="alias" select="identity/alias" />
-                                </xsl:call-template>
-                            </span>
+                            <xsl:call-template name="alias">
+                                <xsl:with-param name="alias" select="identity/alias" />
+                            </xsl:call-template>
                             <xsl:if test="identity/@helper='true'">
-                                <span><xsl:text>&#160;(h)</xsl:text></span>
+                                <xsl:text>&#160;(h)</xsl:text>
                             </xsl:if>
                         </li>
                         <xsl:if test="links/link[@rel='start']">
                             <li>
                                 <xsl:choose>
                                     <xsl:when test="/page/bouts and count(/page/bouts/bout) = 0 and /page/query = ''">
-                                        <span><xsl:text>Start (later)</xsl:text></span>
+                                        <xsl:text>Start (later)</xsl:text>
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <a>
@@ -188,12 +186,16 @@
                                             <xsl:attribute name="title">
                                                 <xsl:text>start new bout</xsl:text>
                                             </xsl:attribute>
-                                            <span><xsl:text>Start</xsl:text></span>
+                                            <xsl:text>Start</xsl:text>
                                         </a>
+                                        <span class="start"><xsl:text>+</xsl:text></span>
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </li>
                         </xsl:if>
+                        <li>
+                            <xsl:text>About</xsl:text>
+                        </li>
                         <li>
                             <a>
                                 <xsl:attribute name="href">
@@ -202,7 +204,7 @@
                                 <xsl:attribute name="title">
                                     <xsl:text>leave Netbout.com right now</xsl:text>
                                 </xsl:attribute>
-                                <span><xsl:text>Logout</xsl:text></span>
+                                <xsl:text>Logout</xsl:text>
                             </a>
                         </li>
                     </ul>
