@@ -177,10 +177,10 @@
             </div>
             <xsl:apply-templates select="participants" />
             <xsl:if test="bundled">
-                <aside class="bundled">
+                <nav class="bundled">
                     <xsl:for-each select="bundled/link[@rel='bout']">
                         <xsl:if test="position() &gt; 1">
-                            <span><xsl:text>, </xsl:text></span>
+                            <span><xsl:text>; </xsl:text></span>
                         </xsl:if>
                         <a>
                             <xsl:attribute name="href">
@@ -201,15 +201,15 @@
                         </span>
                     </xsl:for-each>
                     <xsl:if test="bundled/link[@rel='all']">
-                        <span><xsl:text>, and </xsl:text></span>
+                        <span><xsl:text>; </xsl:text></span>
                         <a>
                             <xsl:attribute name="href">
                                 <xsl:value-of select="bundled/link[@rel='all']/@href"/>
                             </xsl:attribute>
-                            <xsl:text>all of them</xsl:text>
+                            <xsl:text>all of them...</xsl:text>
                         </a>
                     </xsl:if>
-                </aside>
+                </nav>
             </xsl:if>
         </li>
     </xsl:template>

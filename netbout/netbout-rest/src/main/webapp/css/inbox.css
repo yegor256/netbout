@@ -64,14 +64,16 @@ li.bout {
             }
 
 .bundled {
-    position: absolute;
-    right: 0;
-    top: 3em;
-    width: 30em;
+    margin-top: 0.429em;
+    color: #bebcc1;
+    font-size: 1.4em;
 }
 
-    .bundled a,
-    .bundled span {
-        font-size: 1.4em;
+    .bundled a {
+        color: #bebcc1;
     }
+
+        .bundled a:hover {
+            color: #211922;
+        }
 
