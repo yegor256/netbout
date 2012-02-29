@@ -161,7 +161,10 @@
                             <xsl:text>(no title)</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="title" />
+                            <xsl:call-template name="crop">
+                                <xsl:with-param name="text" select="title" />
+                                <xsl:with-param name="length" select="50" />
+                            </xsl:call-template>
                         </xsl:otherwise>
                     </xsl:choose>
                 </a>

@@ -34,13 +34,15 @@
 }
 
     h1 span.num {
-        font-size: 1.4em;
+        font-size: 1.6em;
         margin-right: 0.3em;
     }
 
 /* header with participants and options */
 #top2 {
     position: relative;
+    margin-top: 0.7em;
+    margin-bottom: 0.7em;
 }
 
     /* invite sector */
@@ -116,27 +118,37 @@
 /* stage itself */
 #stage {
     min-height: 3em;
-    margin-top: 2em;
+    margin-top: 1.4em;
+    margin-bottom: 1.4em;
     padding: 1em;
     background-color: #f3f3f1;
-    border: 0.1em solid #e4e5e3;
-    box-shadow: 0em 0.1em 0.1em #e4e5e3; /* JIGSAW: it's CSS3 feature */
+    border-top: 0.1em solid #e4e5e3;
+    border-left: 0.1em solid #e4e5e3;
+    border-bottom: 0.1em solid #dadbd9;
+    border-right: 0.1em solid #dadbd9;
     overflow-y: auto;
+    background-image: url('http://cdn.netbout.com/corner-active.png');
+    background-repeat: no-repeat;
 }
 
 /* form to post a new message */
 #post {
-    margin-bottom: 2em;
-    margin-top: 2em;
 }
 
+    #post p {
+        margin-top: 1em;
+        margin-bottom: 1em;
+        line-height: 0;
+    }
+
     #post textarea {
-        width: 62.29em; /* multiply by 1.4 = 90em - (1.4 * 2) = 87.2em */
+        display: inline;
+        width: 62.143em; /* multiply by 1.4px + 28px (padding) + 2px (border) = 900px (90em) */
     }
 
 /* one message */
 .message {
-    margin-top: 4em;
+    margin-top: 2.5em;
     position: relative;
     min-height: 6em;
 }
@@ -150,7 +162,8 @@
     .message .left img {
         height: 5em;
         width: 5em;
-        box-shadow: 0.1em 0.1em 0.1em gray; /* JIGSAW: it's CSS3 feature */
+        border-bottom: 0.1em solid #dadbd9;
+        border-right: 0.1em solid #dadbd9;
     }
 
     .message .right {

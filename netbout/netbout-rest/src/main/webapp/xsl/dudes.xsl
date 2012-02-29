@@ -44,8 +44,9 @@
                             <xsl:text>em;</xsl:text>
                         </xsl:attribute>
                         <span>
-                            <xsl:call-template name="alias">
-                                <xsl:with-param name="alias" select="alias" />
+                            <xsl:call-template name="crop">
+                                <xsl:with-param name="text" select="alias" />
+                                <xsl:with-param name="length" select="25" />
                             </xsl:call-template>
                         </span>
                         <xsl:if test="@me != 'true'">
@@ -86,6 +87,21 @@
                                 </xsl:if>
                             </xsl:attribute>
                         </img>
+                        <xsl:if test="@helper = 'true' and @confirmed = 'true' and /page/bout/stages">
+                            <xsl:variable name="dude" select="."/>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="/page/bout/stages/stage[.=$dude/identity]/@href"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="class">
+                                    <xsl:text>corner</xsl:text>
+                                    <xsl:if test="identity = /page/bout/stage/@name">
+                                        <xsl:text> active</xsl:text>
+                                    </xsl:if>
+                                </xsl:attribute>
+                                <xsl:text> </xsl:text>
+                            </a>
+                        </xsl:if>
                     </article>
                 </div>
             </xsl:for-each>

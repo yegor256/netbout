@@ -51,15 +51,16 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template name="alias">
-        <xsl:param name="alias" as="xs:string"/>
+    <xsl:template name="crop">
+        <xsl:param name="text" as="xs:string"/>
+        <xsl:param name="length" as="xs:integer"/>
         <xsl:choose>
-            <xsl:when test="string-length($alias) &gt; 25">
-                <xsl:value-of select="substring($alias,0,22)"/>
+            <xsl:when test="string-length($text) &gt; $length">
+                <xsl:value-of select="substring($text, 0, $length - 3)"/>
                 <xsl:text>...</xsl:text>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="$alias"/>
+                <xsl:value-of select="$text"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

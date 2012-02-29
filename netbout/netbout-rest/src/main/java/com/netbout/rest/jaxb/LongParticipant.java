@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
@@ -131,6 +132,15 @@ public final class LongParticipant {
     @XmlAttribute
     public Boolean isConfirmed() {
         return this.participant.confirmed();
+    }
+
+    /**
+     * Is it a helper?
+     * @return Is it?
+     */
+    @XmlAttribute
+    public Boolean isHelper() {
+        return this.participant.identity() instanceof Helper;
     }
 
     /**

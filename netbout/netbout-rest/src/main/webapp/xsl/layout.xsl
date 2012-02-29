@@ -165,8 +165,9 @@
                                     <xsl:value-of select="identity/alias"/>
                                 </xsl:attribute>
                             </img>
-                            <xsl:call-template name="alias">
-                                <xsl:with-param name="alias" select="identity/alias" />
+                            <xsl:call-template name="crop">
+                                <xsl:with-param name="text" select="identity/alias" />
+                                <xsl:with-param name="length" select="25" />
                             </xsl:call-template>
                             <xsl:if test="identity/@helper='true'">
                                 <xsl:text>&#160;(h)</xsl:text>
