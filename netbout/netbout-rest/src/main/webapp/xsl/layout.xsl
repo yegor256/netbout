@@ -119,7 +119,7 @@
             <xsl:value-of select="revision"/>
             <xsl:text> </xsl:text>
             <xsl:call-template name="nano">
-                <xsl:with-param name="nano" select="/page/@nano" />
+                <xsl:with-param name="nano" select="/page/nano" />
             </xsl:call-template>
         </aside>
     </xsl:template>

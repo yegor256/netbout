@@ -23,34 +23,46 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest.jaxb;
+
+import javax.xml.bind.annotation.XmlValue;
+
+/**
+ * Nano time.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class Nano {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.EtaAssertion
-import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
-import com.rexsl.test.RestTester
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
+    /**
+     * Start.
+     */
+    private final transient long start;
 
-def william = new RestSession(rexsl.home).authenticate(new Urn('urn:test:willy'), '')
-def bout = william.start()
-bout.post('Hi there!')
+    /**
+     * Public ctor for JAXB.
+     */
+    public Nano() {
+        throw new IllegalStateException("This ctor should never be called");
+    }
 
-// validate content of the inbox
-RestTester.start(RestUriBuilder.from(william))
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get('render inbox of a user')
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertThat(new EtaAssertion())
-    // @todo #213 for some reason this stuff doesn't work with rexsl 0.3.2
-    // .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
-    .assertXPath('/page/identity/name')
-    .assertXPath('/page/bouts')
-    .assertXPath('/page/nano')
-    .assertXPath('/page/view[.=""]')
-    .assertXPath('/page/bouts/bout/participants/participant')
+    /**
+     * Public ctor.
+     * @param nano Start moment
+     */
+    public Nano(final long nano) {
+        this.start = nano;
+    }
+
+    /**
+     * REL of the link.
+     * @return The name
+     */
+    @XmlValue
+    public long getValue() {
+        return System.nanoTime() - this.start;
+    }
+
+}
