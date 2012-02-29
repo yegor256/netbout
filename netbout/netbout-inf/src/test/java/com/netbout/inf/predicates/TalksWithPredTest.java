@@ -26,8 +26,9 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
@@ -49,17 +50,9 @@ public final class TalksWithPredTest {
     public void positivelyMatchesMessageWithParticipant() throws Exception {
         final Urn name = new UrnMocker().mock();
         final Predicate pred = new TalksWithPred(
-            Arrays.asList(new Predicate[] {new TextPred(name.toString())})
+            Arrays.asList(new Atom[] {new TextAtom(name.toString())})
         );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MsgMocker()
-                    .with(TalksWithPred.TALKS_WITH, name)
-                    .mock(),
-                0
-            )
-        );
+        MatcherAssert.assertThat("not matched", pred.contains(1L));
     }
 
 }

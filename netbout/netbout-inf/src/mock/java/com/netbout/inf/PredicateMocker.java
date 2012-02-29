@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import org.mockito.Mockito;
@@ -87,7 +88,7 @@ public final class PredicateMocker {
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
                     final Long msg = (Long) invocation.getArguments()[0];
-                    return PredicateMocker.this.iterator.contains(msg);
+                    return PredicateMocker.this.messages.contains(msg);
                 }
             }
         ).when(this.predicate).contains(Mockito.any(Long.class));

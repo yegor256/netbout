@@ -26,9 +26,11 @@
  */
 package com.netbout.inf.predicates.text;
 
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
+import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.atoms.VariableAtom;
 import java.util.Arrays;
 import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
@@ -53,16 +55,13 @@ public final class MatchesPredTest {
     public void positivelyMatchesEmptyText() throws Exception {
         final Predicate pred = new MatchesPred(
             Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("").mock(),
-                    new PredicateMocker().doReturn("some text").mock(),
+                new Atom[] {
+                    new TextAtom("hello"),
+                    new VariableAtom("bout.title"),
                 }
             )
         );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
-        );
+        MatcherAssert.assertThat("not matched", pred.contains(1L));
     }
 
     /**
@@ -83,9 +82,9 @@ public final class MatchesPredTest {
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Predicate pred = new MatchesPred(
                 Arrays.asList(
-                    new Predicate[] {
-                        new PredicateMocker().doReturn(entry.getKey()).mock(),
-                        new PredicateMocker().doReturn(entry.getValue()).mock(),
+                    new Atom[] {
+                        new TextAtom(entry.getKey()),
+                        new VariableAtom("text"),
                     }
                 )
             );
@@ -95,7 +94,7 @@ public final class MatchesPredTest {
                     entry.getKey(),
                     entry.getValue()
                 ),
-                (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
+                pred.contains(1L)
             );
         }
     }
@@ -114,9 +113,9 @@ public final class MatchesPredTest {
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Predicate pred = new MatchesPred(
                 Arrays.asList(
-                    new Predicate[] {
-                        new PredicateMocker().doReturn(entry.getKey()).mock(),
-                        new PredicateMocker().doReturn(entry.getValue()).mock(),
+                    new Atom[] {
+                        new TextAtom(entry.getKey()),
+                        new VariableAtom("text"),
                     }
                 )
             );
@@ -126,7 +125,7 @@ public final class MatchesPredTest {
                     entry.getKey(),
                     entry.getValue()
                 ),
-                !(Boolean) pred.evaluate(new MsgMocker().mock(), 0)
+                !pred.contains(1L)
             );
         }
     }

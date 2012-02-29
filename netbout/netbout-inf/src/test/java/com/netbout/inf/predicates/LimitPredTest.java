@@ -26,8 +26,9 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.NumberAtom;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -46,16 +47,10 @@ public final class LimitPredTest {
     @Test
     public void positivelyMatchesMessageAtPosition() throws Exception {
         final Predicate pred = new LimitPred(
-            Arrays.asList(new Predicate[] {new NumberPred(1L)})
+            Arrays.asList(new Atom[] {new NumberAtom(1L)})
         );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
-        );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(new MsgMocker().mock(), 1)
-        );
+        MatcherAssert.assertThat("matched", pred.contains(1L));
+        MatcherAssert.assertThat("not matched", !pred.contains(1L));
     }
 
 }

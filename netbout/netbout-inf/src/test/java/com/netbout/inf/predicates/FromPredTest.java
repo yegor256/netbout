@@ -26,11 +26,10 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.bus.BusMocker;
-import com.netbout.inf.Msg;
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateBuilder;
+import com.netbout.inf.atoms.NumberAtom;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -50,16 +49,10 @@ public final class FromPredTest {
     @Test
     public void positivelyMatchesMessageAtPosition() throws Exception {
         final Predicate pred = new FromPred(
-            Arrays.asList(new Predicate[] {new NumberPred(1L)})
+            Arrays.asList(new Atom[] {new NumberAtom(1L)})
         );
-        MatcherAssert.assertThat(
-            "not matched",
-            !(Boolean) pred.evaluate(new MsgMocker().mock(), 0)
-        );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(new MsgMocker().mock(), 1)
-        );
+        MatcherAssert.assertThat("not matched", !pred.contains(2L));
+        MatcherAssert.assertThat("matched", pred.contains(2L));
     }
 
     /**
@@ -71,12 +64,11 @@ public final class FromPredTest {
         final int total = 10;
         final int from = 3;
         final int limit = total - from - 1;
-        final Predicate pred = new PredicateBuilder(new BusMocker().mock())
+        final Predicate pred = new PredicateBuilder()
             .parse(String.format("(and (from %d) (limit %d))", from, limit));
         int count = 0;
-        final Msg msg = new MsgMocker().mock();
         for (int pos = 0; pos < total; pos += 1) {
-            if ((Boolean) pred.evaluate(msg, pos)) {
+            if (pred.contains(1L)) {
                 count += 1;
             }
         }

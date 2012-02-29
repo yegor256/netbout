@@ -121,7 +121,7 @@ public final class MuxTest {
     @Test
     public void rendersStatistics() throws Exception {
         final Mux mux = new Mux();
-        MatcherAssert.assertThat(mux.statistics(), Matchers.notNull());
+        MatcherAssert.assertThat(mux.statistics(), Matchers.notNullValue());
     }
 
 }

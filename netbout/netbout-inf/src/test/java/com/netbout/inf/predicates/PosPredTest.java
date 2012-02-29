@@ -26,8 +26,9 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.NumberAtom;
 import java.util.Arrays;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
@@ -46,14 +47,10 @@ public final class PosPredTest {
      */
     @Test
     public void positivelyMatchesMessageAtPosition() throws Exception {
-        final int pos = Math.abs(new Random().nextInt());
         final Predicate pred = new PosPred(
-            Arrays.asList(new Predicate[] {new NumberPred(new Long(pos))})
+            Arrays.asList(new Atom[] {new NumberAtom(0L)})
         );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(new MsgMocker().mock(), pos)
-        );
+        MatcherAssert.assertThat("matched", pred.contains(1L));
     }
 
 }

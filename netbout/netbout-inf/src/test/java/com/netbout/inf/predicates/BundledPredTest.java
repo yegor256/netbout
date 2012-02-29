@@ -26,8 +26,7 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
@@ -58,9 +57,7 @@ public final class BundledPredTest {
         final Message from = new MessageMocker()
             .inBout(bout)
             .mock();
-        final Msg msg = Mockito.mock(Msg.class);
-        BundledPred.extract(from, msg);
-        Mockito.verify(msg).put(BundledPred.BUNDLE, "[\"urn:test:somebody\"]");
+        BundledPred.extract(from);
     }
 
     /**
@@ -69,13 +66,8 @@ public final class BundledPredTest {
      */
     @Test
     public void positivelyMatchesBundledMessageOnly() throws Exception {
-        final Predicate pred = new BundledPred(
-            Arrays.asList(new Predicate[] {})
-        );
-        final String marker = "abc";
-        final Msg msg = new MsgMocker().with(BundledPred.BUNDLE, marker).mock();
-        MatcherAssert.assertThat("matched", (Boolean) pred.evaluate(msg, 0));
-        MatcherAssert.assertThat("no!", !(Boolean) pred.evaluate(msg, 1));
+        final Predicate pred = new BundledPred(Arrays.asList(new Atom[] {}));
+        MatcherAssert.assertThat("no", pred.hasNext());
     }
 
 }

@@ -26,10 +26,10 @@
  */
 package com.netbout.inf.predicates.xml;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
+import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.rexsl.test.ContainerMocker;
@@ -91,9 +91,7 @@ public final class NsPredTest {
             )
             + "/>"
         ).when(from).text();
-        final Msg msg = Mockito.mock(Msg.class);
-        NsPred.extract(from, msg);
-        Mockito.verify(msg).put(NsPred.NAMESPACE, Urn.create("urn:test:bar"));
+        NsPred.extract(from);
     }
 
     /**
@@ -104,19 +102,9 @@ public final class NsPredTest {
     public void positivelyMatchesXmlDocument() throws Exception {
         final Urn namespace = new Urn("urn:test:foo");
         final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn(namespace.toString()).mock(),
-                }
-            )
+            Arrays.asList(new Atom[] {new TextAtom(namespace)})
         );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MsgMocker().with(NsPred.NAMESPACE, namespace).mock(),
-                0
-            )
-        );
+        MatcherAssert.assertThat("matched", pred.contains(1L));
     }
 
     /**
@@ -126,15 +114,11 @@ public final class NsPredTest {
     @Test
     public void negativelyMatchesNonXmlDocument() throws Exception {
         final Predicate pred = new NsPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("urn:test:different").mock(),
-                }
-            )
+            Arrays.asList(new Atom[] {new TextAtom("urn:test:different")})
         );
         MatcherAssert.assertThat(
             "not matched",
-            !(Boolean) pred.evaluate(new MsgMocker().mock(), 0)
+            pred.contains(1L)
         );
     }
 

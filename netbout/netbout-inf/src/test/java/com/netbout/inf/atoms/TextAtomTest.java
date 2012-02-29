@@ -24,36 +24,30 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.atoms;
 
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Predicate;
-import com.netbout.spi.Urn;
+import com.netbout.inf.Atom;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link TextPred}.
+ * Test case of {@link TextAtom}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextPredTest {
+public final class TextAtomTest {
 
     /**
-     * TextPred can retrieve different types on demand.
+     * TextAtom can encapsulate text.
      * @throws Exception If there is some problem inside
-     * @todo #231 Doesn't work now. I tried to do this dynamic class
-     *  information retrieval, to no avail
-     *  http://stackoverflow.com/questions/2801267
      */
     @Test
-    @org.junit.Ignore
-    public void retrievesUrnFromText() throws Exception {
-        final Predicate pred = new TextPred("urn:test:some-text");
+    public void encapsulatesText() throws Exception {
+        final Atom<String> atom = new TextAtom("some text");
         MatcherAssert.assertThat(
-            pred.<Urn>evaluate(new MsgMocker().mock(), 0),
-            Matchers.instanceOf(Urn.class)
+            atom.toString(),
+            Matchers.equalTo("\"some text\"")
         );
     }
 

@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.Arrays;
