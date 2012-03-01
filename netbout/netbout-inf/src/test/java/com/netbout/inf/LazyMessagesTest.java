@@ -46,7 +46,7 @@ public final class LazyMessagesTest {
     @Test
     public void findsMessagesInStreamOfMsgs() throws Exception {
         final Predicate pred = new PredicateMocker()
-            .withMessages(Arrays.asList(new Long[] {1L}))
+            .withMessages(new Long[] {1L})
             .mock();
         final Iterable<Long> messages = new LazyMessages(pred);
         MatcherAssert.assertThat(

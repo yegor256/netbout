@@ -38,35 +38,36 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link AndPred}.
+ * Test case of {@link OrPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AndPredTest {
+public final class OrPredTest {
 
     /**
-     * AndPred can merge two predicates togethere.
+     * OrPred can merge two predicates togethere.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void mergesTwoPredicates() throws Exception {
         final Predicate first = new PredicateMocker()
-            .withMessages(new Long[] {1L, 2L})
+            .withMessages(new Long[] {1L})
             .mock();
         final Predicate second = new PredicateMocker()
             .withMessages(new Long[] {2L})
-            .withoutIteration()
             .mock();
-        final Predicate merger = new AndPred(
+        final Predicate merger = new OrPred(
             Arrays.asList(new Atom[] {first, second})
         );
         MatcherAssert.assertThat("has next", merger.hasNext());
+        MatcherAssert.assertThat(merger.next(), Matchers.equalTo(1L));
+        MatcherAssert.assertThat("still has next", merger.hasNext());
         MatcherAssert.assertThat(merger.next(), Matchers.equalTo(2L));
-        MatcherAssert.assertThat("end of iterator", !merger.hasNext());
+        MatcherAssert.assertThat("now it is empty", !merger.hasNext());
     }
 
     /**
-     * AndPred can handle an empty predicates gracefully.
+     * OrPred can handle an empty predicates gracefully.
      * @throws Exception If there is some problem inside
      */
     @Test

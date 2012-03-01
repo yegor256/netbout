@@ -59,7 +59,16 @@ public final class PredicateMocker {
      * Public ctor.
      */
     public PredicateMocker() {
-        this.withMessages(Arrays.asList(new Long[] {}));
+        this.withMessages(new Long[] {});
+    }
+
+    /**
+     * Without iteration.
+     * @return This object
+     */
+    public PredicateMocker withoutIteration() {
+        this.iterator = null;
+        return this;
     }
 
     /**
@@ -67,20 +76,32 @@ public final class PredicateMocker {
      * @param msgs The list of them
      * @return This object
      */
-    public PredicateMocker withMessages(final Collection<Long> msgs) {
-        this.messages = msgs;
-        this.iterator = msgs.iterator();
+    public PredicateMocker withMessages(final Long[] msgs) {
+        this.messages = Arrays.asList(msgs);
+        this.iterator = this.messages.iterator();
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
-                    return PredicateMocker.this.iterator.hasNext();
+                    boolean has;
+                    if (PredicateMocker.this.iterator == null) {
+                        throw new IllegalArgumentException("#hasNext()");
+                    } else {
+                        has = PredicateMocker.this.iterator.hasNext();
+                    }
+                    return has;
                 }
             }
         ).when(this.predicate).hasNext();
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
-                    return PredicateMocker.this.iterator.next();
+                    Long next;
+                    if (PredicateMocker.this.iterator == null) {
+                        throw new IllegalArgumentException("#next()");
+                    } else {
+                        next = PredicateMocker.this.iterator.next();
+                    }
+                    return next;
                 }
             }
         ).when(this.predicate).next();
