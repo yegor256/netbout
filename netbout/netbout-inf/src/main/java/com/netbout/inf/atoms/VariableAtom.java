@@ -43,6 +43,12 @@ public final class VariableAtom implements Atom<String> {
         new VariableAtom("text");
 
     /**
+     * Number of message.
+     */
+    public static final VariableAtom NUMBER =
+        new VariableAtom("number");
+
+    /**
      * Number of bout.
      */
     public static final VariableAtom BOUT_NUMBER =

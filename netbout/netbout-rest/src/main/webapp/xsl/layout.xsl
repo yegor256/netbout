@@ -76,12 +76,12 @@
                                 some data may look not as fresh as they should be. Try
                                 to refresh the page</xsl:text>
                             <xsl:choose>
-                                <xsl:when test="identity/eta &gt; 60000">
+                                <xsl:when test="identity/eta &gt; 60 * 1000 * 1000 * 1000">
                                     <xsl:text> in a few minutes</xsl:text>
                                 </xsl:when>
-                                <xsl:when test="identity/eta &gt; 5000">
+                                <xsl:when test="identity/eta &gt; 5 * 1000 * 1000 * 1000">
                                     <xsl:text> in </xsl:text>
-                                    <xsl:value-of select="round(identity/eta div 1000)"/>
+                                    <xsl:value-of select="round(identity/eta div (1000 * 1000 * 1000))"/>
                                     <xsl:text> seconds</xsl:text>
                                 </xsl:when>
                             </xsl:choose>

@@ -74,9 +74,10 @@ public final class EqualPred extends AbstractVarargPred {
      */
     public EqualPred(final List<Atom> args) {
         super(args);
-        if (this.CACHE.containsKey(this.arg(0))
-            && this.CACHE.get(this.arg(0)).containsKey(this.arg(1))) {
-            this.messages = this.CACHE.get(this.arg(0)).get(this.arg(1));
+        final VariableAtom var = (VariableAtom) this.arg(0);
+        if (this.CACHE.containsKey(var)
+            && this.CACHE.get(var).containsKey(this.arg(1))) {
+            this.messages = this.CACHE.get(var).get(this.arg(1));
         } else {
             this.messages = new ConcurrentSkipListSet<Long>();
         }
@@ -91,6 +92,10 @@ public final class EqualPred extends AbstractVarargPred {
         EqualPred.var(
             VariableAtom.BOUT_NUMBER,
             new NumberAtom(msg.bout().number())
+        ).add(msg.number());
+        EqualPred.var(
+            VariableAtom.NUMBER,
+            new NumberAtom(msg.number())
         ).add(msg.number());
         EqualPred.var(
             VariableAtom.AUTHOR_NAME,

@@ -56,7 +56,7 @@
                     <xsl:value-of select="/page/version/revision"/>
                     <xsl:text> </xsl:text>
                     <xsl:call-template name="nano">
-                        <xsl:with-param name="nano" select="/page/@nano" />
+                        <xsl:with-param name="nano" select="/page/nano" />
                     </xsl:call-template>
                 </aside>
                 <section id="wrapper">

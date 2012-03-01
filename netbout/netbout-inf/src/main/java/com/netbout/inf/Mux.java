@@ -114,7 +114,12 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
             }
         }
         text.append(String.format("%d in the queue\n", this.queue.size()));
-        text.append(String.format("%.2fms avg time\n", this.stats.getMean()));
+        text.append(
+            Logger.format(
+                "%[nano]s avg time\n",
+                (long) this.stats.getMean()
+            )
+        );
         return text.toString();
     }
 
@@ -135,7 +140,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     /**
      * How long do I need to wait before sending requests?
      * @param who Who is asking
-     * @return Estimated number of milliseconds
+     * @return Estimated number of nanoseconds
      */
     public Long eta(final Urn who) {
         Long eta;

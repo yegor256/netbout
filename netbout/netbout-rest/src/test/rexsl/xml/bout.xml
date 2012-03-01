@@ -29,7 +29,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<page nano="56300777">
+<page>
     <version>
         <name>1.0</name>
         <revision>555</revision>
@@ -134,4 +134,5 @@
             </message>
         </messages>
     </bout>
+    <nano>56300777</nano>
 </page>

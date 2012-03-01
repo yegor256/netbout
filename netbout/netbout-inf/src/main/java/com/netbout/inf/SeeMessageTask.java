@@ -86,7 +86,7 @@ final class SeeMessageTask extends AbstractTask {
         PredicateBuilder.extract(this.message);
         Logger.debug(
             this,
-            "#execute(): cached message #%d in %dms",
+            "#execute(): cached message #%d in %[nano]s",
             this.message.number(),
             this.time()
         );

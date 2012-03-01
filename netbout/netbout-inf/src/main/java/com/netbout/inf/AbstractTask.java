@@ -65,9 +65,9 @@ abstract class AbstractTask implements Task {
      */
     @Override
     public void run() {
-        this.started = System.currentTimeMillis();
+        this.started = System.nanoTime();
         this.execute();
-        this.finished = System.currentTimeMillis();
+        this.finished = System.nanoTime();
     }
 
     /**
@@ -77,7 +77,7 @@ abstract class AbstractTask implements Task {
     public Long time() {
         Long time;
         if (this.finished == null) {
-            time = System.currentTimeMillis() - this.started;
+            time = System.nanoTime() - this.started;
         } else {
             time = this.finished - this.started;
         }

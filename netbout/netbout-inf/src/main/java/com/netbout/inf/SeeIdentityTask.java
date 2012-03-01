@@ -112,7 +112,7 @@ final class SeeIdentityTask extends AbstractTask {
         }
         Logger.info(
             this,
-            "#execute(): cached %d bout(s) of '%s' in %dms",
+            "#execute(): cached %d bout(s) of '%s' in %[nano]s",
             numbers.size(),
             this.identity.name(),
             this.time()
