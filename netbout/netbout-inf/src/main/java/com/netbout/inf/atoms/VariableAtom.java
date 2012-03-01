@@ -53,6 +53,23 @@ public final class VariableAtom implements Atom<String> {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return this.name.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof VariableAtom
+            && this.name.equals(((VariableAtom) obj).name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String value() {
         return this.name;
     }

@@ -27,58 +27,41 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Text atom.
- *
+ * Test case of {@link VariableAtom}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextAtom implements Atom<String> {
+public final class VariableAtomTest {
 
     /**
-     * The value of it.
+     * VariableAtom can encapsulate text.
+     * @throws Exception If there is some problem inside
      */
-    private final transient String text;
-
-    /**
-     * Public ctor.
-     * @param value The value of it
-     */
-    public TextAtom(final Object value) {
-        this.text = value.toString();
+    @Test
+    public void encapsulatesText() throws Exception {
+        final Atom<String> atom = new VariableAtom("bout.number");
+        MatcherAssert.assertThat(
+            atom.toString(),
+            Matchers.equalTo("$bout.number")
+        );
     }
 
     /**
-     * {@inheritDoc}
+     * VariableAtom can compare to another object.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public int hashCode() {
-        return this.text.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof TextAtom
-            && this.text.equals(((TextAtom) obj).text);
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String value() {
-        return this.text;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("\"%s\"", this.text.replace("\"", "\\\""));
+    @Test
+    public void comparesToSimilarObject() throws Exception {
+        final String text = "text";
+        MatcherAssert.assertThat(
+            new VariableAtom(text),
+            Matchers.equalTo(new VariableAtom(text))
+        );
     }
 
 }

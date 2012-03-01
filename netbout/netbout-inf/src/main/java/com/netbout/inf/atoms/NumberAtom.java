@@ -53,6 +53,23 @@ public final class NumberAtom implements Atom<Long> {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return this.number.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof NumberAtom 
+            && this.number.equals(((NumberAtom) obj).number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long value() {
         return this.number;
     }

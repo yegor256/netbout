@@ -27,58 +27,41 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Text atom.
- *
+ * Test case of {@link NumberAtom}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextAtom implements Atom<String> {
+public final class NumberAtomTest {
 
     /**
-     * The value of it.
+     * NumberAtom can encapsulate text.
+     * @throws Exception If there is some problem inside
      */
-    private final transient String text;
-
-    /**
-     * Public ctor.
-     * @param value The value of it
-     */
-    public TextAtom(final Object value) {
-        this.text = value.toString();
+    @Test
+    public void encapsulatesText() throws Exception {
+        final Atom<Long> atom = new NumberAtom(2L);
+        MatcherAssert.assertThat(
+            atom.toString(),
+            Matchers.equalTo("2")
+        );
     }
 
     /**
-     * {@inheritDoc}
+     * NumberAtom can compare to another object.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public int hashCode() {
-        return this.text.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof TextAtom
-            && this.text.equals(((TextAtom) obj).text);
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String value() {
-        return this.text;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("\"%s\"", this.text.replace("\"", "\\\""));
+    @Test
+    public void comparesToSimilarObject() throws Exception {
+        final Long num = 1L;
+        MatcherAssert.assertThat(
+            new NumberAtom(num),
+            Matchers.equalTo(new NumberAtom(num))
+        );
     }
 
 }

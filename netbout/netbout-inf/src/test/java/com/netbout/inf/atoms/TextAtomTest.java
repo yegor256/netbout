@@ -51,4 +51,17 @@ public final class TextAtomTest {
         );
     }
 
+    /**
+     * TextAtom can compare to another object.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void comparesToSimilarObject() throws Exception {
+        final String text = "some new text";
+        MatcherAssert.assertThat(
+            new TextAtom(text),
+            Matchers.equalTo(new TextAtom(text))
+        );
+    }
+
 }
