@@ -24,42 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.math;
-
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateMocker;
-import java.util.Arrays;
-import java.util.Random;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
 
 /**
- * Test case of {@link LessThanPred}.
+ * Atoms.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LessThanPredTest {
-
-    /**
-     * LessThanPred can compare two numbers.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void comparesTwoIntegerNumbers() throws Exception {
-        final Long num = new Random().nextLong();
-        final Predicate pred = new LessThanPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn(num - 1L).mock(),
-                    new PredicateMocker().doReturn(num).mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
-        );
-    }
-
-}
+package com.netbout.inf.atoms;

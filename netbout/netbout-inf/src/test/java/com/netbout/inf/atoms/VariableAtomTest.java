@@ -24,46 +24,44 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.atoms;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
+import com.netbout.inf.Atom;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Number atom.
- *
+ * Test case of {@link VariableAtom}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NumberPred implements Predicate {
+public final class VariableAtomTest {
 
     /**
-     * The value of it.
+     * VariableAtom can encapsulate text.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Long number;
-
-    /**
-     * Public ctor.
-     * @param value The value of it
-     */
-    public NumberPred(final Long value) {
-        this.number = value;
+    @Test
+    public void encapsulatesText() throws Exception {
+        final Atom<String> atom = new VariableAtom("bout.number");
+        MatcherAssert.assertThat(
+            atom.toString(),
+            Matchers.equalTo("$bout.number")
+        );
     }
 
     /**
-     * {@inheritDoc}
+     * VariableAtom can compare to another object.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        return this.number;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("%d", this.number);
+    @Test
+    public void comparesToSimilarObject() throws Exception {
+        final String text = "text";
+        MatcherAssert.assertThat(
+            new VariableAtom(text),
+            Matchers.equalTo(new VariableAtom(text))
+        );
     }
 
 }

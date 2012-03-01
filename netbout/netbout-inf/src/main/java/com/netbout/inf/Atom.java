@@ -24,37 +24,20 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
-
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Predicate;
-import com.netbout.spi.Urn;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+package com.netbout.inf;
 
 /**
- * Test case of {@link TextPred}.
+ * One atom.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextPredTest {
+public interface Atom<T> {
 
     /**
-     * TextPred can retrieve different types on demand.
-     * @throws Exception If there is some problem inside
-     * @todo #231 Doesn't work now. I tried to do this dynamic class
-     *  information retrieval, to no avail
-     *  http://stackoverflow.com/questions/2801267
+     * Value of atom.
+     * @return The value of it
      */
-    @Test
-    @org.junit.Ignore
-    public void retrievesUrnFromText() throws Exception {
-        final Predicate pred = new TextPred("urn:test:some-text");
-        MatcherAssert.assertThat(
-            pred.<Urn>evaluate(new MsgMocker().mock(), 0),
-            Matchers.instanceOf(Urn.class)
-        );
-    }
+    T value();
 
 }

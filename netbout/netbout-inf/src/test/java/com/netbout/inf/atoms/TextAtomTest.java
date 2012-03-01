@@ -24,31 +24,43 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.atoms;
 
+import com.netbout.inf.Atom;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link Heap}.
+ * Test case of {@link TextAtom}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class HeapTest {
+public final class TextAtomTest {
 
     /**
-     * Heap can sort messages properly.
+     * TextAtom can encapsulate text.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void findsBoutsInStreamOfMessages() throws Exception {
-        final Heap heap = new Heap();
-        heap.get(1L);
-        heap.get(2L);
+    public void encapsulatesText() throws Exception {
+        final Atom<String> atom = new TextAtom("some text");
         MatcherAssert.assertThat(
-            heap.messages().iterator().next().number(),
-            Matchers.equalTo(2L)
+            atom.toString(),
+            Matchers.equalTo("\"some text\"")
+        );
+    }
+
+    /**
+     * TextAtom can compare to another object.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void comparesToSimilarObject() throws Exception {
+        final String text = "some new text";
+        MatcherAssert.assertThat(
+            new TextAtom(text),
+            Matchers.equalTo(new TextAtom(text))
         );
     }
 

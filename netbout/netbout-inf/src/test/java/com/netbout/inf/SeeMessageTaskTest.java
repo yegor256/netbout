@@ -59,7 +59,6 @@ public final class SeeMessageTaskTest {
         "PMD.AvoidInstantiatingObjectsInLoops", "PMD.AvoidCatchingThrowable"
     })
     public void handlesMessageUpdatesInParallel() throws Exception {
-        final Heap heap = new Heap();
         final ExecutorService executor = Executors.newFixedThreadPool(10);
         final Collection<Callable> tasks = new ArrayList<Callable>();
         final AtomicLong failed = new AtomicLong(50);
@@ -76,7 +75,7 @@ public final class SeeMessageTaskTest {
                                 .withDate(new Date())
                                 .inBout(bout)
                                 .mock();
-                            new SeeMessageTask(heap, msg).run();
+                            new SeeMessageTask(msg).run();
                         // @checkstyle IllegalCatch (1 line)
                         } catch (Throwable ex) {
                             Logger.error(this, "%[exception]s", ex);

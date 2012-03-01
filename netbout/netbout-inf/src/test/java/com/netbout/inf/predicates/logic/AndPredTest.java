@@ -26,35 +26,53 @@
  */
 package com.netbout.inf.predicates.logic;
 
-import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.predicates.AbstractVarargPred;
-import java.util.List;
+import com.netbout.inf.PredicateMocker;
+import com.netbout.inf.predicates.FalsePred;
+import java.util.Arrays;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Logical NOT.
- *
+ * Test case of {@link AndPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "not")
-public final class NotPred extends AbstractVarargPred {
+public final class AndPredTest {
 
     /**
-     * Public ctor.
-     * @param args Arguments/predicates
+     * AndPred can merge two predicates togethere.
+     * @throws Exception If there is some problem inside
      */
-    public NotPred(final List<Predicate> args) {
-        super(args);
+    @Test
+    public void mergesTwoPredicates() throws Exception {
+        final Predicate first = new PredicateMocker()
+            .withMessages(new Long[] {1L, 2L})
+            .mock();
+        final Predicate second = new PredicateMocker()
+            .withMessages(new Long[] {2L})
+            .withoutIteration()
+            .mock();
+        final Predicate merger = new AndPred(
+            Arrays.asList(new Atom[] {first, second})
+        );
+        MatcherAssert.assertThat("has next", merger.hasNext());
+        MatcherAssert.assertThat(merger.next(), Matchers.equalTo(2L));
+        MatcherAssert.assertThat("end of iterator", !merger.hasNext());
     }
 
     /**
-     * {@inheritDoc}
+     * AndPred can handle an empty predicates gracefully.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Boolean evaluate(final Msg msg, final int pos) {
-        return !(Boolean) this.arg(0).evaluate(msg, pos);
+    @Test
+    public void mergesTwoEmptyPredicates() throws Exception {
+        final Predicate merger = new AndPred(
+            Arrays.asList(new Atom[] {new FalsePred(), new FalsePred()})
+        );
+        MatcherAssert.assertThat("row is empty", !merger.hasNext());
     }
 
 }

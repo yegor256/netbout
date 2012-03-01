@@ -42,6 +42,7 @@ import java.util.List;
  * @version $Id$
  */
 @Farm
+@SuppressWarnings("PMD.TooManyMethods")
 public final class MessageFarm {
 
     /**
@@ -79,6 +80,33 @@ public final class MessageFarm {
             .set(msg)
             .set(bout)
             .select(new NotEmptyHandler());
+    }
+
+    /**
+     * Get bout of message.
+     * @param msg Message number to check
+     * @return Number of bout or ZERO if such a message is not found
+     */
+    @Operation("get-bout-of-message")
+    public Long getBoutOfMessage(final Long msg) {
+        return new DbSession(true)
+            .sql("SELECT bout FROM message WHERE number = ?")
+            .set(msg)
+            .select(
+                new Handler<Long>() {
+                    @Override
+                    public Long handle(final ResultSet rset)
+                        throws SQLException {
+                        Long bout;
+                        if (rset.next()) {
+                            bout = rset.getLong(1);
+                        } else {
+                            bout = 0L;
+                        }
+                        return bout;
+                    }
+                }
+            );
     }
 
     /**

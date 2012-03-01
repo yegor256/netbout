@@ -24,51 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.rest.jaxb;
 
-import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.List;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
- * The message was seen by this person.
+ * Nano time.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "seen-by")
-public final class SeenByPred extends AbstractVarargPred {
+public final class Nano {
 
     /**
-     * Public ctor.
-     * @param args The arguments
+     * Start.
      */
-    public SeenByPred(final List<Predicate> args) {
-        super(args);
-        throw new UnsupportedOperationException(
-            "seen-by predicate is not implemented yet"
-        );
+    private final transient long start;
+
+    /**
+     * Public ctor for JAXB.
+     */
+    public Nano() {
+        throw new IllegalStateException("This ctor should never be called");
     }
 
     /**
-     * {@inheritDoc}
+     * Public ctor.
+     * @param nano Start moment
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final Urn name = Urn.create(this.arg(0).<String>evaluate(msg, pos));
-        final boolean seen = msg.has("seen-by", name);
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): participant '%s' has seen message: %B",
-            msg.number(),
-            pos,
-            name,
-            seen
-        );
-        return seen;
+    public Nano(final long nano) {
+        this.start = nano;
+    }
+
+    /**
+     * REL of the link.
+     * @return The name
+     */
+    @XmlValue
+    public long getValue() {
+        return System.nanoTime() - this.start;
     }
 
 }

@@ -24,47 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
-
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
 /**
- * Test case of {@link CustomPred}.
+ * Atoms, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CustomPredTest {
-
-    /**
-     * CustomPred can match through Hub.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void positivelyMatchesThroughHub() throws Exception {
-        final String result = "some text to return";
-        final Urn name = new UrnMocker().mock();
-        final Bus bus = new BusMocker()
-            .doReturn(result, "evaluate-predicate")
-            .mock();
-        final Predicate pred = new CustomPred(
-            bus,
-            name,
-            Arrays.asList(new Predicate[] {new PredicateMocker().mock()})
-        );
-        MatcherAssert.assertThat(
-            (String) pred.evaluate(new MsgMocker().mock(), 0),
-            Matchers.equalTo(result)
-        );
-    }
-
-}
+package com.netbout.inf.atoms;

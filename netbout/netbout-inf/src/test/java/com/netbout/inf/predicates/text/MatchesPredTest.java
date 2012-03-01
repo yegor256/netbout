@@ -26,11 +26,15 @@
  */
 package com.netbout.inf.predicates.text;
 
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateMocker;
+import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.atoms.VariableAtom;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Random;
 import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -51,18 +55,22 @@ public final class MatchesPredTest {
      */
     @Test
     public void positivelyMatchesEmptyText() throws Exception {
+        final Long number = new Random().nextLong();
+        final Message message = new MessageMocker()
+            .withNumber(number)
+            .withText("hello, dude!")
+            .mock();
+        MatchesPred.extract(message);
         final Predicate pred = new MatchesPred(
             Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn("").mock(),
-                    new PredicateMocker().doReturn("some text").mock(),
+                new Atom[] {
+                    new TextAtom("  "),
+                    VariableAtom.TEXT,
                 }
             )
         );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
-        );
+        MatcherAssert.assertThat("matched", pred.contains(number));
+        MatcherAssert.assertThat("is empty", !pred.hasNext());
     }
 
     /**
@@ -81,11 +89,17 @@ public final class MatchesPredTest {
             }
         );
         for (Map.Entry<String, String> entry : matches.entrySet()) {
+            final Long number = new Random().nextLong();
+            final Message message = new MessageMocker()
+                .withNumber(number)
+                .withText(entry.getValue())
+                .mock();
+            MatchesPred.extract(message);
             final Predicate pred = new MatchesPred(
                 Arrays.asList(
-                    new Predicate[] {
-                        new PredicateMocker().doReturn(entry.getKey()).mock(),
-                        new PredicateMocker().doReturn(entry.getValue()).mock(),
+                    new Atom[] {
+                        new TextAtom(entry.getKey()),
+                        VariableAtom.TEXT,
                     }
                 )
             );
@@ -95,7 +109,7 @@ public final class MatchesPredTest {
                     entry.getKey(),
                     entry.getValue()
                 ),
-                (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
+                pred.contains(number)
             );
         }
     }
@@ -112,11 +126,17 @@ public final class MatchesPredTest {
             }
         );
         for (Map.Entry<String, String> entry : matches.entrySet()) {
+            final Long number = new Random().nextLong();
+            final Message message = new MessageMocker()
+                .withNumber(number)
+                .withText(entry.getValue())
+                .mock();
+            MatchesPred.extract(message);
             final Predicate pred = new MatchesPred(
                 Arrays.asList(
-                    new Predicate[] {
-                        new PredicateMocker().doReturn(entry.getKey()).mock(),
-                        new PredicateMocker().doReturn(entry.getValue()).mock(),
+                    new Atom[] {
+                        new TextAtom(entry.getKey()),
+                        VariableAtom.TEXT,
                     }
                 )
             );
@@ -126,7 +146,7 @@ public final class MatchesPredTest {
                     entry.getKey(),
                     entry.getValue()
                 ),
-                !(Boolean) pred.evaluate(new MsgMocker().mock(), 0)
+                !pred.contains(number)
             );
         }
     }

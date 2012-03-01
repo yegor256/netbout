@@ -44,14 +44,14 @@ import java.util.concurrent.TimeUnit;
 public final class EtaAssertion implements AssertionPolicy {
 
     /**
-     * Minimum delay in msec.
+     * Minimum delay in nanosec.
      */
-    private static final long MIN_DELAY = 5 * 1000L;
+    private static final long MIN_DELAY = 5 * 1000L * 1000 * 1000;
 
     /**
-     * Maximum delay in msec.
+     * Maximum delay in nanosec.
      */
-    private static final long MAX_DELAY = 5 * 60 * 1000L;
+    private static final long MAX_DELAY = 5 * 60 * 1000L * 1000 * 1000;
 
     /**
      * Recently detected ETA.
@@ -72,7 +72,7 @@ public final class EtaAssertion implements AssertionPolicy {
                 Logger.warn(
                     this,
                     // @checkstyle LineLength (1 line)
-                    "assertThat(..): ETA=%dms reported for '%s', the page is not ready",
+                    "assertThat(..): ETA=%[nano]s reported for '%s', the page is not ready",
                     this.eta,
                     response.xpath("/page/identity/name/text()").get(0)
                 );
@@ -95,12 +95,12 @@ public final class EtaAssertion implements AssertionPolicy {
             );
             Logger.warn(
                 this,
-                "again(attempt #%d): let's wait %dms and try again",
+                "again(attempt #%d): let's wait %[nano]s and try again",
                 attempt,
                 delay
             );
             try {
-                TimeUnit.MILLISECONDS.sleep(delay);
+                TimeUnit.NANOSECONDS.sleep(delay);
             } catch (InterruptedException ex) {
                 throw new IllegalStateException(ex);
             }

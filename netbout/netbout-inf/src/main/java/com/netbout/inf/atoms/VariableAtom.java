@@ -24,38 +24,90 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.atoms;
 
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
+import com.netbout.inf.Atom;
 
 /**
- * Text atom.
+ * Variable atom.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextPred implements Predicate {
+public final class VariableAtom implements Atom<String> {
 
     /**
-     * The value of it.
+     * Text of message.
      */
-    private final transient String text;
+    public static final VariableAtom TEXT =
+        new VariableAtom("text");
+
+    /**
+     * Number of message.
+     */
+    public static final VariableAtom NUMBER =
+        new VariableAtom("number");
+
+    /**
+     * Number of bout.
+     */
+    public static final VariableAtom BOUT_NUMBER =
+        new VariableAtom("bout.number");
+
+    /**
+     * Title of bout.
+     */
+    public static final VariableAtom BOUT_TITLE =
+        new VariableAtom("bout.title");
+
+    /**
+     * Name of author.
+     */
+    public static final VariableAtom AUTHOR_NAME =
+        new VariableAtom("author.name");
+
+    /**
+     * Alias of author.
+     */
+    public static final VariableAtom AUTHOR_ALIAS =
+        new VariableAtom("author.alias");
+
+    /**
+     * The name of it.
+     */
+    private final transient String name;
 
     /**
      * Public ctor.
      * @param value The value of it
      */
-    public TextPred(final String value) {
-        this.text = value;
+    public VariableAtom(final String value) {
+        this.name = value;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> T evaluate(final Msg msg, final int pos) {
-        return (T) this.text;
+    public int hashCode() {
+        return this.name.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof VariableAtom
+            && this.name.equals(((VariableAtom) obj).name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String value() {
+        return this.name;
     }
 
     /**
@@ -63,7 +115,7 @@ public final class TextPred implements Predicate {
      */
     @Override
     public String toString() {
-        return String.format("\"%s\"", this.text.replace("\"", "\\\""));
+        return String.format("$%s", this.name);
     }
 
 }

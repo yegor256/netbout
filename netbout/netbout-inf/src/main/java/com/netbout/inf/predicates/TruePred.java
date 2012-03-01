@@ -24,61 +24,49 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.math;
+package com.netbout.inf.predicates;
 
-import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.predicates.AbstractVarargPred;
-import com.ymock.util.Logger;
-import java.util.Date;
-import java.util.List;
-import org.joda.time.format.ISODateTimeFormat;
+import java.util.NoSuchElementException;
 
 /**
- * First argument is greater than the second.
+ * True predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "greater-than")
-public final class GreaterThanPred extends AbstractVarargPred {
+public final class TruePred implements Predicate {
 
     /**
-     * Public ctor.
-     * @param args The arguments
+     * {@inheritDoc}
      */
-    public GreaterThanPred(final List<Predicate> args) {
-        super(args);
+    @Override
+    public Long next() {
+        throw new NoSuchElementException();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final Object left = this.arg(0).evaluate(msg, pos);
-        final String right = this.arg(1).evaluate(msg, pos).toString();
-        boolean greater;
-        if (left instanceof Date) {
-            greater = ((Date) left).after(
-                ISODateTimeFormat.dateTime().parseDateTime(right).toDate()
-            );
-        } else if (left instanceof Long) {
-            greater = ((Long) left) > Long.valueOf(right);
-        } else {
-            greater = left.toString().compareTo(right) > 0;
-        }
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): is %[type]s > '%s': %B",
-            msg.number(),
-            pos,
-            left,
-            right,
-            greater
-        );
-        return greater;
+    public boolean hasNext() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String value() {
+        throw new IllegalStateException("#value()");
     }
 
 }

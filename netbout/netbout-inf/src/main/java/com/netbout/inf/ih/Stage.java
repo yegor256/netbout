@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.ih;
 
-import com.netbout.inf.Msg;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -47,11 +46,6 @@ public final class Stage {
      * The text to show.
      */
     private final transient String text;
-
-    /**
-     * Msg to show.
-     */
-    private transient Msg msg;
 
     /**
      * Public ctor, for JAXB.
@@ -75,27 +69,6 @@ public final class Stage {
     @XmlElement
     public String getText() {
         return this.text;
-    }
-
-    /**
-     * Get msg.
-     * @return The msg
-     */
-    @XmlElement
-    public String getMsg() {
-        String txt = null;
-        if (this.msg != null) {
-            txt = this.msg.statistics();
-        }
-        return txt;
-    }
-
-    /**
-     * Set msg.
-     * @param message The msg
-     */
-    public void setMsg(final Msg message) {
-        this.msg = message;
     }
 
     /**

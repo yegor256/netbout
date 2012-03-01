@@ -72,6 +72,20 @@ public final class MessageFarmTest {
     }
 
     /**
+     * MessageFarm can find bout number by message number.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsBoutNumberByMessageNumber() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Long message = new MessageRowMocker(bout).mock();
+        MatcherAssert.assertThat(
+            this.farm.getBoutOfMessage(message),
+            Matchers.equalTo(bout)
+        );
+    }
+
+    /**
      * MessageFarm can set and read message date.
      * @throws Exception If there is some problem inside
      */

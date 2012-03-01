@@ -26,8 +26,8 @@
  */
 package com.netbout.inf.predicates.logic;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
@@ -42,10 +42,15 @@ import java.util.List;
 public final class AndPred extends AbstractVarargPred {
 
     /**
+     * Edge number, just fetched.
+     */
+    private transient Long edge;
+
+    /**
      * Public ctor.
      * @param args Arguments/predicates
      */
-    public AndPred(final List<Predicate> args) {
+    public AndPred(final List<Atom> args) {
         super(args);
     }
 
@@ -53,15 +58,59 @@ public final class AndPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Boolean evaluate(final Msg msg, final int pos) {
-        boolean value = true;
-        for (Predicate pred : this.args()) {
-            value &= (Boolean) pred.evaluate(msg, pos);
-            if (!value) {
+    @SuppressWarnings("PMD.NullAssignment")
+    public Long next() {
+        Long message;
+        if (this.edge == null) {
+            boolean allowed;
+            do {
+                message = ((Predicate) this.arg(0)).next();
+                allowed = this.contains(message);
+            } while (!allowed);
+        } else {
+            message = this.edge;
+            this.edge = null;
+        }
+        return message;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        boolean has;
+        if (this.edge == null) {
+            do {
+                has = ((Predicate) this.arg(0)).hasNext();
+                if (!has) {
+                    break;
+                }
+                final Long num = ((Predicate) this.arg(0)).next();
+                has &= this.contains(num);
+                if (has) {
+                    this.edge = num;
+                }
+            } while (!has);
+        } else {
+            has = true;
+        }
+        return has;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        boolean allowed = true;
+        for (Atom pred : this.args()) {
+            allowed &= ((Predicate) pred).contains(message);
+            if (!allowed) {
                 break;
             }
         }
-        return value;
+        return allowed;
     }
 
 }

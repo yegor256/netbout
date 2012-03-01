@@ -24,36 +24,21 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
-
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+package com.netbout.hub.data;
 
 /**
- * Test case of {@link DefaultMsg}.
+ * Listener of msg events.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultMsgTest {
+interface MsgListener {
 
     /**
-     * DefaultMsg can accept changes.
-     * @throws Exception If there is some problem inside
+     * New message just created in the bout.
+     * @param msg The message
+     * @param bout The bout
      */
-    @Test
-    public void acceptsNewPropertiesAndFindsThem() throws Exception {
-        final DefaultMsg msg = new DefaultMsg(1L);
-        final String name = "property-name";
-        final Long value = 2L;
-        msg.put(name, value);
-        MatcherAssert.assertThat("legal prop", msg.has(name, value));
-        MatcherAssert.assertThat("illegal value", !msg.has(name, "some value"));
-        MatcherAssert.assertThat("absent prop", !msg.has("some name", 1));
-        MatcherAssert.assertThat(
-            msg.get(name),
-            Matchers.<Object>equalTo(value)
-        );
-    }
+    void messageCreated(Long msg, Long bout);
 
 }

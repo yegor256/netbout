@@ -24,64 +24,44 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.atoms;
 
-import com.netbout.bus.Bus;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.List;
+import com.netbout.inf.Atom;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Call predicate by name in Hub.
- *
+ * Test case of {@link NumberAtom}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CustomPred extends AbstractVarargPred {
+public final class NumberAtomTest {
 
     /**
-     * Bus to work with.
+     * NumberAtom can encapsulate text.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Bus ibus;
-
-    /**
-     * Public ctor.
-     * @param bus The bus to work with
-     * @param name Name of the predicate
-     * @param args The arguments
-     */
-    public CustomPred(final Bus bus, final Urn name,
-        final List<Predicate> args) {
-        super(name.toString(), args);
-        this.ibus = bus;
+    @Test
+    public void encapsulatesText() throws Exception {
+        final Atom<Long> atom = new NumberAtom(2L);
+        MatcherAssert.assertThat(
+            atom.toString(),
+            Matchers.equalTo("2")
+        );
     }
 
     /**
-     * {@inheritDoc}
+     * NumberAtom can compare to another object.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final List<Object> values = new ArrayList<Object>();
-        for (Predicate pred : this.args()) {
-            values.add(pred.evaluate(msg, pos));
-        }
-        final Object result = this.ibus.make("evaluate-predicate")
-            .arg(msg.<Long>get(VariablePred.BOUT_NUMBER))
-            .arg(msg.number())
-            .arg(Urn.create(this.name()))
-            .arg(values)
-            .asDefault(false)
-            .exec();
-        Logger.debug(
-            this,
-            "#evaluate(): evaluated '%s': %[type]s",
-            this.name(),
-            result
+    @Test
+    public void comparesToSimilarObject() throws Exception {
+        final Long num = 1L;
+        MatcherAssert.assertThat(
+            new NumberAtom(num),
+            Matchers.equalTo(new NumberAtom(num))
         );
-        return result;
     }
 
 }

@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
 
 /**
@@ -58,6 +59,15 @@ public interface BoutMgr {
      * @checkstyle RedundantThrows (4 lines)
      */
     BoutDt find(Long number) throws BoutNotFoundException;
+
+    /**
+     * Find and return bout from collection, by message number.
+     * @param msg Number of the message
+     * @return The bout found or restored
+     * @throws MessageNotFoundException If this bout is not found
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    BoutDt boutOf(Long msg) throws MessageNotFoundException;
 
     /**
      * Destroy all bouts that are related to this identity.

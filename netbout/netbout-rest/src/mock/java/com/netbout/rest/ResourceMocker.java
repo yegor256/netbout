@@ -231,7 +231,7 @@ public final class ResourceMocker {
         final Source source = XhtmlConverter.the(writer.toString());
         MatcherAssert.assertThat(
             source,
-            XmlMatchers.hasXPath("/page[@nano]")
+            XmlMatchers.hasXPath("/page/nano")
         );
         return source;
     }

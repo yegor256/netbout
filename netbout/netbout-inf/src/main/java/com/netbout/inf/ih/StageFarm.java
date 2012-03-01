@@ -30,7 +30,6 @@ import com.netbout.inf.Infinity;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -124,28 +123,6 @@ public final class StageFarm implements IdentityAware {
     }
 
     /**
-     * Process POST request of the stage.
-     * @param number Bout where it is happening
-     * @param author Author of the message
-     * @param stage Name of stage to render
-     * @param place The place in the stage to render
-     * @param body Body of POST request
-     * @return New place in this stage
-     * @throws Exception If some problem inside
-     * @checkstyle ParameterNumber (5 lines)
-     */
-    @Operation("stage-post-request")
-    public String stagePostRequest(final Long number, final Urn author,
-        final Urn stage, final String place, final String body)
-        throws Exception {
-        String dest = null;
-        if (this.identity.name().equals(stage)) {
-            dest = CpaUtils.decodeBody(body).get("id");
-        }
-        return dest;
-    }
-
-    /**
      * Get XML of the stage.
      * @param number Bout where it is happening
      * @param viewer The viewer
@@ -161,9 +138,6 @@ public final class StageFarm implements IdentityAware {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             final Stage data = new Stage(this.infinity.statistics());
-            if (!place.isEmpty()) {
-                data.setMsg(this.infinity.msg(Long.valueOf(place)));
-            }
             xml = new JaxbPrinter(data).print();
         }
         return xml;

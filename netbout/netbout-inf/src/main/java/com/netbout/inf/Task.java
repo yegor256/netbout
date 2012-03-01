@@ -46,7 +46,7 @@ interface Task extends Runnable {
 
     /**
      * How much time this task consumed.
-     * @return In milliseconds
+     * @return In nanosecondss
      */
     Long time();
 

@@ -24,39 +24,62 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.logic;
+package com.netbout.inf.atoms;
 
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import com.netbout.inf.Atom;
 
 /**
- * Test case of {@link NotPred}.
+ * Number atom.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NotPredTest {
+public final class NumberAtom implements Atom<Long> {
 
     /**
-     * NotPred can reverse a boolean predicate.
-     * @throws Exception If there is some problem inside
+     * The value of it.
      */
-    @Test
-    public void reversesBooleanPredicate() throws Exception {
-        final Predicate pred = new NotPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().mock(),
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            "reversed",
-            !(Boolean) pred.evaluate(new MsgMocker().mock(), 0)
-        );
+    private final transient Long number;
+
+    /**
+     * Public ctor.
+     * @param value The value of it
+     */
+    public NumberAtom(final Long value) {
+        this.number = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.number.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof NumberAtom
+            && this.number.equals(((NumberAtom) obj).number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long value() {
+        return this.number;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.number.toString();
     }
 
 }

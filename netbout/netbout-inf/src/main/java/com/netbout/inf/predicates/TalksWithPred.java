@@ -26,14 +26,21 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * This participant is in the bout.
@@ -45,27 +52,71 @@ import java.util.List;
 public final class TalksWithPred extends AbstractVarargPred {
 
     /**
-     * The property.
+     * Cached participants and their messages.
      */
-    public static final String TALKS_WITH = "talks-with";
+    private static final ConcurrentMap<Urn, SortedSet<Long>> DUDES =
+        new ConcurrentHashMap<Urn, SortedSet<Long>>();
+
+    /**
+     * Cached bouts and their participants.
+     */
+    private static final ConcurrentMap<Long, SortedSet<Urn>> BOUTS =
+        new ConcurrentHashMap<Long, SortedSet<Urn>>();
+
+    /**
+     * Found set of message numbers.
+     */
+    private final transient Set<Long> messages;
+
+    /**
+     * Iterator of them.
+     */
+    private final transient Iterator<Long> iterator;
 
     /**
      * Public ctor.
      * @param args The arguments
      */
-    public TalksWithPred(final List<Predicate> args) {
+    public TalksWithPred(final List<Atom> args) {
         super(args);
+        final Urn urn = Urn.create(((TextAtom) this.arg(0)).value());
+        if (this.DUDES.containsKey(urn)) {
+            this.messages = this.DUDES.get(urn);
+        } else {
+            this.messages = new ConcurrentSkipListSet<Long>();
+        }
+        this.iterator = this.messages.iterator();
     }
 
     /**
      * Extracts necessary data from message.
-     * @param from The message to extract from
-     * @param msg Where to extract
+     * @param msg The message to extract from
      */
-    public static void extract(final Message from, final Msg msg) {
-        msg.clear(TalksWithPred.TALKS_WITH);
-        for (Participant dude : from.bout().participants()) {
-            msg.add(TalksWithPred.TALKS_WITH, dude.identity().name());
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public static void extract(final Message msg) {
+        final Long bout = msg.bout().number();
+        TalksWithPred.BOUTS.putIfAbsent(
+            bout,
+            new ConcurrentSkipListSet<Urn>()
+        );
+        final Set<Urn> names = new HashSet<Urn>();
+        for (Participant dude : msg.bout().participants()) {
+            final Urn name = dude.identity().name();
+            names.add(name);
+            TalksWithPred.DUDES.putIfAbsent(
+                name,
+                new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
+            );
+            TalksWithPred.DUDES.get(name).add(msg.number());
+            TalksWithPred.BOUTS.get(bout).add(name);
+        }
+        final Iterator<Urn> iterator = TalksWithPred.BOUTS.get(bout).iterator();
+        while (iterator.hasNext()) {
+            final Urn name = iterator.next();
+            if (!names.contains(name)) {
+                iterator.remove();
+                TalksWithPred.DUDES.get(name).remove(msg.number());
+            }
         }
     }
 
@@ -73,18 +124,24 @@ public final class TalksWithPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final Urn name = Urn.create(this.arg(0).<String>evaluate(msg, pos));
-        final boolean talks = msg.has(this.TALKS_WITH, name);
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): talks with participant '%s': %B",
-            msg.number(),
-            pos,
-            name,
-            talks
-        );
-        return talks;
+    public Long next() {
+        return this.iterator.next();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        return this.iterator.hasNext();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return this.messages.contains(message);
     }
 
 }

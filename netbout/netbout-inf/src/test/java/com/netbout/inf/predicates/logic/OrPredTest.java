@@ -24,70 +24,56 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.math;
+package com.netbout.inf.predicates.logic;
 
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
+import com.netbout.inf.predicates.FalsePred;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link GreaterThanPred}.
+ * Test case of {@link OrPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class GreaterThanPredTest {
+public final class OrPredTest {
 
     /**
-     * GreaterThanPred can compare two numbers.
+     * OrPred can merge two predicates togethere.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void comparesTwoIntegerNumbers() throws Exception {
-        final Long num = new Random().nextLong();
-        final Predicate pred = new GreaterThanPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn(num + 1L).mock(),
-                    new PredicateMocker().doReturn(num).mock(),
-                }
-            )
+    public void mergesTwoPredicates() throws Exception {
+        final Predicate first = new PredicateMocker()
+            .withMessages(new Long[] {1L})
+            .mock();
+        final Predicate second = new PredicateMocker()
+            .withMessages(new Long[] {2L})
+            .mock();
+        final Predicate merger = new OrPred(
+            Arrays.asList(new Atom[] {first, second, new FalsePred()})
         );
-        MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
-        );
+        MatcherAssert.assertThat("has next", merger.hasNext());
+        MatcherAssert.assertThat(merger.next(), Matchers.equalTo(1L));
+        MatcherAssert.assertThat("still has next", merger.hasNext());
+        MatcherAssert.assertThat(merger.next(), Matchers.equalTo(2L));
+        MatcherAssert.assertThat("now it is empty", !merger.hasNext());
     }
 
     /**
-     * GreaterThanPred can compare two dates.
+     * OrPred can handle an empty predicates gracefully.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void comparesTwoDates() throws Exception {
-        final Date date = new Date();
-        final Predicate pred = new GreaterThanPred(
-            Arrays.asList(
-                new Predicate[] {
-                    new PredicateMocker().doReturn(date).mock(),
-                    new PredicateMocker().doReturn(
-                        ISODateTimeFormat.dateTime().print(
-                            new DateTime(date.getTime() - 1)
-                        )
-                    ).mock(),
-                }
-            )
+    public void mergesTwoEmptyPredicates() throws Exception {
+        final Predicate merger = new AndPred(
+            Arrays.asList(new Atom[] {new FalsePred(), new FalsePred()})
         );
-        MatcherAssert.assertThat(
-            "left date is bigger than the right one",
-            (Boolean) pred.evaluate(new MsgMocker().mock(), 0)
-        );
+        MatcherAssert.assertThat("row is empty", !merger.hasNext());
     }
 
 }

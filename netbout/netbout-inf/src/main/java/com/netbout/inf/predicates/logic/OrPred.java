@@ -26,9 +26,10 @@
  */
 package com.netbout.inf.predicates.logic;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public final class OrPred extends AbstractVarargPred {
      * Public ctor.
      * @param args Arguments/predicates
      */
-    public OrPred(final List<Predicate> args) {
+    public OrPred(final List<Atom> args) {
         super(args);
     }
 
@@ -53,15 +54,48 @@ public final class OrPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
-    public Boolean evaluate(final Msg msg, final int pos) {
-        boolean value = false;
-        for (Predicate pred : this.args()) {
-            value |= (Boolean) pred.evaluate(msg, pos);
-            if (value) {
+    public Long next() {
+        Long message = null;
+        for (Atom pred : this.args()) {
+            if (((Predicate) pred).hasNext()) {
+                message = ((Predicate) pred).next();
                 break;
             }
         }
-        return value;
+        if (message == null) {
+            throw new PredicateException("end of messsages reached");
+        }
+        return message;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        boolean has = false;
+        for (Atom pred : this.args()) {
+            has |= ((Predicate) pred).hasNext();
+            if (has) {
+                break;
+            }
+        }
+        return has;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        boolean allowed = false;
+        for (Atom pred : this.args()) {
+            allowed |= ((Predicate) pred).contains(message);
+            if (allowed) {
+                break;
+            }
+        }
+        return allowed;
     }
 
 }

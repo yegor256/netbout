@@ -32,15 +32,26 @@ package com.netbout.inf;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate {
+public interface Predicate extends Atom<String> {
 
     /**
-     * Evaluate it.
-     * @param msg The message
-     * @param pos Its position in the output list
-     * @return Result of it
-     * @param <T> The type of expected result
+     * Return next message number that complies with this predicate, and jump
+     * to the next element.
+     * @return Message number
      */
-    <T> T evaluate(Msg msg, int pos);
+    Long next();
+
+    /**
+     * Move to the next element, if it exists and return FALSE if it's absent.
+     * @return True if the next element exists, false if it's the end of row
+     */
+    boolean hasNext();
+
+    /**
+     * Check this message number, whether it is allowed.
+     * @param message Message number to check
+     * @return Is it allowed or not?
+     */
+    boolean contains(Long message);
 
 }

@@ -24,70 +24,49 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.predicates;
 
-import java.util.Collections;
-import java.util.SortedMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import com.netbout.inf.Predicate;
+import java.util.NoSuchElementException;
 
 /**
- * Heap of messages.
+ * False predicate.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Heap {
+public final class FalsePred implements Predicate {
 
     /**
-     * All messages.
+     * {@inheritDoc}
      */
-    private final transient SortedMap<Long, Msg> all =
-        new ConcurrentSkipListMap<Long, Msg>(Collections.<Long>reverseOrder());
-
-    /**
-     * Show some stats.
-     * @return The text
-     */
-    public String statistics() {
-        final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d messages\n", this.all.size()));
-        return text.toString();
+    @Override
+    public Long next() {
+        throw new NoSuchElementException();
     }
 
     /**
-     * Iterator of messages.
-     * @return The iterator
+     * {@inheritDoc}
      */
-    public Iterable<Msg> messages() {
-        return this.all.values();
+    @Override
+    public boolean hasNext() {
+        return false;
     }
 
     /**
-     * Get message by number.
-     * @param number The number
-     * @return The message
+     * {@inheritDoc}
      */
-    public Msg get(final Long number) {
-        synchronized (this) {
-            if (!this.all.containsKey(number)) {
-                this.all.put(number, new DefaultMsg(number));
-            }
-            return this.all.get(number);
-        }
+    @Override
+    public boolean contains(final Long message) {
+        return false;
     }
 
     /**
-     * Peek one message, if it exists (if not throws an exception).
-     * @param number The number
-     * @return The message
+     * {@inheritDoc}
      */
-    public Msg peek(final Long number) {
-        if (!this.all.containsKey(number)) {
-            throw new IllegalArgumentException(
-                String.format("Msg #%d not found", number)
-            );
-        }
-        return this.all.get(number);
+    @Override
+    public String value() {
+        throw new IllegalStateException("#value()");
     }
 
 }

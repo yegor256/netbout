@@ -26,10 +26,10 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
-import com.ymock.util.Logger;
+import com.netbout.inf.PredicateException;
+import com.netbout.inf.atoms.NumberAtom;
 import java.util.List;
 
 /**
@@ -42,43 +42,48 @@ import java.util.List;
 public final class LimitPred extends AbstractVarargPred {
 
     /**
-     * How many we already allowed to go?
+     * Maximum position to show.
      */
-    private transient int passed;
+    private final transient Long limit;
+
+    /**
+     * Current position.
+     */
+    private transient long position;
 
     /**
      * Public ctor.
      * @param args The arguments
      */
-    public LimitPred(final List<Predicate> args) {
+    public LimitPred(final List<Atom> args) {
         super(args);
+        this.limit = ((NumberAtom) this.arg(0)).value();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final int limit = Integer.valueOf(
-            this.arg(0).evaluate(msg, pos).toString()
-        );
-        boolean matches;
-        synchronized (this) {
-            matches = this.passed < limit;
-            if (matches) {
-                this.passed += 1;
-            }
-        }
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): %d already passed, limit is #%d: %B",
-            msg.number(),
-            pos,
-            this.passed,
-            limit,
-            matches
-        );
-        return matches;
+    public Long next() {
+        throw new PredicateException("LIMIT#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("LIMIT#hasNext()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        final boolean allow = this.position < this.limit;
+        this.position += 1;
+        return allow;
     }
 
 }

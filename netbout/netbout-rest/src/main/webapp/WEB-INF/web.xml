@@ -72,7 +72,7 @@
         </init-param>
         <init-param>
             <param-name>com.rexsl.trap.Notifier</param-name>
-            <param-value>com.rexsl.trap.SmtpNotifier?to=yegor@netbout.com&amp;password=:Netbout-SmtpPassword&amp;subject=runtime%20exception&amp;transport=smtps&amp;mail.smtp.from=no-reply@netbout.com&amp;mail.smtp.host=:Netbout-SmtpHost&amp;mail.smtp.port=:Netbout-SmtpPort&amp;mail.smtp.user=:Netbout-SmtpUser</param-value>
+            <param-value>com.rexsl.trap.SmtpNotifier?to=yegor@netbout.com&amp;password=:Netbout-SmtpPassword&amp;subject=netbout%20runtime%20exception&amp;transport=smtps&amp;mail.smtp.from=no-reply@netbout.com&amp;mail.smtp.host=:Netbout-SmtpHost&amp;mail.smtp.port=:Netbout-SmtpPort&amp;mail.smtp.user=:Netbout-SmtpUser</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

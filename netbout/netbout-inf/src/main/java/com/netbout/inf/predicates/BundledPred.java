@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
@@ -37,6 +37,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Allows only bundled messages.
@@ -48,9 +50,10 @@ import java.util.TreeSet;
 public final class BundledPred extends AbstractVarargPred {
 
     /**
-     * Bundle marker.
+     * Cached messages and their markers.
      */
-    public static final String BUNDLE = "bundle";
+    private static final ConcurrentMap<Long, String> MARKERS =
+        new ConcurrentHashMap<Long, String>();
 
     /**
      * List of already passed bundles.
@@ -61,34 +64,58 @@ public final class BundledPred extends AbstractVarargPred {
      * Public ctor.
      * @param args The arguments
      */
-    public BundledPred(final List<Predicate> args) {
+    public BundledPred(final List<Atom> args) {
         super(args);
     }
 
     /**
      * Extracts necessary data from message.
-     * @param from The message to extract from
-     * @param msg Where to extract
+     * @param msg The message to extract from
      */
-    public static void extract(final Message from, final Msg msg) {
+    public static void extract(final Message msg) {
         final Set<Urn> names = new TreeSet<Urn>();
-        for (Participant dude : from.bout().participants()) {
+        for (Participant dude : msg.bout().participants()) {
             names.add(dude.identity().name());
         }
-        msg.put(BundledPred.BUNDLE, Logger.format("%[list]s", names));
+        BundledPred.MARKERS.put(msg.number(), Logger.format("%[list]s", names));
+    }
+
+    /**
+     * Get marker for message.
+     * @param msg The message to extract from
+     * @return The marker
+     */
+    public static String marker(final Long msg) {
+        return BundledPred.MARKERS.get(msg);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final String bundle = msg.<String>get(this.BUNDLE);
+    public Long next() {
+        throw new PredicateException("BUNDLED#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("BUNDLED#hasNext()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        final String marker = this.MARKERS.get(message);
         boolean allow;
-        if (this.passed.contains(bundle)) {
+        if (this.passed.contains(marker)) {
             allow = false;
         } else {
-            this.passed.add(bundle);
+            this.passed.add(marker);
             allow = true;
         }
         return allow;

@@ -60,6 +60,11 @@ final class BoutData implements BoutDt {
     private final transient Long number;
 
     /**
+     * Listener of msg creation operations.
+     */
+    private final transient MsgListener listener;
+
+    /**
      * The title.
      */
     private transient String title;
@@ -85,11 +90,13 @@ final class BoutData implements BoutDt {
      * Public ctor.
      * @param ihub The hub
      * @param num The number
+     * @param lstr Listener of message operations
      */
-    public BoutData(final Hub ihub, final Long num) {
+    public BoutData(final Hub ihub, final Long num, final MsgListener lstr) {
         this.hub = ihub;
         assert num != null;
         this.number = num;
+        this.listener = lstr;
     }
 
     /**
@@ -244,6 +251,7 @@ final class BoutData implements BoutDt {
                 .exec();
             data = new MessageData(this.hub, num);
             this.messages.put(num, data);
+            this.listener.messageCreated(num, this.number);
         }
         Logger.debug(
             this,

@@ -30,6 +30,7 @@ import com.netbout.hub.BoutMgr;
 import com.netbout.hub.Hub;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.Collections;
@@ -42,13 +43,19 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultBoutMgr implements BoutMgr {
+public final class DefaultBoutMgr implements BoutMgr, MsgListener {
 
     /**
      * Recently seen bouts.
      */
     private final transient ConcurrentMap<Long, BoutData> bouts =
         new ConcurrentHashMap<Long, BoutData>();
+
+    /**
+     * Messages to bouts.
+     */
+    private final transient ConcurrentMap<Long, Long> cached =
+        new ConcurrentHashMap<Long, Long>();
 
     /**
      * Bus to work with.
@@ -119,6 +126,31 @@ public final class DefaultBoutMgr implements BoutMgr {
      * @checkstyle RedundantThrows (3 lines)
      */
     @Override
+    public BoutData boutOf(final Long msg) throws MessageNotFoundException {
+        if (!this.cached.containsKey(msg)) {
+            final Long bout = this.hub
+                .make("get-bout-of-message")
+                .synchronously()
+                .arg(msg)
+                .asDefault(0L)
+                .exec();
+            if (bout == 0) {
+                throw new MessageNotFoundException(msg);
+            }
+            this.cached.put(msg, bout);
+        }
+        try {
+            return this.find(this.cached.get(msg));
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (3 lines)
+     */
+    @Override
     public BoutData find(final Long number) throws BoutNotFoundException {
         synchronized (this) {
             assert number != null;
@@ -132,7 +164,7 @@ public final class DefaultBoutMgr implements BoutMgr {
                 if (!exists) {
                     throw new BoutNotFoundException(number);
                 }
-                this.bouts.put(number, new BoutData(this.hub, number));
+                this.bouts.put(number, new BoutData(this.hub, number, this));
                 Logger.debug(
                     this,
                     "#find(#%d): bout data restored",
@@ -163,6 +195,14 @@ public final class DefaultBoutMgr implements BoutMgr {
                 }
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void messageCreated(final Long msg, final Long bout) {
+        this.cached.putIfAbsent(msg, bout);
     }
 
     /**

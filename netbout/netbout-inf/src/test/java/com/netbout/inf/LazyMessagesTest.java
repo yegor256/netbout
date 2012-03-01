@@ -26,11 +26,9 @@
  */
 package com.netbout.inf;
 
-import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link LazyMessages}.
@@ -40,20 +38,19 @@ import org.mockito.Mockito;
 public final class LazyMessagesTest {
 
     /**
-     * LazyMessages can find messages.
+     * LazyMessages can fetch messages from predicate.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void findsMessagesInStreamOfMsgs() throws Exception {
-        final Msg msg = new MsgMocker().mock();
-        final Iterable<Msg> msgs = Arrays.asList(new Msg[] {msg});
-        final Predicate pred = new PredicateMocker().mock();
-        final Iterable<Long> messages = new LazyMessages(msgs, pred);
+        final Predicate pred = new PredicateMocker()
+            .withMessages(new Long[] {1L})
+            .mock();
+        final Iterable<Long> messages = new LazyMessages(pred);
         MatcherAssert.assertThat(
             messages,
             Matchers.<Long>iterableWithSize(1)
         );
-        Mockito.verify(pred).evaluate(msg, 0);
     }
 
     /**
@@ -62,9 +59,7 @@ public final class LazyMessagesTest {
      */
     @Test(expected = java.util.NoSuchElementException.class)
     public void throwsWhenIteratorIsEmpty() throws Exception {
-        new LazyMessages(
-            Arrays.asList(new Msg[] {}), new PredicateMocker().mock()
-        ).iterator().next();
+        new LazyMessages(new PredicateMocker().mock()).iterator().next();
     }
 
 }

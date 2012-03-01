@@ -39,9 +39,14 @@ import java.util.Iterator;
 public final class LazyBouts implements Iterable<Bout> {
 
     /**
-     * List of bout numbers.
+     * Bout manager.
      */
-    private final transient Iterable<Long> bouts;
+    private final transient BoutMgr manager;
+
+    /**
+     * List of message numbers.
+     */
+    private final transient Iterable<Long> messages;
 
     /**
      * Where they are.
@@ -50,12 +55,15 @@ public final class LazyBouts implements Iterable<Bout> {
 
     /**
      * Public ctor.
-     * @param bts The list of bout numbers
+     * @param mgr The manager
+     * @param msgs The list of bout numbers
      * @param where The bout where they are located
      */
-    public LazyBouts(final Iterable<Long> bts, final Identity where) {
+    public LazyBouts(final BoutMgr mgr, final Iterable<Long> msgs,
+        final Identity where) {
         super();
-        this.bouts = bts;
+        this.manager = mgr;
+        this.messages = msgs;
         this.identity = where;
     }
 
@@ -64,7 +72,7 @@ public final class LazyBouts implements Iterable<Bout> {
      */
     @Override
     public Iterator<Bout> iterator() {
-        return new BoutsIterator(this.bouts.iterator());
+        return new BoutsIterator(this.messages.iterator());
     }
 
     /**
@@ -95,8 +103,13 @@ public final class LazyBouts implements Iterable<Bout> {
         @Override
         public Bout next() {
             try {
-                return LazyBouts.this.identity.bout(this.iterator.next());
+                return LazyBouts.this.identity.bout(
+                    LazyBouts.this.manager.boutOf(this.iterator.next())
+                        .getNumber()
+                );
             } catch (com.netbout.spi.BoutNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            } catch (com.netbout.spi.MessageNotFoundException ex) {
                 throw new IllegalStateException(ex);
             }
         }

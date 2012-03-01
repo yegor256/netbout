@@ -87,8 +87,8 @@
                                 </xsl:if>
                             </xsl:attribute>
                         </img>
-                        <xsl:if test="@helper = 'true' and @confirmed = 'true' and /page/bout/stages">
-                            <xsl:variable name="dude" select="."/>
+                        <xsl:variable name="dude" select="."/>
+                        <xsl:if test="@helper = 'true' and @confirmed = 'true' and /page/bout/stages/stage[.=$dude/identity]">
                             <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="/page/bout/stages/stage[.=$dude/identity]/@href"/>
@@ -98,6 +98,16 @@
                                     <xsl:if test="identity = /page/bout/stage/@name">
                                         <xsl:text> active</xsl:text>
                                     </xsl:if>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:choose>
+                                        <xsl:when test="identity = /page/bout/stage/@name">
+                                            <xsl:text>You see my data below</xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>Click to see my data</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </xsl:attribute>
                                 <xsl:text> </xsl:text>
                             </a>

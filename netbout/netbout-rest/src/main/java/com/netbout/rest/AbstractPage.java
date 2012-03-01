@@ -30,6 +30,7 @@ import com.netbout.rest.auth.FacebookRs;
 import com.netbout.rest.jaxb.Link;
 import com.netbout.rest.jaxb.LongHelper;
 import com.netbout.rest.jaxb.LongIdentity;
+import com.netbout.rest.jaxb.Nano;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
@@ -294,9 +295,9 @@ public abstract class AbstractPage implements Page {
      * Get time of page generation, in nanoseconds.
      * @return Time in nanoseconds
      */
-    @XmlAttribute
-    public final Long getNano() {
-        return System.nanoTime() - this.home.nano();
+    @XmlElement
+    public final Nano getNano() {
+        return new Nano(this.home.nano());
     }
 
     /**

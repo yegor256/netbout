@@ -26,12 +26,18 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.TextAtom;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -48,18 +54,23 @@ public final class TalksWithPredTest {
     @Test
     public void positivelyMatchesMessageWithParticipant() throws Exception {
         final Urn name = new UrnMocker().mock();
+        final Bout bout = new BoutMocker()
+            .withParticipant(name)
+            .mock();
+        final Message message = new MessageMocker()
+            .inBout(bout)
+            .mock();
+        TalksWithPred.extract(message);
         final Predicate pred = new TalksWithPred(
-            Arrays.asList(new Predicate[] {new TextPred(name.toString())})
+            Arrays.asList(new Atom[] {new TextAtom(name.toString())})
         );
+        MatcherAssert.assertThat("has next", pred.hasNext());
         MatcherAssert.assertThat(
-            "matched",
-            (Boolean) pred.evaluate(
-                new MsgMocker()
-                    .with(TalksWithPred.TALKS_WITH, name)
-                    .mock(),
-                0
-            )
+            pred.next(),
+            Matchers.equalTo(message.number())
         );
+        MatcherAssert.assertThat("end of iterator", !pred.hasNext());
+        MatcherAssert.assertThat("matched", pred.contains(message.number()));
     }
 
 }

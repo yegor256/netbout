@@ -5,9 +5,10 @@ grammar Query;
 
 @header {
     package com.netbout.inf;
-    import com.netbout.inf.predicates.NumberPred;
-    import com.netbout.inf.predicates.TextPred;
-    import com.netbout.inf.predicates.VariablePred;
+    import com.netbout.inf.atoms.NumberAtom;
+    import com.netbout.inf.atoms.TextAtom;
+    import com.netbout.inf.atoms.VariableAtom;
+    import java.util.LinkedList;
     import java.util.List;
 }
 
@@ -41,7 +42,7 @@ query returns [Predicate ret]
     ;
 
 predicate returns [Predicate ret]
-    @init { final List<Predicate> atoms = new ArrayList<Predicate>(); }
+    @init { final List<Atom> atoms = new LinkedList<Atom>(); }
     :
     '('
     NAME
@@ -53,19 +54,19 @@ predicate returns [Predicate ret]
     { $ret = this.builder.build($NAME.text, atoms); }
     ;
 
-atom returns [Predicate ret]
+atom returns [Atom ret]
     :
     predicate
     { $ret = $predicate.ret; }
     |
     VARIABLE
-    { $ret = new VariablePred($VARIABLE.text); }
+    { $ret = new VariableAtom($VARIABLE.text); }
     |
     TEXT
-    { $ret = new TextPred($TEXT.text); }
+    { $ret = new TextAtom($TEXT.text); }
     |
     NUMBER
-    { $ret = new NumberPred(Long.valueOf($NUMBER.text)); }
+    { $ret = new NumberAtom(Long.valueOf($NUMBER.text)); }
     ;
 
 NAME:

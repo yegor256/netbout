@@ -26,8 +26,10 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -48,26 +50,35 @@ public abstract class AbstractVarargPred implements Predicate {
     /**
      * Arguments.
      */
-    private final transient List<Predicate> arguments =
-        new ArrayList<Predicate>();
+    private final transient List<Atom> atoms;
 
     /**
      * Public ctor.
      * @param name The name of it
-     * @param args Arguments/predicates
+     * @param args Arguments
      */
-    public AbstractVarargPred(final String name, final List<Predicate> args) {
+    public AbstractVarargPred(final String name, final List<Atom> args) {
         this.iname = name;
-        this.arguments.addAll(args);
+        this.atoms = new ArrayList<Atom>(args.size());
+        this.atoms.addAll(args);
     }
 
     /**
      * Public ctor.
      * @param args Arguments/predicates
      */
-    public AbstractVarargPred(final List<Predicate> args) {
+    public AbstractVarargPred(final List<Atom> args) {
         this.iname = this.getClass().getAnnotation(Meta.class).name();
-        this.arguments.addAll(args);
+        this.atoms = new ArrayList<Atom>(args.size());
+        this.atoms.addAll(args);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String value() {
+        throw new PredicateException("#value() not supported");
     }
 
     /**
@@ -86,8 +97,8 @@ public abstract class AbstractVarargPred implements Predicate {
      * Get arguments.
      * @return The arguments
      */
-    protected final List<Predicate> args() {
-        return this.arguments;
+    protected final List<Atom> args() {
+        return this.atoms;
     }
 
     /**
@@ -103,13 +114,13 @@ public abstract class AbstractVarargPred implements Predicate {
      * @param num The number
      * @return The predicate/argument
      */
-    protected final Predicate arg(final int num) {
-        if (num >= this.arguments.size()) {
+    protected final Atom arg(final int num) {
+        if (num >= this.atoms.size()) {
             throw new IllegalArgumentException(
                 String.format("argument #%d is absnet in '%s'", num, this)
             );
         }
-        return this.arguments.get(num);
+        return this.atoms.get(num);
     }
 
 }

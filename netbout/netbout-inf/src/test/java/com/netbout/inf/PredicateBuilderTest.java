@@ -26,8 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.bus.BusMocker;
-import com.netbout.inf.predicates.VariablePred;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -48,19 +46,14 @@ public final class PredicateBuilderTest {
         final String[] queries = new String[] {
             "",
             "it's my story: \"\n\t\r \u0435\"",
-            "(and 1)",
-            "(and (equal 1 1) (or (matches $text $date)))",
+            "(and (equal $bout.number 1) (or (matches 'some text' $text)))",
             "(equal $bout.title 'test')",
-            "(urn:test:some-custom-predicate)",
-            "(talks-with 'abc')",
-            "(not (less-than 5 6))",
-            "(and (ns 'test-me') (limit 2))",
+            "(talks-with 'urn:abc:')",
+            "(and (ns 'urn:test:test-me') (limit 2))",
             "(and (from 5) (limit 2) (unique $bout.number))",
-            "(greater-than 'test-1' \"test-2\")",
             "just simple text: \u0435",
         };
-        final PredicateBuilder builder =
-            new PredicateBuilder(new BusMocker().mock());
+        final PredicateBuilder builder = new PredicateBuilder();
         for (String query : queries) {
             builder.parse(query);
         }
@@ -78,8 +71,7 @@ public final class PredicateBuilderTest {
             "(unknown-function 1 2 3)",
             "(invalid-name-of-predicate# 5)",
         };
-        final PredicateBuilder builder =
-            new PredicateBuilder(new BusMocker().mock());
+        final PredicateBuilder builder = new PredicateBuilder();
         for (String query : queries) {
             try {
                 builder.parse(query);
@@ -101,26 +93,12 @@ public final class PredicateBuilderTest {
      */
     @Test
     public void buildsPredicateFromQuery() throws Exception {
-        final PredicateBuilder builder =
-            new PredicateBuilder(new BusMocker().mock());
+        final PredicateBuilder builder = new PredicateBuilder();
         final String text = "\u043F\u0440\u0438\u0432\u0435";
         final Predicate pred = builder.parse(
             String.format("(and (matches \"%s\" $text) (pos 0))", text)
         );
-        MatcherAssert.assertThat(
-            "message found",
-            (Boolean) pred.evaluate(
-                new MsgMocker().with(VariablePred.TEXT, text).mock(),
-                0
-            )
-        );
-        MatcherAssert.assertThat(
-            "message not found",
-            !(Boolean) pred.evaluate(
-                new MsgMocker().with(VariablePred.TEXT, "bar").mock(),
-                1
-            )
-        );
+        MatcherAssert.assertThat(pred, Matchers.notNullValue());
     }
 
     /**
@@ -129,24 +107,10 @@ public final class PredicateBuilderTest {
      */
     @Test
     public void buildsPredicateFromText() throws Exception {
-        final PredicateBuilder builder =
-            new PredicateBuilder(new BusMocker().mock());
+        final PredicateBuilder builder = new PredicateBuilder();
         final String text = "\u043F\u0440\u0438\u0432\u0435\u0442";
         final Predicate pred = builder.parse(text);
-        MatcherAssert.assertThat(
-            "message with text is found",
-            (Boolean) pred.evaluate(
-                new MsgMocker().with(VariablePred.TEXT, text).mock(),
-                0
-            )
-        );
-        MatcherAssert.assertThat(
-            "message without text is not found",
-            !(Boolean) pred.evaluate(
-                new MsgMocker().with(VariablePred.TEXT, "some text").mock(),
-                0
-            )
-        );
+        MatcherAssert.assertThat(pred, Matchers.notNullValue());
     }
 
 }

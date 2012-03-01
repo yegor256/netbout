@@ -26,60 +26,231 @@
  */
 package com.netbout.inf.predicates.text;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.predicates.AbstractVarargPred;
-import com.ymock.util.Logger;
+import com.netbout.inf.predicates.FalsePred;
+import com.netbout.inf.predicates.TruePred;
+import com.netbout.inf.predicates.logic.AndPred;
+import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Matches text against search string.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@Meta(name = "matches")
+@Meta(name = "matches", extracts = true)
+@SuppressWarnings({
+    "PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops"
+})
 public final class MatchesPred extends AbstractVarargPred {
+
+    /**
+     * Cached messages and their namespaces.
+     * @checkstyle LineLength (3 lines)
+     */
+    private static final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> CACHE =
+        new ConcurrentHashMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>>();
+
+    /**
+     * Compound predicate.
+     */
+    private final transient Predicate predicate;
 
     /**
      * Public ctor.
      * @param args The arguments
      */
-    public MatchesPred(final List<Predicate> args) {
+    public MatchesPred(final List<Atom> args) {
         super(args);
+        final Set<String> words = this.words(this.arg(0).value().toString());
+        if (words.size() > 1) {
+            final List<Atom> atoms = new ArrayList<Atom>(words.size());
+            for (String word : words) {
+                atoms.add(
+                    new MatchesPred(
+                        Arrays.asList(
+                            new Atom[] {
+                                new TextAtom(word),
+                                this.arg(1),
+                            }
+                        )
+                    )
+                );
+            }
+            this.predicate = new AndPred(atoms);
+        } else if (words.isEmpty()) {
+            this.predicate = new TruePred();
+        } else {
+            final String word = words.iterator().next();
+            if (this.CACHE.containsKey(this.arg(1))
+                && this.CACHE.get(this.arg(1)).containsKey(word)) {
+                this.predicate = new MatchingPred(
+                    this.CACHE.get(this.arg(1)).get(word)
+                );
+            } else {
+                this.predicate = new FalsePred();
+            }
+        }
+    }
+
+    /**
+     * Extracts necessary data from message.
+     * @param msg The message to extract from
+     */
+    public static void extract(final Message msg) {
+        MatchesPred.extract(
+            VariableAtom.TEXT,
+            msg.text(),
+            msg.number()
+        );
+        MatchesPred.extract(
+            VariableAtom.BOUT_TITLE,
+            msg.bout().title(),
+            msg.number()
+        );
+        MatchesPred.extract(
+            VariableAtom.AUTHOR_ALIAS,
+            NetboutUtils.aliasOf(msg.author()),
+            msg.number()
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(final Msg msg, final int pos) {
-        final String[] keywords = ((String) this.arg(0).evaluate(msg, pos))
-            .replaceAll(
-                "['\"\\!@#\\$%\\?\\^&\\*\\(\\),\\.\\[\\]=\\+\\/]+",
-                "  "
-        )
-            .trim()
-            .toUpperCase(Locale.ENGLISH)
-            .split(" ");
-        final String text = ((String) this.arg(1).evaluate(msg, pos))
-            .toUpperCase(Locale.ENGLISH);
-        boolean matches = true;
-        for (String keyword : keywords) {
-            matches &= text.contains(keyword);
+    public Long next() {
+        return this.predicate.next();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        return this.predicate.hasNext();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return this.predicate.contains(message);
+    }
+
+    /**
+     * Extracts necessary data from message.
+     * @param var Variable
+     * @param text The text
+     * @param msg Message number
+     */
+    private static void extract(final VariableAtom var, final String text,
+        final Long msg) {
+        for (String word : MatchesPred.words(text)) {
+            MatchesPred.CACHE.putIfAbsent(
+                var,
+                new ConcurrentHashMap<String, SortedSet<Long>>()
+            );
+            MatchesPred.CACHE.get(var).putIfAbsent(
+                word,
+                new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
+            );
+            MatchesPred.CACHE.get(var).get(word).add(msg);
         }
-        Logger.debug(
-            this,
-            "#evaluate(#%d, %d): finding %[list]s inside '%s': %B",
-            msg.number(),
-            pos,
-            keywords,
-            text,
-            matches
+    }
+
+    /**
+     * Extract words from text.
+     * @param text The text
+     * @return Set of words
+     */
+    private static Set<String> words(final String text) {
+        final Set<String> words = new HashSet<String>(
+            Arrays.asList(
+                text.replaceAll(
+                    "['\"\\!@#\\$%\\?\\^&\\*\\(\\),\\.\\[\\]=\\+\\/]+",
+                    "  "
+                ).trim().toUpperCase(Locale.ENGLISH).split("\\s+")
+            )
         );
-        return matches;
+        CollectionUtils.filter(
+            words,
+            new org.apache.commons.collections.Predicate() {
+                @Override
+                public boolean evaluate(final Object obj) {
+                    return ((String) obj).length() > 2;
+                }
+            }
+        );
+        return words;
+    }
+
+    private static final class MatchingPred implements Predicate {
+        /**
+         * Found set of message numbers.
+         */
+        private final transient SortedSet<Long> messages;
+        /**
+         * Iterator of them.
+         */
+        private final transient Iterator<Long> iterator;
+        /**
+         * Public ctor.
+         * @param msgs Set of messages
+         */
+        public MatchingPred(final SortedSet<Long> msgs) {
+            this.messages = msgs;
+            this.iterator = msgs.iterator();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Long next() {
+            return this.iterator.next();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean hasNext() {
+            return this.iterator.hasNext();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean contains(final Long message) {
+            return this.messages.contains(message);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String value() {
+            throw new IllegalStateException("#value()");
+        }
     }
 
 }

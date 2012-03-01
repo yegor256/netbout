@@ -184,9 +184,10 @@ public final class HubIdentity implements Identity {
     @Override
     public Iterable<Bout> inbox(final String query) {
         return new LazyBouts(
-            this.hub.infinity().bouts(
+            this.hub.manager(),
+            this.hub.infinity().messages(
                 String.format(
-                    "(and (talks-with '%s') (unique $bout.number) %s)",
+                    "(and (talks-with '%s') %s (unique $bout.number))",
                     this.name(),
                     PredicateBuilder.normalize(query)
                 )
