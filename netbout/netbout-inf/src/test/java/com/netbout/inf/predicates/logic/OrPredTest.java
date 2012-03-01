@@ -57,7 +57,7 @@ public final class OrPredTest {
             .withMessages(new Long[] {2L})
             .mock();
         final Predicate merger = new OrPred(
-            Arrays.asList(new Atom[] {first, second})
+            Arrays.asList(new Atom[] {first, second, new FalsePred()})
         );
         MatcherAssert.assertThat("has next", merger.hasNext());
         MatcherAssert.assertThat(merger.next(), Matchers.equalTo(1L));
