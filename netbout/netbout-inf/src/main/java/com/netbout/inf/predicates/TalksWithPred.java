@@ -29,6 +29,7 @@ package com.netbout.inf.predicates;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
@@ -80,7 +81,7 @@ public final class TalksWithPred extends AbstractVarargPred {
      */
     public TalksWithPred(final List<Atom> args) {
         super(args);
-        final Urn urn = Urn.create(this.arg(0).value().toString());
+        final Urn urn = Urn.create(((TextAtom) this.arg(0)).value());
         if (this.DUDES.containsKey(urn)) {
             this.messages = this.DUDES.get(urn);
         } else {

@@ -42,6 +42,11 @@ import java.util.List;
 public final class AndPred extends AbstractVarargPred {
 
     /**
+     * Edge number, just fetched.
+     */
+    private transient Long edge;
+
+    /**
      * Public ctor.
      * @param args Arguments/predicates
      */
@@ -55,11 +60,16 @@ public final class AndPred extends AbstractVarargPred {
     @Override
     public Long next() {
         Long message;
-        boolean allowed;
-        do {
-            message = ((Predicate) this.arg(0)).next();
-            allowed = this.contains(message);
-        } while (!allowed);
+        if (this.edge == null) {
+            boolean allowed;
+            do {
+                message = ((Predicate) this.arg(0)).next();
+                allowed = this.contains(message);
+            } while (!allowed);
+        } else {
+            message = this.edge;
+            this.edge = null;
+        }
         return message;
     }
 
@@ -68,7 +78,23 @@ public final class AndPred extends AbstractVarargPred {
      */
     @Override
     public boolean hasNext() {
-        return ((Predicate) this.arg(0)).hasNext();
+        boolean has;
+        if (this.edge == null) {
+            do {
+                has = ((Predicate) this.arg(0)).hasNext();
+                if (!has) {
+                    break;
+                }
+                final Long num = ((Predicate) this.arg(0)).next();
+                has &= this.contains(num);
+                if (has) {
+                    this.edge = num;
+                }
+            } while (!has);
+        } else {
+            has = true;
+        }
+        return has;
     }
 
     /**

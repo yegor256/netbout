@@ -24,11 +24,15 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.predicates.logic;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.predicates.FalsePred;
+import com.netbout.inf.predicates.LimitPred;
+import com.netbout.inf.predicates.TalksWithPred;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
@@ -41,18 +45,18 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link TalksWithPred}.
+ * Test case of {@link AndPred}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TalksWithPredTest {
+public final class AndPredTest {
 
     /**
-     * TalksWithPred can match a message with participant.
+     * AndPred can merge two predicates togethere.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void positivelyMatchesMessageWithParticipant() throws Exception {
+    public void mergesTwoPredicates() throws Exception {
         final Urn name = new UrnMocker().mock();
         final Bout bout = new BoutMocker()
             .withParticipant(name)
@@ -61,16 +65,33 @@ public final class TalksWithPredTest {
             .inBout(bout)
             .mock();
         TalksWithPred.extract(message);
-        final Predicate pred = new TalksWithPred(
+        final Predicate first = new TalksWithPred(
             Arrays.asList(new Atom[] {new TextAtom(name.toString())})
         );
-        MatcherAssert.assertThat("has next", pred.hasNext());
+        final Predicate second = new LimitPred(
+            Arrays.asList(new Atom[] {new NumberAtom(1L)})
+        );
+        final Predicate merger = new AndPred(
+            Arrays.asList(new Atom[] {first, second})
+        );
+        MatcherAssert.assertThat("has next", merger.hasNext());
         MatcherAssert.assertThat(
-            pred.next(),
+            merger.next(),
             Matchers.equalTo(message.number())
         );
-        MatcherAssert.assertThat("end of iterator", !pred.hasNext());
-        MatcherAssert.assertThat("matched", pred.contains(message.number()));
+        MatcherAssert.assertThat("end of iterator", !merger.hasNext());
+    }
+
+    /**
+     * AndPred can handle an empty predicates gracefully.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void mergesTwoEmptyPredicates() throws Exception {
+        final Predicate merger = new AndPred(
+            Arrays.asList(new Atom[] {new FalsePred(), new FalsePred()})
+        );
+        MatcherAssert.assertThat("row is empty", !merger.hasNext());
     }
 
 }
