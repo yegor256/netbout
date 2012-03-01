@@ -27,7 +27,6 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +84,6 @@ public final class PredicateBuilder {
     /**
      * Extract properties from the message.
      * @param from The message
-     * @param msg Where to extract
      */
     @SuppressWarnings("PMD.DefaultPackage")
     static void extract(final Message from) {

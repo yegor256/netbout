@@ -28,11 +28,9 @@ package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import com.netbout.spi.Message;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

@@ -29,8 +29,6 @@ package com.netbout.inf.predicates.logic;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
-import com.netbout.inf.atoms.NumberAtom;
-import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.predicates.FalsePred;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;

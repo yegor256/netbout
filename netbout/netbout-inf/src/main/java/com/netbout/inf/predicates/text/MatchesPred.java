@@ -56,21 +56,25 @@ import org.apache.commons.collections.CollectionUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Meta(name = "matches", extracts = true)
+@SuppressWarnings({
+    "PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops"
+})
 public final class MatchesPred extends AbstractVarargPred {
 
     /**
      * Cached messages and their namespaces.
      * @checkstyle LineLength (3 lines)
      */
-    public static final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> CACHE =
+    private static final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> CACHE =
         new ConcurrentHashMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>>();
 
     /**
      * Compound predicate.
      */
-    public final transient Predicate predicate;
+    private final transient Predicate predicate;
 
     /**
      * Public ctor.
@@ -114,10 +118,18 @@ public final class MatchesPred extends AbstractVarargPred {
      * @param msg The message to extract from
      */
     public static void extract(final Message msg) {
-        MatchesPred.extract("text", msg.text(), msg.number());
-        MatchesPred.extract("bout.title", msg.bout().title(), msg.number());
         MatchesPred.extract(
-            "author.alias",
+            VariableAtom.TEXT,
+            msg.text(),
+            msg.number()
+        );
+        MatchesPred.extract(
+            VariableAtom.BOUT_TITLE,
+            msg.bout().title(),
+            msg.number()
+        );
+        MatchesPred.extract(
+            VariableAtom.AUTHOR_ALIAS,
             NetboutUtils.aliasOf(msg.author()),
             msg.number()
         );
@@ -149,13 +161,12 @@ public final class MatchesPred extends AbstractVarargPred {
 
     /**
      * Extracts necessary data from message.
-     * @param name Variable name
+     * @param var Variable
      * @param text The text
      * @param msg Message number
      */
-    private static void extract(final String name, final String text,
+    private static void extract(final VariableAtom var, final String text,
         final Long msg) {
-        final VariableAtom var = new VariableAtom(name);
         for (String word : MatchesPred.words(text)) {
             MatchesPred.CACHE.putIfAbsent(
                 var,
@@ -188,7 +199,7 @@ public final class MatchesPred extends AbstractVarargPred {
             new org.apache.commons.collections.Predicate() {
                 @Override
                 public boolean evaluate(final Object obj) {
-                    return ((String) obj).length() >= 3;
+                    return ((String) obj).length() > 2;
                 }
             }
         );
@@ -199,11 +210,11 @@ public final class MatchesPred extends AbstractVarargPred {
         /**
          * Found set of message numbers.
          */
-        public final transient SortedSet<Long> messages;
+        private final transient SortedSet<Long> messages;
         /**
          * Iterator of them.
          */
-        public final transient Iterator<Long> iterator;
+        private final transient Iterator<Long> iterator;
         /**
          * Public ctor.
          * @param msgs Set of messages

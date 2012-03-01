@@ -30,7 +30,6 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.Arrays;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 

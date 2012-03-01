@@ -28,7 +28,6 @@ package com.netbout.inf.predicates.math;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
@@ -56,18 +55,18 @@ public final class EqualPred extends AbstractVarargPred {
      * Cached messages and their values.
      * @checkstyle LineLength (3 lines)
      */
-    public static final ConcurrentMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>> CACHE =
+    private static final ConcurrentMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>> CACHE =
         new ConcurrentHashMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>>();
 
     /**
      * Found set of message numbers.
      */
-    public final transient SortedSet<Long> messages;
+    private final transient SortedSet<Long> messages;
 
     /**
      * Iterator of them.
      */
-    public final transient Iterator<Long> iterator;
+    private final transient Iterator<Long> iterator;
 
     /**
      * Public ctor.
@@ -89,10 +88,14 @@ public final class EqualPred extends AbstractVarargPred {
      * @param msg The message to extract from
      */
     public static void extract(final Message msg) {
-        EqualPred.var("bout.number", new NumberAtom(msg.bout().number()))
-            .add(msg.number());
-        EqualPred.var("author.name", new TextAtom(msg.author().name()))
-            .add(msg.number());
+        EqualPred.var(
+            VariableAtom.BOUT_NUMBER,
+            new NumberAtom(msg.bout().number())
+        ).add(msg.number());
+        EqualPred.var(
+            VariableAtom.AUTHOR_NAME,
+            new TextAtom(msg.author().name())
+        ).add(msg.number());
     }
 
     /**
@@ -121,12 +124,11 @@ public final class EqualPred extends AbstractVarargPred {
 
     /**
      * Get access to list of message numbers.
-     * @param name Name of variable
+     * @param var The variable
      * @param atom Value of it
      * @return Set of numbers
      */
-    private static Set<Long> var(final String name, final Atom atom) {
-        final VariableAtom var = new VariableAtom(name);
+    private static Set<Long> var(final VariableAtom var, final Atom atom) {
         EqualPred.CACHE.putIfAbsent(
             var,
             new ConcurrentHashMap<Atom, SortedSet<Long>>()

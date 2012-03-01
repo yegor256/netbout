@@ -28,10 +28,8 @@ package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.NumberAtom;
-import com.ymock.util.Logger;
 import java.util.List;
 
 /**
@@ -51,7 +49,7 @@ public final class LimitPred extends AbstractVarargPred {
     /**
      * Current position.
      */
-    private transient Long position = 0L;
+    private transient long position;
 
     /**
      * Public ctor.

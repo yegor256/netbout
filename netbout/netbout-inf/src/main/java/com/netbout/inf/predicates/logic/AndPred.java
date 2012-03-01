@@ -58,6 +58,7 @@ public final class AndPred extends AbstractVarargPred {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.NullAssignment")
     public Long next() {
         Long message;
         if (this.edge == null) {

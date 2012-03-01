@@ -62,7 +62,7 @@ public interface BoutMgr {
 
     /**
      * Find and return bout from collection, by message number.
-     * @param number Number of the message
+     * @param msg Number of the message
      * @return The bout found or restored
      * @throws MessageNotFoundException If this bout is not found
      * @checkstyle RedundantThrows (4 lines)

@@ -37,6 +37,36 @@ import com.netbout.inf.Atom;
 public final class VariableAtom implements Atom<String> {
 
     /**
+     * Text of message.
+     */
+    public static final VariableAtom TEXT =
+        new VariableAtom("text");
+
+    /**
+     * Number of bout.
+     */
+    public static final VariableAtom BOUT_NUMBER =
+        new VariableAtom("bout.number");
+
+    /**
+     * Title of bout.
+     */
+    public static final VariableAtom BOUT_TITLE =
+        new VariableAtom("bout.title");
+
+    /**
+     * Name of author.
+     */
+    public static final VariableAtom AUTHOR_NAME =
+        new VariableAtom("author.name");
+
+    /**
+     * Alias of author.
+     */
+    public static final VariableAtom AUTHOR_ALIAS =
+        new VariableAtom("author.alias");
+
+    /**
      * The name of it.
      */
     private final transient String name;

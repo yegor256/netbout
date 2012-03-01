@@ -28,7 +28,6 @@ package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
@@ -53,7 +52,7 @@ public final class BundledPred extends AbstractVarargPred {
     /**
      * Cached messages and their markers.
      */
-    public static final ConcurrentMap<Long, String> MARKERS =
+    private static final ConcurrentMap<Long, String> MARKERS =
         new ConcurrentHashMap<Long, String>();
 
     /**

@@ -26,12 +26,7 @@
  */
 package com.netbout.inf.predicates.math;
 
-import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link EqualPred}.

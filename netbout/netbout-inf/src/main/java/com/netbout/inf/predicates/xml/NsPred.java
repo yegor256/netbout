@@ -28,7 +28,6 @@ package com.netbout.inf.predicates.xml;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
@@ -38,7 +37,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -55,18 +53,18 @@ public final class NsPred extends AbstractVarargPred {
     /**
      * Cached messages and their namespaces.
      */
-    public static final ConcurrentMap<Urn, Set<Long>> CACHE =
+    private static final ConcurrentMap<Urn, Set<Long>> CACHE =
         new ConcurrentHashMap<Urn, Set<Long>>();
 
     /**
      * Found set of message numbers.
      */
-    public final transient Set<Long> messages;
+    private final transient Set<Long> messages;
 
     /**
      * Iterator of them.
      */
-    public final transient Iterator<Long> iterator;
+    private final transient Iterator<Long> iterator;
 
     /**
      * Public ctor.
@@ -86,7 +84,6 @@ public final class NsPred extends AbstractVarargPred {
     /**
      * Extracts necessary data from message.
      * @param from The message to extract from
-     * @param msg Where to extract
      */
     public static void extract(final Message from) {
         final DomParser parser = new DomParser(from.text());

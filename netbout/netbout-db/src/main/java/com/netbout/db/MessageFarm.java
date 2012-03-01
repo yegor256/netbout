@@ -42,6 +42,7 @@ import java.util.List;
  * @version $Id$
  */
 @Farm
+@SuppressWarnings("PMD.TooManyMethods")
 public final class MessageFarm {
 
     /**

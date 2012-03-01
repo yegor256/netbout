@@ -28,7 +28,6 @@ package com.netbout.inf.predicates.text;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateMocker;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.spi.Message;
@@ -38,7 +37,6 @@ import java.util.Map;
 import java.util.Random;
 import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -67,7 +65,7 @@ public final class MatchesPredTest {
             Arrays.asList(
                 new Atom[] {
                     new TextAtom("  "),
-                    new VariableAtom("text"),
+                    VariableAtom.TEXT,
                 }
             )
         );
@@ -101,7 +99,7 @@ public final class MatchesPredTest {
                 Arrays.asList(
                     new Atom[] {
                         new TextAtom(entry.getKey()),
-                        new VariableAtom("text"),
+                        VariableAtom.TEXT,
                     }
                 )
             );
@@ -138,7 +136,7 @@ public final class MatchesPredTest {
                 Arrays.asList(
                     new Atom[] {
                         new TextAtom(entry.getKey()),
-                        new VariableAtom("text"),
+                        VariableAtom.TEXT,
                     }
                 )
             );

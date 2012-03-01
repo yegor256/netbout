@@ -28,7 +28,6 @@ package com.netbout.inf.predicates.xml;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateMocker;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
@@ -104,7 +103,7 @@ public final class NsPredTest {
         final Predicate pred = new NsPred(
             Arrays.asList(new Atom[] {new TextAtom(namespace)})
         );
-        MatcherAssert.assertThat("not matched", !pred.contains(1L));
+        MatcherAssert.assertThat("not matched (temp)", !pred.contains(1L));
     }
 
     /**

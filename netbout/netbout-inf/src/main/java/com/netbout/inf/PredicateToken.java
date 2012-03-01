@@ -76,7 +76,6 @@ public final class PredicateToken {
     /**
      * Extract properties from the message.
      * @param from The message
-     * @param msg Where to extract
      */
     public void extract(final Message from) {
         if (this.meta.extracts()) {

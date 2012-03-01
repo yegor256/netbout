@@ -28,12 +28,10 @@ package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,24 +54,24 @@ public final class TalksWithPred extends AbstractVarargPred {
     /**
      * Cached participants and their messages.
      */
-    public static final ConcurrentMap<Urn, SortedSet<Long>> DUDES =
+    private static final ConcurrentMap<Urn, SortedSet<Long>> DUDES =
         new ConcurrentHashMap<Urn, SortedSet<Long>>();
 
     /**
      * Cached bouts and their participants.
      */
-    public static final ConcurrentMap<Long, SortedSet<Urn>> BOUTS =
+    private static final ConcurrentMap<Long, SortedSet<Urn>> BOUTS =
         new ConcurrentHashMap<Long, SortedSet<Urn>>();
 
     /**
      * Found set of message numbers.
      */
-    public final transient Set<Long> messages;
+    private final transient Set<Long> messages;
 
     /**
      * Iterator of them.
      */
-    public final transient Iterator<Long> iterator;
+    private final transient Iterator<Long> iterator;
 
     /**
      * Public ctor.
@@ -94,6 +92,7 @@ public final class TalksWithPred extends AbstractVarargPred {
      * Extracts necessary data from message.
      * @param msg The message to extract from
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public static void extract(final Message msg) {
         final Long bout = msg.bout().number();
         TalksWithPred.BOUTS.putIfAbsent(

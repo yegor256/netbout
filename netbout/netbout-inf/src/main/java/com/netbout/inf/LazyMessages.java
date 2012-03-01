@@ -27,7 +27,6 @@
 package com.netbout.inf;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * Lazy list of message numbers.

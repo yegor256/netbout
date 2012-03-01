@@ -62,7 +62,7 @@ public final class NumberAtom implements Atom<Long> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof NumberAtom 
+        return obj instanceof NumberAtom
             && this.number.equals(((NumberAtom) obj).number);
     }
 

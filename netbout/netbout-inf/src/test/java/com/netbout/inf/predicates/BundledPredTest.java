@@ -35,7 +35,6 @@ import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link BundledPred}.
