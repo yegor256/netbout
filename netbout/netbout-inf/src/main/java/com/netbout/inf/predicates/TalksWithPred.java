@@ -34,6 +34,7 @@ import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -94,25 +95,27 @@ public final class TalksWithPred extends AbstractVarargPred {
      */
     public static void extract(final Message msg) {
         final Long bout = msg.bout().number();
-        synchronized (TalksWithPred.class) {
-            if (TalksWithPred.BOUTS.containsKey(bout)) {
-                for (Urn dude : TalksWithPred.BOUTS.get(bout)) {
-                    TalksWithPred.DUDES.get(dude).remove(msg.number());
-                }
-                TalksWithPred.BOUTS.get(bout).clear();
-            }
-            TalksWithPred.BOUTS.putIfAbsent(
-                bout,
-                new ConcurrentSkipListSet<Urn>()
+        TalksWithPred.BOUTS.putIfAbsent(
+            bout,
+            new ConcurrentSkipListSet<Urn>()
+        );
+        final Set<Urn> names = new HashSet<Urn>();
+        for (Participant dude : msg.bout().participants()) {
+            final Urn name = dude.identity().name();
+            names.add(name);
+            TalksWithPred.DUDES.putIfAbsent(
+                name,
+                new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
             );
-            for (Participant dude : msg.bout().participants()) {
-                final Urn name = dude.identity().name();
-                TalksWithPred.DUDES.putIfAbsent(
-                    name,
-                    new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
-                );
-                TalksWithPred.DUDES.get(name).add(msg.number());
-                TalksWithPred.BOUTS.get(bout).add(name);
+            TalksWithPred.DUDES.get(name).add(msg.number());
+            TalksWithPred.BOUTS.get(bout).add(name);
+        }
+        final Iterator<Urn> iterator = TalksWithPred.BOUTS.get(bout).iterator();
+        while (iterator.hasNext()) {
+            final Urn name = iterator.next();
+            if (!names.contains(name)) {
+                iterator.remove();
+                TalksWithPred.DUDES.get(name).remove(msg.number());
             }
         }
     }
