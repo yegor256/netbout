@@ -82,6 +82,33 @@ public final class MessageFarm {
     }
 
     /**
+     * Get bout of message.
+     * @param msg Message number to check
+     * @return Number of bout or ZERO if such a message is not found
+     */
+    @Operation("get-bout-of-message")
+    public Long getBoutOfMessage(final Long msg) {
+        return new DbSession(true)
+            .sql("SELECT bout FROM message WHERE number = ?")
+            .set(msg)
+            .select(
+                new Handler<Long>() {
+                    @Override
+                    public Long handle(final ResultSet rset)
+                        throws SQLException {
+                        Long bout;
+                        if (rset.next()) {
+                            bout = rset.getLong(1);
+                        } else {
+                            bout = 0L;
+                        }
+                        return bout;
+                    }
+                }
+            );
+    }
+
+    /**
      * Get list of numbers of all bout messages.
      * @param bout The bout where it happened
      * @return List of numbers

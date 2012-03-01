@@ -128,7 +128,16 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
     @Override
     public BoutData boutOf(final Long msg) throws MessageNotFoundException {
         if (!this.cached.containsKey(msg)) {
-            throw new MessageNotFoundException(msg);
+            final Long bout = this.hub
+                .make("get-bout-of-message")
+                .synchronously()
+                .arg(msg)
+                .asDefault(0L)
+                .exec();
+            if (bout == 0) {
+                throw new MessageNotFoundException(msg);
+            }
+            this.cached.put(msg, bout);
         }
         try {
             return this.find(this.cached.get(msg));
