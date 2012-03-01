@@ -192,6 +192,14 @@
             </dependency>
             <dependency>
                 <!--
+                This library simplifies collections-management operations.
+                -->
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version since="1 Mar 2012">3.2.1</version>
+            </dependency>
+            <dependency>
+                <!--
                 Apache Xerces is a JAXP implementation of DOM.
                 In order to replace a default implementation
                 provided by JDK with Xerces we are using text files inside
