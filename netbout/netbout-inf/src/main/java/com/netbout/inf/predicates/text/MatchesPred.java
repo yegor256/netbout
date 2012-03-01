@@ -36,6 +36,7 @@ import com.netbout.inf.predicates.FalsePred;
 import com.netbout.inf.predicates.TruePred;
 import com.netbout.inf.predicates.logic.AndPred;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,6 +49,7 @@ import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Matches text against search string.
@@ -93,28 +95,32 @@ public final class MatchesPred extends AbstractVarargPred {
             }
             this.predicate = new AndPred(atoms);
         } else if (words.isEmpty()) {
-            predicate = new TruePred();
+            this.predicate = new TruePred();
         } else {
+            final String word = words.iterator().next();
             if (this.CACHE.containsKey(this.arg(1))
-                && this.CACHE.get(this.arg(1)).containsKey(this.arg(0))) {
-                predicate = new MatchingPred(
-                    this.CACHE.get(this.arg(1)).get(this.arg(0))
+                && this.CACHE.get(this.arg(1)).containsKey(word)) {
+                this.predicate = new MatchingPred(
+                    this.CACHE.get(this.arg(1)).get(word)
                 );
             } else {
-                predicate = new FalsePred();
+                this.predicate = new FalsePred();
             }
         }
     }
 
     /**
      * Extracts necessary data from message.
-     * @param from The message to extract from
-     * @param msg Where to extract
+     * @param msg The message to extract from
      */
-    public static void extract(final Message from) {
-        MatchesPred.extract("text", from.text(), from.number());
-        MatchesPred.extract("bout.title", from.text(), from.number());
-        MatchesPred.extract("author.alias", from.text(), from.number());
+    public static void extract(final Message msg) {
+        MatchesPred.extract("text", msg.text(), msg.number());
+        MatchesPred.extract("bout.title", msg.bout().title(), msg.number());
+        MatchesPred.extract(
+            "author.alias",
+            NetboutUtils.aliasOf(msg.author()),
+            msg.number()
+        );
     }
 
     /**
@@ -169,16 +175,24 @@ public final class MatchesPred extends AbstractVarargPred {
      * @return Set of words
      */
     private static Set<String> words(final String text) {
-        return new HashSet<String>(
+        final Set<String> words = new HashSet<String>(
             Arrays.asList(
                 text.replaceAll(
                     "['\"\\!@#\\$%\\?\\^&\\*\\(\\),\\.\\[\\]=\\+\\/]+",
                     "  "
-                ).trim()
-                    .toUpperCase(Locale.ENGLISH)
-                    .split("\\s+")
+                ).trim().toUpperCase(Locale.ENGLISH).split("\\s+")
             )
         );
+        CollectionUtils.filter(
+            words,
+            new org.apache.commons.collections.Predicate() {
+                @Override
+                public boolean evaluate(final Object obj) {
+                    return ((String) obj).length() >= 3;
+                }
+            }
+        );
+        return words;
     }
 
     private static final class MatchingPred implements Predicate {
