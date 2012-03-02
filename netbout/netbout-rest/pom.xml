@@ -240,7 +240,7 @@
         <dependency>
             <groupId>com.ymock</groupId>
             <artifactId>ymock-server</artifactId>
-            <version since="18 Dec 2011">1.0.4</version>
+            <version since="2 Mar 2012">1.0.5</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -257,7 +257,7 @@
         <dependency>
             <groupId>com.ymock.mock</groupId>
             <artifactId>mock-socket</artifactId>
-            <version since="18 Dec 2011">1.0.4</version>
+            <version since="2 Mar 2012">1.0.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>

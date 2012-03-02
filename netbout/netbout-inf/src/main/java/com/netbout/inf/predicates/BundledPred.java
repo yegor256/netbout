@@ -56,6 +56,12 @@ public final class BundledPred extends AbstractVarargPred {
         new ConcurrentHashMap<Long, String>();
 
     /**
+     * Cached bouts and their message numbers.
+     */
+    private static final ConcurrentMap<Long, Long> BOUTS =
+        new ConcurrentHashMap<Long, Long>();
+
+    /**
      * List of already passed bundles.
      */
     private final transient Set<String> passed = new HashSet<String>();
@@ -78,6 +84,7 @@ public final class BundledPred extends AbstractVarargPred {
             names.add(dude.identity().name());
         }
         BundledPred.MARKERS.put(msg.number(), Logger.format("%[list]s", names));
+        BundledPred.BOUTS.put(msg.bout().number(), msg.number());
     }
 
     /**
@@ -87,6 +94,22 @@ public final class BundledPred extends AbstractVarargPred {
      */
     public static String marker(final Long msg) {
         return BundledPred.MARKERS.get(msg);
+    }
+
+    /**
+     * Get marker for bout number.
+     * @param bout Number of bout
+     * @return The marker
+     */
+    public static String markerOfBout(final Long bout) {
+        final Long msg = BundledPred.BOUTS.get(bout);
+        String marker;
+        if (msg == null) {
+            marker = "";
+        } else {
+            marker = BundledPred.marker(msg);
+        }
+        return marker;
     }
 
     /**

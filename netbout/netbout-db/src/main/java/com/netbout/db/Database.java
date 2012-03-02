@@ -102,7 +102,7 @@ final class Database {
      * @param connection JDBC connection to use
      */
     private static void update(final Connection connection) {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         try {
             final Liquibase liquibase = new Liquibase(
                 "com/netbout/db/liquibase.xml",
@@ -115,8 +115,8 @@ final class Database {
         }
         Logger.info(
             Database.class,
-            "#update(): updated DB schema [%dms]",
-            System.currentTimeMillis() - start
+            "#update(): updated DB schema in %[nano]s",
+            System.nanoTime() - start
         );
     }
 

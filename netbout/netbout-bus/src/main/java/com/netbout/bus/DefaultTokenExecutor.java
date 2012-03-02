@@ -169,7 +169,7 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
      * Execute given token with a given set of helpers.
      * @param token The token to execute
      * @param targets The helpers to use
-     * @return How many miliseconds it took
+     * @return The bill
      */
     private Bill run(final TxToken token,
         final Set<Map.Entry<Identity, Helper>> targets) {
@@ -177,12 +177,12 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
         final Bill bill = new Bill(mnemo);
         for (Map.Entry<Identity, Helper> helper : targets) {
             if (helper.getValue().supports().contains(mnemo)) {
-                final long start = System.currentTimeMillis();
+                final long start = System.nanoTime();
                 helper.getValue().execute(token);
                 if (token.isCompleted()) {
                     bill.done(
                         helper.getKey().name().toString(),
-                        System.currentTimeMillis() - start
+                        System.nanoTime() - start
                     );
                     break;
                 }
@@ -229,9 +229,9 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
      */
     private static final class Bill {
         /**
-         * Minimum amount of msec to report.
+         * Minimum amount of nanosec to report.
          */
-        private static final long MIN_MSEC = 1L;
+        private static final long MIN_NANOSEC = 1L * 1000 * 1000;
         /**
          * When it happened.
          */
@@ -245,9 +245,9 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
          */
         private transient String helper;
         /**
-         * Milliseconds.
+         * Nanoseconds.
          */
-        private transient Long millis;
+        private transient Long nano;
         /**
          * Bout.
          */
@@ -262,11 +262,11 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
         /**
          * Mark it done.
          * @param hlpr Who completed
-         * @param msec How long did it take
+         * @param nsec How long did it take
          */
-        public void done(final String hlpr, final Long msec) {
+        public void done(final String hlpr, final Long nsec) {
             this.helper = hlpr;
-            this.millis = msec;
+            this.nano = nsec;
         }
         /**
          * It is related to this bout.
@@ -280,8 +280,8 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
          * @return Yes or no
          */
         public boolean isDone() {
-            return this.millis != null
-                && this.millis >= this.MIN_MSEC
+            return this.nano != null
+                && this.nano >= this.MIN_NANOSEC
                 && this.helper != null
                 && this.number != null;
         }
@@ -295,7 +295,8 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
                 ISODateTimeFormat.dateTime().print(new DateTime(this.date)),
                 this.mnemo,
                 this.helper,
-                this.millis,
+                // @checkstyle MagicNumber (1 line)
+                this.nano / (1000 * 1000),
                 this.number
             );
         }

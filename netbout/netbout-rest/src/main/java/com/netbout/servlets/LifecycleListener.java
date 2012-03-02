@@ -56,7 +56,7 @@ public final class LifecycleListener implements ServletContextListener {
      */
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         Manifests.append(event.getServletContext());
         this.hub = new DefaultHub();
         event.getServletContext()
@@ -64,8 +64,8 @@ public final class LifecycleListener implements ServletContextListener {
         EmailFarm.setHub(this.hub);
         Logger.info(
             this,
-            "contextInitialized(): done in %dms",
-            System.currentTimeMillis() - start
+            "contextInitialized(): done in %[nano]s",
+            System.nanoTime() - start
         );
     }
 
@@ -74,7 +74,7 @@ public final class LifecycleListener implements ServletContextListener {
      */
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         try {
             this.hub.close();
         } catch (java.io.IOException ex) {
@@ -82,8 +82,8 @@ public final class LifecycleListener implements ServletContextListener {
         }
         Logger.info(
             this,
-            "contextDestroyed(): done in %dms",
-            System.currentTimeMillis() - start
+            "contextDestroyed(): done in %[nano]s",
+            System.nanoTime() - start
         );
     }
 

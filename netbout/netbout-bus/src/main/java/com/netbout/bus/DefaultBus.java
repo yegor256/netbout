@@ -167,14 +167,14 @@ public final class DefaultBus implements Bus, StatsProvider {
          */
         @Override
         public void execute(final JobExecutionContext context) {
-            final long start = System.currentTimeMillis();
+            final long start = System.nanoTime();
             final Bus bus = (Bus) context.getMergedJobDataMap().get(this.KEY);
             bus.make("routine").asDefault(false).exec();
             Logger.debug(
                 this,
-                "#execute(%[type]s): routine job done in %dms",
+                "#execute(%[type]s): routine job done in %[nano]s",
                 context,
-                System.currentTimeMillis() - start
+                System.nanoTime() - start
             );
         }
     }

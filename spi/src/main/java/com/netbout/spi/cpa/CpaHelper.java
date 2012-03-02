@@ -106,13 +106,13 @@ public final class CpaHelper implements Helper {
                 )
             );
         }
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         this.ops.get(token.mnemo()).execute(token);
         Logger.debug(
             this,
-            "#execute('%s'): done in %dms",
+            "#execute('%s'): done in %[nano]s",
             token.mnemo(),
-            System.currentTimeMillis() - start
+            System.nanoTime() - start
         );
     }
 
@@ -122,15 +122,15 @@ public final class CpaHelper implements Helper {
      * @return Discovered ops
      */
     private ConcurrentMap<String, HelpTarget> discover(final URL url) {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         final ConcurrentMap<String, HelpTarget> found =
             new OpDiscoverer(this.identity).discover(url);
         Logger.info(
             this,
-            "#init('%s'): %d operations discovered in %dms: %[list]s",
+            "#init('%s'): %d operations discovered in %[nano]s: %[list]s",
             url,
             found.size(),
-            System.currentTimeMillis() - start,
+            System.nanoTime() - start,
             found.keySet()
         );
         return found;

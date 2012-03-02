@@ -247,7 +247,7 @@ final class DefaultUrnResolver implements UrnResolver {
     private void initialize() {
         synchronized (this.slots) {
             if (!this.initialized) {
-                final long start = System.currentTimeMillis();
+                final long start = System.nanoTime();
                 final List<String> names = this.hub
                     .make("get-all-namespaces")
                     .synchronously()
@@ -272,9 +272,10 @@ final class DefaultUrnResolver implements UrnResolver {
                 }
                 Logger.info(
                     this,
-                    "#initialize(): loaded %d namespace(s) in %dms: %[list]s",
+                    // @checkstyle LineLength (1 line)
+                    "#initialize(): loaded %d namespace(s) in %[nano]s: %[list]s",
                     names.size(),
-                    System.currentTimeMillis() - start,
+                    System.nanoTime() - start,
                     names
                 );
             }
