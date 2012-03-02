@@ -142,7 +142,7 @@ public final class AuthMediator {
      */
     @SuppressWarnings("PMD.AvoidCatchingThrowable")
     private RemoteIdentity load(final URI uri) throws IOException {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         RemoteIdentity identity;
         try {
             identity = Client.create().resource(uri)
@@ -158,10 +158,10 @@ public final class AuthMediator {
         }
         Logger.debug(
             this,
-            "#load(%s): identity '%s' found in %dms",
+            "#load(%s): identity '%s' found in %[nano]s",
             uri,
             identity.name(),
-            System.currentTimeMillis() - start
+            System.nanoTime() - start
         );
         return identity;
     }

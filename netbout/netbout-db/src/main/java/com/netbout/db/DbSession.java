@@ -199,7 +199,7 @@ public final class DbSession {
      */
     @SuppressWarnings("PMD.CloseResource")
     private <T> T run(final Handler<T> handler, final Fetcher fetcher) {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         T result;
         try {
             final PreparedStatement stmt = this.conn.prepareStatement(
@@ -237,9 +237,9 @@ public final class DbSession {
         }
         Logger.debug(
             this,
-            "#run(): '%s' done [%dms]",
+            "#run(): '%s' done in %[nano]s",
             this.query,
-            System.currentTimeMillis() - start
+            System.nanoTime() - start
         );
         return result;
     }

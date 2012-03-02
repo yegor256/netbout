@@ -258,7 +258,7 @@ public final class FacebookRs extends AbstractRs {
      * @throws IOException If some problem with FB
      */
     private String retrieve(final URI uri) throws IOException {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) uri.toURL().openConnection();
@@ -273,10 +273,10 @@ public final class FacebookRs extends AbstractRs {
             conn.disconnect();
             Logger.debug(
                 this,
-                "#retrieve(%s): done [%d] in %dms",
+                "#retrieve(%s): done [%d] in %[nano]s",
                 uri,
                 conn.getResponseCode(),
-                System.currentTimeMillis() - start
+                System.nanoTime() - start
             );
         }
     }

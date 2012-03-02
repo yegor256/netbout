@@ -335,7 +335,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      * @param persister DB helper
      */
     private void promote(final Identity persister) {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         final List<Urn> helpers = this.make("get-all-helpers")
             .synchronously()
             .asDefault(new ArrayList<Urn>())
@@ -362,8 +362,8 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         }
         Logger.info(
             this,
-            "#promote(): done with all helpers in %dms: %[list]s",
-            System.currentTimeMillis() - start,
+            "#promote(): done with all helpers in %[nano]s: %[list]s",
+            System.nanoTime() - start,
             helpers
         );
     }
