@@ -29,6 +29,7 @@ package com.netbout.inf.predicates;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Meta;
 import com.netbout.inf.PredicateException;
+import com.netbout.inf.atoms.NumberAtom;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public final class UnbundledPred extends AbstractVarargPred {
     /**
      * Expected marker.
      */
-    private final transient String expected;
+    private final transient String marker;
 
     /**
      * Public ctor.
@@ -51,7 +52,9 @@ public final class UnbundledPred extends AbstractVarargPred {
      */
     public UnbundledPred(final List<Atom> args) {
         super(args);
-        this.expected = this.arg(0).value().toString();
+        this.marker = BundledPred.markerOfBout(
+            ((NumberAtom) this.arg(0)).value()
+        );
     }
 
     /**
@@ -75,7 +78,7 @@ public final class UnbundledPred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
-        return this.expected.equals(BundledPred.marker(message));
+        return this.marker.equals(BundledPred.marker(message));
     }
 
 }
