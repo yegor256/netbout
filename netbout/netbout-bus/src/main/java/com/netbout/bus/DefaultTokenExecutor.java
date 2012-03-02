@@ -295,7 +295,7 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
                 ISODateTimeFormat.dateTime().print(new DateTime(this.date)),
                 this.mnemo,
                 this.helper,
-                // @checkstyle MagicNumber
+                // @checkstyle MagicNumber (1 line)
                 this.nano / (1000 * 1000),
                 this.number
             );
