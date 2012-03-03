@@ -42,6 +42,11 @@ import java.util.List;
 public final class UnbundledPred extends AbstractVarargPred {
 
     /**
+     * Bout number.
+     */
+    private final transient Long bout;
+
+    /**
      * Expected marker.
      */
     private final transient String marker;
@@ -52,9 +57,8 @@ public final class UnbundledPred extends AbstractVarargPred {
      */
     public UnbundledPred(final List<Atom> args) {
         super(args);
-        this.marker = BundledPred.markerOfBout(
-            ((NumberAtom) this.arg(0)).value()
-        );
+        this.bout = ((NumberAtom) this.arg(0)).value();
+        this.marker = BundledPred.markerOfBout(this.bout);
     }
 
     /**
@@ -78,7 +82,8 @@ public final class UnbundledPred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
-        return this.marker.equals(BundledPred.marker(message));
+        return this.marker.equals(BundledPred.marker(message))
+            && !BundledPred.boutOf(message).equals(this.bout);
     }
 
 }
