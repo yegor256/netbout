@@ -110,7 +110,7 @@ public final class BundledPred extends AbstractVarargPred {
 
     /**
      * Get bout number by message.
-     * @param bout Number of message
+     * @param msg Number of message
      * @return The bout number
      */
     public static Long boutOf(final Long msg) {

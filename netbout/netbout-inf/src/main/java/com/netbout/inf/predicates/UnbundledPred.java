@@ -83,7 +83,7 @@ public final class UnbundledPred extends AbstractVarargPred {
     @Override
     public boolean contains(final Long message) {
         return this.marker.equals(BundledPred.marker(message))
-            && BundledPred.boutOf(message) != this.bout;
+            && !BundledPred.boutOf(message).equals(this.bout);
     }
 
 }
