@@ -29,6 +29,8 @@ package com.netbout.inf.predicates;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -46,10 +48,12 @@ public final class UnbundledPredTest {
      */
     @Test
     public void positivelyMatchesUnbundledMessageOnly() throws Exception {
+        final Message message = new MessageMocker().mock();
+        BundledPred.extract(message);
         final Predicate pred = new UnbundledPred(
-            Arrays.asList(new Atom[] {new NumberAtom(1L)})
+            Arrays.asList(new Atom[] {new NumberAtom(message.bout().number())})
         );
-        MatcherAssert.assertThat("no!", !pred.contains(1L));
+        MatcherAssert.assertThat("no!", !pred.contains(message.number()));
     }
 
 }
