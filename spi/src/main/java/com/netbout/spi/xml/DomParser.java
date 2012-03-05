@@ -115,7 +115,7 @@ public final class DomParser {
             } catch (java.io.IOException ex) {
                 throw new IllegalStateException(ex);
             } catch (org.xml.sax.SAXException ex) {
-                throw new IllegalStateException(ex);
+                throw new DomValidationException(ex);
             }
             if (!handler.isEmpty()) {
                 throw new DomValidationException(
@@ -288,7 +288,18 @@ public final class DomParser {
      * @throws DomValidationException If some problem
      */
     private String clean() throws DomValidationException {
-        final Document dom = this.parse();
+        Document dom;
+        try {
+            dom = DomParser.factory()
+                .newDocumentBuilder()
+                .parse(IOUtils.toInputStream(this.xml, CharEncoding.UTF_8));
+        } catch (java.io.IOException ex) {
+            throw new IllegalArgumentException(ex);
+        } catch (org.xml.sax.SAXException ex) {
+            throw new DomValidationException(ex);
+        } catch (javax.xml.parsers.ParserConfigurationException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         final Urn namespace = this.namespace();
         if (namespace.hasParams()) {
             final Element root = dom.getDocumentElement();

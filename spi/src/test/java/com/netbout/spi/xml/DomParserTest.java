@@ -138,6 +138,15 @@ public final class DomParserTest {
     }
 
     /**
+     * DomParser throws exception for broken XML.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = DomValidationException.class)
+    public void validatesBrokenDocument() throws Exception {
+        new DomParser("<invalid-xml").validate();
+    }
+
+    /**
      * DomParser can allow non-XML documents to go.
      * @throws Exception If there is some problem inside
      */
