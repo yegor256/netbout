@@ -49,6 +49,6 @@ def bout = nancy.start()
         .assertThat(new EtaAssertion())
         .rel('/page/links/link[@rel="post"]/@href')
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
-        .post('posts message to the bout', 'text=' + URLEncoder(it))
+        .post('posts message to the bout', 'text=' + URLEncoder.encode(it))
         .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
 }
