@@ -197,7 +197,11 @@ public final class InboxRs extends AbstractRs {
         if (!pred.startsWith("(unbundled ")) {
             pred = String.format("(and %s (bundled))", pred);
         }
-        return this.identity().inbox(period.query(pred));
+        try {
+            return this.identity().inbox(period.query(pred));
+        } catch (com.netbout.inf.PredicateException ex) {
+            throw new ForwardException(this, ex);
+        }
     }
 
 }

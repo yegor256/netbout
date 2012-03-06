@@ -398,6 +398,7 @@ public final class BoutRs extends AbstractRs {
             .init(this)
             .append(
                 new LongBout(
+                    this,
                     this.hub(),
                     this.bout(),
                     this.coords,
