@@ -28,6 +28,8 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
 import com.netbout.rest.BoutRs;
+import com.netbout.rest.ForwardException;
+import com.netbout.rest.Resource;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
@@ -37,9 +39,9 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -58,6 +60,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.NONE)
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class LongBout {
+
+    /**
+     * Where we are.
+     */
+    private final transient Resource home;
 
     /**
      * The bus.
@@ -97,7 +104,7 @@ public final class LongBout {
     /**
      * Periods to show.
      */
-    private final transient Collection<Link> periods = new ArrayList<Link>();
+    private final transient Collection<Link> periods = new LinkedList<Link>();
 
     /**
      * Public ctor for JAXB.
@@ -108,6 +115,7 @@ public final class LongBout {
 
     /**
      * Private ctor.
+     * @param res Where we are
      * @param ihub The hub
      * @param bot The bout
      * @param crds The coordinates of the stage to render
@@ -115,11 +123,15 @@ public final class LongBout {
      * @param bldr The builder of URIs
      * @param vwr The viewer
      * @param period Which period to view
-     * @checkstyle ParameterNumber (3 lines)
+     * @checkstyle ParameterNumber (7 lines)
      */
-    public LongBout(final Hub ihub, final Bout bot, final StageCoordinates crds,
+    public LongBout(
+        final Resource res, final Hub ihub, final Bout bot,
+        final StageCoordinates crds,
         final String keyword, final UriBuilder bldr, final Identity vwr,
-        final String period) {
+        final String period
+    ) {
+        this.home = res;
         this.hub = ihub;
         this.bout = bot;
         this.coords = crds;
@@ -181,7 +193,7 @@ public final class LongBout {
     @XmlElement(name = "stage")
     @XmlElementWrapper(name = "stages")
     public List<ShortStage> getStages() {
-        final List<ShortStage> stages = new ArrayList<ShortStage>();
+        final List<ShortStage> stages = new LinkedList<ShortStage>();
         for (Identity identity : this.coords.all()) {
             stages.add(new ShortStage(identity, this.builder.clone()));
         }
@@ -214,9 +226,12 @@ public final class LongBout {
     @XmlElementWrapper(name = "messages")
     public List<LongMessage> getMessages() {
         final Period period = PeriodsBuilder.parse(this.view);
-        final Iterable<Message> discussion = this.bout.messages(
-            period.query(this.query)
-        );
+        Iterable<Message> discussion;
+        try {
+            discussion = this.bout.messages(period.query(this.query));
+        } catch (com.netbout.inf.PredicateException ex) {
+            throw new ForwardException(this.home, ex);
+        }
         final PeriodsBuilder pbld = new PeriodsBuilder(
             period,
             UriBuilder.fromUri(
@@ -225,7 +240,7 @@ public final class LongBout {
                     .build(this.query)
             )
         ).setQueryParam(BoutRs.PERIOD_PARAM);
-        final List<LongMessage> msgs = new ArrayList<LongMessage>();
+        final List<LongMessage> msgs = new LinkedList<LongMessage>();
         for (Message msg : discussion) {
             boolean show;
             try {
@@ -255,7 +270,7 @@ public final class LongBout {
     @XmlElementWrapper(name = "participants")
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
-            new ArrayList<LongParticipant>();
+            new LinkedList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
             dudes.add(new LongParticipant(dude, this.builder, this.viewer));
         }

@@ -27,6 +27,8 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.HubMocker;
+import com.netbout.rest.BoutRs;
+import com.netbout.rest.ResourceMocker;
 import com.netbout.rest.StageCoordinatesMocker;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.IdentityMocker;
@@ -51,6 +53,7 @@ public final class LongBoutTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongBout obj = new LongBout(
+            (BoutRs) new ResourceMocker().mock(BoutRs.class),
             new HubMocker().mock(),
             new BoutMocker().titledAs("foo").mock(),
             new StageCoordinatesMocker().mock(),
