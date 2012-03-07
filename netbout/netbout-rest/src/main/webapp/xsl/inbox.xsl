@@ -67,10 +67,9 @@
                     </h1>
                 </header>
                 <p>
-                    <xsl:text>
-                        Netbout is the first in the world "<b>conversation-centric UI on demand</b>".
-                        Do you get it?
-                    </xsl:text>
+                    <xsl:text>Netbout is the first in the world "</xsl:text>
+                    <b><xsl:text>conversation-centric UI on demand</xsl:text></b>
+                    <xsl:text>". Do you get it?</xsl:text>
                 </p>
                 <p>
                     <xsl:text>
@@ -93,7 +92,8 @@
                         <textarea name="starter" style="width: 30em; height: 5em;" id="starter">
                             <xsl:text>&#10;</xsl:text>
                         </textarea>
-                        <input type="submit" value="Start"/>
+                        <label for="submit"><xsl:text> </xsl:text></label>
+                        <input type="submit" value="Start" id="submit"/>
                     </p>
                 </form>
                 <p>
