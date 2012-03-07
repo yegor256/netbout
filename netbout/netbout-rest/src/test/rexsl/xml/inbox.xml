@@ -47,7 +47,7 @@
         <name>William.Shakespeare</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
     </identity>
-    <keyword>some text</keyword>
+    <query>some text</query>
     <periods>
         <link rel="more" href="/xml/bout.xml">
             <title>5 days ago</title>

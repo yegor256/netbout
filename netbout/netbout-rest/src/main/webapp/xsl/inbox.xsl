@@ -111,13 +111,15 @@
                         </li>
                     </ul>
                 </xsl:if>
-                <nav>
-                    <ul class="bouts">
-                        <xsl:for-each select="/page/bouts/bout">
-                            <xsl:apply-templates select="." />
-                        </xsl:for-each>
-                    </ul>
-                </nav>
+                <xsl:if test="count(/page/bouts/bout) &gt; 0">
+                    <nav>
+                        <ul class="bouts">
+                            <xsl:for-each select="/page/bouts/bout">
+                                <xsl:apply-templates select="." />
+                            </xsl:for-each>
+                        </ul>
+                    </nav>
+                </xsl:if>
                 <xsl:if test="/page/periods[count(link) &gt; 0]">
                     <nav>
                         <ul class="periods">
