@@ -147,7 +147,7 @@
                         </xsl:attribute>
                         <xsl:if test="/page/query != ''">
                             <xsl:attribute name="autofocus">
-                                <xsl:text>true</xsl:text>
+                                <xsl:text>autofocus</xsl:text>
                             </xsl:attribute>
                         </xsl:if>
                     </input>

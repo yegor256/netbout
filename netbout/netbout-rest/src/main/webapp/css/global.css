@@ -102,6 +102,12 @@ textarea {
     overflow: hidden;
 }
 
+label {
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+    display: block;
+}
+
 /* error message to show */
 .error-message {
     position: relative;

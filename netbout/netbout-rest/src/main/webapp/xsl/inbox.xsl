@@ -67,15 +67,14 @@
                     </h1>
                 </header>
                 <p>
-                    <xsl:text>
-                        Netbout is the first system in the world
-                        that makes software help us to talk online (not vise versa).
-                    </xsl:text>
+                    <xsl:text>Netbout is the first in the world "</xsl:text>
+                    <b><xsl:text>conversation-centric UI on demand</xsl:text></b>
+                    <xsl:text>". Do you get it?</xsl:text>
                 </p>
                 <p>
                     <xsl:text>
                         Let's start with a simple conversation with someone from
-                        our team:
+                        our team, who will demonstrate and explain:
                     </xsl:text>
                 </p>
                 <form method="post">
@@ -83,19 +82,22 @@
                         <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                     </xsl:attribute>
                     <p>
-                        <div><xsl:text>We know who you are:</xsl:text></div>
-                        <div><input name="name" size="40" disabled="true">
+                        <label for="name"><xsl:text>We know who you are:</xsl:text></label>
+                        <input name="name" size="40" disabled="disabled" id="name">
                             <xsl:attribute name="value">
                                 <xsl:value-of select="/page/identity/alias"/>
                             </xsl:attribute>
-                        </input></div>
-                        <div><xsl:text>What we will talk about?</xsl:text></div>
-                        <div><textarea name="starter" style="width: 30em; height: 5em;"></textarea></div>
-                        <div><input type="submit" value="Start"/></div>
+                        </input>
+                        <label for="starter"><xsl:text>What we will talk about?</xsl:text></label>
+                        <textarea name="starter" style="width: 30em; height: 5em;" id="starter">
+                            <xsl:text>&#10;</xsl:text>
+                        </textarea>
+                        <label for="submit"><xsl:text> </xsl:text></label>
+                        <input type="submit" value="Start" id="submit"/>
                     </p>
                 </form>
                 <p>
-                    <xsl:text>Keep in mind, we are still testing :)</xsl:text>
+                    <xsl:text>Please, keep in mind that we are still testing :)</xsl:text>
                 </p>
             </xsl:when>
             <xsl:otherwise>
@@ -111,13 +113,15 @@
                         </li>
                     </ul>
                 </xsl:if>
-                <nav>
-                    <ul class="bouts">
-                        <xsl:for-each select="/page/bouts/bout">
-                            <xsl:apply-templates select="." />
-                        </xsl:for-each>
-                    </ul>
-                </nav>
+                <xsl:if test="count(/page/bouts/bout) &gt; 0">
+                    <nav>
+                        <ul class="bouts">
+                            <xsl:for-each select="/page/bouts/bout">
+                                <xsl:apply-templates select="." />
+                            </xsl:for-each>
+                        </ul>
+                    </nav>
+                </xsl:if>
                 <xsl:if test="/page/periods[count(link) &gt; 0]">
                     <nav>
                         <ul class="periods">

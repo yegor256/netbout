@@ -98,7 +98,7 @@
                 </xsl:attribute>
                 <p>
                     <textarea name="text" cols="80" rows="5">
-                        <xsl:comment>empty text area</xsl:comment>
+                        <xsl:text>&#10;</xsl:text>
                     </textarea>
                 </p>
                 <p>
