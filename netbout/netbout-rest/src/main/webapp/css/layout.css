@@ -122,7 +122,7 @@ body {
 
                 #right ul li {
                     font-size: 1.4em;
-                    font-weight: 500;
+                    font-weight: 600;
                     vertical-align: middle;
                 }
 
@@ -133,7 +133,7 @@ body {
                     }
 
                 #right ul li a {
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #4b4250;
                     text-decoration: none;
                 }

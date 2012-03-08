@@ -39,4 +39,21 @@
     <settings.of.your.profile>ваши персональные настройки</settings.of.your.profile>
     <Start>Начать</Start>
     <switch.to>переключить на</switch.to>
+    <back.to.inbox>назад к входящим</back.to.inbox>
+    <Start.later>Начать (позже)</Start.later>
+    <start.new.bout>начать новый разговор</start.new.bout>
+    <leave.right.now>выйти из системы</leave.right.now>
+    <click.here>нажмите здесь</click.here>
+    <We.recommend.to.reauthenticate>Рекомендуем войти в систему повторно</We.recommend.to.reauthenticate>
+    <sec>сек</sec>
+    <in>через</in>
+    <in.a.few.minutes>через некоторое время</in.a.few.minutes>
+    <the.server.is.busy>Сервер обновляет Ваши данные, поэтому некоторая
+        информация может быть недоступна. Попробуйте обновить страницу</the.server.is.busy>
+    <inbox>входящие</inbox>
+    <back.to.recent.bouts>назад к самым свежим разговорам</back.to.recent.bouts>
+    <no.title>без названия</no.title>
+    <new>новых</new>
+    <all.of.them>весь список</all.of.them>
+    <back.to.recent.messages>назад к свежим сообщениям</back.to.recent.messages>
 </texts>

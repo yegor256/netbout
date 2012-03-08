@@ -72,17 +72,19 @@
                     </xsl:if>
                     <xsl:if test="identity/eta != 0">
                         <aside class="error-message">
-                            <xsl:text>The server is currently updating your account,
-                                some data may look not as fresh as they should be. Try
-                                to refresh the page</xsl:text>
+                            <xsl:value-of select="$TEXTS/the.server.is.busy"/>
                             <xsl:choose>
                                 <xsl:when test="identity/eta &gt; 60 * 1000 * 1000 * 1000">
-                                    <xsl:text> in a few minutes</xsl:text>
+                                    <xsl:text> </xsl:text>
+                                    <xsl:value-of select="$TEXTS/in.a.few.minutes"/>
                                 </xsl:when>
                                 <xsl:when test="identity/eta &gt; 5 * 1000 * 1000 * 1000">
-                                    <xsl:text> in </xsl:text>
+                                    <xsl:text> </xsl:text>
+                                    <xsl:value-of select="$TEXTS/in"/>
+                                    <xsl:text> </xsl:text>
                                     <xsl:value-of select="round(identity/eta div (1000 * 1000 * 1000))"/>
-                                    <xsl:text> seconds</xsl:text>
+                                    <xsl:text> </xsl:text>
+                                    <xsl:value-of select="$TEXTS/sec"/>
                                 </xsl:when>
                             </xsl:choose>
                             <xsl:text>.</xsl:text>
@@ -90,12 +92,13 @@
                     </xsl:if>
                     <xsl:if test="links/link[@rel='re-login']">
                         <aside class="error-message">
-                            <xsl:text>We recommend you to re-authenticate yourself: </xsl:text>
+                            <xsl:value-of select="$TEXTS/We.recommend.to.reauthenticate"/>
+                            <xsl:text>: </xsl:text>
                             <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="links/link[@rel='re-login']/@href"/>
                                 </xsl:attribute>
-                                <xsl:text>click here</xsl:text>
+                                <xsl:value-of select="$TEXTS/click.here"/>
                             </a>
                             <xsl:text>.</xsl:text>
                         </aside>
@@ -132,7 +135,7 @@
                         <xsl:value-of select="links/link[@rel='home']/@href"/>
                     </xsl:attribute>
                     <xsl:attribute name="title">
-                        <xsl:text>back to inbox</xsl:text>
+                        <xsl:value-of select="$TEXTS/back.to.inbox"/>
                     </xsl:attribute>
                     <xsl:text> </xsl:text> <!-- for W3C compliance -->
                 </a>
@@ -174,7 +177,7 @@
                             <li>
                                 <xsl:choose>
                                     <xsl:when test="/page/bouts and count(/page/bouts/bout) = 0 and /page/query = ''">
-                                        <xsl:text>Start (later)</xsl:text>
+                                        <xsl:value-of select="$TEXTS/Start.later"/>
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <a>
@@ -182,7 +185,7 @@
                                                 <xsl:value-of select="links/link[@rel='start']/@href"/>
                                             </xsl:attribute>
                                             <xsl:attribute name="title">
-                                                <xsl:text>start new bout</xsl:text>
+                                                <xsl:value-of select="$TEXTS/start.new.bout"/>
                                             </xsl:attribute>
                                             <xsl:value-of select="$TEXTS/Start"/>
                                         </a>
@@ -200,7 +203,7 @@
                                     <xsl:value-of select="links/link[@rel='logout']/@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
-                                    <xsl:text>leave Netbout.com right now</xsl:text>
+                                    <xsl:value-of select="$TEXTS/leave.right.now"/>
                                 </xsl:attribute>
                                 <xsl:value-of select="$TEXTS/Logout"/>
                             </a>

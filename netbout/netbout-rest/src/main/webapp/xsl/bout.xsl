@@ -116,7 +116,7 @@
                         <xsl:attribute name="href">
                             <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                         </xsl:attribute>
-                        <xsl:text>back to recent messages</xsl:text>
+                        <xsl:value-of select="$TEXTS/back.to.recent.messages"/>
                     </a>
                 </li>
             </ul>
