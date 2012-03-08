@@ -58,10 +58,11 @@ public final class AuthMediatorTest {
                 Matchers.containsString(MediaType.APPLICATION_XML)
             )
             .returnBody(
-                // @checkstyle StringLiteralsConcatenation (6 lines)
+                // @checkstyle StringLiteralsConcatenation (7 lines)
                 "<page><identity>"
                 + "<aliases><alias>hello</alias></aliases>"
                 + "<authority>http://localhost</authority>"
+                + "<locale>RU</locale>"
                 + String.format("<name>%s</name>", iname)
                 + String.format("<photo>%s</photo>", photo)
                 + "</identity></page>"

@@ -33,6 +33,7 @@ import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Utils for netbout entities manipulations.
@@ -55,7 +56,11 @@ public final class NetboutUtils {
      * @return The alias
      */
     public static String aliasOf(final Identity identity) {
-        final Iterator<String> iter = identity.profile().aliases().iterator();
+        final Profile profile = identity.profile();
+        assert profile != null : "Profile is NULL";
+        final Set<String> aliases = profile.aliases();
+        assert aliases != null : "Set of aliases in the profile is NULL";
+        final Iterator<String> iter = aliases.iterator();
         String alias;
         if (iter.hasNext()) {
             alias = iter.next();

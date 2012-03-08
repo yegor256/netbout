@@ -111,10 +111,13 @@ public final class EmailFarm implements IdentityAware {
         final Bout bout = this.identity.bout(bnum);
         final Message message = bout.message(mnum);
         for (Participant participant : bout.participants()) {
-            if (this.NID.equals(participant.identity().name().nid())
-                && !message.author().equals(participant.identity())) {
-                this.send(participant, message);
+            if (!this.NID.equals(participant.identity().name().nid())) {
+                continue;
             }
+            if (message.author().equals(participant.identity())) {
+                continue;
+            }
+            this.send(participant, message);
         }
     }
 

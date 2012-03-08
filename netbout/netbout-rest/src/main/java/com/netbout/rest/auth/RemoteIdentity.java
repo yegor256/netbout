@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -132,8 +133,8 @@ public final class RemoteIdentity implements Identity {
      * Set photo, method for JAXB unmarshaller.
      * @param url The URL
      */
-    @XmlElement(name = "photo")
-    public void setJaxbPhoto(final String url) {
+    @XmlElement
+    public void setPhoto(final String url) {
         try {
             this.iprofile.setPhoto(new URL(url));
         } catch (java.net.MalformedURLException ex) {
@@ -144,6 +145,15 @@ public final class RemoteIdentity implements Identity {
                 )
             );
         }
+    }
+
+    /**
+     * Set locale, method for JAXB unmarshaller.
+     * @param url The URL
+     */
+    @XmlElement
+    public void setLocale(final String locale) {
+        this.iprofile.setLocale(new Locale(locale));
     }
 
     /**

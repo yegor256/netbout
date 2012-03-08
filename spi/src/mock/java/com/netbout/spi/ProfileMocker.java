@@ -59,7 +59,7 @@ public final class ProfileMocker {
     private final Profile profile = Mockito.mock(Profile.class);
 
     /**
-     * Aliases.
+     * Aliases (should be an array because we use #add(int,String) method.
      */
     private final List<String> aliases = new ArrayList<String>();
 
@@ -67,7 +67,7 @@ public final class ProfileMocker {
      * Public ctor.
      */
     public ProfileMocker() {
-        this.withPhoto("http://localhost/set-by-IdentityMocker.png");
+        this.withPhoto("http://localhost/set-by-ProfileMocker.png");
         this.withLocale(Locale.ENGLISH);
         Mockito.doAnswer(
             new Answer() {

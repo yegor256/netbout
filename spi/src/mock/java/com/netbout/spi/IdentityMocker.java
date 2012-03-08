@@ -75,11 +75,7 @@ public final class IdentityMocker {
     public IdentityMocker() {
         this.namedAs(new UrnMocker().mock());
         this.belongsTo("http://localhost/set-by-IdentityMocker");
-        this.withProfile(
-            new ProfileMocker()
-                .withPhoto("http://localhost/set-by-IdentityMocker.png")
-                .mock()
-        );
+        this.withProfile(new ProfileMocker().mock());
         Mockito.doAnswer(
             new Answer() {
                 @Override

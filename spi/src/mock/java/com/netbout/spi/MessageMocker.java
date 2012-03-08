@@ -95,6 +95,7 @@ public final class MessageMocker {
     public MessageMocker withAuthor(final Urn name) {
         final Identity author = Mockito.mock(Identity.class);
         Mockito.doReturn(name).when(author).name();
+        Mockito.doReturn(new ProfileMocker().mock()).when(author).profile();
         Mockito.doReturn(author).when(this.message).author();
         return this;
     }
