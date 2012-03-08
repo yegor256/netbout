@@ -30,17 +30,12 @@ import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Profile;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.regex.Pattern;
 
 /**
  * Identity.
@@ -50,12 +45,6 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public final class HubIdentity implements Identity {
-
-    /**
-     * Default photo of identity.
-     */
-    private static final String DEFAULT_PHOTO =
-        "http://img.netbout.com/unknown.png";
 
     /**
      * The hub.
@@ -68,14 +57,9 @@ public final class HubIdentity implements Identity {
     private final transient Urn iname;
 
     /**
-     * The photo.
+     * The profile.
      */
-    private transient URL iphoto;
-
-    /**
-     * List of aliases.
-     */
-    private transient Set<String> ialiases;
+    private final transient Profile iprofile;
 
     /**
      * Public ctor.
@@ -85,6 +69,7 @@ public final class HubIdentity implements Identity {
     public HubIdentity(final PowerHub ihub, final Urn name) {
         this.hub = ihub;
         this.iname = name;
+        this.iprofile = new HubProfile(ihub, this);
     }
 
     /**
@@ -200,39 +185,8 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public URL photo() {
-        synchronized (this) {
-            if (this.iphoto == null) {
-                final URL url = this.hub.make("get-identity-photo")
-                    .synchronously()
-                    .arg(this.name())
-                    .asDefault(this.DEFAULT_PHOTO)
-                    .exec();
-                this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
-            }
-            return this.iphoto;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPhoto(final URL url) {
-        synchronized (this) {
-            this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
-        }
-        this.hub.make("identity-mentioned")
-            .synchronously()
-            .arg(this.name())
-            .asDefault(true)
-            .exec();
-        this.hub.make("changed-identity-photo")
-            .synchronously()
-            .arg(this.name())
-            .arg(this.iphoto)
-            .asDefault(true)
-            .exec();
+    public Profile profile() {
+        return this.iprofile;
     }
 
     /**
@@ -266,90 +220,6 @@ public final class HubIdentity implements Identity {
             friends.size()
         );
         return friends;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> aliases() {
-        final Set<String> list = new TreeSet<String>(
-            new Comparator<String>() {
-                private final transient Pattern pattern =
-                    Pattern.compile("[a-zA-Z ]+");
-                @Override
-                public int compare(final String left, final String right) {
-                    int result;
-                    if (this.pattern.matcher(left).matches()) {
-                        result = -1;
-                    } else {
-                        result = 1;
-                    }
-                    return result;
-                }
-            }
-        );
-        list.addAll(this.myAliases());
-        Logger.debug(
-            this,
-            "#aliases(): %d returned",
-            list.size()
-        );
-        return list;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        if (alias == null || alias.isEmpty()) {
-            throw new IllegalArgumentException("alias can't be empty");
-        }
-        synchronized (this) {
-            if (this.myAliases().contains(alias)) {
-                Logger.debug(
-                    this,
-                    "#alias('%s'): it's already set for '%s'",
-                    alias,
-                    this.name()
-                );
-            } else {
-                this.hub.make("added-identity-alias")
-                    .asap()
-                    .arg(this.name())
-                    .arg(alias)
-                    .asDefault(true)
-                    .exec();
-                Logger.info(
-                    this,
-                    "Alias '%s' added for '%s'",
-                    alias,
-                    this.name()
-                );
-                this.myAliases().add(alias);
-            }
-        }
-    }
-
-    /**
-     * Returns a link to the list of aliases.
-     * @return The link to the list of them
-     */
-    private Set<String> myAliases() {
-        synchronized (this) {
-            if (this.ialiases == null) {
-                this.ialiases = new CopyOnWriteArraySet<String>(
-                    (List<String>) this.hub
-                        .make("get-aliases-of-identity")
-                        .synchronously()
-                        .arg(this.name())
-                        .asDefault(new ArrayList<String>())
-                        .exec()
-                );
-            }
-        }
-        return this.ialiases;
     }
 
 }
