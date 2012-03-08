@@ -55,7 +55,7 @@ public final class NetboutUtils {
      * @return The alias
      */
     public static String aliasOf(final Identity identity) {
-        final Iterator<String> iter = identity.aliases().iterator();
+        final Iterator<String> iter = identity.profile().aliases().iterator();
         String alias;
         if (iter.hasNext()) {
             alias = iter.next();

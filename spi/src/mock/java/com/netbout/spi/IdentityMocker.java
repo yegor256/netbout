@@ -58,11 +58,6 @@ public final class IdentityMocker {
     private final Identity identity = Mockito.mock(Identity.class);
 
     /**
-     * Aliases.
-     */
-    private final List<String> aliases = new ArrayList<String>();
-
-    /**
      * All bouts.
      */
     private final SortedMap<Long, Bout> bouts =
@@ -80,15 +75,11 @@ public final class IdentityMocker {
     public IdentityMocker() {
         this.namedAs(new UrnMocker().mock());
         this.belongsTo("http://localhost/set-by-IdentityMocker");
-        this.withPhoto("http://localhost/set-by-IdentityMocker.png");
-        Mockito.doAnswer(
-            new Answer() {
-                @Override
-                public Object answer(final InvocationOnMock invocation) {
-                    return new HashSet(IdentityMocker.this.aliases);
-                }
-            }
-        ).when(this.identity).aliases();
+        this.withProfile(
+            new ProfileMocker()
+                .withPhoto("http://localhost/set-by-IdentityMocker.png")
+                .mock()
+        );
         Mockito.doAnswer(
             new Answer() {
                 @Override
@@ -176,26 +167,12 @@ public final class IdentityMocker {
     }
 
     /**
-     * With this alias.
-     * @param alias The alias
+     * With this profile.
+     * @param profile The profile
      * @return This object
      */
-    public IdentityMocker withAlias(final String alias) {
-        this.aliases.add(0, alias);
-        return this;
-    }
-
-    /**
-     * With this photo.
-     * @param photo The photo
-     * @return This object
-     */
-    public IdentityMocker withPhoto(final String photo) {
-        try {
-            Mockito.doReturn(new URL(photo)).when(this.identity).photo();
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+    public IdentityMocker withProfile(final Profile profile) {
+        Mockito.doReturn(profile).when(this.identity).profile();
         return this;
     }
 
@@ -241,9 +218,6 @@ public final class IdentityMocker {
         if (this.bouts.isEmpty()) {
             final Long num = Math.abs(new Random().nextLong());
             this.withBout(num, new BoutMocker().withNumber(num).mock());
-        }
-        if (this.aliases.isEmpty()) {
-            this.withAlias("test identity alias set by IdentityMocker");
         }
         return this.identity;
     }

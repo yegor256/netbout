@@ -60,7 +60,9 @@ public final class IdentityTest {
     @Test
     public void canHaveAnAliasMocked() throws Exception {
         final String alias = "some alias";
-        final Identity identity = new IdentityMocker().withAlias(alias).mock();
+        final Identity identity = new IdentityMocker()
+            .withProfile(new ProfileMocker().withAlias(alias).mock())
+            .mock();
         MatcherAssert.assertThat(
             NetboutUtils.aliasOf(identity),
             Matchers.equalTo(alias)

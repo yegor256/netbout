@@ -30,81 +30,53 @@
 package com.netbout.spi;
 
 import java.net.URL;
+import java.util.Locale;
 import java.util.Set;
 
 /**
- * The identity of the person in a bout.
+ * Profile of identity.
  *
  * <p>Instances of this interface are thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Identity extends Comparable<Identity> {
+public interface Profile {
 
     /**
-     * How many milliseconds we should way before this object becomes fully
-     * available for requests (if you make a request earlier you may receive
-     * invalid data or even a runtime exception).
-     * @return The number of milliseconds we recommend to wait before making
-     *  any manipulations with this object (and all other child objects, like
-     *  its bouts, messages, etc.)
+     * Language.
+     * @return The language we speak with this identity
      */
-    Long eta();
+    Locale locale();
 
     /**
-     * Who validated this user.
-     * @return The URL of the authority
+     * Set locale for this identity.
+     * @param locale The language we should speak with this identity
      */
-    URL authority();
+    void setLocale(Locale locale);
 
     /**
-     * Get name of the identity, which is unique in the system.
-     * @return The name of the identity
+     * Get a photo of this identity.
+     * @return The URL of the photo
      */
-    Urn name();
+    URL photo();
 
     /**
-     * Start new bout.
-     * @return The bout just created
+     * Set photo of the identity.
+     * @param photo The photo
      */
-    Bout start();
+    void setPhoto(URL photo);
 
     /**
-     * Get an ordered list of all bouts this identity is taking
-     * participation in.
-     * @param query Search query, if necessary
-     * @return The list of bouts
+     * Get all aliases.
+     * @return List of all aliases
      */
-    Iterable<Bout> inbox(String query);
+    Set<String> aliases();
 
     /**
-     * Get bout by its unique ID.
-     * @param number The number of the bout
-     * @return The bout
-     * @throws BoutNotFoundException If this bout doesn't exist
+     * Add new alias.
+     * @param alias The alias
      */
-    Bout bout(Long number) throws BoutNotFoundException;
-
-    /**
-     * Find another identity by name.
-     * @param name Unique name of identity
-     * @return The identity just found
-     * @throws UnreachableUrnException If such a friend can't be reached
-     */
-    Identity friend(Urn name) throws UnreachableUrnException;
-
-    /**
-     * Find friends by keyword.
-     * @param keyword The keyword
-     * @return The list of identities found
-     */
-    Set<Identity> friends(String keyword);
-
-    /**
-     * Get profile.
-     * @return The profile of this identity
-     */
-    Profile profile();
+    void alias(String alias);
 
 }
