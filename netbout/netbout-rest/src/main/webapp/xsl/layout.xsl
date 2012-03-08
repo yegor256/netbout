@@ -184,7 +184,7 @@
                                             <xsl:attribute name="title">
                                                 <xsl:text>start new bout</xsl:text>
                                             </xsl:attribute>
-                                            <xsl:text>Start</xsl:text>
+                                            <xsl:value-of select="$TEXTS/Start"/>
                                         </a>
                                         <span class="start"><xsl:text>+</xsl:text></span>
                                     </xsl:otherwise>
@@ -192,7 +192,7 @@
                             </li>
                         </xsl:if>
                         <li>
-                            <xsl:text>About</xsl:text>
+                            <xsl:value-of select="$TEXTS/About"/>
                         </li>
                         <li>
                             <a>
@@ -202,7 +202,7 @@
                                 <xsl:attribute name="title">
                                     <xsl:text>leave Netbout.com right now</xsl:text>
                                 </xsl:attribute>
-                                <xsl:text>Logout</xsl:text>
+                                <xsl:value-of select="$TEXTS/Logout"/>
                             </a>
                         </li>
                     </ul>
@@ -219,7 +219,7 @@
                         <xsl:value-of select="/page/links/link[@rel='profile']/@href"/>
                     </xsl:attribute>
                     <xsl:attribute name="title">
-                        <xsl:text>your profile and settings</xsl:text>
+                        <xsl:value-of select="$TEXTS/settings.of.your.profile"/>
                     </xsl:attribute>
                     <xsl:call-template name="crop">
                         <xsl:with-param name="text" select="/page/identity/alias" />

@@ -69,20 +69,28 @@ public final class ProfileRs extends AbstractRs {
 
     /**
      * Switch to another language.
-     * @param locale The locale to switch to
+     * @param text The locale to switch to
      * @return The JAX-RS response
      */
     @GET
     @Path("/toggle")
-    public Response toggle(@QueryParam("l") final String locale) {
-        if (locale == null) {
+    public Response toggle(@QueryParam("l") final String text) {
+        if (text == null) {
             throw new ForwardException(
                 this,
                 this.self(),
-                "Query param 'locale' missed"
+                "Query param 'l' missed (with locale to set)"
             );
         }
-        this.identity().profile().setLocale(LocaleUtils.toLocale(locale));
+        final Locale locale = LocaleUtils.toLocale(text);
+        if (!locale.toString().matches("en|ru|zh_CN")) {
+            throw new ForwardException(
+                this,
+                this.self(),
+                String.format("Unsupported locale: '%s'", text)
+            );
+        }
+        this.identity().profile().setLocale(locale);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

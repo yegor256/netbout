@@ -35,11 +35,14 @@
 
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
+    <xsl:param name="TEXTS"
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+
     <xsl:include href="/xsl/layout.xsl" />
 
     <xsl:template name="head">
         <title>
-            <xsl:text>profile</xsl:text>
+            <xsl:value-of select="$TEXTS/profile"/>
         </title>
         <link href="/css/profile.css" rel="stylesheet" type="text/css"/>
     </xsl:template>
@@ -47,7 +50,7 @@
     <xsl:template name="content">
         <header>
             <h1>
-                <span class="title"><xsl:text>Profile settings</xsl:text></span>
+                <span class="title"><xsl:value-of select="$TEXTS/Profile.settings"/></span>
             </h1>
         </header>
         <p>
@@ -61,11 +64,13 @@
             </img>
         </p>
         <p>
-            <xsl:text>Identity: </xsl:text>
+            <xsl:value-of select="$TEXTS/Identity"/>
+            <xsl:text>: </xsl:text>
             <span class="tt"><xsl:value-of select="/page/identity/name"/></span>
         </p>
         <p>
-            <xsl:text>AKA: </xsl:text>
+            <xsl:value-of select="$TEXTS/AKA"/>
+            <xsl:text>: </xsl:text>
             <xsl:for-each select="/page/identity/aliases/alias">
                 <xsl:if test="position() &gt; 1">
                     <xsl:text>, </xsl:text>
@@ -81,7 +86,8 @@
             </xsl:for-each>
         </p>
         <p>
-            <xsl:text>Language: </xsl:text>
+            <xsl:value-of select="$TEXTS/Language"/>
+            <xsl:text>: </xsl:text>
             <img class="flag">
                 <xsl:attribute name="src">
                     <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
@@ -92,7 +98,9 @@
                     <xsl:value-of select="/page/identity/locale"/>
                 </xsl:attribute>
             </img>
-            <xsl:text> switch to </xsl:text>
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="$TEXTS/switch.to"/>
+            <xsl:text> : </xsl:text>
             <xsl:for-each select="/page/profile/locales/link">
                 <xsl:if test="locale != /page/identity/locale">
                     <a>

@@ -35,6 +35,9 @@
 
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
+    <xsl:param name="TEXTS"
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
 
