@@ -122,7 +122,7 @@ public final class LongParticipant {
      */
     @XmlElement
     public URL getPhoto() {
-        return this.participant.identity().photo();
+        return this.participant.identity().profile().photo();
     }
 
     /**

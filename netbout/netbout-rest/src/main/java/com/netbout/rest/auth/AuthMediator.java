@@ -84,7 +84,7 @@ public final class AuthMediator {
         final RemoteIdentity identity = new RemoteIdentity();
         identity.setAuthority("http://www.netbout.com/nb");
         identity.setName(iname.toString());
-        identity.setJaxbPhoto("http://img.netbout.com/unknown.png");
+        identity.setJaxbPhoto("http://cdn.netbout.com/unknown.png");
         return identity;
     }
 

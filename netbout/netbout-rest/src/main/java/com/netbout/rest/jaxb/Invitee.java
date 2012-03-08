@@ -110,7 +110,7 @@ public final class Invitee {
      */
     @XmlElement
     public URL getPhoto() {
-        return this.identity.photo();
+        return this.identity.profile().photo();
     }
 
 }

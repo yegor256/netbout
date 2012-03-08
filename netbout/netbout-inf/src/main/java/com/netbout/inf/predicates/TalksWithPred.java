@@ -91,9 +91,10 @@ public final class TalksWithPred extends AbstractVarargPred {
     /**
      * Extracts necessary data from message.
      * @param msg The message to extract from
+     * @param index The index to extract to
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public static void extract(final Message msg) {
+    public static void extract(final Message msg, final Index index) {
         final Long bout = msg.bout().number();
         TalksWithPred.BOUTS.putIfAbsent(
             bout,

@@ -84,8 +84,9 @@ public final class NsPred extends AbstractVarargPred {
     /**
      * Extracts necessary data from message.
      * @param from The message to extract from
+     * @param index The index to extract to
      */
-    public static void extract(final Message from) {
+    public static void extract(final Message from, final Index index) {
         final DomParser parser = new DomParser(from.text());
         if (parser.isXml()) {
             Urn namespace;

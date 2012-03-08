@@ -26,10 +26,7 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
@@ -37,133 +34,94 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * Resolved identity, instantiated in {@link NbRs#authenticate(Urn,String)},
- * {@link EmailRs#resolve(Urn)}, and {@link FacebookRs#authenticate(String)}.
+ * Resolved profile, instantiated in {@link ResolvedIdentity}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
-final class ResolvedIdentity implements Identity {
+final class ResolvedProfile implements Profile {
 
     /**
-     * Authority.
+     * Locale.
      */
-    private final transient URL iauthority;
+    private final transient Locale ilocale;
 
     /**
-     * The name of it.
+     * Photo.
      */
-    private final transient Urn iname;
+    private final transient URL iphoto;
 
     /**
-     * Profile.
+     * Aliases.
      */
-    private final transient ResolvedProfile iprofile;
+    private final transient Set<String> ialiases = new HashSet<String>();
 
     /**
      * Public ctor.
-     * @param authority The authority
-     * @param name The name of it
+     * @param locale The locale
      * @param photo Its photo
      */
-    public ResolvedIdentity(final URL authority, final Urn name,
-        final URL photo) {
-        this.iauthority = authority;
-        this.iname = name;
-        this.iprofile = new ResolvedProfile(Locale.ENGLISH, photo);
+    public ResolvedProfile(final Locale locale, final URL photo) {
+        this.ilocale = locale;
+        this.iphoto = photo;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public URL authority() {
-        return this.iauthority;
+    public URL photo() {
+        return this.iphoto;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
-        return this.iname;
+    public Locale locale() {
+        return this.ilocale;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
-        return this.iprofile;
+    public Set<String> aliases() {
+        return this.ialiases;
     }
 
     /**
      * Add new alias.
      * @param alias The alias to add
-     * @return This object
      */
-    public ResolvedIdentity addAlias(final String alias) {
+    public void addAlias(final String alias) {
         if (!alias.isEmpty()) {
-            this.iprofile.addAlias(alias);
+            this.ialiases.add(alias);
         }
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity identity) {
-        throw new UnsupportedOperationException("#compareTo()");
+    public void setLocale(final Locale locale) {
+        throw new UnsupportedOperationException("#setLocale()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long eta() {
-        return 0L;
+    public void setPhoto(final URL pic) {
+        throw new UnsupportedOperationException("#setPhoto()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Bout start() {
-        throw new UnsupportedOperationException("#start()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout(final Long number) {
-        throw new UnsupportedOperationException("#bout()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Bout> inbox(final String query) {
-        throw new UnsupportedOperationException("#inbox()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity friend(final Urn name) {
-        throw new UnsupportedOperationException("#friend()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Identity> friends(final String keyword) {
-        throw new UnsupportedOperationException("#friends()");
+    public void alias(final String alias) {
+        throw new UnsupportedOperationException("#alias()");
     }
 
 }

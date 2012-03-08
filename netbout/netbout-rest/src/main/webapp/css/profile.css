@@ -27,8 +27,21 @@
 
 /* JIGSAW IGNORE: there is some problem in w3c server now */
 
+/* photo of identity */
+img.photo {
+    /* originally its size is unknown */
+    width: 5em;
+    float: left;
+    border-bottom: 0.1em solid #9c9c9c;
+    border-right: 0.1em solid #9c9c9c;
+    margin-right: 1em;
+    margin-bottom: 1em;
+}
+
 /* flag */
 img.flag {
-    width: 2.4em;
+    /* originally it is 46x33 pixel, font-size here is 1.4em */
+    width: 1.643em; /* x1.4 = 23px */
     vertical-align: middle;
+    border: 0.1em solid #f3f3f1;
 }

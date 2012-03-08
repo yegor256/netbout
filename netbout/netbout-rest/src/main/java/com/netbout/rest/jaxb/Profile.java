@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -83,35 +84,26 @@ public final class Profile {
     }
 
     /**
-     * Current language.
-     * @return The language code
-     */
-    @XmlElement
-    public String getLanguage() {
-        return "EN";
-    }
-
-    /**
      * List of languages.
      * @return The collection of links to them
      */
     @XmlElement(name = "link")
-    @XmlElementWrapper(name = "languages")
+    @XmlElementWrapper(name = "locales")
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Collection<Link> getLanguages() {
-        final String[] codes = new String[] {
-            "EN", "RU", "CN",
+    public Collection<Link> getLocales() {
+        final Locale[] locales = new Locale[] {
+            Locale.ENGLISH, Locale.CHINA, new Locale("RU")
         };
-        final Collection<Link> links = new ArrayList<Link>(codes.length);
-        for (String code : codes) {
+        final Collection<Link> links = new ArrayList<Link>(locales.length);
+        for (Locale locale : locales) {
             final Link link = new Link(
-                "language",
+                "locale",
                 this.builder.clone()
                     .path("/toggle")
-                    .queryParam("lang", "{lang}")
-                    .build(code)
+                    .queryParam("l", "{locale}")
+                    .build(locale)
             );
-            link.add(new JaxbBundle("code", code).element());
+            link.add(new JaxbBundle("locale", locale).element());
             links.add(link);
         }
         return links;

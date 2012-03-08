@@ -75,11 +75,11 @@ public final class AuthMediatorTest {
             .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-1");
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(iname));
         MatcherAssert.assertThat(
-            identity.photo().toString(),
+            identity.profile().photo().toString(),
             Matchers.equalTo(photo)
         );
         MatcherAssert.assertThat(
-            identity.aliases().size(),
+            identity.profile().aliases().size(),
             Matchers.equalTo(1)
         );
     }

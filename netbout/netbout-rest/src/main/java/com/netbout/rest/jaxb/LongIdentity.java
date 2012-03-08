@@ -76,6 +76,15 @@ public class LongIdentity {
     }
 
     /**
+     * Get locale.
+     * @return The locale
+     */
+    @XmlElement
+    public final String getLocale() {
+        return this.person.profile().locale().toString();
+    }
+
+    /**
      * Get ETA.
      * @return The value in milliseconds
      */
@@ -108,7 +117,7 @@ public class LongIdentity {
      */
     @XmlElement
     public final URL getPhoto() {
-        return this.person.photo();
+        return this.person.profile().photo();
     }
 
     /**
@@ -118,7 +127,7 @@ public class LongIdentity {
     @XmlElement(name = "alias")
     @XmlElementWrapper(name = "aliases")
     public final Collection<String> getAliases() {
-        return this.person.aliases();
+        return this.person.profile().aliases();
     }
 
     /**

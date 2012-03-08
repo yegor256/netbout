@@ -87,8 +87,9 @@ public final class EqualPred extends AbstractVarargPred {
     /**
      * Extracts necessary data from message.
      * @param msg The message to extract from
+     * @param index The index to extract to
      */
-    public static void extract(final Message msg) {
+    public static void extract(final Message msg, final Index index) {
         EqualPred.var(
             VariableAtom.BOUT_NUMBER,
             new NumberAtom(msg.bout().number())

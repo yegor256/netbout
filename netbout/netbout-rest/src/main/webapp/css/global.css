@@ -70,7 +70,14 @@ ol {
 .tt,
 .fixed,
 pre {
-    font-family: 'Courier New', monospace;
+    font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+    background-color: #f3f3f1;
+}
+
+/* inline fixed text */
+.tt {
+    padding-left: 0.4em;
+    padding-right: 0.4em;
 }
 
 /* fixed block */

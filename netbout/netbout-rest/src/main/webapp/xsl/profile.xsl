@@ -51,35 +51,65 @@
             </h1>
         </header>
         <p>
+            <img class="photo">
+                <xsl:attribute name="src">
+                    <xsl:value-of select="/page/identity/photo"/>
+                </xsl:attribute>
+                <xsl:attribute name="alt">
+                    <xsl:value-of select="/page/identity/alias"/>
+                </xsl:attribute>
+            </img>
+        </p>
+        <p>
+            <xsl:text>Identity: </xsl:text>
+            <span class="tt"><xsl:value-of select="/page/identity/name"/></span>
+        </p>
+        <p>
+            <xsl:text>AKA: </xsl:text>
+            <xsl:for-each select="/page/identity/aliases/alias">
+                <xsl:if test="position() &gt; 1">
+                    <xsl:text>, </xsl:text>
+                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="/page/identity/alias = .">
+                        <b><xsl:value-of select="."/></b>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="."/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+        </p>
+        <p>
             <xsl:text>Language: </xsl:text>
             <img class="flag">
                 <xsl:attribute name="src">
                     <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
-                    <xsl:value-of select="/page/profile/language"/>
+                    <xsl:value-of select="/page/identity/locale"/>
                     <xsl:text>.png</xsl:text>
                 </xsl:attribute>
                 <xsl:attribute name="alt">
-                    <xsl:value-of select="/page/profile/language"/>
+                    <xsl:value-of select="/page/identity/locale"/>
                 </xsl:attribute>
             </img>
             <xsl:text> switch to </xsl:text>
-            <xsl:for-each select="/page/profile/languages/link">
-                <xsl:if test="code != /page/profile/language">
+            <xsl:for-each select="/page/profile/locales/link">
+                <xsl:if test="locale != /page/identity/locale">
                     <a>
                         <xsl:attribute name="href">
                             <xsl:value-of select="@href"/>
                         </xsl:attribute>
                         <xsl:attribute name="title">
-                            <xsl:value-of select="code" />
+                            <xsl:value-of select="locale" />
                         </xsl:attribute>
                         <img class="flag">
                             <xsl:attribute name="src">
                                 <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
-                                <xsl:value-of select="code"/>
+                                <xsl:value-of select="locale"/>
                                 <xsl:text>.png</xsl:text>
                             </xsl:attribute>
                             <xsl:attribute name="alt">
-                                <xsl:value-of select="code"/>
+                                <xsl:value-of select="locale"/>
                             </xsl:attribute>
                         </img>
                     </a>

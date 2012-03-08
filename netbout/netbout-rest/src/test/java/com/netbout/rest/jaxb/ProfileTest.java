@@ -55,8 +55,8 @@ public final class ProfileTest {
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),
             Matchers.allOf(
-                XhtmlMatchers.hasXPath("/profile/language"),
-                XhtmlMatchers.hasXPath("//languages/link[@rel='language']")
+                XhtmlMatchers.hasXPath("/profile/locale"),
+                XhtmlMatchers.hasXPath("//locales/link[@rel='locale']")
             )
         );
     }

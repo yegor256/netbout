@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -24,26 +23,58 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.inf;
+
+import com.netbout.spi.Message;
+
+/**
+ * Index.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: stage.xsl 1221 2012-01-30 06:02:11Z yegor256@yahoo.com $
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:nb="http://www.netbout.com"
-    version="2.0" exclude-result-prefixes="xs">
+ * @version $Id$
+ */
+public interface Index {
 
-    <xsl:template match="stage" mode="head">
-        <!-- nothing -->
-    </xsl:template>
+    /**
+     * Aviable keys.
+     */
+    public static enum Key {
+        /**
+         * Bout number.
+         */
+        BOUT_NUMBER,
+        /**
+         * Bout number.
+         */
+        BOUT_NUMBER,
+        /**
+         * XML namespace.
+         */
+        NAMESPACE;
+    }
 
-    <xsl:template match="stage">
-        <p>Infinity statistics:</p>
-        <p class="fixed"><xsl:value-of select="data/text"/></p>
-        <p class="fixed"><xsl:value-of select="data/msg"/></p>
-        <p class="fixed"><xsl:value-of select="data/server"/></p>
-    </xsl:template>
+    /**
+     * Add new message with this property.
+     * @param name Name of property
+     * @param value Value of it
+     * @param message The message to associate
+     */
+    void add(Key name, String value, Object );
 
-</xsl:stylesheet>
+    /**
+     * Fetch all messages with this name and property.
+     * @param name Name of property
+     * @param value Value of it
+     * @return Collection of message numbers
+     */
+    Collection<Long> fetch(Key name, String value);
+
+    /**
+     * Remove properties from the given message.
+     * @param name Name of property
+     * @param message The message
+     */
+    void remove(Key name, Message message);
+
+}

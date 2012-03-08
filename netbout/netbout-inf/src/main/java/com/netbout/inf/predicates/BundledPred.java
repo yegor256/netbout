@@ -83,8 +83,9 @@ public final class BundledPred extends AbstractVarargPred {
     /**
      * Extracts necessary data from message.
      * @param msg The message to extract from
+     * @param index The index to extract to
      */
-    public static void extract(final Message msg) {
+    public static void extract(final Message msg, final Index index) {
         final Set<Urn> names = new TreeSet<Urn>();
         for (Participant dude : msg.bout().participants()) {
             names.add(dude.identity().name());

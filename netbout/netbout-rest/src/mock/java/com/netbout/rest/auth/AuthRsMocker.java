@@ -24,9 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.auth;
 
-import com.netbout.rest.auth.ResolvedIdentity;
+import com.netbout.rest.AbstractPage;
+import com.netbout.rest.AbstractRs;
+import com.netbout.rest.ForwardException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;

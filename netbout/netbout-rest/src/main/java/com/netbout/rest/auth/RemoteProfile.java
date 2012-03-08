@@ -24,84 +24,95 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.rest.auth;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.Meta;
-import com.netbout.inf.PredicateException;
-import com.netbout.spi.Message;
+import com.netbout.spi.Profile;
+import java.net.URL;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Locale;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
- * Allows messages with unique value of parameter.
+ * Remote profile, instantiated by {@link RemoteIdentity}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "unique", extracts = true)
-public final class UniquePred extends AbstractVarargPred {
+final class RemoteProfile implements Profile {
 
     /**
-     * List of already passed bout numbers.
+     * Photo of identity.
      */
-    private final transient Set<Long> passed = new HashSet<Long>();
+    private transient URL iphoto;
 
     /**
-     * Public ctor.
-     * @param args The arguments
+     * Locale of identity.
      */
-    public UniquePred(final List<Atom> args) {
-        super(args);
-        if (!"bout.number".equals(this.arg(0).value())) {
-            throw new PredicateException(
-                "Only $bout.number can be used in (unique)"
-            );
+    private transient Locale ilocale;
+
+    /**
+     * Aliases.
+     */
+    private final transient Set<String> ialiases = new HashSet<String>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL photo() {
+        return this.iphoto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPhoto(final URL pic) {
+        this.iphoto = pic;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Locale locale() {
+        return this.ilocale;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLocale(final Locale locale) {
+        this.ilocale = locale;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> aliases() {
+        return this.ialiases;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void alias(final String alias) {
+        this.ialiases.add(alias);
+    }
+
+    /**
+     * Validate and throw exception if there are some problems.
+     */
+    public void validate() {
+        if (this.iphoto == null) {
+            throw new IllegalStateException("/identity/photo is absent");
         }
-    }
-
-    /**
-     * Extracts necessary data from message.
-     * @param msg The message to extract from
-     * @param dest The index to extract to
-     */
-    public static void extract(final Message msg, final Index dest) {
-        dest.add(Index.Key.BOUT_NUMBER, msg.bout().number(), msg);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long next() {
-        throw new PredicateException("UNIQUE#next()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        throw new PredicateException("UNIQUE#hasNext()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean contains(final Long message) {
-        final Long bout = this.index.fetch(Index.Key.BOUT_NUMBER, message);
-        boolean allow;
-        if (this.passed.contains(bout)) {
-            allow = false;
-        } else {
-            this.passed.add(bout);
-            allow = true;
+        if (this.ilocale == null) {
+            throw new IllegalStateException("/identity/locale is absent");
         }
-        return allow;
     }
 
 }

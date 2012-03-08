@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -67,6 +68,7 @@ public final class ProfileMocker {
      */
     public ProfileMocker() {
         this.withPhoto("http://localhost/set-by-IdentityMocker.png");
+        this.withLocale(Locale.ENGLISH);
         Mockito.doAnswer(
             new Answer() {
                 @Override
@@ -84,6 +86,16 @@ public final class ProfileMocker {
      */
     public ProfileMocker withAlias(final String alias) {
         this.aliases.add(0, alias);
+        return this;
+    }
+
+    /**
+     * With this locale.
+     * @param locale The locale
+     * @return This object
+     */
+    public ProfileMocker withLocale(final Locale locale) {
+        Mockito.doReturn(locale).when(this.profile).locale();
         return this;
     }
 
