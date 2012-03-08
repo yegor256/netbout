@@ -165,10 +165,7 @@
                                     <xsl:value-of select="identity/alias"/>
                                 </xsl:attribute>
                             </img>
-                            <xsl:call-template name="crop">
-                                <xsl:with-param name="text" select="identity/alias" />
-                                <xsl:with-param name="length" select="25" />
-                            </xsl:call-template>
+                            <xsl:call-template name="identity"/>
                             <xsl:if test="identity/@helper='true'">
                                 <xsl:text>&#160;(h)</xsl:text>
                             </xsl:if>
@@ -213,5 +210,31 @@
             </xsl:if>
         </header>
     </xsl:template>
+
+    <xsl:template name="identity">
+        <xsl:choose>
+            <xsl:when test="/page/links/link[@rel='profile']">
+                <a>
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="/page/links/link[@rel='profile']/@href"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="title">
+                        <xsl:text>your profile and settings</xsl:text>
+                    </xsl:attribute>
+                    <xsl:call-template name="crop">
+                        <xsl:with-param name="text" select="/page/identity/alias" />
+                        <xsl:with-param name="length" select="25" />
+                    </xsl:call-template>
+                </a>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="crop">
+                    <xsl:with-param name="text" select="/page/identity/alias" />
+                    <xsl:with-param name="length" select="25" />
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
 
 </xsl:stylesheet>

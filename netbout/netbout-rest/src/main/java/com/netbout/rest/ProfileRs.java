@@ -26,57 +26,66 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.jaxb.Invitee;
+import com.netbout.rest.jaxb.Profile;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
-import com.netbout.spi.Identity;
-import java.util.ArrayList;
-import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
- * Friends finding service (used by RESTful client or AJAX).
+ * User profile.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/f")
-public final class FriendsRs extends AbstractRs {
+@Path("/pf")
+public final class ProfileRs extends AbstractRs {
 
     /**
-     * Get list of friends.
-     * @param mask The mask
+     * The profile page.
      * @return The JAX-RS response
-     * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
-    @Path("/")
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Response list(@QueryParam("mask") final String mask) {
-        if (mask == null) {
-            throw new ForwardException(
-                this,
-                this.base(),
-                "Query param 'mask' missed"
-            );
-        }
-        final List<Invitee> invitees = new ArrayList<Invitee>();
-        for (Identity identity : this.identity().friends(mask)) {
-            invitees.add(new Invitee(identity, this.base()));
-        }
+    public Response front() {
+        final Profile profile = new Profile(this.self(), this.identity());
         return new PageBuilder()
-            .schema("")
+            .stylesheet("/xsl/profile.xsl")
             .build(AbstractPage.class)
             .init(this)
-            .append(new JaxbBundle("mask", mask))
-            .append(JaxbGroup.build(invitees, "invitees"))
+            .append(profile)
             .render()
             .authenticated(this.identity())
             .build();
+    }
+
+    /**
+     * Switch to another language.
+     * @return The JAX-RS response
+     */
+    @GET
+    @Path("/toggle")
+    public Response toggle(@QueryParam("lang") final String code) {
+        // todo
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(this.identity())
+            .entity(String.format("switched to '%s'", code))
+            .status(Response.Status.SEE_OTHER)
+            .location(this.self().build())
+            .build();
+    }
+
+    /**
+     * Location of myself.
+     * @return The location, its builder actually
+     */
+    private UriBuilder self() {
+        return this.base().path("/pf");
     }
 
 }

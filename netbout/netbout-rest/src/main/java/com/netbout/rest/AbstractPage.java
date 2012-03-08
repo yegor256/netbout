@@ -181,6 +181,7 @@ public abstract class AbstractPage implements Page {
         }
         this.append(new JaxbBundle("auth", new Cryptor().encrypt(identity)));
         this.link("logout", "/g/out");
+        this.link("profile", "/pf");
         if (this.trusted(identity)) {
             this.link("start", "/s");
         } else {
