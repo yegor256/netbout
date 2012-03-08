@@ -32,32 +32,28 @@ import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link Profile}.
+ * Test case for {@link LongProfile}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ProfileTest {
+public final class LongProfileTest {
 
     /**
-     * Profile can be converted to XML.
+     * LongProfile can be converted to XML.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void convertsToXml() throws Exception {
-        final Profile obj = new Profile(
+        final LongProfile obj = new LongProfile(
             UriBuilder.fromUri("http://localhost"),
             new IdentityMocker().mock()
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/profile/locale"),
-                XhtmlMatchers.hasXPath("//locales/link[@rel='locale']")
-            )
+            XhtmlMatchers.hasXPath("//locales/link[@rel='locale']")
         );
     }
 

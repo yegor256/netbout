@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.jaxb.Profile;
+import com.netbout.rest.jaxb.LongProfile;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
@@ -51,7 +51,10 @@ public final class ProfileRs extends AbstractRs {
      */
     @GET
     public Response front() {
-        final Profile profile = new Profile(this.self(), this.identity());
+        final LongProfile profile = new LongProfile(
+            this.self(),
+            this.identity()
+        );
         return new PageBuilder()
             .stylesheet("/xsl/profile.xsl")
             .build(AbstractPage.class)

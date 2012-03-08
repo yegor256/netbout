@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "profile")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class Profile {
+public final class LongProfile {
 
     /**
      * URI builder.
@@ -69,7 +69,7 @@ public final class Profile {
     /**
      * Public ctor for JAXB.
      */
-    public Profile() {
+    public LongProfile() {
         throw new IllegalStateException("This ctor should never be called");
     }
 
@@ -78,7 +78,7 @@ public final class Profile {
      * @param bldr URI builder
      * @param vwr The viewer
      */
-    public Profile(final UriBuilder bldr, final Identity vwr) {
+    public LongProfile(final UriBuilder bldr, final Identity vwr) {
         this.builder = bldr;
         this.viewer = vwr;
     }
