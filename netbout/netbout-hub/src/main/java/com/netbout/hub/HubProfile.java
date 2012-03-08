@@ -120,6 +120,12 @@ public final class HubProfile implements Profile {
             .arg(this.ilocale.toString())
             .asDefault(true)
             .exec();
+        Logger.info(
+            this,
+            "Locale set to '%s' for '%s'",
+            this.ilocale,
+            this.identity.name()
+        );
     }
 
     /**
@@ -159,6 +165,11 @@ public final class HubProfile implements Profile {
             .arg(this.iphoto)
             .asDefault(true)
             .exec();
+        Logger.info(
+            this,
+            "Photo changed for '%s'",
+            this.identity.name()
+        );
     }
 
     /**

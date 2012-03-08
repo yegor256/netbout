@@ -30,11 +30,13 @@ import com.netbout.rest.jaxb.LongProfile;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
+import java.util.Locale;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.lang.LocaleUtils;
 
 /**
  * User profile.
@@ -67,17 +69,25 @@ public final class ProfileRs extends AbstractRs {
 
     /**
      * Switch to another language.
+     * @param locale The locale to switch to
      * @return The JAX-RS response
      */
     @GET
     @Path("/toggle")
-    public Response toggle(@QueryParam("lang") final String code) {
-        // todo
+    public Response toggle(@QueryParam("l") final String locale) {
+        if (locale == null) {
+            throw new ForwardException(
+                this,
+                this.self(),
+                "Query param 'locale' missed"
+            );
+        }
+        this.identity().profile().setLocale(LocaleUtils.toLocale(locale));
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
             .authenticated(this.identity())
-            .entity(String.format("switched to '%s'", code))
+            .entity(String.format("switched to '%s'", locale))
             .status(Response.Status.SEE_OTHER)
             .location(this.self().build())
             .build();

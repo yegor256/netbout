@@ -33,6 +33,7 @@ import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Locale;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
@@ -85,7 +86,7 @@ public final class AuthMediator {
         identity.setAuthority("http://www.netbout.com/nb");
         identity.setName(iname.toString());
         identity.setPhoto("http://cdn.netbout.com/unknown.png");
-        identity.setLocale("EN");
+        identity.setLocale(Locale.ENGLISH.toString());
         return identity;
     }
 

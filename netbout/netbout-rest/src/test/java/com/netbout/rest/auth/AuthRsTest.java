@@ -67,7 +67,7 @@ public final class AuthRsTest {
                 "<page><identity>"
                 + "<aliases><alias>hello</alias></aliases>"
                 + "<authority>http://localhost</authority>"
-                + "<locale>EN</locale>"
+                + "<locale>zh_CN</locale>"
                 + String.format("<name>%s</name>", iname)
                 + String.format("<photo>%s</photo>", photo)
                 + "</identity></page>"

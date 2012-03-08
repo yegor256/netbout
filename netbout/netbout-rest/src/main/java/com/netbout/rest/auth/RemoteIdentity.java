@@ -42,6 +42,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.LocaleUtils;
 
 /**
  * Remote identity, returned by {@link AuthMediator#authenticate(Urn,String)}.
@@ -153,7 +154,7 @@ public final class RemoteIdentity implements Identity {
      */
     @XmlElement
     public void setLocale(final String locale) {
-        this.iprofile.setLocale(new Locale(locale));
+        this.iprofile.setLocale(LocaleUtils.toLocale(locale));
     }
 
     /**

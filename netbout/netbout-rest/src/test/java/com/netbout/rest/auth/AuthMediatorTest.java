@@ -62,7 +62,7 @@ public final class AuthMediatorTest {
                 "<page><identity>"
                 + "<aliases><alias>hello</alias></aliases>"
                 + "<authority>http://localhost</authority>"
-                + "<locale>RU</locale>"
+                + "<locale>ru</locale>"
                 + String.format("<name>%s</name>", iname)
                 + String.format("<photo>%s</photo>", photo)
                 + "</identity></page>"
