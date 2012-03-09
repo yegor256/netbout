@@ -31,7 +31,6 @@ import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Locale;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -83,12 +82,8 @@ public class LongIdentity {
      */
     @XmlElement
     public final String getLocale() {
-        String locale = this.person.profile().locale().toString();
-        if (!locale.toString().matches("en|ru|zh_CN")) {
-            Logger.error(this, "Unsupported Locale %s", locale);
-            locale = Locale.ENGLISH.toString();
-        }
-        return locale;
+        return LongProfile.toLocale(this.person.profile().locale().toString())
+            .toString();
     }
 
     /**

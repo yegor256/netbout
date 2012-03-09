@@ -36,7 +36,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.lang.LocaleUtils;
 
 /**
  * User profile.
@@ -69,28 +68,20 @@ public final class ProfileRs extends AbstractRs {
 
     /**
      * Switch to another language.
-     * @param text The locale to switch to
+     * @param locale The locale to switch to
      * @return The JAX-RS response
      */
     @GET
     @Path("/toggle")
-    public Response toggle(@QueryParam("l") final String text) {
-        if (text == null) {
+    public Response toggle(@QueryParam("l") final String locale) {
+        if (locale == null) {
             throw new ForwardException(
                 this,
                 this.self(),
                 "Query param 'l' missed (with locale to set)"
             );
         }
-        final Locale locale = LocaleUtils.toLocale(text);
-        if (!locale.toString().matches("en|ru|zh_CN")) {
-            throw new ForwardException(
-                this,
-                this.self(),
-                String.format("Unsupported locale: '%s'", text)
-            );
-        }
-        this.identity().profile().setLocale(locale);
+        new LongProfile(this.self(), this.identity()).setLocale(locale);
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

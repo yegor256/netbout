@@ -33,11 +33,14 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
-import java.util.ArrayList;
+import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Set;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -45,6 +48,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.commons.lang.LocaleUtils;
 
 /**
  * Short version of a bout.
@@ -91,11 +95,8 @@ public final class LongProfile {
     @XmlElementWrapper(name = "locales")
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Link> getLocales() {
-        final Locale[] locales = new Locale[] {
-            Locale.ENGLISH, Locale.CHINA, new Locale("RU")
-        };
-        final Collection<Link> links = new ArrayList<Link>(locales.length);
-        for (Locale locale : locales) {
+        final Collection<Link> links = new LinkedList<Link>();
+        for (Locale locale : this.available()) {
             final Link link = new Link(
                 "locale",
                 this.builder.clone()
@@ -107,6 +108,44 @@ public final class LongProfile {
             links.add(link);
         }
         return links;
+    }
+
+    /**
+     * Set locale.
+     * @param text The locale as a text.
+     */
+    public void setLocale(final String text) {
+        this.viewer.profile().setLocale(this.toLocale(text));
+    }
+
+    /**
+     * Convert text to Locale.
+     * @param text The locale as a text.
+     * @return Ready to use locale
+     */
+    public static Locale toLocale(final String text) {
+        Locale locale = LocaleUtils.toLocale(text);
+        if (!LongProfile.available().contains(locale)) {
+            Logger.error(
+                LongProfile.class,
+                "Unsupported Locale '%s', reverting to '%s'",
+                locale,
+                Locale.ENGLISH
+            );
+            locale = Locale.ENGLISH;
+        }
+        return locale;
+    }
+
+    /**
+     * Get a list of available locales.
+     * @return The list of them
+     */
+    private static Set<Locale> available() {
+        final Set<Locale> available = new HashSet<Locale>();
+        available.add(Locale.ENGLISH);
+        available.add(new Locale("ru"));
+        return available;
     }
 
 }
