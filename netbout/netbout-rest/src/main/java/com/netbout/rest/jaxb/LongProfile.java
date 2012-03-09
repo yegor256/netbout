@@ -87,6 +87,7 @@ public final class LongProfile {
     @XmlElementWrapper(name = "locales")
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Link> getLocales() {
+        final Locale current = this.viewer.profile().locale();
         final Collection<Link> links = new LinkedList<Link>();
         for (Locale locale : this.available()) {
             final Link link = new Link(
@@ -97,6 +98,24 @@ public final class LongProfile {
                     .build(locale)
             );
             link.add(new JaxbBundle("code", locale).element());
+            link.add(
+                new JaxbBundle(
+                    "name",
+                    locale.getDisplayName(current)
+                ).element()
+            );
+            link.add(
+                new JaxbBundle(
+                    "langauge",
+                    locale.getDisplayLanguage(current)
+                ).element()
+            );
+            link.add(
+                new JaxbBundle(
+                    "country",
+                    locale.getDisplayCountry(current)
+                ).element()
+            );
             links.add(link);
         }
         return links;

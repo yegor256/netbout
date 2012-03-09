@@ -51,7 +51,9 @@
                         </span>
                         <xsl:if test="@me != 'true'">
                             <xsl:if test="@confirmed != 'true'">
-                                <xsl:text> (invited)</xsl:text>
+                                <xsl:text> (</xsl:text>
+                                <xsl:value-of select="$TEXTS/invited"/>
+                                <xsl:text>)</xsl:text>
                             </xsl:if>
                             <xsl:text> </xsl:text>
                             <a class="kickoff">
@@ -59,9 +61,11 @@
                                     <xsl:value-of select="link[@rel='kickoff']/@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
-                                    <xsl:text>kick "</xsl:text>
+                                    <xsl:value-of select="$TEXTS/kick"/>
+                                    <xsl:text> "</xsl:text>
                                     <xsl:value-of select="alias"/>
-                                    <xsl:text>" off this bout</xsl:text>
+                                    <xsl:text>" </xsl:text>
+                                    <xsl:value-of select="$TEXTS/off.this.bout"/>
                                 </xsl:attribute>
                                 <xsl:text>x</xsl:text>
                             </a>

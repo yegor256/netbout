@@ -100,7 +100,7 @@
             </img>
             <xsl:text> </xsl:text>
             <xsl:value-of select="$TEXTS/switch.to"/>
-            <xsl:text> : </xsl:text>
+            <xsl:text>: </xsl:text>
             <xsl:for-each select="/page/profile/locales/link">
                 <xsl:if test="code != /page/identity/locale">
                     <a>
@@ -108,7 +108,7 @@
                             <xsl:value-of select="@href"/>
                         </xsl:attribute>
                         <xsl:attribute name="title">
-                            <xsl:value-of select="code" />
+                            <xsl:value-of select="name" />
                         </xsl:attribute>
                         <img class="flag">
                             <xsl:attribute name="src">
@@ -117,7 +117,7 @@
                                 <xsl:text>.png</xsl:text>
                             </xsl:attribute>
                             <xsl:attribute name="alt">
-                                <xsl:value-of select="code"/>
+                                <xsl:value-of select="name"/>
                             </xsl:attribute>
                         </img>
                     </a>

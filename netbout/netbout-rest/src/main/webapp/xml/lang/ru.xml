@@ -56,4 +56,16 @@
     <new>новых</new>
     <all.of.them>весь список</all.of.them>
     <back.to.recent.messages>назад к свежим сообщениям</back.to.recent.messages>
+    <you>ты</you>
+    <someone>кто-то</someone>
+    <said>сказал(а)</said>
+    <click.to.invite>пригласить</click.to.invite>
+    <to.this.bout>в этот разговор</to.this.bout>
+    <Do.you.agree.to.join>Ты согласен участвовать</Do.you.agree.to.join>
+    <yes>да</yes>
+    <or>или</or>
+    <no>нет</no>
+    <invited>приглашен</invited>
+    <kick>удалить</kick>
+    <off.this.bout>из этого разговора</off.this.bout>
 </texts>
