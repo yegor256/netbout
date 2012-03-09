@@ -43,7 +43,6 @@ import java.util.Collection;
 import java.util.Date;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.Marshaller;
@@ -195,32 +194,20 @@ public abstract class AbstractPage implements Page {
                 this.nocookie(RestSession.MESSAGE_COOKIE)
         )
             .cookie(
-                new NewCookie(
-                    RestSession.LOG_COOKIE,
-                    this.home.log().toString(),
-                    base.getPath(),
-                    base.getHost(),
-                    // @checkstyle MultipleStringLiterals (1 line)
-                    Integer.valueOf(Manifests.read("Netbout-Revision")),
-                    "Netbout.com log",
-                    // @checkstyle MagicNumber (1 line)
-                    60 * 60 * 24 * 90,
-                    false
-                )
+                new CookieBuilder(base)
+                    .named(RestSession.LOG_COOKIE)
+                    .valued(this.home.log().toString())
+                    .commented("Netbout.com log")
+                    .temporary()
+                    .build()
             )
             .cookie(
-                new NewCookie(
-                    RestSession.AUTH_COOKIE,
-                    new Cryptor().encrypt(identity),
-                    base.getPath(),
-                    base.getHost(),
-                    // @checkstyle MultipleStringLiterals (1 line)
-                    Integer.valueOf(Manifests.read("Netbout-Revision")),
-                    "Netbout.com logged-in user",
-                    // @checkstyle MagicNumber (1 line)
-                    60 * 60 * 24 * 90,
-                    false
-                )
+                new CookieBuilder(base)
+                    .named(RestSession.AUTH_COOKIE)
+                    .valued(new Cryptor().encrypt(identity))
+                    .commented("Netbout.com logged-in user")
+                    .temporary()
+                    .build()
             )
             .type(MediaType.TEXT_XML);
     }
@@ -348,14 +335,16 @@ public abstract class AbstractPage implements Page {
      * @return Value of the HTTP header
      */
     private String nocookie(final String name) {
-        final URI base = this.home.base().build();
-        return String.format(
-            // @checkstyle LineLength (1 line)
-            "%s=deleted;Domain=%s;Path=/%s;Expires=Thu, 01-Jan-1970 00:00:01 GMT",
-            name,
-            base.getHost(),
-            this.home.httpServletRequest().getContextPath()
-        );
+        return new CookieBuilder(this.home.base().build())
+            .named(name)
+            .pathed(
+                String.format(
+                    "/%s",
+                    this.home.httpServletRequest().getContextPath()
+                )
+            )
+            .build()
+            .toString();
     }
 
 }

@@ -28,7 +28,6 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
-import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;

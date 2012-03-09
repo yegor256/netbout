@@ -31,7 +31,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;

@@ -102,22 +102,22 @@
             <xsl:value-of select="$TEXTS/switch.to"/>
             <xsl:text> : </xsl:text>
             <xsl:for-each select="/page/profile/locales/link">
-                <xsl:if test="locale != /page/identity/locale">
+                <xsl:if test="code != /page/identity/locale">
                     <a>
                         <xsl:attribute name="href">
                             <xsl:value-of select="@href"/>
                         </xsl:attribute>
                         <xsl:attribute name="title">
-                            <xsl:value-of select="locale" />
+                            <xsl:value-of select="code" />
                         </xsl:attribute>
                         <img class="flag">
                             <xsl:attribute name="src">
                                 <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
-                                <xsl:value-of select="locale"/>
+                                <xsl:value-of select="code"/>
                                 <xsl:text>.png</xsl:text>
                             </xsl:attribute>
                             <xsl:attribute name="alt">
-                                <xsl:value-of select="locale"/>
+                                <xsl:value-of select="code"/>
                             </xsl:attribute>
                         </img>
                     </a>

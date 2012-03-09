@@ -37,7 +37,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
-import com.rexsl.core.Manifests;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.CookieParam;
@@ -47,7 +46,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -192,18 +190,14 @@ public final class BoutRs extends AbstractRs {
             .noCache()
             .asDefault(this.coords.place())
             .exec();
-        final NewCookie cookie = new NewCookie(
-            "netbout-stage",
-            this.coords.copy().setPlace(place).toString(),
-            this.self("").build().getPath(),
-            this.base().build().getHost(),
-            Integer.valueOf(Manifests.read("Netbout-Revision")),
-            "Netbout.com stage information",
-            // @checkstyle MagicNumber (1 line)
-            60 * 60 * 24 * 90,
-            false
-        );
-        return resp.cookie(cookie).build();
+        return resp.cookie(
+            new CookieBuilder(this.self("").build())
+                .named("netbout-stage")
+                .valued(this.coords.copy().setPlace(place).toString())
+                .commented("Netbout.com stage information")
+                .temporary()
+                .build()
+        ).build();
     }
 
     /**

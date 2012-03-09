@@ -35,9 +35,7 @@ import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -69,7 +67,7 @@ public final class RemoteIdentity implements Identity {
     /**
      * Profile of identity.
      */
-    private transient RemoteProfile iprofile = new RemoteProfile();
+    private final transient RemoteProfile iprofile = new RemoteProfile();
 
     /**
      * Problems occured during unmarshalling.
@@ -150,7 +148,7 @@ public final class RemoteIdentity implements Identity {
 
     /**
      * Set locale, method for JAXB unmarshaller.
-     * @param url The URL
+     * @param locale The locale to set
      */
     @XmlElement
     public void setLocale(final String locale) {

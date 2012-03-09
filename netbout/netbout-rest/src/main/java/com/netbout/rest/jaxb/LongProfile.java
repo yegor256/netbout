@@ -27,24 +27,16 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.rest.page.JaxbBundle;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
-import com.netbout.spi.Participant;
-import com.netbout.spi.client.RestSession;
 import com.ymock.util.Logger;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Set;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -104,7 +96,7 @@ public final class LongProfile {
                     .queryParam("l", "{locale}")
                     .build(locale)
             );
-            link.add(new JaxbBundle("locale", locale).element());
+            link.add(new JaxbBundle("code", locale).element());
             links.add(link);
         }
         return links;
