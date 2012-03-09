@@ -60,4 +60,4 @@ RestTester.start(RestUriBuilder.from(misha))
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('/page/identity[locale="ru"]')
 
-MatcherAssert.assertThat(misha.profile().locale(), Matchers.equalTo(new Locale("ru")))
+MatcherAssert.assertThat(misha.profile().locale(), Matchers.equalTo(new Locale('ru')))
