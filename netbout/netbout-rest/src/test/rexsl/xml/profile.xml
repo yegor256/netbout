@@ -49,6 +49,7 @@
         </aliases>
         <name>urn:facebook:123456789</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+        <locale>en</locale>
     </identity>
     <profile>
         <language>RU</language>

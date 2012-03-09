@@ -46,6 +46,7 @@
         <aliases/>
         <name>William.Shakespeare</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+        <locale>en</locale>
     </identity>
     <query/>
     <periods/>
