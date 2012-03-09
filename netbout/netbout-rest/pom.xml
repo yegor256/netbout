@@ -569,7 +569,7 @@
                         <version since="7 Feb 2012">2.0-beta-1</version>
                         <configuration>
                             <systemProperties>
-                                <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
+                                <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
                             </systemProperties>
                             <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
                             <fork>true</fork>

@@ -38,9 +38,9 @@ import javax.ws.rs.core.MediaType
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def chen = new RestSession(rexsl.home).authenticate(new Urn('urn:test:chen'), '')
+def misha = new RestSession(rexsl.home).authenticate(new Urn('urn:test:misha'), '')
 
-RestTester.start(RestUriBuilder.from(chen))
+RestTester.start(RestUriBuilder.from(misha))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('render front page of user')
     .assertStatus(HttpURLConnection.HTTP_OK)
@@ -49,15 +49,15 @@ RestTester.start(RestUriBuilder.from(chen))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('render user profile')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page/profile/locales/link[@rel="locale" and code="zh_CN"]')
-    .rel('/page/profile/locales/link[code="zh_CN"]/@href')
+    .assertXPath('/page/profile/locales/link[@rel="locale" and code="ru"]')
+    .rel('/page/profile/locales/link[code="ru"]/@href')
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get('changing language to Chinese')
+    .get('changing language to Russian')
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
     .follow()
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('reading front page again')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page/identity[locale="zh_CN"]')
+    .assertXPath('/page/identity[locale="ru"]')
 
-MatcherAssert.assertThat(chen.profile().locale(), Matchers.equalTo(Locale.CHINA))
+MatcherAssert.assertThat(misha.profile().locale(), Matchers.equalTo(new Locale("ru")))
