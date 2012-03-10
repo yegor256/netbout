@@ -77,7 +77,9 @@ public final class HubIdentityTest {
         )
             .mock();
         final Urn name = new UrnMocker().mock();
-        final Set<String> aliases = new HubIdentity(hub, name).aliases();
+        final Set<String> aliases = new HubIdentity(hub, name)
+            .profile()
+            .aliases();
         MatcherAssert.assertThat(aliases, Matchers.hasSize(names.length));
         MatcherAssert.assertThat(
             aliases.iterator().next(),

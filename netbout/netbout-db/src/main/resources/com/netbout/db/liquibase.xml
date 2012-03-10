@@ -52,5 +52,6 @@
     <include file="liquibase/010-bill.xml" relativeToChangelogFile="true" />
     <include file="liquibase/011-invoice.xml" relativeToChangelogFile="true" />
     <include file="liquibase/012-archiver.xml" relativeToChangelogFile="true" />
+    <include file="liquibase/013-locale.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>

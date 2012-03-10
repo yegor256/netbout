@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates.xml;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Message;
@@ -90,7 +91,7 @@ public final class NsPredTest {
             )
             + "/>"
         ).when(from).text();
-        NsPred.extract(from);
+        NsPred.extract(from, new IndexMocker().mock());
     }
 
     /**
@@ -101,7 +102,8 @@ public final class NsPredTest {
     public void positivelyMatchesXmlDocument() throws Exception {
         final Urn namespace = new Urn("urn:test:foo");
         final Predicate pred = new NsPred(
-            Arrays.asList(new Atom[] {new TextAtom(namespace)})
+            Arrays.asList(new Atom[] {new TextAtom(namespace)}),
+            new IndexMocker().mock()
         );
         MatcherAssert.assertThat("not matched (temp)", !pred.contains(1L));
     }
@@ -113,7 +115,8 @@ public final class NsPredTest {
     @Test
     public void negativelyMatchesNonXmlDocument() throws Exception {
         final Predicate pred = new NsPred(
-            Arrays.asList(new Atom[] {new TextAtom("urn:test:different")})
+            Arrays.asList(new Atom[] {new TextAtom("urn:test:different")}),
+            new IndexMocker().mock()
         );
         MatcherAssert.assertThat(
             "not matched",

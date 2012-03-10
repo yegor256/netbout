@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates.math;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.atoms.TextAtom;
@@ -71,9 +72,10 @@ public final class EqualPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args The arguments
+     * @param index The index to use for searching
      */
-    public EqualPred(final List<Atom> args) {
-        super(args);
+    public EqualPred(final List<Atom> args, final Index index) {
+        super(args, index);
         final VariableAtom var = (VariableAtom) this.arg(0);
         if (this.CACHE.containsKey(var)
             && this.CACHE.get(var).containsKey(this.arg(1))) {
@@ -87,8 +89,9 @@ public final class EqualPred extends AbstractVarargPred {
     /**
      * Extracts necessary data from message.
      * @param msg The message to extract from
+     * @param index The index to extract to
      */
-    public static void extract(final Message msg) {
+    public static void extract(final Message msg, final Index index) {
         EqualPred.var(
             VariableAtom.BOUT_NUMBER,
             new NumberAtom(msg.bout().number())

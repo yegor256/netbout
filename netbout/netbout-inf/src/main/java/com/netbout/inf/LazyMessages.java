@@ -36,7 +36,7 @@ import java.util.Iterator;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LazyMessages implements Iterable<Long> {
+final class LazyMessages implements Iterable<Long> {
 
     /**
      * The predicate.

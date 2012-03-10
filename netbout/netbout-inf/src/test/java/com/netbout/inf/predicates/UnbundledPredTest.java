@@ -27,6 +27,8 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
+import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.spi.Message;
@@ -49,9 +51,11 @@ public final class UnbundledPredTest {
     @Test
     public void positivelyMatchesUnbundledMessageOnly() throws Exception {
         final Message message = new MessageMocker().mock();
-        BundledPred.extract(message);
+        final Index index = new IndexMocker().mock();
+        BundledPred.extract(message, index);
         final Predicate pred = new UnbundledPred(
-            Arrays.asList(new Atom[] {new NumberAtom(message.bout().number())})
+            Arrays.asList(new Atom[] {new NumberAtom(message.bout().number())}),
+            index
         );
         MatcherAssert.assertThat("no!", !pred.contains(message.number()));
     }

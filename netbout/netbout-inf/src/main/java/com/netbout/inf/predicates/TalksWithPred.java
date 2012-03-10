@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Message;
@@ -76,9 +77,10 @@ public final class TalksWithPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args The arguments
+     * @param index The index to use for searching
      */
-    public TalksWithPred(final List<Atom> args) {
-        super(args);
+    public TalksWithPred(final List<Atom> args, final Index index) {
+        super(args, index);
         final Urn urn = Urn.create(((TextAtom) this.arg(0)).value());
         if (this.DUDES.containsKey(urn)) {
             this.messages = this.DUDES.get(urn);
@@ -91,9 +93,10 @@ public final class TalksWithPred extends AbstractVarargPred {
     /**
      * Extracts necessary data from message.
      * @param msg The message to extract from
+     * @param index The index to extract to
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public static void extract(final Message msg) {
+    public static void extract(final Message msg, final Index index) {
         final Long bout = msg.bout().number();
         TalksWithPred.BOUTS.putIfAbsent(
             bout,

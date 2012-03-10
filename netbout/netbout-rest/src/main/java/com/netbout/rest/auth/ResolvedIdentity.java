@@ -28,20 +28,22 @@ package com.netbout.rest.auth;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
- * Resolved identity.
+ * Resolved identity, instantiated in {@link NbRs#authenticate(Urn,String)},
+ * {@link EmailRs#resolve(Urn)}, and {@link FacebookRs#authenticate(String)}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class ResolvedIdentity implements Identity {
+final class ResolvedIdentity implements Identity {
 
     /**
      * Authority.
@@ -54,14 +56,9 @@ public final class ResolvedIdentity implements Identity {
     private final transient Urn iname;
 
     /**
-     * Photo.
+     * Profile.
      */
-    private final transient URL iphoto;
-
-    /**
-     * Aliases.
-     */
-    private final transient Set<String> ialiases = new HashSet<String>();
+    private final transient ResolvedProfile iprofile;
 
     /**
      * Public ctor.
@@ -73,7 +70,7 @@ public final class ResolvedIdentity implements Identity {
         final URL photo) {
         this.iauthority = authority;
         this.iname = name;
-        this.iphoto = photo;
+        this.iprofile = new ResolvedProfile(Locale.ENGLISH, photo);
     }
 
     /**
@@ -96,16 +93,8 @@ public final class ResolvedIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public URL photo() {
-        return this.iphoto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> aliases() {
-        return this.ialiases;
+    public Profile profile() {
+        return this.iprofile;
     }
 
     /**
@@ -115,7 +104,7 @@ public final class ResolvedIdentity implements Identity {
      */
     public ResolvedIdentity addAlias(final String alias) {
         if (!alias.isEmpty()) {
-            this.ialiases.add(alias);
+            this.iprofile.addAlias(alias);
         }
         return this;
     }
@@ -164,14 +153,6 @@ public final class ResolvedIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void setPhoto(final URL pic) {
-        throw new UnsupportedOperationException("#setPhoto()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Identity friend(final Urn name) {
         throw new UnsupportedOperationException("#friend()");
     }
@@ -182,14 +163,6 @@ public final class ResolvedIdentity implements Identity {
     @Override
     public Set<Identity> friends(final String keyword) {
         throw new UnsupportedOperationException("#friends()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        throw new UnsupportedOperationException("#alias()");
     }
 
 }

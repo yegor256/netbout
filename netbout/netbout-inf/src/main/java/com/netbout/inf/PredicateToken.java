@@ -35,7 +35,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PredicateToken {
+final class PredicateToken {
 
     /**
      * The type.
@@ -76,12 +76,13 @@ public final class PredicateToken {
     /**
      * Extract properties from the message.
      * @param from The message
+     * @param index The index
      */
-    public void extract(final Message from) {
+    public void extract(final Message from, final Index index) {
         if (this.meta.extracts()) {
             try {
-                this.type.getMethod("extract", Message.class)
-                    .invoke(null, from);
+                this.type.getMethod("extract", Message.class, Index.class)
+                    .invoke(null, from, index);
             } catch (NoSuchMethodException ex) {
                 throw new PredicateException(ex);
             } catch (IllegalAccessException ex) {
@@ -95,14 +96,15 @@ public final class PredicateToken {
     /**
      * Build a predicate from list of preds.
      * @param atoms List of arguments
+     * @param index The index
      * @return The predicate
      */
-    public Predicate build(final List<Atom> atoms) {
+    public Predicate build(final List<Atom> atoms, final Index index) {
         Predicate predicate;
         try {
             predicate = (Predicate) this.type
-                .getConstructor(List.class)
-                .newInstance(atoms);
+                .getConstructor(List.class, Index.class)
+                .newInstance(atoms, index);
         } catch (NoSuchMethodException ex) {
             throw new PredicateException(ex);
         } catch (InstantiationException ex) {

@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -189,34 +190,6 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public URL photo() {
-        final String href = this.client
-            .get("reading photo of identity")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/identity/photo[.!='']")
-            .xpath("/page/identity/photo/text()")
-            .get(0);
-        try {
-            return new URL(href);
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPhoto(final URL photo) {
-        throw new UnsupportedOperationException(
-            "Identity#setPhoto() is not implemented yet"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Identity friend(final Urn name) {
         return new Friend(name);
     }
@@ -228,7 +201,7 @@ final class RestIdentity implements Identity {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Set<Identity> friends(final String mask) {
         final List<String> names = this.client
-            .get("reading 'friends' rel link")
+            .get("reading 'friends' @rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='friends']")
             .rel("friends")
@@ -249,23 +222,14 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Set<String> aliases() {
-        final List<String> names = this.client
-            .get("reading aliases of identity")
+    public Profile profile() {
+        final String href = this.client
+            .get("reading 'profle' @rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/identity/aliases")
-            .xpath("/page/identity/aliases/alias/text()");
-        return new HashSet(names);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        throw new UnsupportedOperationException(
-            "Identity#alias() is not implemented yet"
-        );
+            .assertXPath("/page/links/link[@rel='profile']")
+            .xpath("/page/links/link[@rel='profile']/@href")
+            .get(0);
+        return new RestProfile(this.client.copy(href));
     }
 
 }

@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.Arrays;
@@ -47,7 +48,8 @@ public final class PosPredTest {
     @Test
     public void positivelyMatchesMessageAtPosition() throws Exception {
         final Predicate pred = new PosPred(
-            Arrays.asList(new Atom[] {new NumberAtom(0L)})
+            Arrays.asList(new Atom[] {new NumberAtom(0L)}),
+            new IndexMocker().mock()
         );
         MatcherAssert.assertThat("matched", pred.contains(1L));
     }

@@ -28,10 +28,8 @@ package com.netbout.rest;
 
 import com.netbout.spi.client.RestSession;
 import com.netbout.text.SecureString;
-import com.rexsl.core.Manifests;
 import com.ymock.util.Logger;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -99,17 +97,6 @@ public class ForwardException extends WebApplicationException {
      */
     private static Response response(final Resource res,
         final UriBuilder builder, final String msg) {
-        final NewCookie cookie = new NewCookie(
-            RestSession.MESSAGE_COOKIE,
-            new SecureString(msg).toString(),
-            res.base().build().getPath(),
-            res.base().build().getHost(),
-            Integer.valueOf(Manifests.read("Netbout-Revision")),
-            "netbout message",
-            // @checkstyle MagicNumber (1 line)
-            60 * 60,
-            false
-        );
         Logger.debug(
             ForwardException.class,
             "#response(%[type]s, %s, %s): forwarding",
@@ -121,7 +108,14 @@ public class ForwardException extends WebApplicationException {
             .header(RestSession.ERROR_HEADER, msg)
             .entity(msg)
             .location(builder.build())
-            .cookie(cookie)
+            .cookie(
+                new CookieBuilder(res.base().build())
+                    .named(RestSession.MESSAGE_COOKIE)
+                    .valued(new SecureString(msg).toString())
+                    .commented("netbout message")
+                    .temporary()
+                    .build()
+            )
             .build();
     }
 

@@ -52,7 +52,7 @@
                 opacity: 0.4;
             }
 
-        .dudes .dude a.corner {
+        .dudes .dude .corner {
             background-image: url('http://cdn.netbout.com/corner.png');
             background-repeat: no-repeat;
             background-position: left top;

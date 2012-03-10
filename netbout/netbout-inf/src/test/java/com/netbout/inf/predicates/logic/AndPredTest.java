@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates.logic;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
 import com.netbout.inf.predicates.FalsePred;
@@ -56,7 +57,8 @@ public final class AndPredTest {
             .withoutIteration()
             .mock();
         final Predicate merger = new AndPred(
-            Arrays.asList(new Atom[] {first, second})
+            Arrays.asList(new Atom[] {first, second}),
+            new IndexMocker().mock()
         );
         MatcherAssert.assertThat("has next", merger.hasNext());
         MatcherAssert.assertThat(merger.next(), Matchers.equalTo(2L));
@@ -70,7 +72,8 @@ public final class AndPredTest {
     @Test
     public void mergesTwoEmptyPredicates() throws Exception {
         final Predicate merger = new AndPred(
-            Arrays.asList(new Atom[] {new FalsePred(), new FalsePred()})
+            Arrays.asList(new Atom[] {new FalsePred(), new FalsePred()}),
+            new IndexMocker().mock()
         );
         MatcherAssert.assertThat("row is empty", !merger.hasNext());
     }

@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates.xml;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import com.netbout.spi.Message;
@@ -69,9 +70,10 @@ public final class NsPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args The arguments
+     * @param index The index to use for searching
      */
-    public NsPred(final List<Atom> args) {
-        super(args);
+    public NsPred(final List<Atom> args, final Index index) {
+        super(args, index);
         final Urn namespace = Urn.create(this.arg(0).value().toString());
         if (this.CACHE.containsKey(namespace)) {
             this.messages = this.CACHE.get(namespace);
@@ -84,8 +86,9 @@ public final class NsPred extends AbstractVarargPred {
     /**
      * Extracts necessary data from message.
      * @param from The message to extract from
+     * @param index The index to extract to
      */
-    public static void extract(final Message from) {
+    public static void extract(final Message from, final Index index) {
         final DomParser parser = new DomParser(from.text());
         if (parser.isXml()) {
             Urn namespace;

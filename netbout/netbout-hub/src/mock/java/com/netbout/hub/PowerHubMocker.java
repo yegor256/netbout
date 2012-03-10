@@ -29,7 +29,6 @@ package com.netbout.hub;
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.inf.DefaultInfinity;
-import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;

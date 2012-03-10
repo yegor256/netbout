@@ -35,12 +35,15 @@
 
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
+    <xsl:param name="TEXTS"
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
 
     <xsl:template name="head">
         <title>
-            <xsl:text>inbox</xsl:text>
+            <xsl:value-of select="$TEXTS/inbox"/>
             <xsl:variable name="unread">
                 <xsl:value-of select="count(/page/bouts/bout[@unseen &gt; 0])"/>
             </xsl:variable>
@@ -108,7 +111,7 @@
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                                 </xsl:attribute>
-                                <xsl:text>back to recent bouts</xsl:text>
+                                <xsl:value-of select="$TEXTS/back.to.recent.bouts"/>
                             </a>
                         </li>
                     </ul>
@@ -162,7 +165,9 @@
                     </xsl:attribute>
                     <xsl:choose>
                         <xsl:when test="title = ''">
-                            <xsl:text>(no title)</xsl:text>
+                            <xsl:text>(</xsl:text>
+                            <xsl:value-of select="$TEXTS/no.title"/>
+                            <xsl:text>)</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:call-template name="crop">
@@ -175,7 +180,8 @@
                 <xsl:if test="@unseen &gt; 0">
                     <span class="new">
                         <xsl:value-of select="@unseen"/>
-                        <xsl:text> new</xsl:text>
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="$TEXTS/new"/>
                     </span>
                 </xsl:if>
             </div>
@@ -196,7 +202,9 @@
                             <xsl:text>: </xsl:text>
                             <xsl:choose>
                                 <xsl:when test="title = ''">
-                                    <xsl:text>(no title)</xsl:text>
+                                    <xsl:text>(</xsl:text>
+                                    <xsl:value-of select="$TEXTS/no.title"/>
+                                    <xsl:text>)</xsl:text>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:value-of select="title" />
@@ -210,7 +218,8 @@
                             <xsl:attribute name="href">
                                 <xsl:value-of select="bundled/link[@rel='all']/@href"/>
                             </xsl:attribute>
-                            <xsl:text>all of them...</xsl:text>
+                            <xsl:value-of select="$TEXTS/all.of.them"/>
+                            <xsl:text>...</xsl:text>
                         </a>
                     </xsl:if>
                 </nav>

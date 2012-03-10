@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+ * Copyright (c) 2009-2011, netBout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ -->
+<texts>
+    <About>About</About>
+    <AKA>AKA</AKA>
+    <Identity>Identity</Identity>
+    <Language>Language</Language>
+    <Logout>Logout</Logout>
+    <profile>profile</profile>
+    <Profile.settings>Profile settings</Profile.settings>
+    <settings.of.your.profile>settings of your profile</settings.of.your.profile>
+    <Start>Start</Start>
+    <switch.to>switch to</switch.to>
+    <back.to.inbox>back to inbox</back.to.inbox>
+    <Start.later>Start (later)</Start.later>
+    <start.new.bout>start new bout</start.new.bout>
+    <leave.right.now>leave right now</leave.right.now>
+    <click.here>click here</click.here>
+    <We.recommend.to.reauthenticate>We recommend you to re-authenticate yourself</We.recommend.to.reauthenticate>
+    <sec>sec</sec>
+    <in>in</in>
+    <in.a.few.minutes>in a few minutes</in.a.few.minutes>
+    <the.server.is.busy>The server is currently updating your account,
+        some data may look not as fresh as they should be. Try
+        to refresh the page</the.server.is.busy>
+    <inbox>inbox</inbox>
+    <back.to.recent.bouts>back to recent bouts</back.to.recent.bouts>
+    <no.title>no title</no.title>
+    <new>new</new>
+    <all.of.them>all of them</all.of.them>
+    <back.to.recent.messages>back to recent messages</back.to.recent.messages>
+</texts>

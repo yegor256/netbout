@@ -35,6 +35,9 @@
 
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
+    <xsl:param name="TEXTS"
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
 
@@ -113,7 +116,7 @@
                         <xsl:attribute name="href">
                             <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                         </xsl:attribute>
-                        <xsl:text>back to recent messages</xsl:text>
+                        <xsl:value-of select="$TEXTS/back.to.recent.messages"/>
                     </a>
                 </li>
             </ul>
@@ -174,21 +177,24 @@
                     <b>
                         <xsl:choose>
                             <xsl:when test="$msg/author = /page/identity/name">
-                                <xsl:text>you</xsl:text>
+                                <xsl:value-of select="$TEXTS/you"/>
                             </xsl:when>
                             <xsl:when test="/page/bout/participants/participant[$msg/author=identity]">
                                 <xsl:value-of select="/page/bout/participants/participant[$msg/author=identity]/alias"/>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:text>someone</xsl:text>
+                                <xsl:value-of select="$TEXTS/someone"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </b>
-                    <xsl:text> said </xsl:text>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="$TEXTS/said"/>
+                    <xsl:text> </xsl:text>
                     <xsl:value-of select="when"/>
                     <xsl:if test="@seen = 'false'">
                         <span class="red">
-                            <xsl:text> new</xsl:text>
+                            <xsl:text> </xsl:text>
+                            <xsl:value-of select="$TEXTS/new"/>
                         </span>
                     </xsl:if>
                 </header>
@@ -227,9 +233,11 @@
                                     <xsl:value-of select="@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
-                                    <xsl:text>click to invite "</xsl:text>
+                                    <xsl:value-of select="$TEXTS/click.to.invite"/>
+                                    <xsl:text> "</xsl:text>
                                     <xsl:value-of select="alias"/>
-                                    <xsl:text>" to this bout</xsl:text>
+                                    <xsl:text>" </xsl:text>
+                                    <xsl:value-of select="$TEXTS/to.this.bout"/>
                                 </xsl:attribute>
                                 <xsl:call-template name="crop">
                                     <xsl:with-param name="text" select="alias" />
@@ -279,19 +287,22 @@
                         -->
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>Do you agree to join this bout: </xsl:text>
+                        <xsl:value-of select="$TEXTS/Do.you.agree.to.join"/>
+                        <xsl:text>: </xsl:text>
                         <a>
                             <xsl:attribute name="href">
                                 <xsl:value-of select="/page/links/link[@rel='join']/@href"/>
                             </xsl:attribute>
-                            <xsl:text>yes, of course</xsl:text>
+                            <xsl:value-of select="$TEXTS/yes"/>
                         </a>
-                        <xsl:text> or </xsl:text>
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="$TEXTS/or"/>
+                        <xsl:text> </xsl:text>
                         <a>
                             <xsl:attribute name="href">
                                 <xsl:value-of select="/page/links/link[@rel='leave']/@href"/>
                             </xsl:attribute>
-                            <xsl:text>no, I refuse</xsl:text>
+                            <xsl:value-of select="$TEXTS/no"/>
                         </a>
                     </xsl:otherwise>
                 </xsl:choose>

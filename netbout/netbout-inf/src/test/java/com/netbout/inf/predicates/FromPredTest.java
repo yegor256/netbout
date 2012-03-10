@@ -27,9 +27,11 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
+import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateBuilder;
 import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.predicates.logic.AndPred;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -49,7 +51,8 @@ public final class FromPredTest {
     @Test
     public void positivelyMatchesMessageAtPosition() throws Exception {
         final Predicate pred = new FromPred(
-            Arrays.asList(new Atom[] {new NumberAtom(1L)})
+            Arrays.asList(new Atom[] {new NumberAtom(1L)}),
+            new IndexMocker().mock()
         );
         MatcherAssert.assertThat("not matched", !pred.contains(2L));
         MatcherAssert.assertThat("matched", pred.contains(2L));
@@ -61,12 +64,26 @@ public final class FromPredTest {
      */
     @Test
     public void selectsPortionOfMessages() throws Exception {
-        final int total = 10;
-        final int from = 3;
-        final int limit = total - from - 1;
-        final Predicate pred = new PredicateBuilder()
-            .parse(String.format("(and (from %d) (limit %d))", from, limit));
-        int count = 0;
+        final long total = 10L;
+        final long from = 3L;
+        final long limit = total - from - 1;
+        final Index index = new IndexMocker().mock();
+        final Predicate pred = new AndPred(
+            Arrays.asList(
+                new Atom[] {
+                    new FromPred(
+                        Arrays.asList(new Atom[] {new NumberAtom(from)}),
+                        index
+                    ),
+                    new LimitPred(
+                        Arrays.asList(new Atom[] {new NumberAtom(limit)}),
+                        index
+                    ),
+                }
+            ),
+            index
+        );
+        long count = 0L;
         for (int pos = 0; pos < total; pos += 1) {
             if (pred.contains(1L)) {
                 count += 1;

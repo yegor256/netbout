@@ -40,7 +40,6 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
 public interface Identity extends Comparable<Identity> {
 
     /**
@@ -88,18 +87,6 @@ public interface Identity extends Comparable<Identity> {
     Bout bout(Long number) throws BoutNotFoundException;
 
     /**
-     * Get a photo of this identity.
-     * @return The URL of the photo
-     */
-    URL photo();
-
-    /**
-     * Set photo of the identity.
-     * @param photo The photo
-     */
-    void setPhoto(URL photo);
-
-    /**
      * Find another identity by name.
      * @param name Unique name of identity
      * @return The identity just found
@@ -115,15 +102,9 @@ public interface Identity extends Comparable<Identity> {
     Set<Identity> friends(String keyword);
 
     /**
-     * Get all aliases.
-     * @return List of all aliases
+     * Get profile.
+     * @return The profile of this identity
      */
-    Set<String> aliases();
-
-    /**
-     * Add new alias.
-     * @param alias The alias
-     */
-    void alias(String alias);
+    Profile profile();
 
 }

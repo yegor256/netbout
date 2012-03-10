@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
@@ -43,6 +44,11 @@ import org.apache.commons.lang.StringUtils;
 public abstract class AbstractVarargPred implements Predicate {
 
     /**
+     * Indexed data.
+     */
+    private final transient Index data;
+
+    /**
      * Name of it.
      */
     private final transient String iname;
@@ -56,18 +62,23 @@ public abstract class AbstractVarargPred implements Predicate {
      * Public ctor.
      * @param name The name of it
      * @param args Arguments
+     * @param index The index to use for searching
      */
-    public AbstractVarargPred(final String name, final List<Atom> args) {
+    public AbstractVarargPred(final String name, final List<Atom> args,
+        final Index index) {
         this.iname = name;
         this.atoms = new ArrayList<Atom>(args.size());
         this.atoms.addAll(args);
+        this.data = index;
     }
 
     /**
      * Public ctor.
      * @param args Arguments/predicates
+     * @param index The index to use for searching
      */
-    public AbstractVarargPred(final List<Atom> args) {
+    public AbstractVarargPred(final List<Atom> args, final Index index) {
+        this.data = index;
         this.iname = this.getClass().getAnnotation(Meta.class).name();
         this.atoms = new ArrayList<Atom>(args.size());
         this.atoms.addAll(args);
@@ -91,6 +102,14 @@ public abstract class AbstractVarargPred implements Predicate {
             this.iname,
             StringUtils.join(this.args(), " ")
         );
+    }
+
+    /**
+     * Get index.
+     * @return The index
+     */
+    protected final Index index() {
+        return this.data;
     }
 
     /**

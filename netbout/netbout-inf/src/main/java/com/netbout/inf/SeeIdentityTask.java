@@ -66,10 +66,12 @@ final class SeeIdentityTask extends AbstractTask {
      * @param inf The infinity
      * @param where The BUS to work with
      * @param what The identity to update
+     * @param index The index to use
+     * @checkstyle ParameterNumber (3 lines)
      */
     public SeeIdentityTask(final Infinity inf, final Bus where,
-        final Identity what) {
-        super();
+        final Identity what, final Index index) {
+        super(index);
         this.infinity = inf;
         this.bus = where;
         this.identity = what;

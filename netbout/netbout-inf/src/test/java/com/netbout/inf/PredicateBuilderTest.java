@@ -53,7 +53,8 @@ public final class PredicateBuilderTest {
             "(and (from 5) (limit 2) (unique $bout.number))",
             "just simple text: \u0435",
         };
-        final PredicateBuilder builder = new PredicateBuilder();
+        final PredicateBuilder builder =
+            new PredicateBuilder(new IndexMocker().mock());
         for (String query : queries) {
             builder.parse(query);
         }
@@ -71,7 +72,8 @@ public final class PredicateBuilderTest {
             "(unknown-function 1 2 3)",
             "(invalid-name-of-predicate# 5)",
         };
-        final PredicateBuilder builder = new PredicateBuilder();
+        final PredicateBuilder builder =
+            new PredicateBuilder(new IndexMocker().mock());
         for (String query : queries) {
             try {
                 builder.parse(query);
@@ -93,7 +95,8 @@ public final class PredicateBuilderTest {
      */
     @Test
     public void buildsPredicateFromQuery() throws Exception {
-        final PredicateBuilder builder = new PredicateBuilder();
+        final PredicateBuilder builder =
+            new PredicateBuilder(new IndexMocker().mock());
         final String text = "\u043F\u0440\u0438\u0432\u0435";
         final Predicate pred = builder.parse(
             String.format("(and (matches \"%s\" $text) (pos 0))", text)
@@ -107,7 +110,8 @@ public final class PredicateBuilderTest {
      */
     @Test
     public void buildsPredicateFromText() throws Exception {
-        final PredicateBuilder builder = new PredicateBuilder();
+        final PredicateBuilder builder =
+            new PredicateBuilder(new IndexMocker().mock());
         final String text = "\u043F\u0440\u0438\u0432\u0435\u0442";
         final Predicate pred = builder.parse(text);
         MatcherAssert.assertThat(pred, Matchers.notNullValue());

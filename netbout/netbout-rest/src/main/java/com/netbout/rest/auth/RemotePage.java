@@ -35,6 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * Remote page wrapper.
  *
+ * <p>The class has to be public because it's instantiated by JAXB.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

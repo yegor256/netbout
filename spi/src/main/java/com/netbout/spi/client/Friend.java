@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.List;
@@ -128,26 +129,6 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public URL photo() {
-        throw new UnsupportedOperationException(
-            "#photo() can't be called on a friend"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPhoto(final URL photo) {
-        throw new UnsupportedOperationException(
-            "#setPhoto() can't be called on a friend"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Identity friend(final Urn name) {
         throw new UnsupportedOperationException(
             "#friend() can't be called on a friend"
@@ -168,19 +149,9 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Set<String> aliases() {
+    public Profile profile() {
         throw new UnsupportedOperationException(
-            "#aliases() can't be called on a friend"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        throw new UnsupportedOperationException(
-            "#alias() can't be called on a friend"
+            "#profile() can't be called on a friend"
         );
     }
 

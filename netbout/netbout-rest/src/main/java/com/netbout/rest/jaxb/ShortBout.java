@@ -33,10 +33,10 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -152,7 +152,7 @@ public final class ShortBout {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
-            new ArrayList<LongParticipant>();
+            new LinkedList<LongParticipant>();
         for (Participant dude : this.bout.participants()) {
             dudes.add(new LongParticipant(dude, this.builder, this.viewer));
         }
@@ -182,7 +182,7 @@ public final class ShortBout {
     @XmlElementWrapper(name = "bundled")
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Link> getBundled() {
-        final Collection<Link> links = new ArrayList<Link>();
+        final Collection<Link> links = new LinkedList<Link>();
         final String query = String.format(
             "(unbundled %d)",
             this.bout.number()

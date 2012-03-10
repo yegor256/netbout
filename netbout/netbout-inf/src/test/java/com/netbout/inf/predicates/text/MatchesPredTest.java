@@ -27,6 +27,8 @@
 package com.netbout.inf.predicates.text;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
+import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
@@ -60,14 +62,16 @@ public final class MatchesPredTest {
             .withNumber(number)
             .withText("hello, dude!")
             .mock();
-        MatchesPred.extract(message);
+        final Index index = new IndexMocker().mock();
+        MatchesPred.extract(message, index);
         final Predicate pred = new MatchesPred(
             Arrays.asList(
                 new Atom[] {
                     new TextAtom("  "),
                     VariableAtom.TEXT,
                 }
-            )
+            ),
+            index
         );
         MatcherAssert.assertThat("matched", pred.contains(number));
         MatcherAssert.assertThat("is empty", !pred.hasNext());
@@ -88,20 +92,22 @@ public final class MatchesPredTest {
                 {"jeff lebowski", "the dude is Jeff Bridges (Lebowski)"},
             }
         );
+        final Index index = new IndexMocker().mock();
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Long number = new Random().nextLong();
             final Message message = new MessageMocker()
                 .withNumber(number)
                 .withText(entry.getValue())
                 .mock();
-            MatchesPred.extract(message);
+            MatchesPred.extract(message, index);
             final Predicate pred = new MatchesPred(
                 Arrays.asList(
                     new Atom[] {
                         new TextAtom(entry.getKey()),
                         VariableAtom.TEXT,
                     }
-                )
+                ),
+                index
             );
             MatcherAssert.assertThat(
                 String.format(
@@ -125,20 +131,22 @@ public final class MatchesPredTest {
                 {"boy", "short story about some girls"},
             }
         );
+        final Index index = new IndexMocker().mock();
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Long number = new Random().nextLong();
             final Message message = new MessageMocker()
                 .withNumber(number)
                 .withText(entry.getValue())
                 .mock();
-            MatchesPred.extract(message);
+            MatchesPred.extract(message, index);
             final Predicate pred = new MatchesPred(
                 Arrays.asList(
                     new Atom[] {
                         new TextAtom(entry.getKey()),
                         VariableAtom.TEXT,
                     }
-                )
+                ),
+                index
             );
             MatcherAssert.assertThat(
                 String.format(

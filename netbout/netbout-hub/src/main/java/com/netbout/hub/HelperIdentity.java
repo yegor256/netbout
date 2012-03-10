@@ -30,6 +30,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Token;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
@@ -150,16 +151,8 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
-    public URL photo() {
-        return this.identity.photo();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPhoto(final URL url) {
-        this.identity.setPhoto(url);
+    public Profile profile() {
+        return this.identity.profile();
     }
 
     /**
@@ -177,22 +170,6 @@ final class HelperIdentity implements Identity, Helper {
     @Override
     public Set<Identity> friends(final String keyword) {
         return this.identity.friends(keyword);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> aliases() {
-        return this.identity.aliases();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        this.identity.alias(alias);
     }
 
     /**

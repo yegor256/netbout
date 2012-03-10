@@ -29,20 +29,23 @@ package com.netbout.rest.auth;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.LocaleUtils;
 
 /**
- * Remote identity.
+ * Remote identity, returned by {@link AuthMediator#authenticate(Urn,String)}.
+ *
+ * <p>The class has to be public because it's instantiated by JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -62,14 +65,9 @@ public final class RemoteIdentity implements Identity {
     private transient Urn iname;
 
     /**
-     * Photo of identity.
+     * Profile of identity.
      */
-    private transient URL iphoto;
-
-    /**
-     * Aliases.
-     */
-    private final transient Set<String> ialiases = new HashSet<String>();
+    private final transient RemoteProfile iprofile = new RemoteProfile();
 
     /**
      * Problems occured during unmarshalling.
@@ -86,10 +84,10 @@ public final class RemoteIdentity implements Identity {
     public Identity findIn(final Hub hub)
         throws com.netbout.spi.UnreachableUrnException {
         final Identity identity = hub.identity(this.iname);
-        for (String alias : this.aliases()) {
-            identity.alias(alias);
+        for (String alias : this.profile().aliases()) {
+            identity.profile().alias(alias);
         }
-        identity.setPhoto(this.photo());
+        identity.profile().setPhoto(this.profile().photo());
         return identity;
     }
 
@@ -134,10 +132,10 @@ public final class RemoteIdentity implements Identity {
      * Set photo, method for JAXB unmarshaller.
      * @param url The URL
      */
-    @XmlElement(name = "photo")
-    public void setJaxbPhoto(final String url) {
+    @XmlElement
+    public void setPhoto(final String url) {
         try {
-            this.iphoto = new URL(url);
+            this.iprofile.setPhoto(new URL(url));
         } catch (java.net.MalformedURLException ex) {
             this.problems.add(
                 String.format(
@@ -149,12 +147,22 @@ public final class RemoteIdentity implements Identity {
     }
 
     /**
+     * Set locale, method for JAXB unmarshaller.
+     * @param locale The locale to set
+     */
+    @XmlElement
+    public void setLocale(final String locale) {
+        this.iprofile.setLocale(LocaleUtils.toLocale(locale));
+    }
+
+    /**
      * Set aliases, method for JAXB unmarshaller.
      * @param names List of them
      */
     public void setAliases(final Collection<String> names) {
-        this.ialiases.clear();
-        this.ialiases.addAll(names);
+        for (String name : names) {
+            this.iprofile.alias(name);
+        }
     }
 
     /**
@@ -164,7 +172,7 @@ public final class RemoteIdentity implements Identity {
     @XmlElement(name = "alias")
     @XmlElementWrapper(name = "aliases")
     public Set<String> getAliases() {
-        return this.ialiases;
+        return this.iprofile.aliases();
     }
 
     /**
@@ -189,17 +197,9 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public URL photo() {
+    public Profile profile() {
         this.validate();
-        return this.iphoto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> aliases() {
-        return this.ialiases;
+        return this.iprofile;
     }
 
     /**
@@ -246,14 +246,6 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public void setPhoto(final URL pic) {
-        throw new UnsupportedOperationException("#setPhoto()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Identity friend(final Urn name) {
         throw new UnsupportedOperationException("#friend()");
     }
@@ -267,14 +259,6 @@ public final class RemoteIdentity implements Identity {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        throw new UnsupportedOperationException("#alias()");
-    }
-
-    /**
      * Validate and throw exception if there are some problems.
      */
     private void validate() {
@@ -284,9 +268,6 @@ public final class RemoteIdentity implements Identity {
         if (this.iauthority == null) {
             this.problems.add("/identity/authority is absent");
         }
-        if (this.iphoto == null) {
-            this.problems.add("/identity/photo is absent");
-        }
         if (!this.problems.isEmpty()) {
             throw new IllegalStateException(
                 Logger.format(
@@ -295,6 +276,7 @@ public final class RemoteIdentity implements Identity {
                 )
             );
         }
+        this.iprofile.validate();
     }
 
 }

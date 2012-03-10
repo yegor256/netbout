@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
@@ -56,7 +57,7 @@ public final class BundledPredTest {
         final Message from = new MessageMocker()
             .inBout(bout)
             .mock();
-        BundledPred.extract(from);
+        BundledPred.extract(from, new IndexMocker().mock());
     }
 
     /**
@@ -65,7 +66,10 @@ public final class BundledPredTest {
      */
     @Test
     public void positivelyMatchesBundledMessageOnly() throws Exception {
-        final Predicate pred = new BundledPred(Arrays.asList(new Atom[] {}));
+        final Predicate pred = new BundledPred(
+            Arrays.asList(new Atom[] {}),
+            new IndexMocker().mock()
+        );
         MatcherAssert.assertThat("no", pred.contains(1L));
     }
 

@@ -39,7 +39,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
- * RESTful front of one Bout.
+ * Friends finding service (used by RESTful client or AJAX).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

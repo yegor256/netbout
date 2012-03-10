@@ -33,6 +33,7 @@ import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Utils for netbout entities manipulations.
@@ -55,7 +56,11 @@ public final class NetboutUtils {
      * @return The alias
      */
     public static String aliasOf(final Identity identity) {
-        final Iterator<String> iter = identity.aliases().iterator();
+        final Profile profile = identity.profile();
+        assert profile != null : "Profile is NULL";
+        final Set<String> aliases = profile.aliases();
+        assert aliases != null : "Set of aliases in the profile is NULL";
+        final Iterator<String> iter = aliases.iterator();
         String alias;
         if (iter.hasNext()) {
             alias = iter.next();
@@ -63,6 +68,28 @@ public final class NetboutUtils {
             alias = identity.name().toString();
         }
         return alias;
+    }
+
+    /**
+     * Normalize the query.
+     * @param query Raw format
+     * @return The text for predicate
+     */
+    public static String normalize(final String query) {
+        String normalized;
+        if (query == null) {
+            normalized = NetboutUtils.normalize("");
+        } else if (!query.isEmpty() && query.charAt(0) == '('
+            && query.endsWith(")")) {
+            normalized = query;
+        } else {
+            normalized = String.format(
+                // @checkstyle LineLength (1 line)
+                "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
+                query.replace("'", "\\'")
+            );
+        }
+        return normalized;
     }
 
     /**

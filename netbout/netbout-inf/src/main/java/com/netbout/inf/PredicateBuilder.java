@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ import org.reflections.Reflections;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class PredicateBuilder {
+final class PredicateBuilder {
 
     /**
      * All predicates discovered in classpath.
@@ -52,13 +53,26 @@ public final class PredicateBuilder {
         PredicateBuilder.discover();
 
     /**
+     * The index.
+     */
+    private final transient Index index;
+
+    /**
+     * Public ctor.
+     * @param idx The index
+     */
+    public PredicateBuilder(final Index idx) {
+        this.index = idx;
+    }
+
+    /**
      * Build a predicate from a query string.
      * @param query The query
      * @return The predicate
      */
     public Predicate parse(final String query) {
         final CharStream input = new ANTLRStringStream(
-            this.normalize(query)
+            NetboutUtils.normalize(query)
         );
         final QueryLexer lexer = new QueryLexer(input);
         final TokenStream tokens = new CommonTokenStream(lexer);
@@ -84,34 +98,13 @@ public final class PredicateBuilder {
     /**
      * Extract properties from the message.
      * @param from The message
+     * @param idx The index to extract to
      */
     @SuppressWarnings("PMD.DefaultPackage")
-    static void extract(final Message from) {
+    static void extract(final Message from, final Index idx) {
         for (PredicateToken token : PredicateBuilder.PREDICATES) {
-            token.extract(from);
+            token.extract(from, idx);
         }
-    }
-
-    /**
-     * Normalize the query.
-     * @param query Raw format
-     * @return The text for predicate
-     */
-    public static String normalize(final String query) {
-        String normalized;
-        if (query == null) {
-            normalized = PredicateBuilder.normalize("");
-        } else if (!query.isEmpty() && query.charAt(0) == '('
-            && query.endsWith(")")) {
-            normalized = query;
-        } else {
-            normalized = String.format(
-                // @checkstyle LineLength (1 line)
-                "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
-                query.replace("'", "\\'")
-            );
-        }
-        return normalized;
     }
 
     /**
@@ -124,7 +117,7 @@ public final class PredicateBuilder {
         Predicate predicate = null;
         for (PredicateToken token : this.PREDICATES) {
             if (token.namedAs(name)) {
-                predicate = token.build(atoms);
+                predicate = token.build(atoms, this.index);
                 break;
             }
         }

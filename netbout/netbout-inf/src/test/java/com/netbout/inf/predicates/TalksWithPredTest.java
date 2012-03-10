@@ -27,6 +27,8 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
+import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Bout;
@@ -60,9 +62,11 @@ public final class TalksWithPredTest {
         final Message message = new MessageMocker()
             .inBout(bout)
             .mock();
-        TalksWithPred.extract(message);
+        final Index index = new IndexMocker().mock();
+        TalksWithPred.extract(message, index);
         final Predicate pred = new TalksWithPred(
-            Arrays.asList(new Atom[] {new TextAtom(name.toString())})
+            Arrays.asList(new Atom[] {new TextAtom(name.toString())}),
+            index
         );
         MatcherAssert.assertThat("has next", pred.hasNext());
         MatcherAssert.assertThat(

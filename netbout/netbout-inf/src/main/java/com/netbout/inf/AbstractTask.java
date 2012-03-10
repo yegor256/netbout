@@ -45,10 +45,23 @@ abstract class AbstractTask implements Task {
     private transient Long finished;
 
     /**
+     * The index to work with.
+     */
+    private final transient Index data;
+
+    /**
+     * Public ctor.
+     * @param index The index to work with
+     */
+    public AbstractTask(final Index index) {
+        this.data = index;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return this.toString().hashCode();
     }
 
@@ -56,7 +69,7 @@ abstract class AbstractTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object task) {
+    public final boolean equals(final Object task) {
         return this.hashCode() == task.hashCode();
     }
 
@@ -64,7 +77,7 @@ abstract class AbstractTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public void run() {
+    public final void run() {
         this.started = System.nanoTime();
         this.execute();
         this.finished = System.nanoTime();
@@ -74,7 +87,7 @@ abstract class AbstractTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public Long time() {
+    public final Long time() {
         Long time;
         if (this.finished == null) {
             time = System.nanoTime() - this.started;
@@ -88,5 +101,13 @@ abstract class AbstractTask implements Task {
      * Execute task.
      */
     protected abstract void execute();
+
+    /**
+     * Get index.
+     * @return The index
+     */
+    protected final Index index() {
+        return this.data;
+    }
 
 }

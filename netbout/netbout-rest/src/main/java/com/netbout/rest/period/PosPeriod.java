@@ -26,7 +26,7 @@
  */
 package com.netbout.rest.period;
 
-import com.netbout.inf.PredicateBuilder;
+import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.SortedSet;
@@ -156,7 +156,7 @@ final class PosPeriod implements Period {
             original = query;
         } else {
             if (!query.isEmpty()) {
-                original = PredicateBuilder.normalize(query);
+                original = NetboutUtils.normalize(query);
             }
         }
         final String text = String.format(
