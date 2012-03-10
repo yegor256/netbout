@@ -213,6 +213,7 @@ public final class FacebookRs extends AbstractRs {
                 )
         );
         final String[] sectors = response.split("&");
+        String token = null;
         for (String sector : sectors) {
             final String[] pair = sector.split("=");
             if (pair.length != 2) {
@@ -224,15 +225,24 @@ public final class FacebookRs extends AbstractRs {
                 );
             }
             if ("access_token".equals(pair[0])) {
-                return pair[1];
+                token = pair[1];
+                break;
             }
         }
-        throw new IOException(
-            String.format(
-                "Access token not found in response: '%s'",
-                response
-            )
+        if (token == null) {
+            throw new IOException(
+                String.format(
+                    "Access token not found in response: '%s'",
+                    response
+                )
+            );
+        }
+        Logger.debug(
+            this,
+            "#token(..): found '%s'",
+            token
         );
+        return token;
     }
 
     /**
