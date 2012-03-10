@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.NumberAtom;
@@ -54,9 +55,10 @@ public final class UnbundledPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args The arguments
+     * @param index The index to use for searching
      */
-    public UnbundledPred(final List<Atom> args) {
-        super(args);
+    public UnbundledPred(final List<Atom> args, final Index index) {
+        super(args, index);
         this.bout = ((NumberAtom) this.arg(0)).value();
         this.marker = BundledPred.markerOfBout(this.bout);
     }

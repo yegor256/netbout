@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.PredicateException;
 import com.netbout.spi.Message;
@@ -46,6 +47,12 @@ import java.util.concurrent.ConcurrentMap;
 public final class UniquePred extends AbstractVarargPred {
 
     /**
+     * Cached bouts and their messages.
+     */
+    private static final ConcurrentMap<Long, Long> BOUTS =
+        new ConcurrentHashMap<Long, Long>();
+
+    /**
      * List of already passed bout numbers.
      */
     private final transient Set<Long> passed = new HashSet<Long>();
@@ -53,9 +60,10 @@ public final class UniquePred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args The arguments
+     * @param index The index to use for searching
      */
-    public UniquePred(final List<Atom> args) {
-        super(args);
+    public UniquePred(final List<Atom> args, final Index index) {
+        super(args, index);
         if (!"bout.number".equals(this.arg(0).value())) {
             throw new PredicateException(
                 "Only $bout.number can be used in (unique)"
@@ -69,7 +77,7 @@ public final class UniquePred extends AbstractVarargPred {
      * @param dest The index to extract to
      */
     public static void extract(final Message msg, final Index dest) {
-        dest.add(Index.Key.BOUT_NUMBER, msg.bout().number(), msg);
+        UniquePred.BOUTS.put(msg.number(), msg.bout().number());
     }
 
     /**
@@ -93,7 +101,7 @@ public final class UniquePred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
-        final Long bout = this.index.fetch(Index.Key.BOUT_NUMBER, message);
+        final Long bout = this.BOUTS.get(message);
         boolean allow;
         if (this.passed.contains(bout)) {
             allow = false;

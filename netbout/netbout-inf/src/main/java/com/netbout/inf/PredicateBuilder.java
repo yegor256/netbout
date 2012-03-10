@@ -43,13 +43,26 @@ import org.reflections.Reflections;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class PredicateBuilder {
+final class PredicateBuilder {
 
     /**
      * All predicates discovered in classpath.
      */
     private static final List<PredicateToken> PREDICATES =
         PredicateBuilder.discover();
+
+    /**
+     * The index.
+     */
+    private final transient Index index;
+
+    /**
+     * Public ctor.
+     * @param idx The index
+     */
+    public PredicateBuilder(final Index idx) {
+        this.index = idx;
+    }
 
     /**
      * Build a predicate from a query string.
@@ -84,11 +97,12 @@ public final class PredicateBuilder {
     /**
      * Extract properties from the message.
      * @param from The message
+     * @param idx The index to extract to
      */
     @SuppressWarnings("PMD.DefaultPackage")
-    static void extract(final Message from) {
+    static void extract(final Message from, final Index idx) {
         for (PredicateToken token : PredicateBuilder.PREDICATES) {
-            token.extract(from);
+            token.extract(from, idx);
         }
     }
 
@@ -124,7 +138,7 @@ public final class PredicateBuilder {
         Predicate predicate = null;
         for (PredicateToken token : this.PREDICATES) {
             if (token.namedAs(name)) {
-                predicate = token.build(atoms);
+                predicate = token.build(atoms, this.index);
                 break;
             }
         }

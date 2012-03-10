@@ -62,6 +62,7 @@ public final class SeeMessageTaskTest {
         final ExecutorService executor = Executors.newFixedThreadPool(10);
         final Collection<Callable> tasks = new ArrayList<Callable>();
         final AtomicLong failed = new AtomicLong(50);
+        final Index index = new IndexMocker().mock();
         for (int idx = 0; idx < failed.get(); idx += 1) {
             tasks.add(
                 new Callable<Long>() {
@@ -75,7 +76,7 @@ public final class SeeMessageTaskTest {
                                 .withDate(new Date())
                                 .inBout(bout)
                                 .mock();
-                            new SeeMessageTask(msg).run();
+                            new SeeMessageTask(msg, index).run();
                         // @checkstyle IllegalCatch (1 line)
                         } catch (Throwable ex) {
                             Logger.error(this, "%[exception]s", ex);

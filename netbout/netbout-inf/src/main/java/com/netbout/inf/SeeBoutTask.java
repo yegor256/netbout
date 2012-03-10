@@ -66,9 +66,12 @@ final class SeeBoutTask extends AbstractTask {
      * @param inf The infinity
      * @param where The BUS to work with
      * @param what The bout to update
+     * @param index The index
+     * @checkstyle ParameterNumber (3 lines)
      */
-    public SeeBoutTask(final Infinity inf, final Bus where, final Bout what) {
-        super();
+    public SeeBoutTask(final Infinity inf, final Bus where, final Bout what,
+        final Index index) {
+        super(index);
         this.infinity = inf;
         this.bus = where;
         this.bout = what;

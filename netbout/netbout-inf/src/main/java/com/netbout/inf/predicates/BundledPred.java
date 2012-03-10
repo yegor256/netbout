@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.PredicateException;
 import com.netbout.spi.Message;
@@ -75,9 +76,10 @@ public final class BundledPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args The arguments
+     * @param index The index to use for searching
      */
-    public BundledPred(final List<Atom> args) {
-        super(args);
+    public BundledPred(final List<Atom> args, final Index index) {
+        super(args, index);
     }
 
     /**

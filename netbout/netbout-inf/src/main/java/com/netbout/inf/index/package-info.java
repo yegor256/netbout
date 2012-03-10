@@ -24,40 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
-
-import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.IndexMocker;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.atoms.NumberAtom;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
 
 /**
- * Test case of {@link UnbundledPred}.
+ * Index implementation.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UnbundledPredTest {
-
-    /**
-     * UnbundledPred can pass only unbundled messages.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void positivelyMatchesUnbundledMessageOnly() throws Exception {
-        final Message message = new MessageMocker().mock();
-        final Index index = new IndexMocker().mock();
-        BundledPred.extract(message, index);
-        final Predicate pred = new UnbundledPred(
-            Arrays.asList(new Atom[] {new NumberAtom(message.bout().number())}),
-            index
-        );
-        MatcherAssert.assertThat("no!", !pred.contains(message.number()));
-    }
-
-}
+package com.netbout.inf.index;

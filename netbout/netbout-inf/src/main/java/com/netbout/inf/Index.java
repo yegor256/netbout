@@ -26,8 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
-
 /**
  * Index.
  *
@@ -35,46 +33,5 @@ import com.netbout.spi.Message;
  * @version $Id$
  */
 public interface Index {
-
-    /**
-     * Aviable keys.
-     */
-    public static enum Key {
-        /**
-         * Bout number.
-         */
-        BOUT_NUMBER,
-        /**
-         * Bout number.
-         */
-        BOUT_NUMBER,
-        /**
-         * XML namespace.
-         */
-        NAMESPACE;
-    }
-
-    /**
-     * Add new message with this property.
-     * @param name Name of property
-     * @param value Value of it
-     * @param message The message to associate
-     */
-    void add(Key name, String value, Object );
-
-    /**
-     * Fetch all messages with this name and property.
-     * @param name Name of property
-     * @param value Value of it
-     * @return Collection of message numbers
-     */
-    Collection<Long> fetch(Key name, String value);
-
-    /**
-     * Remove properties from the given message.
-     * @param name Name of property
-     * @param message The message
-     */
-    void remove(Key name, Message message);
 
 }

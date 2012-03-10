@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.inf.ih.StageFarm;
+import com.netbout.inf.index.MemoryIndex;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -52,6 +53,11 @@ public final class DefaultInfinity implements Infinity {
      * Multiplexer of tasks.
      */
     private final transient Mux mux = new Mux();
+
+    /**
+     * The index.
+     */
+    private final transient Index index = new MemoryIndex();
 
     /**
      * Public ctor.
@@ -121,7 +127,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public Iterable<Long> messages(final String query) {
-        return new LazyMessages(new PredicateBuilder().parse(query));
+        return new LazyMessages(new PredicateBuilder(this.index).parse(query));
     }
 
     /**
@@ -129,7 +135,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Identity identity) {
-        this.mux.add(new SeeIdentityTask(this, this.bus, identity));
+        this.mux.add(new SeeIdentityTask(this, this.bus, identity, this.index));
         Logger.debug(
             this,
             "see('%s'): request submitted",
@@ -142,7 +148,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Bout bout) {
-        this.mux.add(new SeeBoutTask(this, this.bus, bout));
+        this.mux.add(new SeeBoutTask(this, this.bus, bout, this.index));
         Logger.debug(
             this,
             "see(bout #%d): request submitted",
@@ -155,7 +161,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
-        this.mux.add(new SeeMessageTask(message));
+        this.mux.add(new SeeMessageTask(message, this.index));
         Logger.debug(
             this,
             "see(message #%d): request submitted",

@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates.text;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
@@ -79,9 +80,10 @@ public final class MatchesPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args The arguments
+     * @param index The index to use for searching
      */
-    public MatchesPred(final List<Atom> args) {
-        super(args);
+    public MatchesPred(final List<Atom> args, final Index index) {
+        super(args, index);
         final Set<String> words = this.words(this.arg(0).value().toString());
         if (words.size() > 1) {
             final List<Atom> atoms = new ArrayList<Atom>(words.size());
@@ -93,11 +95,12 @@ public final class MatchesPred extends AbstractVarargPred {
                                 new TextAtom(word),
                                 this.arg(1),
                             }
-                        )
+                        ),
+                        index
                     )
                 );
             }
-            this.predicate = new AndPred(atoms);
+            this.predicate = new AndPred(atoms, index);
         } else if (words.isEmpty()) {
             this.predicate = new TruePred();
         } else {

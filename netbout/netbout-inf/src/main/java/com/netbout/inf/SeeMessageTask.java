@@ -49,9 +49,10 @@ final class SeeMessageTask extends AbstractTask {
     /**
      * Public ctor.
      * @param what The message to update
+     * @param index The index to use
      */
-    public SeeMessageTask(final Message what) {
-        super();
+    public SeeMessageTask(final Message what, final Index index) {
+        super(index);
         this.message = what;
     }
 
@@ -83,7 +84,7 @@ final class SeeMessageTask extends AbstractTask {
      */
     @Override
     protected void execute() {
-        PredicateBuilder.extract(this.message);
+        PredicateBuilder.extract(this.message, this.index());
         Logger.debug(
             this,
             "#execute(): cached message #%d in %[nano]s",

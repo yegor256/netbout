@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates.logic;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
@@ -49,9 +50,10 @@ public final class AndPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args Arguments/predicates
+     * @param index The index to use for searching
      */
-    public AndPred(final List<Atom> args) {
-        super(args);
+    public AndPred(final List<Atom> args, final Index index) {
+        super(args, index);
     }
 
     /**
