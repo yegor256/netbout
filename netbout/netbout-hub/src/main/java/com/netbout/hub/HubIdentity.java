@@ -26,10 +26,10 @@
  */
 package com.netbout.hub;
 
-import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
+import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Profile;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
@@ -174,7 +174,7 @@ public final class HubIdentity implements Identity {
                 String.format(
                     "(and (talks-with '%s') %s (unique $bout.number))",
                     this.name(),
-                    PredicateBuilder.normalize(query)
+                    NetboutUtils.normalize(query)
                 )
             ),
             this

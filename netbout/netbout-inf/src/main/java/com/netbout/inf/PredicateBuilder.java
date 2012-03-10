@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,7 @@ final class PredicateBuilder {
      */
     public Predicate parse(final String query) {
         final CharStream input = new ANTLRStringStream(
-            this.normalize(query)
+            NetboutUtils.normalize(query)
         );
         final QueryLexer lexer = new QueryLexer(input);
         final TokenStream tokens = new CommonTokenStream(lexer);
@@ -104,28 +105,6 @@ final class PredicateBuilder {
         for (PredicateToken token : PredicateBuilder.PREDICATES) {
             token.extract(from, idx);
         }
-    }
-
-    /**
-     * Normalize the query.
-     * @param query Raw format
-     * @return The text for predicate
-     */
-    public static String normalize(final String query) {
-        String normalized;
-        if (query == null) {
-            normalized = PredicateBuilder.normalize("");
-        } else if (!query.isEmpty() && query.charAt(0) == '('
-            && query.endsWith(")")) {
-            normalized = query;
-        } else {
-            normalized = String.format(
-                // @checkstyle LineLength (1 line)
-                "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
-                query.replace("'", "\\'")
-            );
-        }
-        return normalized;
     }
 
     /**

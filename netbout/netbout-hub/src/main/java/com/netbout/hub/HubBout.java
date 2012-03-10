@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.inf.PredicateBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.DuplicateInvitationException;
 import com.netbout.spi.Identity;
@@ -255,7 +254,7 @@ public final class HubBout implements Bout {
                 String.format(
                     "(and (equal $bout.number %d) %s)",
                     this.number(),
-                    PredicateBuilder.normalize(query)
+                    NetboutUtils.normalize(query)
                 )
             ),
             this

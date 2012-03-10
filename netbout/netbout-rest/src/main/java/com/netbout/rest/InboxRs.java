@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.inf.PredicateBuilder;
 import com.netbout.rest.jaxb.ShortBout;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
@@ -193,7 +192,7 @@ public final class InboxRs extends AbstractRs {
      * @return The list of them
      */
     private Iterable<Bout> fetch(final Period period) {
-        String pred = PredicateBuilder.normalize(this.query);
+        String pred = NetboutUtils.normalize(this.query);
         if (!pred.startsWith("(unbundled ")) {
             pred = String.format("(and %s (bundled))", pred);
         }

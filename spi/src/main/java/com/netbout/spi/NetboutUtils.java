@@ -71,6 +71,28 @@ public final class NetboutUtils {
     }
 
     /**
+     * Normalize the query.
+     * @param query Raw format
+     * @return The text for predicate
+     */
+    public static String normalize(final String query) {
+        String normalized;
+        if (query == null) {
+            normalized = NetboutUtils.normalize("");
+        } else if (!query.isEmpty() && query.charAt(0) == '('
+            && query.endsWith(")")) {
+            normalized = query;
+        } else {
+            normalized = String.format(
+                // @checkstyle LineLength (1 line)
+                "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
+                query.replace("'", "\\'")
+            );
+        }
+        return normalized;
+    }
+
+    /**
      * Get the latest date of the particular bout (when it was updated by
      * anyone).
      * @param bout The bout to check
