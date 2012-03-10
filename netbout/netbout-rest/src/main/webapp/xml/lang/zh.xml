@@ -34,15 +34,13 @@
     <sec>秒</sec>
     <in>in</in>
     <in.a.few.minutes>在幾分鐘後</in.a.few.minutes>
-    <the.server.is.busy>The server is currently updating your account,
-        some data may look not as fresh as they should be. Try
-        to refresh the page</the.server.is.busy>
+    <the.server.is.busy>我們的服務器正在更新您的數據。可能看起來不正確的信息。請嘗試刷新頁面。</the.server.is.busy>
     <click.here>click here</click.here>
 
     <!-- top menu -->
     <About>關於我們</About>
     <Start>開始新的對話</Start>
-    <Start.later>Start (later)</Start.later>
+    <Start.later>開始新的對話 (later)</Start.later>
     <start.new.bout>開始新的對話</start.new.bout>
     <back.to.inbox>返回到收件箱</back.to.inbox>
     <Logout>註銷</Logout>
@@ -62,7 +60,7 @@
     <said>said</said>
     <click.to.invite>click to invite</click.to.invite>
     <to.this.bout>to this bout</to.this.bout>
-    <Do.you.agree.to.join>Do you agree to join</Do.you.agree.to.join>
+    <Do.you.agree.to.join>你是否同意加入</Do.you.agree.to.join>
     <yes>是的</yes>
     <or>或</or>
     <no>不</no>
@@ -71,11 +69,11 @@
     <off.this.bout>off this bout</off.this.bout>
 
     <!-- profile page -->
-    <AKA>AKA</AKA>
+    <AKA>也被稱為</AKA>
     <Identity>身分</Identity>
     <Language>語</Language>
     <profile>profile</profile>
-    <Profile.settings>Profile settings</Profile.settings>
-    <settings.of.your.profile>settings of your profile</settings.of.your.profile>
-    <switch.to>switch to</switch.to>
+    <Profile.settings>配置文件設置</Profile.settings>
+    <settings.of.your.profile>配置文件設置</settings.of.your.profile>
+    <switch.to>切換到</switch.to>
 </texts>
