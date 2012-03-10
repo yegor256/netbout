@@ -30,7 +30,7 @@
 /* photo of identity */
 img.photo {
     /* originally its size is unknown */
-    width: 5em;
+    width: 3.57em; /* meaning 50px */
     float: left;
     border-bottom: 0.1em solid #9c9c9c;
     border-right: 0.1em solid #9c9c9c;

@@ -29,32 +29,53 @@
  * @version $Id$
  -->
 <texts>
-    <About>About</About>
-    <AKA>AKA</AKA>
-    <Identity>Identity</Identity>
-    <Language>Language</Language>
-    <Logout>Logout</Logout>
-    <profile>profile</profile>
-    <Profile.settings>Profile settings</Profile.settings>
-    <settings.of.your.profile>settings of your profile</settings.of.your.profile>
-    <Start>Start</Start>
-    <switch.to>switch to</switch.to>
-    <back.to.inbox>back to inbox</back.to.inbox>
-    <Start.later>Start (later)</Start.later>
-    <start.new.bout>start new bout</start.new.bout>
-    <leave.right.now>leave right now</leave.right.now>
-    <click.here>click here</click.here>
-    <We.recommend.to.reauthenticate>We recommend you to re-authenticate yourself</We.recommend.to.reauthenticate>
-    <sec>sec</sec>
+    <!-- global messages -->
+    <We.recommend.to.reauthenticate>我們建議您再次登陸</We.recommend.to.reauthenticate>
+    <sec>秒</sec>
     <in>in</in>
-    <in.a.few.minutes>in a few minutes</in.a.few.minutes>
+    <in.a.few.minutes>在幾分鐘後</in.a.few.minutes>
     <the.server.is.busy>The server is currently updating your account,
         some data may look not as fresh as they should be. Try
         to refresh the page</the.server.is.busy>
+    <click.here>click here</click.here>
+
+    <!-- top menu -->
+    <About>關於我們</About>
+    <Start>開始新的對話</Start>
+    <Start.later>Start (later)</Start.later>
+    <start.new.bout>開始新的對話</start.new.bout>
+    <back.to.inbox>返回到收件箱</back.to.inbox>
+    <Logout>註銷</Logout>
+    <leave.right.now>註銷</leave.right.now>
+
+    <!-- inbox -->
     <inbox>inbox</inbox>
     <back.to.recent.bouts>back to recent bouts</back.to.recent.bouts>
     <no.title>no title</no.title>
     <new>new</new>
     <all.of.them>all of them</all.of.them>
+
+    <!-- bout page -->
     <back.to.recent.messages>back to recent messages</back.to.recent.messages>
+    <you>you</you>
+    <someone>someone</someone>
+    <said>said</said>
+    <click.to.invite>click to invite</click.to.invite>
+    <to.this.bout>to this bout</to.this.bout>
+    <Do.you.agree.to.join>Do you agree to join</Do.you.agree.to.join>
+    <yes>是的</yes>
+    <or>或</or>
+    <no>不</no>
+    <invited>invited</invited>
+    <kick>kick</kick>
+    <off.this.bout>off this bout</off.this.bout>
+
+    <!-- profile page -->
+    <AKA>AKA</AKA>
+    <Identity>身分</Identity>
+    <Language>語</Language>
+    <profile>profile</profile>
+    <Profile.settings>Profile settings</Profile.settings>
+    <settings.of.your.profile>settings of your profile</settings.of.your.profile>
+    <switch.to>switch to</switch.to>
 </texts>
