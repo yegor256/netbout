@@ -92,29 +92,36 @@
                             </xsl:attribute>
                         </img>
                         <xsl:variable name="dude" select="."/>
-                        <xsl:if test="@helper = 'true' and @confirmed = 'true' and /page/bout/stages/stage[.=$dude/identity]">
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="/page/bout/stages/stage[.=$dude/identity]/@href"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="class">
-                                    <xsl:text>corner</xsl:text>
-                                    <xsl:if test="identity = /page/bout/stage/@name">
-                                        <xsl:text> active</xsl:text>
-                                    </xsl:if>
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:choose>
-                                        <xsl:when test="identity = /page/bout/stage/@name">
-                                            <xsl:text>You see my data below</xsl:text>
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:text>Click to see my data</xsl:text>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:attribute>
-                                <xsl:text> </xsl:text>
-                            </a>
+                        <xsl:if test="@helper = 'true' and @confirmed = 'true'">
+                            <xsl:choose>
+                                <xsl:when test="/page/bout/stages/stage[.=$dude/identity]">
+                                    <a>
+                                        <xsl:attribute name="href">
+                                            <xsl:value-of select="/page/bout/stages/stage[.=$dude/identity]/@href"/>
+                                        </xsl:attribute>
+                                        <xsl:attribute name="class">
+                                            <xsl:text>corner</xsl:text>
+                                            <xsl:if test="identity = /page/bout/stage/@name">
+                                                <xsl:text> active</xsl:text>
+                                            </xsl:if>
+                                        </xsl:attribute>
+                                        <xsl:attribute name="title">
+                                            <xsl:choose>
+                                                <xsl:when test="identity = /page/bout/stage/@name">
+                                                    <xsl:text>You see my data below</xsl:text>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:text>Click to see my data</xsl:text>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:attribute>
+                                        <xsl:text> </xsl:text>
+                                    </a>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <div class="corner">&#160;</div>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:if>
                     </article>
                 </div>
