@@ -29,21 +29,7 @@
  * @version $Id$
  -->
 <texts>
-    <About>About</About>
-    <AKA>AKA</AKA>
-    <Identity>Identity</Identity>
-    <Language>Language</Language>
-    <Logout>Logout</Logout>
-    <profile>profile</profile>
-    <Profile.settings>Profile settings</Profile.settings>
-    <settings.of.your.profile>settings of your profile</settings.of.your.profile>
-    <Start>Start</Start>
-    <switch.to>switch to</switch.to>
-    <back.to.inbox>back to inbox</back.to.inbox>
-    <Start.later>Start (later)</Start.later>
-    <start.new.bout>start new bout</start.new.bout>
-    <leave.right.now>leave right now</leave.right.now>
-    <click.here>click here</click.here>
+    <!-- global messages -->
     <We.recommend.to.reauthenticate>We recommend you to re-authenticate yourself</We.recommend.to.reauthenticate>
     <sec>sec</sec>
     <in>in</in>
@@ -51,11 +37,25 @@
     <the.server.is.busy>The server is currently updating your account,
         some data may look not as fresh as they should be. Try
         to refresh the page</the.server.is.busy>
+    <click.here>click here</click.here>
+
+    <!-- top menu -->
+    <About>About</About>
+    <Start>Start</Start>
+    <Start.later>Start (later)</Start.later>
+    <start.new.bout>start new bout</start.new.bout>
+    <back.to.inbox>back to inbox</back.to.inbox>
+    <Logout>Logout</Logout>
+    <leave.right.now>leave right now</leave.right.now>
+
+    <!-- inbox -->
     <inbox>inbox</inbox>
     <back.to.recent.bouts>back to recent bouts</back.to.recent.bouts>
     <no.title>no title</no.title>
     <new>new</new>
     <all.of.them>all of them</all.of.them>
+
+    <!-- bout page -->
     <back.to.recent.messages>back to recent messages</back.to.recent.messages>
     <you>you</you>
     <someone>someone</someone>
@@ -69,4 +69,13 @@
     <invited>invited</invited>
     <kick>kick</kick>
     <off.this.bout>off this bout</off.this.bout>
+
+    <!-- profile page -->
+    <AKA>AKA</AKA>
+    <Identity>Identity</Identity>
+    <Language>Language</Language>
+    <profile>profile</profile>
+    <Profile.settings>Profile settings</Profile.settings>
+    <settings.of.your.profile>settings of your profile</settings.of.your.profile>
+    <switch.to>switch to</switch.to>
 </texts>
