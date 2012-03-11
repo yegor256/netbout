@@ -49,12 +49,24 @@
                     src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
                     <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
                 </script>
-                <link href="/css/global.css" rel="stylesheet" type="text/css"
-                    media="all"/>
-                <link href="/css/layout.css" rel="stylesheet" type="text/css"
-                    media="all"/>
-                <link rel="icon" type="image/gif"
-                    href="http://cdn.netbout.com/favicon.ico"/>
+                <link rel="stylesheet" type="text/css" media="all">
+                    <xsl:attribute name="href">
+                        <xsl:text>/css/global.css?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
+                    </xsl:attribute>
+                </link>
+                <link rel="stylesheet" type="text/css" media="all">
+                    <xsl:attribute name="href">
+                        <xsl:text>/css/layout.css?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
+                    </xsl:attribute>
+                </link>
+                <link rel="icon" type="image/gif">
+                    <xsl:attribute name="href">
+                        <xsl:text>http://cdn.netbout.com/favicon.ico?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
+                    </xsl:attribute>
+                </link>
                 <xsl:call-template name="head" />
             </head>
             <body>

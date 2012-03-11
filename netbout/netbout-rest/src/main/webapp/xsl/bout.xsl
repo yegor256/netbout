@@ -57,9 +57,24 @@
         <script src="/js/bout.js">
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <link href="/css/bout.css" rel="stylesheet" type="text/css"/>
-        <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
-        <link href="/css/periods.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/bout.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/dudes.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/periods.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
         <xsl:if test="/page/bout/stage">
             <xsl:apply-templates select="/page/bout/stage" mode="head" />
         </xsl:if>

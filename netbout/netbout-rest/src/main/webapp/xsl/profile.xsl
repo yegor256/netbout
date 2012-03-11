@@ -44,7 +44,12 @@
         <title>
             <xsl:value-of select="$TEXTS/profile"/>
         </title>
-        <link href="/css/profile.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/profile.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
     </xsl:template>
 
     <xsl:template name="content">

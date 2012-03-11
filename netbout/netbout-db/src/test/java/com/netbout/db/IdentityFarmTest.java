@@ -134,6 +134,20 @@ public final class IdentityFarmTest {
     }
 
     /**
+     * IdentityFarm can find identities by exact name.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsIdentityByExactName() throws Exception {
+        final Urn who = new IdentityRowMocker().mock();
+        final Urn identity = new IdentityRowMocker().mock();
+        MatcherAssert.assertThat(
+            this.farm.findIdentitiesByKeyword(who, identity.toString()),
+            Matchers.hasItem(identity)
+        );
+    }
+
+    /**
      * IdentityFarm can exclude non-facebook and non-test identities.
      * @throws Exception If there is some problem inside
      */

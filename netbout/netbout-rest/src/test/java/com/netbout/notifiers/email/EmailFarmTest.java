@@ -32,6 +32,7 @@ import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -81,7 +82,10 @@ public final class EmailFarmTest {
     @Test
     public void constructsUrnFromEmail() throws Exception {
         final EmailFarm farm = new EmailFarm();
-        final List<Urn> urns = farm.findIdentitiesByKeyword("abc@a.com");
+        final List<Urn> urns = farm.findIdentitiesByKeyword(
+            new UrnMocker().mock(),
+            "abc@a.com"
+        );
         MatcherAssert.assertThat(urns, Matchers.hasSize(1));
         MatcherAssert.assertThat(
             urns.get(0),
@@ -96,7 +100,10 @@ public final class EmailFarmTest {
     @Test
     public void ingoresOtherKeywords() throws Exception {
         MatcherAssert.assertThat(
-            new EmailFarm().findIdentitiesByKeyword("some text"),
+            new EmailFarm().findIdentitiesByKeyword(
+                new UrnMocker().mock(),
+                "some text"
+            ),
             Matchers.nullValue()
         );
     }
