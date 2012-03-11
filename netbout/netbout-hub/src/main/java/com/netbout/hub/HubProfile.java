@@ -111,21 +111,24 @@ public final class HubProfile implements Profile {
      */
     @Override
     public void setLocale(final Locale locale) {
+        final Locale previous = this.ilocale;
         synchronized (this) {
             this.ilocale = locale;
         }
-        this.hub.make("set-identity-locale")
-            .synchronously()
-            .arg(this.identity.name())
-            .arg(this.ilocale.toString())
-            .asDefault(true)
-            .exec();
-        Logger.info(
-            this,
-            "Locale set to '%s' for '%s'",
-            this.ilocale,
-            this.identity.name()
-        );
+        if (previous == null || !previous.equals(locale)) {
+            this.hub.make("set-identity-locale")
+                .synchronously()
+                .arg(this.identity.name())
+                .arg(this.ilocale.toString())
+                .asDefault(true)
+                .exec();
+            Logger.info(
+                this,
+                "Locale set to '%s' for '%s'",
+                this.ilocale,
+                this.identity.name()
+            );
+        }
     }
 
     /**
@@ -151,6 +154,7 @@ public final class HubProfile implements Profile {
      */
     @Override
     public void setPhoto(final URL url) {
+        final URL previous = this.iphoto;
         synchronized (this) {
             this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
         }
@@ -159,17 +163,19 @@ public final class HubProfile implements Profile {
             .arg(this.identity.name())
             .asDefault(true)
             .exec();
-        this.hub.make("changed-identity-photo")
-            .synchronously()
-            .arg(this.identity.name())
-            .arg(this.iphoto)
-            .asDefault(true)
-            .exec();
-        Logger.info(
-            this,
-            "Photo changed for '%s'",
-            this.identity.name()
-        );
+        if (previous == null || !previous.equals(url)) {
+            this.hub.make("changed-identity-photo")
+                .synchronously()
+                .arg(this.identity.name())
+                .arg(this.iphoto)
+                .asDefault(true)
+                .exec();
+            Logger.info(
+                this,
+                "Photo changed for '%s'",
+                this.identity.name()
+            );
+        }
     }
 
     /**
