@@ -287,12 +287,14 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> findByKeyword(final String keyword) {
+    public Set<Identity> findByKeyword(final Identity who,
+        final String keyword) {
         final Set<Identity> found = new HashSet<Identity>();
         if (!keyword.isEmpty()) {
             final List<Urn> names = this
                 .make("find-identities-by-keyword")
                 .synchronously()
+                .arg(who.name())
                 .arg(keyword)
                 .asDefault(new ArrayList<Urn>())
                 .exec();
