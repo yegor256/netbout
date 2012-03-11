@@ -139,10 +139,11 @@ public final class IdentityFarmTest {
      */
     @Test
     public void findsIdentityByExactName() throws Exception {
-        final Urn who = new IdentityRowMocker().mock();
         final Urn identity = new IdentityRowMocker().mock();
         MatcherAssert.assertThat(
-            this.farm.findIdentitiesByKeyword(who, identity.toString()),
+            this.farm.findIdentitiesByKeyword(
+                new Urn("urn:foo:absent-identity"), identity.toString()
+            ),
             Matchers.hasItem(identity)
         );
     }

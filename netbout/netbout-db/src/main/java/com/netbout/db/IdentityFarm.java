@@ -60,15 +60,16 @@ public final class IdentityFarm {
             keyword.toUpperCase(Locale.ENGLISH)
         );
         return new DbSession(true).sql(
-            // @checkstyle StringLiteralsConcatenation (10 lines)
+            // @checkstyle StringLiteralsConcatenation (12 lines)
+            // @checkstyle LineLength (10 lines)
             "SELECT identity.name FROM identity"
-            + " JOIN participant p1 ON p1.identity = identity.name"
-            + " JOIN participant p2 ON p2.identity = ? AND p2.bout = p1.bout"
+            + " LEFT JOIN participant p1 ON p1.identity = identity.name"
+            + " LEFT JOIN participant p2 ON p2.identity = ? AND p2.bout = p1.bout"
             + " LEFT JOIN alias ON alias.identity = identity.name"
-            + " WHERE identity.name = ? OR"
-            + " (UCASE(alias.name) LIKE ? AND"
-            + "  (identity.name LIKE 'urn:facebook:%' OR"
-            + "  identity.name LIKE 'urn:test:%'))"
+            + " WHERE UCASE(identity.name) = ? OR"
+            + " (p2.identity IS NOT NULL"
+            + "  AND UCASE(alias.name) LIKE ?"
+            + "  AND (identity.name LIKE 'urn:facebook:%' OR identity.name LIKE 'urn:test:%'))"
             + " GROUP BY identity.name"
             + " LIMIT 10"
         )
