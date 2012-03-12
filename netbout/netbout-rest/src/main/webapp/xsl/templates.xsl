@@ -65,4 +65,12 @@
         </xsl:choose>
     </xsl:template>
 
+    <xsl:template name="format">
+        <xsl:param name="text" as="xs:string"/>
+        <xsl:param name="value" as="xs:string"/>
+        <xsl:value-of select="substring-before($TEXTS/*[local-name()=$text], '%s')"/>
+        <xsl:value-of select="$value"/>
+        <xsl:value-of select="substring-after($TEXTS/*[local-name()=$text], '%s')"/>
+    </xsl:template>
+
 </xsl:stylesheet>

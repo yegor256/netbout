@@ -38,16 +38,18 @@ import org.openqa.selenium.By
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 def boris = new RestSession(rexsl.home).authenticate(new Urn('urn:test:boris'), '')
+def anna = new RestSession(rexsl.home).authenticate(new Urn('urn:test:anna'), '')
 def bout = boris.start()
 bout.post('hi there!')
 bout.rename('Selenimum test')
+bout.invite(anna)
 
 def driver = new HtmlUnitDriver()
 driver.setJavascriptEnabled(true)
 driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
 
 def ibox = driver.findElementByCssSelector('form#invite input[name="mask"]')
-ibox.sendKeys('h')
+ibox.sendKeys(anna.name().toString())
 ibox.submit()
 
 def invitees = driver.findElementById('invite-list')

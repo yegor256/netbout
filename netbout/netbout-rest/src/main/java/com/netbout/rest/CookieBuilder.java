@@ -52,7 +52,7 @@ final class CookieBuilder {
     /**
      * Value.
      */
-    private transient String value = "deleted";
+    private transient String value = "";
 
     /**
      * Domain.

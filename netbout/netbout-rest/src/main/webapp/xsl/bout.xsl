@@ -36,7 +36,7 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:param name="TEXTS"
-        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml?', /page/version/revision))/texts"/>
 
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
@@ -248,11 +248,10 @@
                                     <xsl:value-of select="@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
-                                    <xsl:value-of select="$TEXTS/click.to.invite"/>
-                                    <xsl:text> "</xsl:text>
-                                    <xsl:value-of select="alias"/>
-                                    <xsl:text>" </xsl:text>
-                                    <xsl:value-of select="$TEXTS/to.this.bout"/>
+                                    <xsl:call-template name="format">
+                                        <xsl:with-param name="text" select="'click.to.invite.X.to.this.bout'" />
+                                        <xsl:with-param name="value" select="alias" />
+                                    </xsl:call-template>
                                 </xsl:attribute>
                                 <xsl:call-template name="crop">
                                     <xsl:with-param name="text" select="alias" />

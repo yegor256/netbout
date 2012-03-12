@@ -36,7 +36,7 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:param name="TEXTS"
-        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml?', /page/version/revision))/texts"/>
 
     <xsl:include href="/xsl/layout.xsl" />
 
@@ -97,7 +97,8 @@
                 <xsl:attribute name="src">
                     <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
                     <xsl:value-of select="/page/identity/locale"/>
-                    <xsl:text>.png</xsl:text>
+                    <xsl:text>.png?</xsl:text>
+                    <xsl:value-of select="/page/version/revision"/>
                 </xsl:attribute>
                 <xsl:attribute name="alt">
                     <xsl:value-of select="/page/identity/locale"/>
@@ -119,7 +120,8 @@
                             <xsl:attribute name="src">
                                 <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
                                 <xsl:value-of select="code"/>
-                                <xsl:text>.png</xsl:text>
+                                <xsl:text>.png?</xsl:text>
+                                <xsl:value-of select="/page/version/revision"/>
                             </xsl:attribute>
                             <xsl:attribute name="alt">
                                 <xsl:value-of select="name"/>

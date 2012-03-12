@@ -42,7 +42,10 @@
     </xsl:template>
 
     <xsl:template match="page">
-        <html lang="en-US">
+        <html>
+            <xsl:attribute name="lang">
+                <xsl:value-of select="/page/identity/locale"/>
+            </xsl:attribute>
             <head>
                 <meta charset="UTF-8" />
                 <script type="text/javascript"
@@ -148,6 +151,11 @@
                     </xsl:attribute>
                     <xsl:attribute name="title">
                         <xsl:value-of select="$TEXTS/back.to.inbox"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="style">
+                        <xsl:text>background-image: url('http://cdn.netbout.com/logo-beta.png?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
+                        <xsl:text>');</xsl:text>
                     </xsl:attribute>
                     <xsl:text> </xsl:text> <!-- for W3C compliance -->
                 </a>

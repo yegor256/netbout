@@ -81,8 +81,12 @@
                                 <xsl:attribute name="title">
                                     <xsl:text>back home</xsl:text>
                                 </xsl:attribute>
-                                <img src="http://cdn.netbout.com/logo-beta.png"
-                                    id="logo" alt="back home" />
+                                <img id="logo" alt="back home">
+                                    <xsl:attribute name="src">
+                                        <xsl:text>http://cdn.netbout.com/logo-beta.png?</xsl:text>
+                                        <xsl:value-of select="/page/version/revision"/>
+                                    </xsl:attribute>
+                                </img>
                             </a>
                         </p>
                         <xsl:if test="/page/identity">
@@ -121,8 +125,12 @@
                                 <xsl:attribute name="title">
                                     <xsl:text>click to authenticate yourself via Facebook</xsl:text>
                                 </xsl:attribute>
-                                <img src="http://cdn.netbout.com/facebook.png" id="facebook"
-                                    alt="login through facebook"/>
+                                <img id="facebook" alt="login through facebook">
+                                    <xsl:attribute name="src">
+                                        <xsl:text>http://cdn.netbout.com/facebook.png?</xsl:text>
+                                        <xsl:value-of select="/page/version/revision"/>
+                                    </xsl:attribute>
+                                </img>
                             </a>
                         </p>
                     </article>
