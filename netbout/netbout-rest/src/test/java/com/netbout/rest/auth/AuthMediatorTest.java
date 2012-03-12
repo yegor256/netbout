@@ -117,11 +117,11 @@ public final class AuthMediatorTest {
         final ContainerMocker container = new ContainerMocker()
             .returnBody(
                 // @checkstyle StringLiteralsConcatenation (4 lines)
-                "<page><identity>"
-                + "<authority>http://localhost</authority>"
-                + "<name>urn:test:abc</name>"
-                + "</identity></page>"
-            )
+                "<page><identity> "
+                + "<authority>http://localhost</authority> "
+                + "<name>urn:test:abc</name> "
+                + " </identity></page>"
+        )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
         final UrnResolver resolver = new UrnResolverMocker()
