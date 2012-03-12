@@ -172,7 +172,8 @@ public final class HubProfile implements Profile {
                 .exec();
             Logger.info(
                 this,
-                "Photo changed for '%s'",
+                "Photo changed to '%s' for '%s'",
+                this.iphoto,
                 this.identity.name()
             );
         }
