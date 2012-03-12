@@ -56,6 +56,18 @@ final class RemoteProfile implements Profile {
     private final transient Set<String> ialiases = new HashSet<String>();
 
     /**
+     * Public ctor.
+     */
+    public RemoteProfile() {
+        try {
+            this.iphoto = new URL("http://cdn.netbout.com/unknown.png");
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
+        this.ilocale = Locale.ENGLISH;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -101,18 +113,6 @@ final class RemoteProfile implements Profile {
     @Override
     public void alias(final String alias) {
         this.ialiases.add(alias);
-    }
-
-    /**
-     * Validate and throw exception if there are some problems.
-     */
-    public void validate() {
-        if (this.iphoto == null) {
-            throw new IllegalStateException("/identity/photo is absent");
-        }
-        if (this.ilocale == null) {
-            throw new IllegalStateException("/identity/locale is absent");
-        }
     }
 
 }

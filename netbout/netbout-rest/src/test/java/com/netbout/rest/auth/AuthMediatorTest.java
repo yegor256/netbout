@@ -30,6 +30,7 @@ import com.netbout.hub.UrnResolver;
 import com.netbout.hub.UrnResolverMocker;
 import com.netbout.spi.Urn;
 import com.rexsl.test.ContainerMocker;
+import java.util.Locale;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.hamcrest.MatcherAssert;
@@ -62,7 +63,7 @@ public final class AuthMediatorTest {
                 "<page><identity>"
                 + "<aliases><alias>hello</alias></aliases>"
                 + "<authority>http://localhost</authority>"
-                + "<locale>ru</locale>"
+                + "<locale>zh</locale>"
                 + String.format("<name>%s</name>", iname)
                 + String.format("<photo>%s</photo>", photo)
                 + "</identity></page>"
@@ -80,6 +81,10 @@ public final class AuthMediatorTest {
             Matchers.equalTo(photo)
         );
         MatcherAssert.assertThat(
+            identity.profile().locale(),
+            Matchers.equalTo(Locale.CHINESE)
+        );
+        MatcherAssert.assertThat(
             identity.profile().aliases().size(),
             Matchers.equalTo(1)
         );
@@ -89,11 +94,10 @@ public final class AuthMediatorTest {
      * AuthMediator can handle broken input.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = java.io.IOException.class)
     public void throwsExceptionWithBrokenInput() throws Exception {
         final ContainerMocker container = new ContainerMocker()
-            // @checkstyle LineLength (1 line)
-            .returnBody("<page><identity><name>urn:void:</name></identity></page>")
+            .returnBody("<page></page>")
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
         final UrnResolver resolver = new UrnResolverMocker()
@@ -102,6 +106,41 @@ public final class AuthMediatorTest {
         final RemoteIdentity identity = new AuthMediator(resolver)
             .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-2");
         identity.name();
+    }
+
+    /**
+     * AuthMediator can work with missed data.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void authenticatesWithMissedData() throws Exception {
+        final ContainerMocker container = new ContainerMocker()
+            .returnBody(
+                // @checkstyle StringLiteralsConcatenation (4 lines)
+                "<page><identity> "
+                + "<authority>http://localhost</authority> "
+                + "<name>urn:test:abc</name> "
+                + " </identity></page>"
+        )
+            .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
+            .mock();
+        final UrnResolver resolver = new UrnResolverMocker()
+            .resolveAs(FacebookRs.NAMESPACE, container.home().toURL())
+            .mock();
+        final RemoteIdentity identity = new AuthMediator(resolver)
+            .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-5");
+        MatcherAssert.assertThat(
+            identity.profile().photo(),
+            Matchers.notNullValue()
+        );
+        MatcherAssert.assertThat(
+            identity.profile().locale(),
+            Matchers.equalTo(Locale.ENGLISH)
+        );
+        MatcherAssert.assertThat(
+            identity.profile().aliases().size(),
+            Matchers.equalTo(0)
+        );
     }
 
 }
