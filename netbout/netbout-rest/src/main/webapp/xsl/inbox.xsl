@@ -36,7 +36,7 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:param name="TEXTS"
-        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml?', /page/version/revision))/texts"/>
 
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
@@ -56,9 +56,24 @@
         <script src="/js/dudes.js">
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <link href="/css/inbox.css" rel="stylesheet" type="text/css"/>
-        <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
-        <link href="/css/periods.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/inbox.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/dudes.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/periods.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
     </xsl:template>
 
     <xsl:template name="content">

@@ -48,26 +48,32 @@ public final class IdentityFarm {
 
     /**
      * Find identities by keyword.
+     * @param who Who is searching for them
      * @param keyword The keyword
      * @return List of identities
      */
     @Operation("find-identities-by-keyword")
-    public List<Urn> findIdentitiesByKeyword(final String keyword) {
+    public List<Urn> findIdentitiesByKeyword(final Urn who,
+        final String keyword) {
         final String matcher = String.format(
             "%%%s%%",
             keyword.toUpperCase(Locale.ENGLISH)
         );
         return new DbSession(true).sql(
-            // @checkstyle StringLiteralsConcatenation (8 lines)
-            "SELECT identity.name FROM identity "
-            + "LEFT JOIN alias ON alias.identity = identity.name "
-            + "WHERE identity.name = ? OR "
-            + "(UCASE(alias.name) LIKE ? AND"
-            + " (identity.name LIKE 'urn:facebook:%' OR"
-            + " identity.name LIKE 'urn:test:%'))"
-            + "GROUP BY identity.name "
-            + "LIMIT 10"
+            // @checkstyle StringLiteralsConcatenation (12 lines)
+            // @checkstyle LineLength (10 lines)
+            "SELECT identity.name FROM identity"
+            + " LEFT JOIN participant p1 ON p1.identity = identity.name"
+            + " LEFT JOIN participant p2 ON p2.identity = ? AND p2.bout = p1.bout"
+            + " LEFT JOIN alias ON alias.identity = identity.name"
+            + " WHERE UCASE(identity.name) = ? OR"
+            + " (p2.identity IS NOT NULL"
+            + "  AND UCASE(alias.name) LIKE ?"
+            + "  AND (identity.name LIKE 'urn:facebook:%' OR identity.name LIKE 'urn:test:%'))"
+            + " GROUP BY identity.name"
+            + " LIMIT 10"
         )
+            .set(who)
             .set(keyword.toUpperCase(Locale.ENGLISH))
             .set(matcher)
             .select(

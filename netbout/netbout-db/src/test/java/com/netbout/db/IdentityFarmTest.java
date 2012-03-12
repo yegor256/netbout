@@ -80,13 +80,18 @@ public final class IdentityFarmTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @org.junit.Ignore
     public void findsIdentitiesByTheirAliases() throws Exception {
+        final Urn who = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().mock();
+        new ParticipantRowMocker(bout).namedAs(who).mock();
         final Urn identity = new IdentityRowMocker()
             .withAlias("martin.fowler@example.com")
             .withAlias("Martin Fowler")
             .withAlias("marty")
             .withAlias("\u0443\u0440\u0430!")
             .mock();
+        new ParticipantRowMocker(bout).namedAs(identity).mock();
         final String[] keywords = new String[] {
             "martin",
             "@example.com",
@@ -96,7 +101,7 @@ public final class IdentityFarmTest {
         };
         for (String keyword : keywords) {
             MatcherAssert.assertThat(
-                this.farm.findIdentitiesByKeyword(keyword),
+                this.farm.findIdentitiesByKeyword(who, keyword),
                 Matchers.hasItem(identity)
             );
         }
@@ -108,20 +113,39 @@ public final class IdentityFarmTest {
      */
     @Test
     public void findsIdentitiesByTheirNames() throws Exception {
+        final Urn who = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().mock();
+        new ParticipantRowMocker(bout).namedAs(who).mock();
         final Urn identity = new IdentityRowMocker()
             .namedAs("urn:test:test%40example%2Ecom")
             .withAlias("test@example.com")
             .mock();
+        new ParticipantRowMocker(bout).namedAs(identity).mock();
         final String[] keywords = new String[] {
             "test",
             "@example",
         };
         for (String keyword : keywords) {
             MatcherAssert.assertThat(
-                this.farm.findIdentitiesByKeyword(keyword),
+                this.farm.findIdentitiesByKeyword(who, keyword),
                 Matchers.hasItem(identity)
             );
         }
+    }
+
+    /**
+     * IdentityFarm can find identities by exact name.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsIdentityByExactName() throws Exception {
+        final Urn identity = new IdentityRowMocker().mock();
+        MatcherAssert.assertThat(
+            this.farm.findIdentitiesByKeyword(
+                new Urn("urn:foo:absent-identity"), identity.toString()
+            ),
+            Matchers.hasItem(identity)
+        );
     }
 
     /**
@@ -130,12 +154,16 @@ public final class IdentityFarmTest {
      */
     @Test
     public void excludeNonObviousIdentities() throws Exception {
-        new IdentityRowMocker()
+        final Urn who = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().mock();
+        new ParticipantRowMocker(bout).namedAs(who).mock();
+        final Urn identity = new IdentityRowMocker()
             .namedAs("urn:netbout:hh")
             .withAlias("freeDOM")
             .mock();
+        new ParticipantRowMocker(bout).namedAs(identity).mock();
         MatcherAssert.assertThat(
-            this.farm.findIdentitiesByKeyword("DOM"),
+            this.farm.findIdentitiesByKeyword(who, "DOM"),
             Matchers.nullValue()
         );
     }

@@ -37,6 +37,7 @@ import org.hamcrest.Matchers
 def rick = new RestSession(rexsl.home).authenticate(new Urn('urn:test:rick'), '')
 
 def names = []
-rick.friends('t').each { names.add(it.name()); }
-MatcherAssert.assertThat(names, Matchers.hasItem(new Urn('urn:facebook:4466')))
+def name = 'urn:facebook:4466'
+rick.friends(name).each { names.add(it.name()); }
+MatcherAssert.assertThat(names, Matchers.hasItem(new Urn(name)))
 

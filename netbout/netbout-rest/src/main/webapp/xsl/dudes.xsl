@@ -61,11 +61,10 @@
                                     <xsl:value-of select="link[@rel='kickoff']/@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
-                                    <xsl:value-of select="$TEXTS/kick"/>
-                                    <xsl:text> "</xsl:text>
-                                    <xsl:value-of select="alias"/>
-                                    <xsl:text>" </xsl:text>
-                                    <xsl:value-of select="$TEXTS/off.this.bout"/>
+                                    <xsl:call-template name="format">
+                                        <xsl:with-param name="text" select="'kick.X.off.this.bout'" />
+                                        <xsl:with-param name="value" select="alias" />
+                                    </xsl:call-template>
                                 </xsl:attribute>
                                 <xsl:text>x</xsl:text>
                             </a>

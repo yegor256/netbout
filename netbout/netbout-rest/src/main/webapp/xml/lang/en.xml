@@ -60,15 +60,13 @@
     <you>you</you>
     <someone>someone</someone>
     <said>said</said>
-    <click.to.invite>click to invite</click.to.invite>
-    <to.this.bout>to this bout</to.this.bout>
+    <click.to.invite.X.to.this.bout>click to invite "%s" to this bout</click.to.invite.X.to.this.bout>
     <Do.you.agree.to.join>Do you agree to join</Do.you.agree.to.join>
     <yes>yes</yes>
     <or>or</or>
     <no>no</no>
     <invited>invited</invited>
-    <kick>kick</kick>
-    <off.this.bout>off this bout</off.this.bout>
+    <kick.X.off.this.bout>kick "%s" off this bout</kick.X.off.this.bout>
 
     <!-- profile page -->
     <AKA>AKA</AKA>
