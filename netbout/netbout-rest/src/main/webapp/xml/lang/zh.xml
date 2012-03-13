@@ -54,8 +54,8 @@
     <inbox>收件箱</inbox>
     <back.to.recent.bouts>点击这里返回最近的会话</back.to.recent.bouts>
     <no.title>此会话还没有标题</no.title>
-    <new.bouts>个新会话</new.bouts>
     <new.messages>个新消息</new.messages>
+    <new.message>new</new.message>
     <all.of.them>看到所有内容</all.of.them>
 
     <!-- bout page -->

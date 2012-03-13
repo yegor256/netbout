@@ -214,7 +214,7 @@
                     <xsl:if test="@seen = 'false'">
                         <span class="red">
                             <xsl:text> </xsl:text>
-                            <xsl:value-of select="$TEXTS/new.bouts"/>
+                            <xsl:value-of select="$TEXTS/new.message"/>
                         </span>
                     </xsl:if>
                 </header>

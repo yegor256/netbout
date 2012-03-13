@@ -25,59 +25,62 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
+ * Translated by Maria Noel Perez Corvalan (skype: maria.noel.perez.corvalan)
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
 <texts>
     <!-- global messages -->
-    <We.recommend.to.reauthenticate>We recommend you to re-authenticate yourself</We.recommend.to.reauthenticate>
-    <sec>sec</sec>
-    <in>in</in>
-    <in.a.few.minutes>in a few minutes</in.a.few.minutes>
-    <the.server.is.busy>The server is currently updating your account,
-        some data may look not as fresh as they should be. Try
-        to refresh the page</the.server.is.busy>
-    <click.here>click here</click.here>
-    <Find>Find...</Find>
+    <We.recommend.to.reauthenticate>Recomendamos re-autenticarse</We.recommend.to.reauthenticate>
+    <click.here>haga click aqui</click.here>
+    <the.server.is.busy>
+        El servidor esta actualizando su cuenta, parte de la informacion puede estar incompleta.
+        Intente actualizar la página
+    </the.server.is.busy>
+    <in.a.few.minutes>en algunos minutos</in.a.few.minutes>
+    <sec>segundos</sec>
+    <in>en</in>
+    <Find>Buscar...</Find>
 
     <!-- top menu -->
-    <About>About</About>
-    <Start>Start</Start>
-    <Start.later>Start (later)</Start.later>
-    <start.new.bout>start new bout</start.new.bout>
-    <back.to.inbox>back to inbox</back.to.inbox>
-    <Logout>Logout</Logout>
-    <leave.right.now>leave right now</leave.right.now>
+    <About>Nosotros</About>
+    <Start>Inicio</Start>
+    <Start.later>Iniciar (más tarde)</Start.later>
+    <start.new.bout>Comienza un nuevo bout</start.new.bout>
+    <back.to.inbox>Volver a la bandeja de entrada</back.to.inbox>
+    <Logout>Salir</Logout>
+    <leave.right.now>salir del sistema ahora</leave.right.now>
 
     <!-- inbox -->
-    <inbox>inbox</inbox>
-    <back.to.recent.bouts>back to recent bouts</back.to.recent.bouts>
-    <no.title>no title</no.title>
-    <new.bouts>new</new.bouts>
-    <new.messages>new</new.messages>
-    <all.of.them>all of them</all.of.them>
+    <inbox>Bandeja de entrada</inbox>
+    <back.to.recent.bouts>Volver a los bouts más recientes</back.to.recent.bouts>
+    <no.title>sin tema todavia</no.title>
+    <new.messages>mensajes</new.messages>
+    <new.message>nuevo</new.message>
+    <all.of.them>todos ellos</all.of.them>
 
     <!-- bout page -->
-    <back.to.recent.messages>back to recent messages</back.to.recent.messages>
-    <you>you</you>
-    <someone>someone</someone>
-    <said>said</said>
-    <click.to.invite.X.to.this.bout>click to invite "%s" to this bout</click.to.invite.X.to.this.bout>
-    <Do.you.agree.to.join>Do you agree to join</Do.you.agree.to.join>
-    <yes>yes</yes>
-    <or>or</or>
+    <back.to.recent.messages>Volver a los mensajes más recientes</back.to.recent.messages>
+    <you>Tú</you>
+    <someone>alguien</someone>
+    <said>dijiste</said>
+    <click.to.invite.X.to.this.bout>Click para inivitar "%s" a este bout</click.to.invite.X.to.this.bout>
+    <Do.you.agree.to.join>Aceptas unirte</Do.you.agree.to.join>
+    <yes>si</yes>
+    <or>o</or>
     <no>no</no>
-    <invited>invited</invited>
-    <kick.X.off.this.bout>kick "%s" off this bout</kick.X.off.this.bout>
-    <Post.new.message>Post new message</Post.new.message>
-    <Invite>Invite...</Invite>
+    <invited>Solo Invitado</invited>
+    <kick.X.off.this.bout>Remover a "%s" de este bout</kick.X.off.this.bout>
+    <Post.new.message>Postee un nuevo mensaje</Post.new.message>
+    <Invite>Invitar...</Invite>
 
     <!-- profile page -->
-    <AKA>AKA</AKA>
-    <Identity>Identity</Identity>
-    <Language>Language</Language>
-    <profile>profile</profile>
-    <Profile.settings>Profile settings</Profile.settings>
-    <settings.of.your.profile>settings of your profile</settings.of.your.profile>
-    <switch.to>switch to</switch.to>
+    <AKA>También conocido como</AKA>
+    <Identity>Identidad</Identity>
+    <Language>Lenguaje</Language>
+    <profile>perfil</profile>
+    <Profile.settings>Configuración del Perfil</Profile.settings>
+    <settings.of.your.profile>Configuración del Perfil</settings.of.your.profile>
+    <switch.to>cambiar a</switch.to>
 </texts>
