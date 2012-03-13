@@ -35,10 +35,10 @@
 
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
-    <xsl:include href="/xsl/layout.xsl" />
-
     <xsl:param name="TEXTS"
         select="document(concat('/xml/lang/en.xml?', /page/version/revision))/texts"/>
+
+    <xsl:include href="/xsl/layout.xsl" />
 
     <xsl:template name="head">
         <title>
