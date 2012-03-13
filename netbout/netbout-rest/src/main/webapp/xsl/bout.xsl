@@ -81,7 +81,7 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <header id="top1">
+        <header>
             <h1>
                 <span class="num">
                     <xsl:text>#</xsl:text>

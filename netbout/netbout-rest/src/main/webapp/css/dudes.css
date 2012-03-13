@@ -82,11 +82,11 @@
         z-index: 100;
     }
 
-        .dudes .bar span {
+        .dudes .bar .name {
             font-size: 1.4em;
         }
 
-        .dudes .bar a.kickoff {
+        .dudes .bar .kickoff {
             font-size: 1.4em;
             color: #f24a40; /* red */
             text-decoration: none;
