@@ -38,12 +38,8 @@ import java.util.TreeSet;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class PosPeriod implements Period {
-
-    /**
-     * Default limit, in elements.
-     */
-    public static final long DEFAULT_LIMIT = 5;
 
     /**
      * Start of the period, position of element.
@@ -62,17 +58,10 @@ final class PosPeriod implements Period {
 
     /**
      * Public ctor.
-     */
-    public PosPeriod() {
-        this(0L, PosPeriod.DEFAULT_LIMIT);
-    }
-
-    /**
-     * Public ctor.
      * @param from When to start
      * @param lmt The limit
      */
-    public PosPeriod(final Long from, final Long lmt) {
+    private PosPeriod(final Long from, final Long lmt) {
         this.start = from;
         this.limit = Math.min(lmt, Period.MAX);
     }
@@ -82,18 +71,35 @@ final class PosPeriod implements Period {
      * @param text The text
      * @return The period discovered
      */
-    public static PosPeriod valueOf(final Object text) {
+    public static PosPeriod parse(final Object text) {
+        // @checkstyle MagicNumber (1 line)
+        return PosPeriod.parse(text, 5L);
+    }
+
+    /**
+     * Build it back from text.
+     * @param text The text
+     * @param size Recommended size of it
+     * @return The period discovered
+     */
+    public static PosPeriod parse(final Object text, final Long size) {
         PosPeriod period;
         if (text != null && text.toString().matches("\\d+\\-\\d+")) {
-            final String[] parts = text.toString().split("-");
-            period = new PosPeriod(
-                Long.valueOf(parts[0]),
-                Long.valueOf(parts[1])
-            );
+            period = PosPeriod.valueOf(text);
         } else {
-            period = new PosPeriod();
+            period = new PosPeriod(0L, size);
         }
         return period;
+    }
+
+    /**
+     * Build it back from text.
+     * @param text The text
+     * @return The period discovered
+     */
+    public static PosPeriod valueOf(final Object text) {
+        final String[] parts = text.toString().split("-");
+        return new PosPeriod(Long.valueOf(parts[0]), Long.valueOf(parts[1]));
     }
 
     /**

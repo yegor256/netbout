@@ -89,7 +89,8 @@ public final class InboxRs extends AbstractRs {
     public Response inbox(@QueryParam(InboxRs.PERIOD_PARAM) final String view) {
         final Identity identity = this.identity();
         final List<ShortBout> bouts = new ArrayList<ShortBout>();
-        final Period period = PeriodsBuilder.parse(view);
+        // @checkstyle MagicNumber (1 line)
+        final Period period = PeriodsBuilder.parse(view, 5L);
         final Iterable<Bout> inbox = this.fetch(period);
         final PeriodsBuilder periods = new PeriodsBuilder(
             period,

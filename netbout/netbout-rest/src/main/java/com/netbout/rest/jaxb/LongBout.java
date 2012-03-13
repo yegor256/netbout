@@ -225,7 +225,8 @@ public final class LongBout {
     @XmlElement(name = "message")
     @XmlElementWrapper(name = "messages")
     public List<LongMessage> getMessages() {
-        final Period period = PeriodsBuilder.parse(this.view);
+        // @checkstyle MagicNumber (1 line)
+        final Period period = PeriodsBuilder.parse(this.view, 20L);
         Iterable<Message> discussion;
         try {
             discussion = this.bout.messages(period.query(this.query));

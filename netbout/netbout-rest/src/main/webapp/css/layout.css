@@ -146,7 +146,7 @@ body {
     position: relative;
     color: #c3c3c3;
     margin-top: 0.3em;
-    font-family: 'Courier New', monospace;
+    font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
     white-space: pre-line;
 }
 
@@ -168,12 +168,25 @@ body {
     #content h1 {
         position: relative;
         padding-top: 5em;
-        margin-bottom: 0.5em;
+        margin-bottom: 0.7em;
     }
 
-        #content h1 span.title {
+        #content h1 .num {
+            font-size: 1.6em;
+            margin-right: 0.3em;
+        }
+
+        #content h1 .title {
             font-size: 2.7em;
             font-weight: 500;
+            line-height: 1em;
+        }
+
+        #content h1 .new {
+            font-size: 1.7em;
+            font-weight: 500;
+            color: #f24a40; /* red */
+            margin-left: 0.3em;
         }
 
     #content p,
@@ -182,3 +195,4 @@ body {
         position: relative;
         font-size: 1.4em;
     }
+

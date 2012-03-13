@@ -169,7 +169,7 @@
                 <xsl:text>bout</xsl:text>
                 <xsl:value-of select="number"/>
             </xsl:attribute>
-            <div class="header">
+            <h1>
                 <span class="num">
                     <xsl:text>#</xsl:text>
                     <xsl:value-of select="number" />
@@ -199,7 +199,7 @@
                         <xsl:value-of select="$TEXTS/new"/>
                     </span>
                 </xsl:if>
-            </div>
+            </h1>
             <xsl:apply-templates select="participants" />
             <xsl:if test="bundled">
                 <nav class="bundled">

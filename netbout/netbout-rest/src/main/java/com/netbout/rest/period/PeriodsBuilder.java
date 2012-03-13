@@ -120,10 +120,11 @@ public final class PeriodsBuilder {
     /**
      * Build it back from text.
      * @param text The text
+     * @param size Recommended size of the period, if it's a default one
      * @return The period discovered
      */
-    public static Period parse(final Object text) {
-        return PosPeriod.valueOf(text);
+    public static Period parse(final Object text, final Long size) {
+        return PosPeriod.parse(text, size);
     }
 
     /**

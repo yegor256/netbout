@@ -132,6 +132,20 @@
                 </xsl:if>
             </xsl:for-each>
         </p>
+        <xsl:if test="/page/identity/@helper='true'">
+            <p>
+                <xsl:text>You're a helper at: </xsl:text>
+                <span class="tt"><xsl:value-of select="/page/identity/location"/></span>
+                <xsl:text> with these operations supported: </xsl:text>
+                <xsl:for-each select="/page/identity/supports/operation">
+                    <xsl:if test="position() &gt; 1">
+                        <xsl:text>, </xsl:text>
+                    </xsl:if>
+                    <span class="tt"><xsl:value-of select="."/></span>
+                </xsl:for-each>
+                <xsl:text>.</xsl:text>
+            </p>
+        </xsl:if>
     </xsl:template>
 
 </xsl:stylesheet>

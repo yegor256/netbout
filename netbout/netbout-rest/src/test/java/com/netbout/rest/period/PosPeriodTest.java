@@ -46,7 +46,7 @@ public final class PosPeriodTest {
      */
     @Test
     public void concumesDatesAndReturnsTitle() throws Exception {
-        final Period period = new PosPeriod().next(this.date("2008-08-24"));
+        final Period period = PosPeriod.parse("").next(this.date("2008-08-24"));
         period.add(this.date("2008-08-22"));
         MatcherAssert.assertThat(
             period.title(),
@@ -60,10 +60,10 @@ public final class PosPeriodTest {
      */
     @Test
     public void serializesToStringAndBack() throws Exception {
-        final Period period = new PosPeriod().next(this.date("2007-04-14"));
+        final Period period = PosPeriod.parse("").next(this.date("2007-04-14"));
         final String text = period.toString();
         MatcherAssert.assertThat(
-            PeriodsBuilder.parse(text),
+            PeriodsBuilder.parse(text, 0L),
             Matchers.equalTo(period)
         );
     }
@@ -74,7 +74,7 @@ public final class PosPeriodTest {
      */
     @Test
     public void explainsItselfToString() throws Exception {
-        final Period period = new PosPeriod().next(this.date("2005-03-14"));
+        final Period period = PosPeriod.parse("").next(this.date("2005-03-14"));
         MatcherAssert.assertThat(period.explain(), Matchers.notNullValue());
     }
 
@@ -84,7 +84,7 @@ public final class PosPeriodTest {
      */
     @Test
     public void fitsNewDatesCorrectly() throws Exception {
-        final Period period = new PosPeriod().next(this.date("2011-03-20"));
+        final Period period = PosPeriod.parse("").next(this.date("2011-03-20"));
         MatcherAssert.assertThat(
             "new date fits in",
             period.fits(this.date("2011-03-18"))
@@ -97,7 +97,7 @@ public final class PosPeriodTest {
      */
     @Test
     public void rejectsDateOnOverflow() throws Exception {
-        final Period period = new PosPeriod(0L, Period.MAX)
+        final Period period = PosPeriod.parse("", Period.MAX)
             .next(this.date("2011-05-01"));
         for (long day = Period.MAX; day > 0; day -= 1) {
             final Date date = this.date(String.format("2011-03-%02d", day));
@@ -116,7 +116,7 @@ public final class PosPeriodTest {
      */
     @Test
     public void revertsFromNull() throws Exception {
-        final Period period = PeriodsBuilder.parse(null);
+        final Period period = PeriodsBuilder.parse(null, 0L);
         MatcherAssert.assertThat(period, Matchers.notNullValue());
     }
 
