@@ -196,7 +196,7 @@
                     <span class="new">
                         <xsl:value-of select="@unseen"/>
                         <xsl:text> </xsl:text>
-                        <xsl:value-of select="$TEXTS/new.bouts"/>
+                        <xsl:value-of select="$TEXTS/new.messages"/>
                     </span>
                 </xsl:if>
             </h1>

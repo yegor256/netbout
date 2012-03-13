@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -27,38 +26,19 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    version="2.0" exclude-result-prefixes="xs">
+ */
+package com.netbout.rest.rexsl.xhtml
 
-    <xsl:output method="xml" omit-xml-declaration="yes"/>
+import com.rexsl.test.XhtmlConverter
+import com.rexsl.test.XhtmlMatchers
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 
-    <xsl:param name="TEXTS"
-        select="document(concat('/xml/lang/en.xml?', /page/version/revision))/texts"/>
-
-    <xsl:include href="/xsl/layout.xsl" />
-
-    <xsl:template name="head">
-        <title>
-            <xsl:value-of select="/page/error/code"/>
-            <xsl:text>: error</xsl:text>
-        </title>
-    </xsl:template>
-
-    <xsl:template name="content">
-        <p>
-            <span class="red">
-                <xsl:value-of select="/page/error/code"/>
-                <xsl:text>: </xsl:text>
-                <xsl:value-of select="/page/error/message"/>
-            </span>
-            <xsl:text>.
-                Maybe the page you're requesting in is no longer available,
-                try to submit some other request.
-            </xsl:text>
-        </p>
-    </xsl:template>
-
-</xsl:stylesheet>
+MatcherAssert.assertThat(
+    XhtmlConverter.the(rexsl.document),
+    Matchers.allOf(
+        XhtmlMatchers.hasXPath('//xhtml:aside[@id="version"]'),
+        XhtmlMatchers.hasXPath('//xhtml:aside[contains(.,"r555")]'),
+        XhtmlMatchers.hasXPath('//xhtml:aside[contains(.,"56ms")]')
+    )
+)
