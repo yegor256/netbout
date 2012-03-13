@@ -39,6 +39,7 @@
     <in>等</in>
     <sec>秒钟</sec>
     <click.here>点击这里</click.here>
+    <Find>查找...</Find>
 
     <!-- top menu -->
     <About>关于我们</About>
@@ -69,6 +70,8 @@
     <no>否</no>
     <invited>刚被邀请</invited>
     <kick.X.off.this.bout>点击这里拒绝 "%s" 加入此会话</kick.X.off.this.bout>
+    <Post.new.message>张贴新消息</Post.new.message>
+    <Invite>邀请...</Invite>
 
     <!-- profile page -->
     <AKA>也称为</AKA>

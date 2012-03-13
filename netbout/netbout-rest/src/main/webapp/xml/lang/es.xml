@@ -38,6 +38,7 @@
         some data may look not as fresh as they should be. Try
         to refresh the page</the.server.is.busy>
     <click.here>click here</click.here>
+    <Find>Find...</Find>
 
     <!-- top menu -->
     <About>About</About>
@@ -52,7 +53,8 @@
     <inbox>inbox</inbox>
     <back.to.recent.bouts>back to recent bouts</back.to.recent.bouts>
     <no.title>no title</no.title>
-    <new>new</new>
+    <new.bouts>new</new.bouts>
+    <new.messages>new</new.message>
     <all.of.them>all of them</all.of.them>
 
     <!-- bout page -->
@@ -67,6 +69,8 @@
     <no>no</no>
     <invited>invited</invited>
     <kick.X.off.this.bout>kick "%s" off this bout</kick.X.off.this.bout>
+    <Post.new.message>Post new message</Post.new.message>
+    <Invite>Invite...</Invite>
 
     <!-- profile page -->
     <AKA>AKA</AKA>

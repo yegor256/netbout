@@ -163,8 +163,11 @@
                     <xsl:attribute name="action">
                         <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                     </xsl:attribute>
-                    <input name="q" id="search-input" placeholder="Find..."
+                    <input name="q" id="search-input"
                         autocomplete="off" size="10" maxlength="120">
+                        <xsl:attribute name="placeholder">
+                            <xsl:value-of select="$TEXTS/Find"/>
+                        </xsl:attribute>
                         <xsl:attribute name="value">
                             <xsl:value-of select="/page/query"/>
                         </xsl:attribute>

@@ -68,4 +68,7 @@
     <no>нет</no>
     <invited>приглашен</invited>
     <kick.X.off.this.bout>удалить "%s" из этого разговора</kick.X.off.this.bout>
+    <Post.new.message>Добавить сообщение</Post.new.message>
+    <Find>Find...</Find>
+    <Invite>Invite...</Invite>
 </texts>
