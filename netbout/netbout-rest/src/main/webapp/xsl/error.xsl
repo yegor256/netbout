@@ -37,6 +37,9 @@
 
     <xsl:include href="/xsl/layout.xsl" />
 
+    <xsl:param name="TEXTS"
+        select="document(concat('/xml/lang/en.xml?', /page/version/revision))/texts"/>
+
     <xsl:template name="head">
         <title>
             <xsl:value-of select="/page/error/code"/>
