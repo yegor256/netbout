@@ -299,6 +299,7 @@
             <span>
                 <xsl:choose>
                     <xsl:when test="$participant/@confirmed = 'true'">
+                        <xsl:text> </xsl:text>
                         <!--
                         <a>
                             <xsl:attribute name="href">
