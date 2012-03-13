@@ -43,16 +43,17 @@
     <About>About</About>
     <Start>Start</Start>
     <Start.later>Start (later)</Start.later>
-    <start.new.bout>start new bout</start.new.bout>
-    <back.to.inbox>back to inbox</back.to.inbox>
+    <start.new.bout>start a new bout</start.new.bout>
+    <back.to.inbox>return back to inbox</back.to.inbox>
     <Logout>Logout</Logout>
-    <leave.right.now>leave right now</leave.right.now>
+    <leave.right.now>leave Netbout right now</leave.right.now>
 
     <!-- inbox -->
     <inbox>inbox</inbox>
     <back.to.recent.bouts>back to recent bouts</back.to.recent.bouts>
     <no.title>no title</no.title>
-    <new>new</new>
+    <new.bouts>new</new.bouts>
+    <new.messages>new</new.message>
     <all.of.them>all of them</all.of.them>
 
     <!-- bout page -->
