@@ -38,6 +38,7 @@ import java.util.TreeSet;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class PosPeriod implements Period {
 
     /**
