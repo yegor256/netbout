@@ -43,7 +43,7 @@
                             <xsl:value-of select="(position()-1) * 5.7"/>
                             <xsl:text>em;</xsl:text>
                         </xsl:attribute>
-                        <span>
+                        <span class="name">
                             <xsl:call-template name="crop">
                                 <xsl:with-param name="text" select="alias" />
                                 <xsl:with-param name="length" select="25" />

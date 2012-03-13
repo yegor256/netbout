@@ -27,7 +27,7 @@
 
 $(document).ready(
     function() {
-        $('header#top1 span.title')
+        $('h1 span.title')
             .blur(
                 function() {
                     var $input = $("#rename input[name='title']");

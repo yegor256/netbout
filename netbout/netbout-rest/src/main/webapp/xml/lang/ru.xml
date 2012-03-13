@@ -53,7 +53,8 @@
     <inbox>входящие</inbox>
     <back.to.recent.bouts>вернуться к последним разговорам</back.to.recent.bouts>
     <no.title>без названия</no.title>
-    <new>новых</new>
+    <new.bouts>новых</new.bouts>
+    <new.messages>новых</new.messages>
     <all.of.them>весь список</all.of.them>
     <back.to.recent.messages>назад к свежим сообщениям</back.to.recent.messages>
     <you>ты</you>
@@ -67,4 +68,7 @@
     <no>нет</no>
     <invited>приглашен</invited>
     <kick.X.off.this.bout>удалить "%s" из этого разговора</kick.X.off.this.bout>
+    <Post.new.message>Добавить сообщение</Post.new.message>
+    <Find>Find...</Find>
+    <Invite>Invite...</Invite>
 </texts>

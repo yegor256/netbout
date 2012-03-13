@@ -120,7 +120,11 @@
                     </textarea>
                 </p>
                 <p>
-                    <input value="Post new message" type="submit" />
+                    <input type="submit">
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="$TEXTS/Post.new.message"/>
+                        </xsl:attribute>
+                    </input>
                 </p>
             </form>
         </xsl:if>
@@ -178,7 +182,8 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:attribute name="src">
-                                <xsl:text>http://img.netbout.com/someone.png</xsl:text>
+                                <xsl:text>http://cdn.netbout.com/someone.png?</xsl:text>
+                                <xsl:value-of select="/page/version/revision"/>
                             </xsl:attribute>
                             <xsl:attribute name="alt">
                                 <xsl:text>someone some time ago</xsl:text>
@@ -209,7 +214,7 @@
                     <xsl:if test="@seen = 'false'">
                         <span class="red">
                             <xsl:text> </xsl:text>
-                            <xsl:value-of select="$TEXTS/new"/>
+                            <xsl:value-of select="$TEXTS/new.bouts"/>
                         </span>
                     </xsl:if>
                 </header>
@@ -227,7 +232,10 @@
                     <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                 </xsl:attribute>
                 <p>
-                    <input name="mask" autocomplete="off" placeholder="Invite...">
+                    <input name="mask" autocomplete="off">
+                        <xsl:attribute name="placeholder">
+                            <xsl:value-of select="$TEXTS/Invite"/>
+                        </xsl:attribute>
                         <xsl:attribute name="value">
                             <xsl:value-of select="/page/mask"/>
                         </xsl:attribute>
@@ -291,6 +299,7 @@
             <span>
                 <xsl:choose>
                     <xsl:when test="$participant/@confirmed = 'true'">
+                        <xsl:text> </xsl:text>
                         <!--
                         <a>
                             <xsl:attribute name="href">
