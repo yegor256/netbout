@@ -40,6 +40,8 @@ MatcherAssert.assertThat(
         XhtmlMatchers.hasXPath('//xhtml:article[@class="message"]'),
         XhtmlMatchers.hasXPath('//xhtml:section[@id="stage"]'),
         XhtmlMatchers.hasXPath('//xhtml:title'),
+        XhtmlMatchers.hasXPath('//xhtml:h1/xhtml:span[@class="title"]'),
+        XhtmlMatchers.hasXPath('//xhtml:form[@id="rename"]/xhtml:input[@name="title"]'),
         XhtmlMatchers.hasXPath('//xhtml:aside[@id="version"]'),
         XhtmlMatchers.hasXPath('//xhtml:aside[contains(.,"r555")]'),
         XhtmlMatchers.hasXPath('//xhtml:aside[contains(.,"56ms")]'),
