@@ -58,19 +58,16 @@ final class ResolvedIdentity implements Identity {
     /**
      * Profile.
      */
-    private final transient ResolvedProfile iprofile;
+    private final transient ResolvedProfile iprofile = new ResolvedProfile();
 
     /**
      * Public ctor.
      * @param authority The authority
      * @param name The name of it
-     * @param photo Its photo
      */
-    public ResolvedIdentity(final URL authority, final Urn name,
-        final URL photo) {
+    public ResolvedIdentity(final URL authority, final Urn name) {
         this.iauthority = authority;
         this.iname = name;
-        this.iprofile = new ResolvedProfile(Locale.ENGLISH, photo);
     }
 
     /**
@@ -95,18 +92,6 @@ final class ResolvedIdentity implements Identity {
     @Override
     public Profile profile() {
         return this.iprofile;
-    }
-
-    /**
-     * Add new alias.
-     * @param alias The alias to add
-     * @return This object
-     */
-    public ResolvedIdentity addAlias(final String alias) {
-        if (!alias.isEmpty()) {
-            this.iprofile.addAlias(alias);
-        }
-        return this;
     }
 
     /**

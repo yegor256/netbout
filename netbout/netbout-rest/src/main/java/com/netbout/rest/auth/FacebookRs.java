@@ -46,6 +46,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.LocaleUtils;
 
 /**
  * Facebook authentication page.
@@ -160,14 +161,19 @@ public final class FacebookRs extends AbstractRs {
     private Identity authenticate(final String code)
         throws IOException {
         final User fbuser = this.user(code);
-        return new ResolvedIdentity(
+        final Identity resolved = new ResolvedIdentity(
             UriBuilder.fromUri("http://www.netbout.com/fb").build().toURL(),
-            new Urn(this.NAMESPACE, fbuser.getId()),
+            new Urn(this.NAMESPACE, fbuser.getId())
+        );
+        resolved.profile().setPhoto(
             UriBuilder
                 .fromPath("https://graph.facebook.com/{id}/picture")
                 .build(fbuser.getId())
                 .toURL()
-        ).addAlias(fbuser.getName());
+        );
+        resolved.profile().alias(fbuser.getName());
+        resolved.profile().setLocale(LocaleUtils.toLocale(fbuser.getLocale()));
+        return resolved;
     }
 
     /**

@@ -102,11 +102,13 @@ public final class NbRs extends AbstractRs {
         } catch (com.netbout.text.StringDecryptionException ex) {
             throw new LoginRequiredException(this, ex);
         }
-        ResolvedIdentity identity;
+        Identity identity;
         try {
             identity = new ResolvedIdentity(
                 new URL("http://www.netbout.com/nb"),
-                iname,
+                iname
+            );
+            identity.profile().setPhoto(
                 new URL(
                     String.format(
                         "http://cdn.netbout.com/nb/%s.png",
@@ -117,7 +119,7 @@ public final class NbRs extends AbstractRs {
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(ex);
         }
-        identity.addAlias(iname.nss());
+        identity.profile().alias(iname.nss());
         return identity;
     }
 
