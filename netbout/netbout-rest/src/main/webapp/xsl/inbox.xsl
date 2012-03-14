@@ -85,37 +85,29 @@
                     </h1>
                 </header>
                 <p>
-                    <xsl:text>Netbout is the first in the world "</xsl:text>
-                    <b><xsl:text>conversation-centric UI on demand</xsl:text></b>
-                    <xsl:text>". Do you get it?</xsl:text>
-                </p>
-                <p>
-                    <xsl:text>
-                        Let's start with a simple conversation with someone from
-                        our team, who will demonstrate and explain:
-                    </xsl:text>
+                    <xsl:value-of select="$TEXTS/Lets.start"/>
                 </p>
                 <form method="post">
                     <xsl:attribute name="action">
                         <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                     </xsl:attribute>
                     <p>
-                        <label for="name"><xsl:text>We know who you are:</xsl:text></label>
-                        <input name="name" size="40" disabled="disabled" id="name">
-                            <xsl:attribute name="value">
-                                <xsl:value-of select="/page/identity/alias"/>
-                            </xsl:attribute>
-                        </input>
-                        <label for="starter"><xsl:text>What we will talk about?</xsl:text></label>
+                        <label for="starter">
+                            <xsl:value-of select="$TEXTS/What.to.talk.about"/>
+                        </label>
                         <textarea name="starter" style="width: 30em; height: 5em;" id="starter">
                             <xsl:text>&#10;</xsl:text>
                         </textarea>
                         <label for="submit"><xsl:text> </xsl:text></label>
-                        <input type="submit" value="Start" id="submit"/>
+                        <input type="submit" id="submit">
+                            <xsl:attribute name="value">
+                                <xsl:value-of select="$TEXTS/Start"/>
+                            </xsl:attribute>
+                        </input>
                     </p>
                 </form>
                 <p>
-                    <xsl:text>Please, keep in mind that we are still testing :)</xsl:text>
+                    <xsl:value-of select="$TEXTS/We.are.still.testing"/>
                 </p>
             </xsl:when>
             <xsl:otherwise>

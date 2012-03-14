@@ -56,6 +56,16 @@
     <new.messages>new</new.messages>
     <new.message>new</new.message>
     <all.of.them>all of them</all.of.them>
+    <What.to.talk.about>
+        What would you like to talk about?
+    </What.to.talk.about>
+    <We.are.still.testing>
+        Please keep in mind that we're still testing :)
+    </We.are.still.testing>
+    <Lets.start>
+        Let's start with a simple conversation with someone from
+        our team, who will demonstrate and explain how Netbout works.
+    </Lets.start>
 
     <!-- bout page -->
     <back.to.recent.messages>back to recent messages</back.to.recent.messages>
