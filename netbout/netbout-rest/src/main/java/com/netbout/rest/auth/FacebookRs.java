@@ -77,6 +77,12 @@ public final class FacebookRs extends AbstractRs {
     @GET
     @Path("/back")
     public Response fbauth(@QueryParam("code") final String code) {
+        if (code == null) {
+            throw new LoginRequiredException(
+                this,
+                "'code' is a mandatory query param"
+            );
+        }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

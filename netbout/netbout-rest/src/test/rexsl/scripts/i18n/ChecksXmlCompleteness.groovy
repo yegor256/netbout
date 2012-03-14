@@ -40,10 +40,10 @@ new File(rexsl.basedir, '/src/main/webapp/xml/lang')
     .grep(~/.*xml$/)
     .each { file ->
     def lang = new XmlSlurper().parse(file)
-    english.each { node ->
+    english.texts.each { node ->
         MatcherAssert.assertThat(
             "missed ${node.name()} in ${file}",
-            !lang."${node.name()}".isEmpty()
+            !lang.texts."${node.name()}".isEmpty()
         )
     }
 }
