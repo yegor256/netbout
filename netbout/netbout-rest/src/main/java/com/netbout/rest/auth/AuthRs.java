@@ -64,10 +64,12 @@ public final class AuthRs extends AbstractRs {
      */
     @CookieParam(RestSession.GOTO_COOKIE)
     public void setGoto(final String uri) {
-        try {
-            this.forward = new URI(uri);
-        } catch (java.net.URISyntaxException ex) {
-            Logger.warn(this, "#setGoto(%s): %[exception]ex", uri, ex);
+        if (uri != null) {
+            try {
+                this.forward = new URI(uri);
+            } catch (java.net.URISyntaxException ex) {
+                Logger.warn(this, "#setGoto(%s): %[exception]ex", uri, ex);
+            }
         }
     }
 
