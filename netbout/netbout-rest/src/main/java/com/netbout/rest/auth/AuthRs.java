@@ -28,6 +28,7 @@ package com.netbout.rest.auth;
 
 import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
+import com.netbout.rest.CookieBuilder;
 import com.netbout.rest.Cryptor;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
@@ -35,6 +36,8 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.ymock.util.Logger;
+import java.net.URI;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -49,6 +52,24 @@ import javax.ws.rs.core.Response;
  */
 @Path("/auth")
 public final class AuthRs extends AbstractRs {
+
+    /**
+     * The URL to go next.
+     */
+    private transient URI forward;
+
+    /**
+     * Set goto URI.
+     * @param uri The URI
+     */
+    @CookieParam(RestSession.GOTO_COOKIE)
+    public void setGoto(final String uri) {
+        try {
+            this.forward = new URI(uri);
+        } catch (java.net.URISyntaxException ex) {
+            Logger.warn(this, "#setGoto(%s): %[exception]ex", uri, ex);
+        }
+    }
 
     /**
      * Authentication page.
@@ -69,6 +90,35 @@ public final class AuthRs extends AbstractRs {
                 "'identity' and 'secret' query params are mandatory"
             );
         }
+        final Identity identity = this.identity(iname, secret);
+        URI location;
+        if (this.forward == null) {
+            location = this.base().path(path).build();
+        } else {
+            location = this.forward;
+        }
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(identity)
+            .cookie(
+                new CookieBuilder(this.base().build())
+                    .named(RestSession.GOTO_COOKIE)
+                    .build()
+            )
+            .status(Response.Status.SEE_OTHER)
+            .location(location)
+            .header(RestSession.AUTH_HEADER, new Cryptor().encrypt(identity))
+            .build();
+    }
+
+    /**
+     * Create identity.
+     * @param iname Identity name
+     * @param secret Secret word
+     * @return The identity
+     */
+    private Identity identity(final Urn iname, final String secret) {
         Identity identity;
         try {
             final Identity previous = this.identity();
@@ -97,14 +147,7 @@ public final class AuthRs extends AbstractRs {
         } catch (LoginRequiredException ex) {
             identity = this.authenticate(iname, secret);
         }
-        return new PageBuilder()
-            .build(AbstractPage.class)
-            .init(this)
-            .authenticated(identity)
-            .status(Response.Status.SEE_OTHER)
-            .location(this.base().path(path).build())
-            .header(RestSession.AUTH_HEADER, new Cryptor().encrypt(identity))
-            .build();
+        return identity;
     }
 
     /**
