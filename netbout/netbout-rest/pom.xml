@@ -468,6 +468,7 @@
                                         <Netbout-PopHost>${pop3.host}</Netbout-PopHost>
                                         <Netbout-PopPort>${pop3.port}</Netbout-PopPort>
                                         <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
+                                        <Netbout-SuperSecret>${security.secret}</Netbout-SuperSecret>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
@@ -557,6 +558,7 @@
                                             <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
                                             <Netbout-PopPort>995</Netbout-PopPort>
                                             <Netbout-SecurityKey>test-security-key</Netbout-SecurityKey>
+                                            <Netbout-SuperSecret>test-super-secret</Netbout-SuperSecret>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>
