@@ -66,12 +66,14 @@ public final class AuthRsMocker extends AbstractRs {
         if (!secret.isEmpty()) {
             throw new ForwardException(this, this.base(), "Wrong secret");
         }
-        final ResolvedIdentity identity = new ResolvedIdentity(
+        final Identity identity = new ResolvedIdentity(
             this.base().path("/mock-auth").build().toURL(),
-            iname,
+            iname
+        );
+        identity.profile().setPhoto(
             new URL("http://img.netbout.com/unknown.png")
         );
-        identity.addAlias(iname.nss());
+        identity.profile().alias(iname.nss());
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)

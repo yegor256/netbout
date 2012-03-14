@@ -42,7 +42,7 @@ import javax.ws.rs.core.NewCookie;
  *  the site doesn't work in localhost:9099 in Chrome. Works fine in Safari,
  *  but not in Chrome. see http://stackoverflow.com/questions/1612177
  */
-final class CookieBuilder {
+public final class CookieBuilder {
 
     /**
      * Name of cookie.

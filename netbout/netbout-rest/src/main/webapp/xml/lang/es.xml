@@ -31,7 +31,6 @@
  * @version $Id$
  -->
 <texts>
-    <!-- global messages -->
     <We.recommend.to.reauthenticate>Recomendamos re-autenticarse</We.recommend.to.reauthenticate>
     <click.here>haga click aqui</click.here>
     <the.server.is.busy>
@@ -42,8 +41,6 @@
     <sec>segundos</sec>
     <in>en</in>
     <Find>Buscar...</Find>
-
-    <!-- top menu -->
     <About>Nosotros</About>
     <Start>Inicio</Start>
     <Start.later>Iniciar (más tarde)</Start.later>
@@ -51,16 +48,12 @@
     <back.to.inbox>Volver a la bandeja de entrada</back.to.inbox>
     <Logout>Salir</Logout>
     <leave.right.now>salir del sistema ahora</leave.right.now>
-
-    <!-- inbox -->
     <inbox>Bandeja de entrada</inbox>
     <back.to.recent.bouts>Volver a los bouts más recientes</back.to.recent.bouts>
     <no.title>sin tema todavia</no.title>
     <new.messages>mensajes</new.messages>
     <new.message>nuevo</new.message>
     <all.of.them>todos ellos</all.of.them>
-
-    <!-- bout page -->
     <back.to.recent.messages>Volver a los mensajes más recientes</back.to.recent.messages>
     <you>Tú</you>
     <someone>alguien</someone>
@@ -74,8 +67,6 @@
     <kick.X.off.this.bout>Remover a "%s" de este bout</kick.X.off.this.bout>
     <Post.new.message>Postee un nuevo mensaje</Post.new.message>
     <Invite>Invitar...</Invite>
-
-    <!-- profile page -->
     <AKA>También conocido como</AKA>
     <Identity>Identidad</Identity>
     <Language>Lenguaje</Language>
@@ -83,4 +74,14 @@
     <Profile.settings>Configuración del Perfil</Profile.settings>
     <settings.of.your.profile>Configuración del Perfil</settings.of.your.profile>
     <switch.to>cambiar a</switch.to>
+    <What.to.talk.about>
+        What would you like to talk about?
+    </What.to.talk.about>
+    <We.are.still.testing>
+        Please keep in mind that we're still testing :)
+    </We.are.still.testing>
+    <Lets.start>
+        Let's start with a simple conversation with someone from
+        our team, who will demonstrate and explain how Netbout works.
+    </Lets.start>
 </texts>

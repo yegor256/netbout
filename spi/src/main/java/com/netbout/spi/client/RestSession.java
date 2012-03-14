@@ -77,6 +77,11 @@ public final class RestSession {
     public static final String MESSAGE_COOKIE = "netbout-msg";
 
     /**
+     * Next-to-go URL.
+     */
+    public static final String GOTO_COOKIE = "netbout-goto";
+
+    /**
      * Query param to search INBOX.
      */
     public static final String QUERY_PARAM = "q";

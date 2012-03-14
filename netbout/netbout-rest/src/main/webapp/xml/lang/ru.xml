@@ -57,9 +57,9 @@
     <new.message>новое</new.message>
     <all.of.them>весь список</all.of.them>
     <back.to.recent.messages>назад к свежим сообщениям</back.to.recent.messages>
-    <you>ты</you>
+    <you>Вы</you>
     <someone>кто-то</someone>
-    <said>сказал(а)</said>
+    <said> </said>
     <click.to.invite.X.to.this.bout>пригласить "%s" в этот разговор</click.to.invite.X.to.this.bout>
     <to.this.bout>в этот разговор</to.this.bout>
     <Do.you.agree.to.join>Ты согласен участвовать</Do.you.agree.to.join>
@@ -71,4 +71,14 @@
     <Post.new.message>Добавить сообщение</Post.new.message>
     <Find>Find...</Find>
     <Invite>Invite...</Invite>
+    <What.to.talk.about>
+        О чем хотите поговорить?
+    </What.to.talk.about>
+    <We.are.still.testing>
+        Просим извинить за возможные проблемы, мы все еще тестируем :)
+    </We.are.still.testing>
+    <Lets.start>
+        Давайте создадим пробный диалог с кем-то из нашей команды
+        и покажем Вам как работает Netbout система.
+    </Lets.start>
 </texts>

@@ -23,86 +23,27 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest.auth;
-
-import com.netbout.spi.Profile;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-
-/**
- * Resolved profile, instantiated in {@link ResolvedIdentity}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class ResolvedProfile implements Profile {
+package com.netbout.rest.rexsl.scripts.i18n
 
-    /**
-     * Locale.
-     */
-    private transient Locale ilocale = Locale.ENGLISH;
+import org.hamcrest.MatcherAssert
 
-    /**
-     * Photo.
-     */
-    private transient URL iphoto;
+def english = new XmlSlurper().parse(
+    new File(rexsl.basedir, '/src/main/webapp/xml/lang/en.xml')
+)
 
-    /**
-     * Aliases.
-     */
-    private final transient Set<String> ialiases = new HashSet<String>();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL photo() {
-        return this.iphoto;
+new File(rexsl.basedir, '/src/main/webapp/xml/lang')
+    .listFiles()
+    .grep(~/.*xml$/)
+    .each { file ->
+    def lang = new XmlSlurper().parse(file)
+    english.texts.each { node ->
+        MatcherAssert.assertThat(
+            "missed ${node.name()} in ${file}",
+            !lang.texts."${node.name()}".isEmpty()
+        )
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Locale locale() {
-        return this.ilocale;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> aliases() {
-        return this.ialiases;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setLocale(final Locale locale) {
-        this.ilocale = locale;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPhoto(final URL pic) {
-        this.iphoto = pic;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        if (!alias.isEmpty()) {
-            this.ialiases.add(alias);
-        }
-    }
-
 }
