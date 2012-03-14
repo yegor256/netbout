@@ -35,6 +35,7 @@ import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
+import com.netbout.text.SecureString;
 import com.ymock.util.Logger;
 import java.net.URI;
 import javax.ws.rs.CookieParam;
@@ -66,9 +67,21 @@ public final class AuthRs extends AbstractRs {
     public void setGoto(final String uri) {
         if (uri != null) {
             try {
-                this.forward = new URI(uri);
+                this.forward = new URI(SecureString.valueOf(uri).toString());
+            } catch (com.netbout.text.StringDecryptionException ex) {
+                Logger.warn(
+                    this,
+                    "#setGoto('%s'): failed to decrypt: %[exception]s",
+                    uri,
+                    ex
+                );
             } catch (java.net.URISyntaxException ex) {
-                Logger.warn(this, "#setGoto(%s): %[exception]ex", uri, ex);
+                Logger.warn(
+                    this,
+                    "#setGoto('%s'): failed to create URI: %[exception]s",
+                    uri,
+                    ex
+                );
             }
         }
     }

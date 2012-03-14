@@ -123,7 +123,7 @@ public final class FacebookRsTest {
         // @checkstyle LineLength (1 line)
         final String code = String.format(
             "%s-%s",
-            FacebookRs.SUPER_SECRET,
+            Manifests.read("Netbout-SuperSecret"),
             fbid
         );
         final FacebookRs rest = new ResourceMocker().mock(FacebookRs.class);

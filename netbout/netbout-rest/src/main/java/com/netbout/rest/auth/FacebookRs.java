@@ -64,13 +64,6 @@ public final class FacebookRs extends AbstractRs {
     public static final String NAMESPACE = "facebook";
 
     /**
-     * Super secret code.
-     */
-    @SuppressWarnings("PMD.DefaultPackage")
-    static final String SUPER_SECRET =
-        "PR45-IU6Y-23ER-9IMW-PAQ2-OO6T-EF5G-PLM6";
-
-    /**
      * Facebook authentication page (callback hits it).
      * @param code Facebook "authorization code"
      * @return The JAX-RS response
@@ -184,7 +177,7 @@ public final class FacebookRs extends AbstractRs {
      */
     private User user(final String code) throws IOException {
         User fbuser;
-        if (code.startsWith(this.SUPER_SECRET)) {
+        if (code.startsWith(Manifests.read("Netbout-SuperSecret"))) {
             fbuser = new User() {
                 @Override
                 public String getName() {
