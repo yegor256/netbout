@@ -60,6 +60,11 @@ final class ParticipantData implements ParticipantDt {
     private transient Boolean confirmed;
 
     /**
+     * Is he a leader?
+     */
+    private transient Boolean leader;
+
+    /**
      * Public ctor.
      * @param ihub The hub
      * @param num The number
@@ -95,7 +100,7 @@ final class ParticipantData implements ParticipantDt {
     @Override
     public void setConfirmed(final Boolean flag) {
         synchronized (this) {
-            this.confirmed = true;
+            this.confirmed = flag;
             this.hub.make("changed-participant-status")
                 .asap()
                 .arg(this.bout)
@@ -106,7 +111,8 @@ final class ParticipantData implements ParticipantDt {
         }
         Logger.debug(
             this,
-            "#setConfirmed(): set"
+            "#setConfirmed(%B): set",
+            flag
         );
     }
 
@@ -125,6 +131,45 @@ final class ParticipantData implements ParticipantDt {
             }
         }
         return this.confirmed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLeader(final Boolean flag) {
+        synchronized (this) {
+            this.leader = flag;
+            this.hub.make("changed-participant-leadership")
+                .asap()
+                .arg(this.bout)
+                .arg(this.identity)
+                .arg(flag)
+                .asDefault(true)
+                .exec();
+        }
+        Logger.debug(
+            this,
+            "#setLeader(%B): set",
+            flag
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean isLeader() {
+        synchronized (this) {
+            if (this.leader == null) {
+                this.leader = this.hub.make("get-participant-leadship")
+                    .synchronously()
+                    .arg(this.bout)
+                    .arg(this.identity)
+                    .exec();
+            }
+        }
+        return this.leader;
     }
 
 }

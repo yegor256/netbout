@@ -136,6 +136,49 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
+    public void setLeader(final Urn name) {
+        synchronized (this) {
+            final Collection<ParticipantDt> dudes = this.getParticipants();
+            ParticipantDt leader = null;
+            for (ParticipantDt dude : dudes) {
+                if (dude.isLeader()) {
+                    leader = dude;
+                    break;
+                }
+            }
+            ParticipantDt candidate = null;
+            for (ParticipantDt dude : dudes) {
+                if (dude.getIdentity().equals(name)) {
+                    candidate = dude;
+                    break;
+                }
+            }
+            if (candidate == null) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Identity '%s' not in bout #%d, can't set as leader",
+                        name,
+                        this.number
+                    )
+                );
+            }
+            candidate.setLeader(true);
+            if (leader != null) {
+                leader.setLeader(false);
+            }
+        }
+        Logger.debug(
+            this,
+            "#setLeader('%s'): changed in bout #%d",
+            name,
+            this.number
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Date getDate() {
         synchronized (this) {
             if (this.date == null) {
