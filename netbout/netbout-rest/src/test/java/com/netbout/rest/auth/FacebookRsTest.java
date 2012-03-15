@@ -137,7 +137,9 @@ public final class FacebookRsTest {
         MatcherAssert.assertThat(
             ResourceMocker.the((Page) response.getEntity(), rest),
             Matchers.allOf(
-                XmlMatchers.hasXPath("//identity[name='urn:facebook:1']"),
+                XmlMatchers.hasXPath(
+                    String.format("//identity[name='urn:facebook:%s']", fbid)
+                ),
                 XmlMatchers.hasXPath("//identity[locale='en']")
             )
         );
