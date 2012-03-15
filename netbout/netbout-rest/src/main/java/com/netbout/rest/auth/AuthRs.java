@@ -67,7 +67,7 @@ public final class AuthRs extends AbstractRs {
     public void setGoto(final String uri) {
         if (uri != null) {
             try {
-                this.forward = new URI(SecureString.valueOf(uri).toString());
+                this.forward = new URI(SecureString.valueOf(uri).text());
             } catch (com.netbout.text.StringDecryptionException ex) {
                 Logger.warn(
                     this,
@@ -84,7 +84,6 @@ public final class AuthRs extends AbstractRs {
                 );
             }
         }
-        System.out.println("forward set to: " + this.forward);
     }
 
     /**
