@@ -59,12 +59,12 @@
             <number>65</number>
             <title>PHP programming in NetBout project</title>
             <participants>
-                <participant>
+                <participant leader="true">
                     <alias>Johnny Depp</alias>
                     <identity>johnny</identity>
                     <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
                 </participant>
-                <participant>
+                <participant leader="false">
                     <alias>Javier Bardem</alias>
                     <identity>javier</identity>
                     <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
@@ -83,17 +83,17 @@
             <number>876</number>
             <title>some personal issues to discuss urgently</title>
             <participants>
-                <participant>
+                <participant leader="true">
                     <alias>Monica Belucci</alias>
                     <identity>Monica</identity>
                     <photo>http://pixdaus.com/pics/1228335452nZgDtst.jpg</photo>
                 </participant>
-                <participant>
+                <participant leader="false">
                     <alias>John Turturro</alias>
                     <identity>john.turturro</identity>
                     <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
                 </participant>
-                <participant>
+                <participant leader="false">
                     <alias>2Pac Shakur</alias>
                     <identity>2pac</identity>
                     <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>

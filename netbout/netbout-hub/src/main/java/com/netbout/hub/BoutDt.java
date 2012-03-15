@@ -76,6 +76,12 @@ public interface BoutDt {
     void kickOff(Urn identity);
 
     /**
+     * Set leader.
+     * @param identity Who should be a leader now
+     */
+    void setLeader(Urn identity);
+
+    /**
      * Add new participant.
      * @param name The name of participant
      * @return The participant just created/added

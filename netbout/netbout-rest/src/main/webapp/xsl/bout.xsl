@@ -257,36 +257,38 @@
             </form>
             <xsl:if test="/page/invitees[count(invitee) &gt; 0]">
                 <ul id="invite-list">
-                    <xsl:for-each select="/page/invitees/invitee">
-                        <li>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="@href"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:call-template name="format">
-                                        <xsl:with-param name="text" select="'click.to.invite.X.to.this.bout'" />
-                                        <xsl:with-param name="value" select="alias" />
-                                    </xsl:call-template>
-                                </xsl:attribute>
-                                <xsl:call-template name="crop">
-                                    <xsl:with-param name="text" select="alias" />
-                                    <xsl:with-param name="length" select="25" />
-                                </xsl:call-template>
-                            </a>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="photo"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="alt">
-                                    <xsl:value-of select="alias"/>
-                                </xsl:attribute>
-                            </img>
-                        </li>
-                    </xsl:for-each>
+                    <xsl:apply-templates select="/page/invitees/invitee" />
                 </ul>
             </xsl:if>
         </aside>
+    </xsl:template>
+
+    <xsl:template match="invitee">
+        <li>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="@href"/>
+                </xsl:attribute>
+                <xsl:attribute name="title">
+                    <xsl:call-template name="format">
+                        <xsl:with-param name="text" select="'click.to.invite.X.to.this.bout'" />
+                        <xsl:with-param name="value" select="alias" />
+                    </xsl:call-template>
+                </xsl:attribute>
+                <xsl:call-template name="crop">
+                    <xsl:with-param name="text" select="alias" />
+                    <xsl:with-param name="length" select="25" />
+                </xsl:call-template>
+            </a>
+            <img>
+                <xsl:attribute name="src">
+                    <xsl:value-of select="photo"/>
+                </xsl:attribute>
+                <xsl:attribute name="alt">
+                    <xsl:value-of select="alias"/>
+                </xsl:attribute>
+            </img>
+        </li>
     </xsl:template>
 
     <xsl:template name="rename">

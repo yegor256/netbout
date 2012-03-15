@@ -1,4 +1,5 @@
-/**
+<?xml version='1.0'?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -9,7 +10,7 @@
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code occasionally and without intent to use it, please report this
- * incident to the author by email.
+ * incident to the author by email: privacy@netbout.com.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,45 +24,31 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest.jaxb;
-
-import com.netbout.spi.ParticipantMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
-/**
- * Test case for {@link LongParticipant}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-public final class LongParticipantTest {
+ -->
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    /**
-     * LongParticipant can be converted to XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void convertsToXml() throws Exception {
-        final LongParticipant obj = new LongParticipant(
-            new ParticipantMocker().mock(),
-            UriBuilder.fromUri("http://localhost"),
-            new ParticipantMocker().withLeader(true).mock()
-        );
-        MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/*/links/link[@rel='kickoff']"),
-                XhtmlMatchers.hasXPath("/participant/identity"),
-                XhtmlMatchers.hasXPath("/participant/alias"),
-                XhtmlMatchers.hasXPath("/participant/photo"),
-                XhtmlMatchers.hasXPath("/participant/@me")
-            )
-        );
-    }
+    <changeSet id="14" author="yegor">
+        <comment>
+            Adding "leadership" column to "participant" table, and
+        </comment>
+        <addColumn tableName="participant">
+            <column name="leader" type="BOOLEAN" defaultValueDate="0"
+                remarks="This participant is a leader in the bout">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <update tableName="participant">
+            <column name="leader" value="1"/>
+            <where>identity='urn:facebook:1531296526'</where>
+        </update>
+    </changeSet>
 
-}
+</databaseChangeLog>

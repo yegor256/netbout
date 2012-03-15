@@ -31,6 +31,7 @@ import com.netbout.rest.BoutRs;
 import com.netbout.rest.ResourceMocker;
 import com.netbout.rest.StageCoordinatesMocker;
 import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
@@ -52,14 +53,15 @@ public final class LongBoutTest {
      */
     @Test
     public void convertsToXml() throws Exception {
+        final Identity viewer = new IdentityMocker().mock();
         final LongBout obj = new LongBout(
             (BoutRs) new ResourceMocker().mock(BoutRs.class),
             new HubMocker().mock(),
-            new BoutMocker().titledAs("foo").mock(),
+            new BoutMocker().withParticipant(viewer).titledAs("foo").mock(),
             new StageCoordinatesMocker().mock(),
             "some keyword",
             UriBuilder.fromUri("http://localhost"),
-            new IdentityMocker().mock(),
+            viewer,
             null
         );
         MatcherAssert.assertThat(

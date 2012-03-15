@@ -35,97 +35,101 @@
 
     <xsl:template match="participants">
         <nav class="dudes">
-            <xsl:for-each select="participant">
-                <div>
-                    <aside class="bar">
-                        <xsl:attribute name="style">
-                            <xsl:text>left: </xsl:text>
-                            <xsl:value-of select="(position()-1) * 5.7"/>
-                            <xsl:text>em;</xsl:text>
+            <xsl:apply-templates select="participant">
+                <xsl:sort select="@leader" order="descending" />
+            </xsl:apply-templates>
+        </nav>
+    </xsl:template>
+
+    <xsl:template match="participant">
+        <div>
+            <aside class="bar">
+                <xsl:attribute name="style">
+                    <xsl:text>left: </xsl:text>
+                    <xsl:value-of select="(position()-1) * 5.7"/>
+                    <xsl:text>em;</xsl:text>
+                </xsl:attribute>
+                <span class="name">
+                    <xsl:call-template name="crop">
+                        <xsl:with-param name="text" select="alias" />
+                        <xsl:with-param name="length" select="25" />
+                    </xsl:call-template>
+                </span>
+                <xsl:if test="@confirmed != 'true'">
+                    <xsl:text> (</xsl:text>
+                    <xsl:value-of select="$TEXTS/invited"/>
+                    <xsl:text>)</xsl:text>
+                </xsl:if>
+                <xsl:if test="links/link[@rel='kickoff']">
+                    <xsl:text> </xsl:text>
+                    <a class="kickoff">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="links/link[@rel='kickoff']/@href"/>
                         </xsl:attribute>
-                        <span class="name">
-                            <xsl:call-template name="crop">
-                                <xsl:with-param name="text" select="alias" />
-                                <xsl:with-param name="length" select="25" />
+                        <xsl:attribute name="title">
+                            <xsl:call-template name="format">
+                                <xsl:with-param name="text" select="'kick.X.off.this.bout'" />
+                                <xsl:with-param name="value" select="alias" />
                             </xsl:call-template>
-                        </span>
-                        <xsl:if test="@me != 'true'">
-                            <xsl:if test="@confirmed != 'true'">
-                                <xsl:text> (</xsl:text>
-                                <xsl:value-of select="$TEXTS/invited"/>
-                                <xsl:text>)</xsl:text>
-                            </xsl:if>
-                            <xsl:text> </xsl:text>
-                            <a class="kickoff">
+                        </xsl:attribute>
+                        <xsl:text>x</xsl:text>
+                    </a>
+                </xsl:if>
+            </aside>
+            <article class="dude">
+                <xsl:attribute name="style">
+                    <xsl:text>left: </xsl:text>
+                    <xsl:value-of select="(position()-1) * 5.7"/>
+                    <xsl:text>em;</xsl:text>
+                </xsl:attribute>
+                <img>
+                    <xsl:attribute name="alt">
+                        <xsl:value-of select="alias"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="src">
+                        <xsl:value-of select="photo"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="class">
+                        <xsl:text>photo</xsl:text>
+                        <xsl:if test="@confirmed != 'true'">
+                            <xsl:text> pending</xsl:text>
+                        </xsl:if>
+                    </xsl:attribute>
+                </img>
+                <xsl:variable name="dude" select="."/>
+                <xsl:if test="@helper = 'true' and @confirmed = 'true'">
+                    <xsl:choose>
+                        <xsl:when test="/page/bout/stages/stage[.=$dude/identity]">
+                            <a>
                                 <xsl:attribute name="href">
-                                    <xsl:value-of select="link[@rel='kickoff']/@href"/>
+                                    <xsl:value-of select="/page/bout/stages/stage[.=$dude/identity]/@href"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="class">
+                                    <xsl:text>corner</xsl:text>
+                                    <xsl:if test="identity = /page/bout/stage/@name">
+                                        <xsl:text> active</xsl:text>
+                                    </xsl:if>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
-                                    <xsl:call-template name="format">
-                                        <xsl:with-param name="text" select="'kick.X.off.this.bout'" />
-                                        <xsl:with-param name="value" select="alias" />
-                                    </xsl:call-template>
+                                    <xsl:choose>
+                                        <xsl:when test="identity = /page/bout/stage/@name">
+                                            <xsl:text>You see my data below</xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>Click to see my data</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </xsl:attribute>
-                                <xsl:text>x</xsl:text>
+                                <xsl:text> </xsl:text>
                             </a>
-                        </xsl:if>
-                    </aside>
-                    <article class="dude">
-                        <xsl:attribute name="style">
-                            <xsl:text>left: </xsl:text>
-                            <xsl:value-of select="(position()-1) * 5.7"/>
-                            <xsl:text>em;</xsl:text>
-                        </xsl:attribute>
-                        <img>
-                            <xsl:attribute name="alt">
-                                <xsl:value-of select="alias"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="src">
-                                <xsl:value-of select="photo"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="class">
-                                <xsl:text>photo</xsl:text>
-                                <xsl:if test="@confirmed != 'true'">
-                                    <xsl:text> pending</xsl:text>
-                                </xsl:if>
-                            </xsl:attribute>
-                        </img>
-                        <xsl:variable name="dude" select="."/>
-                        <xsl:if test="@helper = 'true' and @confirmed = 'true'">
-                            <xsl:choose>
-                                <xsl:when test="/page/bout/stages/stage[.=$dude/identity]">
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="/page/bout/stages/stage[.=$dude/identity]/@href"/>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="class">
-                                            <xsl:text>corner</xsl:text>
-                                            <xsl:if test="identity = /page/bout/stage/@name">
-                                                <xsl:text> active</xsl:text>
-                                            </xsl:if>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="title">
-                                            <xsl:choose>
-                                                <xsl:when test="identity = /page/bout/stage/@name">
-                                                    <xsl:text>You see my data below</xsl:text>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    <xsl:text>Click to see my data</xsl:text>
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </xsl:attribute>
-                                        <xsl:text> </xsl:text>
-                                    </a>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <div class="corner">&#160;</div>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:if>
-                    </article>
-                </div>
-            </xsl:for-each>
-        </nav>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <div class="corner">&#160;</div>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:if>
+            </article>
+        </div>
     </xsl:template>
 
 </xsl:stylesheet>

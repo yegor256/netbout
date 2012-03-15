@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
@@ -48,10 +49,11 @@ public final class ShortBoutTest {
      */
     @Test
     public void convertsToXml() throws Exception {
+        final Identity viewer = new IdentityMocker().mock();
         final ShortBout obj = new ShortBout(
-            new BoutMocker().mock(),
+            new BoutMocker().withParticipant(viewer).mock(),
             UriBuilder.fromUri("http://localhost"),
-            new IdentityMocker().mock()
+            viewer
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),

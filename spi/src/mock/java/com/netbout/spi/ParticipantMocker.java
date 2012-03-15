@@ -49,6 +49,8 @@ public final class ParticipantMocker {
      */
     public ParticipantMocker() {
         this.withIdentity(new IdentityMocker().mock());
+        this.withConfirm(true);
+        this.withLeader(false);
         this.inBout(new BoutMocker().mock());
     }
 
@@ -59,6 +61,26 @@ public final class ParticipantMocker {
      */
     public ParticipantMocker withIdentity(final Identity identity) {
         Mockito.doReturn(identity).when(this.participant).identity();
+        return this;
+    }
+
+    /**
+     * With confirmation status.
+     * @param The flag
+     * @return This object
+     */
+    public ParticipantMocker withConfirm(final Boolean flag) {
+        Mockito.doReturn(flag).when(this.participant).confirmed();
+        return this;
+    }
+
+    /**
+     * With leadership status.
+     * @param The flag
+     * @return This object
+     */
+    public ParticipantMocker withLeader(final Boolean flag) {
+        Mockito.doReturn(flag).when(this.participant).leader();
         return this;
     }
 
