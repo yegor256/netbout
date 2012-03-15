@@ -162,7 +162,7 @@ final class ParticipantData implements ParticipantDt {
     public Boolean isLeader() {
         synchronized (this) {
             if (this.leader == null) {
-                this.leader = this.hub.make("get-participant-leadship")
+                this.leader = this.hub.make("get-participant-leadership")
                     .synchronously()
                     .arg(this.bout)
                     .arg(this.identity)
