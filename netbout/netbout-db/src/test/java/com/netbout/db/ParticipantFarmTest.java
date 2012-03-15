@@ -49,7 +49,7 @@ public final class ParticipantFarmTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void manipulatsBoutStatus() throws Exception {
+    public void manipulatesWithStatus() throws Exception {
         final Long bout = new BoutRowMocker().mock();
         final Urn identity = new ParticipantRowMocker(bout).mock();
         MatcherAssert.assertThat(
@@ -59,6 +59,25 @@ public final class ParticipantFarmTest {
         this.farm.changedParticipantStatus(bout, identity, true);
         MatcherAssert.assertThat(
             this.farm.getParticipantStatus(bout, identity),
+            Matchers.equalTo(true)
+        );
+    }
+
+    /**
+     * ParticipantFarm can manipulate with leadership status of participant.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void manipulatesWithLeadership() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Urn identity = new ParticipantRowMocker(bout).mock();
+        MatcherAssert.assertThat(
+            this.farm.getParticipantLeadership(bout, identity),
+            Matchers.equalTo(false)
+        );
+        this.farm.changedParticipantLeadership(bout, identity, true);
+        MatcherAssert.assertThat(
+            this.farm.getParticipantLeadership(bout, identity),
             Matchers.equalTo(true)
         );
     }

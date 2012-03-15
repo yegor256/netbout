@@ -134,24 +134,7 @@ public final class ParticipantFarm {
             .sql("SELECT confirmed FROM participant WHERE bout = ? AND identity = ?")
             .set(bout)
             .set(identity)
-            .select(
-                new Handler<Boolean>() {
-                    @Override
-                    public Boolean handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "participant %s not found in bout #%d",
-                                    identity,
-                                    bout
-                                )
-                            );
-                        }
-                        return rset.getBoolean(1);
-                    }
-                }
-            );
+            .select(new BooleanHandler());
     }
 
     /**
@@ -170,6 +153,54 @@ public final class ParticipantFarm {
             .set(bout)
             .set(identity)
             .update();
+    }
+
+    /**
+     * Get participant leadership status.
+     * @param bout The number of the bout
+     * @param identity The participant
+     * @return Status of the participant
+     */
+    @Operation("get-participant-leadership")
+    public Boolean getParticipantLeadership(final Long bout,
+        final Urn identity) {
+        return new DbSession(true)
+            // @checkstyle LineLength (1 line)
+            .sql("SELECT leader FROM participant WHERE bout = ? AND identity = ?")
+            .set(bout)
+            .set(identity)
+            .select(new BooleanHandler());
+    }
+
+    /**
+     * Changed participant leadership.
+     * @param bout The number of the bout
+     * @param identity The participant
+     * @param status The status to set
+     */
+    @Operation("changed-participant-leadership")
+    public void changedParticipantLeadership(final Long bout,
+        final Urn identity, final Boolean status) {
+        new DbSession(true)
+            // @checkstyle LineLength (1 line)
+            .sql("UPDATE participant SET leader = ? WHERE bout = ? AND identity = ?")
+            .set(status)
+            .set(bout)
+            .set(identity)
+            .update();
+    }
+
+    private static final class BooleanHandler implements Handler<Boolean> {
+        @Override
+        public Boolean handle(final ResultSet rset)
+            throws SQLException {
+            if (!rset.next()) {
+                throw new IllegalArgumentException(
+                    "participant not found in bout"
+                );
+            }
+            return rset.getBoolean(1);
+        }
     }
 
 }
