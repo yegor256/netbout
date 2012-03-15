@@ -27,7 +27,6 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Helper;
-import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import java.net.URL;
