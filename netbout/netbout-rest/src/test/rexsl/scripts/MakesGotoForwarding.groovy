@@ -40,7 +40,7 @@ import org.hamcrest.Matchers
 
 def name = new Urn('urn:test:leon')
 def matt = new RestSession(rexsl.home).authenticate(name, '')
-def bout = matt.start();
+def bout = matt.start()
 def path = UriBuilder.fromUri(rexsl.home).path('/{bout}').build(bout.number())
 
 def cookie = RestTester.start(path)

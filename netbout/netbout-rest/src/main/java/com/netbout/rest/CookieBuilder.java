@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.rexsl.core.Manifests;
 import java.net.URI;
 import java.util.Date;
 import java.util.Locale;

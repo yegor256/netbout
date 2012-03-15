@@ -45,6 +45,7 @@ public final class CookieBuilderTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void acceptsValidValues() throws Exception {
         final String[] texts = new String[] {
             "",
@@ -52,8 +53,8 @@ public final class CookieBuilderTest {
             "some-text-to-accept(!)",
         };
         for (String text : texts) {
-            new CookieBuilder(new URI("http://localhost/foo"))
-                .named("some-name")
+            new CookieBuilder(new URI("http://localhost/bar"))
+                .named("some-name-of-cookie")
                 .valued(text)
                 .build();
         }
@@ -64,6 +65,7 @@ public final class CookieBuilderTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void rejectsInvalidValues() throws Exception {
         final String[] texts = new String[] {
             " ",
