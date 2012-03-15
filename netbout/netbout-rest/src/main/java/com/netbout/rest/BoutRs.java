@@ -194,7 +194,6 @@ public final class BoutRs extends AbstractRs {
             new CookieBuilder(this.self("").build())
                 .named("netbout-stage")
                 .valued(this.coords.copy().setPlace(place).toString())
-                .commented("Netbout.com stage information")
                 .temporary()
                 .build()
         ).build();

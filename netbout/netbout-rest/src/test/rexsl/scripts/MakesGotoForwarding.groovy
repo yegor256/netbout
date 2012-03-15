@@ -27,25 +27,35 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+package com.netbout.rest.rexsl.scripts.selenium
 
+import com.netbout.spi.Urn
+import com.netbout.spi.client.RestSession
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriBuilder
+import org.hamcrest.Matchers
 
-// In this script we are trying to make different hits to the
-// pages that definitely don't exist in the system. All of them
-// should lead to 404 HTTP code
+def name = new Urn('urn:test:leon')
+def matt = new RestSession(rexsl.home).authenticate(name, '')
+def bout = matt.start()
+def path = UriBuilder.fromUri(rexsl.home).path('/{bout}').build(bout.number())
 
-[
-    '/some-strange-name',
-    '/-some-thing-else'
-].each { path ->
-    RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('reading non-existing page')
-        .assertStatus(HttpURLConnection.HTTP_NOT_FOUND)
-        .assertXPath("/page/links/link[@rel='self']")
-        .assertXPath("/page/error[code='404']")
-}
+def cookie = RestTester.start(path)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read home')
+    .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
+    .cookie(RestSession.GOTO_COOKIE)
+
+def uri = UriBuilder.fromUri(rexsl.home)
+    .path('/auth')
+    .queryParam('identity', matt.name())
+    .queryParam('secret', '')
+
+RestTester.start(uri)
+    .header(HttpHeaders.COOKIE, cookie.toString())
+    .get('authenticate the user')
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+    .assertHeader(HttpHeaders.LOCATION, Matchers.equalTo(path.toString()))

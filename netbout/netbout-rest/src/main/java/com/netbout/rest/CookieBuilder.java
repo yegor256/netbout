@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.rexsl.core.Manifests;
 import java.net.URI;
 import java.util.Date;
 import java.util.Locale;
@@ -38,6 +37,7 @@ import javax.ws.rs.core.NewCookie;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
+ * @see <a href="http://tools.ietf.org/html/rfc6265">RFC6265</a>
  * @todo #254 Somehow we should specify PORT in the cookie. Without this param
  *  the site doesn't work in localhost:9099 in Chrome. Works fine in Safari,
  *  but not in Chrome. see http://stackoverflow.com/questions/1612177
@@ -60,11 +60,6 @@ public final class CookieBuilder {
     private final transient String domain;
 
     /**
-     * Port.
-     */
-    private transient Integer port;
-
-    /**
      * Path.
      */
     private transient String path;
@@ -75,21 +70,11 @@ public final class CookieBuilder {
     private transient Date expires = new Date(0);
 
     /**
-     * Comment to set.
-     */
-    private transient String comment = "";
-
-    /**
      * Public ctor.
      * @param uri The URI
      */
     public CookieBuilder(final URI uri) {
         this.domain = uri.getHost();
-        this.port = uri.getPort();
-        if (this.port <= 0) {
-            // @checkstyle MagicNumber (1 line)
-            this.port = 80;
-        }
         this.path = uri.getPath();
     }
 
@@ -97,8 +82,14 @@ public final class CookieBuilder {
      * Named like this.
      * @param txt The name
      * @return This object
+     * @see <a href="http://tools.ietf.org/html/rfc2616#section-2.2">RFC2616</a>
      */
     public CookieBuilder named(final String txt) {
+        if (!txt.matches("[\\x20-\\x7E]+")) {
+            throw new IllegalArgumentException(
+                String.format("illegal cookie name: '%s'", txt)
+            );
+        }
         this.name = txt;
         return this;
     }
@@ -109,6 +100,12 @@ public final class CookieBuilder {
      * @return This object
      */
     public CookieBuilder valued(final String txt) {
+        // @checkstyle LineLength (1 line)
+        if (!txt.matches("[\\x21\\x23-\\x2B\\x2D-\\x3A\\x3C-\\x5B\\x5D-\\x7E]*")) {
+            throw new IllegalArgumentException(
+                String.format("illegal cookie value: '%s'", txt)
+            );
+        }
         this.value = txt;
         return this;
     }
@@ -119,6 +116,11 @@ public final class CookieBuilder {
      * @return This object
      */
     public CookieBuilder pathed(final String txt) {
+        if (!txt.matches("/[\\x20-\\x3A\\x3C-\\x7E]*")) {
+            throw new IllegalArgumentException(
+                String.format("illegal cookie path: '%s'", txt)
+            );
+        }
         this.path = txt;
         return this;
     }
@@ -132,16 +134,6 @@ public final class CookieBuilder {
             // @checkstyle MagicNumber (1 line)
             new Date().getTime() + 90 * 24 * 60 * 60 * 1000L
         );
-        return this;
-    }
-
-    /**
-     * Commented as this.
-     * @param txt The comment
-     * @return This object
-     */
-    public CookieBuilder commented(final String txt) {
-        this.comment = txt;
         return this;
     }
 
@@ -171,15 +163,12 @@ public final class CookieBuilder {
             return String.format(
                 Locale.ENGLISH,
                 // @checkstyle LineLength (1 line)
-                "%s=%s;Domain=%s;Port=%d;Path=%s;Expires=%ta, %6$td-%6$tb-%6$tY %6$tT GMT;Version=%d;Comment=\"%s\"",
+                "%s=\"%s\"; Domain=%s; Path=%s; Expires=%ta, %5$td-%5$tb-%5$tY %5$tT GMT",
                 this.getName(),
                 this.getValue(),
                 CookieBuilder.this.domain,
-                CookieBuilder.this.port,
                 CookieBuilder.this.path,
-                CookieBuilder.this.expires,
-                Integer.valueOf(Manifests.read("Netbout-Revision")),
-                CookieBuilder.this.comment.replace("\"", "\\\"")
+                CookieBuilder.this.expires
             );
         }
     }

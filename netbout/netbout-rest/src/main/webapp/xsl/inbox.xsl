@@ -53,7 +53,11 @@
                 <xsl:text>)</xsl:text>
             </xsl:if>
         </title>
-        <script src="/js/dudes.js">
+        <script>
+            <xsl:attribute name="src">
+                <xsl:text>/js/dudes.js?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
         <link rel="stylesheet" type="text/css">
