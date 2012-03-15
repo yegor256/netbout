@@ -23,29 +23,45 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.rest;
+
+import java.net.HttpCookie;
+import java.net.URI;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+/**
+ * Test case for {@link CookieBuilder}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class CookieBuilderTest {
 
-import com.rexsl.test.RestTester
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.UriBuilder
+    /**
+     * CookieBuilder can build a valid cookie.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void buildsCorrectCookie() throws Exception {
+        final String name = "some-cookie-name";
+        final String value = "some-value-of-it";
+        final String cookie = new CookieBuilder(new URI("http://localhost/a"))
+            .named(name)
+            .valued(value)
+            .build()
+            .toString();
+        MatcherAssert.assertThat(
+            HttpCookie.parse(cookie).get(0),
+            Matchers.allOf(
+                Matchers.hasToString(Matchers.containsString(name)),
+                Matchers.hasProperty("name", Matchers.equalTo(name)),
+                Matchers.hasProperty("value", Matchers.equalTo(value)),
+                Matchers.hasProperty("domain", Matchers.equalTo("localhost")),
+                Matchers.hasProperty("path", Matchers.equalTo("/a"))
+            )
+        );
+    }
 
-// In this script we are trying to make different hits to the
-// pages that definitely don't exist in the system. All of them
-// should lead to 404 HTTP code
-
-[
-    '/some-strange-name',
-    '/-some-thing-else'
-].each { path ->
-    RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('reading non-existing page')
-        .assertStatus(HttpURLConnection.HTTP_NOT_FOUND)
-        .assertXPath("/page/links/link[@rel='self']")
-        .assertXPath("/page/error[code='404']")
 }

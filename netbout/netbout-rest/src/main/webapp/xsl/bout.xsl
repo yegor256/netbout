@@ -51,10 +51,18 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="/page/bout/title"/>
         </title>
-        <script src="/js/dudes.js">
+        <script>
+            <xsl:attribute name="src">
+                <xsl:text>/js/dudes.js?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <script src="/js/bout.js">
+        <script>
+            <xsl:attribute name="src">
+                <xsl:text>/js/bout.js?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
         <link rel="stylesheet" type="text/css">

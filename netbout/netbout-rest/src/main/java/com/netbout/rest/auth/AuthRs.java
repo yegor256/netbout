@@ -84,6 +84,7 @@ public final class AuthRs extends AbstractRs {
                 );
             }
         }
+        System.out.println("forward set to: " + this.forward);
     }
 
     /**
