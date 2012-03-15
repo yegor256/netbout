@@ -51,12 +51,12 @@ public final class LongParticipantTest {
         final LongParticipant obj = new LongParticipant(
             new ParticipantMocker().mock(),
             UriBuilder.fromUri("http://localhost"),
-            new IdentityMocker().mock()
+            new ParticipantMocker().withLeader(true).mock()
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),
             Matchers.allOf(
-                XhtmlMatchers.hasXPath("/participant/link[@rel='kickoff']"),
+                XhtmlMatchers.hasXPath("/*/links/link[@rel='kickoff']"),
                 XhtmlMatchers.hasXPath("/participant/identity"),
                 XhtmlMatchers.hasXPath("/participant/alias"),
                 XhtmlMatchers.hasXPath("/participant/photo"),

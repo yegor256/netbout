@@ -272,8 +272,10 @@ public final class LongBout {
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
             new LinkedList<LongParticipant>();
+        final Participant myself =
+            NetboutUtils.participantOf(this.viewer, this.bout);
         for (Participant dude : this.bout.participants()) {
-            dudes.add(new LongParticipant(dude, this.builder, this.viewer));
+            dudes.add(new LongParticipant(dude, this.builder, myself));
         }
         return dudes;
     }

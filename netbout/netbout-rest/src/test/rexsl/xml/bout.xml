@@ -81,7 +81,7 @@
                 <identity>urn:test:depp</identity>
                 <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
             </participant>
-            <participant href="/xml/PageBout.xml" confirmed="false">
+            <participant href="/xml/PageBout.xml" confirmed="false" leader="true">
                 <alias>Javier</alias>
                 <identity>urn:test:javier%40gmail.com</identity>
                 <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>

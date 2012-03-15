@@ -31,11 +31,14 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import java.net.URL;
+import java.util.Collection;
+import java.util.LinkedList;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -61,7 +64,7 @@ public final class LongParticipant {
     /**
      * The viewer of it.
      */
-    private final transient Identity viewer;
+    private final transient Participant viewer;
 
     /**
      * Public ctor for JAXB.
@@ -77,7 +80,7 @@ public final class LongParticipant {
      * @param vwr The viewer
      */
     public LongParticipant(final Participant dude, final UriBuilder bldr,
-        final Identity vwr) {
+        final Participant vwr) {
         this.participant = dude;
         this.builder = bldr;
         this.viewer = vwr;
@@ -87,15 +90,22 @@ public final class LongParticipant {
      * Get kick-off link.
      * @return The link
      */
-    @XmlElement
-    public Link getLink() {
-        return new Link(
-            "kickoff",
-            this.builder.clone()
-                .path("/kickoff")
-                .queryParam("name", "{name}")
-                .build(this.participant.identity().name())
-        );
+    @XmlElement(name = "link")
+    @XmlElementWrapper(name = "links")
+    public Collection<Link> getLinks() {
+        final Collection<Link> links = new LinkedList<Link>();
+        if (this.viewer.leader() && !this.viewer.equals(this.participant)) {
+            links.add(
+                new Link(
+                    "kickoff",
+                    this.builder.clone()
+                        .path("/kickoff")
+                        .queryParam("name", "{name}")
+                        .build(this.participant.identity().name())
+                )
+            );
+        }
+        return links;
     }
 
     /**
@@ -135,6 +145,15 @@ public final class LongParticipant {
     }
 
     /**
+     * Is he a leader?
+     * @return Is it?
+     */
+    @XmlAttribute
+    public Boolean isLeader() {
+        return this.participant.leader();
+    }
+
+    /**
      * Is it a helper?
      * @return Is it?
      */
@@ -149,7 +168,7 @@ public final class LongParticipant {
      */
     @XmlAttribute
     public Boolean isMe() {
-        return this.participant.identity().equals(this.viewer);
+        return this.participant.identity().equals(this.viewer.identity());
     }
 
 }

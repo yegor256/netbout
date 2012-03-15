@@ -49,16 +49,16 @@
                                 <xsl:with-param name="length" select="25" />
                             </xsl:call-template>
                         </span>
-                        <xsl:if test="@me != 'true'">
-                            <xsl:if test="@confirmed != 'true'">
-                                <xsl:text> (</xsl:text>
-                                <xsl:value-of select="$TEXTS/invited"/>
-                                <xsl:text>)</xsl:text>
-                            </xsl:if>
+                        <xsl:if test="@confirmed != 'true'">
+                            <xsl:text> (</xsl:text>
+                            <xsl:value-of select="$TEXTS/invited"/>
+                            <xsl:text>)</xsl:text>
+                        </xsl:if>
+                        <xsl:if test="links/link[@rel='kickoff']">
                             <xsl:text> </xsl:text>
                             <a class="kickoff">
                                 <xsl:attribute name="href">
-                                    <xsl:value-of select="link[@rel='kickoff']/@href"/>
+                                    <xsl:value-of select="links/link[@rel='kickoff']/@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
                                     <xsl:call-template name="format">
