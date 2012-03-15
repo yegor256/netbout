@@ -55,7 +55,7 @@ def uri = UriBuilder.fromUri(rexsl.home)
     .queryParam('secret', '')
 
 RestTester.start(uri)
-    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+    .header(HttpHeaders.COOKIE, cookie.toString())
     .get('authenticate the user')
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
     .assertHeader(HttpHeaders.LOCATION, Matchers.equalTo(path.toString()))

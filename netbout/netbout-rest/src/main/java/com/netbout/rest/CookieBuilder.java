@@ -88,7 +88,7 @@ public final class CookieBuilder {
     public CookieBuilder named(final String txt) {
         if (!txt.matches("[\\x20-\\x7E]+")) {
             throw new IllegalArgumentException(
-                String.format("illegal cookie name: %s", txt)
+                String.format("illegal cookie name: '%s'", txt)
             );
         }
         this.name = txt;
@@ -102,9 +102,9 @@ public final class CookieBuilder {
      */
     public CookieBuilder valued(final String txt) {
         // @checkstyle LineLength (1 line)
-        if (!txt.matches("[\\x21\\x23-\\x2B\\x2D-\\x3A\\x3C-\\x5B\\x5D-\\x7E]+")) {
+        if (!txt.matches("[\\x21\\x23-\\x2B\\x2D-\\x3A\\x3C-\\x5B\\x5D-\\x7E]*")) {
             throw new IllegalArgumentException(
-                String.format("illegal cookie value: %s", txt)
+                String.format("illegal cookie value: '%s'", txt)
             );
         }
         this.value = txt;
@@ -117,9 +117,9 @@ public final class CookieBuilder {
      * @return This object
      */
     public CookieBuilder pathed(final String txt) {
-        if (!txt.matches("[\\x20-\\x3A\\x3C-\\x7E]+")) {
+        if (!txt.matches("/[\\x20-\\x3A\\x3C-\\x7E]*")) {
             throw new IllegalArgumentException(
-                String.format("illegal cookie path: %s", txt)
+                String.format("illegal cookie path: '%s'", txt)
             );
         }
         this.path = txt;

@@ -30,6 +30,7 @@ import java.net.HttpCookie;
 import java.net.URI;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -38,6 +39,49 @@ import org.junit.Test;
  * @version $Id$
  */
 public final class CookieBuilderTest {
+
+    /**
+     * CookieBuilder can accept correct values.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void acceptsValidValues() throws Exception {
+        final String[] texts = new String[] {
+            "",
+            "text",
+            "some-text-to-accept(!)",
+        };
+        for (String text : texts) {
+            new CookieBuilder(new URI("http://localhost/foo"))
+                .named("some-name")
+                .valued(text)
+                .build();
+        }
+    }
+
+    /**
+     * CookieBuilder can reject incorrect values.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void rejectsInvalidValues() throws Exception {
+        final String[] texts = new String[] {
+            " ",
+            ";",
+            "\\ backslash is not allowed",
+        };
+        for (String text : texts) {
+            try {
+                new CookieBuilder(new URI("http://localhost/foo"))
+                    .named("some-name")
+                    .valued(text)
+                    .build();
+                Assert.fail("Exception expected here");
+            } catch (IllegalArgumentException ex) {
+                assert ex != null;
+            }
+        }
+    }
 
     /**
      * CookieBuilder can build a valid cookie.
