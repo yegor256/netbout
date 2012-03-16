@@ -40,7 +40,6 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-return;
 Manifests.append(new File(rexsl.basedir, 'src/test/resources/META-INF/MANIFEST.MF'))
 
 def home = new URI(System.getProperty('catapult.home'))

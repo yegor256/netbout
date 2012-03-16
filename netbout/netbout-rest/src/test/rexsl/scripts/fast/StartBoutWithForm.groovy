@@ -37,11 +37,12 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriBuilder
+import org.apache.commons.lang.CharEncoding
 import org.hamcrest.Matchers
 
 def message = 'Hi, how are you doing there?\nI\'m fine by the way!\n'
-def first = 'urn:test:jackie'
-def second = 'urn:test:chris'
+def first = 'urn:test:bratt'
+def second = 'urn:test:mickey'
 
 def bruce = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruce'), '')
 
@@ -52,7 +53,15 @@ def uri = UriBuilder.fromUri(RestUriBuilder.from(bruce).build())
     .build(String.format("%s,%s", first, second), message)
 
 RestTester.start(uri)
-    .get('starting a bout')
+    .post(
+        'starting a bout',
+        String.format(
+            'participants=%s,%s&message=%s',
+            URLEncoder.encode(first, CharEncoding.UTF_8),
+            URLEncoder.encode(second, CharEncoding.UTF_8),
+            URLEncoder.encode(message, CharEncoding.UTF_8)
+        )
+    )
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
     .follow()
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
@@ -60,6 +69,6 @@ RestTester.start(uri)
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertXPath('/page/bout/participants/participant[identity="urn:test:bruce"]')
     .assertXPath('//participant[identity="urn:test:bruce" and @leader="true"]')
-    .assertXPath('//participant[identity="urn:test:jackie" and @leader="false"]')
-    .assertXPath('//participant[identity="urn:test:chris" and @leader="false"]')
+    .assertXPath('//participant[identity="urn:test:bratt" and @leader="false"]')
+    .assertXPath('//participant[identity="urn:test:mickey" and @leader="false"]')
     .assertXPath('//messages/message[contains(text, "how are you doing")]')

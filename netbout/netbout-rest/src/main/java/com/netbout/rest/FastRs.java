@@ -26,24 +26,16 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.jaxb.Namespace;
-import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Fast-lane URIs.
@@ -56,6 +48,8 @@ public final class FastRs extends AbstractRs {
 
     /**
      * Start a new bout with this first message and participants.
+     * @param participants List of participants (comma separated)
+     * @param message The message to post
      * @return The JAX-RS response
      */
     @GET
@@ -85,6 +79,20 @@ public final class FastRs extends AbstractRs {
             .status(Response.Status.SEE_OTHER)
             .location(this.base().path("/{num}").build(bout.number()))
             .build();
+    }
+
+    /**
+     * Start a new bout with this first message and participants.
+     * @param participants List of participants (comma separated)
+     * @param message The message to post
+     * @return The JAX-RS response
+     */
+    @POST
+    @Path("/start")
+    public Response startPost(
+        @FormParam("participants") final String participants,
+        @FormParam("message") final String message) {
+        return this.start(participants, message);
     }
 
 }
