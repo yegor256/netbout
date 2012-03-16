@@ -27,35 +27,46 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+package com.netbout.rest.rexsl.scripts.fast
 
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriBuilder
-import org.hamcrest.Matchers
+import org.apache.commons.lang.CharEncoding
 
-def name = new Urn('urn:test:leon')
-def matt = new RestSession(rexsl.home).authenticate(name, '')
-def bout = matt.start()
-def path = UriBuilder.fromUri(rexsl.home).path('/{bout}').build(bout.number())
+def message = 'Hi, how are you doing there?\nI\'m fine by the way!\n'
+def first = 'urn:test:bratt'
+def second = 'urn:test:mickey'
 
-def cookie = RestTester.start(path)
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get('read home')
-    .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
-    .cookie(RestSession.GOTO_COOKIE)
+def bruce = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruce'), '')
 
-def uri = UriBuilder.fromUri(rexsl.home)
-    .path('/auth')
-    .queryParam('identity', matt.name())
-    .queryParam('secret', '')
+def uri = UriBuilder.fromUri(RestUriBuilder.from(bruce).build())
+    .path('/fast/start')
+    .queryParam('participants', '{dudes}')
+    .queryParam('message', '{message}')
+    .build(String.format('%s,%s', first, second), message)
 
 RestTester.start(uri)
-    .header(HttpHeaders.COOKIE, cookie.toString())
-    .get('authenticate the user')
+    .post(
+        'starting a bout',
+        String.format(
+            'participants=%s,%s&message=%s',
+            URLEncoder.encode(first, CharEncoding.UTF_8),
+            URLEncoder.encode(second, CharEncoding.UTF_8),
+            URLEncoder.encode(message, CharEncoding.UTF_8)
+        )
+    )
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-    .assertHeader(HttpHeaders.LOCATION, Matchers.equalTo(path.toString()))
+    .follow()
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read the bout just created')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('/page/bout/participants/participant[identity="urn:test:bruce"]')
+    .assertXPath('//participant[identity="urn:test:bruce" and @leader="true"]')
+    .assertXPath('//participant[identity="urn:test:bratt" and @leader="false"]')
+    .assertXPath('//participant[identity="urn:test:mickey" and @leader="false"]')
+    .assertXPath('//messages/message[contains(text, "how are you doing")]')
