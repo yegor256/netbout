@@ -35,9 +35,7 @@ import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriBuilder
-import org.hamcrest.Matchers
 
 def message = 'Hi, how are you doing there?\nI\'m fine by the way!\n'
 def first = 'urn:test:jackie'
@@ -49,7 +47,7 @@ def uri = UriBuilder.fromUri(RestUriBuilder.from(bruce).build())
     .path('/fast/start')
     .queryParam('participants', '{dudes}')
     .queryParam('message', '{message}')
-    .build(String.format("%s,%s", first, second), message)
+    .build(String.format('%s,%s', first, second), message)
 
 RestTester.start(uri)
     .get('starting a bout')
