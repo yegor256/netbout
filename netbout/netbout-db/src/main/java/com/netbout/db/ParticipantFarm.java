@@ -31,8 +31,8 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -81,7 +81,7 @@ public final class ParticipantFarm {
                     @Override
                     public List<Urn> handle(final ResultSet rset)
                         throws SQLException {
-                        final List<Urn> names = new ArrayList<Urn>();
+                        final List<Urn> names = new LinkedList<Urn>();
                         while (rset.next()) {
                             names.add(Urn.create(rset.getString(1)));
                         }

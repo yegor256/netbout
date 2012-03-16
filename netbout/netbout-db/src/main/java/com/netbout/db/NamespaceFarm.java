@@ -31,8 +31,8 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -90,7 +90,7 @@ public final class NamespaceFarm {
                     @Override
                     public List<String> handle(final ResultSet rset)
                         throws SQLException {
-                        final List<String> names = new ArrayList<String>();
+                        final List<String> names = new LinkedList<String>();
                         while (rset.next()) {
                             names.add(rset.getString(1));
                         }

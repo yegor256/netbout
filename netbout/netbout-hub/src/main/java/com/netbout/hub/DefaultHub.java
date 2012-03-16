@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Entry point to Hub.
@@ -55,8 +57,8 @@ import java.util.concurrent.ConcurrentMap;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public final class DefaultHub implements PowerHub, StatsProvider {
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.DoNotUseThreads" })
+public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
 
     /**
      * The bus.
@@ -102,11 +104,36 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         this.promote(this.persister());
+        Executors.newSingleThreadScheduledExecutor()
+            .scheduleAtFixedRate(this, 0L, 1L, TimeUnit.MINUTES);
         Logger.info(
             this,
             "#DefaultHub(%[type]s): instantiated",
             bus
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+        final List<Urn> names = this.make("find-silent-identities")
+            .synchronously()
+            .asDefault(new ArrayList<Urn>(0))
+            .exec();
+        for (Urn name : names) {
+            final String marker = this.make("get-silence-marker")
+                .synchronously()
+                .arg(name)
+                .asDefault("")
+                .exec();
+            this.make("remind-silent-identity")
+                .arg(name)
+                .arg(marker)
+                .asDefault(false)
+                .exec();
+        }
     }
 
     /**

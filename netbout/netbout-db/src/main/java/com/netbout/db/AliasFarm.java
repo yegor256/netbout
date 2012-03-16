@@ -31,8 +31,8 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -77,7 +77,7 @@ public final class AliasFarm {
                         List<String> aliases = null;
                         while (rset.next()) {
                             if (aliases == null) {
-                                aliases = new ArrayList<String>();
+                                aliases = new LinkedList<String>();
                             }
                             aliases.add(rset.getString(1));
                         }

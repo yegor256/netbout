@@ -32,8 +32,10 @@ import com.netbout.spi.cpa.Operation;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,6 +44,7 @@ import java.util.Locale;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Farm
 public final class IdentityFarm {
@@ -77,22 +80,7 @@ public final class IdentityFarm {
             .set(who)
             .set(keyword.toUpperCase(Locale.ENGLISH))
             .set(matcher)
-            .select(
-                new Handler<List<Urn>>() {
-                    @Override
-                    public List<Urn> handle(final ResultSet rset)
-                        throws SQLException {
-                        List<Urn> names = null;
-                        while (rset.next()) {
-                            if (names == null) {
-                                names = new ArrayList<Urn>();
-                            }
-                            names.add(Urn.create(rset.getString(1)));
-                        }
-                        return names;
-                    }
-                }
-            );
+            .select(new NamesHandler());
     }
 
     /**
@@ -111,7 +99,7 @@ public final class IdentityFarm {
                     @Override
                     public List<Long> handle(final ResultSet rset)
                         throws SQLException {
-                        final List<Long> numbers = new ArrayList<Long>();
+                        final List<Long> numbers = new LinkedList<Long>();
                         while (rset.next()) {
                             numbers.add(rset.getLong(1));
                         }
@@ -235,6 +223,68 @@ public final class IdentityFarm {
             .set(photo)
             .set(name)
             .update();
+    }
+
+    /**
+     * Find silent identities.
+     * @return List of their names
+     */
+    @Operation("find-silent-identities")
+    public List<Urn> findSilentIdentities() {
+        final Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.DAY_OF_YEAR, -1);
+        return new DbSession(true).sql(
+            // @checkstyle StringLiteralsConcatenation (2 lines)
+            "SELECT author, MAX(date) AS recent FROM message"
+            + " GROUP BY author HAVING recent < ?"
+        )
+            .set(cal.getTime())
+            .select(new NamesHandler());
+    }
+
+    /**
+     * Get marker of silence of this identity.
+     * @param name The name of identity
+     * @return The marker
+     */
+    @Operation("get-silence-marker")
+    public String getSilenceMarker(final Urn name) {
+        return new DbSession(true)
+            .sql("SELECT date FROM message WHERE author = ? ORDER BY date DESC")
+            .set(name)
+            .select(
+                new Handler<String>() {
+                    @Override
+                    public String handle(final ResultSet rset)
+                        throws SQLException {
+                        if (!rset.next()) {
+                            throw new IllegalArgumentException(
+                                String.format(
+                                    "Identity '%s' not found, can't get marker",
+                                    name
+                                )
+                            );
+                        }
+                        return rset.getString(1);
+                    }
+                }
+            );
+    }
+
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    static final class NamesHandler implements Handler<List<Urn>> {
+        @Override
+        public List<Urn> handle(final ResultSet rset)
+            throws SQLException {
+            List<Urn> names = null;
+            while (rset.next()) {
+                if (names == null) {
+                    names = new LinkedList<Urn>();
+                }
+                names.add(Urn.create(rset.getString(1)));
+            }
+            return names;
+        }
     }
 
 }

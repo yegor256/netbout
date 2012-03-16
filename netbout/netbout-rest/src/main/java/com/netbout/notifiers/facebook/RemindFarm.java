@@ -24,72 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.db;
+package com.netbout.notifiers.facebook;
 
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Date;
+import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.Operation;
 
 /**
- * Mocker of {@code MESSAGE} row in a database.
+ * Reminder farm.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class MessageRowMocker {
+@Farm
+public final class RemindFarm {
 
     /**
-     * The bout it is related to.
+     * Remind identity which is silent for a long time.
+     * @param name Name of identity
+     * @param marker The marker to avoid duplicate reminders
+     * @throws Exception If some problem inside
      */
-    private final transient Long bout;
-
-    /**
-     * Date of bout.
-     */
-    private transient Date date = new Date();
-
-    /**
-     * Author of bout.
-     */
-    private transient Urn author = new IdentityRowMocker().mock();
-
-    /**
-     * Public ctor.
-     * @param number The bout
-     */
-    public MessageRowMocker(final Long number) {
-        this.bout = number;
-    }
-
-    /**
-     * With this date.
-     * @param when Date of message
-     * @return THis object
-     */
-    public MessageRowMocker withDate(final Date when) {
-        this.date = when;
-        return this;
-    }
-
-    /**
-     * With this author.
-     * @param name The author
-     * @return THis object
-     */
-    public MessageRowMocker withAuthor(final Urn name) {
-        this.author = name;
-        return this;
-    }
-
-    /**
-     * Mock it and return its number.
-     */
-    public Long mock() {
-        final MessageFarm farm = new MessageFarm();
-        Long number;
-        number = farm.createBoutMessage(this.bout);
-        farm.changedMessageAuthor(number, this.author);
-        farm.changedMessageDate(number, this.date);
-        return number;
+    @Operation("remind-silent-identity")
+    public void remindSilentIdentity(final Urn name, final String marker)
+        throws Exception {
+        // ...
     }
 
 }

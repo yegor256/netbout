@@ -28,6 +28,8 @@ package com.netbout.db;
 
 import com.netbout.spi.Urn;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -186,6 +188,30 @@ public final class IdentityFarmTest {
         new SeenRowMocker(msg, main).mock();
         new SeenRowMocker(msg, child).mock();
         this.farm.identitiesJoined(main, child);
+    }
+
+    /**
+     * IdentityFarm can find all silent identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsSilentIdentities() throws Exception {
+        final Urn who = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().withParticipant(who).mock();
+        final Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.MONTH, -1);
+        new MessageRowMocker(bout)
+            .withDate(cal.getTime())
+            .withAuthor(who)
+            .mock();
+        MatcherAssert.assertThat(
+            this.farm.findSilentIdentities(),
+            Matchers.hasItem(who)
+        );
+        MatcherAssert.assertThat(
+            this.farm.getSilenceMarker(who),
+            Matchers.notNullValue()
+        );
     }
 
 }
