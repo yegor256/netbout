@@ -40,12 +40,14 @@ import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Locale;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.LocaleUtils;
 
 /**
  * Facebook authentication page.
@@ -63,13 +65,6 @@ public final class FacebookRs extends AbstractRs {
     public static final String NAMESPACE = "facebook";
 
     /**
-     * Super secret code.
-     */
-    @SuppressWarnings("PMD.DefaultPackage")
-    static final String SUPER_SECRET =
-        "PR45-IU6Y-23ER-9IMW-PAQ2-OO6T-EF5G-PLM6";
-
-    /**
      * Facebook authentication page (callback hits it).
      * @param code Facebook "authorization code"
      * @return The JAX-RS response
@@ -77,6 +72,12 @@ public final class FacebookRs extends AbstractRs {
     @GET
     @Path("/back")
     public Response fbauth(@QueryParam("code") final String code) {
+        if (code == null) {
+            throw new LoginRequiredException(
+                this,
+                "'code' is a mandatory query param"
+            );
+        }
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
@@ -154,14 +155,19 @@ public final class FacebookRs extends AbstractRs {
     private Identity authenticate(final String code)
         throws IOException {
         final User fbuser = this.user(code);
-        return new ResolvedIdentity(
+        final Identity resolved = new ResolvedIdentity(
             UriBuilder.fromUri("http://www.netbout.com/fb").build().toURL(),
-            new Urn(this.NAMESPACE, fbuser.getId()),
+            new Urn(this.NAMESPACE, fbuser.getId())
+        );
+        resolved.profile().setPhoto(
             UriBuilder
                 .fromPath("https://graph.facebook.com/{id}/picture")
                 .build(fbuser.getId())
                 .toURL()
-        ).addAlias(fbuser.getName());
+        );
+        resolved.profile().alias(fbuser.getName());
+        resolved.profile().setLocale(LocaleUtils.toLocale(fbuser.getLocale()));
+        return resolved;
     }
 
     /**
@@ -172,7 +178,7 @@ public final class FacebookRs extends AbstractRs {
      */
     private User user(final String code) throws IOException {
         User fbuser;
-        if (code.startsWith(this.SUPER_SECRET)) {
+        if (code.startsWith(Manifests.read("Netbout-SuperSecret"))) {
             fbuser = new User() {
                 @Override
                 public String getName() {
@@ -181,6 +187,10 @@ public final class FacebookRs extends AbstractRs {
                 @Override
                 public String getId() {
                     return code.substring(code.lastIndexOf('-') + 1);
+                }
+                @Override
+                public String getLocale() {
+                    return Locale.ENGLISH.toString();
                 }
             };
         } else {

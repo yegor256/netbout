@@ -42,6 +42,7 @@ import javax.ws.rs.core.UriBuilder
     '/css/global.css',
     '/js/bout.js',
     '/xsl/login.xsl',
+    '/xml/lang/en.xml',
 ].each { path ->
     RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
         .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)

@@ -60,9 +60,10 @@ interface PowerHub extends Hub {
 
     /**
      * Find identities by keyword.
+     * @param who Who is searching
      * @param keyword The keyword
      * @return The identities found
      */
-    Set<Identity> findByKeyword(String keyword);
+    Set<Identity> findByKeyword(Identity who, String keyword);
 
 }

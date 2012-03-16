@@ -91,6 +91,24 @@ final class RestParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
+    public boolean leader() {
+        return Boolean.valueOf(this.bySuffix("/@leader"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void consign() {
+        throw new UnsupportedOperationException(
+            "Participant#consign() is not implemented yet"
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void kickOff() {
         this.client
             .get("reading 'kickoff' rel link")

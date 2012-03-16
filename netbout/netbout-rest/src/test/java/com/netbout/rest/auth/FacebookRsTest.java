@@ -28,6 +28,7 @@ package com.netbout.rest.auth;
 
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
+import com.netbout.rest.Page;
 import com.netbout.rest.ResourceMocker;
 import com.netbout.rest.UriInfoMocker;
 import com.netbout.spi.Identity;
@@ -48,6 +49,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case for {@link LoginRs}.
@@ -123,7 +125,7 @@ public final class FacebookRsTest {
         // @checkstyle LineLength (1 line)
         final String code = String.format(
             "%s-%s",
-            FacebookRs.SUPER_SECRET,
+            Manifests.read("Netbout-SuperSecret"),
             fbid
         );
         final FacebookRs rest = new ResourceMocker().mock(FacebookRs.class);
@@ -131,6 +133,15 @@ public final class FacebookRsTest {
         MatcherAssert.assertThat(
             response.getStatus(),
             Matchers.equalTo(HttpURLConnection.HTTP_OK)
+        );
+        MatcherAssert.assertThat(
+            ResourceMocker.the((Page) response.getEntity(), rest),
+            Matchers.allOf(
+                XmlMatchers.hasXPath(
+                    String.format("//identity[name='urn:facebook:%s']", fbid)
+                ),
+                XmlMatchers.hasXPath("//identity[locale='en']")
+            )
         );
     }
 

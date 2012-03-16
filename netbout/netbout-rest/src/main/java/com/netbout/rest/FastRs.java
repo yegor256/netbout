@@ -24,62 +24,75 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.auth;
+package com.netbout.rest;
 
-import com.netbout.rest.AbstractPage;
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.ForwardException;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import java.net.URL;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 /**
- * Mocks authentication mechanism.
+ * Fast-lane URIs.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/mock-auth")
-public final class AuthRsMocker extends AbstractRs {
+@Path("/fast")
+public final class FastRs extends AbstractRs {
 
     /**
-     * Authentication page.
-     * @param iname Name of identity
-     * @param secret The secret code
+     * Start a new bout with this first message and participants.
+     * @param participants List of participants (comma separated)
+     * @param message The message to post
      * @return The JAX-RS response
-     * @throws Exception If some problem
      */
     @GET
-    public Response auth(@QueryParam("identity") final Urn iname,
-        @QueryParam("secret") final String secret) throws Exception {
-        if ((iname == null) || (secret == null)) {
-            throw new ForwardException(this, this.base(), "NULL inputs");
+    @Path("/start")
+    public Response start(@QueryParam("participants") final String participants,
+        @QueryParam("message") final String message) {
+        final Identity identity = this.identity();
+        final Bout bout = identity.start();
+        for (String dude : participants.split(",")) {
+            try {
+                bout.invite(identity.friend(Urn.create(dude)));
+            } catch (com.netbout.spi.UnreachableUrnException ex) {
+                throw new ForwardException(this, this.base(), ex);
+            } catch (com.netbout.spi.DuplicateInvitationException ex) {
+                throw new ForwardException(this, this.base(), ex);
+            }
         }
-        if (!"test".equals(iname.nid())) {
-            throw new ForwardException(this, this.base(), "Invalid NID");
+        try {
+            bout.post(message);
+        } catch (com.netbout.spi.MessagePostException ex) {
+            throw new ForwardException(this, this.base(), ex);
         }
-        if (!secret.isEmpty()) {
-            throw new ForwardException(this, this.base(), "Wrong secret");
-        }
-        final Identity identity = new ResolvedIdentity(
-            this.base().path("/mock-auth").build().toURL(),
-            iname
-        );
-        identity.profile().setPhoto(
-            new URL("http://img.netbout.com/unknown.png")
-        );
-        identity.profile().alias(iname.nss());
         return new PageBuilder()
             .build(AbstractPage.class)
             .init(this)
-            .render()
             .authenticated(identity)
+            .status(Response.Status.SEE_OTHER)
+            .location(this.base().path("/{num}").build(bout.number()))
             .build();
+    }
+
+    /**
+     * Start a new bout with this first message and participants.
+     * @param participants List of participants (comma separated)
+     * @param message The message to post
+     * @return The JAX-RS response
+     */
+    @POST
+    @Path("/start")
+    public Response startPost(
+        @FormParam("participants") final String participants,
+        @FormParam("message") final String message) {
+        return this.start(participants, message);
     }
 
 }

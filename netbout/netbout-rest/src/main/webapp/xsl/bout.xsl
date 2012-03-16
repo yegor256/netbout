@@ -36,7 +36,7 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:param name="TEXTS"
-        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml?', /page/version/revision))/texts"/>
 
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
@@ -51,22 +51,45 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="/page/bout/title"/>
         </title>
-        <script src="/js/dudes.js">
+        <script>
+            <xsl:attribute name="src">
+                <xsl:text>/js/dudes.js?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <script src="/js/bout.js">
+        <script>
+            <xsl:attribute name="src">
+                <xsl:text>/js/bout.js?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <link href="/css/bout.css" rel="stylesheet" type="text/css"/>
-        <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
-        <link href="/css/periods.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/bout.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/dudes.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/periods.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
         <xsl:if test="/page/bout/stage">
             <xsl:apply-templates select="/page/bout/stage" mode="head" />
         </xsl:if>
     </xsl:template>
 
     <xsl:template name="content">
-        <header id="top1">
+        <header>
             <h1>
                 <span class="num">
                     <xsl:text>#</xsl:text>
@@ -105,7 +128,11 @@
                     </textarea>
                 </p>
                 <p>
-                    <input value="Post new message" type="submit" />
+                    <input type="submit">
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="$TEXTS/Post.new.message"/>
+                        </xsl:attribute>
+                    </input>
                 </p>
             </form>
         </xsl:if>
@@ -163,7 +190,8 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:attribute name="src">
-                                <xsl:text>http://img.netbout.com/someone.png</xsl:text>
+                                <xsl:text>http://cdn.netbout.com/someone.png?</xsl:text>
+                                <xsl:value-of select="/page/version/revision"/>
                             </xsl:attribute>
                             <xsl:attribute name="alt">
                                 <xsl:text>someone some time ago</xsl:text>
@@ -194,7 +222,7 @@
                     <xsl:if test="@seen = 'false'">
                         <span class="red">
                             <xsl:text> </xsl:text>
-                            <xsl:value-of select="$TEXTS/new"/>
+                            <xsl:value-of select="$TEXTS/new.message"/>
                         </span>
                     </xsl:if>
                 </header>
@@ -212,7 +240,10 @@
                     <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                 </xsl:attribute>
                 <p>
-                    <input name="mask" autocomplete="off" placeholder="Invite...">
+                    <input name="mask" autocomplete="off">
+                        <xsl:attribute name="placeholder">
+                            <xsl:value-of select="$TEXTS/Invite"/>
+                        </xsl:attribute>
                         <xsl:attribute name="value">
                             <xsl:value-of select="/page/mask"/>
                         </xsl:attribute>
@@ -226,37 +257,38 @@
             </form>
             <xsl:if test="/page/invitees[count(invitee) &gt; 0]">
                 <ul id="invite-list">
-                    <xsl:for-each select="/page/invitees/invitee">
-                        <li>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="@href"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:value-of select="$TEXTS/click.to.invite"/>
-                                    <xsl:text> "</xsl:text>
-                                    <xsl:value-of select="alias"/>
-                                    <xsl:text>" </xsl:text>
-                                    <xsl:value-of select="$TEXTS/to.this.bout"/>
-                                </xsl:attribute>
-                                <xsl:call-template name="crop">
-                                    <xsl:with-param name="text" select="alias" />
-                                    <xsl:with-param name="length" select="25" />
-                                </xsl:call-template>
-                            </a>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="photo"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="alt">
-                                    <xsl:value-of select="alias"/>
-                                </xsl:attribute>
-                            </img>
-                        </li>
-                    </xsl:for-each>
+                    <xsl:apply-templates select="/page/invitees/invitee" />
                 </ul>
             </xsl:if>
         </aside>
+    </xsl:template>
+
+    <xsl:template match="invitee">
+        <li>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="@href"/>
+                </xsl:attribute>
+                <xsl:attribute name="title">
+                    <xsl:call-template name="format">
+                        <xsl:with-param name="text" select="'click.to.invite.X.to.this.bout'" />
+                        <xsl:with-param name="value" select="alias" />
+                    </xsl:call-template>
+                </xsl:attribute>
+                <xsl:call-template name="crop">
+                    <xsl:with-param name="text" select="alias" />
+                    <xsl:with-param name="length" select="25" />
+                </xsl:call-template>
+            </a>
+            <img>
+                <xsl:attribute name="src">
+                    <xsl:value-of select="photo"/>
+                </xsl:attribute>
+                <xsl:attribute name="alt">
+                    <xsl:value-of select="alias"/>
+                </xsl:attribute>
+            </img>
+        </li>
     </xsl:template>
 
     <xsl:template name="rename">
@@ -277,6 +309,7 @@
             <span>
                 <xsl:choose>
                     <xsl:when test="$participant/@confirmed = 'true'">
+                        <xsl:text> </xsl:text>
                         <!--
                         <a>
                             <xsl:attribute name="href">

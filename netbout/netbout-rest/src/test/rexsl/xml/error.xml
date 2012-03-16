@@ -1,4 +1,6 @@
-/**
+<?xml version="1.0"?>
+<?xml-stylesheet href="/xsl/login.xsl" type="text/xsl"?>
+<!--
  * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
@@ -23,45 +25,19 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest.jaxb;
-
-import com.netbout.spi.ParticipantMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
-/**
- * Test case for {@link LongParticipant}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- */
-public final class LongParticipantTest {
-
-    /**
-     * LongParticipant can be converted to XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void convertsToXml() throws Exception {
-        final LongParticipant obj = new LongParticipant(
-            new ParticipantMocker().mock(),
-            UriBuilder.fromUri("http://localhost"),
-            new ParticipantMocker().withLeader(true).mock()
-        );
-        MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/*/links/link[@rel='kickoff']"),
-                XhtmlMatchers.hasXPath("/participant/identity"),
-                XhtmlMatchers.hasXPath("/participant/alias"),
-                XhtmlMatchers.hasXPath("/participant/photo"),
-                XhtmlMatchers.hasXPath("/participant/@me")
-            )
-        );
-    }
-
-}
+ -->
+<page>
+    <version>
+        <name>1.0</name>
+        <revision>555</revision>
+        <date>2011-09-23</date>
+    </version>
+    <error>
+        <code>404</code>
+        <message>Hi</message>
+    </error>
+    <nano>56300777</nano>
+</page>

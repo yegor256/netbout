@@ -40,6 +40,8 @@
         <link href="/" rel="logout" />
         <link href="/xml/bout.xml" rel="start" />
         <link href="/xml/bout.xml" rel="self" />
+        <link href="/xml/bout.xml" rel="post" />
+        <link href="/xml/bout.xml" rel="rename" />
     </links>
     <identity>
         <alias>Willy</alias>
@@ -74,22 +76,22 @@
             <stage name="urn:test:Meetings" href="/xml/PageBout.xml" alias="123" />
         </stages>
         <participants>
-            <participant href="/xml/PageBout.xml" confirmed="1">
+            <participant href="/xml/PageBout.xml" confirmed="true">
                 <alias>Johnny Depp</alias>
                 <identity>urn:test:depp</identity>
                 <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
             </participant>
-            <participant href="/xml/PageBout.xml" confirmed="1">
+            <participant href="/xml/PageBout.xml" confirmed="false" leader="true">
                 <alias>Javier</alias>
                 <identity>urn:test:javier%40gmail.com</identity>
                 <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
             </participant>
-            <participant href="/xml/PageBout.xml" confirmed="0">
+            <participant href="/xml/PageBout.xml" confirmed="true">
                 <alias>John Turturro</alias>
-                <identity>urn:test:john-turturro</identity>
+                <identity>urn:facebook:123456789</identity>
                 <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
             </participant>
-            <participant href="/xml/PageBout.xml" confirmed="1">
+            <participant href="/xml/PageBout.xml" confirmed="true">
                 <alias>2Pac</alias>
                 <identity>urn:test:2pac</identity>
                 <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>

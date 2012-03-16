@@ -23,45 +23,41 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest.jaxb;
-
-import com.netbout.spi.ParticipantMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
-/**
- * Test case for {@link LongParticipant}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LongParticipantTest {
+package com.netbout.rest.rexsl.scripts.fast
 
-    /**
-     * LongParticipant can be converted to XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void convertsToXml() throws Exception {
-        final LongParticipant obj = new LongParticipant(
-            new ParticipantMocker().mock(),
-            UriBuilder.fromUri("http://localhost"),
-            new ParticipantMocker().withLeader(true).mock()
-        );
-        MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/*/links/link[@rel='kickoff']"),
-                XhtmlMatchers.hasXPath("/participant/identity"),
-                XhtmlMatchers.hasXPath("/participant/alias"),
-                XhtmlMatchers.hasXPath("/participant/photo"),
-                XhtmlMatchers.hasXPath("/participant/@me")
-            )
-        );
-    }
+import com.netbout.spi.Urn
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import com.rexsl.test.RestTester
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriBuilder
 
-}
+def message = 'Hi, how are you doing there?\nI\'m fine by the way!\n'
+def first = 'urn:test:jackie'
+def second = 'urn:test:chris'
+
+def bruce = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruce'), '')
+
+def uri = UriBuilder.fromUri(RestUriBuilder.from(bruce).build())
+    .path('/fast/start')
+    .queryParam('participants', '{dudes}')
+    .queryParam('message', '{message}')
+    .build(String.format('%s,%s', first, second), message)
+
+RestTester.start(uri)
+    .get('starting a bout')
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+    .follow()
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read the bout just created')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('/page/bout/participants/participant[identity="urn:test:bruce"]')
+    .assertXPath('//participant[identity="urn:test:bruce" and @leader="true"]')
+    .assertXPath('//participant[identity="urn:test:jackie" and @leader="false"]')
+    .assertXPath('//participant[identity="urn:test:chris" and @leader="false"]')
+    .assertXPath('//messages/message[contains(text, "how are you doing")]')

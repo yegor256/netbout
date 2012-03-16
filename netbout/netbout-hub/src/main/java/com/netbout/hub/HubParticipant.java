@@ -127,4 +127,20 @@ public final class HubParticipant implements Participant {
         return this.data.isConfirmed();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean leader() {
+        return this.data.isLeader();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void consign() {
+        this.boutdt.setLeader(this.identity().name());
+    }
+
 }

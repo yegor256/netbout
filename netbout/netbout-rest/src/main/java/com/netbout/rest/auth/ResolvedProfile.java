@@ -43,27 +43,17 @@ final class ResolvedProfile implements Profile {
     /**
      * Locale.
      */
-    private final transient Locale ilocale;
+    private transient Locale ilocale = Locale.ENGLISH;
 
     /**
      * Photo.
      */
-    private final transient URL iphoto;
+    private transient URL iphoto;
 
     /**
      * Aliases.
      */
     private final transient Set<String> ialiases = new HashSet<String>();
-
-    /**
-     * Public ctor.
-     * @param locale The locale
-     * @param photo Its photo
-     */
-    public ResolvedProfile(final Locale locale, final URL photo) {
-        this.ilocale = locale;
-        this.iphoto = photo;
-    }
 
     /**
      * {@inheritDoc}
@@ -90,21 +80,11 @@ final class ResolvedProfile implements Profile {
     }
 
     /**
-     * Add new alias.
-     * @param alias The alias to add
-     */
-    public void addAlias(final String alias) {
-        if (!alias.isEmpty()) {
-            this.ialiases.add(alias);
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public void setLocale(final Locale locale) {
-        throw new UnsupportedOperationException("#setLocale()");
+        this.ilocale = locale;
     }
 
     /**
@@ -112,7 +92,7 @@ final class ResolvedProfile implements Profile {
      */
     @Override
     public void setPhoto(final URL pic) {
-        throw new UnsupportedOperationException("#setPhoto()");
+        this.iphoto = pic;
     }
 
     /**
@@ -120,7 +100,9 @@ final class ResolvedProfile implements Profile {
      */
     @Override
     public void alias(final String alias) {
-        throw new UnsupportedOperationException("#alias()");
+        if (!alias.isEmpty()) {
+            this.ialiases.add(alias);
+        }
     }
 
 }

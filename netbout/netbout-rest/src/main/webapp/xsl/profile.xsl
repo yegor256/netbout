@@ -36,7 +36,7 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:param name="TEXTS"
-        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml?', /page/version/revision))/texts"/>
 
     <xsl:include href="/xsl/layout.xsl" />
 
@@ -44,7 +44,12 @@
         <title>
             <xsl:value-of select="$TEXTS/profile"/>
         </title>
-        <link href="/css/profile.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/profile.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
     </xsl:template>
 
     <xsl:template name="content">
@@ -92,7 +97,8 @@
                 <xsl:attribute name="src">
                     <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
                     <xsl:value-of select="/page/identity/locale"/>
-                    <xsl:text>.png</xsl:text>
+                    <xsl:text>.png?</xsl:text>
+                    <xsl:value-of select="/page/version/revision"/>
                 </xsl:attribute>
                 <xsl:attribute name="alt">
                     <xsl:value-of select="/page/identity/locale"/>
@@ -114,7 +120,8 @@
                             <xsl:attribute name="src">
                                 <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
                                 <xsl:value-of select="code"/>
-                                <xsl:text>.png</xsl:text>
+                                <xsl:text>.png?</xsl:text>
+                                <xsl:value-of select="/page/version/revision"/>
                             </xsl:attribute>
                             <xsl:attribute name="alt">
                                 <xsl:value-of select="name"/>
@@ -125,6 +132,20 @@
                 </xsl:if>
             </xsl:for-each>
         </p>
+        <xsl:if test="/page/identity/@helper='true'">
+            <p>
+                <xsl:text>You're a helper at: </xsl:text>
+                <span class="tt"><xsl:value-of select="/page/identity/location"/></span>
+                <xsl:text> with these operations supported: </xsl:text>
+                <xsl:for-each select="/page/identity/supports/operation">
+                    <xsl:if test="position() &gt; 1">
+                        <xsl:text>, </xsl:text>
+                    </xsl:if>
+                    <span class="tt"><xsl:value-of select="."/></span>
+                </xsl:for-each>
+                <xsl:text>.</xsl:text>
+            </p>
+        </xsl:if>
     </xsl:template>
 
 </xsl:stylesheet>

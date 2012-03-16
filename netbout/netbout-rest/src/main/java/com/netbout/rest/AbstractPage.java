@@ -102,7 +102,10 @@ public abstract class AbstractPage implements Page {
      */
     public final Page init(final Resource res) {
         this.home = res;
-        this.link("self", this.home.uriInfo().getAbsolutePathBuilder());
+        this.link(
+            "self",
+            UriBuilder.fromUri(this.home.uriInfo().getRequestUri())
+        );
         this.link("home", this.home.base());
         return this;
     }
@@ -197,7 +200,6 @@ public abstract class AbstractPage implements Page {
                 new CookieBuilder(base)
                     .named(RestSession.LOG_COOKIE)
                     .valued(this.home.log().toString())
-                    .commented("Netbout.com log")
                     .temporary()
                     .build()
             )
@@ -205,7 +207,6 @@ public abstract class AbstractPage implements Page {
                 new CookieBuilder(base)
                     .named(RestSession.AUTH_COOKIE)
                     .valued(new Cryptor().encrypt(identity))
-                    .commented("Netbout.com logged-in user")
                     .temporary()
                     .build()
             )

@@ -23,45 +23,39 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest.jaxb;
-
-import com.netbout.spi.ParticipantMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
-/**
- * Test case for {@link LongParticipant}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LongParticipantTest {
+package com.netbout.rest.rexsl.scripts
 
-    /**
-     * LongParticipant can be converted to XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void convertsToXml() throws Exception {
-        final LongParticipant obj = new LongParticipant(
-            new ParticipantMocker().mock(),
-            UriBuilder.fromUri("http://localhost"),
-            new ParticipantMocker().withLeader(true).mock()
-        );
-        MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/*/links/link[@rel='kickoff']"),
-                XhtmlMatchers.hasXPath("/participant/identity"),
-                XhtmlMatchers.hasXPath("/participant/alias"),
-                XhtmlMatchers.hasXPath("/participant/photo"),
-                XhtmlMatchers.hasXPath("/participant/@me")
-            )
-        );
-    }
+import com.netbout.spi.Urn
+import com.netbout.spi.client.RestSession
+import com.rexsl.test.RestTester
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
+import javax.ws.rs.core.UriBuilder
+import org.hamcrest.Matchers
 
-}
+def name = new Urn('urn:test:leon')
+def matt = new RestSession(rexsl.home).authenticate(name, '')
+def bout = matt.start()
+def path = UriBuilder.fromUri(rexsl.home).path('/{bout}').build(bout.number())
+
+def cookie = RestTester.start(path)
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read home')
+    .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
+    .cookie(RestSession.GOTO_COOKIE)
+
+def uri = UriBuilder.fromUri(rexsl.home)
+    .path('/auth')
+    .queryParam('identity', matt.name())
+    .queryParam('secret', '')
+
+RestTester.start(uri)
+    .header(HttpHeaders.COOKIE, cookie.toString())
+    .get('authenticate the user')
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+    .assertHeader(HttpHeaders.LOCATION, Matchers.equalTo(path.toString()))

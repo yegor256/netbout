@@ -85,6 +85,7 @@ final class HelpTarget {
      * Execute it with arguments.
      * @param token The token
      */
+    @SuppressWarnings("PMD.AvoidCatchingThrowable")
     public void execute(final Token token) {
         final Object[] params = this.converted(
             token,
@@ -105,6 +106,16 @@ final class HelpTarget {
             throw new IllegalStateException(
                 Logger.format(
                     "Failed to call \"%s\" with %[list]s",
+                    this.method.toGenericString(),
+                    this.typesOf(params)
+                ),
+                ex
+            );
+        // @checkstyle IllegalCatch (1 line)
+        } catch (Throwable ex) {
+            throw new IllegalArgumentException(
+                Logger.format(
+                    "Exception in \"%s\" with %[list]s",
                     this.method.toGenericString(),
                     this.typesOf(params)
                 ),

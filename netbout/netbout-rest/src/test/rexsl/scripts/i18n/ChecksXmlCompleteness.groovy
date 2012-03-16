@@ -23,45 +23,27 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest.jaxb;
-
-import com.netbout.spi.ParticipantMocker;
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
-/**
- * Test case for {@link LongParticipant}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LongParticipantTest {
+package com.netbout.rest.rexsl.scripts.i18n
 
-    /**
-     * LongParticipant can be converted to XML.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void convertsToXml() throws Exception {
-        final LongParticipant obj = new LongParticipant(
-            new ParticipantMocker().mock(),
-            UriBuilder.fromUri("http://localhost"),
-            new ParticipantMocker().withLeader(true).mock()
-        );
+import org.hamcrest.MatcherAssert
+
+def english = new XmlSlurper().parse(
+    new File(rexsl.basedir, '/src/main/webapp/xml/lang/en.xml')
+)
+
+new File(rexsl.basedir, '/src/main/webapp/xml/lang')
+    .listFiles()
+    .grep(~/.*xml$/)
+    .each { file ->
+    def lang = new XmlSlurper().parse(file)
+    english.texts.each { node ->
         MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/*/links/link[@rel='kickoff']"),
-                XhtmlMatchers.hasXPath("/participant/identity"),
-                XhtmlMatchers.hasXPath("/participant/alias"),
-                XhtmlMatchers.hasXPath("/participant/photo"),
-                XhtmlMatchers.hasXPath("/participant/@me")
-            )
-        );
+            "missed ${node.name()} in ${file}",
+            !lang.texts."${node.name()}".isEmpty()
+        )
     }
-
 }

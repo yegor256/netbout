@@ -16,3 +16,4 @@ Netbout-PopPassword: netbout-test
 Netbout-PopHost: pop.gmail.com
 Netbout-PopPort: 995
 Netbout-SecurityKey: test-security-key
+Netbout-SuperSecret: super-secret

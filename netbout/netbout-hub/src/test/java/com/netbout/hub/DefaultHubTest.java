@@ -163,7 +163,7 @@ public final class DefaultHubTest {
         );
         final Identity identity = hub.identity(name);
         MatcherAssert.assertThat(
-            hub.findByKeyword(name.nss()),
+            hub.findByKeyword(new IdentityMocker().mock(), name.nss()),
             Matchers.hasItem(identity)
         );
     }
@@ -175,7 +175,8 @@ public final class DefaultHubTest {
     @Test
     public void ignoresEmptyRequestsForIdentities() throws Exception {
         MatcherAssert.assertThat(
-            new DefaultHub(new BusMocker().mock()).findByKeyword(""),
+            new DefaultHub(new BusMocker().mock())
+                .findByKeyword(new IdentityMocker().mock(), ""),
             Matchers.hasSize(0)
         );
     }

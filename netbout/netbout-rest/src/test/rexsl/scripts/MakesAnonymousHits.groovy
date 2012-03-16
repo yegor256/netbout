@@ -29,11 +29,13 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.spi.client.RestSession
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriBuilder
+import org.hamcrest.Matchers
 
 // In this script we are trying to make different hits to the site
 // from anonymous user. All of our hits should lead to /login page.
@@ -44,6 +46,8 @@ import javax.ws.rs.core.UriBuilder
 ].each { path ->
     RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .header(HttpHeaders.SET_COOKIE, 'netbout=some-invalid-text')
         .get('anonymous hit')
         .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
+        .assertHeader(HttpHeaders.SET_COOKIE, Matchers.containsString(RestSession.GOTO_COOKIE))
 }

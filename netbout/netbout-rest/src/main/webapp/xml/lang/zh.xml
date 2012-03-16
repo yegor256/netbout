@@ -25,55 +25,63 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
+ * Translated by judylee2nd@gmail.com (skype: judy.lee.2nd)
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
 <texts>
-    <!-- global messages -->
-    <We.recommend.to.reauthenticate>我們建議您再次登陸</We.recommend.to.reauthenticate>
-    <sec>秒</sec>
-    <in>in</in>
-    <in.a.few.minutes>在幾分鐘後</in.a.few.minutes>
-    <the.server.is.busy>我們的服務器正在更新您的數據。可能看起來不正確的信息。請嘗試刷新頁面。</the.server.is.busy>
-    <click.here>click here</click.here>
-
-    <!-- top menu -->
-    <About>關於我們</About>
-    <Start>開始新的對話</Start>
-    <Start.later>開始新的對話 (later)</Start.later>
-    <start.new.bout>開始新的對話</start.new.bout>
-    <back.to.inbox>返回到收件箱</back.to.inbox>
-    <Logout>註銷</Logout>
-    <leave.right.now>註銷</leave.right.now>
-
-    <!-- inbox -->
-    <inbox>inbox</inbox>
-    <back.to.recent.bouts>back to recent bouts</back.to.recent.bouts>
-    <no.title>no title</no.title>
-    <new>new</new>
-    <all.of.them>all of them</all.of.them>
-
-    <!-- bout page -->
-    <back.to.recent.messages>back to recent messages</back.to.recent.messages>
-    <you>you</you>
-    <someone>someone</someone>
-    <said>said</said>
-    <click.to.invite>click to invite</click.to.invite>
-    <to.this.bout>to this bout</to.this.bout>
-    <Do.you.agree.to.join>你是否同意加入</Do.you.agree.to.join>
-    <yes>是的</yes>
+    <beta.version>预发布版本</beta.version>
+    <We.recommend.to.reauthenticate>我们建议用户用另一种方式重新登录</We.recommend.to.reauthenticate>
+    <the.server.is.busy>
+        服务器正在更新您的账户，有些数据看起来可能不是最新的
+        尝试刷新页面
+    </the.server.is.busy>
+    <in.a.few.minutes>在一段时间以内</in.a.few.minutes>
+    <in>在</in>
+    <sec>秒钟以内</sec>
+    <click.here>点击这里</click.here>
+    <Find>查找...</Find>
+    <About>关于我们</About>
+    <Start>开始</Start>
+    <Start.later>开始（现在尚未为您提供</Start.later>
+    <start.new.bout>点击这里开始一个新的会话</start.new.bout>
+    <back.to.inbox>返回收件箱</back.to.inbox>
+    <Logout>退出</Logout>
+    <leave.right.now>立刻离开此系统</leave.right.now>
+    <inbox>收件箱</inbox>
+    <back.to.recent.bouts>点击这里返回最近的会话</back.to.recent.bouts>
+    <no.title>此会话还没有标题</no.title>
+    <new.messages>个新消息</new.messages>
+    <new.message>新消息</new.message>
+    <all.of.them>看到所有内容</all.of.them>
+    <back.to.recent.messages>点击返回最新的消息</back.to.recent.messages>
+    <you>您</you>
+    <someone>某人</someone>
+    <said>说</said>
+    <click.to.invite.X.to.this.bout>点击这里邀请 "%s"  加入此会话</click.to.invite.X.to.this.bout>
+    <Do.you.agree.to.join>你愿意加入此会话吗？</Do.you.agree.to.join>
+    <yes>是</yes>
     <or>或</or>
-    <no>不</no>
-    <invited>invited</invited>
-    <kick>kick</kick>
-    <off.this.bout>off this bout</off.this.bout>
-
-    <!-- profile page -->
-    <AKA>也被稱為</AKA>
-    <Identity>身分</Identity>
-    <Language>語</Language>
-    <profile>profile</profile>
-    <Profile.settings>配置文件設置</Profile.settings>
-    <settings.of.your.profile>配置文件設置</settings.of.your.profile>
-    <switch.to>切換到</switch.to>
+    <no>否</no>
+    <invited>刚被邀请</invited>
+    <kick.X.off.this.bout>点击这里拒绝 "%s" 加入此会话</kick.X.off.this.bout>
+    <Post.new.message>张贴新消息</Post.new.message>
+    <Invite>邀请...</Invite>
+    <AKA>也称为</AKA>
+    <Identity>身份</Identity>
+    <Language>语言</Language>
+    <profile>个人资料设置</profile>
+    <Profile.settings>个人资料设置</Profile.settings>
+    <settings.of.your.profile>个人资料设置</settings.of.your.profile>
+    <switch.to>切换到</switch.to>
+    <What.to.talk.about>
+        你想谈些什么？
+    </What.to.talk.about>
+    <We.are.still.testing>
+        请记住我们还在进行测试 :)
+    </We.are.still.testing>
+    <Lets.start>
+        我们可以从与我们团队某个成员的一个简单会话开始，他（她）将向我们展示并解释 Netbout是如何工作的
+    </Lets.start>
 </texts>

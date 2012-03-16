@@ -112,7 +112,16 @@ public class ForwardException extends WebApplicationException {
                 new CookieBuilder(res.base().build())
                     .named(RestSession.MESSAGE_COOKIE)
                     .valued(new SecureString(msg).toString())
-                    .commented("netbout message")
+                    .temporary()
+                    .build()
+            )
+            .cookie(
+                new CookieBuilder(res.base().build())
+                    .named(RestSession.GOTO_COOKIE)
+                    .valued(
+                        new SecureString(res.uriInfo().getRequestUri())
+                            .toString()
+                    )
                     .temporary()
                     .build()
             )

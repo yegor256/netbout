@@ -225,7 +225,8 @@ public final class LongBout {
     @XmlElement(name = "message")
     @XmlElementWrapper(name = "messages")
     public List<LongMessage> getMessages() {
-        final Period period = PeriodsBuilder.parse(this.view);
+        // @checkstyle MagicNumber (1 line)
+        final Period period = PeriodsBuilder.parse(this.view, 20L);
         Iterable<Message> discussion;
         try {
             discussion = this.bout.messages(period.query(this.query));
@@ -271,8 +272,10 @@ public final class LongBout {
     public Collection<LongParticipant> getParticipants() {
         final Collection<LongParticipant> dudes =
             new LinkedList<LongParticipant>();
+        final Participant myself =
+            NetboutUtils.participantOf(this.viewer, this.bout);
         for (Participant dude : this.bout.participants()) {
-            dudes.add(new LongParticipant(dude, this.builder, this.viewer));
+            dudes.add(new LongParticipant(dude, this.builder, myself));
         }
         return dudes;
     }

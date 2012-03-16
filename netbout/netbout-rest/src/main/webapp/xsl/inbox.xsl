@@ -36,7 +36,7 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:param name="TEXTS"
-        select="document(concat('/xml/lang/', /page/identity/locale, '.xml'))/texts"/>
+        select="document(concat('/xml/lang/', /page/identity/locale, '.xml?', /page/version/revision))/texts"/>
 
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
@@ -53,12 +53,31 @@
                 <xsl:text>)</xsl:text>
             </xsl:if>
         </title>
-        <script src="/js/dudes.js">
+        <script>
+            <xsl:attribute name="src">
+                <xsl:text>/js/dudes.js?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <link href="/css/inbox.css" rel="stylesheet" type="text/css"/>
-        <link href="/css/dudes.css" rel="stylesheet" type="text/css"/>
-        <link href="/css/periods.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/inbox.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/dudes.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
+        <link rel="stylesheet" type="text/css">
+            <xsl:attribute name="href">
+                <xsl:text>/css/periods.css?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+        </link>
     </xsl:template>
 
     <xsl:template name="content">
@@ -70,37 +89,29 @@
                     </h1>
                 </header>
                 <p>
-                    <xsl:text>Netbout is the first in the world "</xsl:text>
-                    <b><xsl:text>conversation-centric UI on demand</xsl:text></b>
-                    <xsl:text>". Do you get it?</xsl:text>
-                </p>
-                <p>
-                    <xsl:text>
-                        Let's start with a simple conversation with someone from
-                        our team, who will demonstrate and explain:
-                    </xsl:text>
+                    <xsl:value-of select="$TEXTS/Lets.start"/>
                 </p>
                 <form method="post">
                     <xsl:attribute name="action">
                         <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                     </xsl:attribute>
                     <p>
-                        <label for="name"><xsl:text>We know who you are:</xsl:text></label>
-                        <input name="name" size="40" disabled="disabled" id="name">
-                            <xsl:attribute name="value">
-                                <xsl:value-of select="/page/identity/alias"/>
-                            </xsl:attribute>
-                        </input>
-                        <label for="starter"><xsl:text>What we will talk about?</xsl:text></label>
+                        <label for="starter">
+                            <xsl:value-of select="$TEXTS/What.to.talk.about"/>
+                        </label>
                         <textarea name="starter" style="width: 30em; height: 5em;" id="starter">
                             <xsl:text>&#10;</xsl:text>
                         </textarea>
                         <label for="submit"><xsl:text> </xsl:text></label>
-                        <input type="submit" value="Start" id="submit"/>
+                        <input type="submit" id="submit">
+                            <xsl:attribute name="value">
+                                <xsl:value-of select="$TEXTS/Start"/>
+                            </xsl:attribute>
+                        </input>
                     </p>
                 </form>
                 <p>
-                    <xsl:text>Please, keep in mind that we are still testing :)</xsl:text>
+                    <xsl:value-of select="$TEXTS/We.are.still.testing"/>
                 </p>
             </xsl:when>
             <xsl:otherwise>
@@ -154,7 +165,7 @@
                 <xsl:text>bout</xsl:text>
                 <xsl:value-of select="number"/>
             </xsl:attribute>
-            <div class="header">
+            <h1>
                 <span class="num">
                     <xsl:text>#</xsl:text>
                     <xsl:value-of select="number" />
@@ -181,10 +192,10 @@
                     <span class="new">
                         <xsl:value-of select="@unseen"/>
                         <xsl:text> </xsl:text>
-                        <xsl:value-of select="$TEXTS/new"/>
+                        <xsl:value-of select="$TEXTS/new.messages"/>
                     </span>
                 </xsl:if>
-            </div>
+            </h1>
             <xsl:apply-templates select="participants" />
             <xsl:if test="bundled">
                 <nav class="bundled">

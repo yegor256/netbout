@@ -42,19 +42,34 @@
     </xsl:template>
 
     <xsl:template match="page">
-        <html lang="en-US">
+        <html>
+            <xsl:attribute name="lang">
+                <xsl:value-of select="/page/identity/locale"/>
+            </xsl:attribute>
             <head>
                 <meta charset="UTF-8" />
                 <script type="text/javascript"
                     src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
                     <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
                 </script>
-                <link href="/css/global.css" rel="stylesheet" type="text/css"
-                    media="all"/>
-                <link href="/css/layout.css" rel="stylesheet" type="text/css"
-                    media="all"/>
-                <link rel="icon" type="image/gif"
-                    href="http://cdn.netbout.com/favicon.ico"/>
+                <link rel="stylesheet" type="text/css" media="all">
+                    <xsl:attribute name="href">
+                        <xsl:text>/css/global.css?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
+                    </xsl:attribute>
+                </link>
+                <link rel="stylesheet" type="text/css" media="all">
+                    <xsl:attribute name="href">
+                        <xsl:text>/css/layout.css?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
+                    </xsl:attribute>
+                </link>
+                <link rel="icon" type="image/gif">
+                    <xsl:attribute name="href">
+                        <xsl:text>http://cdn.netbout.com/favicon.ico?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
+                    </xsl:attribute>
+                </link>
                 <xsl:call-template name="head" />
             </head>
             <body>
@@ -137,14 +152,22 @@
                     <xsl:attribute name="title">
                         <xsl:value-of select="$TEXTS/back.to.inbox"/>
                     </xsl:attribute>
+                    <xsl:attribute name="style">
+                        <xsl:text>background-image: url('http://cdn.netbout.com/logo-beta.png?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
+                        <xsl:text>');</xsl:text>
+                    </xsl:attribute>
                     <xsl:text> </xsl:text> <!-- for W3C compliance -->
                 </a>
                 <form id="search" method="get" role="search">
                     <xsl:attribute name="action">
                         <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                     </xsl:attribute>
-                    <input name="q" id="search-input" placeholder="Find..."
+                    <input name="q" id="search-input"
                         autocomplete="off" size="10" maxlength="120">
+                        <xsl:attribute name="placeholder">
+                            <xsl:value-of select="$TEXTS/Find"/>
+                        </xsl:attribute>
                         <xsl:attribute name="value">
                             <xsl:value-of select="/page/query"/>
                         </xsl:attribute>
@@ -239,5 +262,12 @@
         </xsl:choose>
     </xsl:template>
 
+    <xsl:template name="format">
+        <xsl:param name="text" as="xs:string"/>
+        <xsl:param name="value" as="xs:string"/>
+        <xsl:value-of select="substring-before($TEXTS/*[local-name()=$text], '%s')"/>
+        <xsl:value-of select="$value"/>
+        <xsl:value-of select="substring-after($TEXTS/*[local-name()=$text], '%s')"/>
+    </xsl:template>
 
 </xsl:stylesheet>

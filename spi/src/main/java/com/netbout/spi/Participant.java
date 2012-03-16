@@ -58,6 +58,17 @@ public interface Participant {
     boolean confirmed();
 
     /**
+     * Is he a leader?
+     * @return Yes or no?
+     */
+    boolean leader();
+
+    /**
+     * He is a leader now.
+     */
+    void consign();
+
+    /**
      * Kick him off this bout.
      */
     void kickOff();

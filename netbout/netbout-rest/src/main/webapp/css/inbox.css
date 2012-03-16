@@ -34,34 +34,8 @@ ul.bouts {
 li.bout {
     position: relative;
     clear: both;
-    margin-top: 5em;
     list-style: none;
 }
-
-    li.bout div.header {
-        margin-bottom: 0.5em;
-    }
-
-        li.bout div.header span {
-        }
-
-            li.bout div.header span.num {
-                margin-right: 0.3em;
-                font-size: 1.6em;
-            }
-
-            li.bout div.header a.title {
-                font-size: 2.7em;
-                font-weight: 500;
-                line-height: 1em;
-            }
-
-            li.bout div.header span.new {
-                font-size: 1.7em;
-                font-weight: 500;
-                color: #f24a40; /* red */
-                margin-left: 0.3em;
-            }
 
 .bundled {
     margin-top: 0.429em;

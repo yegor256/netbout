@@ -35,6 +35,9 @@
 
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
+    <xsl:param name="TEXTS"
+        select="document(concat('/xml/lang/en.xml?', /page/version/revision))/texts"/>
+
     <xsl:include href="/xsl/layout.xsl" />
 
     <xsl:template name="head">
@@ -52,7 +55,7 @@
                 <xsl:value-of select="/page/error/message"/>
             </span>
             <xsl:text>.
-                Maybe the page you're requesting is no longer available,
+                Maybe the page you're requesting in is no longer available,
                 try to submit some other request.
             </xsl:text>
         </p>

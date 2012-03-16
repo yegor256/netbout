@@ -28,15 +28,9 @@
 /* JIGSAW IGNORE: there is some problem in w3c server now */
 
 /* header with title */
-#top1 {
+h1 {
     width: 70em;
-    position: relative;
 }
-
-    h1 span.num {
-        font-size: 1.6em;
-        margin-right: 0.3em;
-    }
 
 /* header with participants and options */
 #top2 {
@@ -80,7 +74,8 @@
                     margin-left: 0.5em;
                     height: 2.6em;
                     width: 2.6em;
-                    box-shadow: 0.1em 0.1em 0.1em gray; /* JIGSAW: it's CSS3 feature */
+                    border-bottom: 0.1em solid #9c9c9c;
+                    border-right: 0.1em solid #9c9c9c;
                 }
 
     /* options below invite sector */

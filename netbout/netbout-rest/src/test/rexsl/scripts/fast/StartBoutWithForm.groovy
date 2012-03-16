@@ -27,25 +27,46 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+package com.netbout.rest.rexsl.scripts.fast
 
+import com.netbout.spi.Urn
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
+import org.apache.commons.lang.CharEncoding
 
-// In this script we are trying to make different hits to the
-// pages that definitely don't exist in the system. All of them
-// should lead to 404 HTTP code
+def message = 'Hi, how are you doing there?\nI\'m fine by the way!\n'
+def first = 'urn:test:bratt'
+def second = 'urn:test:mickey'
 
-[
-    '/some-strange-name',
-    '/-some-thing-else'
-].each { path ->
-    RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('reading non-existing page')
-        .assertStatus(HttpURLConnection.HTTP_NOT_FOUND)
-        .assertXPath("/page/links/link[@rel='self']")
-        .assertXPath("/page/error[code='404']")
-}
+def bruce = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruce'), '')
+
+def uri = UriBuilder.fromUri(RestUriBuilder.from(bruce).build())
+    .path('/fast/start')
+    .queryParam('participants', '{dudes}')
+    .queryParam('message', '{message}')
+    .build(String.format('%s,%s', first, second), message)
+
+RestTester.start(uri)
+    .post(
+        'starting a bout',
+        String.format(
+            'participants=%s,%s&message=%s',
+            URLEncoder.encode(first, CharEncoding.UTF_8),
+            URLEncoder.encode(second, CharEncoding.UTF_8),
+            URLEncoder.encode(message, CharEncoding.UTF_8)
+        )
+    )
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+    .follow()
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read the bout just created')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertXPath('/page/bout/participants/participant[identity="urn:test:bruce"]')
+    .assertXPath('//participant[identity="urn:test:bruce" and @leader="true"]')
+    .assertXPath('//participant[identity="urn:test:bratt" and @leader="false"]')
+    .assertXPath('//participant[identity="urn:test:mickey" and @leader="false"]')
+    .assertXPath('//messages/message[contains(text, "how are you doing")]')

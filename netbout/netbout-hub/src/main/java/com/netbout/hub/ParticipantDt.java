@@ -60,4 +60,16 @@ public interface ParticipantDt {
      */
     Boolean isConfirmed();
 
+    /**
+     * Is he a leader?
+     * @return The flag
+     */
+    Boolean isLeader();
+
+    /**
+     * Set status.
+     * @param flag The flag
+     */
+    void setLeader(Boolean flag);
+
 }
