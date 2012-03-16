@@ -112,7 +112,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
             throw new IllegalStateException(ex);
         }
         data.setTitle("(no title)");
-        ParticipantDt dude = data.addParticipant(author);
+        final ParticipantDt dude = data.addParticipant(author);
         dude.setConfirmed(true);
         dude.setLeader(true);
         Logger.debug(
