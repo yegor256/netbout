@@ -43,11 +43,41 @@ public final class MessageRowMocker {
     private final transient Long bout;
 
     /**
+     * Date of bout.
+     */
+    private transient Date date = new Date();
+
+    /**
+     * Author of bout.
+     */
+    private transient Urn author = new IdentityRowMocker().mock();
+
+    /**
      * Public ctor.
      * @param number The bout
      */
     public MessageRowMocker(final Long number) {
         this.bout = number;
+    }
+
+    /**
+     * With this date.
+     * @param when Date of message
+     * @return THis object
+     */
+    public MessageRowMocker withDate(final Date when) {
+        this.date = when;
+        return this;
+    }
+
+    /**
+     * With this author.
+     * @param name The author
+     * @return THis object
+     */
+    public MessageRowMocker withAuthor(final Urn name) {
+        this.author = name;
+        return this;
     }
 
     /**
@@ -57,7 +87,8 @@ public final class MessageRowMocker {
         final MessageFarm farm = new MessageFarm();
         Long number;
         number = farm.createBoutMessage(this.bout);
-        farm.changedMessageDate(number, new Date());
+        farm.changedMessageAuthor(number, this.author);
+        farm.changedMessageDate(number, this.date);
         return number;
     }
 

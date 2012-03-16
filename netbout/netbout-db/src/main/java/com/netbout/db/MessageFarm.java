@@ -31,8 +31,8 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -125,7 +125,7 @@ public final class MessageFarm {
                     @Override
                     public List<Long> handle(final ResultSet rset)
                         throws SQLException {
-                        final List<Long> numbers = new ArrayList<Long>();
+                        final List<Long> numbers = new LinkedList<Long>();
                         while (rset.next()) {
                             numbers.add(rset.getLong(1));
                         }
