@@ -57,7 +57,7 @@ import java.util.concurrent.TimeUnit;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.DoNotUseThreads"})
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.DoNotUseThreads" })
 public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
 
     /**
