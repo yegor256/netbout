@@ -40,6 +40,7 @@ import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Locale;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -186,6 +187,10 @@ public final class FacebookRs extends AbstractRs {
                 @Override
                 public String getId() {
                     return code.substring(code.lastIndexOf('-') + 1);
+                }
+                @Override
+                public String getLocale() {
+                    return Locale.ENGLISH.toString();
                 }
             };
         } else {

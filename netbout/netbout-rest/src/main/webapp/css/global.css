@@ -76,7 +76,7 @@ ol {
 .fixed,
 pre {
     font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
-    font-size: 0.9em;
+    font-size: 90%;
     background-color: #f3f3f1;
 }
 
