@@ -132,9 +132,9 @@ final class RestNamespaces extends AbstractMap<String, URL> {
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
             .get("reading home page of the identity")
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .rel("//link[@rel='helper']/@href")
+            .rel("//link[@rel='profile']/@href")
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .get("reading helper page")
+            .get("reading profile page")
             .assertStatus(HttpURLConnection.HTTP_OK);
     }
 
