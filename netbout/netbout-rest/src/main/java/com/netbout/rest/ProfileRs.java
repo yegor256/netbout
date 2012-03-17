@@ -26,13 +26,23 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.Namespace;
+import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.jaxb.LongProfile;
 import com.netbout.rest.page.PageBuilder;
+import com.netbout.spi.Identity;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * User profile.
@@ -57,6 +67,10 @@ public final class ProfileRs extends AbstractRs {
             .stylesheet("/xsl/profile.xsl")
             .build(AbstractPage.class)
             .init(this)
+            .link("promote", this.base().path("/h/promote"))
+            // @checkstyle MultipleStringLiterals (2 lines)
+            .link("namespaces", this.base().path("/h/namespaces"))
+            .append(JaxbGroup.build(this.namespaces(), "namespaces"))
             .append(profile)
             .render()
             .authenticated(this.identity())
@@ -95,6 +109,80 @@ public final class ProfileRs extends AbstractRs {
      */
     private UriBuilder self() {
         return this.base().path("/pf");
+    }
+
+    /**
+     * Promote this identity to helper.
+     * @param addr The URL of the helper
+     * @return The JAX-RS response
+     */
+    @POST
+    @Path("/promote")
+    public Response promote(@FormParam("url") final String addr) {
+        if (addr == null) {
+            throw new ForwardException(this, this.self(), "'url' missed");
+        }
+        URL url;
+        try {
+            url = new URL(addr);
+        } catch (java.net.MalformedURLException ex) {
+            throw new ForwardException(this, this.self(), ex);
+        }
+        final Identity identity = this.identity();
+        this.hub().promote(identity, url);
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(identity)
+            .status(Response.Status.SEE_OTHER)
+            .location(this.self().build())
+            .build();
+    }
+
+    /**
+     * Register these namespaces.
+     * @param text List of namespaces and URLs
+     * @return The JAX-RS response
+     */
+    @POST
+    @Path("/namespaces")
+    public Response register(@FormParam("text") final String text) {
+        if (text == null) {
+            throw new ForwardException(this, this.self(), "'text' missed");
+        }
+        final Identity identity = this.identity();
+        for (String line : StringUtils.split(text, "\n")) {
+            final String[] parts = StringUtils.split(line, "=", 2);
+            this.hub().resolver().register(
+                identity,
+                StringUtils.trim(parts[0]),
+                StringUtils.trim(parts[1])
+            );
+        }
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .authenticated(identity)
+            .status(Response.Status.SEE_OTHER)
+            .location(this.self().build())
+            .build();
+    }
+
+    /**
+     * Get list of my namespaces.
+     * @return The collection of them
+     */
+    @SuppressWarnings(
+        { "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap" }
+    )
+    private Collection<Namespace> namespaces() {
+        final Collection<Namespace> namespaces = new ArrayList<Namespace>();
+        final Map<String, String> map = this.hub().resolver()
+            .registered(this.identity());
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            namespaces.add(new Namespace(entry.getKey(), entry.getValue()));
+        }
+        return namespaces;
     }
 
 }
