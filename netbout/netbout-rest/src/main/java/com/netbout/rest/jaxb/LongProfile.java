@@ -158,6 +158,7 @@ public final class LongProfile {
         available.add(new Locale("es"));
         available.add(Locale.CHINESE);
         available.add(new Locale("ru"));
+        available.add(new Locale("ua"));
         return available;
     }
 
