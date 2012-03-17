@@ -26,9 +26,9 @@
  */
 package com.netbout.rest;
 
+import com.netbout.rest.jaxb.LongProfile;
 import com.netbout.rest.jaxb.Namespace;
 import com.netbout.rest.page.JaxbGroup;
-import com.netbout.rest.jaxb.LongProfile;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import java.net.URL;
