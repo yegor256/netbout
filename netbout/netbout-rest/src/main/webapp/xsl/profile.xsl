@@ -136,7 +136,7 @@
     </xsl:template>
 
     <xsl:template name="helper">
-        <xsl:if test="/page/identity/@helper='true'">
+        <xsl:if test="/page/identity/@helper">
             <p>
                 <xsl:text>You're a helper already with this URL: </xsl:text>
                 <span class="tt"><xsl:value-of select="/page/identity/location"/></span>
@@ -156,8 +156,9 @@
         </xsl:if>
         <xsl:if test="/page/identity[starts-with(name, 'urn:netbout:')]
             or /page/identity[starts-with(name, 'urn:woquo:')]
+            or /page/identity[starts-with(name, 'urn:test:')]
             or /page/identity[name='urn:facebook:1531296526']">
-            <xsl:if test="/page/identity/@helper!='true'">
+            <xsl:if test="/page/identity[not(@helper)]">
                 <p>
                     <xsl:text>
                         You're not a helper yet. Fill this form with
