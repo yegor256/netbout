@@ -106,6 +106,7 @@ input {
     /* any submit button */
     input[type="submit"] {
         background-color: #f3f3f1;
+        cursor: pointer;
     }
 
 /* any text aread */
