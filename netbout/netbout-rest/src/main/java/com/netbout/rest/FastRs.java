@@ -56,6 +56,13 @@ public final class FastRs extends AbstractRs {
     @Path("/start")
     public Response start(@QueryParam("participants") final String participants,
         @QueryParam("message") final String message) {
+        if (participants == null || message == null) {
+            throw new ForwardException(
+                this,
+                this.base(),
+                "Query params 'participants' and 'message' are mandatory"
+            );
+        }
         final Identity identity = this.identity();
         final Bout bout = identity.start();
         for (String dude : participants.split(",")) {

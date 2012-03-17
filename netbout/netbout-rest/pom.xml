@@ -134,6 +134,7 @@
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
             <version>${rexsl.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
