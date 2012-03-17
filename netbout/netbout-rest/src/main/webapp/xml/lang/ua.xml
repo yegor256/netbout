@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!--
+ * Copyright (c) 2009-2011, netBout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ -->
+<texts>
+    <!-- global messages -->
+    <We.recommend.to.reauthenticate>
+        Ми рекомендуємо ввійти до системи іншим способом
+    </We.recommend.to.reauthenticate>
+    <sec>сек</sec>
+    <in>через</in>
+    <in.a.few.minutes>через кілька хвилин</in.a.few.minutes>
+    <the.server.is.busy>
+        Сервер зараз поновлює ваші данні, тому вони мають виглядати неповними.
+        Спробуйте поновити сторінку
+    </the.server.is.busy>
+    <click.here>натисніть тут</click.here>
+    <Find>Шукати...</Find>
+
+    <!-- top menu -->
+    <About>About</About>
+    <Start>Начати</Start>
+    <Start.later>Начати (потім)</Start.later>
+    <start.new.bout>начати нову бесіду</start.new.bout>
+    <back.to.inbox>повернутись до бесід які були останіми</back.to.inbox>
+    <Logout>Вийти</Logout>
+    <leave.right.now>вийти із системи</leave.right.now>
+
+    <!-- inbox -->
+    <inbox>бесіди</inbox>
+    <back.to.recent.bouts>назад до начала</back.to.recent.bouts>
+    <no.title>доки нема назви</no.title>
+    <new.messages>нових</new.messages>
+    <new.message>нове</new.message>
+    <all.of.them>всі останні</all.of.them>
+    <What.to.talk.about>
+        Про шо бажаєте поспілкуватись?
+    </What.to.talk.about>
+    <We.are.still.testing>
+        Майте наувазі, що ми ще тестуємо систему :)
+    </We.are.still.testing>
+    <Lets.start>
+        Давайте почнемо бесіду з кимсь із нашої команди,
+        хто продемонструє, як працює Netbout система.
+    </Lets.start>
+
+    <!-- bout page -->
+    <back.to.recent.messages>назад до останніх</back.to.recent.messages>
+    <you>Ви</you>
+    <someone>хтось</someone>
+    <said>сказав</said>
+    <click.to.invite.X.to.this.bout>натисніть сюди, щоб запросити "%s" до бесіди</click.to.invite.X.to.this.bout>
+    <Do.you.agree.to.join>Чи згодні Ви приєднатись до бесіди</Do.you.agree.to.join>
+    <yes>так</yes>
+    <or>чи</or>
+    <no>ні</no>
+    <invited>запрошений</invited>
+    <Invite>Запросити...</Invite>
+    <kick.X.off.this.bout>видалити "%s" із бесіди</kick.X.off.this.bout>
+    <Post.new.message>Відправити</Post.new.message>
+
+    <!-- profile page -->
+    <AKA>Також відоми як</AKA>
+    <Identity>Особистісь</Identity>
+    <Language>Мова</Language>
+    <profile>профіль</profile>
+    <Profile.settings>Налаштування</Profile.settings>
+    <settings.of.your.profile>налаштування Вашого профілю</settings.of.your.profile>
+    <switch.to>переключитись на</switch.to>
+</texts>
