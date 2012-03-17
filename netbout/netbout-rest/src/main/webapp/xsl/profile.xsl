@@ -147,7 +147,7 @@
             </p>
         </xsl:if>
         <xsl:if test="/page/identity[starts-with(name, 'urn:netbout:')]
-            or /page/identity[starts-with(name, 'urn:woquo:')
+            or /page/identity[starts-with(name, 'urn:woquo:')]
             or /page/identity[name='urn:facebook:1531296526']">
             <p>
                 <xsl:text>
