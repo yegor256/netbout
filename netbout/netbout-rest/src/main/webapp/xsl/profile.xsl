@@ -132,11 +132,19 @@
                 </xsl:if>
             </xsl:for-each>
         </p>
+        <xsl:call-template name="helper"/>
+    </xsl:template>
+
+    <xsl:template name="helper">
         <xsl:if test="/page/identity/@helper='true'">
             <p>
-                <xsl:text>You're a helper at: </xsl:text>
+                <xsl:text>You're a helper already with this URL: </xsl:text>
                 <span class="tt"><xsl:value-of select="/page/identity/location"/></span>
-                <xsl:text> with these operations supported: </xsl:text>
+                <xsl:text>.</xsl:text>
+            </p>
+            <p>
+                <xsl:value-of select="count(/page/identity/supports/operation)"/>
+                <xsl:text> operation(s) are supported: </xsl:text>
                 <xsl:for-each select="/page/identity/supports/operation">
                     <xsl:if test="position() &gt; 1">
                         <xsl:text>, </xsl:text>
@@ -145,6 +153,56 @@
                 </xsl:for-each>
                 <xsl:text>.</xsl:text>
             </p>
+        </xsl:if>
+        <xsl:if test="/page/identity[starts-with(name, 'urn:netbout:')]
+            or /page/identity[starts-with(name, 'urn:woquo:')]
+            or /page/identity[name='urn:facebook:1531296526']">
+            <xsl:if test="/page/identity/@helper!='true'">
+                <p>
+                    <xsl:text>
+                        You're not a helper yet. Fill this form with
+                        a URL of your JAR and get promoted:
+                    </xsl:text>
+                </p>
+                <form method="post">
+                    <xsl:attribute name="action">
+                        <xsl:value-of select="/page/links/link[@rel='promote']/@href"/>
+                    </xsl:attribute>
+                    <p>
+                        <label for="url">URL:</label>
+                        <input name="url" type="url" size="50" autocomplete="off" id="url">
+                            <xsl:attribute name="value">
+                                <xsl:value-of select="/page/identity/location"/>
+                            </xsl:attribute>
+                        </input>
+                        <label for="promote"><xsl:text> </xsl:text></label>
+                        <input value="Promote" type="submit" id="promote"/>
+                    </p>
+                </form>
+            </xsl:if>
+            <form method="post">
+                <xsl:attribute name="action">
+                    <xsl:value-of select="/page/links/link[@rel='namespaces']/@href"/>
+                </xsl:attribute>
+                <p>
+                    <label for="text">
+                        <xsl:text>Namespaces registered for you (</xsl:text>
+                        <span class="tt"><xsl:text>&lt;namespace&gt; "=" &lt;URL template&gt;</xsl:text></span>
+                        <xsl:text> per line):</xsl:text>
+                    </label>
+                    <textarea name="text" style="width: 50em; height: 6em;" id="text">
+                        <xsl:for-each select="/page/namespaces/namespace">
+                            <xsl:value-of select="name"/>
+                            <xsl:text>=</xsl:text>
+                            <xsl:value-of select="template"/>
+                            <xsl:text>&#x0d;</xsl:text>
+                        </xsl:for-each>
+                        <xsl:text>&#x0d;</xsl:text>
+                    </textarea>
+                    <label for="register"><xsl:text> </xsl:text></label>
+                    <input value="Register" type="submit" id="register"/>
+                </p>
+            </form>
         </xsl:if>
     </xsl:template>
 

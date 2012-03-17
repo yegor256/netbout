@@ -36,17 +36,18 @@ import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.types.User;
 import com.rexsl.core.Manifests;
+import com.rexsl.test.RestTester;
 import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Locale;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.LocaleUtils;
 
 /**
@@ -89,6 +90,23 @@ public final class FacebookRs extends AbstractRs {
                     .queryParam("secret", "{fbcode}")
                     .build(code)
             )
+            .build();
+    }
+
+    /**
+     * Facebook canvas.
+     * @return The JAX-RS response
+     * @see <a link="http://developers.facebook.com/docs/guides/canvas/">Graph API, Canvas</a>
+     */
+    @POST
+    @Path("/canvas")
+    public Response canvas() {
+        return new PageBuilder()
+            .build(AbstractPage.class)
+            .init(this)
+            .preserved()
+            .status(Response.Status.SEE_OTHER)
+            .location(this.base().build())
             .build();
     }
 
@@ -207,21 +225,23 @@ public final class FacebookRs extends AbstractRs {
      * @throws IOException If some problem with FB
      */
     private String token(final String code) throws IOException {
-        final String response = this.retrieve(
-            UriBuilder
-                // @checkstyle MultipleStringLiterals (5 lines)
-                .fromPath("https://graph.facebook.com/oauth/access_token")
-                .queryParam("client_id", "{id}")
-                .queryParam("redirect_uri", "{uri}")
-                .queryParam("client_secret", "{secret}")
-                .queryParam("code", "{code}")
-                .build(
-                    Manifests.read("Netbout-FbId"),
-                    this.base().path("/fb/back").build(),
-                    Manifests.read("Netbout-FbSecret"),
-                    code
-                )
-        );
+        final URI uri = UriBuilder
+            // @checkstyle MultipleStringLiterals (5 lines)
+            .fromPath("https://graph.facebook.com/oauth/access_token")
+            .queryParam("client_id", "{id}")
+            .queryParam("redirect_uri", "{uri}")
+            .queryParam("client_secret", "{secret}")
+            .queryParam("code", "{code}")
+            .build(
+                Manifests.read("Netbout-FbId"),
+                this.base().path("/fb/back").build(),
+                Manifests.read("Netbout-FbSecret"),
+                code
+            );
+        final String response = RestTester.start(uri)
+            .get("getting access_token from Facebook")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .getBody();
         final String[] sectors = response.split("&");
         String token = null;
         for (String sector : sectors) {
@@ -268,36 +288,6 @@ public final class FacebookRs extends AbstractRs {
             return client.fetchObject("me", com.restfb.types.User.class);
         } catch (com.restfb.exception.FacebookException ex) {
             throw new IOException(ex);
-        }
-    }
-
-    /**
-     * Retrive data from the URL through HTTP request.
-     * @param uri The URI
-     * @return The response, text body
-     * @throws IOException If some problem with FB
-     */
-    private String retrieve(final URI uri) throws IOException {
-        final long start = System.nanoTime();
-        HttpURLConnection conn;
-        try {
-            conn = (HttpURLConnection) uri.toURL().openConnection();
-        } catch (java.net.MalformedURLException ex) {
-            throw new IOException(ex);
-        }
-        try {
-            return IOUtils.toString(conn.getInputStream());
-        } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException(ex);
-        } finally {
-            conn.disconnect();
-            Logger.debug(
-                this,
-                "#retrieve(%s): done [%d] in %[nano]s",
-                uri,
-                conn.getResponseCode(),
-                System.nanoTime() - start
-            );
         }
     }
 

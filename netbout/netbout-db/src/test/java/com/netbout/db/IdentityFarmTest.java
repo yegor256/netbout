@@ -214,4 +214,28 @@ public final class IdentityFarmTest {
         );
     }
 
+    /**
+     * IdentityFarm can return empty list if there are no silent identities.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void emptyListIfNoSilentIdentities() throws Exception {
+        final Urn who = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().withParticipant(who).mock();
+        final Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.HOUR, -1);
+        new MessageRowMocker(bout)
+            .withDate(cal.getTime())
+            .withAuthor(who)
+            .mock();
+        MatcherAssert.assertThat(
+            this.farm.findSilentIdentities(),
+            Matchers.not(Matchers.hasItem(who))
+        );
+        MatcherAssert.assertThat(
+            this.farm.getSilenceMarker(who),
+            Matchers.equalTo("")
+        );
+    }
+
 }

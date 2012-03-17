@@ -137,7 +137,6 @@ public final class InboxRs extends AbstractRs {
             .append(JaxbGroup.build(bouts, "bouts"))
             .append(JaxbGroup.build(periods.links(), "periods"))
             .link("friends", this.base().path("/f"))
-            .link("helper", this.base().path("/h"))
             .render()
             .authenticated(identity)
             .build();
@@ -173,6 +172,13 @@ public final class InboxRs extends AbstractRs {
     @POST
     public Response starter(@FormParam("starter") final String text)
         throws Exception {
+        if (text == null) {
+            throw new ForwardException(
+                this,
+                this.base(),
+                "Form param 'starter' is mandatory"
+            );
+        }
         final Identity identity = this.identity();
         final Bout bout = identity.start();
         bout.rename("Welcome to Netbout!");

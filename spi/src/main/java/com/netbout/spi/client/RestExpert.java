@@ -71,9 +71,9 @@ public final class RestExpert {
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
             .get("home page")
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .rel("/page/links/link[@rel='helper']/@href")
+            .rel("/page/links/link[@rel='profile']/@href")
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .get("reading promotion page")
+            .get("reading profile")
             .assertStatus(HttpURLConnection.HTTP_OK);
         if (entry.xpath("/page/identity/@helper").isEmpty()) {
             entry
