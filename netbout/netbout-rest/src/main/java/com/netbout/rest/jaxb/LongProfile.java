@@ -135,7 +135,7 @@ public final class LongProfile {
      * @return Ready to use locale
      */
     public static Locale toLocale(final String text) {
-        Locale locale = LocaleUtils.toLocale(text);
+        Locale locale = new Locale(LocaleUtils.toLocale(text).getLanguage());
         if (!LongProfile.available().contains(locale)) {
             Logger.error(
                 LongProfile.class,
