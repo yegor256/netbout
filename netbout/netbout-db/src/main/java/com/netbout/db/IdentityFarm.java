@@ -249,26 +249,53 @@ public final class IdentityFarm {
      */
     @Operation("get-silence-marker")
     public String getSilenceMarker(final Urn name) {
-        return new DbSession(true)
+        final Date recent = new DbSession(true)
             .sql("SELECT date FROM message WHERE author = ? ORDER BY date DESC")
             .set(name)
             .select(
-                new Handler<String>() {
+                new Handler<Date>() {
                     @Override
-                    public String handle(final ResultSet rset)
+                    public Date handle(final ResultSet rset)
                         throws SQLException {
                         if (!rset.next()) {
                             throw new IllegalArgumentException(
                                 String.format(
-                                    "Identity '%s' not found, can't get marker",
+                                    "Identity '%s' not found, can't get date",
                                     name
                                 )
                             );
                         }
-                        return rset.getString(1);
+                        return Utc.getTimestamp(rset, 1);
                     }
                 }
             );
+        final Long total = new DbSession(true).sql(
+            // @checkstyle StringLiteralsConcatenation (3 lines)
+            "SELECT COUNT(*) FROM message"
+                + " JOIN participant p ON p.bout=message.bout"
+                + " WHERE p.identity = ? AND message.date > ?"
+        )
+            .set(name)
+            .set(recent)
+            .select(
+                new Handler<Long>() {
+                    @Override
+                    public Long handle(final ResultSet rset)
+                        throws SQLException {
+                        if (!rset.next()) {
+                            throw new IllegalArgumentException();
+                        }
+                        return rset.getLong(1);
+                    }
+                }
+            );
+        String marker;
+        if (total > 0) {
+            marker = String.format("%d message(s)", total);
+        } else {
+            marker = "";
+        }
+        return marker;
     }
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")

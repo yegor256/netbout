@@ -128,11 +128,13 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
                 .arg(name)
                 .asDefault("")
                 .exec();
-            this.make("remind-silent-identity")
-                .arg(name)
-                .arg(marker)
-                .asDefault(false)
-                .exec();
+            if (!marker.isEmpty()) {
+                this.make("remind-silent-identity")
+                    .arg(name)
+                    .arg(marker)
+                    .asDefault(false)
+                    .exec();
+            }
         }
     }
 
