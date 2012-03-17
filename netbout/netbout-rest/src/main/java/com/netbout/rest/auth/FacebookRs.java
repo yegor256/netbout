@@ -48,7 +48,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.LocaleUtils;
 
 /**
@@ -96,7 +95,6 @@ public final class FacebookRs extends AbstractRs {
 
     /**
      * Facebook canvas.
-     * @param code Facebook "authorization code"
      * @return The JAX-RS response
      * @see <a link="http://developers.facebook.com/docs/guides/canvas/">Graph API, Canvas</a>
      */

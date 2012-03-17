@@ -29,14 +29,18 @@ package com.netbout.notifiers.facebook;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
+import com.restfb.Connection;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.Facebook;
+import com.restfb.FacebookClient;
+import com.restfb.Parameter;
+import com.restfb.types.FacebookType;
 import com.rexsl.core.Manifests;
 import com.rexsl.test.RestTester;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.Matchers;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.Parameter;
 
 /**
  * Reminder farm.
@@ -62,17 +66,42 @@ public final class RemindFarm {
     public void remindSilentIdentity(final Urn name, final String marker) {
         final FacebookClient client = new DefaultFacebookClient(this.token());
         final String path = String.format("%s/apprequests", name.nss());
-        final AppRequest reqs = client.fetchObject(path, AppRequest.class);
-        client.publish(
-            path,
-            String.class,
-            Parameter.with("data", marker),
-            Parameter.with(
-                "message",
-                // @checkstyle LineLength (1 line)
-                "There are a few messages waiting for your attention in Netbout.com"
-            )
-        );
+        if (this.clean(client, marker, path)) {
+            client.publish(
+                path,
+                FacebookType.class,
+                Parameter.with("data", marker),
+                Parameter.with(
+                    "message",
+                    String.format("Waiting for your attention: %s", marker)
+                )
+            );
+        }
+    }
+
+    /**
+     * Clean all previous apprequests.
+     * @param client The client
+     * @param marker The marker to avoid duplicate reminders
+     * @param path The path to work with
+     * @return Is it clean now and we should post again?
+     */
+    @SuppressWarnings("PMD.CloseResource")
+    private boolean clean(final FacebookClient client, final String marker,
+        final String path) {
+        final Connection<AppRequest> reqs =
+            client.fetchConnection(path, AppRequest.class);
+        boolean clean = true;
+        if (!reqs.getData().isEmpty()) {
+            for (AppRequest request : reqs.getData()) {
+                if (request.data.equals(marker)) {
+                    clean = false;
+                } else {
+                    client.deleteObject(request.getId());
+                }
+            }
+        }
+        return clean;
     }
 
     /**
@@ -96,6 +125,24 @@ public final class RemindFarm {
             .assertBody(Matchers.startsWith("access_token="))
             .getBody();
         return response.split("=", 2)[1];
+    }
+
+    /**
+     * AppRequest from FB.
+     */
+    private static final class AppRequest extends FacebookType {
+        /**
+         * Data of request.
+         */
+        @Facebook("data")
+        private transient String data;
+        /**
+         * Get data.
+         * @return The data
+         */
+        public String getData() {
+            return this.data;
+        }
     }
 
 }
