@@ -132,6 +132,10 @@
                 </xsl:if>
             </xsl:for-each>
         </p>
+        <xsl:call-template name="helper"/>
+    </xsl:template>
+
+    <xsl:template name="helper">
         <xsl:if test="/page/identity/@helper='true'">
             <p>
                 <xsl:text>You're a helper already with this URL: </xsl:text>
@@ -171,7 +175,7 @@
                                 <xsl:value-of select="/page/identity/location"/>
                             </xsl:attribute>
                         </input>
-                        <label for="promote"> </label>
+                        <label for="promote"><xsl:text> </xsl:text></label>
                         <input value="Promote" type="submit" id="promote"/>
                     </p>
                 </form>
@@ -195,7 +199,7 @@
                         </xsl:for-each>
                         <xsl:text>&#x0d;</xsl:text>
                     </textarea>
-                    <label for="register"> </label>
+                    <label for="register"><xsl:text> </xsl:text></label>
                     <input value="Register" type="submit" id="register"/>
                 </p>
             </form>
