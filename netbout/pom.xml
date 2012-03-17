@@ -508,6 +508,16 @@
     </profiles>
 
     <build>
+        <resources>
+            <!--
+            To enable filtering of resources
+            @link http://maven.apache.org/guides/getting-started/index.html#How_do_I_filter_resource_files
+            -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <extensions>
             <extension>
                 <!--
