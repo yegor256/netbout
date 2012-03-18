@@ -156,7 +156,8 @@ public final class LongProfile {
         final Set<Locale> available = new HashSet<Locale>();
         available.add(Locale.ENGLISH);
         available.add(new Locale("es"));
-        available.add(Locale.CHINESE);
+        available.add(new Locale("jp"));
+        available.add(new Locale("zh"));
         available.add(new Locale("ru"));
         available.add(new Locale("ua"));
         return available;
