@@ -153,7 +153,16 @@
                         <xsl:value-of select="$TEXTS/back.to.inbox"/>
                     </xsl:attribute>
                     <xsl:attribute name="style">
-                        <xsl:text>background-image: url('http://cdn.netbout.com/logo-beta.png?</xsl:text>
+                        <xsl:text>background-image: url('http://cdn.netbout.com/logo/logo-</xsl:text>
+                        <xsl:choose>
+                            <xsl:when test="/page/identity/locale">
+                                <xsl:value-of select="/page/identity/locale"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>en</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:text>.png?</xsl:text>
                         <xsl:value-of select="/page/version/revision"/>
                         <xsl:text>');</xsl:text>
                     </xsl:attribute>

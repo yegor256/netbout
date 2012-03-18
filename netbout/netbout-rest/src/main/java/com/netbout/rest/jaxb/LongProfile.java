@@ -106,14 +106,8 @@ public final class LongProfile {
             );
             link.add(
                 new JaxbBundle(
-                    "langauge",
+                    "language",
                     locale.getDisplayLanguage(current)
-                ).element()
-            );
-            link.add(
-                new JaxbBundle(
-                    "country",
-                    locale.getDisplayCountry(current)
                 ).element()
             );
             links.add(link);
@@ -156,7 +150,8 @@ public final class LongProfile {
         final Set<Locale> available = new HashSet<Locale>();
         available.add(Locale.ENGLISH);
         available.add(new Locale("es"));
-        available.add(Locale.CHINESE);
+        available.add(new Locale("jp"));
+        available.add(new Locale("zh"));
         available.add(new Locale("ru"));
         available.add(new Locale("ua"));
         return available;
