@@ -29,9 +29,12 @@ package com.netbout.rest.jaxb;
 import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
+import java.io.File;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.w3c.dom.Element;
 
 /**
  * Test case for {@link LongProfile}.
@@ -52,8 +55,43 @@ public final class LongProfileTest {
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),
-            XhtmlMatchers.hasXPath("//locales/link[@rel='locale']")
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("//locales/link[@rel='locale']"),
+                XhtmlMatchers.hasXPath("//link[code='en']"),
+                XhtmlMatchers.hasXPath("//link[name='English']"),
+                XhtmlMatchers.hasXPath("//link[language='English']")
+            )
         );
+    }
+
+    /**
+     * LongProfile can find only available locales.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void returnsAvailableLocales() throws Exception {
+        final LongProfile profile = new LongProfile(
+            UriBuilder.fromUri("http://localhost"),
+            new IdentityMocker().mock()
+        );
+        for (Link link : profile.getLocales()) {
+            for (Element element : link.getElements()) {
+                if (!element.getTagName().equals("code")) {
+                    continue;
+                }
+                final File file = new File(
+                    System.getProperty("basedir"),
+                        String.format(
+                        "/src/main/webapp/xml/lang/%s.xml",
+                        element.getTextContent()
+                    )
+                );
+                MatcherAssert.assertThat(
+                    String.format("language file '%s' must be present", file),
+                    file.exists()
+                );
+            }
+        }
     }
 
 }

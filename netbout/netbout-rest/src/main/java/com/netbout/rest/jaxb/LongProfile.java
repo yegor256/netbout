@@ -106,14 +106,8 @@ public final class LongProfile {
             );
             link.add(
                 new JaxbBundle(
-                    "langauge",
+                    "language",
                     locale.getDisplayLanguage(current)
-                ).element()
-            );
-            link.add(
-                new JaxbBundle(
-                    "country",
-                    locale.getDisplayCountry(current)
                 ).element()
             );
             links.add(link);
