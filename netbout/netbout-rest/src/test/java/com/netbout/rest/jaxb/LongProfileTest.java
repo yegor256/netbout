@@ -50,7 +50,7 @@ public final class LongProfileTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongProfile obj = new LongProfile(
-            UriBuilder.fromUri("http://localhost"),
+            UriBuilder.fromUri("http://localhost/foo"),
             new IdentityMocker().mock()
         );
         MatcherAssert.assertThat(
@@ -76,7 +76,7 @@ public final class LongProfileTest {
         );
         for (Link link : profile.getLocales()) {
             for (Element element : link.getElements()) {
-                if (!element.getTagName().equals("code")) {
+                if (!"code".equals(element.getTagName())) {
                     continue;
                 }
                 final File file = new File(
