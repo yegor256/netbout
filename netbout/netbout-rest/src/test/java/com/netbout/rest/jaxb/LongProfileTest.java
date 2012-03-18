@@ -69,6 +69,7 @@ public final class LongProfileTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void returnsAvailableLocales() throws Exception {
         final LongProfile profile = new LongProfile(
             UriBuilder.fromUri("http://localhost"),
