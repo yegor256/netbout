@@ -29,7 +29,9 @@ package com.netbout.rest;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -50,12 +52,15 @@ public final class FastRs extends AbstractRs {
      * Start a new bout with this first message and participants.
      * @param participants List of participants (comma separated)
      * @param message The message to post
+     * @param leader Who should be a leader (0 = me, 1 = first in the list
+     *  of participants, etc.)
      * @return The JAX-RS response
      */
     @GET
     @Path("/start")
     public Response start(@QueryParam("participants") final String participants,
-        @QueryParam("message") final String message) {
+        @QueryParam("message") final String message,
+        @QueryParam("leader") @DefaultValue("0") final String leader) {
         if (participants == null || message == null) {
             throw new ForwardException(
                 this,
@@ -65,14 +70,20 @@ public final class FastRs extends AbstractRs {
         }
         final Identity identity = this.identity();
         final Bout bout = identity.start();
+        int pos = 1;
         for (String dude : participants.split(",")) {
+            Participant invited;
             try {
-                bout.invite(identity.friend(Urn.create(dude)));
+                invited = bout.invite(identity.friend(Urn.create(dude)));
             } catch (com.netbout.spi.UnreachableUrnException ex) {
                 throw new ForwardException(this, this.base(), ex);
             } catch (com.netbout.spi.DuplicateInvitationException ex) {
                 throw new ForwardException(this, this.base(), ex);
             }
+            if (Integer.valueOf(leader) == pos) {
+                invited.consign();
+            }
+            ++pos;
         }
         try {
             bout.post(message);
@@ -92,14 +103,17 @@ public final class FastRs extends AbstractRs {
      * Start a new bout with this first message and participants.
      * @param participants List of participants (comma separated)
      * @param message The message to post
+     * @param leader Who should be a leader (0 = me, 1 = first in the list
+     *  of participants, etc.)
      * @return The JAX-RS response
      */
     @POST
     @Path("/start")
     public Response startPost(
         @FormParam("participants") final String participants,
-        @FormParam("message") final String message) {
-        return this.start(participants, message);
+        @FormParam("message") final String message,
+        @QueryParam("leader") @DefaultValue("0") final String leader) {
+        return this.start(participants, message, leader);
     }
 
 }
