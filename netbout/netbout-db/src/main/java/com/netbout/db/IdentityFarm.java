@@ -277,7 +277,7 @@ public final class IdentityFarm {
         final Long total = new DbSession(true).sql(
             // @checkstyle StringLiteralsConcatenation (5 lines)
             "SELECT COUNT(*) FROM message"
-            + " LEFT JOIN seen ON seen.message = message.number"
+            + " LEFT JOIN seen ON seen.message = message.number "
             + " JOIN participant p ON p.bout = message.bout"
             + " WHERE p.identity = ? AND message.date > ?"
             + " AND seen.message IS NULL"
