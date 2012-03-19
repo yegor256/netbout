@@ -112,7 +112,7 @@ public final class FastRs extends AbstractRs {
     public Response startPost(
         @FormParam("participants") final String participants,
         @FormParam("message") final String message,
-        @QueryParam("leader") @DefaultValue("0") final String leader) {
+        @FormParam("leader") @DefaultValue("0") final String leader) {
         return this.start(participants, message, leader);
     }
 
