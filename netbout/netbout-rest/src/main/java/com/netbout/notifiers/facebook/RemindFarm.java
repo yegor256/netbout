@@ -37,6 +37,7 @@ import com.restfb.Parameter;
 import com.restfb.types.FacebookType;
 import com.rexsl.core.Manifests;
 import com.rexsl.test.RestTester;
+import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
@@ -76,6 +77,13 @@ public final class RemindFarm {
                     String.format("Waiting for your attention: %s", marker)
                 )
             );
+            Logger.info(
+                this,
+                "#remindSilentIdentity('%s', '%s'): published to %s",
+                name,
+                marker,
+                path
+            );
         }
     }
 
@@ -98,6 +106,13 @@ public final class RemindFarm {
                     clean = false;
                 } else {
                     client.deleteObject(request.getId());
+                    Logger.info(
+                        this,
+                        "#clean(.., '%s', '%s'): deleted apprequest %s",
+                        marker,
+                        path,
+                        request.getId()
+                    );
                 }
             }
         }
