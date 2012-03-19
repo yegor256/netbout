@@ -80,7 +80,7 @@ public final class FastRs extends AbstractRs {
             } catch (com.netbout.spi.DuplicateInvitationException ex) {
                 throw new ForwardException(this, this.base(), ex);
             }
-            if (Integer.valueOf(leader) == pos) {
+            if (Integer.parseInt(leader) == pos) {
                 invited.consign();
             }
             ++pos;
