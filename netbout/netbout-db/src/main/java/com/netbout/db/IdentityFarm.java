@@ -249,8 +249,13 @@ public final class IdentityFarm {
      */
     @Operation("get-silence-marker")
     public String getSilenceMarker(final Urn name) {
-        final Date recent = new DbSession(true)
-            .sql("SELECT date FROM message WHERE author = ? ORDER BY date DESC")
+        final Date recent = new DbSession(true).sql(
+            // @checkstyle StringLiteralsConcatenation (4 lines)
+            "SELECT message.date FROM message"
+            + " LEFT JOIN seen ON seen.message = message.number"
+            + " WHERE author = ? AND seen.message IS NULL"
+            + " ORDER BY message.date DESC"
+        )
             .set(name)
             .select(
                 new Handler<Date>() {
@@ -270,10 +275,12 @@ public final class IdentityFarm {
                 }
             );
         final Long total = new DbSession(true).sql(
-            // @checkstyle StringLiteralsConcatenation (3 lines)
+            // @checkstyle StringLiteralsConcatenation (5 lines)
             "SELECT COUNT(*) FROM message"
-                + " JOIN participant p ON p.bout=message.bout"
-                + " WHERE p.identity = ? AND message.date > ?"
+            + " LEFT JOIN seen ON seen.message = message.number "
+            + " JOIN participant p ON p.bout = message.bout"
+            + " WHERE p.identity = ? AND message.date > ?"
+            + " AND seen.message IS NULL"
         )
             .set(name)
             .set(recent)

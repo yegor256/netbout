@@ -47,15 +47,13 @@ def bruce = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruce'), 
 
 def uri = UriBuilder.fromUri(RestUriBuilder.from(bruce).build())
     .path('/fast/start')
-    .queryParam('participants', '{dudes}')
-    .queryParam('message', '{message}')
     .build(String.format('%s,%s', first, second), message)
 
 RestTester.start(uri)
     .post(
         'starting a bout',
         String.format(
-            'participants=%s,%s&message=%s',
+            'participants=%s,%s&message=%s&leader=1',
             URLEncoder.encode(first, CharEncoding.UTF_8),
             URLEncoder.encode(second, CharEncoding.UTF_8),
             URLEncoder.encode(message, CharEncoding.UTF_8)
@@ -68,7 +66,7 @@ RestTester.start(uri)
     .assertStatus(HttpURLConnection.HTTP_OK)
     .assertThat(new EtaAssertion())
     .assertXPath('/page/bout/participants/participant[identity="urn:test:bruce"]')
-    .assertXPath('//participant[identity="urn:test:bruce" and @leader="true"]')
-    .assertXPath('//participant[identity="urn:test:bratt" and @leader="false"]')
+    .assertXPath('//participant[identity="urn:test:bruce" and @leader="false"]')
+    .assertXPath('//participant[identity="urn:test:bratt" and @leader="true"]')
     .assertXPath('//participant[identity="urn:test:mickey" and @leader="false"]')
     .assertXPath('//messages/message[contains(text, "how are you doing")]')
