@@ -339,6 +339,11 @@
                 <groupId>com.rexsl</groupId>
                 <artifactId>rexsl-maven-plugin</artifactId>
                 <version>${rexsl.version}</version>
+                <configuration>
+                    <systemProperties>
+                        <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
+                    </systemProperties>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -412,9 +417,19 @@
                         </executions>
                         <dependencies>
                             <dependency>
+                                <groupId>log4j</groupId>
+                                <artifactId>log4j</artifactId>
+                                <version since="19 Sep 2011">1.2.16</version>
+                            </dependency>
+                            <dependency>
                                 <groupId>com.rexsl</groupId>
                                 <artifactId>rexsl-core</artifactId>
                                 <version>${rexsl.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.netbout</groupId>
+                                <artifactId>netbout-rest</artifactId>
+                                <version netbout="yes">2.0-SNAPSHOT</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -439,6 +454,27 @@
                                         </ftp>
                                     </target>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin> -->
+                    <!-- <plugin>
+                        <groupId>br.com.ingenieux</groupId>
+                        <artifactId>cloudfront-maven-plugin</artifactId>
+                        <version since="19 Mar 2012">0.2.7-SNAPSHOT</version>
+                        <configuration>
+                            <distributions>
+                                <distribution>
+                                    <id>EYYIK0VUALLZ</id>
+                                    <domainName>dxe6yfv2r7pzd.cloudfront.net</domainName>
+                                </distribution>
+                            </distributions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>update-distribution</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin> -->
