@@ -455,7 +455,7 @@
                     <plugin>
                         <groupId>br.com.ingenieux</groupId>
                         <artifactId>cloudfront-maven-plugin</artifactId>
-                        <version since="19 Mar 2012">0.2.7-SNAPSHOT</version>
+                        <version since="19 Mar 2012">0.2.7-RC1</version>
                         <configuration>
                             <webappDirectory>${basedir}/src/main/webapp</webappDirectory>
                             <distributions>
