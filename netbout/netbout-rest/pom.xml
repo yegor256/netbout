@@ -339,6 +339,11 @@
                 <groupId>com.rexsl</groupId>
                 <artifactId>rexsl-maven-plugin</artifactId>
                 <version>${rexsl.version}</version>
+                <configuration>
+                    <systemProperties>
+                        <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
+                    </systemProperties>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -401,7 +406,7 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <phase>deploy</phase>
+                                <phase>deploy-x</phase>
                                 <goals>
                                     <goal>upload-source-bundle</goal>
                                     <goal>create-application-version</goal>
@@ -411,6 +416,11 @@
                             </execution>
                         </executions>
                         <dependencies>
+                            <dependency>
+                                <groupId>log4j</groupId>
+                                <artifactId>log4j</artifactId>
+                                <version since="19 Sep 2011">1.2.16</version>
+                            </dependency>
                             <dependency>
                                 <groupId>com.rexsl</groupId>
                                 <artifactId>rexsl-core</artifactId>
@@ -442,6 +452,30 @@
                             </execution>
                         </executions>
                     </plugin> -->
+                    <plugin>
+                        <groupId>br.com.ingenieux</groupId>
+                        <artifactId>cloudfront-maven-plugin</artifactId>
+                        <version since="19 Mar 2012">0.2.7-RC1</version>
+                        <configuration>
+                            <webappDirectory>${basedir}/src/main/webapp</webappDirectory>
+                            <distributions>
+                                <distribution>
+                                    <id>EYYIK0VUALLZ</id>
+                                    <domainName>dxe6yfv2r7pzd.cloudfront.net</domainName>
+                                    <includes>xsl/**, css/**, xml/**, js/**</includes>
+                                    <excludes>**/.svn/**</excludes>
+                                </distribution>
+                            </distributions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>update-distribution</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
                 <pluginManagement>
                     <plugins>
