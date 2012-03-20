@@ -144,6 +144,7 @@ public final class NetboutUtils {
                     "Can't find myself ('%s') among %d participants in bout #%d: %[list]s",
                     identity,
                     participants.size(),
+                    bout.number(),
                     participants
                 )
             );
