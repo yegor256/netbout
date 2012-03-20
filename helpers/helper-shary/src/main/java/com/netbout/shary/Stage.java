@@ -26,8 +26,8 @@
  */
 package com.netbout.shary;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -48,7 +48,7 @@ public final class Stage {
      * List of documents in it.
      */
     private final transient Collection<SharedDoc> docs =
-        new ArrayList<SharedDoc>();
+        new LinkedList<SharedDoc>();
 
     /**
      * The place.

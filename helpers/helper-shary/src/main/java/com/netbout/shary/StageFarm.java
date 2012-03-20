@@ -321,7 +321,7 @@ public final class StageFarm implements IdentityAware {
         final Set<String> stops = new HashSet<String>();
         for (Message msg : inbox) {
             final Slip slip = new JaxbParser(msg.text()).parse(Slip.class);
-            if (!slip.isAllow()) {
+            if (!slip.isAllow() || slip.getUri().isEmpty()) {
                 stops.add(slip.getName());
                 continue;
             }
