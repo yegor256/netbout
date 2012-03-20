@@ -406,7 +406,7 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <phase>deploy-x</phase>
+                                <phase>deploy</phase>
                                 <goals>
                                     <goal>upload-source-bundle</goal>
                                     <goal>create-application-version</goal>

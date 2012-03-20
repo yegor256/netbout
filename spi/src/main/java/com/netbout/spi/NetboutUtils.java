@@ -140,7 +140,8 @@ public final class NetboutUtils {
         if (found == null) {
             throw new IllegalStateException(
                 Logger.format(
-                    "Can't find myself ('%s') among %d participants: %[list]s",
+                    // @checkstyle LineLength (1 line)
+                    "Can't find myself ('%s') among %d participants in bout #%d: %[list]s",
                     identity,
                     participants.size(),
                     participants
