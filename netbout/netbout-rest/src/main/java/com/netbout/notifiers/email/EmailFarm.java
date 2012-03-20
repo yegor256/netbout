@@ -37,7 +37,7 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import com.netbout.text.Template;
+import com.netbout.spi.text.Template;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;

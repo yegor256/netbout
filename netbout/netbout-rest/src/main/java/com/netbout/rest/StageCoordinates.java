@@ -31,7 +31,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.netbout.text.SecureString;
+import com.netbout.spi.text.SecureString;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -152,7 +152,7 @@ public final class StageCoordinates {
             } catch (java.net.URISyntaxException ex) {
                 coords.setStage(new Urn());
                 coords.setPlace("");
-            } catch (com.netbout.text.StringDecryptionException ex) {
+            } catch (com.netbout.spi.text.StringDecryptionException ex) {
                 coords.setStage(new Urn());
                 coords.setPlace("");
             }

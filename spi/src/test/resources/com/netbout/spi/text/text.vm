@@ -1,0 +1,3 @@
+Hello, ${name}!
+
+This file is used in com.netbout.spi.text.TemplateTest

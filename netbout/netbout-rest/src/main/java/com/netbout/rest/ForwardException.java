@@ -27,7 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.spi.client.RestSession;
-import com.netbout.text.SecureString;
+import com.netbout.spi.text.SecureString;
 import com.ymock.util.Logger;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;

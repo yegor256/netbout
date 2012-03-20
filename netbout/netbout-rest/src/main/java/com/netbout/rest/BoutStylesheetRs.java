@@ -27,7 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.spi.Urn;
-import com.netbout.text.Template;
+import com.netbout.spi.text.Template;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;

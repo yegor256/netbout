@@ -163,6 +163,12 @@
             <version since="19 Oct 2011">2.1</version>
         </dependency>
         <dependency>
+            <!-- ReXSL core features -->
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-core</artifactId>
+            <version>${rexsl.version}</version>
+        </dependency>
+        <dependency>
             <!-- ReXSL test client -->
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-test</artifactId>
@@ -220,6 +226,12 @@
             <artifactId>log4j</artifactId>
             <version since="19 Sep 2011">1.2.16</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Text formatting tool -->
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version since="17 Nov 2011">1.7</version>
         </dependency>
         <dependency>
             <!--

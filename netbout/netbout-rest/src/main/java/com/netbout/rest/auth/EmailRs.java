@@ -33,7 +33,7 @@ import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.text.SecureString;
+import com.netbout.spi.text.SecureString;
 import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -100,7 +100,7 @@ public final class EmailRs extends AbstractRs {
                     String.format("Wrong secret '%s' for '%s'", secret, iname)
                 );
             }
-        } catch (com.netbout.text.StringDecryptionException ex) {
+        } catch (com.netbout.spi.text.StringDecryptionException ex) {
             throw new LoginRequiredException(this, ex);
         }
         return this.resolve(iname);

@@ -30,7 +30,7 @@ import com.netbout.hub.Hub;
 import com.netbout.rest.log.LogList;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
-import com.netbout.text.SecureString;
+import com.netbout.spi.text.SecureString;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -233,7 +233,7 @@ public abstract class AbstractRs implements Resource {
         if (msg != null) {
             try {
                 this.imessage = SecureString.valueOf(msg).text();
-            } catch (com.netbout.text.StringDecryptionException ex) {
+            } catch (com.netbout.spi.text.StringDecryptionException ex) {
                 this.imessage = ex.getMessage();
             }
             Logger.debug(

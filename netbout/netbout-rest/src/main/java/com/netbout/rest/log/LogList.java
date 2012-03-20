@@ -26,7 +26,7 @@
  */
 package com.netbout.rest.log;
 
-import com.netbout.text.SecureString;
+import com.netbout.spi.text.SecureString;
 import com.ymock.util.Logger;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,7 +85,7 @@ public final class LogList {
             for (String event : events) {
                 this.list.add(StringEscapeUtils.unescapeXml(event));
             }
-        } catch (com.netbout.text.StringDecryptionException ex) {
+        } catch (com.netbout.spi.text.StringDecryptionException ex) {
             Logger.warn(this, "#append(%s): %[exception]s", text, ex);
         }
     }
