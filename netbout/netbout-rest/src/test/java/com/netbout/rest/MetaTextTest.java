@@ -46,17 +46,17 @@ public final class MetaTextTest {
     @Test
     public void formatsTextToHtml() throws Exception {
         final MetaText meta = new MetaText(
-            "**hi**, _dude_!\r\n{{{\r\nb**oo**m\n}}}"
+            "**hi**, _dude_!\r\n\n{{{\r\nb**oo**m\n}}}"
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(String.format("<x>%s</x>", meta.html())),
             Matchers.describedAs(
                 meta.html(),
                 Matchers.allOf(
-                    XhtmlMatchers.hasXPath("/x/b[.='hi']"),
-                    XhtmlMatchers.hasXPath("/x/i[.='dude']"),
+                    XhtmlMatchers.hasXPath("/x/p/b[.='hi']"),
+                    XhtmlMatchers.hasXPath("/x/p/i[.='dude']"),
                     XhtmlMatchers.hasXPath(
-                        "/x/div[@class='fixed' and .='b**oo**m']"
+                        "/x/p[@class='fixed' and .='b**oo**m']"
                     )
                 )
             )

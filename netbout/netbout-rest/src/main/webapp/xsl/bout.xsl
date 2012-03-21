@@ -226,9 +226,9 @@
                         </span>
                     </xsl:if>
                 </header>
-                <p class="text">
+                <div class="text">
                     <xsl:value-of select="render" disable-output-escaping="yes" />
-                </p>
+                </div>
             </div>
         </article>
     </xsl:template>

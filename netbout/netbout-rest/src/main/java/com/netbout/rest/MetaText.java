@@ -96,6 +96,7 @@ public final class MetaText {
      * @return Reformatted text
      */
     private String reformat(final Map<String, String> regexs) {
+        boolean par = false;
         boolean pre = false;
         final String[] lines = StringUtils.splitPreserveAllTokens(
             this.text,
@@ -103,30 +104,37 @@ public final class MetaText {
         );
         final StringBuilder output = new StringBuilder();
         for (int pos = 0; pos < lines.length; ++pos) {
-            if (lines[pos].matches("\\s*\\{{3}\\s*") && !pre) {
+            String line = lines[pos].trim();
+            if ("{{{".equals(line) && !pre) {
                 pre = true;
-                output.append("<div class='fixed'>");
                 continue;
             }
-            if (lines[pos].matches("\\s*\\}{3}\\s*") && pre) {
+            if ("}}}".equals(line) && pre) {
                 pre = false;
-                if (output.charAt(output.length() - 1) == '\n') {
-                    output.setLength(output.length() - 1);
-                }
-                output.append("</div>");
                 continue;
             }
-            String parsed = lines[pos];
+            if (line.isEmpty()) {
+                if (par) {
+                    output.append("</p>");
+                }
+                par = false;
+                continue;
+            }
             if (!pre) {
-                parsed = this.reformat(parsed, regexs);
+                line = this.reformat(line, regexs);
             }
-            output.append(parsed);
-            if (pos != lines.length - 1) {
-                output.append('\n');
+            if (!par) {
+                if (pre) {
+                    output.append("<p class='fixed'>");
+                } else {
+                    output.append("<p>");
+                }
+                par = true;
             }
+            output.append(line);
         }
-        if (pre) {
-            output.append("<!-- closing broken formatting --></div>");
+        if (par) {
+            output.append("</p>");
         }
         return output.toString();
     }

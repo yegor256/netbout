@@ -173,11 +173,10 @@ h1 {
         }
 
         .message .right .text {
-            white-space: pre-line;
-            font-size: 1.4em;
         }
 
-        .message .right p div.fixed {
-            padding: 1em;
-        }
+            .message .right .text p.fixed {
+                padding: 1em;
+                overflow-x: auto;
+            }
 
