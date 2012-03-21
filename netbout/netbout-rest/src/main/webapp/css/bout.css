@@ -177,3 +177,7 @@ h1 {
             font-size: 1.4em;
         }
 
+        .message .right p div.fixed {
+            padding: 1em;
+        }
+

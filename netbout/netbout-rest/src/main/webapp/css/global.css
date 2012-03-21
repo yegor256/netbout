@@ -114,6 +114,7 @@ textarea {
     padding: 1em;
     border: 0.071em solid #bfbcc1;
     overflow: hidden;
+    font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
 }
 
 label {

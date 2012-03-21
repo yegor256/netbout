@@ -106,8 +106,8 @@
                     this bout. What do you think, guys?...
                 </text>
                 <render>
-                    I think that this subject should be discussed in
-                    this bout. What do you think, guys?...
+                    I think that this &lt;b&gt;subject&lt;/b&gt; should be discussed in
+                    this bout. What do you think, &lt;i&gt;guys&lt;/i&gt;?...
                 </render>
                 <date></date>
             </message>
@@ -125,7 +125,7 @@
                 <text>
                     It's [a link](http://example.com)
                 </text>
-                <render>some text</render>
+                <render>It's &lt;a href="http://example.com"&gt;a link&lt;/a&gt;</render>
             </message>
             <message>
                 <number>4</number>
