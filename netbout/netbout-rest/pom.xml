@@ -120,12 +120,6 @@
             <version since="3 Nov 2011">3.12.1.GA</version>
         </dependency>
         <dependency>
-            <!-- Text formatting tool -->
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version since="17 Nov 2011">1.7</version>
-        </dependency>
-        <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-core</artifactId>
             <version>${rexsl.version}</version>

@@ -30,7 +30,7 @@ import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.text.SecureString;
+import com.netbout.spi.text.SecureString;
 import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
 import org.apache.commons.lang.StringUtils;
@@ -100,7 +100,7 @@ final class AnchorEmail {
             }
             this.receiver = hub.identity(new Urn(parts[1]));
             this.where = this.receiver.bout(Long.valueOf(parts[0]));
-        } catch (com.netbout.text.StringDecryptionException ex) {
+        } catch (com.netbout.spi.text.StringDecryptionException ex) {
             throw new BrokenAnchorException(ex);
         } catch (java.net.URISyntaxException ex) {
             throw new BrokenAnchorException(ex);

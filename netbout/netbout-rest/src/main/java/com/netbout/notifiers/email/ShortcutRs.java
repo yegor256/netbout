@@ -28,7 +28,7 @@ package com.netbout.notifiers.email;
 
 import com.netbout.rest.AbstractRs;
 import com.netbout.rest.LoginRequiredException;
-import com.netbout.text.SecureString;
+import com.netbout.spi.text.SecureString;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;

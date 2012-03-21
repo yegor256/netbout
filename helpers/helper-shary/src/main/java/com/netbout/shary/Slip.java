@@ -29,6 +29,7 @@ package com.netbout.shary;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
+import com.netbout.spi.text.SecureString;
 import com.netbout.spi.xml.SchemaLocation;
 import eu.medsea.mimeutil.MimeUtil2;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -110,18 +111,22 @@ public final class Slip {
             alias = "someone";
         }
         String text;
-        if (this.allow) {
-            text = String.format(
-                "%s shared **\"%s\"** with us.",
-                alias,
-                this.name
-            );
+        if (this.uri == null || this.uri.isEmpty()) {
+            text = "Internal error in file sharing, try again";
         } else {
-            text = String.format(
-                "%s decided not to share \"%s\" with us any more.",
-                alias,
-                this.name
-            );
+            if (this.allow) {
+                text = String.format(
+                    "%s shared **\"%s\"** with us.",
+                    alias,
+                    this.name
+                );
+            } else {
+                text = String.format(
+                    "%s decided not to share \"%s\" with us any more.",
+                    alias,
+                    this.name
+                );
+            }
         }
         return text;
     }
@@ -148,7 +153,7 @@ public final class Slip {
      * @return The URI of the document
      */
     public String getUri() {
-        return this.uri;
+        return new SecureString(this.uri).toString();
     }
 
     /**
@@ -157,7 +162,11 @@ public final class Slip {
      */
     @XmlElement(name = "uri", namespace = Slip.NAMESPACE)
     public void setUri(final String addr) {
-        this.uri = addr;
+        try {
+            this.uri = SecureString.valueOf(addr).text();
+        } catch (com.netbout.spi.text.StringDecryptionException ex) {
+            this.uri = "";
+        }
     }
 
     /**

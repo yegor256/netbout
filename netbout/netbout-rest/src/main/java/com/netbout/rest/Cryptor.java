@@ -29,7 +29,7 @@ package com.netbout.rest;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.netbout.text.SecureString;
+import com.netbout.spi.text.SecureString;
 import com.ymock.util.Logger;
 
 /**
@@ -64,7 +64,7 @@ public final class Cryptor {
         String iname;
         try {
             iname = SecureString.valueOf(hash).text();
-        } catch (com.netbout.text.StringDecryptionException ex) {
+        } catch (com.netbout.spi.text.StringDecryptionException ex) {
             throw new DecryptionException(ex);
         }
         Identity identity;

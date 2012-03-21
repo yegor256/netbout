@@ -33,7 +33,7 @@ import com.netbout.spi.Identity
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
-import com.netbout.text.SecureString
+import com.netbout.spi.text.SecureString
 import com.rexsl.core.Manifests
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
