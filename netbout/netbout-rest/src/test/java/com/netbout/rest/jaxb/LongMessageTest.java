@@ -32,8 +32,6 @@ import com.netbout.spi.BoutMocker;
 import com.netbout.spi.MessageMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
-import java.util.Map;
-import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -85,8 +83,44 @@ public final class LongMessageTest {
             new MessageMocker().withText(text).mock()
         );
         MatcherAssert.assertThat(
-            msg.getRender(),
+            (String) msg.getRender(),
             Matchers.equalTo(new MetaText(text).html())
+        );
+    }
+
+    /**
+     * LongMessage can understand un-formatted XML.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void understandNonFormattedXml() throws Exception {
+        final String text = "<a xmlns='urn:test:foo'>boom</a>";
+        final LongMessage msg = new LongMessage(
+            // @checkstyle MultipleStringLiterals (1 line)
+            new HubMocker().doReturn(text, "pre-render-message")
+                .mock(),
+            new BoutMocker().mock(),
+            new MessageMocker().withText(text).mock()
+        );
+        MatcherAssert.assertThat(
+            JaxbConverter.the(msg),
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath(
+                    String.format(
+                        "/message/text[.=\"%s\"]",
+                        text
+                    )
+                ),
+                XhtmlMatchers.hasXPath(
+                    String.format("/message/render[contains(., 'boom')]")
+                ),
+                XhtmlMatchers.hasXPath(
+                    "/message/render[@namespace='urn:test:foo']"
+                ),
+                XhtmlMatchers.hasXPath(
+                    "/message/render[@name='a']"
+                )
+            )
         );
     }
 

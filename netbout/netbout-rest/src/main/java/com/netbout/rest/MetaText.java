@@ -94,7 +94,10 @@ public final class MetaText {
      * Reformat, using regular expressions.
      * @param regexs Regular expressions
      * @return Reformatted text
+     * @checkstyle CyclomaticComplexity (60 lines)
+     * @checkstyle ExecutableStatementCount (60 lines)
      */
+    @SuppressWarnings("PMD.NPathComplexity")
     private String reformat(final Map<String, String> regexs) {
         boolean par = false;
         boolean pre = false;
@@ -128,11 +131,7 @@ public final class MetaText {
             if (par) {
                 output.append('\n');
             } else {
-                if (pre) {
-                    output.append("<p class='fixed'>");
-                } else {
-                    output.append("<p>");
-                }
+                output.append(this.parStart(pre));
                 par = true;
             }
             output.append(line);
@@ -159,6 +158,21 @@ public final class MetaText {
             );
         }
         return parsed;
+    }
+
+    /**
+     * Create PAR starting line.
+     * @param pre Is it PRE mode?
+     * @return Par starting line
+     */
+    private String parStart(final boolean pre) {
+        String line;
+        if (pre) {
+            line = "<p class='fixed'>";
+        } else {
+            line = "<p>";
+        }
+        return line;
     }
 
 }

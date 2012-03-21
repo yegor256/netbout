@@ -227,7 +227,36 @@
                     </xsl:if>
                 </header>
                 <div class="text">
-                    <xsl:value-of select="render" disable-output-escaping="yes" />
+                    <xsl:choose>
+                        <xsl:when test="render/@namespace">
+                            <p>
+                                <span class="tt">
+                                    <xsl:text>&lt;</xsl:text>
+                                    <xsl:value-of select="render/@name"/>
+                                    <xsl:text> xmlns="</xsl:text>
+                                    <xsl:value-of select="render/@namespace"/>
+                                    <xsl:text>"&gt;</xsl:text>
+                                </span>
+                                <span style="cursor: pointer;">
+                                    <xsl:attribute name="onclick">
+                                        <xsl:text>$(this).parent().parent().find('p.fixed').show();</xsl:text>
+                                    </xsl:attribute>
+                                    <xsl:text>...</xsl:text>
+                                </span>
+                                <span class="tt">
+                                    <xsl:text>&lt;/</xsl:text>
+                                    <xsl:value-of select="render/@name"/>
+                                    <xsl:text>&gt;</xsl:text>
+                                </span>
+                            </p>
+                            <p class="fixed" style="display: none;">
+                                <xsl:value-of select="render" disable-output-escaping="yes" />
+                            </p>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="render" disable-output-escaping="yes" />
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </div>
             </div>
         </article>
