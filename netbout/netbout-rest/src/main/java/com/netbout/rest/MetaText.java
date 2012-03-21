@@ -26,13 +26,19 @@
  */
 package com.netbout.rest;
 
+import java.util.Map;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Text with meta commands.
  *
+ * <p>The class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle MultipleStringLiterals (200 lines)
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class MetaText {
 
     /**
@@ -51,28 +57,96 @@ public final class MetaText {
     /**
      * Convert it to HTML.
      * @return The HTML
+     * @checkstyle MultipleStringLiterals (10 lines)
      */
     public String html() {
-        return this.text
-            .replaceAll(
-                "\\[(.*?)\\]\\((http://.*?)\\)",
-                "<a href='$2'>$1</a>"
-        )
-            .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
-            .replaceAll("`(.*?)`", "<span class='tt'>$1</span>")
-            .replaceAll("_(.*?)_", "<i>$1</i>");
+        return this.reformat(
+            ArrayUtils.toMap(
+                new Object[][] {
+                    {"\\[(.*?)\\]\\((http://.*?)\\)", "<a href='$2'>$1</a>"},
+                    {"\\*\\*(.*?)\\*\\*", "<b>$1</b>"},
+                    {"`(.*?)`", "<span class='tt'>$1</span>"},
+                    {"_(.*?)_", "<i>$1</i>"},
+                }
+            )
+        );
     }
 
     /**
      * Convert it to plain text.
      * @return The plain text
+     * @checkstyle MultipleStringLiterals (10 lines)
      */
     public String plain() {
-        return this.text
-            .replaceAll("\\[(.*?)\\]\\((http://.*?)\\)", "$1 ($2)")
-            .replaceAll("\\*\\*(.*?)\\*\\*", "$1")
-            .replaceAll("`(.*?)`", "$1")
-            .replaceAll("_(.*?)_", "$1");
+        return this.reformat(
+            ArrayUtils.toMap(
+                new Object[][] {
+                    {"\\[(.*?)\\]\\((http://.*?)\\)", "$1 ($2)"},
+                    {"\\*\\*(.*?)\\*\\*", "$1"},
+                    {"`(.*?)`", "$1"},
+                    {"_(.*?)_", "$1"},
+                }
+            )
+        );
+    }
+
+    /**
+     * Reformat, using regular expressions.
+     * @param regexs Regular expressions
+     * @return Reformatted text
+     */
+    private String reformat(final Map<String, String> regexs) {
+        boolean pre = false;
+        final String[] lines = StringUtils.splitPreserveAllTokens(
+            this.text,
+            "\n"
+        );
+        final StringBuilder output = new StringBuilder();
+        for (int pos = 0; pos < lines.length; ++pos) {
+            if (lines[pos].matches("\\s*\\{{3}\\s*") && !pre) {
+                pre = true;
+                output.append("<div class='fixed'>");
+                continue;
+            }
+            if (lines[pos].matches("\\s*\\}{3}\\s*") && pre) {
+                pre = false;
+                if (output.charAt(output.length() - 1) == '\n') {
+                    output.setLength(output.length() - 1);
+                }
+                output.append("</div>");
+                continue;
+            }
+            String parsed = lines[pos];
+            if (!pre) {
+                parsed = this.reformat(parsed, regexs);
+            }
+            output.append(parsed);
+            if (pos != lines.length - 1) {
+                output.append('\n');
+            }
+        }
+        if (pre) {
+            output.append("<!-- closing broken formatting --></div>");
+        }
+        return output.toString();
+    }
+
+    /**
+     * Reformat one line, using regular expressions.
+     * @param line The line to reformat
+     * @param regexs Regular expressions
+     * @return Reformatted line
+     */
+    private String reformat(final String line,
+        final Map<String, String> regexs) {
+        String parsed = line;
+        for (Map.Entry<String, String> regex : regexs.entrySet()) {
+            parsed = parsed.replaceAll(
+                regex.getKey(),
+                regex.getValue()
+            );
+        }
+        return parsed;
     }
 
 }
