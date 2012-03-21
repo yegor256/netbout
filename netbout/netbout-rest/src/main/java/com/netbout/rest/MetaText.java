@@ -64,9 +64,9 @@ public final class MetaText {
             ArrayUtils.toMap(
                 new Object[][] {
                     {"\\[(.*?)\\]\\((http://.*?)\\)", "<a href='$2'>$1</a>"},
-                    {"\\*\\*(.*?)\\*\\*", "<b>$1</b>"},
+                    {"\\*+(.*?)\\*+", "<b>$1</b>"},
                     {"`(.*?)`", "<span class='tt'>$1</span>"},
-                    {"_(.*?)_", "<i>$1</i>"},
+                    {"_+(.*?)_+", "<i>$1</i>"},
                 }
             )
         );
@@ -113,17 +113,21 @@ public final class MetaText {
                 pre = false;
                 continue;
             }
-            if (line.isEmpty()) {
+            if (line.isEmpty() && !pre) {
                 if (par) {
                     output.append("</p>");
                 }
                 par = false;
                 continue;
             }
-            if (!pre) {
+            if (pre) {
+                line = lines[pos];
+            } else {
                 line = this.reformat(line, regexs);
             }
-            if (!par) {
+            if (par) {
+                output.append('\n');
+            } else {
                 if (pre) {
                     output.append("<p class='fixed'>");
                 } else {
@@ -134,7 +138,7 @@ public final class MetaText {
             output.append(line);
         }
         if (par) {
-            output.append("</p>");
+            output.append("<!-- end of text --></p>");
         }
         return output.toString();
     }

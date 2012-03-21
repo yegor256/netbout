@@ -63,7 +63,7 @@ public final class LongMessageTest {
                 XhtmlMatchers.hasXPath("/message/number"),
                 XhtmlMatchers.hasXPath("/message/author"),
                 XhtmlMatchers.hasXPath("/message/text[.='<>']"),
-                XhtmlMatchers.hasXPath("/message/render[.='<p>hello</p>']"),
+                XhtmlMatchers.hasXPath("/message/render[contains(.,'hello')]"),
                 XhtmlMatchers.hasXPath("/message/date"),
                 XhtmlMatchers.hasXPath("/message/@seen")
             )
