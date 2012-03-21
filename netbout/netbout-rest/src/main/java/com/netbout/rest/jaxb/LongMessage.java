@@ -31,12 +31,14 @@ import com.netbout.rest.MetaText;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
+import com.netbout.spi.xml.DomParser;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -46,6 +48,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @version $Id$
  */
 @XmlRootElement(name = "message")
+@XmlSeeAlso(RawXml.class)
 @XmlAccessorType(XmlAccessType.NONE)
 public final class LongMessage {
 
@@ -115,7 +118,7 @@ public final class LongMessage {
      * @return The text
      */
     @XmlElement
-    public String getRender() {
+    public Object getRender() {
         final String txt = this.getText();
         final String render = this.hub.make("pre-render-message")
             .synchronously()
@@ -125,7 +128,17 @@ public final class LongMessage {
             .arg(txt)
             .asDefault(txt)
             .exec();
-        return new MetaText(StringEscapeUtils.escapeXml(render)).html();
+        Object output = null;
+        if (render.equals(txt)) {
+            final DomParser dom = new DomParser(txt);
+            if (dom.isXml()) {
+                output = new RawXml(dom);
+            }
+        }
+        if (output == null) {
+            output = new MetaText(StringEscapeUtils.escapeXml(render)).html();
+        }
+        return output;
     }
 
     /**

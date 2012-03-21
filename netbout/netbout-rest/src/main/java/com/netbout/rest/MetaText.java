@@ -64,9 +64,9 @@ public final class MetaText {
             ArrayUtils.toMap(
                 new Object[][] {
                     {"\\[(.*?)\\]\\((http://.*?)\\)", "<a href='$2'>$1</a>"},
-                    {"\\*\\*(.*?)\\*\\*", "<b>$1</b>"},
+                    {"\\*+(.*?)\\*+", "<b>$1</b>"},
                     {"`(.*?)`", "<span class='tt'>$1</span>"},
-                    {"_(.*?)_", "<i>$1</i>"},
+                    {"_+(.*?)_+", "<i>$1</i>"},
                 }
             )
         );
@@ -94,8 +94,12 @@ public final class MetaText {
      * Reformat, using regular expressions.
      * @param regexs Regular expressions
      * @return Reformatted text
+     * @checkstyle CyclomaticComplexity (60 lines)
+     * @checkstyle ExecutableStatementCount (60 lines)
      */
+    @SuppressWarnings("PMD.NPathComplexity")
     private String reformat(final Map<String, String> regexs) {
+        boolean par = false;
         boolean pre = false;
         final String[] lines = StringUtils.splitPreserveAllTokens(
             this.text,
@@ -103,30 +107,37 @@ public final class MetaText {
         );
         final StringBuilder output = new StringBuilder();
         for (int pos = 0; pos < lines.length; ++pos) {
-            if (lines[pos].matches("\\s*\\{{3}\\s*") && !pre) {
+            String line = lines[pos].trim();
+            if ("{{{".equals(line) && !pre) {
                 pre = true;
-                output.append("<div class='fixed'>");
                 continue;
             }
-            if (lines[pos].matches("\\s*\\}{3}\\s*") && pre) {
+            if ("}}}".equals(line) && pre) {
                 pre = false;
-                if (output.charAt(output.length() - 1) == '\n') {
-                    output.setLength(output.length() - 1);
-                }
-                output.append("</div>");
                 continue;
             }
-            String parsed = lines[pos];
-            if (!pre) {
-                parsed = this.reformat(parsed, regexs);
+            if (line.isEmpty() && !pre) {
+                if (par) {
+                    output.append("</p>");
+                }
+                par = false;
+                continue;
             }
-            output.append(parsed);
-            if (pos != lines.length - 1) {
+            if (pre) {
+                line = lines[pos];
+            } else {
+                line = this.reformat(line, regexs);
+            }
+            if (par) {
                 output.append('\n');
+            } else {
+                output.append(this.parStart(pre));
+                par = true;
             }
+            output.append(line);
         }
-        if (pre) {
-            output.append("<!-- closing broken formatting --></div>");
+        if (par) {
+            output.append("<!-- end of text --></p>");
         }
         return output.toString();
     }
@@ -147,6 +158,21 @@ public final class MetaText {
             );
         }
         return parsed;
+    }
+
+    /**
+     * Create PAR starting line.
+     * @param pre Is it PRE mode?
+     * @return Par starting line
+     */
+    private String parStart(final boolean pre) {
+        String line;
+        if (pre) {
+            line = "<p class='fixed'>";
+        } else {
+            line = "<p>";
+        }
+        return line;
     }
 
 }
