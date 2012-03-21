@@ -104,15 +104,7 @@ public final class MatchesPred extends AbstractVarargPred {
         } else if (words.isEmpty()) {
             this.predicate = new TruePred();
         } else {
-            final String word = words.iterator().next();
-            if (this.CACHE.containsKey(this.arg(1))
-                && this.CACHE.get(this.arg(1)).containsKey(word)) {
-                this.predicate = new MatchingPred(
-                    this.CACHE.get(this.arg(1)).get(word)
-                );
-            } else {
-                this.predicate = new FalsePred();
-            }
+            this.predicate = this.byWord(words.iterator().next());
         }
     }
 
@@ -161,6 +153,34 @@ public final class MatchesPred extends AbstractVarargPred {
     @Override
     public boolean contains(final Long message) {
         return this.predicate.contains(message);
+    }
+
+    /**
+     * Create predicate by this word.
+     * @param word The word
+     * @return The predicate
+     */
+    private Predicate byWord(final String word) {
+        Predicate pred = null;
+        if (MatchesPred.CACHE.containsKey(this.arg(1))) {
+            final ConcurrentMap<String, SortedSet<Long>> map =
+                MatchesPred.CACHE.get(this.arg(1));
+            if (map.containsKey(word)) {
+                pred = new MatchingPred(map.get(word));
+            } else {
+                for (String keyword : map.keySet()) {
+                    // @checkstyle NestedIfDepth (4 lines)
+                    if (keyword.contains(word)) {
+                        pred = new MatchingPred(map.get(keyword));
+                        break;
+                    }
+                }
+            }
+        }
+        if (pred == null) {
+            pred = new FalsePred();
+        }
+        return pred;
     }
 
     /**
