@@ -26,6 +26,8 @@
  */
 package com.netbout.rest;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,7 +40,6 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class MetaText {
 
     /**
@@ -57,122 +58,224 @@ public final class MetaText {
     /**
      * Convert it to HTML.
      * @return The HTML
-     * @checkstyle MultipleStringLiterals (10 lines)
      */
     public String html() {
-        return this.reformat(
-            ArrayUtils.toMap(
-                new Object[][] {
-                    {"\\[(.*?)\\]\\((http://.*?)\\)", "<a href='$2'>$1</a>"},
-                    {"\\*+(.*?)\\*+", "<b>$1</b>"},
-                    {"`(.*?)`", "<span class='tt'>$1</span>"},
-                    {"_+(.*?)_+", "<i>$1</i>"},
+        return StringUtils.join(
+            this.paragraphs(
+                new AbstractPar(
+                    ArrayUtils.toMap(
+                        new Object[][] {
+                            // @checkstyle MultipleStringLiterals (5 lines)
+                            // @checkstyle LineLength (1 line)
+                            {"\\[(.*?)\\]\\((http://.*?)\\)", "<a href='$2'>$1</a>"},
+                            {"\\*+(.*?)\\*+", "<b>$1</b>"},
+                            {"`(.*?)`", "<span class='tt'>$1</span>"},
+                            {"_+(.*?)_+", "<i>$1</i>"},
+                        }
+                    )
+                ) {
+                    @Override
+                    protected String pack() {
+                        String out;
+                        if (this.isPre()) {
+                            out = String.format(
+                                "<p class='fixed'>%s</p>",
+                                this.getText()
+                            );
+                        } else {
+                            out = String.format("<p>%s</p>", this.getText());
+                        }
+                        return out;
+                    }
                 }
-            )
+            ),
+            ""
         );
     }
 
     /**
      * Convert it to plain text.
      * @return The plain text
-     * @checkstyle MultipleStringLiterals (10 lines)
      */
     public String plain() {
-        return this.reformat(
-            ArrayUtils.toMap(
-                new Object[][] {
-                    {"\\[(.*?)\\]\\((http://.*?)\\)", "$1 ($2)"},
-                    {"\\*\\*(.*?)\\*\\*", "$1"},
-                    {"`(.*?)`", "$1"},
-                    {"_(.*?)_", "$1"},
+        return StringUtils.join(
+            this.paragraphs(
+                new AbstractPar(
+                    ArrayUtils.toMap(
+                        new Object[][] {
+                            // @checkstyle MultipleStringLiterals (4 lines)
+                            {"\\[(.*?)\\]\\((http://.*?)\\)", "$1 ($2)"},
+                            {"\\*\\*(.*?)\\*\\*", "$1"},
+                            {"`(.*?)`", "$1"},
+                            {"_(.*?)_", "$1"},
+                        }
+                    )
+                ) {
+                    @Override
+                    protected String pack() {
+                        return this.getText();
+                    }
                 }
-            )
+            ),
+            "\n\n"
         );
     }
 
     /**
-     * Reformat, using regular expressions.
-     * @param regexs Regular expressions
-     * @return Reformatted text
-     * @checkstyle CyclomaticComplexity (60 lines)
-     * @checkstyle ExecutableStatementCount (60 lines)
+     * Break text down do paragraphs.
+     * @param par Paragraph processor
+     * @return List of paragraphs found
      */
-    @SuppressWarnings("PMD.NPathComplexity")
-    private String reformat(final Map<String, String> regexs) {
-        boolean par = false;
-        boolean pre = false;
-        final String[] lines = StringUtils.splitPreserveAllTokens(
-            this.text,
-            "\n"
-        );
-        final StringBuilder output = new StringBuilder();
-        for (int pos = 0; pos < lines.length; ++pos) {
-            String line = lines[pos].trim();
-            if ("{{{".equals(line) && !pre) {
-                pre = true;
-                continue;
+    private List<String> paragraphs(final Par par) {
+        final String[] lines =
+            StringUtils.splitPreserveAllTokens(this.text, "\n");
+        final List<String> pars = new LinkedList<String>();
+        for (String line : lines) {
+            par.push(line);
+            if (par.ready()) {
+                pars.add(par.out());
             }
-            if ("}}}".equals(line) && pre) {
-                pre = false;
-                continue;
-            }
-            if (line.isEmpty() && !pre) {
-                if (par) {
-                    output.append("</p>");
+        }
+        if (!par.isEmpty()) {
+            pars.add(par.out());
+        }
+        return pars;
+    }
+
+    private interface Par {
+        /**
+         * Add new line to it.
+         * @param line The line of text
+         */
+        void push(String line);
+        /**
+         * Is it ready?
+         * @return TRUE if paragraph is closed
+         */
+        boolean ready();
+        /**
+         * Is it empty?
+         * @return TRUE if paragraph is empty
+         */
+        boolean isEmpty();
+        /**
+         * Get paragraph out of it.
+         * @return The text
+         */
+        String out();
+    }
+
+    private static abstract class AbstractPar implements Par {
+        /**
+         * Regular expressions.
+         */
+        private final transient Map<String, String> regexs;
+        /**
+         * The text collected so far.
+         */
+        private final transient StringBuilder text = new StringBuilder();
+        /**
+         * Line number we're processing now.
+         */
+        private transient int pos = 0;
+        /**
+         * PRE-mode is now ON?
+         */
+        private transient boolean pre = false;
+        /**
+         * We're done?
+         */
+        private transient boolean closed = false;
+        /**
+         * Public ctor.
+         * @param map Map of regexs
+         */
+        public AbstractPar(final Map<String, String> map) {
+            this.regexs = map;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void push(final String line) {
+            String trimmed = line.trim();
+            if ("{{{".equals(trimmed) && !this.pre && this.pos == 0) {
+                this.pre = true;
+            } else if ("}}}".equals(trimmed) && this.pre) {
+                this.closed = true;
+            } else if (trimmed.isEmpty() && !this.pre && this.pos != 0) {
+                this.closed = true;
+            } else {
+                if (this.pos > 0) {
+                    this.text.append('\n');
                 }
-                par = false;
-                continue;
+                if (this.pre) {
+                    this.text.append(line);
+                    ++this.pos;
+                } else if (!trimmed.isEmpty()) {
+                    this.text.append(this.format(trimmed));
+                    ++this.pos;
+                }
             }
-            if (pre) {
-                line = lines[pos];
-            } else {
-                line = this.reformat(line, regexs);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean ready() {
+            return this.closed;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean isEmpty() {
+            return this.text.length() == 0;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String out() {
+            final String out = this.pack();
+            this.closed = false;
+            this.pre = false;
+            this.text.setLength(0);
+            this.pos = 0;
+            return out;
+        }
+        /**
+         * Pack text into paragraph.
+         * @return The text
+         */
+        protected abstract String pack();
+        /**
+         * Get text.
+         * @return The text
+         */
+        protected final String getText() {
+            return this.text.toString();
+        }
+        /**
+         * Is in PRE mode?
+         * @return True if yes
+         */
+        protected final boolean isPre() {
+            return this.pre;
+        }
+        /**
+         * Format the line.
+         */
+        private String format(final String line) {
+            String formatted = line;
+            for (Map.Entry<String, String> regex : this.regexs.entrySet()) {
+                formatted = formatted.replaceAll(
+                    regex.getKey(),
+                    regex.getValue()
+                );
             }
-            if (par) {
-                output.append('\n');
-            } else {
-                output.append(this.parStart(pre));
-                par = true;
-            }
-            output.append(line);
+            return formatted;
         }
-        if (par) {
-            output.append("<!-- end of text --></p>");
-        }
-        return output.toString();
-    }
-
-    /**
-     * Reformat one line, using regular expressions.
-     * @param line The line to reformat
-     * @param regexs Regular expressions
-     * @return Reformatted line
-     */
-    private String reformat(final String line,
-        final Map<String, String> regexs) {
-        String parsed = line;
-        for (Map.Entry<String, String> regex : regexs.entrySet()) {
-            parsed = parsed.replaceAll(
-                regex.getKey(),
-                regex.getValue()
-            );
-        }
-        return parsed;
-    }
-
-    /**
-     * Create PAR starting line.
-     * @param pre Is it PRE mode?
-     * @return Par starting line
-     */
-    private String parStart(final boolean pre) {
-        String line;
-        if (pre) {
-            line = "<p class='fixed'>";
-        } else {
-            line = "<p>";
-        }
-        return line;
     }
 
 }
