@@ -68,6 +68,7 @@ public final class MetaTextTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void handlesBrokenFormattingGracefully() throws Exception {
         final String[] texts = new String[] {
             "}}}\n",
@@ -80,9 +81,9 @@ public final class MetaTextTest {
         for (String text : texts) {
             MatcherAssert.assertThat(
                 XhtmlConverter.the(
-                    String.format("<x>%s</x>", new MetaText(text).html())
+                    String.format("<z>%s</z>", new MetaText(text).html())
                 ),
-                XhtmlMatchers.hasXPath("/x")
+                XhtmlMatchers.hasXPath("/z")
             );
         }
     }

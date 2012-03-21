@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class MetaText {
 
     /**
@@ -117,12 +118,7 @@ public final class MetaText {
             }
             String parsed = lines[pos];
             if (!pre) {
-                for (Map.Entry<String, String> regex : regexs.entrySet()) {
-                    parsed = parsed.replaceAll(
-                        regex.getKey(),
-                        regex.getValue()
-                    );
-                }
+                parsed = this.reformat(parsed, regexs);
             }
             output.append(parsed);
             if (pos != lines.length - 1) {
@@ -133,6 +129,24 @@ public final class MetaText {
             output.append("<!-- closing broken formatting --></div>");
         }
         return output.toString();
+    }
+
+    /**
+     * Reformat one line, using regular expressions.
+     * @param line The line to reformat
+     * @param regexs Regular expressions
+     * @return Reformatted line
+     */
+    private String reformat(final String line,
+        final Map<String, String> regexs) {
+        String parsed = line;
+        for (Map.Entry<String, String> regex : regexs.entrySet()) {
+            parsed = parsed.replaceAll(
+                regex.getKey(),
+                regex.getValue()
+            );
+        }
+        return parsed;
     }
 
 }
