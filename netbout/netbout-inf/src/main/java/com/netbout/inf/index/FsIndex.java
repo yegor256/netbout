@@ -127,7 +127,7 @@ public final class FsIndex implements Index {
                     new FileOutputStream(this.file)
                 );
             }
-            Logger.info(
+            Logger.debug(
                 this,
                 "#flush(): MAPS saved %d bytes to %s in %[nano]s",
                 this.file.length(),
