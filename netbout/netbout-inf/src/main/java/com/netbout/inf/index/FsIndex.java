@@ -90,7 +90,7 @@ public final class FsIndex implements Index {
         text.append(String.format("%d maps\n", this.maps.size()))
             .append(
                 String.format(
-                    "Size: %d bytes",
+                    "Size: %d bytes\n",
                     SerializationUtils.serialize((Serializable) this.maps)
                         .length
                 )

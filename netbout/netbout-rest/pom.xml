@@ -371,7 +371,7 @@
                         <version since="21 Mar 2012">1.0-beta-4</version>
                         <executions>
                             <execution>
-                                <phase>prepare-package</phase>
+                                <phase>generate-resources</phase>
                                 <goals>
                                     <goal>create</goal>
                                 </goals>
