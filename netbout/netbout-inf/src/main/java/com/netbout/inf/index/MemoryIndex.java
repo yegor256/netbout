@@ -27,6 +27,8 @@
 package com.netbout.inf.index;
 
 import com.netbout.inf.Index;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * In-memory index.
@@ -35,5 +37,28 @@ import com.netbout.inf.Index;
  * @version $Id$
  */
 public final class MemoryIndex implements Index {
+
+    /**
+     * All maps.
+     * @checkstyle LineLength (3 lines)
+     */
+    private final transient ConcurrentMap<String, ConcurrentMap<Object, Object>> maps =
+        new ConcurrentHashMap<String, ConcurrentMap<Object, Object>>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <X, Y> ConcurrentMap<X, Y> get(final String name) {
+        synchronized (this.maps) {
+            if (!this.maps.containsKey(name)) {
+                this.maps.put(
+                    name,
+                    (ConcurrentMap) new ConcurrentHashMap<X, Y>()
+                );
+            }
+            return (ConcurrentHashMap<X, Y>) this.maps.get(name);
+        }
+    }
 
 }

@@ -38,11 +38,6 @@ import java.io.Serializable;
 public final class VariableAtom implements Atom<String>, Serializable {
 
     /**
-     * Serialization marker.
-     */
-    private static final long serialVersionUID = 0x4255AFCD9812DDEFL;
-
-    /**
      * Text of message.
      */
     public static final VariableAtom TEXT =
@@ -77,6 +72,11 @@ public final class VariableAtom implements Atom<String>, Serializable {
      */
     public static final VariableAtom AUTHOR_ALIAS =
         new VariableAtom("author.alias");
+
+    /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x4255AFCD9812DDEFL;
 
     /**
      * The name of it.

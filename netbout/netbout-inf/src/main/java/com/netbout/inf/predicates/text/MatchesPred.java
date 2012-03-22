@@ -66,11 +66,9 @@ import org.apache.commons.collections.CollectionUtils;
 public final class MatchesPred extends AbstractVarargPred {
 
     /**
-     * Cached messages and their namespaces.
-     * @checkstyle LineLength (3 lines)
+     * MAP ID.
      */
-    private static final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> CACHE =
-        new ConcurrentHashMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>>();
+    private static final String MAP = MatchesPred.class.getName();
 
     /**
      * Compound predicate.
@@ -84,6 +82,9 @@ public final class MatchesPred extends AbstractVarargPred {
      */
     public MatchesPred(final List<Atom> args, final Index index) {
         super(args, index);
+        // @checkstyle LineLength (1 line)
+        final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> cache =
+            index.get(MatchesPred.MAP);
         final Set<String> words = this.words(this.arg(0).value().toString());
         if (words.size() > 1) {
             final List<Atom> atoms = new ArrayList<Atom>(words.size());
@@ -104,7 +105,7 @@ public final class MatchesPred extends AbstractVarargPred {
         } else if (words.isEmpty()) {
             this.predicate = new TruePred();
         } else {
-            this.predicate = this.byWord(words.iterator().next());
+            this.predicate = this.byWord(cache, words.iterator().next());
         }
     }
 
@@ -115,16 +116,19 @@ public final class MatchesPred extends AbstractVarargPred {
      */
     public static void extract(final Message msg, final Index index) {
         MatchesPred.extract(
+            index,
             VariableAtom.TEXT,
             msg.text(),
             msg.number()
         );
         MatchesPred.extract(
+            index,
             VariableAtom.BOUT_TITLE,
             msg.bout().title(),
             msg.number()
         );
         MatchesPred.extract(
+            index,
             VariableAtom.AUTHOR_ALIAS,
             NetboutUtils.aliasOf(msg.author()),
             msg.number()
@@ -157,14 +161,17 @@ public final class MatchesPred extends AbstractVarargPred {
 
     /**
      * Create predicate by this word.
+     * @param cache The cache to use
      * @param word The word
      * @return The predicate
+     * @checkstyle LineLength (2 lines)
      */
-    private Predicate byWord(final String word) {
+    private Predicate byWord(final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> cache,
+        final String word) {
         Predicate pred = null;
-        if (MatchesPred.CACHE.containsKey(this.arg(1))) {
+        if (cache.containsKey(this.arg(1))) {
             final ConcurrentMap<String, SortedSet<Long>> map =
-                MatchesPred.CACHE.get(this.arg(1));
+                cache.get(this.arg(1));
             if (map.containsKey(word)) {
                 pred = new MatchingPred(map.get(word));
             } else {
@@ -185,22 +192,27 @@ public final class MatchesPred extends AbstractVarargPred {
 
     /**
      * Extracts necessary data from message.
+     * @param index The index
      * @param var Variable
      * @param text The text
      * @param msg Message number
+     * @checkstyle ParameterNumber (3 lines)
      */
-    private static void extract(final VariableAtom var, final String text,
-        final Long msg) {
+    private static void extract(final Index index, final VariableAtom var,
+        final String text, final Long msg) {
+        // @checkstyle LineLength (1 line)
+        final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> cache =
+            (ConcurrentMap) index.get(MatchesPred.MAP);
         for (String word : MatchesPred.words(text)) {
-            MatchesPred.CACHE.putIfAbsent(
+            cache.putIfAbsent(
                 var,
                 new ConcurrentHashMap<String, SortedSet<Long>>()
             );
-            MatchesPred.CACHE.get(var).putIfAbsent(
+            cache.get(var).putIfAbsent(
                 word,
                 new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
             );
-            MatchesPred.CACHE.get(var).get(word).add(msg);
+            cache.get(var).get(word).add(msg);
         }
     }
 
