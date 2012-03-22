@@ -76,6 +76,17 @@ public final class FsIndex implements Index {
      * {@inheritDoc}
      */
     @Override
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("%d maps\n", this.maps.size()))
+            .append(String.format("File: %s", this.file));
+        return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <X, Y> ConcurrentMap<X, Y> get(final String name) {
         synchronized (this.maps) {
             if (!this.maps.containsKey(name)) {

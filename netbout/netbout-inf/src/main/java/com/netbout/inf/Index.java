@@ -45,4 +45,10 @@ public interface Index {
      */
     <X, Y> ConcurrentMap<X, Y> get(String name);
 
+    /**
+     * Show some stats.
+     * @return Text stats
+     */
+    String statistics();
+
 }

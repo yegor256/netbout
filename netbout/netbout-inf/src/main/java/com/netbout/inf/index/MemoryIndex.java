@@ -61,4 +61,14 @@ public final class MemoryIndex implements Index {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("%d maps", this.maps.size()));
+        return text.toString();
+    }
+
 }
