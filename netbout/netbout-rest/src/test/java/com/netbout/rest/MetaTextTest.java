@@ -88,7 +88,7 @@ public final class MetaTextTest {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void handlesBrokenFormattingGracefully() throws Exception {
         final String[] texts = new String[] {
-            "}}}\n",
+            "}}}\n ",
             "{{{",
             "",
             "**hi there! {{{",
@@ -110,7 +110,9 @@ public final class MetaTextTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    @SuppressWarnings({
+        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap"
+    })
     public void formatsTextFragmentsToHtml() throws Exception {
         final Map<String, String> texts = ArrayUtils.toMap(
             new Object[][] {

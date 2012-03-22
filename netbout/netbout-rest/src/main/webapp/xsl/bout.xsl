@@ -237,10 +237,7 @@
                                     <xsl:value-of select="render/@namespace"/>
                                     <xsl:text>"&gt;</xsl:text>
                                 </span>
-                                <span style="cursor: pointer;">
-                                    <xsl:attribute name="onclick">
-                                        <xsl:text>$(this).parent().parent().find('p.fixed').show();</xsl:text>
-                                    </xsl:attribute>
+                                <span class="xml-toggle" style="cursor: pointer;">
                                     <xsl:text>...</xsl:text>
                                 </span>
                                 <span class="tt">

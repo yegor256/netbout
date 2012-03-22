@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class MetaText {
 
     /**
@@ -165,7 +166,7 @@ public final class MetaText {
         String out();
     }
 
-    private static abstract class AbstractPar implements Par {
+    private abstract static class AbstractPar implements MetaText.Par {
         /**
          * Regular expressions.
          */
@@ -177,15 +178,15 @@ public final class MetaText {
         /**
          * Line number we're processing now.
          */
-        private transient int pos = 0;
+        private transient int pos;
         /**
          * PRE-mode is now ON?
          */
-        private transient boolean pre = false;
+        private transient boolean pre;
         /**
          * We're done?
          */
-        private transient boolean closed = false;
+        private transient boolean closed;
         /**
          * Public ctor.
          * @param map Map of regexs
@@ -198,7 +199,7 @@ public final class MetaText {
          */
         @Override
         public void push(final String line) {
-            String trimmed = line.trim();
+            final String trimmed = line.trim();
             if ("{{{".equals(trimmed) && !this.pre && this.pos == 0) {
                 this.pre = true;
             } else if ("}}}".equals(trimmed) && this.pre) {
@@ -206,16 +207,7 @@ public final class MetaText {
             } else if (trimmed.isEmpty() && !this.pre && this.pos != 0) {
                 this.closed = true;
             } else {
-                if (this.pos > 0) {
-                    this.text.append('\n');
-                }
-                if (this.pre) {
-                    this.text.append(line);
-                    ++this.pos;
-                } else if (!trimmed.isEmpty()) {
-                    this.text.append(this.format(trimmed));
-                    ++this.pos;
-                }
+                this.append(line, trimmed);
             }
         }
         /**
@@ -265,6 +257,8 @@ public final class MetaText {
         }
         /**
          * Format the line.
+         * @param line The line to format
+         * @return Formatted line
          */
         private String format(final String line) {
             String formatted = line;
@@ -275,6 +269,23 @@ public final class MetaText {
                 );
             }
             return formatted;
+        }
+        /**
+         * Append this line.
+         * @param line The line to append
+         * @param trimmed Trimmed version of it
+         */
+        private void append(final String line, final String trimmed) {
+            if (this.pos > 0) {
+                this.text.append('\n');
+            }
+            if (this.pre) {
+                this.text.append(line);
+                ++this.pos;
+            } else if (!trimmed.isEmpty()) {
+                this.text.append(this.format(trimmed));
+                ++this.pos;
+            }
         }
     }
 

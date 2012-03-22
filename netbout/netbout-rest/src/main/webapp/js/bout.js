@@ -46,5 +46,10 @@ $(document).ready(
                     }
                 }
             );
+        $('span.xml-toggle').onclick(
+            function() {
+                $(this).parent().parent().find('p.fixed').toggle();
+            }
+        );
     }
 );
