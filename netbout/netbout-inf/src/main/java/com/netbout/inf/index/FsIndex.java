@@ -68,8 +68,17 @@ public final class FsIndex implements Index {
         synchronized (FsIndex.class) {
             this.maps = FsIndex.load(this.file);
         }
-        Executors.newSingleThreadScheduledExecutor()
-            .scheduleAtFixedRate(new Saver(), 0L, 1L, TimeUnit.MINUTES);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
+            new Runnable() {
+                @Override
+                public void run() {
+                    FsIndex.this.flush();
+                }
+            },
+            0L,
+            1L,
+            TimeUnit.MINUTES
+        );
     }
 
     /**
@@ -167,13 +176,6 @@ public final class FsIndex implements Index {
             }
         }
         return maps;
-    }
-
-    private final class Saver implements Runnable {
-        @Override
-        public void run() {
-            FsIndex.this.flush();
-        }
     }
 
 }
