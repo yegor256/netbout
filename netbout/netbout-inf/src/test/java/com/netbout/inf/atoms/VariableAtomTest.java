@@ -27,6 +27,7 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import org.apache.commons.lang.SerializationUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -61,6 +62,20 @@ public final class VariableAtomTest {
         MatcherAssert.assertThat(
             new VariableAtom(text),
             Matchers.equalTo(new VariableAtom(text))
+        );
+    }
+
+    /**
+     * VariableAtom can be serialized.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void serializesToBytes() throws Exception {
+        final VariableAtom var = new VariableAtom("bout.title");
+        final byte[] bytes = SerializationUtils.serialize(var);
+        MatcherAssert.assertThat(
+            ((VariableAtom) SerializationUtils.deserialize(bytes)).toString(),
+            Matchers.equalTo(var.toString())
         );
     }
 

@@ -24,68 +24,37 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.index;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
-import com.netbout.inf.PredicateException;
-import com.netbout.inf.atoms.NumberAtom;
-import java.util.List;
+import com.netbout.spi.Urn;
+import java.util.concurrent.ConcurrentMap;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Allows only messages that unbundle on the specified bout number.
- *
+ * Test case of {@link FsIndex}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "unbundled")
-public final class UnbundledPred extends AbstractVarargPred {
+public final class FsIndexTest {
 
     /**
-     * Bout number.
+     * FsIndex can persist itself.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Long bout;
-
-    /**
-     * Expected marker.
-     */
-    private final transient String marker;
-
-    /**
-     * Public ctor.
-     * @param args The arguments
-     * @param index The index to use for searching
-     */
-    public UnbundledPred(final List<Atom> args, final Index index) {
-        super(args, index);
-        this.bout = ((NumberAtom) this.arg(0)).value();
-        this.marker = BundledPred.markerOfBout(index, this.bout);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long next() {
-        throw new PredicateException("UNBUNDLED#next()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        throw new PredicateException("UNBUNDLED#hasNext()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean contains(final Long message) {
-        return this.marker.equals(BundledPred.marker(this.index(), message))
-            && !BundledPred.boutOf(this.index(), message).equals(this.bout);
+    @Test
+    public void persistsItself() throws Exception {
+        final FsIndex index = new FsIndex();
+        final String name = "some-test-name";
+        final ConcurrentMap<Long, Urn> map = index.get(name);
+        final Urn urn = new Urn("urn:test:abc");
+        map.put(1L, urn);
+        index.flush();
+        MatcherAssert.assertThat(
+            new FsIndex().<Long, Urn>get(name).get(1L),
+            Matchers.equalTo(urn)
+        );
     }
 
 }

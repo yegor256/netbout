@@ -29,6 +29,8 @@ package com.netbout.inf;
 /**
  * Exception in predicate.
  *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

@@ -28,7 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.inf.ih.StageFarm;
-import com.netbout.inf.index.MemoryIndex;
+import com.netbout.inf.index.FsIndex;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -57,7 +57,7 @@ public final class DefaultInfinity implements Infinity {
     /**
      * The index.
      */
-    private final transient Index index = new MemoryIndex();
+    private final transient Index index = new FsIndex();
 
     /**
      * Public ctor.
@@ -77,7 +77,9 @@ public final class DefaultInfinity implements Infinity {
         final StringBuilder text = new StringBuilder();
         text.append("Mux stats:\n")
             .append(this.mux.statistics())
-            .append("\njava.lang.Runtime:\n")
+            .append("\n\nIndex stats:\n")
+            .append(this.index.statistics())
+            .append("\n\njava.lang.Runtime:\n")
             .append(
                 String.format(
                     "  availableProcessors(): %d\n",
