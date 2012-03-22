@@ -50,7 +50,10 @@ public final class FsIndex implements Index {
     /**
      * The file to use.
      */
-    private final transient File file = new File("/tmp/data.ser");
+    private final transient File file = new File(
+        System.getProperty("java.io.tmpdir"),
+        "netbout-INF-data.ser"
+    );
 
     /**
      * All maps.

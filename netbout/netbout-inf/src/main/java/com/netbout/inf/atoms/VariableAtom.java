@@ -81,7 +81,8 @@ public final class VariableAtom implements Atom<String>, Serializable {
     /**
      * The name of it.
      */
-    private final transient String name;
+    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
+    private final String name;
 
     /**
      * Public ctor.

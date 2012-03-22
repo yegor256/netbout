@@ -78,7 +78,8 @@ public final class Urn implements Comparable, Serializable {
     /**
      * The URI.
      */
-    private final transient URI uri;
+    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
+    private final URI uri;
 
     /**
      * Public ctor, for JAXB mostly.

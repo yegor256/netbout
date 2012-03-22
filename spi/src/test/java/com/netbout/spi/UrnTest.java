@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import java.net.URI;
+import org.apache.commons.lang.SerializationUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -290,6 +291,20 @@ public final class UrnTest {
         MatcherAssert.assertThat(
             new Urn("urn:test:something?a=9&b=4").pure(),
             Matchers.equalTo(new Urn("urn:test:something"))
+        );
+    }
+
+    /**
+     * Urn can be serialized.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void serializesToBytes() throws Exception {
+        final Urn urn = new Urn("urn:test:some-data-to-serialize");
+        final byte[] bytes = SerializationUtils.serialize(urn);
+        MatcherAssert.assertThat(
+            ((Urn) SerializationUtils.deserialize(bytes)).toString(),
+            Matchers.equalTo(urn.toString())
         );
     }
 
