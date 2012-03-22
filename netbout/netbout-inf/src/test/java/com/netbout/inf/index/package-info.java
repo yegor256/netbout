@@ -24,68 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
-
-import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
-import com.netbout.inf.PredicateException;
-import com.netbout.inf.atoms.NumberAtom;
-import java.util.List;
 
 /**
- * Allows only messages that unbundle on the specified bout number.
+ * Index implementation.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "unbundled")
-public final class UnbundledPred extends AbstractVarargPred {
-
-    /**
-     * Bout number.
-     */
-    private final transient Long bout;
-
-    /**
-     * Expected marker.
-     */
-    private final transient String marker;
-
-    /**
-     * Public ctor.
-     * @param args The arguments
-     * @param index The index to use for searching
-     */
-    public UnbundledPred(final List<Atom> args, final Index index) {
-        super(args, index);
-        this.bout = ((NumberAtom) this.arg(0)).value();
-        this.marker = BundledPred.markerOfBout(index, this.bout);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long next() {
-        throw new PredicateException("UNBUNDLED#next()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        throw new PredicateException("UNBUNDLED#hasNext()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean contains(final Long message) {
-        return this.marker.equals(BundledPred.marker(this.index(), message))
-            && !BundledPred.boutOf(this.index(), message).equals(this.bout);
-    }
-
-}
+package com.netbout.inf.index;

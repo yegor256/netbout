@@ -38,7 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -51,22 +50,27 @@ import java.util.concurrent.ConcurrentMap;
 public final class BundledPred extends AbstractVarargPred {
 
     /**
+     * MAP ID.
+     */
+    private static final String MAP_MARKERS =
+        String.format("%s:markers", BundledPred.class.getName());
+
+    /**
+     * MAP ID.
+     */
+    private static final String MAP_BOUTS =
+        String.format("%s:bouts", BundledPred.class.getName());
+
+    /**
+     * MAP ID.
+     */
+    private static final String MAP_MESSAGES =
+        String.format("%s:messages", BundledPred.class.getName());
+
+    /**
      * Cached messages and their markers.
      */
-    private static final ConcurrentMap<Long, String> MARKERS =
-        new ConcurrentHashMap<Long, String>();
-
-    /**
-     * Cached bouts and their message numbers.
-     */
-    private static final ConcurrentMap<Long, Long> BOUTS =
-        new ConcurrentHashMap<Long, Long>();
-
-    /**
-     * Cached message numbers and bout numbers.
-     */
-    private static final ConcurrentMap<Long, Long> MESSAGES =
-        new ConcurrentHashMap<Long, Long>();
+    private final transient ConcurrentMap<Long, String> markers;
 
     /**
      * List of already passed bundles.
@@ -80,6 +84,7 @@ public final class BundledPred extends AbstractVarargPred {
      */
     public BundledPred(final List<Atom> args, final Index index) {
         super(args, index);
+        this.markers = index.get(BundledPred.MAP_MARKERS);
     }
 
     /**
@@ -92,51 +97,66 @@ public final class BundledPred extends AbstractVarargPred {
         for (Participant dude : msg.bout().participants()) {
             names.add(dude.identity().name());
         }
-        BundledPred.MARKERS.put(msg.number(), Logger.format("%[list]s", names));
-        BundledPred.BOUTS.put(msg.bout().number(), msg.number());
-        BundledPred.MESSAGES.put(msg.number(), msg.bout().number());
+        final ConcurrentMap<Long, String> markers =
+            index.get(BundledPred.MAP_MARKERS);
+        final ConcurrentMap<Long, Long> bouts =
+            index.get(BundledPred.MAP_BOUTS);
+        final ConcurrentMap<Long, Long> messages =
+            index.get(BundledPred.MAP_MESSAGES);
+        markers.put(msg.number(), Logger.format("%[list]s", names));
+        bouts.put(msg.bout().number(), msg.number());
+        messages.put(msg.number(), msg.bout().number());
     }
 
     /**
      * Get marker for message.
+     * @param index The index to use for it
      * @param msg The message to extract from
      * @return The marker
      */
-    public static String marker(final Long msg) {
-        if (!BundledPred.MARKERS.containsKey(msg)) {
+    public static String marker(final Index index, final Long msg) {
+        final ConcurrentMap<Long, String> markers =
+            index.get(BundledPred.MAP_MARKERS);
+        if (!markers.containsKey(msg)) {
             throw new IllegalArgumentException(
                 String.format("marker not found for message #%d", msg)
             );
         }
-        return BundledPred.MARKERS.get(msg);
+        return markers.get(msg);
     }
 
     /**
      * Get bout number by message.
+     * @param index The index to use for it
      * @param msg Number of message
      * @return The bout number
      */
-    public static Long boutOf(final Long msg) {
-        if (!BundledPred.MESSAGES.containsKey(msg)) {
+    public static Long boutOf(final Index index, final Long msg) {
+        final ConcurrentMap<Long, Long> messages =
+            index.get(BundledPred.MAP_MESSAGES);
+        if (!messages.containsKey(msg)) {
             throw new IllegalArgumentException(
                 String.format("bout not found for message #%d", msg)
             );
         }
-        return BundledPred.MESSAGES.get(msg);
+        return messages.get(msg);
     }
 
     /**
      * Get marker for bout number.
+     * @param index The index to use for it
      * @param bout Number of bout
      * @return The marker
      */
-    public static String markerOfBout(final Long bout) {
-        if (!BundledPred.BOUTS.containsKey(bout)) {
+    public static String markerOfBout(final Index index, final Long bout) {
+        final ConcurrentMap<Long, Long> bouts =
+            index.get(BundledPred.MAP_BOUTS);
+        if (!bouts.containsKey(bout)) {
             throw new IllegalArgumentException(
                 String.format("bout #%d not found", bout)
             );
         }
-        return BundledPred.marker(BundledPred.BOUTS.get(bout));
+        return BundledPred.marker(index, bouts.get(bout));
     }
 
     /**
@@ -160,7 +180,7 @@ public final class BundledPred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
-        final String marker = this.MARKERS.get(message);
+        final String marker = this.markers.get(message);
         boolean allow;
         if (this.passed.contains(marker)) {
             allow = false;

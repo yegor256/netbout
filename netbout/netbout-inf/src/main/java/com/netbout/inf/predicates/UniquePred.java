@@ -34,7 +34,6 @@ import com.netbout.spi.Message;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -47,10 +46,14 @@ import java.util.concurrent.ConcurrentMap;
 public final class UniquePred extends AbstractVarargPred {
 
     /**
+     * MAP ID.
+     */
+    private static final String MAP = UniquePred.class.getName();
+
+    /**
      * Cached bouts and their messages.
      */
-    private static final ConcurrentMap<Long, Long> BOUTS =
-        new ConcurrentHashMap<Long, Long>();
+    private final transient ConcurrentMap<Long, Long> cache;
 
     /**
      * List of already passed bout numbers.
@@ -64,6 +67,7 @@ public final class UniquePred extends AbstractVarargPred {
      */
     public UniquePred(final List<Atom> args, final Index index) {
         super(args, index);
+        this.cache = index.get(UniquePred.MAP);
         if (!"bout.number".equals(this.arg(0).value())) {
             throw new PredicateException(
                 "Only $bout.number can be used in (unique)"
@@ -74,10 +78,11 @@ public final class UniquePred extends AbstractVarargPred {
     /**
      * Extracts necessary data from message.
      * @param msg The message to extract from
-     * @param dest The index to extract to
+     * @param index The index to extract to
      */
-    public static void extract(final Message msg, final Index dest) {
-        UniquePred.BOUTS.put(msg.number(), msg.bout().number());
+    public static void extract(final Message msg, final Index index) {
+        final ConcurrentMap<Long, Long> cache = index.get(UniquePred.MAP);
+        cache.put(msg.number(), msg.bout().number());
     }
 
     /**
@@ -101,7 +106,7 @@ public final class UniquePred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
-        final Long bout = this.BOUTS.get(message);
+        final Long bout = this.cache.get(message);
         boolean allow;
         if (this.passed.contains(bout)) {
             allow = false;
