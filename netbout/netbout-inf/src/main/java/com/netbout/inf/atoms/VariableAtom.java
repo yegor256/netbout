@@ -32,6 +32,8 @@ import java.io.Serializable;
 /**
  * Variable atom.
  *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

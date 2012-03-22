@@ -32,6 +32,8 @@ import java.util.Set;
 /**
  * One task to be executed in Mux.
  *
+ * <p>Implementators of this class should be immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

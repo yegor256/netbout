@@ -75,7 +75,7 @@ public final class FsIndex implements Index {
                     FsIndex.this.flush();
                 }
             },
-            0L,
+            1L,
             1L,
             TimeUnit.MINUTES
         );
@@ -88,6 +88,13 @@ public final class FsIndex implements Index {
     public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d maps\n", this.maps.size()))
+            .append(
+                String.format(
+                    "Size: %d bytes",
+                    SerializationUtils.serialize((Serializable) this.maps)
+                        .length
+                )
+            )
             .append(String.format("File: %s", this.file));
         return text.toString();
     }

@@ -41,6 +41,8 @@ import java.util.TreeSet;
 /**
  * The task to review one identity.
  *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
