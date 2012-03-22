@@ -46,7 +46,7 @@ $(document).ready(
                     }
                 }
             );
-        $('span.xml-toggle').onclick(
+        $('span.xml-toggle').click(
             function() {
                 $(this).parent().parent().find('p.fixed').toggle();
             }
