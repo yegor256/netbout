@@ -26,7 +26,11 @@
  */
 package com.netbout.inf;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link Index}.
@@ -34,6 +38,12 @@ import org.mockito.Mockito;
  * @version $Id$
  */
 public final class IndexMocker {
+
+    /**
+     * All maps.
+     */
+    private final transient ConcurrentMap<String, ConcurrentMap<Object, Object>> maps =
+        new ConcurrentHashMap<String, ConcurrentMap<Object, Object>>();
 
     /**
      * The object.
@@ -44,6 +54,22 @@ public final class IndexMocker {
      * Public ctor.
      */
     public IndexMocker() {
+        Mockito.doAnswer(
+            new Answer<ConcurrentMap>() {
+                public ConcurrentMap answer(final InvocationOnMock invocation) {
+                    final String name = (String) invocation.getArguments()[0];
+                    synchronized (IndexMocker.this.maps) {
+                        if (!IndexMocker.this.maps.containsKey(name)) {
+                            IndexMocker.this.maps.put(
+                                name,
+                                new ConcurrentHashMap<Object, Object>()
+                            );
+                        }
+                        return IndexMocker.this.maps.get(name);
+                    }
+                }
+            }
+        ).when(this.index).get(Mockito.anyString());
     }
 
     /**

@@ -36,6 +36,8 @@ import java.util.Set;
 /**
  * The task to review one message.
  *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

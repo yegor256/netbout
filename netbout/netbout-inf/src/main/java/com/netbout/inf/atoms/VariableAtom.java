@@ -27,14 +27,17 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import java.io.Serializable;
 
 /**
  * Variable atom.
  *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VariableAtom implements Atom<String> {
+public final class VariableAtom implements Atom<String>, Serializable {
 
     /**
      * Text of message.
@@ -73,9 +76,15 @@ public final class VariableAtom implements Atom<String> {
         new VariableAtom("author.alias");
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x4255AFCD9812DDEFL;
+
+    /**
      * The name of it.
      */
-    private final transient String name;
+    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
+    private final String name;
 
     /**
      * Public ctor.

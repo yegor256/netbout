@@ -38,7 +38,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -52,10 +51,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public final class NsPred extends AbstractVarargPred {
 
     /**
-     * Cached messages and their namespaces.
+     * MAP ID.
      */
-    private static final ConcurrentMap<Urn, Set<Long>> CACHE =
-        new ConcurrentHashMap<Urn, Set<Long>>();
+    private static final String MAP = NsPred.class.getName();
 
     /**
      * Found set of message numbers.
@@ -74,9 +72,10 @@ public final class NsPred extends AbstractVarargPred {
      */
     public NsPred(final List<Atom> args, final Index index) {
         super(args, index);
+        final ConcurrentMap<Urn, Set<Long>> cache = index.get(NsPred.MAP);
         final Urn namespace = Urn.create(this.arg(0).value().toString());
-        if (this.CACHE.containsKey(namespace)) {
-            this.messages = this.CACHE.get(namespace);
+        if (cache.containsKey(namespace)) {
+            this.messages = cache.get(namespace);
         } else {
             this.messages = new ConcurrentSkipListSet<Long>();
         }
@@ -93,12 +92,14 @@ public final class NsPred extends AbstractVarargPred {
         if (parser.isXml()) {
             Urn namespace;
             try {
+                final ConcurrentMap<Urn, Set<Long>> cache =
+                    index.get(NsPred.MAP);
                 namespace = parser.namespace();
-                NsPred.CACHE.putIfAbsent(
+                cache.putIfAbsent(
                     namespace,
                     new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
                 );
-                NsPred.CACHE.get(namespace).add(from.number());
+                cache.get(namespace).add(from.number());
                 Logger.debug(
                     NsPred.class,
                     "#extract(#%d, ..): namespace '%s' found",

@@ -26,6 +26,8 @@
  */
 package com.netbout.inf;
 
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * Index.
  *
@@ -33,5 +35,20 @@ package com.netbout.inf;
  * @version $Id$
  */
 public interface Index {
+
+    /**
+     * Get a map from this index.
+     * @param name Name of the map, unique in index
+     * @return The map to use
+     * @param <X> Type of keys
+     * @param <Y> Type of values
+     */
+    <X, Y> ConcurrentMap<X, Y> get(String name);
+
+    /**
+     * Show some stats.
+     * @return Text stats
+     */
+    String statistics();
 
 }

@@ -27,19 +27,28 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import java.io.Serializable;
 
 /**
  * Text atom.
  *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextAtom implements Atom<String> {
+public final class TextAtom implements Atom<String>, Serializable {
+
+    /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x4255AFCD6612DDEFL;
 
     /**
      * The value of it.
      */
-    private final transient String text;
+    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
+    private final String text;
 
     /**
      * Public ctor.

@@ -40,6 +40,8 @@ import org.reflections.Reflections;
 /**
  * Builder of a predicate.
  *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)

@@ -151,9 +151,9 @@ public final class StageFarm implements IdentityAware {
         String dest = null;
         if (this.identity.name().equals(stage)) {
             final Slip slip = this.slip(author, body);
-            if (slip.getName().isEmpty() || slip.getUri().isEmpty()) {
+            if (slip.getName().isEmpty() || slip.getRawUri().isEmpty()) {
                 dest = "empty-args";
-            } else if (slip.getUri().matches("(http|s3)://.*")) {
+            } else if (slip.getRawUri().matches("(http|s3)://.*")) {
                 dest = "";
                 this.identity.bout(number).post(new JaxbPrinter(slip).print());
             } else {
@@ -321,7 +321,7 @@ public final class StageFarm implements IdentityAware {
         final Set<String> stops = new HashSet<String>();
         for (Message msg : inbox) {
             final Slip slip = new JaxbParser(msg.text()).parse(Slip.class);
-            if (!slip.isAllow() || slip.getUri().isEmpty()) {
+            if (!slip.isAllow() || slip.getRawUri().isEmpty()) {
                 stops.add(slip.getName());
                 continue;
             }

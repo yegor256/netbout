@@ -32,6 +32,8 @@ import java.util.List;
 /**
  * Predicate wrapping token.
  *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

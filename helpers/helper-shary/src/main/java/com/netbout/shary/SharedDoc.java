@@ -141,7 +141,7 @@ public final class SharedDoc {
      * @return The URI of it
      */
     public String getUri() {
-        return this.slip.getUri();
+        return this.slip.getRawUri();
     }
 
 }

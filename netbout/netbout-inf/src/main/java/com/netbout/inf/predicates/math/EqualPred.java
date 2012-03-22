@@ -53,11 +53,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public final class EqualPred extends AbstractVarargPred {
 
     /**
-     * Cached messages and their values.
-     * @checkstyle LineLength (3 lines)
+     * MAP ID.
      */
-    private static final ConcurrentMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>> CACHE =
-        new ConcurrentHashMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>>();
+    private static final String MAP = EqualPred.class.getName();
 
     /**
      * Found set of message numbers.
@@ -76,10 +74,13 @@ public final class EqualPred extends AbstractVarargPred {
      */
     public EqualPred(final List<Atom> args, final Index index) {
         super(args, index);
+        // @checkstyle LineLength (1 line)
+        final ConcurrentMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>> cache =
+            index.get(EqualPred.MAP);
         final VariableAtom var = (VariableAtom) this.arg(0);
-        if (this.CACHE.containsKey(var)
-            && this.CACHE.get(var).containsKey(this.arg(1))) {
-            this.messages = this.CACHE.get(var).get(this.arg(1));
+        if (cache.containsKey(var)
+            && cache.get(var).containsKey(this.arg(1))) {
+            this.messages = cache.get(var).get(this.arg(1));
         } else {
             this.messages = new ConcurrentSkipListSet<Long>();
         }
@@ -93,14 +94,17 @@ public final class EqualPred extends AbstractVarargPred {
      */
     public static void extract(final Message msg, final Index index) {
         EqualPred.var(
+            index,
             VariableAtom.BOUT_NUMBER,
             new NumberAtom(msg.bout().number())
         ).add(msg.number());
         EqualPred.var(
+            index,
             VariableAtom.NUMBER,
             new NumberAtom(msg.number())
         ).add(msg.number());
         EqualPred.var(
+            index,
             VariableAtom.AUTHOR_NAME,
             new TextAtom(msg.author().name())
         ).add(msg.number());
@@ -132,20 +136,25 @@ public final class EqualPred extends AbstractVarargPred {
 
     /**
      * Get access to list of message numbers.
+     * @param index The index
      * @param var The variable
      * @param atom Value of it
      * @return Set of numbers
      */
-    private static Set<Long> var(final VariableAtom var, final Atom atom) {
-        EqualPred.CACHE.putIfAbsent(
+    private static Set<Long> var(final Index index,
+        final VariableAtom var, final Atom atom) {
+        // @checkstyle LineLength (1 line)
+        final ConcurrentMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>> cache =
+            index.get(EqualPred.MAP);
+        cache.putIfAbsent(
             var,
             new ConcurrentHashMap<Atom, SortedSet<Long>>()
         );
-        EqualPred.CACHE.get(var).putIfAbsent(
+        cache.get(var).putIfAbsent(
             atom,
             new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
         );
-        return EqualPred.CACHE.get(var).get(atom);
+        return cache.get(var).get(atom);
     }
 
 }

@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -53,16 +52,16 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public final class TalksWithPred extends AbstractVarargPred {
 
     /**
-     * Cached participants and their messages.
+     * MAP ID.
      */
-    private static final ConcurrentMap<Urn, SortedSet<Long>> DUDES =
-        new ConcurrentHashMap<Urn, SortedSet<Long>>();
+    private static final String MAP_DUDES =
+        String.format("%s:dudes", TalksWithPred.class.getName());
 
     /**
-     * Cached bouts and their participants.
+     * MAP ID.
      */
-    private static final ConcurrentMap<Long, SortedSet<Urn>> BOUTS =
-        new ConcurrentHashMap<Long, SortedSet<Urn>>();
+    private static final String MAP_BOUTS =
+        String.format("%s:bouts", TalksWithPred.class.getName());
 
     /**
      * Found set of message numbers.
@@ -81,9 +80,11 @@ public final class TalksWithPred extends AbstractVarargPred {
      */
     public TalksWithPred(final List<Atom> args, final Index index) {
         super(args, index);
+        final ConcurrentMap<Urn, SortedSet<Long>> dudes =
+            index.get(TalksWithPred.MAP_DUDES);
         final Urn urn = Urn.create(((TextAtom) this.arg(0)).value());
-        if (this.DUDES.containsKey(urn)) {
-            this.messages = this.DUDES.get(urn);
+        if (dudes.containsKey(urn)) {
+            this.messages = dudes.get(urn);
         } else {
             this.messages = new ConcurrentSkipListSet<Long>();
         }
@@ -98,7 +99,11 @@ public final class TalksWithPred extends AbstractVarargPred {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public static void extract(final Message msg, final Index index) {
         final Long bout = msg.bout().number();
-        TalksWithPred.BOUTS.putIfAbsent(
+        final ConcurrentMap<Urn, SortedSet<Long>> dudes =
+            index.get(TalksWithPred.MAP_DUDES);
+        final ConcurrentMap<Long, SortedSet<Urn>> bouts =
+            index.get(TalksWithPred.MAP_BOUTS);
+        bouts.putIfAbsent(
             bout,
             new ConcurrentSkipListSet<Urn>()
         );
@@ -106,19 +111,19 @@ public final class TalksWithPred extends AbstractVarargPred {
         for (Participant dude : msg.bout().participants()) {
             final Urn name = dude.identity().name();
             names.add(name);
-            TalksWithPred.DUDES.putIfAbsent(
+            dudes.putIfAbsent(
                 name,
                 new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
             );
-            TalksWithPred.DUDES.get(name).add(msg.number());
-            TalksWithPred.BOUTS.get(bout).add(name);
+            dudes.get(name).add(msg.number());
+            bouts.get(bout).add(name);
         }
-        final Iterator<Urn> iterator = TalksWithPred.BOUTS.get(bout).iterator();
+        final Iterator<Urn> iterator = bouts.get(bout).iterator();
         while (iterator.hasNext()) {
             final Urn name = iterator.next();
             if (!names.contains(name)) {
                 iterator.remove();
-                TalksWithPred.DUDES.get(name).remove(msg.number());
+                dudes.get(name).remove(msg.number());
             }
         }
     }

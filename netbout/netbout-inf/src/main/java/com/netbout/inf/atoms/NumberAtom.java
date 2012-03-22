@@ -27,19 +27,28 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import java.io.Serializable;
 
 /**
  * Number atom.
  *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NumberAtom implements Atom<Long> {
+public final class NumberAtom implements Atom<Long>, Serializable {
+
+    /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x4253AFFD9812DDEFL;
 
     /**
      * The value of it.
      */
-    private final transient Long number;
+    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
+    private final Long number;
 
     /**
      * Public ctor.

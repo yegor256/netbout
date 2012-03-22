@@ -28,6 +28,8 @@ package com.netbout.rest;
 
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
+import java.util.Map;
+import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -64,6 +66,21 @@ public final class MetaTextTest {
     }
 
     /**
+     * MetaText can format a meta-text to plain text.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void formatsMetaTextToPlain() throws Exception {
+        final MetaText meta = new MetaText(
+            "**hi**, _buddy_!\r\n\n{{{\r\n b**o\n   \n\no**m\n}}}"
+        );
+        MatcherAssert.assertThat(
+            meta.plain(),
+            Matchers.equalTo("hi, buddy!\n\n b**o\n   \n\no**m")
+        );
+    }
+
+    /**
      * MetaText can handle broken formatting correctly.
      * @throws Exception If there is some problem inside
      */
@@ -71,7 +88,7 @@ public final class MetaTextTest {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void handlesBrokenFormattingGracefully() throws Exception {
         final String[] texts = new String[] {
-            "}}}\n",
+            "}}}\n ",
             "{{{",
             "",
             "**hi there! {{{",
@@ -84,6 +101,34 @@ public final class MetaTextTest {
                     String.format("<z>%s</z>", new MetaText(text).html())
                 ),
                 XhtmlMatchers.hasXPath("/z")
+            );
+        }
+    }
+
+    /**
+     * MetaText can format small snippets.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings({
+        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap"
+    })
+    public void formatsTextFragmentsToHtml() throws Exception {
+        final Map<String, String> texts = ArrayUtils.toMap(
+            new Object[][] {
+                {"hi, *dude*!", "<p>hi, <b>dude</b>!</p>"},
+                {"hello, **dude**!", "<p>hello, <b>dude</b>!</p>"},
+                {"wazzup, ***dude***!", "<p>wazzup, <b>dude</b>!</p>"},
+                {"hey, _man_!", "<p>hey, <i>man</i>!</p>"},
+                {"x: `oops`", "<p>x: <span class='tt'>oops</span></p>"},
+                {"[a](http://foo)", "<p><a href='http://foo'>a</a></p>"},
+                {"}}}\n", "<p>}}}</p>"},
+            }
+        );
+        for (Map.Entry<String, String> entry : texts.entrySet()) {
+            MatcherAssert.assertThat(
+                new MetaText(entry.getKey()).html(),
+                Matchers.equalTo(entry.getValue())
             );
         }
     }

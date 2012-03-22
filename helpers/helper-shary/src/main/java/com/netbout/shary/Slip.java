@@ -149,11 +149,19 @@ public final class Slip {
     }
 
     /**
-     * Get URI.
-     * @return The URI of the document
+     * Get URI (encrypted form, for XML).
+     * @return The URI of the document in encrypted form
      */
     public String getUri() {
         return new SecureString(this.uri).toString();
+    }
+
+    /**
+     * Get URI, in original format (without encryption).
+     * @return The URI of the document
+     */
+    public String getRawUri() {
+        return this.uri;
     }
 
     /**
