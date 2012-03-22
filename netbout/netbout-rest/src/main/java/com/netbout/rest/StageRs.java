@@ -106,7 +106,7 @@ public final class StageRs extends AbstractRs {
         if ("home".equals(response)) {
             resp = new PageBuilder()
                 .build(AbstractPage.class)
-                .init(this)
+                .init(this, false)
                 .authenticated(this.identity())
                 .status(Response.Status.SEE_OTHER)
                 .location(this.base().path("/{bout}").build(this.bout.number()))
@@ -140,7 +140,7 @@ public final class StageRs extends AbstractRs {
             .exec();
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(

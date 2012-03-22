@@ -131,7 +131,7 @@ public final class InboxRs extends AbstractRs {
             .schema("")
             .stylesheet("/xsl/inbox.xsl")
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, true)
             .append(new JaxbBundle("query", this.query))
             .append(new JaxbBundle("view", view))
             .append(JaxbGroup.build(bouts, "bouts"))
@@ -153,7 +153,7 @@ public final class InboxRs extends AbstractRs {
         final Bout bout = identity.start();
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .authenticated(identity)
             .entity(String.format("bout #%d created", bout.number()))
             .status(Response.Status.SEE_OTHER)
@@ -186,7 +186,7 @@ public final class InboxRs extends AbstractRs {
         bout.invite(identity.friend(new Urn("facebook", "1531296526")));
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())
