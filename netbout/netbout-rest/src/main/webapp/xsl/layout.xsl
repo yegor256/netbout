@@ -168,25 +168,27 @@
                     </xsl:attribute>
                     <xsl:text> </xsl:text> <!-- for W3C compliance -->
                 </a>
-                <form id="search" method="get" role="search">
-                    <xsl:attribute name="action">
-                        <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
-                    </xsl:attribute>
-                    <input name="q" id="search-input"
-                        autocomplete="off" size="10" maxlength="120">
-                        <xsl:attribute name="placeholder">
-                            <xsl:value-of select="$TEXTS/Find"/>
+                <xsl:if test="/page/@searcheable = 'true'">
+                    <form id="search" method="get" role="search">
+                        <xsl:attribute name="action">
+                            <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
                         </xsl:attribute>
-                        <xsl:attribute name="value">
-                            <xsl:value-of select="/page/query"/>
-                        </xsl:attribute>
-                        <xsl:if test="/page/query != ''">
-                            <xsl:attribute name="autofocus">
-                                <xsl:text>autofocus</xsl:text>
+                        <input name="q" id="search-input"
+                            autocomplete="off" size="10" maxlength="120">
+                            <xsl:attribute name="placeholder">
+                                <xsl:value-of select="$TEXTS/Find"/>
                             </xsl:attribute>
-                        </xsl:if>
-                    </input>
-                </form>
+                            <xsl:attribute name="value">
+                                <xsl:value-of select="/page/query"/>
+                            </xsl:attribute>
+                            <xsl:if test="/page/query != ''">
+                                <xsl:attribute name="autofocus">
+                                    <xsl:text>autofocus</xsl:text>
+                                </xsl:attribute>
+                            </xsl:if>
+                        </input>
+                    </form>
+                </xsl:if>
             </div>
             <xsl:if test="identity">
                 <nav id="right" role="navigation">

@@ -50,6 +50,7 @@ RestTester.start(RestUriBuilder.from(william))
     // @todo #213 for some reason this stuff doesn't work with rexsl 0.3.2
     // .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
     .assertXPath('/page/identity[name="urn:test:willy"]')
+    .assertXPath('/page[@searcheable="true"]')
     .assertXPath('/page/bouts')
     .assertXPath('/page/nano')
     .assertXPath('/page/view[.=""]')

@@ -90,7 +90,7 @@ public final class FsIndex implements Index {
         text.append(String.format("%d maps\n", this.maps.size()))
             .append(
                 String.format(
-                    "Size: %d bytes",
+                    "Size: %d bytes\n",
                     SerializationUtils.serialize((Serializable) this.maps)
                         .length
                 )
@@ -127,7 +127,7 @@ public final class FsIndex implements Index {
                     new FileOutputStream(this.file)
                 );
             }
-            Logger.info(
+            Logger.debug(
                 this,
                 "#flush(): MAPS saved %d bytes to %s in %[nano]s",
                 this.file.length(),

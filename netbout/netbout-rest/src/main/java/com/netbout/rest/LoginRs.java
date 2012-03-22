@@ -63,7 +63,7 @@ public final class LoginRs extends AbstractRs {
         return new PageBuilder()
             .stylesheet("/xsl/login.xsl")
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .link("facebook", fburi)
             .render()
             .preserved()
@@ -90,7 +90,7 @@ public final class LoginRs extends AbstractRs {
     public Response logout() {
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .anonymous()
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())

@@ -62,7 +62,7 @@ public final class EmailRs extends AbstractRs {
         @QueryParam("secret") final String secret) {
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .render()
             .authenticated(this.authenticate(iname, secret))
             .build();

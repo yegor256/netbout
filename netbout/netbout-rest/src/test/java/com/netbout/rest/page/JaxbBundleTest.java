@@ -86,7 +86,7 @@ public final class JaxbBundleTest {
         final Page page = new PageBuilder()
             .stylesheet("test")
             .build(AbstractPage.class)
-            .init((Resource) new ResourceMocker().mock(BoutRs.class))
+            .init((Resource) new ResourceMocker().mock(BoutRs.class), false)
             .append(bundle.element())
             .append("Test me");
         MatcherAssert.assertThat(

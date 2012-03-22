@@ -223,7 +223,7 @@ public final class BoutRs extends AbstractRs {
         }
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -250,7 +250,7 @@ public final class BoutRs extends AbstractRs {
         bout.rename(title);
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -282,7 +282,7 @@ public final class BoutRs extends AbstractRs {
         }
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -300,7 +300,7 @@ public final class BoutRs extends AbstractRs {
         this.bout().confirm();
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -317,7 +317,7 @@ public final class BoutRs extends AbstractRs {
         this.bout().leave();
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())
@@ -341,7 +341,7 @@ public final class BoutRs extends AbstractRs {
         NetboutUtils.participantOf(friend, this.bout()).kickOff();
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -388,7 +388,7 @@ public final class BoutRs extends AbstractRs {
                     .toString()
             )
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, true)
             .append(
                 new LongBout(
                     this,

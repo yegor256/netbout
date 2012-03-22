@@ -76,6 +76,11 @@ public abstract class AbstractPage implements Page {
     private transient Resource home;
 
     /**
+     * Is this page searcheable?
+     */
+    private transient boolean searcheable;
+
+    /**
      * The response builder to return.
      */
     private final transient Response.ResponseBuilder builder = Response.ok();
@@ -98,10 +103,12 @@ public abstract class AbstractPage implements Page {
     /**
      * Initializer.
      * @param res Home of this page
+     * @param srch Is this page searcheable?
      * @return This object
      */
-    public final Page init(final Resource res) {
+    public final Page init(final Resource res, final boolean srch) {
         this.home = res;
+        this.searcheable = srch;
         this.link(
             "self",
             UriBuilder.fromUri(this.home.uriInfo().getRequestUri())
@@ -296,6 +303,15 @@ public abstract class AbstractPage implements Page {
     @XmlAttribute
     public final Date getTime() {
         return new Date();
+    }
+
+    /**
+     * Is this page searcheable?
+     * @return Yes or no
+     */
+    @XmlAttribute
+    public final boolean isSearcheable() {
+        return this.searcheable;
     }
 
     /**

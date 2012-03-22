@@ -81,7 +81,7 @@ public final class FacebookRs extends AbstractRs {
         }
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .preserved()
             .status(Response.Status.SEE_OTHER)
             .location(
@@ -103,7 +103,7 @@ public final class FacebookRs extends AbstractRs {
     public Response canvas() {
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .preserved()
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())
@@ -158,7 +158,7 @@ public final class FacebookRs extends AbstractRs {
         );
         return new PageBuilder()
             .build(AbstractPage.class)
-            .init(this)
+            .init(this, false)
             .render()
             .authenticated(identity)
             .build();

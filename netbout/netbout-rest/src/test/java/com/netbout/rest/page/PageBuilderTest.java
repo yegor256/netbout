@@ -59,7 +59,7 @@ public final class PageBuilderTest {
         final Page page = new PageBuilder()
             .stylesheet(stylesheet)
             .build(AbstractPage.class)
-            .init((Resource) new ResourceMocker().mock(BoutRs.class));
+            .init((Resource) new ResourceMocker().mock(BoutRs.class), false);
         new PageBuilder()
             .stylesheet(stylesheet)
             .build(AbstractPage.class);
