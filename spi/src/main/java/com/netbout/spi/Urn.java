@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -45,7 +46,12 @@ import org.apache.commons.lang.StringUtils;
  * @see <a href="http://tools.ietf.org/html/rfc2141">RFC2141</a>
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.UseConcurrentHashMap" })
-public final class Urn implements Comparable {
+public final class Urn implements Comparable, Serializable {
+
+    /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x4243AFCD9812ABDCL;
 
     /**
      * Marker of an empty URN.

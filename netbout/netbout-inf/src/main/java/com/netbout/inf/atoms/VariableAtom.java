@@ -27,6 +27,7 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import java.io.Serializable;
 
 /**
  * Variable atom.
@@ -34,7 +35,12 @@ import com.netbout.inf.Atom;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VariableAtom implements Atom<String> {
+public final class VariableAtom implements Atom<String>, Serializable {
+
+    /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x4255AFCD9812DDEFL;
 
     /**
      * Text of message.
