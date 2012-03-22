@@ -102,7 +102,8 @@ public final class FsIndex implements Index {
             }
             Logger.info(
                 this,
-                "#flush(): MAPS saved to %s in %[nano]s",
+                "#flush(): MAPS saved %d bytes to %s in %[nano]s",
+                this.file.length(),
                 this.file,
                 System.nanoTime() - start
             );
@@ -133,8 +134,9 @@ public final class FsIndex implements Index {
                 );
                 Logger.info(
                     FsIndex.class,
-                    "#load(%s): MAPS loaded in %[nano]s",
+                    "#load(%s): MAPS loaded %d bytes in %[nano]s",
                     src,
+                    src.length(),
                     System.nanoTime() - start
                 );
             } catch (java.io.IOException ex) {
