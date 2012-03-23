@@ -89,7 +89,7 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <header>
+        <div>
             <h1>
                 <span class="num">
                     <xsl:text>#</xsl:text>
@@ -107,15 +107,15 @@
                     </xsl:call-template>
                 </span>
             </h1>
-        </header>
-        <header id="top2">
+        </div>
+        <div id="top2">
             <xsl:apply-templates select="/page/bout/participants" />
             <xsl:if test="$participant/@confirmed = 'true' and not(/page/links/link[@rel='re-login'])">
                 <xsl:call-template name="invite" />
                 <xsl:call-template name="rename" />
             </xsl:if>
             <xsl:call-template name="options" />
-        </header>
+        </div>
         <xsl:call-template name="stages" />
         <xsl:if test="$participant/@confirmed = 'true'">
             <form id="post" method="post">
@@ -172,12 +172,12 @@
 
     <xsl:template match="message">
         <xsl:variable name="msg" select="."/>
-        <article class="message">
+        <div class="message">
             <xsl:attribute name="id">
                 <xsl:text>msg</xsl:text>
                 <xsl:value-of select="$msg/number"/>
             </xsl:attribute>
-            <aside class="left">
+            <div class="left">
                 <img class="photo">
                     <xsl:choose>
                         <xsl:when test="/page/bout/participants/participant[$msg/author=identity]">
@@ -199,9 +199,9 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </img>
-            </aside>
+            </div>
             <div class="right">
-                <header class="meta">
+                <div class="meta">
                     <b>
                         <xsl:choose>
                             <xsl:when test="$msg/author = /page/identity/name">
@@ -225,7 +225,7 @@
                             <xsl:value-of select="$TEXTS/new.message"/>
                         </span>
                     </xsl:if>
-                </header>
+                </div>
                 <div class="text">
                     <xsl:choose>
                         <xsl:when test="render/@namespace">
@@ -256,11 +256,11 @@
                     </xsl:choose>
                 </div>
             </div>
-        </article>
+        </div>
     </xsl:template>
 
     <xsl:template name="invite">
-        <aside id="invite-aside">
+        <div id="invite-aside">
             <form method="get" id="invite">
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
@@ -289,7 +289,7 @@
                 </xsl:if>
                 <xsl:apply-templates select="/page/invitees/invitee" />
             </ul>
-        </aside>
+        </div>
     </xsl:template>
 
     <xsl:template match="invitee">
@@ -334,7 +334,7 @@
     </xsl:template>
 
     <xsl:template name="options">
-        <aside id="options">
+        <div id="options">
             <span>
                 <xsl:choose>
                     <xsl:when test="$participant/@confirmed = 'true'">
@@ -369,14 +369,14 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </span>
-        </aside>
+        </div>
     </xsl:template>
 
     <xsl:template name="stages">
         <xsl:if test="/page/bout/stage">
-            <section id="stage">
+            <div id="stage">
                 <xsl:apply-templates select="/page/bout/stage"/>
-            </section>
+            </div>
         </xsl:if>
     </xsl:template>
 

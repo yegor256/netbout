@@ -75,17 +75,17 @@
                 <xsl:apply-templates select="version" />
                 <div id="cap">
                     <div id="incap">
-                        <xsl:call-template name="header" />
+                        <xsl:call-template name="cap" />
                     </div>
                 </div>
-                <section id="content" role="main">
+                <div id="content" role="main">
                     <xsl:if test="message != ''">
-                        <aside class="error-message">
+                        <div class="error-message">
                             <xsl:value-of select="message"/>
-                        </aside>
+                        </div>
                     </xsl:if>
                     <xsl:if test="identity/eta != 0">
-                        <aside class="error-message">
+                        <div class="error-message">
                             <xsl:value-of select="$TEXTS/the.server.is.busy"/>
                             <xsl:choose>
                                 <xsl:when test="identity/eta &gt; 60 * 1000 * 1000 * 1000">
@@ -102,10 +102,10 @@
                                 </xsl:when>
                             </xsl:choose>
                             <xsl:text>.</xsl:text>
-                        </aside>
+                        </div>
                     </xsl:if>
                     <xsl:if test="links/link[@rel='re-login']">
-                        <aside class="error-message">
+                        <div class="error-message">
                             <xsl:value-of select="$TEXTS/We.recommend.to.reauthenticate"/>
                             <xsl:text>: </xsl:text>
                             <a>
@@ -115,34 +115,34 @@
                                 <xsl:value-of select="$TEXTS/click.here"/>
                             </a>
                             <xsl:text>.</xsl:text>
-                        </aside>
+                        </div>
                     </xsl:if>
                     <xsl:if test="count(log/event) &gt; 0">
-                        <aside id="log">
+                        <div id="log">
                             <xsl:for-each select="log/event">
                                 <p><xsl:value-of select="."/></p>
                             </xsl:for-each>
-                        </aside>
+                        </div>
                     </xsl:if>
                     <xsl:call-template name="content" />
-                </section>
+                </div>
             </body>
         </html>
     </xsl:template>
 
     <xsl:template match="version">
-        <aside id="version">
+        <div id="version">
             <xsl:text>r</xsl:text>
             <xsl:value-of select="revision"/>
             <xsl:text> </xsl:text>
             <xsl:call-template name="nano">
                 <xsl:with-param name="nano" select="/page/nano" />
             </xsl:call-template>
-        </aside>
+        </div>
     </xsl:template>
 
-    <xsl:template name="header">
-        <header id="header">
+    <xsl:template name="cap">
+        <div id="header">
             <div id="left">
                 <a id="logo">
                     <xsl:attribute name="href">
@@ -190,7 +190,7 @@
                 </xsl:if>
             </div>
             <xsl:if test="identity">
-                <nav id="right" role="navigation">
+                <div id="right" role="navigation">
                     <ul>
                         <li>
                             <img id="photo">
@@ -242,9 +242,9 @@
                             </a>
                         </li>
                     </ul>
-                </nav>
+                </div>
             </xsl:if>
-        </header>
+        </div>
     </xsl:template>
 
     <xsl:template name="identity">

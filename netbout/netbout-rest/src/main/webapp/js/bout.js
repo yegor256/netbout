@@ -61,6 +61,7 @@ $(document).ready(
                         $ul.empty();
                         $(xml).find('invitee').each(
                             function() {
+                                // $ul.append('<li>hello</li>');
                                 $ul.append(
                                     $('<li/>')
                                         .append(
