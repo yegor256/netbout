@@ -47,6 +47,10 @@
             <id>woquo.s3</id>
             <url>s3://repo.woquo.com/snapshot</url>
         </repository>
+        <repository>
+            <id>caybo.s3</id>
+            <url>s3://repo.caybo.com/snapshot</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -308,6 +312,12 @@
         <dependency>
             <groupId>com.woquo</groupId>
             <artifactId>woquo-board-helper</artifactId>
+            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.caybo</groupId>
+            <artifactId>caybo</artifactId>
             <version since="9 Jan 2012">1.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
