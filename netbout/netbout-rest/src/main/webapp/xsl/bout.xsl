@@ -89,25 +89,24 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <div>
-            <h1>
-                <span class="num">
-                    <xsl:text>#</xsl:text>
-                    <xsl:value-of select="/page/bout/number"/>
-                </span>
-                <span class="title">
-                    <xsl:if test="$participant/@confirmed = 'true'">
-                        <xsl:attribute name="contenteditable">
-                            <xsl:text>true</xsl:text>
-                        </xsl:attribute>
-                    </xsl:if>
-                    <xsl:call-template name="crop">
-                        <xsl:with-param name="text" select="/page/bout/title" />
-                        <xsl:with-param name="length" select="50" />
-                    </xsl:call-template>
-                </span>
-            </h1>
-        </div>
+        <h1>
+            <span id="bout-number" style="display: none;"><xsl:value-of select="/page/bout/number"/></span>
+            <span class="num">
+                <xsl:text>#</xsl:text>
+                <xsl:value-of select="/page/bout/number"/>
+            </span>
+            <span class="title">
+                <xsl:if test="$participant/@confirmed = 'true'">
+                    <xsl:attribute name="contenteditable">
+                        <xsl:text>true</xsl:text>
+                    </xsl:attribute>
+                </xsl:if>
+                <xsl:call-template name="crop">
+                    <xsl:with-param name="text" select="/page/bout/title" />
+                    <xsl:with-param name="length" select="50" />
+                </xsl:call-template>
+            </span>
+        </h1>
         <div id="top2">
             <xsl:apply-templates select="/page/bout/participants" />
             <xsl:if test="$participant/@confirmed = 'true' and not(/page/links/link[@rel='re-login'])">
@@ -150,23 +149,21 @@
         </xsl:if>
         <xsl:apply-templates select="/page/bout/messages/message" />
         <xsl:if test="/page/bout/periods[count(link) &gt; 0]">
-            <nav>
-                <ul class="periods">
-                    <xsl:for-each select="/page/bout/periods/link">
-                        <li>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="@href"/>
-                                </xsl:attribute>
-                                <xsl:value-of select="title" />
-                                <xsl:if test="@rel='earliest'">
-                                    <xsl:text>...</xsl:text>
-                                </xsl:if>
-                            </a>
-                        </li>
-                    </xsl:for-each>
-                </ul>
-            </nav>
+            <ul class="periods">
+                <xsl:for-each select="/page/bout/periods/link">
+                    <li>
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="@href"/>
+                            </xsl:attribute>
+                            <xsl:value-of select="title" />
+                            <xsl:if test="@rel='earliest'">
+                                <xsl:text>...</xsl:text>
+                            </xsl:if>
+                        </a>
+                    </li>
+                </xsl:for-each>
+            </ul>
         </xsl:if>
     </xsl:template>
 
@@ -281,7 +278,7 @@
                     </input>
                 </p>
             </form>
-            <ul id="invite-list" data-role='listview'>
+            <ul id="invite-list">
                 <xsl:if test="not(/page/invitees/invitee)">
                     <xsl:attribute name="style">
                         <xsl:text>display: none;</xsl:text>

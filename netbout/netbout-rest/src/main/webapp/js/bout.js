@@ -27,6 +27,7 @@
 
 $(document).ready(
     function() {
+        var bout = parseInt($('#bout-number').text(), 10);
         $('h1 span.title')
             .blur(
                 function() {
@@ -54,9 +55,12 @@ $(document).ready(
         $('input[name="mask"]').keyup(
             function() {
                 var $ul = $('#invite-list');
-                $.get(
-                    '/f?mask=' + encodeURI($(this).val()),
-                    function(xml) {
+                $.ajax({
+                    url: '/f?mask=' + encodeURI($(this).val()) + '&bout=' + bout,
+                    headers: { 'Accept': 'application/xml' },
+                    cache: false,
+                    dataType: 'xml',
+                    success: function(xml) {
                         $ul.hide();
                         $ul.empty();
                         $(xml).find('invitee').each(
@@ -81,7 +85,7 @@ $(document).ready(
                             $ul.show();
                         }
                     }
-                )
+                });
             }
         );
     }
