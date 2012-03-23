@@ -43,7 +43,7 @@
 
     <xsl:template match="participant">
         <div>
-            <aside class="bar">
+            <div class="bar">
                 <xsl:attribute name="style">
                     <xsl:text>left: </xsl:text>
                     <xsl:value-of select="(position()-1) * 5.7"/>
@@ -75,8 +75,8 @@
                         <xsl:text>x</xsl:text>
                     </a>
                 </xsl:if>
-            </aside>
-            <article class="dude">
+            </div>
+            <div class="dude">
                 <xsl:attribute name="style">
                     <xsl:text>left: </xsl:text>
                     <xsl:value-of select="(position()-1) * 5.7"/>
@@ -128,7 +128,7 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:if>
-            </article>
+            </div>
         </div>
     </xsl:template>
 

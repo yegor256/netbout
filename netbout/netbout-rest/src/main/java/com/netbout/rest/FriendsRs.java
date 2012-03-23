@@ -37,6 +37,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * Friends finding service (used by RESTful client or AJAX).
@@ -50,23 +51,30 @@ public final class FriendsRs extends AbstractRs {
     /**
      * Get list of friends.
      * @param mask The mask
+     * @param bout The bout number where you're going to use this list
      * @return The JAX-RS response
      * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
     @Path("/")
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Response list(@QueryParam("mask") final String mask) {
-        if (mask == null) {
+    public Response list(@QueryParam("mask") final String mask,
+        @QueryParam("bout") final String bout) {
+        if (mask == null || bout == null) {
             throw new ForwardException(
                 this,
                 this.base(),
-                "Query param 'mask' missed"
+                "Query param 'mask' and 'bout' are mandatory"
             );
         }
         final List<Invitee> invitees = new ArrayList<Invitee>();
         for (Identity identity : this.identity().friends(mask)) {
-            invitees.add(new Invitee(identity, this.base()));
+            invitees.add(
+                new Invitee(
+                    identity,
+                    UriBuilder.fromUri(this.base().path("/{bout}").build(bout))
+                )
+            );
         }
         return new PageBuilder()
             .schema("")

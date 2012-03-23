@@ -25,31 +25,78 @@
  * SUCH DAMAGE.
  */
 
-$(document).ready(
-    function() {
-        $('h1 span.title')
-            .blur(
-                function() {
-                    var $input = $("#rename input[name='title']");
-                    var previous = $input.val();
-                    var entered = $(this).text();
-                    if (entered != previous) {
-                        $input.val(entered);
-                        $("#rename").submit();
-                    }
-                }
-            )
-            .keydown(
-                function() {
-                    if (arguments[0].keyCode == 13) {
-                        $(this).blur();
-                    }
-                }
-            );
-        $('span.xml-toggle').click(
+/**
+ * Pre-configure this page.
+ */
+var setup = function() {
+    var bout = parseInt($('#bout-number').text(), 10);
+    $('h1 span.title')
+        .blur(
             function() {
-                $(this).parent().parent().find('p.fixed').toggle();
+                var $input = $("#rename input[name='title']");
+                var previous = $input.val();
+                var entered = $(this).text();
+                if (entered != previous) {
+                    $input.val(entered);
+                    $("#rename").submit();
+                }
+            }
+        )
+        .keydown(
+            function() {
+                if (arguments[0].keyCode == 13) {
+                    $(this).blur();
+                }
             }
         );
-    }
-);
+    $('span.xml-toggle').click(
+        function() {
+            $(this).parent().parent().find('p.fixed').toggle();
+        }
+    );
+    $('input[name="mask"]').keyup(
+        function() {
+            var $ul = $('#invite-list');
+            $.ajax({
+                url: '/f?mask=' + encodeURI($(this).val()) + '&bout=' + bout,
+                headers: { 'Accept': 'application/xml' },
+                cache: false,
+                dataType: 'xml',
+                error: function() {
+                    $ul.hide();
+                    $ul.empty();
+                },
+                success: function(xml) {
+                    $ul.hide();
+                    $ul.empty();
+                    $(xml).find('invitee').each(
+                        function() {
+                            var alias = $(this).find('alias').text();
+                            $ul.append(
+                                $('<li/>')
+                                    .append(
+                                        $('<a/>')
+                                            .attr('href', $(this).attr('href'))
+                                            .attr('title', $(this).find('alias').text())
+                                            .append(alias.length > 25 ? alias.substr(0, 25) + '...' : alias)
+                                    )
+                                    .append(
+                                        $('<img/>')
+                                            .attr('src', $(this).find('photo').text())
+                                            .attr('alt', alias)
+                                            .append(' ')
+                                    )
+                            );
+                        }
+                    );
+                    if ($ul.find('li').size() > 0) {
+                        $ul.show();
+                    }
+                },
+            });
+        }
+    );
+}
+
+$(document).ready(setup);
+

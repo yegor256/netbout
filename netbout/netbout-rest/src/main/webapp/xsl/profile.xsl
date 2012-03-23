@@ -53,11 +53,11 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <header>
+        <div>
             <h1>
                 <span class="title"><xsl:value-of select="$TEXTS/Profile.settings"/></span>
             </h1>
-        </header>
+        </div>
         <p>
             <img class="photo">
                 <xsl:attribute name="src">

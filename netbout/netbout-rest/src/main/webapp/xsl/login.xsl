@@ -63,16 +63,16 @@
                 <title>login</title>
             </head>
             <body>
-                <aside id="version">
+                <div id="version">
                     <xsl:text>r</xsl:text>
                     <xsl:value-of select="/page/version/revision"/>
                     <xsl:text> </xsl:text>
                     <xsl:call-template name="nano">
                         <xsl:with-param name="nano" select="/page/nano" />
                     </xsl:call-template>
-                </aside>
-                <section id="wrapper">
-                    <article id="content">
+                </div>
+                <div id="wrapper">
+                    <div id="content">
                         <p>
                             <a>
                                 <xsl:attribute name="href">
@@ -120,9 +120,9 @@
                             </p>
                         </xsl:if>
                         <xsl:if test="/page/message != ''">
-                            <aside class="error-message">
+                            <div class="error-message">
                                 <xsl:value-of select="/page/message"/>
-                            </aside>
+                            </div>
                         </xsl:if>
                         <p>
                             <a>
@@ -140,8 +140,8 @@
                                 </img>
                             </a>
                         </p>
-                    </article>
-                </section>
+                    </div>
+                </div>
             </body>
         </html>
     </xsl:template>

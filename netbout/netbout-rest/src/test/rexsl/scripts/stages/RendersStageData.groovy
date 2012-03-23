@@ -50,11 +50,11 @@ RestTester.start(RestUriBuilder.from(bout))
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
     .get('read bout page')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('//xhtml:section[@id="stage"]//xhtml:p')
+    .assertXPath('//xhtml:div[@id="stage"]//xhtml:p')
 
 // validate the same stage from Maria's point of view
 RestTester.start(RestUriBuilder.from(maria.bout(bout.number())))
     .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
     .get('read bout page for Maria')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('//xhtml:section[@id = "stage"]//xhtml:p')
+    .assertXPath('//xhtml:div[@id = "stage"]//xhtml:p')
