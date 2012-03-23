@@ -53,23 +53,23 @@ h1 {
             background-color: white;
         }
 
-        #invite-aside ul {
+        #invite-list {
             padding: 1em;
             border: 0.071em solid #bfbcc1;
             margin-left: 0em;
             margin-bottom: 0em;
         }
 
-            #invite-aside ul li {
+            #invite-list li {
                 list-style: none;
                 margin-bottom: 0.3em;
             }
 
-                #invite-aside ul li a {
+                #invite-list li a {
                     vertical-align: middle;
                 }
 
-                #invite-aside ul li img {
+                #invite-list li img {
                     vertical-align: middle;
                     margin-left: 0.5em;
                     height: 2.6em;

@@ -48,8 +48,7 @@
             </xsl:attribute>
             <head>
                 <meta charset="UTF-8" />
-                <script type="text/javascript"
-                    src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
+                <script type="text/javascript" src="http://cdn.netbout.com/jquery.js">
                     <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
                 </script>
                 <link rel="stylesheet" type="text/css" media="all">

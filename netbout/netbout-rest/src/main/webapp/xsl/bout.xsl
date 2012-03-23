@@ -281,11 +281,14 @@
                     </input>
                 </p>
             </form>
-            <xsl:if test="/page/invitees[count(invitee) &gt; 0]">
-                <ul id="invite-list">
-                    <xsl:apply-templates select="/page/invitees/invitee" />
-                </ul>
-            </xsl:if>
+            <ul id="invite-list" data-role='listview'>
+                <xsl:if test="not(/page/invitees/invitee)">
+                    <xsl:attribute name="style">
+                        <xsl:text>display: none;</xsl:text>
+                    </xsl:attribute>
+                </xsl:if>
+                <xsl:apply-templates select="/page/invitees/invitee" />
+            </ul>
         </aside>
     </xsl:template>
 

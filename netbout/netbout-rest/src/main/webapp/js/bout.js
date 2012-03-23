@@ -51,5 +51,37 @@ $(document).ready(
                 $(this).parent().parent().find('p.fixed').toggle();
             }
         );
+        $('input[name="mask"]').keyup(
+            function() {
+                var $ul = $('#invite-list');
+                $.get(
+                    '/f?mask=' + encodeURI($(this).val()),
+                    function(xml) {
+                        $ul.hide();
+                        $ul.empty();
+                        $(xml).find('invitee').each(
+                            function() {
+                                $ul.append(
+                                    $('<li/>')
+                                        .append(
+                                            $('<a/>')
+                                                .attr('href', $(this).attr('href'))
+                                                .append($(this).find('alias').text())
+                                        )
+                                        .append(
+                                            $('<img/>')
+                                                .attr('src', $(this).find('photo').text())
+                                                .append(' ')
+                                        )
+                                );
+                            }
+                        );
+                        if ($ul.find('li').size() > 0) {
+                            $ul.show();
+                        }
+                    }
+                )
+            }
+        );
     }
 );
