@@ -65,17 +65,19 @@ $(document).ready(
                         $ul.empty();
                         $(xml).find('invitee').each(
                             function() {
-                                // $ul.append('<li>hello</li>');
+                                var alias = $(this).find('alias').text();
                                 $ul.append(
                                     $('<li/>')
                                         .append(
                                             $('<a/>')
                                                 .attr('href', $(this).attr('href'))
-                                                .append($(this).find('alias').text())
+                                                .attr('title', $(this).find('alias').text())
+                                                .append(alias.length > 25 ? alias.substr(0, 25) + '...' : alias)
                                         )
                                         .append(
                                             $('<img/>')
                                                 .attr('src', $(this).find('photo').text())
+                                                .attr('alt', alias)
                                                 .append(' ')
                                         )
                                 );
