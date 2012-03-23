@@ -284,6 +284,7 @@
                         <xsl:text>display: none;</xsl:text>
                     </xsl:attribute>
                 </xsl:if>
+                <xsl:comment>to make this UL element non-empty</xsl:comment>
                 <xsl:apply-templates select="/page/invitees/invitee" />
             </ul>
         </div>

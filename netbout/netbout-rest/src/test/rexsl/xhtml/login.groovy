@@ -38,6 +38,6 @@ MatcherAssert.assertThat(
     XhtmlConverter.the(rexsl.document),
     Matchers.allOf(
         XhtmlMatchers.hasXPath('//xhtml:html'),
-        XhtmlMatchers.hasXPath('//xhtml:aside[@id="version" and contains(.,"r9988") and contains(.,"0.3ms")]')
+        XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"r9988") and contains(.,"0.3ms")]')
     )
 )

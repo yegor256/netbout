@@ -206,6 +206,7 @@ final class RestIdentity implements Identity {
             .assertXPath("/page/links/link[@rel='friends']")
             .rel("friends")
             .queryParam("mask", mask)
+            .queryParam("bout", "1")
             .get(String.format("reading suggestions for '%s'", mask))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/mask[.='%s']", mask))

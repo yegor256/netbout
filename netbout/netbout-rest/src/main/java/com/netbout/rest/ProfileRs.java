@@ -151,7 +151,7 @@ public final class ProfileRs extends AbstractRs {
             throw new ForwardException(this, this.self(), "'text' missed");
         }
         final Identity identity = this.identity();
-        for (String line : StringUtils.split(text, "\n")) {
+        for (String line : StringUtils.split(text.trim(), "\n")) {
             final String[] parts = StringUtils.split(line, "=", 2);
             this.hub().resolver().register(
                 identity,
