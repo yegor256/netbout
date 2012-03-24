@@ -149,6 +149,7 @@ public final class FsIndex implements Index {
      * @param src Where to load from
      * @return Loaded or created maps
      */
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     private static ConcurrentMap<String, ConcurrentMap<Object, Object>> load(
         final File src) {
         ConcurrentMap<String, ConcurrentMap<Object, Object>> maps =
@@ -177,6 +178,14 @@ public final class FsIndex implements Index {
                 Logger.error(
                     FsIndex.class,
                     "#load(%s): failed to deserialize MAPS: %[exception]s",
+                    src,
+                    ex
+                );
+            // @checkstyle IllegalCatch (1 line)
+            } catch (RuntimeException ex) {
+                Logger.error(
+                    FsIndex.class,
+                    "#load(%s): failed to create MAPS: %[exception]s",
                     src,
                     ex
                 );
