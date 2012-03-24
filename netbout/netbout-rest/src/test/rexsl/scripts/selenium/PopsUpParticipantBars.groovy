@@ -23,15 +23,35 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
  */
+package com.netbout.rest.rexsl.scripts.selenium
 
-$(document).ready(
-    function() {
-        $('div.bar')
-            .mouseover(function() { $(this).show(); })
-            .mouseout(function() { $(this).hide(); });
-        $('div.dude')
-            .mouseover(function() { $(this).parent().find('.bar').show(); })
-            .mouseout(function() { $(this).parent().find('.bar').hide(); });
-    }
-);
+import com.netbout.spi.Urn
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import java.util.concurrent.TimeUnit
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+
+def erik = new RestSession(rexsl.home).authenticate(new Urn('urn:test:erik'), '')
+def bout = erik.start()
+bout.post('hello everybody!')
+bout.rename('Selenimum test of participant bars pop-ups')
+
+def driver = new HtmlUnitDriver()
+driver.setJavascriptEnabled(true)
+driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
+
+def dude = driver.findElementByCssSelector('div.dude')
+dude.click()
+
+TimeUnit.SECONDS.sleep(2)
+
+MatcherAssert.assertThat(
+    driver.findElementByCssSelector('div.bar').getCssValue('display'),
+    Matchers.not(Matchers.equalTo('none'))
+)

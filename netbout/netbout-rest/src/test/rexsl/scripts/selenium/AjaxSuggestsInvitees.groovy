@@ -23,15 +23,37 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
  */
+package com.netbout.rest.rexsl.scripts.selenium
 
-$(document).ready(
-    function() {
-        $('div.bar')
-            .mouseover(function() { $(this).show(); })
-            .mouseout(function() { $(this).hide(); });
-        $('div.dude')
-            .mouseover(function() { $(this).parent().find('.bar').show(); })
-            .mouseout(function() { $(this).parent().find('.bar').hide(); });
-    }
-);
+import com.netbout.spi.Urn
+import com.netbout.spi.client.RestSession
+import com.netbout.spi.client.RestUriBuilder
+import java.util.concurrent.TimeUnit
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
+import org.openqa.selenium.By
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+
+def leon = new RestSession(rexsl.home).authenticate(new Urn('urn:test:leon'), '')
+def bout = leon.start()
+bout.post('hi, I will try to find friends with AJAX!')
+bout.rename('finding friends with AJAX/Selenium')
+
+def driver = new HtmlUnitDriver()
+driver.setJavascriptEnabled(true)
+driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
+
+def input = driver.findElementByCssSelector('form#invite input[name="mask"]')
+input.sendKeys('c')
+
+TimeUnit.SECONDS.sleep(10)
+
+def invitees = driver.findElementById('invite-list')
+MatcherAssert.assertThat(
+    invitees.findElements(By.cssSelector('li')).size(),
+    Matchers.greaterThan(0)
+)
