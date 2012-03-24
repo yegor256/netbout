@@ -25,6 +25,14 @@
  * SUCH DAMAGE.
  */
 
+String.prototype.escaped = function() {
+    return this.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/'/g, "&apos;")
+        .replace(/"/g, "&quot;");
+}
+
 /**
  * Pre-configure this page.
  */
@@ -68,28 +76,20 @@ var setup = function() {
                 },
                 success: function(xml) {
                     $ul.hide();
-                    $ul.empty();
+                    var html = '';
                     $(xml).find('invitee').each(
                         function() {
                             var alias = $(this).find('alias').text();
-                            $ul.append(
-                                $('<li/>')
-                                    .append(
-                                        $('<a/>')
-                                            .attr('href', $(this).attr('href'))
-                                            .attr('title', $(this).find('alias').text())
-                                            .append(alias.length > 25 ? alias.substr(0, 25) + '...' : alias)
-                                    )
-                                    .append(
-                                        $('<img/>')
-                                            .attr('src', $(this).find('photo').text())
-                                            .attr('alt', alias)
-                                            .append(' ')
-                                    )
-                            );
+                            // see http://stackoverflow.com/questions/9834487
+                            html += '<li><a href="' + $(this).attr('href').escaped()
+                                + '" title="' + alias.escaped() + '">'
+                                + (alias.length > 25 ? alias.substr(0, 25) + '...' : alias).escaped()
+                                + '</a><img src="' + $(this).find('photo').text().escaped()
+                                + '" alt="' + alias.escaped() + '"></img></li>';
                         }
                     );
-                    if ($ul.find('li').size() > 0) {
+                    $ul.html(html);
+                    if (html.length > 0) {
                         $ul.show();
                     }
                 },
