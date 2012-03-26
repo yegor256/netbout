@@ -103,7 +103,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         text.append(String.format("%d identities\n", this.dependants.size()));
         for (ConcurrentMap.Entry<Urn, AtomicLong> entry
             : this.dependants.entrySet()) {
-            if (entry.getValue().get() > 0) {
+            if (entry.getValue().get() != 0) {
                 text.append(
                     String.format(
                         "  %s: %d\n",
