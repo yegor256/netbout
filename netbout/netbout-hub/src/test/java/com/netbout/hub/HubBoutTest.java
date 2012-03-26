@@ -32,6 +32,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import org.apache.commons.lang.StringUtils;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -146,6 +147,18 @@ public final class HubBoutTest {
                 )
             )
         );
+    }
+
+    /**
+     * HubBout can reject too long titles.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = com.netbout.spi.IllegalOperationException.class)
+    public void boutRejectsTooLongTitles() throws Exception {
+        // @checkstyle MagicNumber (1 line)
+        final String title = StringUtils.repeat("some text", 200);
+        new HubBout(this.hub, this.viewer, this.boutDtMocker.mock())
+            .rename(title);
     }
 
 }
