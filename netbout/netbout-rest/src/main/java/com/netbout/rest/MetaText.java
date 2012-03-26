@@ -188,6 +188,10 @@ public final class MetaText {
          */
         private transient boolean closed;
         /**
+         * Counter of mistakes with "{{{".
+         */
+        private transient int mistakes;
+        /**
          * Public ctor.
          * @param map Map of regexs
          */
@@ -200,13 +204,28 @@ public final class MetaText {
         @Override
         public void push(final String line) {
             final String trimmed = line.trim();
-            if ("{{{".equals(trimmed) && !this.pre && this.pos == 0) {
-                this.pre = true;
-            } else if ("}}}".equals(trimmed) && this.pre) {
+            boolean append = true;
+            if ("{{{".equals(trimmed)) {
+                if (!this.pre && this.pos == 0) {
+                    this.pre = true;
+                    append = false;
+                } else {
+                    ++this.mistakes;
+                }
+            }
+            if ("}}}".equals(trimmed) && this.pre) {
+                if (this.mistakes == 0) {
+                    this.closed = true;
+                    append = false;
+                } else {
+                    --this.mistakes;
+                }
+            }
+            if (trimmed.isEmpty() && !this.pre && this.pos != 0) {
                 this.closed = true;
-            } else if (trimmed.isEmpty() && !this.pre && this.pos != 0) {
-                this.closed = true;
-            } else {
+                append = false;
+            }
+            if (append) {
                 this.append(line, trimmed);
             }
         }

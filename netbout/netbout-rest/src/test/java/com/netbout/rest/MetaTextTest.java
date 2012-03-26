@@ -144,7 +144,7 @@ public final class MetaTextTest {
         );
         MatcherAssert.assertThat(
             meta.plain(),
-            Matchers.equalTo("hi\n{{{\nboom\n}}}\n\n")
+            Matchers.equalTo("hi\n{{{\nboom\n}}}\n")
         );
     }
 
