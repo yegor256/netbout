@@ -35,6 +35,7 @@ package com.netbout.spi;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @since 1.4.4
  */
 public final class IllegalOperationException extends RuntimeException {
 

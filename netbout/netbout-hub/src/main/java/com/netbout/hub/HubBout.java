@@ -155,6 +155,12 @@ public final class HubBout implements Bout {
                 )
             );
         }
+        // @checkstyle MagicNumber (1 line)
+        if (text.length() > 150) {
+            throw new com.netbout.spi.IllegalOperationException(
+                "Title can't be longer than 150 symbols"
+            );
+        }
         this.data.setTitle(text);
         this.hub.infinity().see(this);
         Logger.info(
