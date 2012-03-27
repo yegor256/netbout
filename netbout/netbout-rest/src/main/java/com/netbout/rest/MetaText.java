@@ -187,17 +187,9 @@ public final class MetaText {
          */
         private transient boolean pre;
         /**
-         * We're done?
+         * We're done with the paragraph?
          */
         private transient boolean closed;
-        /**
-         * Counter of mistakes with "{{{".
-         */
-        private transient int mistakes;
-        /**
-         * Current line is visible?
-         */
-        private transient boolean visible;
         /**
          * Public ctor.
          * @param map Map of regexs
@@ -210,16 +202,13 @@ public final class MetaText {
          */
         @Override
         public void push(final String line) {
-            final String trimmed = line.trim();
-            this.visible = true;
-            this.brackets(trimmed);
-            if (trimmed.isEmpty() && !this.pre && this.pos != 0) {
+            final String trimmed = line.replaceAll("\\p{Cntrl}", "");
+            if (trimmed.startsWith("    ") && this.pos == 0) {
+                this.pre = true;
+            } else if (trimmed.isEmpty() && this.pos != 0) {
                 this.closed = true;
-                this.visible = false;
             }
-            if (this.visible) {
-                this.append(line, trimmed);
-            }
+            this.append(trimmed);
         }
         /**
          * {@inheritDoc}
@@ -284,39 +273,19 @@ public final class MetaText {
         /**
          * Append this line.
          * @param line The line to append
-         * @param trimmed Trimmed version of it
          */
-        private void append(final String line, final String trimmed) {
+        private void append(final String line) {
             if (this.pos > 0) {
                 this.text.append('\n');
             }
             if (this.pre) {
-                this.text.append(line);
+                this.text.append(line.substring(4));
                 ++this.pos;
-            } else if (!trimmed.isEmpty()) {
-                this.text.append(this.format(trimmed));
-                ++this.pos;
-            }
-        }
-        /**
-         * Catch brackets if they are there.
-         * @param trimmed The trimmed line
-         */
-        private void brackets(final String trimmed) {
-            if ("{{{".equals(trimmed)) {
-                if (!this.pre && this.pos == 0) {
-                    this.pre = true;
-                    this.visible = false;
-                } else {
-                    ++this.mistakes;
-                }
-            }
-            if ("}}}".equals(trimmed) && this.pre) {
-                if (this.mistakes == 0) {
-                    this.closed = true;
-                    this.visible = false;
-                } else {
-                    --this.mistakes;
+            } else {
+                final String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    this.text.append(this.format(line.trim()));
+                    ++this.pos;
                 }
             }
         }
