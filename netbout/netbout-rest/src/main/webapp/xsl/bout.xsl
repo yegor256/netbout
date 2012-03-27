@@ -239,9 +239,30 @@
                                     <xsl:value-of select="render/@namespace"/>
                                     <xsl:text>"&gt;</xsl:text>
                                 </span>
-                                <span class="xml-toggle" style="cursor: pointer;">
-                                    <xsl:text>...</xsl:text>
+                                <xsl:text> </xsl:text>
+                                <span class="xml-toggle" style="cursor: pointer;"
+                                    title="click to see full content">
+                                    <xsl:text>... </xsl:text>
+                                    <xsl:variable name="length">
+                                        <xsl:value-of select="string-length(render)"/>
+                                    </xsl:variable>
+                                    <xsl:choose>
+                                        <xsl:when test="$length &gt; 5 * 1024">
+                                            <xsl:value-of select="format-number($length div 1024, '0.#')"/>
+                                            <xsl:text>Kb</xsl:text>
+                                        </xsl:when>
+                                        <xsl:when test="$length &gt; 1024 * 1024">
+                                            <xsl:value-of select="format-number($length div (1024 * 1024), '0.##')"/>
+                                            <xsl:text>Mb</xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="$length"/>
+                                            <xsl:text> bytes</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <xsl:text> ...</xsl:text>
                                 </span>
+                                <xsl:text> </xsl:text>
                                 <span class="tt">
                                     <xsl:text>&lt;/</xsl:text>
                                     <xsl:value-of select="render/@name"/>

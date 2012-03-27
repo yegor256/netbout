@@ -116,9 +116,13 @@ public final class MessageFarm {
      */
     @Operation("get-bout-messages")
     public List<Long> getBoutMessages(final Long bout) {
-        return new DbSession(true)
-            // @checkstyle LineLength (1 line)
-            .sql("SELECT number FROM message WHERE bout = ? AND date IS NOT NULL")
+        return new DbSession(true).sql(
+            // @checkstyle StringLiteralsConcatenation (4 lines)
+            "SELECT number FROM message WHERE bout = ?"
+            + " AND date IS NOT NULL"
+            + " AND author IS NOT NULL"
+            + " AND text IS NOT NULL"
+        )
             .set(bout)
             .select(
                 new Handler<List<Long>>() {
