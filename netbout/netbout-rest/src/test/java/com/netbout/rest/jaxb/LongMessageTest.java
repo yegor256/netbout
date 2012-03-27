@@ -27,7 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.HubMocker;
-import com.netbout.rest.MetaText;
+import com.netbout.rest.meta.MetaText;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.MessageMocker;
 import com.rexsl.test.JaxbConverter;

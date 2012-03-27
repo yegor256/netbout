@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.meta;
 
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
