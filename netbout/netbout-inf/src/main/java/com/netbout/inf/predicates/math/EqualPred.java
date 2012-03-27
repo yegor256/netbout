@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -55,7 +54,8 @@ public final class EqualPred extends AbstractVarargPred {
     /**
      * MAP ID.
      */
-    private static final String MAP = EqualPred.class.getName();
+    private static final String MAP =
+        String.format("%s:%%s", EqualPred.class.getName());
 
     /**
      * Found set of message numbers.
@@ -74,13 +74,11 @@ public final class EqualPred extends AbstractVarargPred {
      */
     public EqualPred(final List<Atom> args, final Index index) {
         super(args, index);
-        // @checkstyle LineLength (1 line)
-        final ConcurrentMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>> cache =
-            index.get(EqualPred.MAP);
         final VariableAtom var = (VariableAtom) this.arg(0);
-        if (cache.containsKey(var)
-            && cache.get(var).containsKey(this.arg(1))) {
-            this.messages = cache.get(var).get(this.arg(1));
+        final ConcurrentMap<Atom, SortedSet<Long>> cache =
+            index.get(String.format(EqualPred.MAP, var));
+        if (cache.containsKey(this.arg(1))) {
+            this.messages = cache.get(this.arg(1));
         } else {
             this.messages = new ConcurrentSkipListSet<Long>();
         }
@@ -143,18 +141,13 @@ public final class EqualPred extends AbstractVarargPred {
      */
     private static Set<Long> var(final Index index,
         final VariableAtom var, final Atom atom) {
-        // @checkstyle LineLength (1 line)
-        final ConcurrentMap<VariableAtom, ConcurrentMap<Atom, SortedSet<Long>>> cache =
-            index.get(EqualPred.MAP);
+        final ConcurrentMap<Atom, SortedSet<Long>> cache =
+            index.get(String.format(EqualPred.MAP, var));
         cache.putIfAbsent(
-            var,
-            new ConcurrentHashMap<Atom, SortedSet<Long>>()
-        );
-        cache.get(var).putIfAbsent(
             atom,
             new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
         );
-        return cache.get(var).get(atom);
+        return cache.get(atom);
     }
 
 }

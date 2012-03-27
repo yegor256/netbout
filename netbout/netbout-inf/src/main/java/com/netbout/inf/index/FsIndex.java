@@ -87,7 +87,13 @@ public final class FsIndex implements Index {
     @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d maps\n", this.maps.size()))
+        text.append(
+            String.format(
+                "%d maps: %[list]s\n",
+                this.maps.size(),
+                this.maps.keySet()
+            )
+        )
             .append(
                 String.format(
                     "Size: %d bytes\n",

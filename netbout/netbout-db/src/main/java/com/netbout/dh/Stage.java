@@ -89,6 +89,7 @@ public final class Stage {
             "SELECT COUNT(*) FROM helper",
             "SELECT COUNT(*) FROM identity",
             "SELECT COUNT(*) FROM invoice",
+            "SELECT COUNT(*) FROM message",
             "SELECT COUNT(*) FROM namespace",
             "SELECT COUNT(*) FROM seen",
             "SELECT * FROM invoice ORDER BY `day` DESC LIMIT 5",
