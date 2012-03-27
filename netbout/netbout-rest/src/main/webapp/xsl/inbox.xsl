@@ -128,32 +128,28 @@
                     </ul>
                 </xsl:if>
                 <xsl:if test="count(/page/bouts/bout) &gt; 0">
-                    <nav>
-                        <ul class="bouts">
-                            <xsl:for-each select="/page/bouts/bout">
-                                <xsl:apply-templates select="." />
-                            </xsl:for-each>
-                        </ul>
-                    </nav>
+                    <ul class="bouts">
+                        <xsl:for-each select="/page/bouts/bout">
+                            <xsl:apply-templates select="." />
+                        </xsl:for-each>
+                    </ul>
                 </xsl:if>
                 <xsl:if test="/page/periods[count(link) &gt; 0]">
-                    <nav>
-                        <ul class="periods">
-                            <xsl:for-each select="/page/periods/link">
-                                <li>
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="@href"/>
-                                        </xsl:attribute>
-                                        <xsl:value-of select="title" />
-                                        <xsl:if test="@rel='earliest'">
-                                            <xsl:text>...</xsl:text>
-                                        </xsl:if>
-                                    </a>
-                                </li>
-                            </xsl:for-each>
-                        </ul>
-                    </nav>
+                    <ul class="periods">
+                        <xsl:for-each select="/page/periods/link">
+                            <li>
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="@href"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="title" />
+                                    <xsl:if test="@rel='earliest'">
+                                        <xsl:text>...</xsl:text>
+                                    </xsl:if>
+                                </a>
+                            </li>
+                        </xsl:for-each>
+                    </ul>
                 </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
@@ -197,45 +193,56 @@
                 </xsl:if>
             </h1>
             <xsl:apply-templates select="participants" />
-            <xsl:if test="bundled">
-                <nav class="bundled">
-                    <xsl:for-each select="bundled/link[@rel='bout']">
-                        <xsl:if test="position() &gt; 1">
-                            <span><xsl:text>; </xsl:text></span>
-                        </xsl:if>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="@href"/>
-                            </xsl:attribute>
-                            <xsl:value-of select="number" />
-                        </a>
-                        <span>
-                            <xsl:text>: </xsl:text>
-                            <xsl:choose>
-                                <xsl:when test="title = ''">
-                                    <xsl:text>(</xsl:text>
-                                    <xsl:value-of select="$TEXTS/no.title"/>
-                                    <xsl:text>)</xsl:text>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="title" />
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </span>
-                    </xsl:for-each>
-                    <xsl:if test="bundled/link[@rel='all']">
-                        <span><xsl:text>; </xsl:text></span>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="bundled/link[@rel='all']/@href"/>
-                            </xsl:attribute>
-                            <xsl:value-of select="$TEXTS/all.of.them"/>
-                            <xsl:text>...</xsl:text>
-                        </a>
-                    </xsl:if>
-                </nav>
-            </xsl:if>
+            <xsl:apply-templates select="bundled" />
         </li>
+    </xsl:template>
+
+    <xsl:template match="bundled">
+        <div class="bundled">
+            <xsl:for-each select="link[@rel='bout']">
+                <xsl:if test="position() &gt; 1">
+                    <span><xsl:text>; </xsl:text></span>
+                </xsl:if>
+                <a>
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="@href"/>
+                    </xsl:attribute>
+                    <xsl:value-of select="number" />
+                    <xsl:if test="unseen &gt; 0">
+                        <xsl:text> (</xsl:text>
+                        <span class="red">
+                            <xsl:value-of select="unseen" />
+                            <xsl:text> </xsl:text>
+                            <xsl:value-of select="$TEXTS/new.messages"/>
+                        </span>
+                        <xsl:text>)</xsl:text>
+                    </xsl:if>
+                </a>
+                <span>
+                    <xsl:text>: </xsl:text>
+                    <xsl:choose>
+                        <xsl:when test="title = ''">
+                            <xsl:text>(</xsl:text>
+                            <xsl:value-of select="$TEXTS/no.title"/>
+                            <xsl:text>)</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="title" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </span>
+            </xsl:for-each>
+            <xsl:if test="bundled/link[@rel='all']">
+                <span><xsl:text>; </xsl:text></span>
+                <a>
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="bundled/link[@rel='all']/@href"/>
+                    </xsl:attribute>
+                    <xsl:value-of select="$TEXTS/all.of.them"/>
+                    <xsl:text>...</xsl:text>
+                </a>
+            </xsl:if>
+        </div>
     </xsl:template>
 
 </xsl:stylesheet>

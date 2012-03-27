@@ -232,14 +232,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 Mux.this.add(task);
                 Logger.warn(
                     this,
-                    "#run('%s'): resubmitted because of %[type]s: '%s'",
-                    task,
-                    ex,
-                    ex.getMessage()
-                );
-                Logger.debug(
-                    this,
-                    "#run('%s'): resubmit because of:\n%[exception]s",
+                    "#run('%s'): resubmitted because of: %[exception]s",
                     task,
                     ex
                 );

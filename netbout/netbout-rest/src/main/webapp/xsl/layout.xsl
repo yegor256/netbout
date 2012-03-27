@@ -190,7 +190,7 @@
                 </xsl:if>
             </div>
             <xsl:if test="identity">
-                <div id="right" role="navigation">
+                <div id="right">
                     <ul>
                         <li>
                             <img id="photo">
