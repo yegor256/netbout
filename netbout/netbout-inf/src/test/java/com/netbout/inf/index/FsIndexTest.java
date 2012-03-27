@@ -57,4 +57,16 @@ public final class FsIndexTest {
         );
     }
 
+    /**
+     * FsIndex can return statistics.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void producesStatisticsAsText() throws Exception {
+        MatcherAssert.assertThat(
+            new FsIndex().statistics(),
+            Matchers.notNullValue()
+        );
+    }
+
 }
