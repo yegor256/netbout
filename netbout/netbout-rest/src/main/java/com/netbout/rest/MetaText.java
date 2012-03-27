@@ -166,6 +166,9 @@ public final class MetaText {
         String out();
     }
 
+    /**
+     * This class is mutable and NOT thread-safe.
+     */
     private abstract static class AbstractPar implements MetaText.Par {
         /**
          * Regular expressions.
@@ -192,6 +195,10 @@ public final class MetaText {
          */
         private transient int mistakes;
         /**
+         * Current line is visible?
+         */
+        private transient boolean visible;
+        /**
          * Public ctor.
          * @param map Map of regexs
          */
@@ -204,28 +211,13 @@ public final class MetaText {
         @Override
         public void push(final String line) {
             final String trimmed = line.trim();
-            boolean append = true;
-            if ("{{{".equals(trimmed)) {
-                if (!this.pre && this.pos == 0) {
-                    this.pre = true;
-                    append = false;
-                } else {
-                    ++this.mistakes;
-                }
-            }
-            if ("}}}".equals(trimmed) && this.pre) {
-                if (this.mistakes == 0) {
-                    this.closed = true;
-                    append = false;
-                } else {
-                    --this.mistakes;
-                }
-            }
+            this.visible = true;
+            this.brackets(trimmed);
             if (trimmed.isEmpty() && !this.pre && this.pos != 0) {
                 this.closed = true;
-                append = false;
+                this.visible = false;
             }
-            if (append) {
+            if (this.visible) {
                 this.append(line, trimmed);
             }
         }
@@ -304,6 +296,28 @@ public final class MetaText {
             } else if (!trimmed.isEmpty()) {
                 this.text.append(this.format(trimmed));
                 ++this.pos;
+            }
+        }
+        /**
+         * Catch brackets if they are there.
+         * @param trimmed The trimmed line
+         */
+        private void brackets(final String trimmed) {
+            if ("{{{".equals(trimmed)) {
+                if (!this.pre && this.pos == 0) {
+                    this.pre = true;
+                    this.visible = false;
+                } else {
+                    ++this.mistakes;
+                }
+            }
+            if ("}}}".equals(trimmed) && this.pre) {
+                if (this.mistakes == 0) {
+                    this.closed = true;
+                    this.visible = false;
+                } else {
+                    --this.mistakes;
+                }
             }
         }
     }
