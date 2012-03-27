@@ -26,70 +26,37 @@
  */
 package com.netbout.rest.meta;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-
 /**
- * Text with meta commands.
- *
- * <p>The class is immutable and thread-safe.
+ * Par.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MetaText {
+interface Par {
 
     /**
-     * The source text.
+     * Add new line to it.
+     * @param line The line of text
      */
-    private final transient String text;
+    void push(String line);
 
     /**
-     * Public ctor.
-     * @param txt The raw source text, with meta commands
+     * Is it ready?
+     * @return TRUE if paragraph is closed
      */
-    public MetaText(final String txt) {
-        this.text = txt;
-    }
+    boolean ready();
 
     /**
-     * Convert it to HTML.
-     * @return The HTML
+     * Is it empty?
+     * @return TRUE if paragraph is empty
      */
-    public String html() {
-        return StringUtils.join(this.paragraphs(new HtmlPar()), "");
-    }
+    boolean isEmpty();
 
     /**
-     * Convert it to plain text.
-     * @return The plain text
+     * Get paragraph out of it.
+     * @return The text
      */
-    public String plain() {
-        return StringUtils.join(this.paragraphs(new PlainPar()), "\n\n");
-    }
-
-    /**
-     * Break text down do paragraphs.
-     * @param par Paragraph processor
-     * @return List of paragraphs found
-     */
-    private List<String> paragraphs(final Par par) {
-        final String[] lines =
-            StringUtils.splitPreserveAllTokens(this.text, "\n");
-        final List<String> pars = new LinkedList<String>();
-        for (String line : lines) {
-            par.push(line);
-            if (par.ready()) {
-                pars.add(par.out());
-            }
-        }
-        if (!par.isEmpty()) {
-            pars.add(par.out());
-        }
-        return pars;
-    }
+    String out();
 
 }
+

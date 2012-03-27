@@ -33,63 +33,48 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Text with meta commands.
+ * Html PAR.
  *
- * <p>The class is immutable and thread-safe.
+ * <p>The class is mutable and NOT thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MetaText {
-
-    /**
-     * The source text.
-     */
-    private final transient String text;
+final class HtmlPar extends AbstractPar {
 
     /**
      * Public ctor.
-     * @param txt The raw source text, with meta commands
      */
-    public MetaText(final String txt) {
-        this.text = txt;
+    public HtmlPar() {
+        super(
+            ArrayUtils.toMap(
+                new Object[][] {
+                    // @checkstyle MultipleStringLiterals (5 lines)
+                    // @checkstyle LineLength (1 line)
+                    {"\\[(.*?)\\]\\((http://.*?)\\)", "<a href='$2'>$1</a>"},
+                    {"\\*+(.*?)\\*+", "<b>$1</b>"},
+                    {"`(.*?)`", "<span class='tt'>$1</span>"},
+                    {"_+(.*?)_+", "<i>$1</i>"},
+                }
+            )
+        );
     }
-
+    
     /**
-     * Convert it to HTML.
-     * @return The HTML
-     */
-    public String html() {
-        return StringUtils.join(this.paragraphs(new HtmlPar()), "");
-    }
-
-    /**
-     * Convert it to plain text.
-     * @return The plain text
-     */
-    public String plain() {
-        return StringUtils.join(this.paragraphs(new PlainPar()), "\n\n");
-    }
-
-    /**
-     * Break text down do paragraphs.
-     * @param par Paragraph processor
-     * @return List of paragraphs found
-     */
-    private List<String> paragraphs(final Par par) {
-        final String[] lines =
-            StringUtils.splitPreserveAllTokens(this.text, "\n");
-        final List<String> pars = new LinkedList<String>();
-        for (String line : lines) {
-            par.push(line);
-            if (par.ready()) {
-                pars.add(par.out());
-            }
+     * {@inheritDoc}
+     */            
+    @Override
+    protected String pack() {
+        String out;
+        if (this.isPre()) {
+            out = String.format(
+                "<p class='fixed'>%s</p>",
+                this.getText()
+            );
+        } else {
+            out = String.format("<p>%s</p>", this.getText());
         }
-        if (!par.isEmpty()) {
-            pars.add(par.out());
-        }
-        return pars;
+        return out;
     }
 
 }

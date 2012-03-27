@@ -33,63 +33,38 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Text with meta commands.
+ * Plain PAR.
  *
- * <p>The class is immutable and thread-safe.
+ * <p>The class is mutable and NOT thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MetaText {
-
-    /**
-     * The source text.
-     */
-    private final transient String text;
+final class PlainPar extends AbstractPar {
 
     /**
      * Public ctor.
-     * @param txt The raw source text, with meta commands
      */
-    public MetaText(final String txt) {
-        this.text = txt;
+    public PlainPar() {
+        super(
+            ArrayUtils.toMap(
+                new Object[][] {
+                    // @checkstyle MultipleStringLiterals (4 lines)
+                    {"\\[(.*?)\\]\\((http://.*?)\\)", "$1 ($2)"},
+                    {"\\*\\*(.*?)\\*\\*", "$1"},
+                    {"`(.*?)`", "$1"},
+                    {"_(.*?)_", "$1"},
+                }
+            )
+        );
     }
 
     /**
-     * Convert it to HTML.
-     * @return The HTML
+     * {@inheritDoc}
      */
-    public String html() {
-        return StringUtils.join(this.paragraphs(new HtmlPar()), "");
-    }
-
-    /**
-     * Convert it to plain text.
-     * @return The plain text
-     */
-    public String plain() {
-        return StringUtils.join(this.paragraphs(new PlainPar()), "\n\n");
-    }
-
-    /**
-     * Break text down do paragraphs.
-     * @param par Paragraph processor
-     * @return List of paragraphs found
-     */
-    private List<String> paragraphs(final Par par) {
-        final String[] lines =
-            StringUtils.splitPreserveAllTokens(this.text, "\n");
-        final List<String> pars = new LinkedList<String>();
-        for (String line : lines) {
-            par.push(line);
-            if (par.ready()) {
-                pars.add(par.out());
-            }
-        }
-        if (!par.isEmpty()) {
-            pars.add(par.out());
-        }
-        return pars;
+    @Override
+    protected String pack() {
+        return this.getText();
     }
 
 }
