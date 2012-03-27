@@ -80,13 +80,15 @@ abstract class AbstractPar implements Par {
      */
     @Override
     public void push(final String line) {
-        final String trimmed = line.replaceAll("\\p{Cntrl}", "");
-        if (trimmed.startsWith("    ") && this.pos == 0) {
-            this.pre = true;
-        } else if (trimmed.isEmpty() && this.pos != 0) {
+        final String trimmed = line.replaceAll("\\p{Cntrl}+", "");
+        if (trimmed.isEmpty() && this.pos != 0) {
             this.closed = true;
+        } else {
+            if (trimmed.startsWith("    ") && this.pos == 0) {
+                this.pre = true;
+            }
+            this.append(trimmed);
         }
-        this.append(trimmed);
     }
 
     /**
