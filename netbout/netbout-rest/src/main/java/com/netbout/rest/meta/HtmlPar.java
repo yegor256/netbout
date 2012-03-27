@@ -26,11 +26,7 @@
  */
 package com.netbout.rest.meta;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Html PAR.
@@ -46,18 +42,13 @@ final class HtmlPar extends AbstractPar {
      * Public ctor.
      */
     public HtmlPar() {
-        super(
-            ArrayUtils.toMap(
-                new Object[][] {
-                    // @checkstyle MultipleStringLiterals (5 lines)
-                    // @checkstyle LineLength (1 line)
-                    {"\\[(.+?)\\]\\((http://.+?)\\)", "<a href='$2'>$1</a>"},
-                    {"\\*+(.+?)\\*+", "<b>$1</b>"},
-                    {"`(.+?)`", "<span class='tt'>$1</span>"},
-                    {"_+(.+?)_+", "<i>$1</i>"},
-                }
-            )
-        );
+        super(ArrayUtils.toMap(new Object[][] {
+            // @checkstyle MultipleStringLiterals (5 lines)
+            {"\\[(.+?)\\]\\((http://.+?)\\)", "<a href='$2'>$1</a>"},
+            {"\\*+(.+?)\\*+", "<b>$1</b>"},
+            {"`(.+?)`", "<span class='tt'>$1</span>"},
+            {"_+(.+?)_+", "<i>$1</i>"},
+        }));
     }
 
     /**

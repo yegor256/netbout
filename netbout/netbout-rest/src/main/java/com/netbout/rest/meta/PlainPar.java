@@ -26,11 +26,7 @@
  */
 package com.netbout.rest.meta;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Plain PAR.
@@ -46,17 +42,13 @@ final class PlainPar extends AbstractPar {
      * Public ctor.
      */
     public PlainPar() {
-        super(
-            ArrayUtils.toMap(
-                new Object[][] {
-                    // @checkstyle MultipleStringLiterals (4 lines)
-                    {"\\[(.+?)\\]\\((http://.+?)\\)", "$1 ($2)"},
-                    {"\\*+(.+?)\\*+", "$1"},
-                    {"`(.+?)`", "$1"},
-                    {"_+(.*?)_+", "$1"},
-                }
-            )
-        );
+        super(ArrayUtils.toMap(new Object[][] {
+            // @checkstyle MultipleStringLiterals (4 lines)
+            {"\\[(.+?)\\]\\((http://.+?)\\)", "$1 ($2)"},
+            {"\\*+(.+?)\\*+", "$1"},
+            {"`(.+?)`", "$1"},
+            {"_+(.*?)_+", "$1"},
+        }));
     }
 
     /**
