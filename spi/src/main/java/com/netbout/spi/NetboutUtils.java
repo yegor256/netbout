@@ -122,6 +122,24 @@ public final class NetboutUtils {
     }
 
     /**
+     * Get total number of unseen messages in this bout.
+     * @param bout The bout to check
+     * @return Total number of messages
+     * @todo #332 This implementation is very ineffective and should be
+     *  changed. We should introduce a new predicate in INF and use it.
+     *  Something like "(unseen-by ?)".
+     */
+    public static int unreadMessages(final Bout bout) {
+        int count = 0;
+        for (Message msg : bout.messages("")) {
+            if (!msg.seen()) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    /**
      * Find a person in the bout, if he's there (otherwise throw a runtime
      * exception).
      * @param identity The person to find

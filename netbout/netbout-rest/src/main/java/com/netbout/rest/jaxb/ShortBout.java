@@ -166,14 +166,8 @@ public final class ShortBout {
      * @return Total number of messages which haven't been seen yet
      */
     @XmlAttribute(name = "unseen")
-    public Integer getTotalNumberOfUnseenMessages() {
-        Integer count = 0;
-        for (Message msg : this.bout.messages("")) {
-            if (!msg.seen()) {
-                count += 1;
-            }
-        }
-        return count;
+    public int getTotalNumberOfUnseenMessages() {
+        return NetboutUtils.unreadMessages(this.bout);
     }
 
     /**
@@ -201,6 +195,10 @@ public final class ShortBout {
             );
             link.add(new JaxbBundle("number", item.number()).element());
             link.add(new JaxbBundle("title", item.title()).element());
+            link.add(
+                new JaxbBundle("unseen", NetboutUtils.unreadMessages(bout))
+                    .element()
+            );
             links.add(link);
         }
         if (max == 0) {
