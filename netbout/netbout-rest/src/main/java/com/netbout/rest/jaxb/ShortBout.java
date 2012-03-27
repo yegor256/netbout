@@ -29,7 +29,6 @@ package com.netbout.rest.jaxb;
 import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
@@ -196,7 +195,7 @@ public final class ShortBout {
             link.add(new JaxbBundle("number", item.number()).element());
             link.add(new JaxbBundle("title", item.title()).element());
             link.add(
-                new JaxbBundle("unseen", NetboutUtils.unreadMessages(bout))
+                new JaxbBundle("unseen", NetboutUtils.unreadMessages(item))
                     .element()
             );
             links.add(link);
