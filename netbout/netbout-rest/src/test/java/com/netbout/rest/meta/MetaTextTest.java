@@ -48,7 +48,7 @@ public final class MetaTextTest {
     @Test
     public void formatsTextToHtml() throws Exception {
         final MetaText meta = new MetaText(
-            "**hi**, _dude_!\r\n     b**o\n    \n    \n    o**m\n"
+            "**hi**, _dude_!\r\n\n     b**o\n    \n    \n    o**m\n"
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(String.format("<x>%s</x>", meta.html())),
@@ -72,7 +72,7 @@ public final class MetaTextTest {
     @Test
     public void formatsMetaTextToPlain() throws Exception {
         final MetaText meta = new MetaText(
-            "**hi**, _buddy_!\r\n     b**o\n    \n    \n    o**m\n"
+            "**hi**, _buddy_!\r\n\n     b**o\n    \n    \n    o**m\n"
         );
         MatcherAssert.assertThat(
             meta.plain(),

@@ -51,18 +51,18 @@ final class HtmlPar extends AbstractPar {
                 new Object[][] {
                     // @checkstyle MultipleStringLiterals (5 lines)
                     // @checkstyle LineLength (1 line)
-                    {"\\[(.*?)\\]\\((http://.*?)\\)", "<a href='$2'>$1</a>"},
-                    {"\\*+(.*?)\\*+", "<b>$1</b>"},
-                    {"`(.*?)`", "<span class='tt'>$1</span>"},
-                    {"_+(.*?)_+", "<i>$1</i>"},
+                    {"\\[(.+?)\\]\\((http://.+?)\\)", "<a href='$2'>$1</a>"},
+                    {"\\*+(.+?)\\*+", "<b>$1</b>"},
+                    {"`(.+?)`", "<span class='tt'>$1</span>"},
+                    {"_+(.+?)_+", "<i>$1</i>"},
                 }
             )
         );
     }
-    
+
     /**
      * {@inheritDoc}
-     */            
+     */
     @Override
     protected String pack() {
         String out;

@@ -43,6 +43,11 @@ import org.apache.commons.lang.StringUtils;
 abstract class AbstractPar implements Par {
 
     /**
+     * Indentation prefix.
+     */
+    private static final String PREFIX = "    ";
+
+    /**
      * Regular expressions.
      */
     private final transient Map<String, String> regexs;
@@ -81,10 +86,11 @@ abstract class AbstractPar implements Par {
     @Override
     public void push(final String line) {
         final String trimmed = line.replaceAll("\\p{Cntrl}+", "");
-        if (trimmed.isEmpty() && this.pos != 0) {
+        if ((trimmed.isEmpty() && this.pos != 0)
+            || (this.pre && !trimmed.startsWith(this.PREFIX))) {
             this.closed = true;
         } else {
-            if (trimmed.startsWith("    ") && this.pos == 0) {
+            if (trimmed.startsWith(this.PREFIX) && this.pos == 0) {
                 this.pre = true;
             }
             this.append(trimmed);
@@ -167,7 +173,7 @@ abstract class AbstractPar implements Par {
             this.text.append('\n');
         }
         if (this.pre) {
-            this.text.append(line.substring(4));
+            this.text.append(line.substring(this.PREFIX.length()));
             ++this.pos;
         } else {
             final String trimmed = line.trim();

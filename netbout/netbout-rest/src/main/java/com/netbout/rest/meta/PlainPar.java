@@ -50,10 +50,10 @@ final class PlainPar extends AbstractPar {
             ArrayUtils.toMap(
                 new Object[][] {
                     // @checkstyle MultipleStringLiterals (4 lines)
-                    {"\\[(.*?)\\]\\((http://.*?)\\)", "$1 ($2)"},
-                    {"\\*\\*(.*?)\\*\\*", "$1"},
-                    {"`(.*?)`", "$1"},
-                    {"_(.*?)_", "$1"},
+                    {"\\[(.+?)\\]\\((http://.+?)\\)", "$1 ($2)"},
+                    {"\\*+(.+?)\\*+", "$1"},
+                    {"`(.+?)`", "$1"},
+                    {"_+(.*?)_+", "$1"},
                 }
             )
         );
