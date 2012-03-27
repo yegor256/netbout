@@ -310,7 +310,7 @@ public abstract class AbstractPage implements Page {
      * @return The IP address
      */
     @XmlAttribute
-    public final Date getIp() {
+    public final String getIp() {
         return this.home.httpServletRequest().getLocalAddr();
     }
 
