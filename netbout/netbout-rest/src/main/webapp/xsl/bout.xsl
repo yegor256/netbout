@@ -91,10 +91,15 @@
     <xsl:template name="content">
         <h1>
             <span id="bout-number" style="display: none;"><xsl:value-of select="/page/bout/number"/></span>
-            <span class="num">
-                <xsl:text>#</xsl:text>
-                <xsl:value-of select="/page/bout/number"/>
-            </span>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                </xsl:attribute>
+                <span class="num">
+                    <xsl:text>#</xsl:text>
+                    <xsl:value-of select="/page/bout/number"/>
+                </span>
+            </a>
             <span class="title">
                 <xsl:if test="$participant/@confirmed = 'true'">
                     <xsl:attribute name="contenteditable">

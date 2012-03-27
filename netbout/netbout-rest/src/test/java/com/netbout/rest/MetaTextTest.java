@@ -133,4 +133,19 @@ public final class MetaTextTest {
         }
     }
 
+    /**
+     * MetaText can format a complex long text.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void formatsComplexMultiPreText() throws Exception {
+        final MetaText meta = new MetaText(
+            "{{{\nhi\n{{{\nboom\n}}}\n\n}}}\n"
+        );
+        MatcherAssert.assertThat(
+            meta.plain(),
+            Matchers.equalTo("hi\n{{{\nboom\n}}}\n")
+        );
+    }
+
 }
