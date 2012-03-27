@@ -27,7 +27,7 @@
 package com.netbout.notifiers.email;
 
 import com.netbout.hub.Hub;
-import com.netbout.rest.MetaText;
+import com.netbout.rest.meta.MetaText;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;

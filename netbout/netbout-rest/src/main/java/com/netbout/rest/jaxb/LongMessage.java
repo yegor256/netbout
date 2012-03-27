@@ -27,7 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
-import com.netbout.rest.MetaText;
+import com.netbout.rest.meta.MetaText;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;

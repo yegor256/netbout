@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.meta;
 
 import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
@@ -48,7 +48,7 @@ public final class MetaTextTest {
     @Test
     public void formatsTextToHtml() throws Exception {
         final MetaText meta = new MetaText(
-            "**hi**, _dude_!\r\n\n{{{\r\n b**o\n   \n\no**m\n}}}"
+            "**hi**, _dude_!\r\n\n     b**o\n    \n    \n    o**m\n"
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(String.format("<x>%s</x>", meta.html())),
@@ -58,7 +58,7 @@ public final class MetaTextTest {
                     XhtmlMatchers.hasXPath("/x/p/b[.='hi']"),
                     XhtmlMatchers.hasXPath("/x/p/i[.='dude']"),
                     XhtmlMatchers.hasXPath(
-                        "/x/p[@class='fixed' and .=' b**o\n   \n\no**m']"
+                        "/x/p[@class='fixed' and .=' b**o\n\n\no**m']"
                     )
                 )
             )
@@ -72,11 +72,11 @@ public final class MetaTextTest {
     @Test
     public void formatsMetaTextToPlain() throws Exception {
         final MetaText meta = new MetaText(
-            "**hi**, _buddy_!\r\n\n{{{\r\n b**o\n   \n\no**m\n}}}"
+            "**hi**, _buddy_!\r\n\n     b**o\n    \n    \n    o**m\n"
         );
         MatcherAssert.assertThat(
             meta.plain(),
-            Matchers.equalTo("hi, buddy!\n\n b**o\n   \n\no**m")
+            Matchers.equalTo("hi, buddy!\n\n b**o\n\n\no**m")
         );
     }
 
@@ -88,12 +88,11 @@ public final class MetaTextTest {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void handlesBrokenFormattingGracefully() throws Exception {
         final String[] texts = new String[] {
-            "}}}\n ",
-            "{{{",
+            "**\n ",
+            "__",
             "",
             "**hi there! {{{",
-            "{{{\n{{{\n{{{\n}}}\n",
-            "}}}\n}}}\n{{{\n}}}\n}}}\n",
+            "    \n  \n      \n     \n",
         };
         for (String text : texts) {
             MatcherAssert.assertThat(
@@ -131,21 +130,6 @@ public final class MetaTextTest {
                 Matchers.equalTo(entry.getValue())
             );
         }
-    }
-
-    /**
-     * MetaText can format a complex long text.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void formatsComplexMultiPreText() throws Exception {
-        final MetaText meta = new MetaText(
-            "{{{\nhi\n{{{\nboom\n}}}\n\n}}}\n"
-        );
-        MatcherAssert.assertThat(
-            meta.plain(),
-            Matchers.equalTo("hi\n{{{\nboom\n}}}\n")
-        );
     }
 
 }
