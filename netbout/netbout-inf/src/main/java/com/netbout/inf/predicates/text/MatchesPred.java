@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import org.apache.commons.collections.CollectionUtils;
@@ -68,7 +67,8 @@ public final class MatchesPred extends AbstractVarargPred {
     /**
      * MAP ID.
      */
-    private static final String MAP = MatchesPred.class.getName();
+    private static final String MAP =
+        String.format("%s:%%s", MatchesPred.class.getName());
 
     /**
      * Compound predicate.
@@ -82,9 +82,6 @@ public final class MatchesPred extends AbstractVarargPred {
      */
     public MatchesPred(final List<Atom> args, final Index index) {
         super(args, index);
-        // @checkstyle LineLength (1 line)
-        final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> cache =
-            index.get(MatchesPred.MAP);
         final Set<String> words = this.words(this.arg(0).value().toString());
         if (words.size() > 1) {
             final List<Atom> atoms = new ArrayList<Atom>(words.size());
@@ -105,6 +102,8 @@ public final class MatchesPred extends AbstractVarargPred {
         } else if (words.isEmpty()) {
             this.predicate = new TruePred();
         } else {
+            final ConcurrentMap<String, SortedSet<Long>> cache =
+                index.get(String.format(MatchesPred.MAP, this.arg(1)));
             this.predicate = this.byWord(cache, words.iterator().next());
         }
     }
@@ -164,23 +163,17 @@ public final class MatchesPred extends AbstractVarargPred {
      * @param cache The cache to use
      * @param word The word
      * @return The predicate
-     * @checkstyle LineLength (2 lines)
      */
-    private Predicate byWord(final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> cache,
+    private Predicate byWord(final ConcurrentMap<String, SortedSet<Long>> cache,
         final String word) {
         Predicate pred = null;
-        if (cache.containsKey(this.arg(1))) {
-            final ConcurrentMap<String, SortedSet<Long>> map =
-                cache.get(this.arg(1));
-            if (map.containsKey(word)) {
-                pred = new MatchingPred(map.get(word));
-            } else {
-                for (String keyword : map.keySet()) {
-                    // @checkstyle NestedIfDepth (4 lines)
-                    if (keyword.contains(word)) {
-                        pred = new MatchingPred(map.get(keyword));
-                        break;
-                    }
+        if (cache.containsKey(word)) {
+            pred = new MatchingPred(cache.get(word));
+        } else {
+            for (String keyword : cache.keySet()) {
+                if (keyword.contains(word)) {
+                    pred = new MatchingPred(cache.get(keyword));
+                    break;
                 }
             }
         }
@@ -200,19 +193,14 @@ public final class MatchesPred extends AbstractVarargPred {
      */
     private static void extract(final Index index, final VariableAtom var,
         final String text, final Long msg) {
-        // @checkstyle LineLength (1 line)
-        final ConcurrentMap<VariableAtom, ConcurrentMap<String, SortedSet<Long>>> cache =
-            (ConcurrentMap) index.get(MatchesPred.MAP);
+        final ConcurrentMap<String, SortedSet<Long>> cache =
+            index.get(String.format(MatchesPred.MAP, var));
         for (String word : MatchesPred.words(text)) {
             cache.putIfAbsent(
-                var,
-                new ConcurrentHashMap<String, SortedSet<Long>>()
-            );
-            cache.get(var).putIfAbsent(
                 word,
                 new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
             );
-            cache.get(var).get(word).add(msg);
+            cache.get(word).add(msg);
         }
     }
 
