@@ -88,14 +88,14 @@ public final class FsIndex implements Index {
     public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append(
-            String.format(
+            Logger.format(
                 "%d maps: %[list]s\n",
                 this.maps.size(),
                 this.maps.keySet()
             )
         )
             .append(
-                String.format(
+                Logger.format(
                     "Size: %d bytes\n",
                     SerializationUtils.serialize((Serializable) this.maps)
                         .length

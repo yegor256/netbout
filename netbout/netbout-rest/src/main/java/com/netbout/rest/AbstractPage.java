@@ -306,6 +306,15 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
+     * Get IP address of the server.
+     * @return The IP address
+     */
+    @XmlAttribute
+    public final String getIp() {
+        return this.home.httpServletRequest().getLocalAddr();
+    }
+
+    /**
      * Is this page searcheable?
      * @return Yes or no
      */
