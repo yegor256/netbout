@@ -243,7 +243,17 @@ public final class LongBout {
         ).setQueryParam(BoutRs.PERIOD_PARAM);
         final List<LongMessage> msgs = new LinkedList<LongMessage>();
         for (Message msg : discussion) {
-            boolean show;
+            Boolean show = this.hub.make("is-message-visible")
+                .synchronously()
+                .inBout(this.bout)
+                .arg(this.bout.number())
+                .arg(msg.number())
+                .arg(msg.text())
+                .asDefault(true)
+                .exec();
+            if (!show) {
+                continue;
+            }
             try {
                 show = pbld.show(msg.date());
             } catch (com.netbout.rest.period.PeriodViolationException ex) {
