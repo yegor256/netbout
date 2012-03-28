@@ -45,7 +45,7 @@
         <title>
             <xsl:value-of select="$TEXTS/inbox"/>
             <xsl:variable name="unread">
-                <xsl:value-of select="count(/page/bouts/bout[@unseen &gt; 0])"/>
+                <xsl:value-of select="count(/page/bouts/bout[@unseen = 'true'])"/>
             </xsl:variable>
             <xsl:if test="$unread &gt; 0">
                 <xsl:text> (</xsl:text>
@@ -184,9 +184,8 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </a>
-                <xsl:if test="@unseen &gt; 0">
+                <xsl:if test="@unseen = 'true'">
                     <span class="new">
-                        <xsl:value-of select="@unseen"/>
                         <xsl:text> </xsl:text>
                         <xsl:value-of select="$TEXTS/new.messages"/>
                     </span>
@@ -207,16 +206,14 @@
                     <xsl:attribute name="href">
                         <xsl:value-of select="@href"/>
                     </xsl:attribute>
-                    <xsl:value-of select="number" />
-                    <xsl:if test="unseen &gt; 0">
-                        <xsl:text> (</xsl:text>
-                        <span class="red">
-                            <xsl:value-of select="unseen" />
-                            <xsl:text> </xsl:text>
-                            <xsl:value-of select="$TEXTS/new.messages"/>
-                        </span>
-                        <xsl:text>)</xsl:text>
-                    </xsl:if>
+                    <span>
+                        <xsl:if test="unseen = 'true'">
+                            <xsl:attribute name="class">
+                                <xsl:text>red</xsl:text>
+                            </xsl:attribute>
+                        </xsl:if>
+                        <xsl:value-of select="number" />
+                    </span>
                 </a>
                 <span>
                     <xsl:text>: </xsl:text>
