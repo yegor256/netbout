@@ -165,7 +165,7 @@ public final class ShortBout {
      * @return TRUE if there are some unseen messages inside
      */
     @XmlAttribute
-    public boolean getUnseen() {
+    public boolean isUnseen() {
         return NetboutUtils.isUnread(this.bout);
     }
 
