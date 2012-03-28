@@ -161,12 +161,12 @@ public final class ShortBout {
     }
 
     /**
-     * How many UN-seen messages are there?
-     * @return Total number of messages which haven't been seen yet
+     * This bout has any unseen messsages?
+     * @return TRUE if there are some unseen messages inside
      */
-    @XmlAttribute(name = "unseen")
-    public int getTotalNumberOfUnseenMessages() {
-        return NetboutUtils.unreadMessages(this.bout);
+    @XmlAttribute
+    public boolean getUnseen() {
+        return NetboutUtils.isUnread(this.bout);
     }
 
     /**
@@ -195,7 +195,7 @@ public final class ShortBout {
             link.add(new JaxbBundle("number", item.number()).element());
             link.add(new JaxbBundle("title", item.title()).element());
             link.add(
-                new JaxbBundle("unseen", NetboutUtils.unreadMessages(item))
+                new JaxbBundle("unseen", NetboutUtils.isUnread(item))
                     .element()
             );
             links.add(link);
