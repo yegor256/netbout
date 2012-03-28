@@ -411,6 +411,17 @@ public final class HubBout implements Bout {
                     )
                 );
             }
+            final String error = this.hub.make("pre-post-validate")
+                .synchronously()
+                .inBout(this)
+                .arg(this.number())
+                .arg(this.viewer.name())
+                .arg(text)
+                .asDefault("")
+                .exec();
+            if (!error.isEmpty()) {
+                throw new MessagePostException(error);
+            }
         }
     }
 
