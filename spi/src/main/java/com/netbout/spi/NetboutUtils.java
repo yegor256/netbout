@@ -122,21 +122,22 @@ public final class NetboutUtils {
     }
 
     /**
-     * Get total number of unseen messages in this bout.
+     * This bout has something unread?
      * @param bout The bout to check
-     * @return Total number of messages
+     * @return TRUE if this bout has some new messages
      * @todo #332 This implementation is very ineffective and should be
      *  changed. We should introduce a new predicate in INF and use it.
      *  Something like "(unseen-by ?)".
      */
-    public static int unreadMessages(final Bout bout) {
-        int count = 0;
+    public static boolean isUnread(final Bout bout) {
+        boolean unread = false;
         for (Message msg : bout.messages("")) {
             if (!msg.seen()) {
-                count += 1;
+                unread = true;
+                break;
             }
         }
-        return count;
+        return unread;
     }
 
     /**
