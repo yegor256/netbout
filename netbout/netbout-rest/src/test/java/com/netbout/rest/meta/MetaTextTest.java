@@ -132,4 +132,28 @@ public final class MetaTextTest {
         }
     }
 
+    /**
+     * MetaText can format bullets to HTML.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void formatsBulletsToHtml() throws Exception {
+        final MetaText meta = new MetaText(
+            "my list:\n\n* line one\n* line two\n\nnormal text now"
+        );
+        MatcherAssert.assertThat(
+            XhtmlConverter.the(String.format("<r>%s</r>", meta.html())),
+            Matchers.describedAs(
+                meta.html(),
+                Matchers.allOf(
+                    XhtmlMatchers.hasXPath("/r/p[.='my list:']"),
+                    XhtmlMatchers.hasXPath("/r/ul[count(li) = 2]"),
+                    XhtmlMatchers.hasXPath("/r/ul/li[.='line one']"),
+                    XhtmlMatchers.hasXPath("/r/ul/li[.='line two']"),
+                    XhtmlMatchers.hasXPath("/r/p[.='normal text now']")
+                )
+            )
+        );
+    }
+
 }

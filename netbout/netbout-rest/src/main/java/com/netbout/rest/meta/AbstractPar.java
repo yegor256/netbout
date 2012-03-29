@@ -64,6 +64,11 @@ abstract class AbstractPar implements Par {
     private transient boolean pre;
 
     /**
+     * Bulles mode is ON.
+     */
+    private transient boolean bullets;
+
+    /**
      * We're done with the paragraph?
      */
     private transient boolean closed;
@@ -88,6 +93,8 @@ abstract class AbstractPar implements Par {
         } else {
             if (trimmed.startsWith(this.PREFIX) && this.pos == 0) {
                 this.pre = true;
+            } else if (trimmed.startsWith("* ") && this.pos == 0) {
+                this.bullets = true;
             }
             this.append(trimmed);
         }
@@ -119,6 +126,7 @@ abstract class AbstractPar implements Par {
         this.pre = false;
         this.text.setLength(0);
         this.pos = 0;
+        this.bullets = false;
         return out;
     }
 
@@ -142,6 +150,14 @@ abstract class AbstractPar implements Par {
      */
     protected final boolean isPre() {
         return this.pre;
+    }
+
+    /**
+     * Is in BULLETS mode?
+     * @return True if yes
+     */
+    protected final boolean isBullets() {
+        return this.bullets;
     }
 
     /**
@@ -170,6 +186,9 @@ abstract class AbstractPar implements Par {
         }
         if (this.pre) {
             this.text.append(line.substring(this.PREFIX.length()));
+            ++this.pos;
+        } else if (this.bullets) {
+            this.text.append(line.substring(2));
             ++this.pos;
         } else {
             final String trimmed = line.trim();

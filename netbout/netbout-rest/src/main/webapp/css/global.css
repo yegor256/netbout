@@ -76,7 +76,6 @@ ol {
 .fixed,
 pre {
     font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
-    font-size: 90%;
     background-color: #f3f3f1;
 }
 
@@ -89,6 +88,7 @@ pre {
 /* fixed block */
 .fixed {
     white-space: pre;
+    font-size: 1.3em;
 }
 
 /* red text marker */
