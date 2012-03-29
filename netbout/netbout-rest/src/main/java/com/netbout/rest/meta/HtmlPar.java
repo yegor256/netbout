@@ -27,6 +27,7 @@
 package com.netbout.rest.meta;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Html PAR.
@@ -61,6 +62,11 @@ final class HtmlPar extends AbstractPar {
             out = String.format(
                 "<p class='fixed'>%s</p>",
                 this.getText()
+            );
+        } else if (this.isBullets()) {
+            out = String.format(
+                "<ul><li>%s</li></ul>",
+                StringUtils.join(this.getText().split("\n"), "</li><li>")
             );
         } else {
             out = String.format("<p>%s</p>", this.getText());

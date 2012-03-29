@@ -139,7 +139,7 @@ public final class MetaTextTest {
     @Test
     public void formatsBulletsToHtml() throws Exception {
         final MetaText meta = new MetaText(
-            "my list:\n* line one\n* line two\nnormal text now"
+            "my list:\n\n* line one\n* line two\n\nnormal text now"
         );
         MatcherAssert.assertThat(
             XhtmlConverter.the(String.format("<r>%s</r>", meta.html())),
