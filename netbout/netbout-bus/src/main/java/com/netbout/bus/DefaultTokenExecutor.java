@@ -102,7 +102,7 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
             }
         }
         this.helpers.put(identity, helper);
-        Logger.info(
+        Logger.debug(
             this,
             "#register(%s): registered (%d total now)",
             helper,

@@ -265,7 +265,7 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
         }
         this.all.remove(existing);
         this.save(new HelperIdentity((HubIdentity) identity, helper));
-        Logger.info(
+        Logger.debug(
             this,
             "#promote('%s', '%[type]s'): replaced existing identity (%[type]s)",
             identity.name(),

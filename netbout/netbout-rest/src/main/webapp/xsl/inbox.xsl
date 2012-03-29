@@ -163,6 +163,11 @@
             </xsl:attribute>
             <h1>
                 <span class="num">
+                    <xsl:if test="@unseen = 'true'">
+                        <xsl:attribute name="class">
+                            <xsl:text>red</xsl:text>
+                        </xsl:attribute>
+                    </xsl:if>
                     <xsl:text>#</xsl:text>
                     <xsl:value-of select="number" />
                 </span>
@@ -184,12 +189,6 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </a>
-                <xsl:if test="@unseen = 'true'">
-                    <span class="new">
-                        <xsl:text> </xsl:text>
-                        <xsl:value-of select="$TEXTS/new.messages"/>
-                    </span>
-                </xsl:if>
             </h1>
             <xsl:apply-templates select="participants" />
             <xsl:apply-templates select="bundled" />
