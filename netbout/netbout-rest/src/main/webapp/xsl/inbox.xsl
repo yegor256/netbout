@@ -162,12 +162,13 @@
                 <xsl:value-of select="number"/>
             </xsl:attribute>
             <h1>
-                <span class="num">
-                    <xsl:if test="@unseen = 'true'">
-                        <xsl:attribute name="class">
-                            <xsl:text>red</xsl:text>
-                        </xsl:attribute>
-                    </xsl:if>
+                <span>
+                    <xsl:attribute name="class">
+                        <xsl:text>num</xsl:text>
+                        <xsl:if test="@unseen = 'true'">
+                            <xsl:text> red</xsl:text>
+                        </xsl:if>
+                    </xsl:attribute>
                     <xsl:text>#</xsl:text>
                     <xsl:value-of select="number" />
                 </span>
@@ -228,11 +229,11 @@
                     </xsl:choose>
                 </span>
             </xsl:for-each>
-            <xsl:if test="bundled/link[@rel='all']">
+            <xsl:if test="link[@rel='all']">
                 <span><xsl:text>; </xsl:text></span>
                 <a>
                     <xsl:attribute name="href">
-                        <xsl:value-of select="bundled/link[@rel='all']/@href"/>
+                        <xsl:value-of select="link[@rel='all']/@href"/>
                     </xsl:attribute>
                     <xsl:value-of select="$TEXTS/all.of.them"/>
                     <xsl:text>...</xsl:text>
