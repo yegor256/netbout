@@ -126,10 +126,6 @@ h1 {
     background-repeat: no-repeat;
 }
 
-    #stage .fixed {
-        font-size: 1.3em;
-    }
-
 /* form to post a new message */
 #post {
 }
