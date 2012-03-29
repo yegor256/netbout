@@ -106,7 +106,7 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
         this.promote(this.persister());
         Executors.newSingleThreadScheduledExecutor()
             .scheduleAtFixedRate(this, 0L, 1L, TimeUnit.MINUTES);
-        Logger.info(
+        Logger.debug(
             this,
             "#DefaultHub(%[type]s): instantiated",
             bus
@@ -155,19 +155,19 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
      */
     @Override
     public void close() {
-        Logger.info(this, "#close(): shutting down INF");
+        Logger.debug(this, "#close(): shutting down INF");
         try {
             this.inf.close();
         } catch (java.io.IOException ex) {
             throw new IllegalStateException(ex);
         }
-        Logger.info(this, "#close(): shutting down BUS");
+        Logger.debug(this, "#close(): shutting down BUS");
         try {
             this.ibus.close();
         } catch (java.io.IOException ex) {
             throw new IllegalStateException(ex);
         }
-        Logger.info(this, "#close(): closed successfully");
+        Logger.debug(this, "#close(): closed successfully");
     }
 
     /**
@@ -371,7 +371,7 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
             .synchronously()
             .asDefault(new ArrayList<Urn>())
             .exec();
-        Logger.info(this, "#promote(): promoting %[list]s", helpers);
+        Logger.debug(this, "#promote(): promoting %[list]s", helpers);
         for (Urn name : helpers) {
             if (name.equals(persister.name())) {
                 continue;
@@ -391,7 +391,7 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
                 );
             }
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#promote(): done with all helpers in %[nano]s: %[list]s",
             System.nanoTime() - start,
