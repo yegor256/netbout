@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestResponse;
+import com.rexsl.test.XmlDocument;
 import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -74,7 +75,7 @@ final class RestNamespaces extends AbstractMap<String, URL> {
     public Set<Map.Entry<String, URL>> entrySet() {
         final Set<Map.Entry<String, URL>> namespaces =
             new HashSet<Map.Entry<String, URL>>();
-        for (TestResponse node
+        for (XmlDocument node
             : this.entry().nodes("/page/namespaces/namespace")) {
             try {
                 namespaces.add(
