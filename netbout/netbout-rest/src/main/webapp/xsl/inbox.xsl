@@ -229,11 +229,11 @@
                     </xsl:choose>
                 </span>
             </xsl:for-each>
-            <xsl:if test="bundled/link[@rel='all']">
+            <xsl:if test="link[@rel='all']">
                 <span><xsl:text>; </xsl:text></span>
                 <a>
                     <xsl:attribute name="href">
-                        <xsl:value-of select="bundled/link[@rel='all']/@href"/>
+                        <xsl:value-of select="link[@rel='all']/@href"/>
                     </xsl:attribute>
                     <xsl:value-of select="$TEXTS/all.of.them"/>
                     <xsl:text>...</xsl:text>

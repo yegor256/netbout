@@ -196,6 +196,11 @@
             <version since="9 Feb 2012">1.3.2</version>
         </dependency>
         <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version since="14 Nov 2011">2.0</version>
+        </dependency>
+        <dependency>
             <!--
             Facebook Client
             @see http://restfb.com/
