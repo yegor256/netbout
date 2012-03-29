@@ -114,7 +114,7 @@ final class SeeIdentityTask extends AbstractTask {
                 throw new IllegalStateException(ex);
             }
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#execute(): cached %d bout(s) of '%s' in %[nano]s",
             numbers.size(),
