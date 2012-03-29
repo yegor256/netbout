@@ -149,7 +149,7 @@ final class RestIdentity implements Identity {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public List<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final String query) {
         final List<String> hrefs = this.client
             .queryParam(RestSession.QUERY_PARAM, query)
             .get(String.format("reading bouts in the inbox '%s'", query))

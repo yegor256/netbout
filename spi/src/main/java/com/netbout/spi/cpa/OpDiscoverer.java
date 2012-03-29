@@ -110,6 +110,7 @@ final class OpDiscoverer {
      * @param ref The reflections
      * @return Associative array of discovered targets/operations
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private ConcurrentMap<String, HelpTarget> retrieve(final Reflections ref) {
         final ConcurrentMap<String, HelpTarget> targets =
             new ConcurrentHashMap<String, HelpTarget>();
@@ -128,7 +129,7 @@ final class OpDiscoverer {
                 throw new IllegalArgumentException(ex);
             }
             if (farm instanceof IdentityAware) {
-                ((IdentityAware) farm).init(this.identity);
+                ((IdentityAware) farm).init(new SafeIdentity(this.identity));
             }
             for (ConcurrentMap.Entry<String, HelpTarget> entry
                 : this.inFarm(farm).entrySet()) {
