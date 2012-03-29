@@ -162,12 +162,13 @@
                 <xsl:value-of select="number"/>
             </xsl:attribute>
             <h1>
-                <span class="num">
-                    <xsl:if test="@unseen = 'true'">
-                        <xsl:attribute name="class">
-                            <xsl:text>red</xsl:text>
-                        </xsl:attribute>
-                    </xsl:if>
+                <span>
+                    <xsl:attribute name="class">
+                        <xsl:text>num</xsl:text>
+                        <xsl:if test="@unseen = 'true'">
+                            <xsl:text> red</xsl:text>
+                        </xsl:if>
+                    </xsl:attribute>
                     <xsl:text>#</xsl:text>
                     <xsl:value-of select="number" />
                 </span>
