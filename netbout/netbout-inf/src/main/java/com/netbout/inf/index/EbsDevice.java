@@ -31,7 +31,6 @@ import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.AttachVolumeRequest;
 import com.amazonaws.services.ec2.model.DescribeVolumesRequest;
-import com.amazonaws.services.ec2.model.DescribeVolumesResult;
 import com.amazonaws.services.ec2.model.Volume;
 import com.amazonaws.services.ec2.model.VolumeAttachment;
 import com.amazonaws.services.ec2.model.VolumeAttachmentState;
@@ -149,18 +148,20 @@ final class EbsDevice {
      * @throws IOException If some IO problem inside
      */
     public VolumeAttachmentState request() throws IOException {
-        String state;
-        try {
-            state = this.amazon.attachVolume(
-                new AttachVolumeRequest(
-                    this.volume,
-                    this.instance,
-                    EbsDevice.DEVICE
-                )
-            ).getAttachment().getState();
-        } catch (com.amazonaws.AmazonClientException ex) {
-            throw new IOException(ex);
-        }
+        final String state = this.amazon.attachVolume(
+            new AttachVolumeRequest(
+                this.volume,
+                this.instance,
+                EbsDevice.DEVICE
+            )
+        ).getAttachment().getState();
+        Logger.info(
+            this,
+            "#request(): sent request to attach '%s' to '%s' as '%s'",
+            this.volume,
+            this.instance,
+            EbsDevice.DEVICE
+        );
         return VolumeAttachmentState.valueOf(state);
     }
 
@@ -173,13 +174,7 @@ final class EbsDevice {
         final DescribeVolumesRequest request = new DescribeVolumesRequest();
         request.setVolumeIds(Arrays.asList(new String[] {this.volume}));
         VolumeAttachment found = null;
-        DescribeVolumesResult result;
-        try {
-            result = this.amazon.describeVolumes(request);
-        } catch (com.amazonaws.AmazonClientException ex) {
-            throw new IOException(ex);
-        }
-        for (Volume vol : result.getVolumes()) {
+        for (Volume vol : this.amazon.describeVolumes(request).getVolumes()) {
             if (!vol.getVolumeId().equals(this.volume)) {
                 continue;
             }
@@ -190,6 +185,21 @@ final class EbsDevice {
                 found = attachment;
                 break;
             }
+        }
+        if (found == null) {
+            Logger.info(
+                this,
+                "#attachment(): NULL for volume '%s'",
+                this.volume
+            );
+        } else {
+            Logger.info(
+                this,
+                "#attachment(): volume=%s, state=%s, device=%s",
+                found.getVolumeId(),
+                found.getState(),
+                found.getDevice()
+            );
         }
         return found;
     }

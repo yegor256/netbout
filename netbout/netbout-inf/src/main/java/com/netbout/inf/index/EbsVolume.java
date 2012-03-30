@@ -88,6 +88,8 @@ final class EbsVolume implements Folder {
             }
         } catch (IOException ex) {
             Logger.error(this, "#path(): failed with %[exception]s", ex);
+        } catch (com.amazonaws.AmazonClientException ex) {
+            Logger.error(this, "#path(): AWS failure %[exception]s", ex);
         }
         return this.directory.path();
     }
