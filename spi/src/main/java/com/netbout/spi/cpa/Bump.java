@@ -78,7 +78,7 @@ final class Bump {
                 TimeUnit.MILLISECONDS.sleep((long) Math.pow(2, retry));
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-                break;
+                throw new IllegalArgumentException(ex);
             }
         }
     }

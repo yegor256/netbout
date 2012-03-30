@@ -82,7 +82,7 @@ public final class FsIndexTest {
             Matchers.arrayWithSize(Matchers.greaterThan(0))
         );
         MatcherAssert.assertThat(
-            new FsIndex().<Long, Urn>get(name).get(1L),
+            new FsIndex(this.folder).<Long, Urn>get(name).get(1L),
             Matchers.equalTo(urn)
         );
     }

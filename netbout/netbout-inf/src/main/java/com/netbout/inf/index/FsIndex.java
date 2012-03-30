@@ -81,8 +81,8 @@ public final class FsIndex implements Index {
                     FsIndex.this.flush();
                 }
             },
-            1L,
-            1L,
+            2L,
+            2L,
             TimeUnit.MINUTES
         );
     }
