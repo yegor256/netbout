@@ -43,6 +43,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -108,7 +109,6 @@ final class EbsVolume implements Folder {
      */
     @Override
     public File path() {
-        this.directory.mkdirs();
         try {
             if (!this.mounted()) {
                 this.mount(this.attach(Manifests.read("Netbout-EbsVolume")));
@@ -130,6 +130,7 @@ final class EbsVolume implements Folder {
         } catch (IOException ex) {
             text.append(Logger.format("%[exception]s", ex));
         }
+        text.append(String.format("\nmounter: %s", this.mounter));
         return text.toString();
     }
 
@@ -167,6 +168,8 @@ final class EbsVolume implements Folder {
      * @throws IOException If some IO problem inside
      */
     private void mount(final String device) throws IOException {
+        FileUtils.deleteQuietly(this.directory);
+        this.directory.mkdirs();
         final String output = this.exec(
             new ProcessBuilder(
                 this.mounter.getPath(),
@@ -273,6 +276,11 @@ final class EbsVolume implements Folder {
         } catch (AssertionError ex) {
             instance = "unknown";
         }
+        Logger.info(
+            EbsVolume.class,
+            "#currentInstance(): detected '%s'",
+            instance
+        );
         return instance;
     }
 
