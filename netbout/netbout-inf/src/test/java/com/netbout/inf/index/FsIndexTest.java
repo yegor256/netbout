@@ -78,6 +78,10 @@ public final class FsIndexTest {
         map.put(1L, urn);
         index.flush();
         MatcherAssert.assertThat(
+            this.folder.path().list(),
+            Matchers.arrayWithSize(Matchers.greaterThan(0))
+        );
+        MatcherAssert.assertThat(
             new FsIndex().<Long, Urn>get(name).get(1L),
             Matchers.equalTo(urn)
         );
