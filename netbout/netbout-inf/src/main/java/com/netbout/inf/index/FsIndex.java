@@ -50,10 +50,7 @@ public final class FsIndex implements Index {
     /**
      * The file to use.
      */
-    private final transient File file = new File(
-        System.getProperty("java.io.tmpdir"),
-        "netbout-INF-data.ser"
-    );
+    private final transient File file;
 
     /**
      * All maps.
@@ -62,9 +59,18 @@ public final class FsIndex implements Index {
     private final transient ConcurrentMap<String, ConcurrentMap<Object, Object>> maps;
 
     /**
-     * Public ctor.
+     * Default public ctor.
      */
     public FsIndex() {
+        this(new EbsVolume());
+    }
+
+    /**
+     * Public ctor.
+     * @param folder The Folder to use
+     */
+    public FsIndex(final Folder folder) {
+        this.file = new File(folder.path(), "inf-data.ser");
         synchronized (FsIndex.class) {
             this.maps = FsIndex.load(this.file);
         }
