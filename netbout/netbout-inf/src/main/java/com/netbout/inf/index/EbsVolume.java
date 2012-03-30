@@ -35,10 +35,12 @@ import com.amazonaws.services.ec2.model.Volume;
 import com.amazonaws.services.ec2.model.VolumeAttachment;
 import com.amazonaws.services.ec2.model.VolumeAttachmentState;
 import com.rexsl.core.Manifests;
+import com.rexsl.test.RestTester;
 import com.ymock.util.Logger;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
@@ -54,6 +56,11 @@ import org.apache.commons.io.IOUtils;
 final class EbsVolume implements Folder {
 
     /**
+     * How many nanoseconds of waiting we can afford.
+     */
+    private static final Long MAX_NANO = 2L * 60 * 1000 * 1000 * 1000;
+
+    /**
      * Mounting directory.
      */
     private final transient File directory = new File(
@@ -64,7 +71,7 @@ final class EbsVolume implements Folder {
     /**
      * MOUNT command.
      */
-    private final transient File mounter = EbsVolume.bin("/sbin/mount");
+    private final transient File mounter = EbsVolume.bin("mount");
 
     /**
      * EC2 entry point.
@@ -180,11 +187,16 @@ final class EbsVolume implements Folder {
      * Attach this EBS volume and return name of device.
      * @param volume Name of volume
      * @return Name of device to mount
+     * @throws IOException If some IO problem inside
      */
-    private String attach(final String volume) {
-        this.amazon.attachVolume(
-            new AttachVolumeRequest(volume, this.instance, "/dev/hda5")
-        );
+    private String attach(final String volume) throws IOException {
+        try {
+            this.amazon.attachVolume(
+                new AttachVolumeRequest(volume, this.instance, "/dev/hdg")
+            );
+        } catch (com.amazonaws.AmazonClientException ex) {
+            throw new IOException(ex);
+        }
         return this.device(volume);
     }
 
@@ -192,13 +204,24 @@ final class EbsVolume implements Folder {
      * Find the name of device which is attached with this volume.
      * @param volume Name of volume
      * @return Name of device
+     * @throws IOException If some IO problem inside
      */
-    private String device(final String volume) {
+    private String device(final String volume) throws IOException {
         String device = null;
         int retry = 0;
+        final long start = System.nanoTime();
         final DescribeVolumesRequest request = new DescribeVolumesRequest();
         request.setVolumeIds(Arrays.asList(new String[] {volume}));
         do {
+            if (System.nanoTime() - start > this.MAX_NANO) {
+                throw new IOException(
+                    String.format(
+                        "Volume '%s' not attached to '%s', time out",
+                        volume,
+                        this.instance
+                    )
+                );
+            }
             ++retry;
             try {
                 TimeUnit.SECONDS.sleep((long) Math.pow(2, retry));
@@ -241,19 +264,15 @@ final class EbsVolume implements Folder {
      */
     private static String currentInstance() {
         String instance;
-        Logger.info(EbsVolume.class, "#currentInstance(): trying to detect...");
         try {
-            instance = (String) new URL(
-                "http://169.254.169.254/latest/meta-data/instance-id"
-            ).getContent();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
+            // @checkstyle LineLength (1 line)
+            instance = RestTester.start(URI.create("http://169.254.169.254/latest/meta-data/instance-id"))
+                .get("loading current EC2 instance ID")
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .getBody();
+        } catch (AssertionError ex) {
+            instance = "unknown";
         }
-        Logger.info(
-            EbsVolume.class,
-            "#currentInstance(): EC2 instance ID '%s'",
-            instance
-        );
         return instance;
     }
 
@@ -270,10 +289,10 @@ final class EbsVolume implements Folder {
             code = proc.waitFor();
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException(ex);
+            throw new IOException(ex);
         }
         if (code != 0) {
-            throw new IllegalStateException(
+            throw new IOException(
                 String.format(
                     "Abnormal termination: %s",
                     IOUtils.toString(proc.getErrorStream())
@@ -293,12 +312,8 @@ final class EbsVolume implements Folder {
         final String[] paths = new String[] {
             "/bin",
             "/usr/bin",
-            "/usr/local/bin",
-            "/opt/local/bin",
             "/sbin",
             "/usr/sbin",
-            "/usr/local/sbin",
-            "/opt/local/sbin",
         };
         File file = null;
         for (String path : paths) {

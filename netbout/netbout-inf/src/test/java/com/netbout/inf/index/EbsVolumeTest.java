@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.index;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 /**
@@ -36,12 +37,12 @@ import org.junit.Test;
 public final class EbsVolumeTest {
 
     /**
-     * EbsVolume can attach and mount.
+     * EbsVolume can return a valid directory, even when there is no AWS at all.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void attachesAndMounts() throws Exception {
-        // I don't know how to test it...
+        MatcherAssert.assertThat("dir exists", new EbsVolume().path().exists());
     }
 
 }
