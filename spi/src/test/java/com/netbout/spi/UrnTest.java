@@ -179,6 +179,7 @@ public final class UrnTest {
             "urn:a:?boom",
             "urn:a:test?123",
             "urn:a:test?1a2b3c",
+            "urn:a:test?1A2B3C",
             "urn:a:?alpha=abccde%20%45%4Fme",
             "urn:woquo:ns:pa/procure/BalanceRecord?name=*",
             "urn:a:?alpha=50&beta=u%20worksfine",

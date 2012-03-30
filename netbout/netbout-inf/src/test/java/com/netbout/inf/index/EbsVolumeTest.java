@@ -24,41 +24,25 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.index;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import java.util.Arrays;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 /**
- * Test case of {@link DefaultInfinity}.
+ * Test case of {@link EbsVolume}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultInfinityTest {
+public final class EbsVolumeTest {
 
     /**
-     * DefaultInfinity can find messages.
+     * EbsVolume can return a valid directory, even when there is no AWS at all.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void populatesIndexOnFirstTimeCall() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new Long[] {1L}), "get-bouts-of-identity")
-            .doReturn(Arrays.asList(new Long[] {}), "get-bout-messages")
-            .mock();
-        final Infinity inf = new DefaultInfinity(bus, new IndexMocker().mock());
-        final Bout bout = new BoutMocker().mock();
-        final Identity identity = new IdentityMocker()
-            .withBout(1L, bout)
-            .mock();
-        inf.see(identity);
-        inf.messages("foo");
+    public void attachesAndMounts() throws Exception {
+        MatcherAssert.assertThat("dir exists", new EbsVolume().path().exists());
     }
 
 }

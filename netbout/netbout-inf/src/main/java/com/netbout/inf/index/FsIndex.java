@@ -48,12 +48,14 @@ import org.apache.commons.lang.SerializationUtils;
 public final class FsIndex implements Index {
 
     /**
+     * The folder to use.
+     */
+    private final transient Folder folder;
+
+    /**
      * The file to use.
      */
-    private final transient File file = new File(
-        System.getProperty("java.io.tmpdir"),
-        "netbout-INF-data.ser"
-    );
+    private final transient File file;
 
     /**
      * All maps.
@@ -62,9 +64,19 @@ public final class FsIndex implements Index {
     private final transient ConcurrentMap<String, ConcurrentMap<Object, Object>> maps;
 
     /**
-     * Public ctor.
+     * Default public ctor.
      */
     public FsIndex() {
+        this(new EbsVolume());
+    }
+
+    /**
+     * Public ctor.
+     * @param fldr The Folder to use
+     */
+    public FsIndex(final Folder fldr) {
+        this.folder = fldr;
+        this.file = new File(this.folder.path(), "inf-data.ser");
         synchronized (FsIndex.class) {
             this.maps = FsIndex.load(this.file);
         }
@@ -75,8 +87,8 @@ public final class FsIndex implements Index {
                     FsIndex.this.flush();
                 }
             },
-            1L,
-            1L,
+            2L,
+            2L,
             TimeUnit.MINUTES
         );
     }
@@ -101,7 +113,8 @@ public final class FsIndex implements Index {
                         .length
                 )
             )
-            .append(String.format("File: %s", this.file));
+            .append(String.format("File: %s\n", this.file))
+            .append(this.folder.statistics());
         return text.toString();
     }
 

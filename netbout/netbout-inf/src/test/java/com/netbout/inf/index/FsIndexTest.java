@@ -30,7 +30,11 @@ import com.netbout.spi.Urn;
 import java.util.concurrent.ConcurrentMap;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link FsIndex}.
@@ -40,19 +44,45 @@ import org.junit.Test;
 public final class FsIndexTest {
 
     /**
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
+
+    /**
+     * Temporary folder.
+     */
+    private transient Folder folder;
+
+    /**
+     * Create temporary folder.
+     * @throws Exception If there is some problem inside
+     */
+    @Before
+    public void createFolder() throws Exception {
+        this.folder = Mockito.mock(Folder.class);
+        Mockito.doReturn(this.temp.newFolder("foo")).when(this.folder).path();
+    }
+
+    /**
      * FsIndex can persist itself.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void persistsItself() throws Exception {
-        final FsIndex index = new FsIndex();
+        final FsIndex index = new FsIndex(this.folder);
         final String name = "some-test-name";
         final ConcurrentMap<Long, Urn> map = index.get(name);
         final Urn urn = new Urn("urn:test:abc");
         map.put(1L, urn);
         index.flush();
         MatcherAssert.assertThat(
-            new FsIndex().<Long, Urn>get(name).get(1L),
+            this.folder.path().list(),
+            Matchers.arrayWithSize(Matchers.greaterThan(0))
+        );
+        MatcherAssert.assertThat(
+            new FsIndex(this.folder).<Long, Urn>get(name).get(1L),
             Matchers.equalTo(urn)
         );
     }
@@ -64,7 +94,7 @@ public final class FsIndexTest {
     @Test
     public void producesStatisticsAsText() throws Exception {
         MatcherAssert.assertThat(
-            new FsIndex().statistics(),
+            new FsIndex(this.folder).statistics(),
             Matchers.notNullValue()
         );
     }

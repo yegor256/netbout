@@ -57,13 +57,23 @@ public final class DefaultInfinity implements Infinity {
     /**
      * The index.
      */
-    private final transient Index index = new FsIndex();
+    private final transient Index index;
 
     /**
      * Public ctor.
      * @param ibus The BUS to work with
      */
     public DefaultInfinity(final Bus ibus) {
+        this(ibus, new FsIndex());
+    }
+
+    /**
+     * Public ctor, with custom index.
+     * @param ibus The BUS to work with
+     * @param idx The index to use
+     */
+    public DefaultInfinity(final Bus ibus, final Index idx) {
+        this.index = idx;
         this.bus = ibus;
         StageFarm.register(this);
         Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", ibus);

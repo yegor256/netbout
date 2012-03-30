@@ -24,41 +24,28 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.index;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import java.util.Arrays;
-import org.junit.Test;
+import java.io.File;
 
 /**
- * Test case of {@link DefaultInfinity}.
+ * Folder in file system.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultInfinityTest {
+interface Folder {
 
     /**
-     * DefaultInfinity can find messages.
-     * @throws Exception If there is some problem inside
+     * Get its full path.
+     * @return The path
      */
-    @Test
-    public void populatesIndexOnFirstTimeCall() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new Long[] {1L}), "get-bouts-of-identity")
-            .doReturn(Arrays.asList(new Long[] {}), "get-bout-messages")
-            .mock();
-        final Infinity inf = new DefaultInfinity(bus, new IndexMocker().mock());
-        final Bout bout = new BoutMocker().mock();
-        final Identity identity = new IdentityMocker()
-            .withBout(1L, bout)
-            .mock();
-        inf.see(identity);
-        inf.messages("foo");
-    }
+    File path();
+
+    /**
+     * Show some stats.
+     * @return Text stats
+     */
+    String statistics();
 
 }
