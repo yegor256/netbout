@@ -49,6 +49,7 @@ import org.apache.commons.io.IOUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @author Krzysztof Krason (Krzysztof.Krason@gmail.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class EbsVolume implements Folder {
 
@@ -109,6 +110,20 @@ final class EbsVolume implements Folder {
             Logger.error(this, "#path(): failed with %[exception]s", ex);
         }
         return this.directory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        try {
+            text.append(this.exec(new ProcessBuilder(this.mounter.getPath())));
+        } catch (IOException ex) {
+            text.append(Logger.format("%[exception]s", ex));
+        }
+        return text.toString();
     }
 
     /**

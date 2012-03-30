@@ -48,6 +48,11 @@ import org.apache.commons.lang.SerializationUtils;
 public final class FsIndex implements Index {
 
     /**
+     * The folder to use.
+     */
+    private final transient Folder folder;
+
+    /**
      * The file to use.
      */
     private final transient File file;
@@ -67,10 +72,11 @@ public final class FsIndex implements Index {
 
     /**
      * Public ctor.
-     * @param folder The Folder to use
+     * @param fldr The Folder to use
      */
-    public FsIndex(final Folder folder) {
-        this.file = new File(folder.path(), "inf-data.ser");
+    public FsIndex(final Folder fldr) {
+        this.folder = fldr;
+        this.file = new File(this.folder.path(), "inf-data.ser");
         synchronized (FsIndex.class) {
             this.maps = FsIndex.load(this.file);
         }
@@ -107,7 +113,8 @@ public final class FsIndex implements Index {
                         .length
                 )
             )
-            .append(String.format("File: %s", this.file));
+            .append(String.format("File: %s\n", this.file))
+            .append(this.folder.statistics());
         return text.toString();
     }
 

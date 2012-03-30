@@ -514,6 +514,7 @@
                                         <Netbout-PopPort>${pop3.port}</Netbout-PopPort>
                                         <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
                                         <Netbout-SuperSecret>${security.secret}</Netbout-SuperSecret>
+                                        <Netbout-EbsVolume>${ebs.volume}</Netbout-EbsVolume>
                                         <Netbout-AwsKey>${aws.key}</Netbout-AwsKey>
                                         <Netbout-AwsSecret>${aws.secret}</Netbout-AwsSecret>
                                     </manifestEntries>

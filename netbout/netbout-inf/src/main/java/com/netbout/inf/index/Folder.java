@@ -42,4 +42,10 @@ interface Folder {
      */
     File path();
 
+    /**
+     * Show some stats.
+     * @return Text stats
+     */
+    String statistics();
+
 }
