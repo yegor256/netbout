@@ -75,7 +75,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      * Stats on performance.
      */
     private final transient DescriptiveStatistics stats =
-        new DescriptiveStatistics(100);
+        new DescriptiveStatistics(5000);
 
     /**
      * Public ctor.
