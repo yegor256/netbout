@@ -66,6 +66,21 @@ final class EbsDirectory {
      * @return File
      */
     public File path() {
+        if (!this.directory.exists()) {
+            if (this.directory.mkdirs()) {
+                Logger.info(
+                    this,
+                    "#path(): directory '%s' created",
+                    this.directory
+                );
+            } else {
+                Logger.info(
+                    this,
+                    "#path(): directory '%s' already exists",
+                    this.directory
+                );
+            }
+        }
         return this.directory;
     }
 
@@ -78,19 +93,19 @@ final class EbsDirectory {
         final String output = this.exec(
             new ProcessBuilder(EbsDirectory.MOUNTER.getPath())
         );
-        final boolean mounted = output.contains(this.directory.getPath());
+        final boolean mounted = output.contains(this.path().getPath());
         if (mounted) {
             Logger.info(
                 this,
                 "#mounted(): '%s' is already mounted:\n%s",
-                this.directory,
+                this.path(),
                 output
             );
         } else {
             Logger.info(
                 this,
                 "#mounted(): '%s' is not mounted yet:\n%s",
-                this.directory,
+                this.path(),
                 output
             );
         }
@@ -104,20 +119,19 @@ final class EbsDirectory {
      */
     public void mount(final EbsDevice device) throws IOException {
         FileUtils.deleteQuietly(this.directory);
-        this.directory.mkdirs();
         final String name = device.name();
         final String output = this.exec(
             new ProcessBuilder(
                 EbsDirectory.MOUNTER.getPath(),
                 name,
-                this.directory.getPath()
+                this.path().getPath()
             )
         );
         Logger.info(
             this,
             "#mount(%s): mounted as %s:\n%s",
             name,
-            this.directory,
+            this.path(),
             output
         );
     }
