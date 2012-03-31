@@ -30,7 +30,6 @@ import com.rexsl.core.Manifests;
 import com.rexsl.test.RestTester;
 import com.ymock.util.Logger;
 import java.io.File;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
@@ -76,6 +75,7 @@ final class EbsVolume implements Folder {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public File path() {
         try {
             if (!this.directory.mounted()) {
@@ -86,10 +86,9 @@ final class EbsVolume implements Folder {
                     )
                 );
             }
-        } catch (IOException ex) {
+        // @checkstyle IllegalCatch (1 line)
+        } catch (Exception ex) {
             Logger.error(this, "#path(): failed with %[exception]s", ex);
-        } catch (com.amazonaws.AmazonClientException ex) {
-            Logger.error(this, "#path(): AWS failure %[exception]s", ex);
         }
         return this.directory.path();
     }
