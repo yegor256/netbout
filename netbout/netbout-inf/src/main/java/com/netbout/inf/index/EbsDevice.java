@@ -133,8 +133,7 @@ final class EbsDevice {
     public VolumeAttachmentState attach() throws IOException {
         final VolumeAttachment attachment = this.attachment();
         VolumeAttachmentState state = null;
-        if (attachment == null
-            || state.equals(VolumeAttachmentState.Detached)) {
+        if (attachment == null) {
             state = this.request();
         } else {
             state = VolumeAttachmentState.fromValue(attachment.getState());
