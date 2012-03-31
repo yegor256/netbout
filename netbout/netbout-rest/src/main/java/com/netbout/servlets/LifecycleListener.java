@@ -75,10 +75,12 @@ public final class LifecycleListener implements ServletContextListener {
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
         final long start = System.nanoTime();
-        try {
-            this.hub.close();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
+        if (this.hub != null) {
+            try {
+                this.hub.close();
+            } catch (java.io.IOException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
         Logger.info(
             this,
