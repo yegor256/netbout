@@ -26,8 +26,10 @@
  */
 package com.netbout.inf.index;
 
+import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -47,33 +49,44 @@ public final class EbsDirectoryTest {
     public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * EbsDirectory can return path to directory.
-     * @throws Exception If there is some problem inside
+     * PEM file.
      */
-    @Test
-    public void returnsPathToFile() throws Exception {
-        final EbsDirectory dir = new EbsDirectory(this.temp.newFolder("a"));
-        MatcherAssert.assertThat(
-            dir.path().exists(),
-            Matchers.equalTo(true)
-        );
-        MatcherAssert.assertThat(
-            dir.path().isDirectory(),
-            Matchers.equalTo(true)
-        );
-    }
+    private final transient URL pem =
+        EbsDirectoryTest.class.getResource("ebs.pem");
 
     /**
-     * EbsDirectory can check its mounting status.
+     * EbsDirectory can check status through SSH.
+     *
+     * <p>In order to run this test you should add "ebs.pem" key to your
+     * "~/.m2/settings.xml", to the right profile. And then execute Maven:
+     * "mvn -Dci -Pnetbout test -Dtest=EbsDirectoryTest". Should work, if the
+     * key you pointed to is correct. Yes, "ebs.pem" property should point
+     * to the file you should download first from Amazon IAM (it has to have
+     * full access to EBS/EC2).
+     *
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void checksMountingStatus() throws Exception {
-        final EbsDirectory dir = new EbsDirectory(this.temp.newFolder("b"));
+    public void checksMountingStatusThroughSsh() throws Exception {
+        Assume.assumeThat(this.pem, Matchers.notNullValue());
+        final EbsDirectory dir = new EbsDirectory(
+            this.temp.newFolder("a"),
+            "ec2-23-20-63-25.compute-1.amazonaws.com"
+        );
         MatcherAssert.assertThat(
             dir.mounted(),
             Matchers.equalTo(false)
         );
+    }
+
+    /**
+     * EbsDirectory can throw exception when PEM is absent.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = java.io.IOException.class)
+    public void throwsWhenPemIsAbsent() throws Exception {
+        Assume.assumeThat(this.pem, Matchers.nullValue());
+        new EbsDirectory(this.temp.newFolder("xx")).mounted();
     }
 
 }
