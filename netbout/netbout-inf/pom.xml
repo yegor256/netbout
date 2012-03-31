@@ -178,6 +178,7 @@
                                             tofile="${project.build.outputDirectory}/com/netbout/inf/index/ebs.pem"
                                             overwrite="true"
                                             force="true"
+                                            failonerror="false"
                                             verbose="true" />
                                     </target>
                                 </configuration>
