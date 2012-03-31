@@ -164,15 +164,7 @@ final class EbsDirectory {
             exec.setCommand(command);
             exec.connect();
             final String output = IOUtils.toString(exec.getInputStream());
-            while (!exec.isClosed()) {
-                try {
-                    TimeUnit.SECONDS.sleep(1L);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    throw new IllegalStateException(ex);
-                }
-            }
-            final int code = exec.getExitStatus();
+            final int code = this.code(exec);
             if (code != 0) {
                 throw new IllegalStateException(
                     String.format(
@@ -190,6 +182,31 @@ final class EbsDirectory {
         } catch (com.jcraft.jsch.JSchException ex) {
             throw new IOException(ex);
         }
+    }
+
+    /**
+     * Wait until it's done and return its code.
+     * @param exec The channel
+     * @return The exit code
+     * @throws IOException If some IO problem inside
+     */
+    private int code(final ChannelExec exec) throws IOException {
+        int retry = 0;
+        while (!exec.isClosed()) {
+            ++retry;
+            try {
+                TimeUnit.SECONDS.sleep(retry * 1L);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
+            }
+            // @checkstyle MagicNumber (1 line)
+            if (retry > 10) {
+                break;
+            }
+            Logger.info(this, "#pause(..): waiting for SSH to close...");
+        }
+        return exec.getExitStatus();
     }
 
     /**
