@@ -137,7 +137,7 @@ final class EbsDevice {
             || state.equals(VolumeAttachmentState.Detached)) {
             state = this.request();
         } else {
-            state = VolumeAttachmentState.valueOf(attachment.getState());
+            state = VolumeAttachmentState.fromValue(attachment.getState());
         }
         return state;
     }
@@ -162,7 +162,7 @@ final class EbsDevice {
             this.instance,
             EbsDevice.DEVICE
         );
-        return VolumeAttachmentState.valueOf(state);
+        return VolumeAttachmentState.fromValue(state);
     }
 
     /**

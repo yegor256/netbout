@@ -33,8 +33,8 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 
@@ -372,7 +372,7 @@ public final class Urn implements Comparable, Serializable {
      * @return The map of values
      */
     private static Map<String, String> demap(final String urn) {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new TreeMap<String, String>();
         final String[] sectors = StringUtils.split(urn, '?');
         if (sectors.length == 2) {
             final String[] parts = StringUtils.split(sectors[1], '&');
