@@ -111,16 +111,14 @@ final class EbsDirectory {
         if (mounted) {
             Logger.info(
                 this,
-                "#mounted(): '%s' is already mounted:\n%s",
-                this.path(),
-                output
+                "#mounted(): '%s' is already mounted",
+                this.path()
             );
         } else {
             Logger.info(
                 this,
-                "#mounted(): '%s' is not mounted yet:\n%s",
-                this.path(),
-                output
+                "#mounted(): '%s' is not mounted yet",
+                this.path()
             );
         }
         return mounted;
@@ -136,6 +134,7 @@ final class EbsDirectory {
         final String name = device.name();
         final String output = this.exec(
             "sudo",
+            "-S",
             "mount",
             name,
             this.path()
@@ -163,10 +162,12 @@ final class EbsDirectory {
             final String command = this.command(args);
             exec.setCommand(command);
             exec.connect();
+            exec.getOutputStream().write("nothing to say\n".getBytes());
+            exec.getOutputStream().flush();
             final String output = IOUtils.toString(exec.getInputStream());
             final int code = this.code(exec);
             if (code != 0) {
-                throw new IllegalStateException(
+                throw new IOException(
                     String.format(
                         "Failed to execute \"%s\" (code=%d):\n%s\n%s",
                         command,
@@ -178,6 +179,12 @@ final class EbsDirectory {
             }
             exec.disconnect();
             session.disconnect();
+            Logger.info(
+                this,
+                "#exec(..): \"%s\"\n  %s",
+                command,
+                output.replace("\n", "\n  ")
+            );
             return output;
         } catch (com.jcraft.jsch.JSchException ex) {
             throw new IOException(ex);
