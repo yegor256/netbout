@@ -83,7 +83,7 @@ final class EbsVolume implements Folder {
                     new EbsDevice(
                         this.instance,
                         Manifests.read("Netbout-EbsVolume")
-                    )
+                    ).name()
                 );
             }
         // @checkstyle IllegalCatch (1 line)

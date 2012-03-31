@@ -30,12 +30,13 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.ymock.util.Logger;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Directory for EBS volume.
@@ -129,20 +130,21 @@ final class EbsDirectory {
      * @param device Name of device to mount
      * @throws IOException If some IO problem inside
      */
-    public void mount(final EbsDevice device) throws IOException {
+    public void mount(final String device) throws IOException {
         FileUtils.deleteQuietly(this.directory);
-        final String name = device.name();
         final String output = this.exec(
             "sudo",
             "-S",
             "mount",
-            name,
+            "-t",
+            "ext3",
+            device,
             this.path()
         );
         Logger.info(
             this,
             "#mount(%s): mounted as %s:\n%s",
-            name,
+            device,
             this.path(),
             output
         );
@@ -162,21 +164,26 @@ final class EbsDirectory {
             final String command = this.command(args);
             exec.setCommand(command);
             exec.connect();
-            exec.getOutputStream().write("nothing to say\n".getBytes());
-            exec.getOutputStream().flush();
-            final String output = IOUtils.toString(exec.getInputStream());
+            final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+            final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+            exec.setErrStream(stderr);
+            exec.setOutputStream(stdout);
+            exec.setInputStream(null);
             final int code = this.code(exec);
             if (code != 0) {
                 throw new IOException(
                     String.format(
-                        "Failed to execute \"%s\" (code=%d):\n%s\n%s",
+                        "Failed to execute \"%s\" (code=%d): %s",
                         command,
                         code,
-                        output,
-                        IOUtils.toString(exec.getErrStream())
+                        new String(stderr.toByteArray(), CharEncoding.UTF_8)
                     )
                 );
             }
+            final String output = new String(
+                stdout.toByteArray(),
+                CharEncoding.UTF_8
+            );
             exec.disconnect();
             session.disconnect();
             Logger.info(
@@ -205,13 +212,13 @@ final class EbsDirectory {
                 TimeUnit.SECONDS.sleep(retry * 1L);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-                throw new IllegalStateException(ex);
+                throw new IOException(ex);
             }
             // @checkstyle MagicNumber (1 line)
             if (retry > 10) {
                 break;
             }
-            Logger.info(this, "#pause(..): waiting for SSH to close...");
+            Logger.info(this, "#pause(..): waiting for SSH (retry=%d)", retry);
         }
         return exec.getExitStatus();
     }
@@ -252,11 +259,11 @@ final class EbsDirectory {
     private String command(final Object... args) {
         final StringBuilder command = new StringBuilder();
         for (Object arg : args) {
-            command.append("'")
-                .append(arg.toString())
+            command.append(" '")
+                .append(arg.toString().replace("'", "\\'"))
                 .append("' ");
         }
-        return command.toString();
+        return command.toString().trim();
     }
 
     /**
