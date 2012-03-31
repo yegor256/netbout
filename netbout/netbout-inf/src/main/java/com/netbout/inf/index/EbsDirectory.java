@@ -213,11 +213,7 @@ final class EbsDirectory {
                     }
                 }
             );
-            final URL key = this.getClass().getResource("ebs.pem");
-            if (key == null) {
-                throw new IOException("PEM not found");
-            }
-            jsch.addIdentity(key.getFile());
+            jsch.addIdentity(this.key().getPath());
             return jsch.getSession("ec2-user", this.host);
         } catch (com.jcraft.jsch.JSchException ex) {
             throw new IOException(ex);
@@ -237,6 +233,21 @@ final class EbsDirectory {
                 .append("' ");
         }
         return command.toString();
+    }
+
+    /**
+     * Get file with secret key.
+     * @return The file
+     * @throws IOException If some IO problem inside
+     */
+    private File key() throws IOException {
+        final File file = File.createTempFile("netbout-ebs", ".pem");
+        final URL key = this.getClass().getResource("ebs.pem");
+        if (key == null) {
+            throw new IOException("PEM not found");
+        }
+        FileUtils.copyURLToFile(key, file);
+        return file;
     }
 
 }
