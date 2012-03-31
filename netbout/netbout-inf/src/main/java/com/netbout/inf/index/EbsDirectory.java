@@ -26,9 +26,14 @@
  */
 package com.netbout.inf.index;
 
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 import com.ymock.util.Logger;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -44,21 +49,31 @@ import org.apache.commons.io.IOUtils;
 final class EbsDirectory {
 
     /**
-     * Mounter.
-     */
-    private static final File MOUNTER = EbsDirectory.bin("mount");
-
-    /**
      * Mounting directory.
      */
     private final transient File directory;
+
+    /**
+     * Our host.
+     */
+    private final transient String host;
 
     /**
      * Public ctor.
      * @param path Directory
      */
     public EbsDirectory(final File path) {
+        this(path, "localhost");
+    }
+
+    /**
+     * Public ctor.
+     * @param path Directory
+     * @param hst The host where we're working
+     */
+    public EbsDirectory(final File path, final String hst) {
         this.directory = path;
+        this.host = hst;
     }
 
     /**
@@ -90,9 +105,8 @@ final class EbsDirectory {
      * @throws IOException If some IO problem inside
      */
     public boolean mounted() throws IOException {
-        final String output = this.exec(
-            new ProcessBuilder(EbsDirectory.MOUNTER.getPath())
-        );
+        // @checkstyle MultipleStringLiterals (1 line)
+        final String output = this.exec("mount");
         final boolean mounted = output.contains(this.path().getPath());
         if (mounted) {
             Logger.info(
@@ -121,11 +135,10 @@ final class EbsDirectory {
         FileUtils.deleteQuietly(this.directory);
         final String name = device.name();
         final String output = this.exec(
-            new ProcessBuilder(
-                EbsDirectory.MOUNTER.getPath(),
-                name,
-                this.path().getPath()
-            )
+            "sudo",
+            "mount",
+            name,
+            this.path()
         );
         Logger.info(
             this,
@@ -138,60 +151,92 @@ final class EbsDirectory {
 
     /**
      * Execute unix command and return it's output as a string.
-     * @param bldr The process builder to use
+     * @param args Arguments of shell command
      * @return The output as a string (trimmed)
      * @throws IOException If some IO problem inside
      */
-    private String exec(final ProcessBuilder bldr) throws IOException {
-        final Process proc = bldr.start();
-        int code;
+    private String exec(final Object... args) throws IOException {
         try {
-            code = proc.waitFor();
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+            final Session session = this.session();
+            session.connect();
+            final ChannelExec exec = (ChannelExec) session.openChannel("exec");
+            final String command = this.command(args);
+            exec.setCommand(command);
+            exec.connect();
+            final String output = IOUtils.toString(exec.getInputStream());
+            while (!exec.isClosed()) {
+                try {
+                    TimeUnit.SECONDS.sleep(1L);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(ex);
+                }
+            }
+            final int code = exec.getExitStatus();
+            if (code != 0) {
+                throw new IllegalStateException(
+                    String.format(
+                        "Failed to execute \"%s\" (code=%d):\n%s\n%s",
+                        command,
+                        code,
+                        output,
+                        IOUtils.toString(exec.getErrStream())
+                    )
+                );
+            }
+            exec.disconnect();
+            session.disconnect();
+            return output;
+        } catch (com.jcraft.jsch.JSchException ex) {
             throw new IOException(ex);
         }
-        if (code != 0) {
-            throw new IOException(
-                String.format(
-                    "Abnormal termination: %s",
-                    IOUtils.toString(proc.getErrorStream())
-                )
-            );
-        }
-        return IOUtils.toString(proc.getInputStream()).trim();
     }
 
     /**
-     * Find binary and return its full name.
-     * @param name Short name
-     * @return Full name
+     * Create and return a session.
+     * @return JSch session
+     * @throws IOException If some IO problem inside
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    private static File bin(final String name) {
-        final String[] paths = new String[] {
-            "/bin",
-            "/usr/bin",
-            "/sbin",
-            "/usr/sbin",
-        };
-        File file = null;
-        for (String path : paths) {
-            final File bin = new File(path, name);
-            if (bin.exists() && bin.isFile()) {
-                file = bin;
-                break;
-            }
-        }
-        if (file == null) {
-            throw new IllegalStateException(
-                String.format(
-                    "Failed to find executable of '%s'",
-                    name
-                )
+    private Session session() throws IOException {
+        try {
+            final JSch jsch = new JSch();
+            jsch.setConfig("StrictHostKeyChecking", "no");
+            jsch.setLogger(
+                new com.jcraft.jsch.Logger() {
+                    @Override
+                    public boolean isEnabled(final int level) {
+                        return true;
+                    }
+                    @Override
+                    public void log(final int level, final String msg) {
+                        Logger.info(EbsDirectory.class, "%s", msg);
+                    }
+                }
             );
+            final URL key = this.getClass().getResource("ebs.pem");
+            if (key == null) {
+                throw new IOException("PEM not found");
+            }
+            jsch.addIdentity(key.getFile());
+            return jsch.getSession("ec2-user", this.host);
+        } catch (com.jcraft.jsch.JSchException ex) {
+            throw new IOException(ex);
         }
-        return file;
+    }
+
+    /**
+     * Create command.
+     * @param args Arguments of shell command
+     * @return The command
+     */
+    private String command(final Object... args) {
+        final StringBuilder command = new StringBuilder();
+        for (Object arg : args) {
+            command.append("'")
+                .append(arg.toString())
+                .append("' ");
+        }
+        return command.toString();
     }
 
 }

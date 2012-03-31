@@ -154,6 +154,41 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>continuous-integration</id>
+            <activation>
+                <property><name>ci</name></property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <id>copy-EBS-pem-file</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <copy file="${ebs.pem}"
+                                            tofile="${project.build.outputDirectory}/com/netbout/inf/index/ebs.pem"
+                                            overwrite="true"
+                                            force="true"
+                                            verbose="true" />
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
