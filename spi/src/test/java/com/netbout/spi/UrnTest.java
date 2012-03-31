@@ -33,7 +33,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import org.apache.commons.lang.SerializationUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -325,7 +324,6 @@ public final class UrnTest {
         final List<String> params = Arrays.asList(
             new String[] {"ft", "sec", "9", "123", "a1b2c3", "A", "B", "C"}
         );
-        final Random random = new Random();
         Urn first = new Urn("urn:test:x");
         Urn second = first;
         for (String param : params) {
