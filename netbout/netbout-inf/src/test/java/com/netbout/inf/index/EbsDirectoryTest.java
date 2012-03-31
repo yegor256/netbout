@@ -26,8 +26,6 @@
  */
 package com.netbout.inf.index;
 
-import com.netbout.spi.Urn;
-import java.util.concurrent.ConcurrentMap;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
