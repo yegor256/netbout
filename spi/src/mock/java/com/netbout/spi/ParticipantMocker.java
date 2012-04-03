@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,8 @@ public final class ParticipantMocker {
     /**
      * Mocked participant.
      */
-    private final Participant participant = Mockito.mock(Participant.class);
+    private final transient Participant participant =
+        Mockito.mock(Participant.class);
 
     /**
      * Public ctor.
@@ -56,7 +57,7 @@ public final class ParticipantMocker {
 
     /**
      * This is the participant.
-     * @param The identity
+     * @param identity The identity
      * @return This object
      */
     public ParticipantMocker withIdentity(final Identity identity) {
@@ -66,7 +67,7 @@ public final class ParticipantMocker {
 
     /**
      * With confirmation status.
-     * @param The flag
+     * @param flag The flag
      * @return This object
      */
     public ParticipantMocker withConfirm(final Boolean flag) {
@@ -76,7 +77,7 @@ public final class ParticipantMocker {
 
     /**
      * With leadership status.
-     * @param The flag
+     * @param flag The flag
      * @return This object
      */
     public ParticipantMocker withLeader(final Boolean flag) {
@@ -86,7 +87,7 @@ public final class ParticipantMocker {
 
     /**
      * In bout.
-     * @param The bout
+     * @param bout The bout
      * @return This object
      */
     public ParticipantMocker inBout(final Bout bout) {

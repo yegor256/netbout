@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -105,7 +105,7 @@ final class MessageData implements MessageDt {
      */
     @Override
     public void setDate(final Date dte) {
-        synchronized (this) {
+        synchronized (this.number) {
             this.date = dte;
             this.hub.make("changed-message-date")
                 .synchronously()
@@ -126,7 +126,7 @@ final class MessageData implements MessageDt {
      */
     @Override
     public Date getDate() {
-        synchronized (this) {
+        synchronized (this.number) {
             if (this.date == null) {
                 this.date = this.hub.make("get-message-date")
                     .synchronously()
@@ -142,7 +142,7 @@ final class MessageData implements MessageDt {
      */
     @Override
     public void setAuthor(final Urn idnt) {
-        synchronized (this) {
+        synchronized (this.number) {
             this.author = idnt;
             this.hub.make("changed-message-author")
                 .synchronously()
@@ -164,7 +164,7 @@ final class MessageData implements MessageDt {
      */
     @Override
     public Urn getAuthor() {
-        synchronized (this) {
+        synchronized (this.number) {
             if (this.author == null) {
                 this.author = this.hub.make("get-message-author")
                     .synchronously()
@@ -180,7 +180,7 @@ final class MessageData implements MessageDt {
      */
     @Override
     public void setText(final String txt) {
-        synchronized (this) {
+        synchronized (this.number) {
             this.text = txt;
             this.hub.make("changed-message-text")
                 .synchronously()
@@ -202,7 +202,7 @@ final class MessageData implements MessageDt {
      */
     @Override
     public String getText() {
-        synchronized (this) {
+        synchronized (this.number) {
             if (this.text == null) {
                 this.text = this.hub.make("get-message-text")
                     .synchronously()
@@ -218,7 +218,7 @@ final class MessageData implements MessageDt {
      */
     @Override
     public void addSeenBy(final Urn identity) {
-        synchronized (this) {
+        synchronized (this.number) {
             if (!this.isSeenBy(identity)) {
                 this.hub.make("message-was-seen")
                     .asap()
@@ -242,7 +242,7 @@ final class MessageData implements MessageDt {
      */
     @Override
     public Boolean isSeenBy(final Urn identity) {
-        synchronized (this) {
+        synchronized (this.number) {
             if (!this.seenBy.containsKey(identity)) {
                 final Boolean status = this.hub.make("was-message-seen")
                     .synchronously()

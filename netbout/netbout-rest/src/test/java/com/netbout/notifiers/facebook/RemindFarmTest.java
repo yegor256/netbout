@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,6 @@ public final class RemindFarmTest {
         final RemindFarm farm = new RemindFarm();
         final Urn name = new Urn(FacebookRs.NAMESPACE, "1531296526");
         final String marker = "test";
-        // farm.remindSilentIdentity(name, marker);
         assert marker != null;
         assert name != null;
         assert farm != null;

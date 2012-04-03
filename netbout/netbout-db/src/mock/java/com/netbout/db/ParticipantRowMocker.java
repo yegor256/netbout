@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,6 +76,7 @@ public final class ParticipantRowMocker {
 
     /**
      * Mock it and return its name.
+     * @return The URN of just created participant
      */
     public Urn mock() {
         final IdentityFarm ifarm = new IdentityFarm();

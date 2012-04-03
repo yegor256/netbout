@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,8 @@ final class EbsVolume implements Folder {
     @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
-        text.append("hi");
+        text.append(String.format("instance: %s\n", this.instance));
+        text.append(this.directory.statistics());
         return text.toString();
     }
 

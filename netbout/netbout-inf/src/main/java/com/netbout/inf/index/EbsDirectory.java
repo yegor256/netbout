@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,6 +75,17 @@ final class EbsDirectory {
     public EbsDirectory(final File path, final String hst) {
         this.directory = path;
         this.host = hst;
+    }
+
+    /**
+     * Some stats to show.
+     * @return The text
+     */
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("directory: %s\n", this.directory));
+        text.append(String.format("host: %s", this.host));
+        return text.toString();
     }
 
     /**

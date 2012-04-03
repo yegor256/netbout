@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,9 @@ public final class BoutRowMocker {
 
     /**
      * Mock it and return its number.
+     * @return Number of just mocked bout
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Long mock() {
         final BoutFarm farm = new BoutFarm();
         final Long bout = farm.getNextBoutNumber();

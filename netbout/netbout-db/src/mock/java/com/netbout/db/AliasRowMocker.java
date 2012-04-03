@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.util.Random;
 
 /**
@@ -76,6 +75,7 @@ public final class AliasRowMocker {
 
     /**
      * Mock it and return its text.
+     * @return Just mocked alias
      */
     public String mock() {
         final AliasFarm afarm = new AliasFarm();

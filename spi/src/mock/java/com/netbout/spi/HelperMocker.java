@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,12 +47,12 @@ public final class HelperMocker {
     /**
      * Mocked helper.
      */
-    private final Helper helper = Mockito.mock(Helper.class);
+    private final transient Helper helper = Mockito.mock(Helper.class);
 
     /**
      * Map of requests and responses.
      */
-    private final ConcurrentMap<String, Object> ops =
+    private final transient ConcurrentMap<String, Object> ops =
         new ConcurrentHashMap<String, Object>();
 
     /**

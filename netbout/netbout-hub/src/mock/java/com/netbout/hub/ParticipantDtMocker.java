@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,9 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.TxBuilder;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
 
 /**
@@ -45,7 +41,8 @@ public final class ParticipantDtMocker {
     /**
      * The object.
      */
-    private final ParticipantDt participant = Mockito.mock(ParticipantDt.class);
+    private final transient ParticipantDt participant =
+        Mockito.mock(ParticipantDt.class);
 
     /**
      * Public ctor.

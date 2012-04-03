@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,23 +45,24 @@ import org.mockito.stubbing.Answer;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class BoutMocker {
 
     /**
      * Mocked bout.
      */
-    private final Bout bout = Mockito.mock(Bout.class);
+    private final transient Bout bout = Mockito.mock(Bout.class);
 
     /**
      * List of participants.
      */
-    private final Collection<Participant> participants =
+    private final transient Collection<Participant> participants =
         new ArrayList<Participant>();
 
     /**
      * List of messages.
      */
-    private final List<Message> messages = new ArrayList<Message>();
+    private final transient List<Message> messages = new ArrayList<Message>();
 
     /**
      * Public ctor.
@@ -74,7 +75,7 @@ public final class BoutMocker {
             Mockito.doAnswer(
                 new Answer() {
                     public Object answer(final InvocationOnMock invocation) {
-                        Long num = (Long) invocation.getArguments()[0];
+                        final Long num = (Long) invocation.getArguments()[0];
                         return BoutMocker.this.messages.get(num.intValue());
                     }
                 }
@@ -89,7 +90,7 @@ public final class BoutMocker {
 
     /**
      * This is the title of bout.
-     * @param The title of it
+     * @param title The title of it
      * @return This object
      */
     public BoutMocker titledAs(final String title) {
@@ -99,7 +100,7 @@ public final class BoutMocker {
 
     /**
      * With this number.
-     * @param The number
+     * @param num The number
      * @return This object
      */
     public BoutMocker withNumber(final Long num) {
@@ -109,7 +110,7 @@ public final class BoutMocker {
 
     /**
      * With this date.
-     * @param The date
+     * @param date The date
      * @return This object
      */
     public BoutMocker withDate(final Date date) {
@@ -156,9 +157,9 @@ public final class BoutMocker {
                     return msgs;
                 }
             }
-        ).when(this.bout).messages(
-            Mockito.argThat(Matchers.containsString(mask))
-        );
+        )
+            .when(this.bout)
+            .messages(Mockito.argThat(Matchers.containsString(mask)));
         return this;
     }
 

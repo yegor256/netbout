@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,16 +31,9 @@ package com.netbout.spi;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -56,12 +49,12 @@ public final class ProfileMocker {
     /**
      * Mocked profile.
      */
-    private final Profile profile = Mockito.mock(Profile.class);
+    private final transient Profile profile = Mockito.mock(Profile.class);
 
     /**
      * Aliases (should be an array because we use #add(int,String) method.
      */
-    private final List<String> aliases = new ArrayList<String>();
+    private final transient List<String> aliases = new ArrayList<String>();
 
     /**
      * Public ctor.

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ public final class MessageMocker {
     /**
      * Mocked message.
      */
-    private final Message message = Mockito.mock(Message.class);
+    private final transient Message message = Mockito.mock(Message.class);
 
     /**
      * Public ctor.
@@ -59,7 +59,7 @@ public final class MessageMocker {
 
     /**
      * In this bout.
-     * @param The bout
+     * @param bout The bout
      * @return This object
      */
     public MessageMocker inBout(final Bout bout) {
@@ -69,7 +69,7 @@ public final class MessageMocker {
 
     /**
      * With this number.
-     * @param The text
+     * @param num The number
      * @return This object
      */
     public MessageMocker withNumber(final Long num) {
@@ -79,7 +79,7 @@ public final class MessageMocker {
 
     /**
      * With this date.
-     * @param The text
+     * @param date The date
      * @return This object
      */
     public MessageMocker withDate(final Date date) {
@@ -111,7 +111,7 @@ public final class MessageMocker {
 
     /**
      * With this text.
-     * @param The text
+     * @param text The text
      * @return This object
      */
     public MessageMocker withText(final String text) {

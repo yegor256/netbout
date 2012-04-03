@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -163,7 +163,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     public void add(final Task task) {
         if (!this.isTerminated() && !this.isShutdown()
             && !this.isTerminating()) {
-            synchronized (this) {
+            synchronized (this.queue) {
                 if (this.queue.contains(task)) {
                     Logger.debug(
                         this,
@@ -173,10 +173,8 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 } else {
                     this.queue.add(task);
                     for (Urn who : task.dependants()) {
-                        synchronized (this) {
-                            this.dependants.putIfAbsent(who, new AtomicLong());
-                            this.dependants.get(who).incrementAndGet();
-                        }
+                        this.dependants.putIfAbsent(who, new AtomicLong());
+                        this.dependants.get(who).incrementAndGet();
                     }
                     Logger.debug(
                         this,

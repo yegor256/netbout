@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,13 +42,16 @@ final class PlainPar extends AbstractPar {
      * Public ctor.
      */
     public PlainPar() {
-        super(ArrayUtils.toMap(new Object[][] {
-            // @checkstyle MultipleStringLiterals (4 lines)
-            {"\\[(.+?)\\]\\((http://.+?)\\)", "$1 ($2)"},
-            {"\\*+(.+?)\\*+", "$1"},
-            {"`(.+?)`", "$1"},
-            {"_+(.*?)_+", "$1"},
-        }));
+        super(
+            ArrayUtils.toMap(
+                new Object[][] {
+                    // @checkstyle MultipleStringLiterals (4 lines)
+                    {"\\[(.+?)\\]\\((http://.+?)\\)", "$1 ($2)"},
+                    {"\\*+(.+?)\\*+", "$1"},
+                    {"`(.+?)`", "$1"},
+                    {"_+(.*?)_+", "$1"},
+                }
+        ));
     }
 
     /**

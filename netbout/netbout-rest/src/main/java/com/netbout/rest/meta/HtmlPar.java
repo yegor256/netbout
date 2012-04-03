@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,13 +43,16 @@ final class HtmlPar extends AbstractPar {
      * Public ctor.
      */
     public HtmlPar() {
-        super(ArrayUtils.toMap(new Object[][] {
-            // @checkstyle MultipleStringLiterals (5 lines)
-            {"\\[(.+?)\\]\\((http://.+?)\\)", "<a href='$2'>$1</a>"},
-            {"\\*+(.+?)\\*+", "<b>$1</b>"},
-            {"`(.+?)`", "<span class='tt'>$1</span>"},
-            {"_+(.+?)_+", "<i>$1</i>"},
-        }));
+        super(
+            ArrayUtils.toMap(
+                new Object[][] {
+                    // @checkstyle MultipleStringLiterals (5 lines)
+                    {"\\[(.+?)\\]\\((http://.+?)\\)", "<a href='$2'>$1</a>"},
+                    {"\\*+(.+?)\\*+", "<b>$1</b>"},
+                    {"`(.+?)`", "<span class='tt'>$1</span>"},
+                    {"_+(.+?)_+", "<i>$1</i>"},
+                }
+        ));
     }
 
     /**
