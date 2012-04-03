@@ -85,8 +85,12 @@ final class EbsDirectory {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("directory: %s\n", this.directory));
         text.append(String.format("host: %s\n", this.host));
-        // @checkstyle MultipleStringLiterals (1 line)
-        text.append(this.exec("mount"));
+        try {
+            // @checkstyle MultipleStringLiterals (1 line)
+            text.append(this.exec("mount"));
+        } catch (IOException ex) {
+            text.append(String.format("%[exception]s", ex));
+        }
         return text.toString();
     }
 
