@@ -29,7 +29,6 @@ package com.netbout.hub;
 import com.netbout.spi.Urn;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;

@@ -70,6 +70,7 @@ public final class StoreMocker extends Store {
 
     /**
      * {@inheritDoc}
+     * @checkstyle ParameterNumber (4 lines)
      */
     @Override
     public void connect(final String host, final int port,

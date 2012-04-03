@@ -71,14 +71,14 @@ public final class BoutMgrMocker {
             Mockito.doAnswer(
                 new Answer() {
                     public Object answer(final InvocationOnMock invocation) {
-                        Long num = (Long) invocation.getArguments()[0];
+                        final Long num = (Long) invocation.getArguments()[0];
                         return new BoutDtMocker()
+                            .withNumber(num)
                             .withParticipant(
                                 new ParticipantDtMocker()
                                     .withIdentity(BoutMgrMocker.this.author)
                                     .mock()
                             )
-                            .withNumber(num)
                             .mock();
                     }
                 }

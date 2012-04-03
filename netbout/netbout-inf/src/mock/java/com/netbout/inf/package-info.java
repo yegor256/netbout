@@ -24,57 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.meta;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
- * Html PAR.
- *
- * <p>The class is mutable and NOT thread-safe.
+ * Infinity, mockers.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class HtmlPar extends AbstractPar {
-
-    /**
-     * Public ctor.
-     */
-    public HtmlPar() {
-        super(
-            ArrayUtils.toMap(
-                new Object[][] {
-                    // @checkstyle MultipleStringLiterals (5 lines)
-                    {"\\[(.+?)\\]\\((http://.+?)\\)", "<a href='$2'>$1</a>"},
-                    {"\\*+(.+?)\\*+", "<b>$1</b>"},
-                    {"`(.+?)`", "<span class='tt'>$1</span>"},
-                    {"_+(.+?)_+", "<i>$1</i>"},
-                }
-        ));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String pack() {
-        String out;
-        if (this.isPre()) {
-            out = String.format(
-                "<p class='fixed'>%s</p>",
-                this.getText()
-            );
-        } else if (this.isBullets()) {
-            out = String.format(
-                "<ul><li>%s</li></ul>",
-                StringUtils.join(this.getText().split("\n"), "</li><li>")
-            );
-        } else {
-            out = String.format("<p>%s</p>", this.getText());
-        }
-        return out;
-    }
-
-}
+package com.netbout.inf;

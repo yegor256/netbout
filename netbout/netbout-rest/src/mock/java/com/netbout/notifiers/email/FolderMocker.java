@@ -48,7 +48,7 @@ public final class FolderMocker {
      */
     public FolderMocker() {
         final Message[] messages = new Message[] {
-            new MessageMocker().mock()
+            new MessageMocker().mock(),
         };
         try {
             Mockito.doReturn(messages).when(this.folder).getMessages();

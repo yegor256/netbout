@@ -50,7 +50,7 @@ public final class MessageMocker {
     public MessageMocker() {
         try {
             final Address[] emails = new Address[] {
-                new InternetAddress("mock@netbout.com", "Mr. Mocker")
+                new InternetAddress("mock@netbout.com", "Mr. Mocker"),
             };
             Mockito.doReturn(emails).when(this.message).getAllRecipients();
             Mockito.doReturn(emails).when(this.message).getFrom();

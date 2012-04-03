@@ -78,6 +78,17 @@ final class EbsDirectory {
     }
 
     /**
+     * Some stats to show.
+     * @return The text
+     */
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("directory: %s\n", this.directory));
+        text.append(String.format("host: %s", this.host));
+        return text.toString();
+    }
+
+    /**
      * The path.
      * @return File
      */

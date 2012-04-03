@@ -66,6 +66,7 @@ public final class PredicateMocker {
      * Without iteration.
      * @return This object
      */
+    @SuppressWarnings("PMD.NullAssignment")
     public PredicateMocker withoutIteration() {
         this.iterator = null;
         return this;

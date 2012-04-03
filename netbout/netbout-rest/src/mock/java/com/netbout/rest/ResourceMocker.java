@@ -26,8 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.netbout.hub.UrnResolver;
@@ -43,7 +41,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 import javax.xml.bind.Marshaller;
@@ -82,7 +79,7 @@ public final class ResourceMocker {
     /**
      * Providers.
      */
-    private transient Providers providers =
+    private final transient Providers providers =
         Mockito.mock(Providers.class);
 
     /**
@@ -94,13 +91,13 @@ public final class ResourceMocker {
     /**
      * Http headers.
      */
-    private transient HttpHeaders httpHeaders =
+    private final transient HttpHeaders httpHeaders =
         Mockito.mock(HttpHeaders.class);
 
     /**
      * Servlet request.
      */
-    private transient HttpServletRequest httpRequest =
+    private final transient HttpServletRequest httpRequest =
         Mockito.mock(HttpServletRequest.class);
 
     /**

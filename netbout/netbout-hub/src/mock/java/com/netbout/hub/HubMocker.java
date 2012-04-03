@@ -26,13 +26,10 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.inf.DefaultInfinity;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
-import java.net.URL;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -85,10 +82,9 @@ public final class HubMocker {
                     return (Identity) invocation.getArguments()[0];
                 }
             }
-        ).when(this.hub).join(
-            Mockito.any(Identity.class),
-            Mockito.any(Identity.class)
-        );
+        )
+            .when(this.hub)
+            .join(Mockito.any(Identity.class), Mockito.any(Identity.class));
     }
 
     /**

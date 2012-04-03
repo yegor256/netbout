@@ -76,6 +76,7 @@ public final class ParticipantRowMocker {
 
     /**
      * Mock it and return its name.
+     * @return The URN of just created participant
      */
     public Urn mock() {
         final IdentityFarm ifarm = new IdentityFarm();

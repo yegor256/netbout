@@ -31,11 +31,8 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.List;
-import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -85,6 +82,7 @@ public final class StageFarmMocker implements IdentityAware {
      * @param body Body of POST request
      * @return New place in this stage
      * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("stage-post-request")
     public String stagePostRequest(final Long number,
@@ -109,10 +107,12 @@ public final class StageFarmMocker implements IdentityAware {
     /**
      * Get XML of the stage.
      * @param number Bout where it is happening
+     * @param viewer Who is rendering
      * @param stage Name of stage to render
      * @param place The place in the stage to render
      * @return The XML document
      * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("render-stage-xml")
     public String renderStageXml(final Long number, final Urn viewer,
@@ -151,6 +151,7 @@ public final class StageFarmMocker implements IdentityAware {
      * @param path Relative path inside this URI, e.g. "/test.xsd"
      * @return HTTP response full body
      * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("render-stage-resource")
     public String renderStageResource(final Long number, final Urn author,
@@ -167,6 +168,7 @@ public final class StageFarmMocker implements IdentityAware {
      * Local test resource.
      * @param name The name of it (inside
      *  {@code src/test/resources/com/netbout/rest/bumper})
+     * @return THe name of resource
      */
     private String res(final String name) {
         try {

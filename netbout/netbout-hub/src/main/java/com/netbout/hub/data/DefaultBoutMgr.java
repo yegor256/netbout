@@ -154,7 +154,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
      */
     @Override
     public BoutData find(final Long number) throws BoutNotFoundException {
-        synchronized (this) {
+        synchronized (this.bouts) {
             assert number != null;
             if (!this.bouts.containsKey(number)) {
                 final Boolean exists = this.hub
@@ -182,7 +182,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
      */
     @Override
     public void destroy(final Urn author) {
-        synchronized (this) {
+        synchronized (this.bouts) {
             for (Long number : this.bouts.keySet()) {
                 boolean found = false;
                 for (ParticipantDt dude

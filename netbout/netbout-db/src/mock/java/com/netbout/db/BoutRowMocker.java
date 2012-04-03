@@ -54,7 +54,9 @@ public final class BoutRowMocker {
 
     /**
      * Mock it and return its number.
+     * @return Number of just mocked bout
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Long mock() {
         final BoutFarm farm = new BoutFarm();
         final Long bout = farm.getNextBoutNumber();

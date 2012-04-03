@@ -43,6 +43,8 @@ public final class TransportMocker extends Transport {
 
     /**
      * Public ctor.
+     * @param session The session
+     * @param name The name
      */
     public TransportMocker(final Session session, final URLName name) {
         super(session, name);
@@ -62,6 +64,7 @@ public final class TransportMocker extends Transport {
         try {
             Logger.info(
                 this,
+                // @checkstyle LineLength (1 line)
                 "#sendMessage(..):\n  From: %[list]s\n  To: %[list]s\n  CC:%s\n  Reply-to: %[list]s\n  Subject: %s\n  Text: %s",
                 message.getFrom(),
                 message.getRecipients(Message.RecipientType.TO),
@@ -79,6 +82,7 @@ public final class TransportMocker extends Transport {
 
     /**
      * {@inheritDoc}
+     * @checkstyle ParameterNumber (4 lines)
      */
     @Override
     public void connect(final String host, final int port, final String user,

@@ -92,11 +92,9 @@ public final class SlipTest {
                 {"test.pdf", "application/pdf"},
                 {"http://localhost/test.txt", "text/plain"},
                 {"s3:/abc.cde/myfile.zip", "application/x-zip-compressed"},
-                // {"ftp://example.com/data.mp3", "audio/mpeg"},
                 {"http://google.com/image.png", "image/png"},
                 {"http://example.com/test.doc", "application/msword"},
                 {"http://example.com/test.xls", "application/excel"},
-                // { "http://example.com/test.mp4", "video/mp4"},
                 {"http://example.com/test.mpeg", "video/mpeg"},
                 {"http://example.com/test", "application/octet-stream"},
             }

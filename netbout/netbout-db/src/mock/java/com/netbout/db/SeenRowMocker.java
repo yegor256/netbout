@@ -27,8 +27,6 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Random;
 
 /**
  * Mocker of {@code SEEN} row in a database.

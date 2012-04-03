@@ -26,8 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.net.URL;
@@ -62,7 +60,7 @@ public final class UrnResolverMocker {
     public UrnResolverMocker() {
         final Answer answer = new Answer() {
             public Object answer(final InvocationOnMock invocation) {
-                Urn urn = (Urn) invocation.getArguments()[0];
+                final Urn urn = (Urn) invocation.getArguments()[0];
                 final String nid = urn.nid();
                 if (!UrnResolverMocker.this.namespaces.containsKey(nid)) {
                     throw new IllegalArgumentException(

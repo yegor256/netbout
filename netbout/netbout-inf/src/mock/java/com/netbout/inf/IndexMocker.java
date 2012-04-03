@@ -41,6 +41,7 @@ public final class IndexMocker {
 
     /**
      * All maps.
+     * @checkstyle LineLength (2 lines)
      */
     private final transient ConcurrentMap<String, ConcurrentMap<Object, Object>> maps =
         new ConcurrentHashMap<String, ConcurrentMap<Object, Object>>();

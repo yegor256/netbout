@@ -27,10 +27,6 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Mocker of {@code NAMESPACE} row in a database.
@@ -73,26 +69,27 @@ public final class NamespaceRowMocker {
 
     /**
      * With this owner.
-     * @param name The owner
+     * @param txt The owner
      * @return This object
      */
-    public NamespaceRowMocker withOwner(final Urn name) {
-        this.identity = name;
+    public NamespaceRowMocker withOwner(final Urn txt) {
+        this.identity = txt;
         return this;
     }
 
     /**
      * With this template.
-     * @param name The name
-     * @return THis object
+     * @param txt The name
+     * @return This object
      */
-    public NamespaceRowMocker withTemplate(final String name) {
-        this.template = name;
+    public NamespaceRowMocker withTemplate(final String txt) {
+        this.template = txt;
         return this;
     }
 
     /**
      * Mock it and return its name.
+     * @return Just created namespace
      */
     public String mock() {
         final NamespaceFarm farm = new NamespaceFarm();

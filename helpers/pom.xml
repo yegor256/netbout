@@ -267,7 +267,7 @@
                     <plugin>
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
-                        <version since="21 Nov 2011">0.1.7</version>
+                        <version since="2 Apr 2012">0.1.9</version>
                         <configuration>
                             <license>file:${basedir}/LICENSE.txt</license>
                         </configuration>

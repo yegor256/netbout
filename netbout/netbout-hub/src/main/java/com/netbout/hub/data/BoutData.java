@@ -121,7 +121,7 @@ final class BoutData implements BoutDt {
     @Override
     public void kickOff(final Urn identity) {
         final ParticipantDt dude = this.find(identity);
-        synchronized (this) {
+        synchronized (this.participants) {
             this.participants.remove(dude);
             this.hub.make("removed-bout-participant")
                 .synchronously()
@@ -137,7 +137,7 @@ final class BoutData implements BoutDt {
      */
     @Override
     public void setLeader(final Urn name) {
-        synchronized (this) {
+        synchronized (this.participants) {
             final Collection<ParticipantDt> dudes = this.getParticipants();
             ParticipantDt leader = null;
             for (ParticipantDt dude : dudes) {
@@ -180,7 +180,7 @@ final class BoutData implements BoutDt {
      */
     @Override
     public Date getDate() {
-        synchronized (this) {
+        synchronized (this.date) {
             if (this.date == null) {
                 this.date = this.hub.make("get-bout-date")
                     .synchronously()
@@ -196,7 +196,7 @@ final class BoutData implements BoutDt {
      */
     @Override
     public String getTitle() {
-        synchronized (this) {
+        synchronized (this.title) {
             if (this.title == null) {
                 this.title = this.hub.make("get-bout-title")
                     .synchronously()
@@ -212,7 +212,7 @@ final class BoutData implements BoutDt {
      */
     @Override
     public void setTitle(final String text) {
-        synchronized (this) {
+        synchronized (this.title) {
             this.title = text;
             this.hub.make("changed-bout-title")
                 .asap()
@@ -236,7 +236,7 @@ final class BoutData implements BoutDt {
     public ParticipantDt addParticipant(final Urn name) {
         final ParticipantDt data =
             new ParticipantData(this.hub, this.number, name);
-        synchronized (this) {
+        synchronized (this.participants) {
             this.getParticipants().add(data);
             this.hub.make("added-bout-participant")
                 .synchronously()
@@ -261,7 +261,7 @@ final class BoutData implements BoutDt {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<ParticipantDt> getParticipants() {
-        synchronized (this) {
+        synchronized (this.participants) {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantDt>();
                 final List<Urn> identities = this.hub
@@ -286,7 +286,7 @@ final class BoutData implements BoutDt {
     @Override
     public MessageDt addMessage() {
         MessageDt data;
-        synchronized (this) {
+        synchronized (this.messages) {
             final Long num = this.hub.make("create-bout-message")
                 .synchronously()
                 .arg(this.number)
@@ -312,7 +312,7 @@ final class BoutData implements BoutDt {
     @Override
     public MessageDt findMessage(final Long num)
         throws MessageNotFoundException {
-        synchronized (this) {
+        synchronized (this.messages) {
             if (!this.messages.containsKey(num)) {
                 final Boolean exists = this.hub
                     .make("check-message-existence")

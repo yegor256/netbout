@@ -47,12 +47,12 @@ public final class HelperMocker {
     /**
      * Mocked helper.
      */
-    private final Helper helper = Mockito.mock(Helper.class);
+    private final transient Helper helper = Mockito.mock(Helper.class);
 
     /**
      * Map of requests and responses.
      */
-    private final ConcurrentMap<String, Object> ops =
+    private final transient ConcurrentMap<String, Object> ops =
         new ConcurrentHashMap<String, Object>();
 
     /**

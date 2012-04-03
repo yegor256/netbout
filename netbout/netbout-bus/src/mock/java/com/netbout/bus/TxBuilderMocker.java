@@ -27,8 +27,6 @@
 package com.netbout.bus;
 
 import com.netbout.spi.Bout;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;

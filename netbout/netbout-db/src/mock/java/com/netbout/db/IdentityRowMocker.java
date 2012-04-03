@@ -88,7 +88,9 @@ public final class IdentityRowMocker {
 
     /**
      * Mock it and return its URN.
+     * @return Name of just mocked identity
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Urn mock() {
         final IdentityFarm farm = new IdentityFarm();
         try {

@@ -93,7 +93,7 @@ public final class HubProfile implements Profile {
      */
     @Override
     public Locale locale() {
-        synchronized (this) {
+        synchronized (this.ilocale) {
             if (this.ilocale == null) {
                 final String lang = this.hub.make("get-locale-of-identity")
                     .synchronously()
@@ -112,7 +112,7 @@ public final class HubProfile implements Profile {
     @Override
     public void setLocale(final Locale locale) {
         final Locale previous = this.ilocale;
-        synchronized (this) {
+        synchronized (this.ilocale) {
             this.ilocale = locale;
         }
         if (previous == null || !previous.equals(locale)) {
@@ -136,7 +136,7 @@ public final class HubProfile implements Profile {
      */
     @Override
     public URL photo() {
-        synchronized (this) {
+        synchronized (this.iphoto) {
             if (this.iphoto == null) {
                 final URL url = this.hub.make("get-identity-photo")
                     .synchronously()
@@ -155,7 +155,7 @@ public final class HubProfile implements Profile {
     @Override
     public void setPhoto(final URL url) {
         final URL previous = this.iphoto;
-        synchronized (this) {
+        synchronized (this.iphoto) {
             this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
         }
         this.hub.make("identity-mentioned")
@@ -217,7 +217,7 @@ public final class HubProfile implements Profile {
         if (alias == null || alias.isEmpty()) {
             throw new IllegalArgumentException("alias can't be empty");
         }
-        synchronized (this) {
+        synchronized (this.ialiases) {
             if (this.myAliases().contains(alias)) {
                 Logger.debug(
                     this,
@@ -248,7 +248,7 @@ public final class HubProfile implements Profile {
      * @return The link to the list of them
      */
     private Set<String> myAliases() {
-        synchronized (this) {
+        synchronized (this.ialiases) {
             if (this.ialiases == null) {
                 this.ialiases = new CopyOnWriteArraySet<String>(
                     (List<String>) this.hub

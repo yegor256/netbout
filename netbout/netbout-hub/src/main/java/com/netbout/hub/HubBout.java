@@ -232,8 +232,8 @@ public final class HubBout implements Bout {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
-        final Collection<Participant> participants
-            = new ArrayList<Participant>();
+        final Collection<Participant> participants =
+            new ArrayList<Participant>();
         for (ParticipantDt dude : this.data.getParticipants()) {
             participants.add(
                 new HubParticipant(this.hub, this, dude, this.data)

@@ -26,7 +26,6 @@
  */
 package com.netbout.rest.bumper;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
@@ -34,7 +33,6 @@ import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import java.net.URI;
 import java.net.URL;
-import java.util.List;
 import javax.ws.rs.core.UriBuilder;
 
 /**
@@ -58,6 +56,7 @@ public final class BumperFarmMocker implements IdentityAware {
 
     /**
      * Inform about base URI.
+     * @param uri The URI
      */
     public static void setBaseUri(final URI uri) {
         try {

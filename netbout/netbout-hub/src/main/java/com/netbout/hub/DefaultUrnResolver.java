@@ -87,7 +87,8 @@ final class DefaultUrnResolver implements UrnResolver {
                     String.format(
                         "  %s: %s\n",
                         entry.getKey(),
-                        entry.getValue())
+                        entry.getValue()
+                    )
                 );
             }
         }
