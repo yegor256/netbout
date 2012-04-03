@@ -58,7 +58,7 @@ final class EbsDevice {
     /**
      * Device to attach to.
      */
-    private static final String DEVICE = "/dev/hdg";
+    private static final String DEVICE = "/dev/sda5";
 
     /**
      * EC2 entry point.
