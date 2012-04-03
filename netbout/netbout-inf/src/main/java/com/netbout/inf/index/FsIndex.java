@@ -107,13 +107,12 @@ public final class FsIndex implements Index {
             )
         )
             .append(
-                Logger.format(
-                    "Size: %d bytes\n",
-                    SerializationUtils.serialize((Serializable) this.maps)
-                        .length
+                String.format(
+                    "File: %s (%d bytes)\n",
+                    this.file,
+                    this.file.length()
                 )
             )
-            .append(String.format("File: %s\n", this.file))
             .append(this.folder.statistics());
         return text.toString();
     }
