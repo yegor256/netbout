@@ -157,6 +157,10 @@ final class EbsDirectory {
             "ext3",
             device,
             this.path()
+            "&&",
+            "chown",
+            "tomcat7.tomcat7",
+            this.path()
         );
         Logger.info(
             this,
