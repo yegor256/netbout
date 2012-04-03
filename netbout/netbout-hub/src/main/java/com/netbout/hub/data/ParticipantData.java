@@ -99,7 +99,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public void setConfirmed(final Boolean flag) {
-        synchronized (this.confirmed) {
+        synchronized (this.bout) {
             this.confirmed = flag;
             this.hub.make("changed-participant-status")
                 .asap()
@@ -121,7 +121,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public Boolean isConfirmed() {
-        synchronized (this.confirmed) {
+        synchronized (this.bout) {
             if (this.confirmed == null) {
                 this.confirmed = this.hub.make("get-participant-status")
                     .synchronously()
@@ -138,7 +138,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public void setLeader(final Boolean flag) {
-        synchronized (this.leader) {
+        synchronized (this.bout) {
             this.leader = flag;
             this.hub.make("changed-participant-leadership")
                 .asap()
@@ -160,7 +160,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public Boolean isLeader() {
-        synchronized (this.leader) {
+        synchronized (this.bout) {
             if (this.leader == null) {
                 this.leader = this.hub.make("get-participant-leadership")
                     .synchronously()
