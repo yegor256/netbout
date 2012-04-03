@@ -43,6 +43,14 @@ public final class JDBM3Index implements Index {
      * {@inheritDoc}
      */
     @Override
+    public void close() {
+        // nothing to do yet
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <X, Y> ConcurrentMap<X, Y> get(final String name) {
         return null;
     }

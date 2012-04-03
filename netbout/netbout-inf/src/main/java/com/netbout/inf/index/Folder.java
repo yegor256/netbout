@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.index;
 
+import java.io.Closeable;
 import java.io.File;
 
 /**
@@ -34,7 +35,7 @@ import java.io.File;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Folder {
+interface Folder extends Closeable {
 
     /**
      * Get its full path.

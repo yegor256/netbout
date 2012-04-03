@@ -49,6 +49,14 @@ public final class MemoryIndex implements Index {
      * {@inheritDoc}
      */
     @Override
+    public void close() {
+        // nothing to close here
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <X, Y> ConcurrentMap<X, Y> get(final String name) {
         synchronized (this.maps) {
             if (!this.maps.containsKey(name)) {

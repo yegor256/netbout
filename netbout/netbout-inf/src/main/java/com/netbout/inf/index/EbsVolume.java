@@ -75,6 +75,14 @@ final class EbsVolume implements Folder {
      * {@inheritDoc}
      */
     @Override
+    public void close() throws java.io.IOException {
+        this.directory.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public File path() {
         try {

@@ -31,6 +31,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.ymock.util.Logger;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -47,7 +48,8 @@ import org.apache.commons.lang.CharEncoding;
  * @author Krzysztof Krason (Krzysztof.Krason@gmail.com)
  * @version $Id$
  */
-final class EbsDirectory {
+@SuppressWarnings("PMD.TooManyMethods")
+final class EbsDirectory implements Closeable {
 
     /**
      * Mounting directory.
@@ -75,6 +77,15 @@ final class EbsDirectory {
     public EbsDirectory(final File path, final String hst) {
         this.directory = path;
         this.host = hst;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        // @checkstyle MultipleStringLiterals (1 line)
+        this.exec("sudo", "-S", "umount", this.directory);
     }
 
     /**
@@ -156,7 +167,7 @@ final class EbsDirectory {
             "-t",
             "ext3",
             device,
-            this.path()
+            this.path(),
             "&&",
             "chown",
             "tomcat7.tomcat7",
