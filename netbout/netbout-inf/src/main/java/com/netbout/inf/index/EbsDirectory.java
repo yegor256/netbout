@@ -295,6 +295,7 @@ final class EbsDirectory {
             throw new IOException("PEM not found");
         }
         FileUtils.copyURLToFile(key, file);
+        FileUtils.forceDeleteOnExit(file);
         return file;
     }
 
