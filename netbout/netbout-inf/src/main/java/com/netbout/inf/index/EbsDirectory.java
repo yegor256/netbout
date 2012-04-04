@@ -168,10 +168,6 @@ final class EbsDirectory implements Closeable {
             "-t",
             "ext3",
             device,
-            this.path(),
-            "&&",
-            "chown",
-            "tomcat7.tomcat7",
             this.path()
         );
         Logger.info(
@@ -180,6 +176,19 @@ final class EbsDirectory implements Closeable {
             device,
             this.path(),
             output
+        );
+        this.exec(
+            "sudo",
+            "-S",
+            "chown",
+            "tomcat7.tomcat7",
+            this.path()
+        );
+        Logger.info(
+            this,
+            "#mount(%s): permission changed for %s",
+            device,
+            this.path()
         );
     }
 
