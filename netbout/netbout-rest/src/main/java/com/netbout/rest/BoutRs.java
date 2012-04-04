@@ -412,10 +412,12 @@ public final class BoutRs extends AbstractRs {
                 .append(JaxbGroup.build(invitees, "invitees"));
         }
         if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
-            page.link("post", this.self("/p"))
-                .link("rename", this.self("/r"));
+            page.link("post", this.self("/p"));
         } else {
             page.link("join", this.self("/join"));
+        }
+        if (NetboutUtils.participantOf(myself, this.bout()).leader()) {
+            page.link("rename", this.self("/r"));
         }
         return page;
     }
