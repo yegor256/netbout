@@ -345,7 +345,7 @@
     </xsl:template>
 
     <xsl:template name="rename">
-        <xsl:if select="/page/links/link[@rel='rename']">
+        <xsl:if test="/page/links/link[@rel='rename']">
             <form id="rename" method="post" style="display: none;">
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
