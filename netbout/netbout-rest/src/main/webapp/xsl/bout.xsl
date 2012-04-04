@@ -101,7 +101,7 @@
                 </span>
             </a>
             <span class="title">
-                <xsl:if test="$participant/@confirmed = 'true'">
+                <xsl:if test="$participant/@confirmed = 'true' and /page/links/link[@rel='rename']">
                     <xsl:attribute name="contenteditable">
                         <xsl:text>true</xsl:text>
                     </xsl:attribute>
