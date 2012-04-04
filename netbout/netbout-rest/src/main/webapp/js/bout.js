@@ -38,25 +38,27 @@ String.prototype.escaped = function() {
  */
 var setup = function() {
     var bout = parseInt($('#bout-number').text(), 10);
-    $('h1 span.title')
-        .blur(
-            function() {
-                var $input = $("#rename input[name='title']");
-                var previous = $input.val();
-                var entered = $(this).text();
-                if (entered != previous) {
-                    $input.val(entered);
-                    $("#rename").submit();
+    if ($('#rename')[0]) {
+        $('h1 span.title')
+            .blur(
+                function() {
+                    var $input = $("#rename input[name='title']");
+                    var previous = $input.val();
+                    var entered = $(this).text();
+                    if (entered != previous) {
+                        $input.val(entered);
+                        $("#rename").submit();
+                    }
                 }
-            }
-        )
-        .keydown(
-            function() {
-                if (arguments[0].keyCode == 13) {
-                    $(this).blur();
+            )
+            .keydown(
+                function() {
+                    if (arguments[0].keyCode == 13) {
+                        $(this).blur();
+                    }
                 }
-            }
-        );
+            );
+    }
     $('span.xml-toggle').click(
         function() {
             $(this).parent().parent().find('p.fixed').toggle();
