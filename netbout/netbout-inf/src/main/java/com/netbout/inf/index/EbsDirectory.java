@@ -157,6 +157,7 @@ final class EbsDirectory implements Closeable {
      * Mount this device to our directory.
      * @param device Name of device to mount
      * @throws IOException If some IO problem inside
+     * @see <a href="http://serverfault.com/questions/376455">why chown</a>
      */
     public void mount(final String device) throws IOException {
         FileUtils.deleteQuietly(this.directory);

@@ -79,12 +79,16 @@ public final class LifecycleListener implements ServletContextListener {
             try {
                 this.hub.close();
             } catch (java.io.IOException ex) {
-                throw new IllegalStateException(ex);
+                Logger.error(
+                    this,
+                    "#contextDestroyed(): %[exception]s",
+                    ex
+                );
             }
         }
         Logger.info(
             this,
-            "contextDestroyed(): done in %[nano]s",
+            "#contextDestroyed(): done in %[nano]s",
             System.nanoTime() - start
         );
     }
