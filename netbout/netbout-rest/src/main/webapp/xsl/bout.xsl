@@ -101,7 +101,7 @@
                 </span>
             </a>
             <span class="title">
-                <xsl:if test="$participant/@confirmed = 'true'">
+                <xsl:if test="$participant/@confirmed = 'true' and /page/links/link[@rel='rename']">
                     <xsl:attribute name="contenteditable">
                         <xsl:text>true</xsl:text>
                     </xsl:attribute>
@@ -345,16 +345,18 @@
     </xsl:template>
 
     <xsl:template name="rename">
-        <form id="rename" method="post" style="display: none;">
-            <xsl:attribute name="action">
-                <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
-            </xsl:attribute>
-            <input name="title" size="50" autocomplete="off">
-                <xsl:attribute name="value">
-                    <xsl:value-of select="/page/bout/title"/>
+        <xsl:if test="/page/links/link[@rel='rename']">
+            <form id="rename" method="post" style="display: none;">
+                <xsl:attribute name="action">
+                    <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
                 </xsl:attribute>
-            </input>
-        </form>
+                <input name="title" size="50" autocomplete="off">
+                    <xsl:attribute name="value">
+                        <xsl:value-of select="/page/bout/title"/>
+                    </xsl:attribute>
+                </input>
+            </form>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template name="options">
