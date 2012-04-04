@@ -121,9 +121,10 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public void close() {
+    public void close() throws java.io.IOException {
         Logger.info(this, "#close(): will stop Mux in a second");
         this.mux.close();
+        this.index.close();
     }
 
     /**

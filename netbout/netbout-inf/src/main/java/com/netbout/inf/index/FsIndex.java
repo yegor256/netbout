@@ -97,6 +97,15 @@ public final class FsIndex implements Index {
      * {@inheritDoc}
      */
     @Override
+    public void close() throws java.io.IOException {
+        this.flush();
+        this.folder.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append(

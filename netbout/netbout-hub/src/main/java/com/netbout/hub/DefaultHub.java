@@ -154,19 +154,11 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
      * {@inheritDoc}
      */
     @Override
-    public void close() {
+    public void close() throws java.io.IOException {
         Logger.debug(this, "#close(): shutting down INF");
-        try {
-            this.inf.close();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
+        this.inf.close();
         Logger.debug(this, "#close(): shutting down BUS");
-        try {
-            this.ibus.close();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
+        this.ibus.close();
         Logger.debug(this, "#close(): closed successfully");
     }
 

@@ -31,6 +31,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.ymock.util.Logger;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -47,7 +48,8 @@ import org.apache.commons.lang.CharEncoding;
  * @author Krzysztof Krason (Krzysztof.Krason@gmail.com)
  * @version $Id$
  */
-final class EbsDirectory {
+@SuppressWarnings("PMD.TooManyMethods")
+final class EbsDirectory implements Closeable {
 
     /**
      * Mounting directory.
@@ -75,6 +77,15 @@ final class EbsDirectory {
     public EbsDirectory(final File path, final String hst) {
         this.directory = path;
         this.host = hst;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        // @checkstyle MultipleStringLiterals (1 line)
+        this.exec("sudo", "-S", "umount", this.directory);
     }
 
     /**
@@ -146,6 +157,7 @@ final class EbsDirectory {
      * Mount this device to our directory.
      * @param device Name of device to mount
      * @throws IOException If some IO problem inside
+     * @see <a href="http://serverfault.com/questions/376455">why chown</a>
      */
     public void mount(final String device) throws IOException {
         FileUtils.deleteQuietly(this.directory);
@@ -156,6 +168,10 @@ final class EbsDirectory {
             "-t",
             "ext3",
             device,
+            this.path(),
+            "&&",
+            "chown",
+            "tomcat7.tomcat7",
             this.path()
         );
         Logger.info(
@@ -295,6 +311,7 @@ final class EbsDirectory {
             throw new IOException("PEM not found");
         }
         FileUtils.copyURLToFile(key, file);
+        FileUtils.forceDeleteOnExit(file);
         return file;
     }
 
