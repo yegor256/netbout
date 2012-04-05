@@ -37,7 +37,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
@@ -376,7 +376,6 @@ public final class BoutRs extends AbstractRs {
      * Main page.
      * @return The page
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private Page page() {
         final Identity myself = this.identity();
         this.coords.normalize(this.hub(), this.bout());
@@ -403,14 +402,7 @@ public final class BoutRs extends AbstractRs {
             )
             .append(new JaxbBundle("query", this.query))
             .link("leave", this.self("/leave"));
-        if (this.mask != null) {
-            final List<Invitee> invitees = new ArrayList<Invitee>();
-            for (Identity friend : myself.friends(this.mask)) {
-                invitees.add(new Invitee(friend, this.self("")));
-            }
-            page.append(new JaxbBundle("mask", this.mask))
-                .append(JaxbGroup.build(invitees, "invitees"));
-        }
+        this.appendInvitees(page);
         if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
             page.link("post", this.self("/p"));
         } else {
@@ -420,6 +412,22 @@ public final class BoutRs extends AbstractRs {
             page.link("rename", this.self("/r"));
         }
         return page;
+    }
+
+    /**
+     * Append invitees, if necessary.
+     * @param page The page to append to
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private void appendInvitees(final Page page) {
+        if (this.mask != null) {
+            final List<Invitee> invitees = new LinkedList<Invitee>();
+            for (Identity friend : this.identity().friends(this.mask)) {
+                invitees.add(new Invitee(friend, this.self("")));
+            }
+            page.append(new JaxbBundle("mask", this.mask))
+                .append(JaxbGroup.build(invitees, "invitees"));
+        }
     }
 
     /**
