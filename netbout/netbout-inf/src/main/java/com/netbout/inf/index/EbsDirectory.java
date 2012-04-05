@@ -100,7 +100,7 @@ final class EbsDirectory implements Closeable {
             // @checkstyle MultipleStringLiterals (1 line)
             text.append(this.exec("mount"));
         } catch (IOException ex) {
-            text.append(String.format("%[exception]s", ex));
+            text.append(Logger.format("%[exception]s", ex));
         }
         return text.toString();
     }

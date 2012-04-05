@@ -35,7 +35,7 @@ import com.ymock.util.Logger
 
 def urlFile = new File(rexsl.basedir, 'jdbc.txt')
 if (urlFile.exists()) {
-    Manifests.inject('Netbout-JdbcUrl', urlFile.text)
+    Manifests.inject('Netbout-JdbcUrl', urlFile.text.trim())
 }
 
 def line = new StringBuilder()
