@@ -73,23 +73,25 @@
             <xsl:text>: </xsl:text>
             <span class="tt"><xsl:value-of select="/page/identity/name"/></span>
         </p>
-        <p>
-            <xsl:value-of select="$TEXTS/AKA"/>
-            <xsl:text>: </xsl:text>
-            <xsl:for-each select="/page/identity/aliases/alias">
-                <xsl:if test="position() &gt; 1">
-                    <xsl:text>, </xsl:text>
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="/page/identity/alias = .">
-                        <b><xsl:value-of select="."/></b>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="."/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:for-each>
-        </p>
+        <xsl:if test="/page/identity/aliases[count(alias) &gt; 1]">
+            <p>
+                <xsl:value-of select="$TEXTS/AKA"/>
+                <xsl:text>: </xsl:text>
+                <xsl:for-each select="/page/identity/aliases/alias">
+                    <xsl:if test="position() &gt; 1">
+                        <xsl:text>, </xsl:text>
+                    </xsl:if>
+                    <xsl:choose>
+                        <xsl:when test="/page/identity/alias = .">
+                            <b><xsl:value-of select="."/></b>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="."/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </p>
+        </xsl:if>
         <p>
             <xsl:value-of select="$TEXTS/Language"/>
             <xsl:text>: </xsl:text>

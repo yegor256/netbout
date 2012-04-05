@@ -38,7 +38,7 @@ import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -88,7 +88,7 @@ public final class InboxRs extends AbstractRs {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Response inbox(@QueryParam(InboxRs.PERIOD_PARAM) final String view) {
         final Identity identity = this.identity();
-        final List<ShortBout> bouts = new ArrayList<ShortBout>();
+        final List<ShortBout> bouts = new LinkedList<ShortBout>();
         // @checkstyle MagicNumber (1 line)
         final Period period = PeriodsBuilder.parse(view, 5L);
         final Iterable<Bout> inbox = this.fetch(period);

@@ -38,9 +38,9 @@ import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -88,12 +88,12 @@ public abstract class AbstractPage implements Page {
     /**
      * Collection of elements.
      */
-    private final transient Collection elements = new ArrayList();
+    private final transient Collection elements = new LinkedList();
 
     /**
      * Collection of links.
      */
-    private final transient Collection<Link> links = new ArrayList<Link>();
+    private final transient Collection<Link> links = new LinkedList<Link>();
 
     /**
      * Collection of log events.
@@ -311,7 +311,11 @@ public abstract class AbstractPage implements Page {
      */
     @XmlAttribute
     public final String getIp() {
-        return this.home.httpServletRequest().getLocalAddr();
+        return String.format(
+            "%s:%d",
+            this.home.httpServletRequest().getLocalAddr(),
+            this.home.httpServletRequest().getLocalPort()
+        );
     }
 
     /**

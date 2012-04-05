@@ -31,7 +31,7 @@ import com.netbout.rest.page.JaxbBundle;
 import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -67,7 +67,7 @@ public final class FriendsRs extends AbstractRs {
                 "Query param 'mask' and 'bout' are mandatory"
             );
         }
-        final List<Invitee> invitees = new ArrayList<Invitee>();
+        final List<Invitee> invitees = new LinkedList<Invitee>();
         for (Identity identity : this.identity().friends(mask)) {
             invitees.add(
                 new Invitee(

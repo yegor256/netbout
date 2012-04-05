@@ -32,8 +32,8 @@ import com.netbout.rest.page.JaxbGroup;
 import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -176,7 +176,7 @@ public final class ProfileRs extends AbstractRs {
         { "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap" }
     )
     private Collection<Namespace> namespaces() {
-        final Collection<Namespace> namespaces = new ArrayList<Namespace>();
+        final Collection<Namespace> namespaces = new LinkedList<Namespace>();
         final Map<String, String> map = this.hub().resolver()
             .registered(this.identity());
         for (Map.Entry<String, String> entry : map.entrySet()) {
