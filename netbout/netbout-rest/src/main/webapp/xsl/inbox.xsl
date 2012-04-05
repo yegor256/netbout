@@ -121,7 +121,7 @@
                         <li>
                             <a>
                                 <xsl:attribute name="href">
-                                    <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                                    <xsl:value-of select="/page/links/link[@rel='home']/@href"/>
                                 </xsl:attribute>
                                 <xsl:value-of select="$TEXTS/back.to.recent.bouts"/>
                             </a>

@@ -311,7 +311,11 @@ public abstract class AbstractPage implements Page {
      */
     @XmlAttribute
     public final String getIp() {
-        return this.home.httpServletRequest().getLocalAddr();
+        return String.format(
+            "%s:%d"
+            this.home.httpServletRequest().getLocalAddr(),
+            this.home.httpServletRequest().getLocalPort()
+        );
     }
 
     /**
