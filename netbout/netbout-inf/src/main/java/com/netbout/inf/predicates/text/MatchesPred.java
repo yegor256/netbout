@@ -54,6 +54,8 @@ import org.apache.commons.collections.CollectionUtils;
 /**
  * Matches text against search string.
  *
+ * <p>This class is NOT thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)

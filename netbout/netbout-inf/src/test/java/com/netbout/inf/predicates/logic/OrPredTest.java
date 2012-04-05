@@ -60,9 +60,9 @@ public final class OrPredTest {
             new IndexMocker().mock()
         );
         MatcherAssert.assertThat("has next", merger.hasNext());
-        MatcherAssert.assertThat(merger.next(), Matchers.equalTo(1L));
-        MatcherAssert.assertThat("still has next", merger.hasNext());
         MatcherAssert.assertThat(merger.next(), Matchers.equalTo(2L));
+        MatcherAssert.assertThat("still has next", merger.hasNext());
+        MatcherAssert.assertThat(merger.next(), Matchers.equalTo(1L));
         MatcherAssert.assertThat("now it is empty", !merger.hasNext());
     }
 

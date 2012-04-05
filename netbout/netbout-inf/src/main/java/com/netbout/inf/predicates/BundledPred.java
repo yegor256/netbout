@@ -43,6 +43,8 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Allows only bundled messages.
  *
+ * <p>This class is NOT thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

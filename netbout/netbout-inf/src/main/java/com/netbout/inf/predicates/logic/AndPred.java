@@ -36,6 +36,8 @@ import java.util.List;
 /**
  * Logical AND.
  *
+ * <p>This class is NOT thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
