@@ -349,9 +349,9 @@
                 <artifactId>rexsl-maven-plugin</artifactId>
                 <version>${rexsl.version}</version>
                 <configuration>
-                    <systemProperties>
+                    <systemPropertyVariables>
                         <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
-                    </systemProperties>
+                    </systemPropertyVariables>
                 </configuration>
                 <executions>
                     <execution>
