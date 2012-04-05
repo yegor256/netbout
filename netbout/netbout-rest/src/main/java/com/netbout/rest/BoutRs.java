@@ -403,6 +403,9 @@ public final class BoutRs extends AbstractRs {
             .append(new JaxbBundle("query", this.query))
             .link("leave", this.self("/leave"));
         this.appendInvitees(page);
+        if (this.view == null) {
+            page.link("top", this.self(""));
+        }
         if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
             page.link("post", this.self("/p"));
         } else {
@@ -436,10 +439,13 @@ public final class BoutRs extends AbstractRs {
      * @return The location, its builder actually
      */
     private UriBuilder self(final String path) {
-        return this.base()
-            // @checkstyle MultipleStringLiterals (1 line)
-            .path(String.format("/%d", this.bout().number()))
-            .path(path);
+        return UriBuilder.fromUri(
+            this.base()
+                .path("/{bout}")
+                .path(path)
+                .queryParam(RestSession.QUERY_PARAM, "{query}")
+                .build(this.bout().number(), this.query)
+        );
     }
 
 }

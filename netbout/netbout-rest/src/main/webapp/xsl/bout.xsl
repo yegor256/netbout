@@ -145,7 +145,7 @@
                 <li>
                     <a>
                         <xsl:attribute name="href">
-                            <xsl:value-of select="/page/links/link[@rel='first']/@href"/>
+                            <xsl:value-of select="/page/links/link[@rel='top']/@href"/>
                         </xsl:attribute>
                         <xsl:value-of select="$TEXTS/back.to.recent.messages"/>
                     </a>
