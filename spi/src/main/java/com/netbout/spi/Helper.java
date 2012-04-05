@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.io.Closeable;
 import java.net.URL;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Helper {
+public interface Helper extends Closeable {
 
     /**
      * Returns full list of supported operations (their mnemos).

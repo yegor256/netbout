@@ -95,6 +95,14 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
+    public void close() {
+        // nothing to do here
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void execute(final Token token) {
         if (!this.ops.containsKey(token.mnemo())) {
             throw new IllegalArgumentException(

@@ -95,6 +95,7 @@ public final class LifecycleListener implements ServletContextListener {
             "#contextDestroyed(): done in %[nano]s",
             System.nanoTime() - start
         );
+        org.apache.log4j.LogManager.shutdown();
     }
 
 }
