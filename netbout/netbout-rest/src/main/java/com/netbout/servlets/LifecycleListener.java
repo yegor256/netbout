@@ -57,7 +57,11 @@ public final class LifecycleListener implements ServletContextListener {
     @Override
     public void contextInitialized(final ServletContextEvent event) {
         final long start = System.nanoTime();
-        Manifests.append(event.getServletContext());
+        try {
+            Manifests.append(event.getServletContext());
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
         this.hub = new DefaultHub();
         event.getServletContext()
             .setAttribute("com.netbout.rest.HUB", this.hub);
