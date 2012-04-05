@@ -93,7 +93,7 @@
             <span id="bout-number" style="display: none;"><xsl:value-of select="/page/bout/number"/></span>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='top']/@href"/>
                 </xsl:attribute>
                 <span class="num">
                     <xsl:text>#</xsl:text>

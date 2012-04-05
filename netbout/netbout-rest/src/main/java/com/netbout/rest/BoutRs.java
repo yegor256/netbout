@@ -403,12 +403,10 @@ public final class BoutRs extends AbstractRs {
             .append(new JaxbBundle("query", this.query))
             .link("leave", this.self("/leave"));
         this.appendInvitees(page);
-        if (!this.view.isEmpty()) {
-            page.link(
-                "top",
-                this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, "")
-            );
-        }
+        page.link(
+            "top",
+            this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, "")
+        );
         if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
             page.link("post", this.self("/p"));
         } else {
