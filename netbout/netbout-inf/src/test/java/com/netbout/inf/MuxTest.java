@@ -64,11 +64,7 @@ public final class MuxTest {
         for (int idx = 0; idx < latch.getCount(); idx += 1) {
             mux.add(task);
         }
-        try {
-            latch.await(1, TimeUnit.SECONDS);
-        } catch (InterruptedException ex) {
-            throw new IllegalStateException(ex);
-        }
+        latch.await(1, TimeUnit.SECONDS);
         MatcherAssert.assertThat(mux.eta(name), Matchers.equalTo(0L));
         mux.close();
     }

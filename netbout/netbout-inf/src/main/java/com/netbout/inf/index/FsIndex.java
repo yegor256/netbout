@@ -169,7 +169,7 @@ public final class FsIndex implements Index {
         if (src.exists()) {
             final long start = System.nanoTime();
             try {
-                Logger.info(FsIndex.class, "#load(%s): trying to load...");
+                Logger.info(FsIndex.class, "#load(%s): trying to load...", src);
                 maps = (ConcurrentMap) SerializationUtils.deserialize(
                     new FileInputStream(src)
                 );
