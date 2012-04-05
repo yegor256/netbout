@@ -38,6 +38,8 @@ import org.apache.commons.lang.StringUtils;
 /**
  * Variable arguments predicate.
  *
+ * <p>This class is NOT thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

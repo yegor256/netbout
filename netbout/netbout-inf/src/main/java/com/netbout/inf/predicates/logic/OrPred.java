@@ -33,15 +33,24 @@ import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Logical OR.
+ *
+ * <p>This class is NOT thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @Meta(name = "or")
 public final class OrPred extends AbstractVarargPred {
+
+    /**
+     * Pool of already retrieved numbers.
+     */
+    private final transient SortedSet<Long> pool = new TreeSet<Long>();
 
     /**
      * Public ctor.
@@ -57,16 +66,16 @@ public final class OrPred extends AbstractVarargPred {
      */
     @Override
     public Long next() {
-        Long message = null;
         for (Atom pred : this.args()) {
             if (((Predicate) pred).hasNext()) {
-                message = ((Predicate) pred).next();
-                break;
+                this.pool.add(((Predicate) pred).next());
             }
         }
-        if (message == null) {
+        if (this.pool.isEmpty()) {
             throw new PredicateException("end of messsages reached");
         }
+        final Long message = this.pool.last();
+        this.pool.remove(message);
         return message;
     }
 
@@ -75,7 +84,7 @@ public final class OrPred extends AbstractVarargPred {
      */
     @Override
     public boolean hasNext() {
-        boolean has = false;
+        boolean has = !this.pool.isEmpty();
         for (Atom pred : this.args()) {
             has |= ((Predicate) pred).hasNext();
             if (has) {
@@ -90,7 +99,7 @@ public final class OrPred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
-        boolean allowed = false;
+        boolean allowed = this.pool.contains(message);
         for (Atom pred : this.args()) {
             allowed |= ((Predicate) pred).contains(message);
             if (allowed) {

@@ -45,6 +45,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 /**
  * All arguments should be equal to each other.
  *
+ * <p>This class is NOT thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
