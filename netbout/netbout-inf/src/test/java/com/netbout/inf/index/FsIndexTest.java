@@ -76,7 +76,7 @@ public final class FsIndexTest {
         final ConcurrentMap<Long, Urn> map = index.get(name);
         final Urn urn = new Urn("urn:test:abc");
         map.put(1L, urn);
-        index.flush();
+        index.close();
         MatcherAssert.assertThat(
             this.folder.path().list(),
             Matchers.arrayWithSize(Matchers.greaterThan(0))

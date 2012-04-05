@@ -34,8 +34,6 @@ import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.SerializationUtils;
 
 /**
@@ -77,20 +75,7 @@ public final class FsIndex implements Index {
     public FsIndex(final Folder fldr) {
         this.folder = fldr;
         this.file = new File(this.folder.path(), "inf-data.ser");
-        synchronized (FsIndex.class) {
-            this.maps = FsIndex.load(this.file);
-        }
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
-            new Runnable() {
-                @Override
-                public void run() {
-                    FsIndex.this.flush();
-                }
-            },
-            2L,
-            2L,
-            TimeUnit.MINUTES
-        );
+        this.maps = FsIndex.load(this.file);
     }
 
     /**
@@ -145,10 +130,10 @@ public final class FsIndex implements Index {
     /**
      * Flush it to disc.
      */
-    public void flush() {
+    private void flush() {
         final long start = System.nanoTime();
         try {
-            synchronized (FsIndex.class) {
+            synchronized (this.maps) {
                 SerializationUtils.serialize(
                     (Serializable) this.maps,
                     new FileOutputStream(this.file)
