@@ -155,10 +155,10 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
      */
     @Override
     public void close() throws java.io.IOException {
-        Logger.debug(this, "#close(): shutting down INF");
-        this.inf.close();
         Logger.debug(this, "#close(): shutting down BUS");
         this.ibus.close();
+        Logger.debug(this, "#close(): shutting down INF");
+        this.inf.close();
         Logger.debug(this, "#close(): closed successfully");
     }
 

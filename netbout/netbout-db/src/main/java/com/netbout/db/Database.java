@@ -68,6 +68,7 @@ final class Database {
         synchronized (Database.class) {
             Database.instance = null;
         }
+        Logger.info(Database.class, "#drop(): dropped");
     }
 
     /**
