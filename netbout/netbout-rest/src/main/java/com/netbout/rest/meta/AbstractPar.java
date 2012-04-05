@@ -188,7 +188,7 @@ abstract class AbstractPar implements Par {
             this.text.append(line.substring(this.PREFIX.length()));
             ++this.pos;
         } else if (this.bullets) {
-            this.text.append(line.substring(2));
+            this.text.append(this.format(line.substring(2)));
             ++this.pos;
         } else {
             final String trimmed = line.trim();

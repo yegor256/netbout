@@ -44,5 +44,4 @@ img.flag {
     /* originally it is 46x33 pixel, font-size here is 1.4em */
     width: 1.643em; /* x1.4 = 23px */
     vertical-align: middle;
-    border: 0.1em solid #f3f3f1;
 }
