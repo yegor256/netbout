@@ -96,7 +96,7 @@ public final class InboxRs extends AbstractRs {
             period,
             UriBuilder.fromUri(
                 this.base().clone()
-                    .queryParam(RestSession.QUERY_PARAM, "{query}")
+                    .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
                     .build(this.query)
             )
         ).setQueryParam(InboxRs.PERIOD_PARAM);

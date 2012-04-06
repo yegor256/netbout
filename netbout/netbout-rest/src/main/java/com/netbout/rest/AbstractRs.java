@@ -219,7 +219,7 @@ public abstract class AbstractRs implements Resource {
             .clone();
         if (this.icookie != null && !this.icookie.isEmpty()
             && this.addAuthToURIs) {
-            builder.queryParam(RestSession.AUTH_PARAM, this.icookie);
+            builder.replaceQueryParam(RestSession.AUTH_PARAM, this.icookie);
         }
         return builder;
     }

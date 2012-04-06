@@ -94,7 +94,7 @@ public final class LongProfile {
                 "locale",
                 this.builder.clone()
                     .path("/toggle")
-                    .queryParam("l", "{locale}")
+                    .replaceQueryParam("l", "{locale}")
                     .build(locale)
             );
             link.add(new JaxbBundle("code", locale).element());

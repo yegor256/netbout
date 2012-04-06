@@ -405,7 +405,7 @@ public final class BoutRs extends AbstractRs {
         this.appendInvitees(page);
         page.link(
             "top",
-            this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, "")
+            this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, null)
         );
         if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
             page.link("post", this.self("/p"));
@@ -444,8 +444,8 @@ public final class BoutRs extends AbstractRs {
             this.base()
                 .path("/{bout}")
                 .path(path)
-                .queryParam(RestSession.QUERY_PARAM, "{query}")
-                .queryParam(BoutRs.PERIOD_PARAM, "{period}")
+                .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
+                .replaceQueryParam(BoutRs.PERIOD_PARAM, "{period}")
                 .build(this.bout().number(), this.query, this.view)
         );
     }
