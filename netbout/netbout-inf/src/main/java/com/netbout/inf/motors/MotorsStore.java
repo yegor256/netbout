@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.motors;
 
+import com.netbout.inf.motors.ebs.EbsVolume;
 import org.reflections.Reflections;
 
 /**
@@ -39,10 +40,15 @@ import org.reflections.Reflections;
 public final class MotorsStore {
 
     /**
+     * The folder to work with.
+     */
+    private final transient Folder folder = new EbsVolume();
+
+    /**
      * Discover all motors.
      * @return List of pointers to predicates
      */
-    public Set<Pointer> discover(final Index index) {
+    public Set<Pointer> discover() {
         final Reflections ref = new Reflections(
             this.getClass().getPackage().getName()
         );
@@ -50,8 +56,8 @@ public final class MotorsStore {
         for (Class pred : ref.getSubTypesOf(Pointer.class)) {
             try {
                 motors.add(
-                    (Pointer) pred.getConstructor(Index.class)
-                        .newInstance(index)
+                    (Pointer) pred.getConstructor(File.class)
+                        .newInstance(this.folder.path())
                 );
             } catch (NoSuchMethodException ex) {
                 throw new PredicateException(ex);

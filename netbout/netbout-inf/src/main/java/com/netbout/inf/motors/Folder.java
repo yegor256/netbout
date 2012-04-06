@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.index;
+package com.netbout.inf.motors;
 
 import java.io.Closeable;
 import java.io.File;
