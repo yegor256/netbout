@@ -24,44 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.index;
-
-import com.netbout.inf.Index;
-import java.util.concurrent.ConcurrentMap;
 
 /**
- * Index on top of JDBM3.
+ * SQL engine on top of JDBC.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @todo #329 Once it's in Maven Central we should continue:
- *  https://github.com/jankotek/JDBM3/issues/31
  */
-public final class JDBM3Index implements Index {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() {
-        // nothing to do yet
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <X, Y> ConcurrentMap<X, Y> get(final String name) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String statistics() {
-        final StringBuilder text = new StringBuilder();
-        return text.toString();
-    }
-
-}
+package com.netbout.inf.jdbc;

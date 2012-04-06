@@ -24,11 +24,51 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.inf.lucene;
+
+import com.netbout.inf.TextEngine;
+import java.io.Closeable;
+import java.io.File;
+import java.util.Iterator;
 
 /**
- * Logic predicates.
+ * Search engine on top of Lucene.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.inf.predicates.logic;
+public final class LuceneEngine implements TextEngine {
+
+    /**
+     * Public ctor.
+     * @param dir Where to keep data
+     */
+    public LuceneEngine(final File dir) {
+        // todo
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void insert(final Long number, final Data data) {
+        // todo
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator<Long> find(final String field, final String text) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        return "hi";
+    }
+
+}

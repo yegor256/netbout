@@ -55,10 +55,9 @@ public final class FromPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args The arguments
-     * @param index The index to use for searching
      */
-    public FromPred(final List<Atom> args, final Index index) {
-        super(args, index);
+    public FromPred(final List<Atom> args) {
+        super(args);
         this.from = ((NumberAtom) this.arg(0)).value();
     }
 

@@ -24,36 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
 
 /**
- * One predicate.
- *
- * <p>Implementations must be thread-safe.
+ * Text engine on top of Lucene.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate extends Atom<String> {
-
-    /**
-     * Return next message number that complies with this predicate, and jump
-     * to the next element.
-     * @return Message number
-     */
-    Long next();
-
-    /**
-     * Move to the next element, if it exists and return FALSE if it's absent.
-     * @return True if the next element exists, false if it's the end of row
-     */
-    boolean hasNext();
-
-    /**
-     * Check this message number, whether it is allowed.
-     * @param message Message number to check
-     * @return Is it allowed or not?
-     */
-    boolean contains(Long message);
-
-}
+package com.netbout.inf.lucene;

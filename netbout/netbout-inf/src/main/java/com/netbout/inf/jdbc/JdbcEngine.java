@@ -24,62 +24,42 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.index;
+package com.netbout.inf.jdbc;
 
-import com.netbout.inf.Index;
 import com.netbout.inf.SqlEngine;
-import com.netbout.inf.TextEngine;
-import com.netbout.inf.jdbc.HsqlEngine;
-import com.netbout.inf.lucene.LuceneEngine;
-import com.ymock.util.Logger;
+import java.io.Closeable;
 import java.io.File;
+import java.util.Iterator;
 
 /**
- * Index in file-system.
+ * SQL engine on top of JDBC.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class FsIndex implements Index {
-
-    /**
-     * The folder to use.
-     */
-    private final transient Folder folder;
-
-    /**
-     * SQL engine.
-     */
-    private final transient SqlEngine sengine;
-
-    /**
-     * Texts engine.
-     */
-    private final transient TextEngine tengine;
-
-    /**
-     * Default public ctor.
-     */
-    public FsIndex() {
-        this(new EbsVolume());
-    }
+public final class JdbcEngine implements SqlEngine {
 
     /**
      * Public ctor.
-     * @param fldr The Folder to use
+     * @param dir Where to keep data
      */
-    public FsIndex(final Folder fldr) {
-        this.folder = fldr;
-        this.sengine = new HsqlEngine(new File(this.folder.path(), "hsql"));
-        this.tengine = new LuceneEngine(new File(this.folder.path(), "lucene"));
+    public JdbcEngine(final File dir) {
+        // todo
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws java.io.IOException {
-        this.folder.close();
+    public void exec(final String query) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator<Long> select(final String query) {
+        return null;
     }
 
     /**
@@ -87,29 +67,7 @@ public final class FsIndex implements Index {
      */
     @Override
     public String statistics() {
-        return new StringBuilder()
-            .append(this.folder.statistics())
-            .append(Logger.format("\n%[type]s (SQL):\n", this.sengine))
-            .append(this.sengine.statistics())
-            .append(Logger.format("\n%[type]s (Text):\n", this.tengine))
-            .append(this.tengine.statistics())
-            .toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SqlEngine sql() {
-        return this.sengine;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TextEngine texts() {
-        return this.tengine;
+        return "hi";
     }
 
 }

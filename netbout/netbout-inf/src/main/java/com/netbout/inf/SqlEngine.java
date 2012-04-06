@@ -26,34 +26,34 @@
  */
 package com.netbout.inf;
 
+import java.io.Closeable;
+import java.util.Iterator;
+
 /**
- * One predicate.
- *
- * <p>Implementations must be thread-safe.
+ * SQL engine.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate extends Atom<String> {
+public interface SqlEngine extends Closeable {
 
     /**
-     * Return next message number that complies with this predicate, and jump
-     * to the next element.
-     * @return Message number
+     * Execute this query.
+     * @param query The SQL query to execute
      */
-    Long next();
+    void exec(String query);
 
     /**
-     * Move to the next element, if it exists and return FALSE if it's absent.
-     * @return True if the next element exists, false if it's the end of row
+     * Select data.
+     * @param query The SQL query to execute
+     * @return Iterator of numbers
      */
-    boolean hasNext();
+    Iterator<Long> select(String query);
 
     /**
-     * Check this message number, whether it is allowed.
-     * @param message Message number to check
-     * @return Is it allowed or not?
+     * Show some stats.
+     * @return Text stats
      */
-    boolean contains(Long message);
+    String statistics();
 
 }

@@ -52,10 +52,9 @@ public final class AndPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args Arguments/predicates
-     * @param index The index to use for searching
      */
-    public AndPred(final List<Atom> args, final Index index) {
-        super(args, index);
+    public AndPred(final List<Atom> args) {
+        super(args);
     }
 
     /**

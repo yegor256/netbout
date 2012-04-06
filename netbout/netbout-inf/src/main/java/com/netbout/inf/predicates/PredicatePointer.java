@@ -24,89 +24,95 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.logic;
+package com.netbout.inf.predicates;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.predicates.AbstractVarargPred;
+import com.netbout.inf.Pointer;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
- * Logical OR.
+ * Pointer to predicate.
  *
- * <p>This class is NOT thread-safe.
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "or")
-public final class OrPred extends AbstractVarargPred {
+public final class PredicatePointer implements Pointer {
 
     /**
-     * Pool of already retrieved numbers.
+     * The type.
      */
-    private final transient SortedSet<Long> pool = new TreeSet<Long>();
+    private final transient Class<? extends Predicate> type;
+
+    /**
+     * Meta info.
+     */
+    private final transient Meta meta;
 
     /**
      * Public ctor.
-     * @param args Arguments/predicates
-     * @param index The index to use for searching
+     * @param pred The class just found
      */
-    public OrPred(final List<Atom> args, final Index index) {
-        super(args, index);
+    public PredicatePointer(final Class<? extends Predicate> pred) {
+        this.type = pred;
+        this.meta = pred.getAnnotation(Meta.class);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long next() {
-        for (Atom pred : this.args()) {
-            if (((Predicate) pred).hasNext()) {
-                this.pool.add(((Predicate) pred).next());
-            }
-        }
-        if (this.pool.isEmpty()) {
-            throw new NoSuchElementException("end of messsages reached");
-        }
-        final Long message = this.pool.last();
-        this.pool.remove(message);
-        return message;
+    public String toString() {
+        return this.type.getName();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
-        boolean has = !this.pool.isEmpty();
-        for (Atom pred : this.args()) {
-            has |= ((Predicate) pred).hasNext();
-            if (has) {
-                break;
-            }
-        }
-        return has;
+    public boolean pointsTo(final String name) {
+        return this.meta.name().equals(name);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean contains(final Long message) {
-        boolean allowed = this.pool.contains(message);
-        for (Atom pred : this.args()) {
-            allowed |= ((Predicate) pred).contains(message);
-            if (allowed) {
-                break;
-            }
+    public Predicate build(final List<Atom> atoms) {
+        Predicate predicate;
+        try {
+            predicate = (Predicate) this.type
+                .getConstructor(List.class)
+                .newInstance(atoms);
+        } catch (NoSuchMethodException ex) {
+            throw new PredicateException(ex);
+        } catch (InstantiationException ex) {
+            throw new PredicateException(ex);
+        } catch (IllegalAccessException ex) {
+            throw new PredicateException(ex);
+        } catch (java.lang.reflect.InvocationTargetException ex) {
+            throw new PredicateException(ex);
         }
-        return allowed;
+        return predicate;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void see(final Message msg) {
+        // nothing to do here
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void see(final Bout bout) {
+        // nothing to do here
     }
 
 }

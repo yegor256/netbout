@@ -46,11 +46,6 @@ import org.apache.commons.lang.StringUtils;
 public abstract class AbstractVarargPred implements Predicate {
 
     /**
-     * Indexed data.
-     */
-    private final transient Index data;
-
-    /**
      * Name of it.
      */
     private final transient String iname;
@@ -62,25 +57,9 @@ public abstract class AbstractVarargPred implements Predicate {
 
     /**
      * Public ctor.
-     * @param name The name of it
-     * @param args Arguments
-     * @param index The index to use for searching
-     */
-    public AbstractVarargPred(final String name, final List<Atom> args,
-        final Index index) {
-        this.iname = name;
-        this.atoms = new ArrayList<Atom>(args.size());
-        this.atoms.addAll(args);
-        this.data = index;
-    }
-
-    /**
-     * Public ctor.
      * @param args Arguments/predicates
-     * @param index The index to use for searching
      */
-    public AbstractVarargPred(final List<Atom> args, final Index index) {
-        this.data = index;
+    public AbstractVarargPred(final List<Atom> args) {
         this.iname = this.getClass().getAnnotation(Meta.class).name();
         this.atoms = new ArrayList<Atom>(args.size());
         this.atoms.addAll(args);
@@ -107,14 +86,6 @@ public abstract class AbstractVarargPred implements Predicate {
     }
 
     /**
-     * Get index.
-     * @return The index
-     */
-    protected final Index index() {
-        return this.data;
-    }
-
-    /**
      * Get arguments.
      * @return The arguments
      */
@@ -137,7 +108,7 @@ public abstract class AbstractVarargPred implements Predicate {
      */
     protected final Atom arg(final int num) {
         if (num >= this.atoms.size()) {
-            throw new IllegalArgumentException(
+            throw new PredicateException(
                 String.format("argument #%d is absnet in '%s'", num, this)
             );
         }

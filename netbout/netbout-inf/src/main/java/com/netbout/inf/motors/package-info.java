@@ -24,59 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.index;
-
-import com.netbout.inf.Index;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
- * In-memory index.
+ * Motors.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MemoryIndex implements Index {
-
-    /**
-     * All maps.
-     * @checkstyle LineLength (3 lines)
-     */
-    private final transient ConcurrentMap<String, ConcurrentMap<Object, Object>> maps =
-        new ConcurrentHashMap<String, ConcurrentMap<Object, Object>>();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() {
-        // nothing to close here
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <X, Y> ConcurrentMap<X, Y> get(final String name) {
-        synchronized (this.maps) {
-            if (!this.maps.containsKey(name)) {
-                this.maps.put(
-                    name,
-                    (ConcurrentMap) new ConcurrentHashMap<X, Y>()
-                );
-            }
-            return (ConcurrentHashMap<X, Y>) this.maps.get(name);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String statistics() {
-        final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d maps", this.maps.size()));
-        return text.toString();
-    }
-
-}
+package com.netbout.inf.motors;

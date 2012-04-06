@@ -26,34 +26,51 @@
  */
 package com.netbout.inf;
 
+import java.io.Closeable;
+import java.util.Iterator;
+
 /**
- * One predicate.
- *
- * <p>Implementations must be thread-safe.
+ * Text search engine.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate extends Atom<String> {
+public interface TextEngine extends Closeable {
 
     /**
-     * Return next message number that complies with this predicate, and jump
-     * to the next element.
-     * @return Message number
+     * Insert this number into the engine.
+     * @param number The number of message
+     * @param data Internal data (texts)
      */
-    Long next();
+    void insert(Long number, Data data);
 
     /**
-     * Move to the next element, if it exists and return FALSE if it's absent.
-     * @return True if the next element exists, false if it's the end of row
+     * Find numbers.
+     * @param field Name of field to search for
+     * @param text Text to search for
+     * @return Iterator of numbers
      */
-    boolean hasNext();
+    Iterator<Long> find(String field, String text);
 
     /**
-     * Check this message number, whether it is allowed.
-     * @param message Message number to check
-     * @return Is it allowed or not?
+     * Show some stats.
+     * @return Text stats
      */
-    boolean contains(Long message);
+    String statistics();
+
+    /**
+     * Data.
+     */
+    final class Data {
+        /**
+         * With this field.
+         * @param field Name of field
+         * @param text Value of the field
+         * @return New object with this data on board
+         */
+        public Data with(final String name, final String text) {
+            return new Data();
+        }
+    }
 
 }

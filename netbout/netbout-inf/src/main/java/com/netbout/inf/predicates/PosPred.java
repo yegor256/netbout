@@ -55,10 +55,9 @@ public final class PosPred extends AbstractVarargPred {
     /**
      * Public ctor.
      * @param args The arguments
-     * @param index The index to use for searching
      */
-    public PosPred(final List<Atom> args, final Index index) {
-        super(args, index);
+    public PosPred(final List<Atom> args) {
+        super(args);
         this.expected = ((NumberAtom) this.arg(0)).value();
     }
 

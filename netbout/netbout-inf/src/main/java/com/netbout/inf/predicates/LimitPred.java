@@ -57,8 +57,8 @@ public final class LimitPred extends AbstractVarargPred {
      * @param args The arguments
      * @param index The index to use for searching
      */
-    public LimitPred(final List<Atom> args, final Index index) {
-        super(args, index);
+    public LimitPred(final List<Atom> args) {
+        super(args);
         this.limit = ((NumberAtom) this.arg(0)).value();
     }
 

@@ -38,13 +38,16 @@ import java.util.concurrent.ConcurrentMap;
 public interface Index extends Closeable {
 
     /**
-     * Get a map from this index.
-     * @param name Name of the map, unique in index
-     * @return The map to use
-     * @param <X> Type of keys
-     * @param <Y> Type of values
+     * Get SQL engine.
+     * @return The engine
      */
-    <X, Y> ConcurrentMap<X, Y> get(String name);
+    SqlEngine sql();
+
+    /**
+     * Text search engine.
+     * @return The engine
+     */
+    TextEngine text();
 
     /**
      * Show some stats.

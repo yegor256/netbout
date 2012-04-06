@@ -24,92 +24,88 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.index;
+package com.netbout.inf.predicates.logic;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Index;
-import com.netbout.inf.SqlEngine;
-import com.netbout.inf.TextEngine;
-import com.netbout.inf.jdbc.HsqlEngine;
-import com.netbout.inf.lucene.LuceneEngine;
-import com.ymock.util.Logger;
-import java.io.File;
+import com.netbout.inf.Meta;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.predicates.AbstractVarargPred;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
- * Index in file-system.
+ * Logical OR.
+ *
+ * <p>This class is NOT thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class FsIndex implements Index {
+@Meta(name = "or")
+public final class OrPred extends AbstractVarargPred {
 
     /**
-     * The folder to use.
+     * Pool of already retrieved numbers.
      */
-    private final transient Folder folder;
-
-    /**
-     * SQL engine.
-     */
-    private final transient SqlEngine sengine;
-
-    /**
-     * Texts engine.
-     */
-    private final transient TextEngine tengine;
-
-    /**
-     * Default public ctor.
-     */
-    public FsIndex() {
-        this(new EbsVolume());
-    }
+    private final transient SortedSet<Long> pool = new TreeSet<Long>();
 
     /**
      * Public ctor.
-     * @param fldr The Folder to use
+     * @param args Arguments/predicates
      */
-    public FsIndex(final Folder fldr) {
-        this.folder = fldr;
-        this.sengine = new HsqlEngine(new File(this.folder.path(), "hsql"));
-        this.tengine = new LuceneEngine(new File(this.folder.path(), "lucene"));
+    public OrPred(final List<Atom> args) {
+        super(args);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws java.io.IOException {
-        this.folder.close();
+    public Long next() {
+        for (Atom pred : this.args()) {
+            if (((Predicate) pred).hasNext()) {
+                this.pool.add(((Predicate) pred).next());
+            }
+        }
+        if (this.pool.isEmpty()) {
+            throw new NoSuchElementException("end of messsages reached");
+        }
+        final Long message = this.pool.last();
+        this.pool.remove(message);
+        return message;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String statistics() {
-        return new StringBuilder()
-            .append(this.folder.statistics())
-            .append(Logger.format("\n%[type]s (SQL):\n", this.sengine))
-            .append(this.sengine.statistics())
-            .append(Logger.format("\n%[type]s (Text):\n", this.tengine))
-            .append(this.tengine.statistics())
-            .toString();
+    public boolean hasNext() {
+        boolean has = !this.pool.isEmpty();
+        for (Atom pred : this.args()) {
+            has |= ((Predicate) pred).hasNext();
+            if (has) {
+                break;
+            }
+        }
+        return has;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SqlEngine sql() {
-        return this.sengine;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TextEngine texts() {
-        return this.tengine;
+    public boolean contains(final Long message) {
+        boolean allowed = this.pool.contains(message);
+        for (Atom pred : this.args()) {
+            allowed |= ((Predicate) pred).contains(message);
+            if (allowed) {
+                break;
+            }
+        }
+        return allowed;
     }
 
 }

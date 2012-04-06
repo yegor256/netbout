@@ -26,16 +26,11 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
-import java.util.List;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
-import org.reflections.Reflections;
 
 /**
  * Builder of a predicate.
@@ -44,27 +39,20 @@ import org.reflections.Reflections;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class PredicateBuilder {
 
     /**
-     * All predicates discovered in classpath.
+     * The store.
      */
-    private static final List<PredicateToken> PREDICATES =
-        PredicateBuilder.discover();
-
-    /**
-     * The index.
-     */
-    private final transient Index index;
+    private final transient PredicateStore store;
 
     /**
      * Public ctor.
-     * @param idx The index
+     * @param str The store with predicates
      */
-    public PredicateBuilder(final Index idx) {
-        this.index = idx;
+    public PredicateBuilder(final PredicateStore str) {
+        this.store = str;
     }
 
     /**
@@ -79,7 +67,7 @@ final class PredicateBuilder {
         final QueryLexer lexer = new QueryLexer(input);
         final TokenStream tokens = new CommonTokenStream(lexer);
         final QueryParser parser = new QueryParser(tokens);
-        parser.setPredicateBuilder(this);
+        parser.setPredicateStore(this.store);
         Predicate predicate;
         try {
             predicate = parser.query();
@@ -95,62 +83,6 @@ final class PredicateBuilder {
             predicate
         );
         return predicate;
-    }
-
-    /**
-     * Extract properties from the message.
-     * @param from The message
-     * @param idx The index to extract to
-     */
-    @SuppressWarnings("PMD.DefaultPackage")
-    static void extract(final Message from, final Index idx) {
-        for (PredicateToken token : PredicateBuilder.PREDICATES) {
-            token.extract(from, idx);
-        }
-    }
-
-    /**
-     * Build a predicate from name and list of preds.
-     * @param name Its name
-     * @param atoms List of arguments
-     * @return The predicate
-     */
-    protected Predicate build(final String name, final List<Atom> atoms) {
-        Predicate predicate = null;
-        for (PredicateToken token : this.PREDICATES) {
-            if (token.namedAs(name)) {
-                predicate = token.build(atoms, this.index);
-                break;
-            }
-        }
-        if (predicate == null) {
-            throw new PredicateException(
-                String.format("Unknown predicate name '%s'", name)
-            );
-        }
-        return predicate;
-    }
-
-    /**
-     * Discover all predicates.
-     * @return List of predicate tokens
-     */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    private static List<PredicateToken> discover() {
-        final Reflections ref = new Reflections(
-            PredicateBuilder.class.getPackage().getName()
-        );
-        final List<PredicateToken> tokens = new ArrayList<PredicateToken>();
-        for (Class pred : ref.getTypesAnnotatedWith(Meta.class)) {
-            tokens.add(new PredicateToken(pred));
-        }
-        Logger.debug(
-            PredicateBuilder.class,
-            "#discover(): %d predicates discovered in classpath: %[list]s",
-            tokens.size(),
-            tokens
-        );
-        return tokens;
     }
 
 }

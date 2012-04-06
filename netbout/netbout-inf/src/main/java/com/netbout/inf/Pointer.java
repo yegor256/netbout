@@ -26,34 +26,43 @@
  */
 package com.netbout.inf;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
+import java.util.List;
+
 /**
- * One predicate.
+ * Pointer to a predicate.
  *
- * <p>Implementations must be thread-safe.
+ * <p>Implementation must be immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate extends Atom<String> {
+public interface Pointer {
 
     /**
-     * Return next message number that complies with this predicate, and jump
-     * to the next element.
-     * @return Message number
+     * Points to this predicate (by name)?
+     * @param name The name to check against
+     * @return Yes or no
      */
-    Long next();
+    boolean pointsTo(String name);
 
     /**
-     * Move to the next element, if it exists and return FALSE if it's absent.
-     * @return True if the next element exists, false if it's the end of row
+     * See this message.
+     * @param msg The message to see
      */
-    boolean hasNext();
+    void see(Message msg);
 
     /**
-     * Check this message number, whether it is allowed.
-     * @param message Message number to check
-     * @return Is it allowed or not?
+     * See this bout.
+     * @param bout The bout to see
      */
-    boolean contains(Long message);
+    void see(Bout bout);
+
+    /**
+     * Create a predicate.
+     * @param atoms Atoms
+     */
+    Predicate build(List<Atom> atoms);
 
 }
