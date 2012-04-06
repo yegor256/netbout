@@ -48,9 +48,9 @@ final class PredicateStore {
     private final transient Set<Pointer> pointers;
 
     /**
-     * The index.
+     * Store of motors.
      */
-    private final transient Index index;
+    private final transient MotorsStore motors = new MotorsStore();
 
     /**
      * Public ctor.
@@ -103,7 +103,7 @@ final class PredicateStore {
     private Set<Pointer> discover() {
         final Set<Pointer> ptrs = new HashSet<Pointer>();
         ptrs.addAll(PredicatePointer.discover());
-        ptrs.addAll(new MotorsStore().discover());
+        ptrs.addAll(this.motors.discover());
         return ptrs;
     }
 

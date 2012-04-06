@@ -36,31 +36,31 @@ import java.util.List;
 /**
  * Allows only messages that unbundle on the specified bout number.
  *
+ * <p>This class is thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "unbundled")
-public final class UnbundledPred extends AbstractVarargPred {
+final class UnbundledPred implements Predicate {
 
     /**
-     * Bout number.
+     * Marker to use.
      */
-    private final transient Long bout;
+    private final transient Marker marker;
 
     /**
-     * Expected marker.
+     * Expected bundle.
      */
-    private final transient String marker;
+    private final transient String bundle;
 
     /**
      * Public ctor.
-     * @param args The arguments
-     * @param index The index to use for searching
+     * @param mrkr The marker to use
+     * @param bndl The bundle to use
      */
-    public UnbundledPred(final List<Atom> args, final Index index) {
-        super(args, index);
-        this.bout = ((NumberAtom) this.arg(0)).value();
-        this.marker = BundledPred.markerOfBout(index, this.bout);
+    public BundledPred(final Marker mrkr, final String bndl) {
+        this.marker = mrkr;
+        this.bundle = bndl;
     }
 
     /**
@@ -84,6 +84,7 @@ public final class UnbundledPred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
+        final String bundle = this.marker.get(message);
         return this.marker.equals(BundledPred.marker(this.index(), message))
             && !BundledPred.boutOf(this.index(), message).equals(this.bout);
     }

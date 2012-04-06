@@ -27,18 +27,17 @@
 package com.netbout.inf.predicates.logic;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Logical OR.
  *
- * <p>This class is NOT thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -49,7 +48,8 @@ final class OrPred extends AbstractVarargPred {
     /**
      * Pool of already retrieved numbers.
      */
-    private final transient SortedSet<Long> pool = new TreeSet<Long>();
+    private final transient SortedSet<Long> pool =
+        new ConcurrentSkipListSet<Long>();
 
     /**
      * Public ctor.

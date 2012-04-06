@@ -27,7 +27,6 @@
 package com.netbout.inf.predicates.logic;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
@@ -35,7 +34,7 @@ import java.util.List;
 /**
  * Logical AND.
  *
- * <p>This class is NOT thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -47,6 +46,11 @@ final class AndPred extends AbstractVarargPred {
      * Edge number, just fetched.
      */
     private transient Long edge;
+
+    /**
+     * Synchronization lock.
+     */
+    private final transient Integer lock = 1L;
 
     /**
      * Public ctor.
@@ -62,18 +66,20 @@ final class AndPred extends AbstractVarargPred {
     @Override
     @SuppressWarnings("PMD.NullAssignment")
     public Long next() {
-        Long message;
-        if (this.edge == null) {
-            boolean allowed;
-            do {
-                message = ((Predicate) this.arg(0)).next();
-                allowed = this.contains(message);
-            } while (!allowed);
-        } else {
-            message = this.edge;
-            this.edge = null;
+        synchronized (this.lock) {
+            Long message;
+            if (this.edge == null) {
+                boolean allowed;
+                do {
+                    message = ((Predicate) this.arg(0)).next();
+                    allowed = this.contains(message);
+                } while (!allowed);
+            } else {
+                message = this.edge;
+                this.edge = null;
+            }
+            return message;
         }
-        return message;
     }
 
     /**
@@ -81,23 +87,25 @@ final class AndPred extends AbstractVarargPred {
      */
     @Override
     public boolean hasNext() {
-        boolean has;
-        if (this.edge == null) {
-            do {
-                has = ((Predicate) this.arg(0)).hasNext();
-                if (!has) {
-                    break;
-                }
-                final Long num = ((Predicate) this.arg(0)).next();
-                has &= this.contains(num);
-                if (has) {
-                    this.edge = num;
-                }
-            } while (!has);
-        } else {
-            has = true;
+        synchronized (this.lock) {
+            boolean has;
+            if (this.edge == null) {
+                do {
+                    has = ((Predicate) this.arg(0)).hasNext();
+                    if (!has) {
+                        break;
+                    }
+                    final Long num = ((Predicate) this.arg(0)).next();
+                    has &= this.contains(num);
+                    if (has) {
+                        this.edge = num;
+                    }
+                } while (!has);
+            } else {
+                has = true;
+            }
+            return has;
         }
-        return has;
     }
 
     /**

@@ -38,7 +38,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * Variable arguments predicate.
  *
- * <p>This class is NOT thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -61,8 +61,7 @@ abstract class AbstractVarargPred implements Predicate {
      */
     public AbstractVarargPred(final List<Atom> args) {
         this.iname = this.getClass().getAnnotation(Meta.class).name();
-        this.atoms = new ArrayList<Atom>(args.size());
-        this.atoms.addAll(args);
+        this.atoms = new ArrayList<Atom>(args);
     }
 
     /**

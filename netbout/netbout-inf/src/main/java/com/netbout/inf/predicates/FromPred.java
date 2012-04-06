@@ -27,13 +27,15 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Show the message if its position is bigger or equal than this one.
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -49,7 +51,7 @@ final class FromPred extends AbstractVarargPred {
     /**
      * Current position.
      */
-    private transient long position;
+    private transient AtomicLong position = new AtomicLong(0L);
 
     /**
      * Public ctor.
@@ -81,9 +83,7 @@ final class FromPred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
-        final boolean allow = this.position >= this.from;
-        this.position += 1;
-        return allow;
+        return this.position.getAndIncrement() >= this.from;
     }
 
 }

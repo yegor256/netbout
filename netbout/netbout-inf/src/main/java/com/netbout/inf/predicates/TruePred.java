@@ -32,6 +32,8 @@ import java.util.NoSuchElementException;
 /**
  * True predicate.
  *
+ * <p>This class is thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

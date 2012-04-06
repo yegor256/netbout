@@ -61,8 +61,9 @@ public interface Pointer {
 
     /**
      * Create a predicate.
+     * @param name Name of predicate to build
      * @param atoms Atoms
      */
-    Predicate build(List<Atom> atoms);
+    Predicate build(String name, List<Atom> atoms);
 
 }

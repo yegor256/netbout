@@ -27,13 +27,15 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * We have this number of elements in the result list, not more.
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -49,7 +51,7 @@ final class LimitPred extends AbstractVarargPred {
     /**
      * Current position.
      */
-    private transient long position;
+    private transient AtomicLong position = new AtomicLong(0L);
 
     /**
      * Public ctor.
@@ -82,9 +84,7 @@ final class LimitPred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
-        final boolean allow = this.position < this.limit;
-        this.position += 1;
-        return allow;
+        return this.position.getAndIncrement() < this.limit;
     }
 
 }

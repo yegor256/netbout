@@ -55,25 +55,15 @@ public final class DefaultInfinity implements Infinity {
     private final transient Mux mux = new Mux();
 
     /**
-     * The index.
+     * Store of predicates.
      */
-    private final transient Index index;
-
-    /**
-     * Public ctor.
-     * @param ibus The BUS to work with
-     */
-    public DefaultInfinity(final Bus ibus) {
-        this(ibus, new FsIndex());
-    }
+    private final transient PredicateStore store = new PredicateStore();
 
     /**
      * Public ctor, with custom index.
      * @param ibus The BUS to work with
-     * @param idx The index to use
      */
-    public DefaultInfinity(final Bus ibus, final Index idx) {
-        this.index = idx;
+    public DefaultInfinity(final Bus ibus) {
         this.bus = ibus;
         StageFarm.register(this);
         Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", ibus);
@@ -87,8 +77,8 @@ public final class DefaultInfinity implements Infinity {
         final StringBuilder text = new StringBuilder();
         text.append("Mux stats:\n")
             .append(this.mux.statistics())
-            .append("\n\nIndex stats:\n")
-            .append(this.index.statistics())
+            .append("\n\nStore stats:\n")
+            .append(this.store.statistics())
             .append("\n\njava.lang.Runtime:\n")
             .append(
                 String.format(
@@ -124,7 +114,7 @@ public final class DefaultInfinity implements Infinity {
     public void close() throws java.io.IOException {
         Logger.info(this, "#close(): will stop Mux in a second");
         this.mux.close();
-        this.index.close();
+        this.store.close();
     }
 
     /**
@@ -140,7 +130,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public Iterable<Long> messages(final String query) {
-        return new LazyMessages(new PredicateBuilder(this.index).parse(query));
+        return new LazyMessages(new PredicateBuilder(this.store).parse(query));
     }
 
     /**
@@ -148,7 +138,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Identity identity) {
-        this.mux.add(new SeeIdentityTask(this, this.bus, identity, this.index));
+        this.mux.add(new SeeIdentityTask(this, this.bus, identity, this.store));
         Logger.debug(
             this,
             "see('%s'): request submitted",
@@ -161,7 +151,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Bout bout) {
-        this.mux.add(new SeeBoutTask(this, this.bus, bout, this.index));
+        this.mux.add(new SeeBoutTask(this, this.bus, bout, this.store));
         Logger.debug(
             this,
             "see(bout #%d): request submitted",
@@ -174,7 +164,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
-        this.mux.add(new SeeMessageTask(message, this.index));
+        this.mux.add(new SeeMessageTask(message, this.store));
         Logger.debug(
             this,
             "see(message #%d): request submitted",

@@ -73,14 +73,17 @@ public final class PredicatePointer implements Pointer {
      */
     @Override
     public boolean pointsTo(final String name) {
-        return this.meta.name().equals(name);
+        return this.meta.value().equals(name);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Predicate build(final List<Atom> atoms) {
+    public Predicate build(final String name, final List<Atom> atoms) {
+        if (!name.equals(this.meta.value())) {
+            throw new PredicateException("illegal name");
+        }
         Predicate predicate;
         try {
             predicate = (Predicate) this.type

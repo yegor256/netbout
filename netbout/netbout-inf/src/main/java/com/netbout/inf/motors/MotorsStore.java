@@ -47,10 +47,10 @@ public final class MotorsStore {
             this.getClass().getPackage().getName()
         );
         final Set<Pointer> motors = new HashSet<Pointer>();
-        for (Class pred : ref.getSubTypesOf(Motor.class)) {
+        for (Class pred : ref.getSubTypesOf(Pointer.class)) {
             try {
                 motors.add(
-                    (Motor) pred.getConstructor(Index.class)
+                    (Pointer) pred.getConstructor(Index.class)
                         .newInstance(index)
                 );
             } catch (NoSuchMethodException ex) {
