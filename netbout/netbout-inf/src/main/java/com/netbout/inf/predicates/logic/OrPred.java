@@ -30,7 +30,6 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateException;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
 import java.util.NoSuchElementException;
