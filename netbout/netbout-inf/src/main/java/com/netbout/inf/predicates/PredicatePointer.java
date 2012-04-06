@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.predicates;
 
-import com.netbout.inf.Meta;
 import com.netbout.inf.Pointer;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
@@ -113,6 +112,28 @@ public final class PredicatePointer implements Pointer {
     @Override
     public void see(final Bout bout) {
         // nothing to do here
+    }
+
+    /**
+     * Discover all predicates.
+     * @return List of pointers to predicates
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public static Set<Pointer> discover() {
+        final Reflections ref = new Reflections(
+            PredicatePointer.class.getPackage().getName()
+        );
+        final Set<Pointer> ptrs = new HashSet<Pointer>();
+        for (Class pred : ref.getTypesAnnotatedWith(Meta.class)) {
+            ptrs.add(new PredicatePointer(pred));
+        }
+        Logger.debug(
+            this,
+            "#discover(): %d predicates discovered in classpath: %[list]s",
+            ptrs.size(),
+            ptrs
+        );
+        return ptrs;
     }
 
 }

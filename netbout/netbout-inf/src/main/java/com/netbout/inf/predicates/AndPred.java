@@ -28,7 +28,6 @@ package com.netbout.inf.predicates.logic;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
@@ -41,7 +40,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "and")
+@Meta("and")
 public final class AndPred extends AbstractVarargPred {
 
     /**

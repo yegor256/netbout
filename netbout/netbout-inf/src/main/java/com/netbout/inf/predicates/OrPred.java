@@ -28,7 +28,6 @@ package com.netbout.inf.predicates.logic;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
@@ -44,7 +43,7 @@ import java.util.TreeSet;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "or")
+@Meta("or")
 public final class OrPred extends AbstractVarargPred {
 
     /**

@@ -24,11 +24,52 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.inf.motors;
+
+import org.reflections.Reflections;
 
 /**
- * XML predicates.
+ * Store of all motors.
+ *
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.inf.predicates.xml;
+public final class MotorsStore {
+
+    /**
+     * Discover all motors.
+     * @return List of pointers to predicates
+     */
+    public Set<Pointer> discover(final Index index) {
+        final Reflections ref = new Reflections(
+            this.getClass().getPackage().getName()
+        );
+        final Set<Pointer> motors = new HashSet<Pointer>();
+        for (Class pred : ref.getSubTypesOf(Motor.class)) {
+            try {
+                motors.add(
+                    (Motor) pred.getConstructor(Index.class)
+                        .newInstance(index)
+                );
+            } catch (NoSuchMethodException ex) {
+                throw new PredicateException(ex);
+            } catch (InstantiationException ex) {
+                throw new PredicateException(ex);
+            } catch (IllegalAccessException ex) {
+                throw new PredicateException(ex);
+            } catch (java.lang.reflect.InvocationTargetException ex) {
+                throw new PredicateException(ex);
+            }
+        }
+        Logger.debug(
+            this,
+            "#discover(): %d motors discovered in classpath: %[list]s",
+            motors.size(),
+            motors
+        );
+        return motors;
+    }
+
+}

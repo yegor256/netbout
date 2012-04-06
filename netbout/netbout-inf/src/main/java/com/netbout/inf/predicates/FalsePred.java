@@ -35,6 +35,7 @@ import java.util.NoSuchElementException;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Meta("false")
 public final class FalsePred implements Predicate {
 
     /**

@@ -31,7 +31,6 @@ import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
-import org.reflections.Reflections;
 
 /**
  * Store of all known predicates.
@@ -101,38 +100,10 @@ final class PredicateStore {
      * Discover all predicates.
      * @return List of pointers to predicates
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private Set<Pointer> discover() {
-        final Reflections ref = new Reflections(
-            this.getClass().getPackage().getName()
-        );
         final Set<Pointer> ptrs = new HashSet<Pointer>();
-        for (Class pred : ref.getTypesAnnotatedWith(Meta.class)) {
-            if (pred instanceof Predicate) {
-                ptrs.add(new PredicatePointer(pred));
-            } else if (pred instanceof Motor) {
-                try {
-                    ptrs.add(
-                        (Motor) pred.getConstructor(Index.class)
-                            .newInstance(this.index)
-                    );
-                } catch (NoSuchMethodException ex) {
-                    throw new PredicateException(ex);
-                } catch (InstantiationException ex) {
-                    throw new PredicateException(ex);
-                } catch (IllegalAccessException ex) {
-                    throw new PredicateException(ex);
-                } catch (java.lang.reflect.InvocationTargetException ex) {
-                    throw new PredicateException(ex);
-                }
-            }
-        }
-        Logger.debug(
-            this,
-            "#discover(): %d predicates discovered in classpath: %[list]s",
-            ptrs.size(),
-            ptrs
-        );
+        ptrs.addAll(PredicatePointer.discover());
+        ptrs.addAll(new MotorsStore().discover());
         return ptrs;
     }
 
