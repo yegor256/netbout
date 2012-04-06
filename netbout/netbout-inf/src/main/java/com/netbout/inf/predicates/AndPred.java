@@ -41,7 +41,7 @@ import java.util.List;
  * @version $Id$
  */
 @Meta("and")
-public final class AndPred extends AbstractVarargPred {
+final class AndPred extends AbstractVarargPred {
 
     /**
      * Edge number, just fetched.

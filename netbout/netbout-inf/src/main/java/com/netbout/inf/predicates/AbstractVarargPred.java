@@ -43,7 +43,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public abstract class AbstractVarargPred implements Predicate {
+abstract class AbstractVarargPred implements Predicate {
 
     /**
      * Name of it.

@@ -44,7 +44,7 @@ import java.util.TreeSet;
  * @version $Id$
  */
 @Meta("or")
-public final class OrPred extends AbstractVarargPred {
+final class OrPred extends AbstractVarargPred {
 
     /**
      * Pool of already retrieved numbers.

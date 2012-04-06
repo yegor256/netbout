@@ -36,7 +36,7 @@ import java.util.NoSuchElementException;
  * @version $Id$
  */
 @Meta("false")
-public final class FalsePred implements Predicate {
+final class FalsePred implements Predicate {
 
     /**
      * {@inheritDoc}

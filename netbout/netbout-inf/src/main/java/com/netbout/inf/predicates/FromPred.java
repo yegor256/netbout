@@ -39,7 +39,7 @@ import java.util.List;
  * @version $Id$
  */
 @Meta("from")
-public final class FromPred extends AbstractVarargPred {
+final class FromPred extends AbstractVarargPred {
 
     /**
      * Minimum position to show.

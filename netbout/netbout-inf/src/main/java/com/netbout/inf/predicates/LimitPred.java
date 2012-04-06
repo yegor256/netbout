@@ -39,7 +39,7 @@ import java.util.List;
  * @version $Id$
  */
 @Meta("limit")
-public final class LimitPred extends AbstractVarargPred {
+final class LimitPred extends AbstractVarargPred {
 
     /**
      * Maximum position to show.

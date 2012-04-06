@@ -39,7 +39,7 @@ import java.util.List;
  * @version $Id$
  */
 @Meta("pos")
-public final class PosPred extends AbstractVarargPred {
+final class PosPred extends AbstractVarargPred {
 
     /**
      * Expected position.
