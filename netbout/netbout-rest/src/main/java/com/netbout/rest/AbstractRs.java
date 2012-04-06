@@ -211,6 +211,8 @@ public abstract class AbstractRs implements Resource {
 
     /**
      * {@inheritDoc}
+     *
+     * @see http://stackoverflow.com/questions/10040243
      */
     @Override
     public final UriBuilder base() {
@@ -221,7 +223,7 @@ public abstract class AbstractRs implements Resource {
             && this.addAuthToURIs) {
             builder.replaceQueryParam(RestSession.AUTH_PARAM, this.icookie);
         }
-        return builder;
+        return UriBuilder.fromUri(builder.build());
     }
 
     /**
