@@ -68,10 +68,10 @@ public final class BoutRsTest {
             )
             .mock(BoutRs.class);
         rest.setNumber(bout.number());
-        rest.setPeriod(null);
+        rest.setPeriod("10-20");
         rest.setStage(null);
         rest.setPlace(null);
-        rest.setQuery(null);
+        rest.setQuery("hello");
         rest.setMask(null);
         rest.setStageCoords(null);
         final Response response = rest.front();
@@ -83,7 +83,13 @@ public final class BoutRsTest {
                 ),
                 XmlMatchers.hasXPath(
                     String.format("/page/bout[title='%s']", title)
-                )
+                ),
+                XmlMatchers.hasXPath("/page/links/link[@rel='top']"),
+                XmlMatchers.hasXPath("/page/links/link[@rel='leave']"),
+                XmlMatchers.hasXPath("/page/links/link[@rel='post']"),
+                XmlMatchers.hasXPath("/page[@searcheable='true']"),
+                XmlMatchers.hasXPath("/page[query='hello']"),
+                XmlMatchers.hasXPath("/page/bout[view='10-20']")
             )
         );
     }

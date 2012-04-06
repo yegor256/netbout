@@ -237,7 +237,7 @@ public final class LongBout {
             period,
             UriBuilder.fromUri(
                 this.builder.clone()
-                    .queryParam(RestSession.QUERY_PARAM, "{query}")
+                    .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
                     .build(this.query)
             )
         ).setQueryParam(BoutRs.PERIOD_PARAM);

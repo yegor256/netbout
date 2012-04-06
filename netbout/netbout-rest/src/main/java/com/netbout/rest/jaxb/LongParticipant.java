@@ -99,7 +99,7 @@ public final class LongParticipant {
                     "kickoff",
                     this.builder.clone()
                         .path("/kickoff")
-                        .queryParam("name", "{name}")
+                        .replaceQueryParam("name", "{name}")
                         .build(this.participant.identity().name())
                 )
             );

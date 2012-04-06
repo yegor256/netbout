@@ -59,9 +59,9 @@ public final class ShortcutRs extends AbstractRs {
         }
         return Response.seeOther(
             this.base().path("/auth")
-                .queryParam("identity", "{who}")
-                .queryParam("secret", "{secret}")
-                .queryParam("goto", "/{bout}")
+                .replaceQueryParam("identity", "{who}")
+                .replaceQueryParam("secret", "{secret}")
+                .replaceQueryParam("goto", "/{bout}")
                 .build(
                     anchor.identity().name(),
                     new SecureString(anchor.identity().name()),

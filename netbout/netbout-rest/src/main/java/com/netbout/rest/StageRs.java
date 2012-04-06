@@ -145,7 +145,7 @@ public final class StageRs extends AbstractRs {
             .status(Response.Status.SEE_OTHER)
             .location(
                 this.base().path("/{num}")
-                    .queryParam(BoutRs.PLACE_PARAM, "{dest}")
+                    .replaceQueryParam(BoutRs.PLACE_PARAM, "{dest}")
                     .build(this.bout.number(), dest)
             )
             .build();

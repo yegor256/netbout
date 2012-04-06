@@ -28,7 +28,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<texts>
+<texts revision="${build.number}">
     <!-- global messages -->
     <We.recommend.to.reauthenticate>We recommend you to re-authenticate yourself</We.recommend.to.reauthenticate>
     <sec>sec</sec>

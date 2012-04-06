@@ -295,7 +295,7 @@ public final class PeriodsBuilder {
             name,
             UriBuilder.fromUri(
                 this.base.clone()
-                    .queryParam(this.param, "{period}")
+                    .replaceQueryParam(this.param, "{period}")
                     .build(this.period)
             )
         );

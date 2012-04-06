@@ -205,7 +205,7 @@ public final class ShortBout {
                 new Link(
                     "all",
                     this.builder.clone().path("/..")
-                        .queryParam(RestSession.QUERY_PARAM, "{query}")
+                        .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
                         .build(query)
                 )
             );

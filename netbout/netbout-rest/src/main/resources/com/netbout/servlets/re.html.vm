@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>internal application error</title>
-        <link href="/css/global.css" rel="stylesheet" type="text/css"></link>
-        <link rel="icon" type="image/gif" href="http://cdn.netbout.com/favicon.ico"/>
+        <title>Internal application error</title>
+        <link href="/css/global.css?${build.number}"
+            rel="stylesheet" type="text/css"></link>
+        <link rel="icon" type="image/gif"
+            href="http://cdn.netbout.com/favicon.ico?${build.number}"/>
     </head>
     <body style="padding: 1em;">
         <section>
             <p>
                 <a href="http://www.netbout.com/">
-                    <img src="http://cdn.netbout.com/logo-small.png"/>
+                    <img src="http://cdn.netbout.com/logo-small.png?${build.number}"/>
                 </a>
             </p>
             <p>
-                <b style="color: red;">Internal application error</b>.
+                <b style="color: red;">
+                    Internal application error (r.${build.number})
+                </b>.
             </p>
             <p>
                 Netbout team already received a notification about this
