@@ -211,6 +211,7 @@ public abstract class AbstractRs implements Resource {
 
     /**
      * {@inheritDoc}
+     * @see http://java.net/jira/browse/JERSEY-1081
      */
     @Override
     public final UriBuilder base() {
@@ -221,7 +222,6 @@ public abstract class AbstractRs implements Resource {
             && this.addAuthToURIs) {
             builder.replaceQueryParam(RestSession.AUTH_PARAM, this.icookie);
         }
-        // @see http://java.net/jira/browse/JERSEY-1081
         return UriBuilder.fromUri(builder.build());
     }
 

@@ -33,6 +33,7 @@ import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -72,7 +73,7 @@ public final class OrPred extends AbstractVarargPred {
             }
         }
         if (this.pool.isEmpty()) {
-            throw new PredicateException("end of messsages reached");
+            throw new NoSuchElementException("end of messsages reached");
         }
         final Long message = this.pool.last();
         this.pool.remove(message);
