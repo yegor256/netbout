@@ -30,7 +30,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<texts>
+<texts revision="${build.number}">
     <We.recommend.to.reauthenticate>Recomendamos re-autenticarse</We.recommend.to.reauthenticate>
     <click.here>haga click aqui</click.here>
     <the.server.is.busy>

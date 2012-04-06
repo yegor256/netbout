@@ -28,7 +28,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<texts>
+<texts revision="${build.number}">
     <!-- global messages -->
     <We.recommend.to.reauthenticate>
         Ми рекомендуємо ввійти до системи іншим способом

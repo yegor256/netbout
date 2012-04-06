@@ -32,7 +32,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<texts>
+<texts revision="${build.number}">
     <beta.version>ベータ版</beta.version>
     <!-- global messages -->
     <We.recommend.to.reauthenticate>自分を再度認証させることをお勧めします</We.recommend.to.reauthenticate>
