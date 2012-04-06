@@ -24,9 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors;
+package com.netbout.inf;
 
-import com.netbout.inf.motors.ebs.EbsVolume;
+import com.netbout.inf.ebs.EbsVolume;
 import org.reflections.Reflections;
 
 /**
