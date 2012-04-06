@@ -24,11 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.inf.triples;
+
+import java.io.Closeable;
+import java.io.File;
+import java.util.Iterator;
 
 /**
- * SQL engine on top of JDBC.
+ * Triples.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.inf.jdbc;
+public final class Triples implements Closeable {
+
+    /**
+     * Public ctor.
+     * @param dir Where to keep data
+     */
+    public Triples(final File dir) {
+        // todo
+    }
+
+    /**
+     * Put new triple.
+     * @param message Message number
+     * @param name Name of triple
+     * @param value The value
+     */
+    public void put(final Long message, final String name, final Object value) {
+    }
+
+    /**
+     * Get the value.
+     * @param message Message number
+     * @param name Name of triple
+     * @return The value found
+     */
+    public Object get(final Long message, final String name) {
+    }
+
+    /**
+     * Reverse lookup.
+     * @param name Name of triple
+     * @param value The value to look for
+     * @return Reverse sorted list of message numbers
+     */
+    public Iterator<Long> reverse(final String name, final Object value) {
+    }
+
+}

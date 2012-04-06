@@ -24,58 +24,40 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.lucene;
 
-import com.netbout.inf.ebs.EbsVolume;
-import org.reflections.Reflections;
+import java.io.Closeable;
+import java.io.File;
+import java.util.Iterator;
 
 /**
- * Store of all motors.
- *
- * <p>This class is immutable and thread-safe.
+ * Search engine on top of Lucene.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MotorsStore {
+public final class Lucene {
 
     /**
-     * The folder to work with.
+     * Public ctor.
+     * @param dir Where to keep data
      */
-    private final transient Folder folder = new EbsVolume();
+    public Lucene(final File dir) {
+        // todo
+    }
 
     /**
-     * Discover all motors.
-     * @return List of pointers to predicates
+     * {@inheritDoc}
      */
-    public Set<Pointer> discover() {
-        final Reflections ref = new Reflections(
-            this.getClass().getPackage().getName()
-        );
-        final Set<Pointer> motors = new HashSet<Pointer>();
-        for (Class pred : ref.getSubTypesOf(Pointer.class)) {
-            try {
-                motors.add(
-                    (Pointer) pred.getConstructor(File.class)
-                        .newInstance(this.folder.path())
-                );
-            } catch (NoSuchMethodException ex) {
-                throw new PredicateException(ex);
-            } catch (InstantiationException ex) {
-                throw new PredicateException(ex);
-            } catch (IllegalAccessException ex) {
-                throw new PredicateException(ex);
-            } catch (java.lang.reflect.InvocationTargetException ex) {
-                throw new PredicateException(ex);
-            }
-        }
-        Logger.debug(
-            this,
-            "#discover(): %d motors discovered in classpath: %[list]s",
-            motors.size(),
-            motors
-        );
-        return motors;
+    public void insert(final Long number, final Data data) {
+        // todo
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Iterator<Long> find(final String field, final String text) {
+        return null;
     }
 
 }

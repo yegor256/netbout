@@ -37,12 +37,12 @@ abstract class AbstractTask implements Task {
     /**
      * When started.
      */
-    private transient Long started;
+    private transient long started;
 
     /**
      * When finished (or NULL if still running).
      */
-    private transient Long finished;
+    private transient long finished;
 
     /**
      * The index to work with.
@@ -87,9 +87,9 @@ abstract class AbstractTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public final Long time() {
-        Long time;
-        if (this.finished == null) {
+    public final long time() {
+        long time;
+        if (this.finished == 0L) {
             time = System.nanoTime() - this.started;
         } else {
             time = this.finished - this.started;

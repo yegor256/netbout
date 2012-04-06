@@ -26,9 +26,9 @@
  */
 
 /**
- * Index implementation.
+ * Amazon EBS/EC2 implementation of {@link Folder}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.inf.motors.ebs;
+package com.netbout.inf.ebs;

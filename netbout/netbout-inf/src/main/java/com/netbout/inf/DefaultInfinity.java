@@ -121,7 +121,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public Long eta(final Urn who) {
+    public long eta(final Urn who) {
         return this.mux.eta(who);
     }
 

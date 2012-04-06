@@ -171,8 +171,8 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      * @param who Who is asking
      * @return Estimated number of nanoseconds
      */
-    public Long eta(final Urn who) {
-        Long eta;
+    public long eta(final Urn who) {
+        long eta;
         if (this.dependants.containsKey(who)) {
             eta = this.dependants.get(who).get();
             if (eta > 0) {

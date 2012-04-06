@@ -51,7 +51,7 @@ public interface Infinity extends Closeable {
      * @param who Who is asking
      * @return Estimated number of milliseconds
      */
-    Long eta(Urn who);
+    long eta(Urn who);
 
     /**
      * Find messages for the given predicate.

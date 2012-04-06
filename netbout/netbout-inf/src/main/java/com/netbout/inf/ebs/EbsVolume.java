@@ -24,8 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.ebs;
+package com.netbout.inf.ebs;
 
+import com.netbout.inf.Folder;
 import com.rexsl.core.Manifests;
 import com.rexsl.test.RestTester;
 import com.ymock.util.Logger;

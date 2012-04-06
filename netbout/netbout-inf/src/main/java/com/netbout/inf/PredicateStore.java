@@ -29,8 +29,10 @@ package com.netbout.inf;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Store of all known predicates.
@@ -40,17 +42,17 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class PredicateStore {
+final class PredicateStore implements Closeable {
+
+    /**
+     * The folder to work with.
+     */
+    private final transient Folder folder = new EbsVolume();
 
     /**
      * Pointers to all known predicates.
      */
     private final transient Set<Pointer> pointers;
-
-    /**
-     * Store of motors.
-     */
-    private final transient MotorsStore motors = new MotorsStore();
 
     /**
      * Public ctor.
@@ -59,6 +61,16 @@ final class PredicateStore {
     public PredicateStore(final Index idx) {
         this.index = idx;
         this.pointers = this.discover();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws java.io.IOException {
+        for (Pointer pointer : this.pointers) {
+            IOUtils.closeQuietly(pointer);
+        }
     }
 
     /**
@@ -103,8 +115,42 @@ final class PredicateStore {
     private Set<Pointer> discover() {
         final Set<Pointer> ptrs = new HashSet<Pointer>();
         ptrs.addAll(PredicatePointer.discover());
-        ptrs.addAll(this.motors.discover());
+        ptrs.addAll(this.motors());
         return ptrs;
+    }
+
+    /**
+     * Discover all motors.
+     * @return List of pointers to predicates
+     */
+    private Set<Pointer> motors() {
+        final Reflections ref = new Reflections(
+            this.getClass().getPackage().getName()
+        );
+        final Set<Pointer> motors = new HashSet<Pointer>();
+        for (Class pred : ref.getSubTypesOf(Pointer.class)) {
+            try {
+                motors.add(
+                    (Pointer) pred.getConstructor(File.class)
+                        .newInstance(this.folder.path())
+                );
+            } catch (NoSuchMethodException ex) {
+                throw new PredicateException(ex);
+            } catch (InstantiationException ex) {
+                throw new PredicateException(ex);
+            } catch (IllegalAccessException ex) {
+                throw new PredicateException(ex);
+            } catch (java.lang.reflect.InvocationTargetException ex) {
+                throw new PredicateException(ex);
+            }
+        }
+        Logger.debug(
+            this,
+            "#discover(): %d motors discovered in classpath: %[list]s",
+            motors.size(),
+            motors
+        );
+        return motors;
     }
 
 }

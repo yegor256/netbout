@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
+import java.io.Closeable;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Pointer {
+public interface Pointer extends Closeable {
 
     /**
      * Points to this predicate (by name)?
