@@ -29,11 +29,11 @@ package com.netbout.inf;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.io.Closeable;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -44,6 +44,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings({
     "PMD.DoNotUseThreads", "PMD.AvoidInstantiatingObjectsInLoops"
@@ -86,7 +87,17 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
             Mux.THREADS,
             1L,
             TimeUnit.DAYS,
-            new LinkedBlockingQueue<Runnable>()
+            new LinkedBlockingQueue<Runnable>(),
+            new ThreadFactory() {
+                private int num;
+                @Override
+                public Thread newThread(final Runnable runnable) {
+                    return new Thread(
+                        runnable,
+                        String.format("mux-pool-%d", ++this.num)
+                    );
+                }
+            }
         );
         this.prestartAllCoreThreads();
         for (int thread = 0; thread < Mux.THREADS; thread += 1) {
@@ -125,14 +136,32 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
 
     /**
      * {@inheritDoc}
+     *
+     * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/ExecutorService.html">Example</a>
      */
     @Override
     public void close() {
-        final List<Runnable> killed = this.shutdownNow();
+        this.shutdown();
+        try {
+            // @checkstyle MagicNumber (1 line)
+            if (this.awaitTermination(10, TimeUnit.SECONDS)) {
+                Logger.info(this, "#close(): shutdown() succeeded");
+            } else {
+                Logger.warn(this, "#close(): shutdown() failed");
+                this.shutdownNow();
+                if (this.awaitTermination(1, TimeUnit.MINUTES)) {
+                    Logger.info(this, "#close(): shutdownNow() succeeded");
+                } else {
+                    Logger.error(this, "#close(): failed to stop threads");
+                }
+            }
+        } catch (InterruptedException ex) {
+            this.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
         Logger.info(
             this,
-            "#close(): terminated %d tasks (%d remained in the queue)",
-            killed.size(),
+            "#close(): %d remained in the queue",
             this.queue.size()
         );
     }
@@ -206,7 +235,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                     task = Mux.this.queue.take();
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
-                    throw new IllegalStateException(ex);
+                    break;
                 }
                 this.run(task);
                 for (Urn who : task.dependants()) {

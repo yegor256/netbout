@@ -192,6 +192,14 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
+    public void close() throws java.io.IOException {
+        this.helper.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void execute(final Token token) {
         this.helper.execute(token);
     }

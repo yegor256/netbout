@@ -98,7 +98,7 @@ public final class BoutRs extends AbstractRs {
     /**
      * The period we're looking at.
      */
-    private transient String view;
+    private transient String view = "";
 
     /**
      * Set number of bout.
@@ -403,9 +403,10 @@ public final class BoutRs extends AbstractRs {
             .append(new JaxbBundle("query", this.query))
             .link("leave", this.self("/leave"));
         this.appendInvitees(page);
-        if (this.view == null) {
-            page.link("top", this.self(""));
-        }
+        page.link(
+            "top",
+            this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, "")
+        );
         if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
             page.link("post", this.self("/p"));
         } else {
@@ -444,7 +445,8 @@ public final class BoutRs extends AbstractRs {
                 .path("/{bout}")
                 .path(path)
                 .queryParam(RestSession.QUERY_PARAM, "{query}")
-                .build(this.bout().number(), this.query)
+                .queryParam(BoutRs.PERIOD_PARAM, "{period}")
+                .build(this.bout().number(), this.query, this.view)
         );
     }
 

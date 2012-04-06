@@ -23,49 +23,27 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.db;
+
+import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.Operation;
+
+/**
+ * General helper manipulations.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.bootstrap
+@Farm
+public final class DbFarm {
 
-import com.netbout.db.DbSession
-import com.rexsl.core.Manifests
-import com.ymock.util.Logger
-
-def urlFile = new File(rexsl.basedir, 'jdbc.txt')
-if (urlFile.exists()) {
-    Manifests.inject('Netbout-JdbcUrl', urlFile.text.trim())
-}
-
-def line = new StringBuilder()
-def queries = []
-new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text ->
-    if (text.startsWith('--')) {
-        return
+    /**
+     * Shutdown the helper.
+     */
+    @Operation("shutdown")
+    public void shutdown() {
+        Database.drop();
     }
-    line.append(text)
-    if (text.trim().endsWith(';')) {
-        queries.add(line.toString())
-        line.setLength(0)
-    }
-}
 
-// let's create a big amount of bouts and messages for one identity
-(5000..6000).each {
-    queries.add(
-        'INSERT IGNORE INTO bout (number, title, date) VALUES'
-        + " (${it}, 'test', '2001-01-01')"
-    )
-    queries.add(
-        'INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES'
-        + " (${it}, 'urn:test:bumper', 1, '2001-01-01')"
-    )
-    queries.add(
-        'INSERT IGNORE INTO message (number, bout, date, author, text) VALUES'
-        + " (${it}, ${it}, '2001-01-01', 'urn:test:bumper', 'hi!')"
-    )
 }
-
-queries.each { new DbSession(true).sql(it).update() }
-Logger.info(this, 'Test database is ready (%d queries)', queries.size())

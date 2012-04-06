@@ -79,7 +79,9 @@ public final class LifecycleListener implements ServletContextListener {
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
         final long start = System.nanoTime();
-        if (this.hub != null) {
+        if (this.hub == null) {
+            Logger.warn(this, "#contextDestroyed(): HUB is null");
+        } else {
             try {
                 this.hub.close();
             } catch (java.io.IOException ex) {
@@ -95,6 +97,7 @@ public final class LifecycleListener implements ServletContextListener {
             "#contextDestroyed(): done in %[nano]s",
             System.nanoTime() - start
         );
+        org.apache.log4j.LogManager.shutdown();
     }
 
 }
