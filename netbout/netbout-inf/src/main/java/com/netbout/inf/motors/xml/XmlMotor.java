@@ -24,34 +24,27 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.bundles;
+package com.netbout.inf.motors.xml;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
-import com.ymock.util.Logger;
-import java.util.ArrayList;
+import com.netbout.spi.xml.DomParser;
 import java.util.List;
-import org.reflections.Reflections;
 
 /**
- * Bundles motor.
+ * XML motor.
  *
  * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BundlesMotor implements Pointer {
+public final class XmlMotor implements Pointer {
 
     /**
-     * Message to bout (name of triple).
+     * Message to namespace (name of triple).
      */
-    private static final String MSG_TO_BOUT = "message-to-bout";
-
-    /**
-     * Bout to marker (name of triple).
-     */
-    private static final String BOUT_TO_MARKER = "bout-to-marker";
+    private static final String MSG_TO_NS = "message-to-namespace";
 
     /**
      * The triples.
@@ -62,7 +55,7 @@ public final class BundlesMotor implements Pointer {
      * Public ctor.
      * @param dir The directory to work in
      */
-    public BundlesMotor(final File dir) {
+    public XmlMotor(final File dir) {
         this.triples = new Triples(dir);
     }
 
@@ -71,7 +64,7 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public String toString() {
-        return "Bundles";
+        return "XML";
     }
 
     /**
@@ -87,7 +80,7 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public boolean pointsTo(final String name) {
-        return name.matches("bundled|unbundled");
+        return name.matches("ns");
     }
 
     /**
@@ -95,20 +88,10 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public Predicate build(final String name, final List<Atom> atoms) {
-        Predicate pred;
-        if ("bundled".equals(name)) {
-            pred = new BundledPred(this.triples);
-        } else if ("unbundled".equals(name)) {
-            pred = new UnbundledPred(
-                this.triples,
-                this.triples.get(
-                    ((NumberAtom) atoms.get(0)).value()
-                    BundlesMotor.BOUT_TO_MARKER
-                ),
-                ((NumberAtom) atoms.get(0)).value()
-            );
-        }
-        return pred;
+        return new NsPred(
+            this.triples,
+            Urn.create(((TextAtom) atoms.get(0)).value())
+        );
     }
 
     /**
@@ -116,11 +99,24 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public void see(final Message msg) {
-        this.triples.put(
-            msg.number(),
-            BundlesMotor.MSG_TO_BOUT,
-            msg.bout().number()
-        );
+        final DomParser parser = new DomParser(msg.text());
+        if (parser.isXml()) {
+            Urn namespace;
+            try {
+                this.triples.put(
+                    msg.number(),
+                    BundlesMotor.MSG_TO_NS,
+                    parser.namespace().toString()
+                );
+            } catch (com.netbout.spi.xml.DomValidationException ex) {
+                Logger.warn(
+                    NsPred.class,
+                    "#see(#%d, ..): %[exception]s",
+                    msg.number(),
+                    ex
+                );
+            }
+        }
     }
 
     /**
@@ -128,16 +124,7 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public void see(final Bout bout) {
-        final Set<Urn> names = new TreeSet<Urn>();
-        for (Participant dude : bout.participants()) {
-            names.add(dude.identity().name());
-        }
-        final String marker = Logger.format("%[list]s", names);
-        this.triples.put(
-            bout.number(),
-            BundlesMotor.BOUT_TO_MARKER,
-            marker
-        );
+        // nothing to do here
     }
 
 }

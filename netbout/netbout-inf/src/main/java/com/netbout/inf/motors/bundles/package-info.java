@@ -24,75 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.bundles;
-
-import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateException;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Allows only bundled messages.
- *
- * <p>This class is thread-safe.
+ * Bundles.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class BundledPred implements Predicate {
-
-    /**
-     * Triples to use.
-     */
-    private final transient Triples triples;
-
-    /**
-     * List of already passed markers.
-     */
-    private final transient Set<String> passed =
-        new ConcurrentSkipListSet<String>();
-
-    /**
-     * Public ctor.
-     * @param trpls The triples to work with
-     */
-    public BundledPred(final Triples trpls) {
-        this.triples = trpls;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long next() {
-        throw new PredicateException("BUNDLED#next()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        throw new PredicateException("BUNDLED#hasNext()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean contains(final Long message) {
-        final String marker = this.triples.get(
-            this.triples.get(message, BundlesMotor.MSG_TO_BOUT),
-            BundlesMotor.BOUT_TO_MARKER
-        );
-        boolean allow;
-        if (this.passed.contains(marker)) {
-            allow = false;
-        } else {
-            this.passed.add(marker);
-            allow = true;
-        }
-        return allow;
-    }
-
-}
+package com.netbout.inf.motors.bundles;

@@ -24,46 +24,55 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.bundles;
+package com.netbout.inf.motors.texts;
 
+import com.netbout.inf.Atom;
+import com.netbout.inf.Index;
+import com.netbout.inf.Meta;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.atoms.VariableAtom;
+import com.netbout.inf.predicates.AbstractVarargPred;
+import com.netbout.inf.predicates.FalsePred;
+import com.netbout.inf.predicates.TruePred;
+import com.netbout.inf.predicates.logic.AndPred;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
-import com.ymock.util.Logger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import org.reflections.Reflections;
+import java.util.Locale;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
- * Bundles motor.
+ * Texts motor.
  *
- * <p>This class is immutable and thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class BundlesMotor implements Pointer {
+public final class TextsMotor implements Pointer {
 
     /**
-     * Message to bout (name of triple).
+     * The lucene.
      */
-    private static final String MSG_TO_BOUT = "message-to-bout";
-
-    /**
-     * Bout to marker (name of triple).
-     */
-    private static final String BOUT_TO_MARKER = "bout-to-marker";
-
-    /**
-     * The triples.
-     */
-    private final transient Triples triples;
+    private final transient Lucene lucene;
 
     /**
      * Public ctor.
      * @param dir The directory to work in
      */
-    public BundlesMotor(final File dir) {
-        this.triples = new Triples(dir);
+    public TextsMotor(final File dir) {
+        this.lucene = new Lucene(dir);
     }
 
     /**
@@ -71,7 +80,7 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public String toString() {
-        return "Bundles";
+        return "Texts";
     }
 
     /**
@@ -79,7 +88,7 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public void close() throws java.io.IOException {
-        this.triples.close();
+        this.lucene.close();
     }
 
     /**
@@ -87,7 +96,7 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public boolean pointsTo(final String name) {
-        return name.matches("bundled|unbundled");
+        return name.matches("matches");
     }
 
     /**
@@ -95,20 +104,6 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public Predicate build(final String name, final List<Atom> atoms) {
-        Predicate pred;
-        if ("bundled".equals(name)) {
-            pred = new BundledPred(this.triples);
-        } else if ("unbundled".equals(name)) {
-            pred = new UnbundledPred(
-                this.triples,
-                this.triples.get(
-                    ((NumberAtom) atoms.get(0)).value()
-                    BundlesMotor.BOUT_TO_MARKER
-                ),
-                ((NumberAtom) atoms.get(0)).value()
-            );
-        }
-        return pred;
     }
 
     /**
@@ -116,11 +111,6 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public void see(final Message msg) {
-        this.triples.put(
-            msg.number(),
-            BundlesMotor.MSG_TO_BOUT,
-            msg.bout().number()
-        );
     }
 
     /**
@@ -128,16 +118,6 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public void see(final Bout bout) {
-        final Set<Urn> names = new TreeSet<Urn>();
-        for (Participant dude : bout.participants()) {
-            names.add(dude.identity().name());
-        }
-        final String marker = Logger.format("%[list]s", names);
-        this.triples.put(
-            bout.number(),
-            BundlesMotor.BOUT_TO_MARKER,
-            marker
-        );
     }
 
 }

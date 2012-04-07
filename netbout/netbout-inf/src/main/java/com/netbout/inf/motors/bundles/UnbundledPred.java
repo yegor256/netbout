@@ -92,8 +92,8 @@ final class UnbundledPred implements Predicate {
     @Override
     public boolean contains(final Long message) {
         final String marker = this.triples.get(
-            message,
-            BundlesMotor.MSG_TO_MARKER
+            this.triples.get(message, BundlesMotor.MSG_TO_BOUT),
+            BundlesMotor.BOUT_TO_MARKER
         );
         return this.bundle.equals(marker)
             && !this.triples.get(BundlesMotor.MSG_TO_BOUT, message)

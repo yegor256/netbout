@@ -24,80 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.xml;
-
-import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
-import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+package com.netbout.inf.triples;
 
 /**
- * Namespace predicate.
- *
- * <p>This class is NOT thread-safe.
+ * When triple is not found by {Triples#get()}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NsPred implements Predicate {
-
-    /**
-     * Triples to use.
-     */
-    private final transient Triples triples;
-
-    /**
-     * Iterator of them.
-     */
-    private final transient Iterator<Long> iterator;
-
-    /**
-     * The namespace.
-     */
-    private final transient Urn namespace;
+public final class MissedTripleException extends Exception {
 
     /**
      * Public ctor.
-     * @param trp The triples
-     * @param nsp The namespace
+     * @param cause The cause
      */
-    public NsPred(final Triples trp, final Urn nsp) {
-        this.triples = trp;
-        this.namespace = nsp;
-        this.iterator = this.triples
-            .reverse(XmlMotor.MSG_TO_NS, this.namespace);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long next() {
-        return this.iterator.next();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        return this.iterator.hasNext();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean contains(final Long message) {
-        return this.triples.<Urn>get(message, XmlMotor.MSG_TO_NS)
-            .equals(this.namespace);
+    public MissedTripleException(final String cause) {
+        super(cause);
     }
 
 }
