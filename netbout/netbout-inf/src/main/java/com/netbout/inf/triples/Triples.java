@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.triples;
 
+import com.netbout.spi.Message;
 import java.io.Closeable;
 import java.io.File;
 import java.util.Iterator;
@@ -47,21 +48,29 @@ public final class Triples implements Closeable {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws java.io.IOException {
+        // ...
+    }
+
+    /**
      * Put new triple.
-     * @param message Message number
+     * @param number The number
      * @param name Name of triple
      * @param value The value
      */
-    public void put(final Long message, final String name, final Object value) {
+    public void put(final Long number, final String name, final Object value) {
     }
 
     /**
      * Get the value.
-     * @param message Message number
+     * @param number The number
      * @param name Name of triple
      * @return The value found
      */
-    public Object get(final Long message, final String name) {
+    public Object get(final Long number, final String name) {
     }
 
     /**

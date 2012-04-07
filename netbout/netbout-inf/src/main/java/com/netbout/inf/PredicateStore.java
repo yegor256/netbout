@@ -30,6 +30,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
 import java.io.Closeable;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
@@ -129,10 +130,11 @@ final class PredicateStore implements Closeable {
         );
         final Set<Pointer> motors = new HashSet<Pointer>();
         for (Class pred : ref.getSubTypesOf(Pointer.class)) {
+            final File dir = new File(this.folder.path(), pre.getName());
+            dir.mkdirs();
             try {
                 motors.add(
-                    (Pointer) pred.getConstructor(File.class)
-                        .newInstance(this.folder.path())
+                    (Pointer) pred.getConstructor(File.class).newInstance(dir)
                 );
             } catch (NoSuchMethodException ex) {
                 throw new PredicateException(ex);

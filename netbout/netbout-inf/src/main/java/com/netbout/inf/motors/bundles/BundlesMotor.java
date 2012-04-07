@@ -41,19 +41,29 @@ import org.reflections.Reflections;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class XmlMotor implements Pointer {
+public final class BundlesMotor implements Pointer {
 
     /**
-     * The index.
+     * Message to marker (name of triple).
      */
-    private final transient Index index;
+    private static final String MSG_TO_MARKER = "message-to-marker";
+
+    /**
+     * Message to bout (name of triple).
+     */
+    private static final String MSG_TO_BOUT = "message-to-bout";
+
+    /**
+     * The triples.
+     */
+    private final transient Triples triples;
 
     /**
      * Public ctor.
-     * @param idx The index to work with
+     * @param dir The directory to work in
      */
-    public BundlesMotor(final Index idx) {
-        this.index = idx;
+    public BundlesMotor(final File dir) {
+        this.triples = new Triples(dir);
     }
 
     /**
@@ -62,6 +72,14 @@ public final class XmlMotor implements Pointer {
     @Override
     public String toString() {
         return "Bundles";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws java.io.IOException {
+        this.triples.close();
     }
 
     /**
@@ -79,9 +97,19 @@ public final class XmlMotor implements Pointer {
     public Predicate build(final String name, final List<Atom> atoms) {
         Predicate pred;
         if ("bundled".equals(name)) {
-            pred = new BundledPred(new MapBundler(this.index));
+            pred = new BundledPred(this.triples);
         } else if ("unbundled".equals(name)) {
-            pred = new UnbundledPred(new Marker());
+            pred = new UnbundledPred(
+                this.triples,
+                this.triples.get(
+                    this.triples.reverse(
+                        BundlesMotor.MSG_TO_BOUT,
+                        ((NumberAtom) this.arg(0)).value()
+                    ).next(),
+                    BundlesMotor.MSG_TO_MARKER
+                ),
+                ((NumberAtom) this.arg(0)).value()
+            );
         }
         return pred;
     }
@@ -95,15 +123,17 @@ public final class XmlMotor implements Pointer {
         for (Participant dude : msg.bout().participants()) {
             names.add(dude.identity().name());
         }
-        final ConcurrentMap<Long, String> markers =
-            index.get(BundledPred.MAP_MARKERS);
-        final ConcurrentMap<Long, Long> bouts =
-            index.get(BundledPred.MAP_BOUTS);
-        final ConcurrentMap<Long, Long> messages =
-            index.get(BundledPred.MAP_MESSAGES);
-        markers.put(msg.number(), Logger.format("%[list]s", names));
-        bouts.put(msg.bout().number(), msg.number());
-        messages.put(msg.number(), msg.bout().number());
+        final String marker = Logger.format("%[list]s", names);
+        this.triples.put(
+            msg.number(),
+            BundlesMotor.MSG_TO_MARKER,
+            marker
+        );
+        this.triples.put(
+            msg.number(),
+            BundlesMotor.MSG_TO_BOUT,
+            msg.bout().number()
+        );
     }
 
     /**
@@ -112,57 +142,6 @@ public final class XmlMotor implements Pointer {
     @Override
     public void see(final Bout bout) {
         // nothing to do here
-    }
-
-    /**
-     * Get marker for message.
-     * @param index The index to use for it
-     * @param msg The message to extract from
-     * @return The marker
-     */
-    public static String marker(final Index index, final Long msg) {
-        final ConcurrentMap<Long, String> markers =
-            index.get(BundledPred.MAP_MARKERS);
-        if (!markers.containsKey(msg)) {
-            throw new IllegalArgumentException(
-                String.format("marker not found for message #%d", msg)
-            );
-        }
-        return markers.get(msg);
-    }
-
-    /**
-     * Get bout number by message.
-     * @param index The index to use for it
-     * @param msg Number of message
-     * @return The bout number
-     */
-    public static Long boutOf(final Index index, final Long msg) {
-        final ConcurrentMap<Long, Long> messages =
-            index.get(BundledPred.MAP_MESSAGES);
-        if (!messages.containsKey(msg)) {
-            throw new IllegalArgumentException(
-                String.format("bout not found for message #%d", msg)
-            );
-        }
-        return messages.get(msg);
-    }
-
-    /**
-     * Get marker for bout number.
-     * @param index The index to use for it
-     * @param bout Number of bout
-     * @return The marker
-     */
-    public static String markerOfBout(final Index index, final Long bout) {
-        final ConcurrentMap<Long, Long> bouts =
-            index.get(BundledPred.MAP_BOUTS);
-        if (!bouts.containsKey(bout)) {
-            throw new IllegalArgumentException(
-                String.format("bout #%d not found", bout)
-            );
-        }
-        return BundledPred.marker(index, bouts.get(bout));
     }
 
 }

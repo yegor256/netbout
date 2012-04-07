@@ -72,6 +72,14 @@ public final class PredicatePointer implements Pointer {
      * {@inheritDoc}
      */
     @Override
+    public void close() {
+        // nothing to close here
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean pointsTo(final String name) {
         return this.meta.value().equals(name);
     }

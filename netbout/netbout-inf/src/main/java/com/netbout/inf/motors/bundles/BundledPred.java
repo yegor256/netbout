@@ -42,9 +42,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 final class BundledPred implements Predicate {
 
     /**
-     * Marker to use.
+     * Triples to use.
      */
-    private final transient Marker marker;
+    private final transient Triples triples;
 
     /**
      * List of already passed markers.
@@ -54,10 +54,10 @@ final class BundledPred implements Predicate {
 
     /**
      * Public ctor.
-     * @param mrkr The marker to use
+     * @param trpls The triples to work with
      */
-    public BundledPred(final Marker mrkr) {
-        this.marker = mrkr;
+    public BundledPred(final Triples trpls) {
+        this.triples = trpls;
     }
 
     /**
@@ -81,12 +81,15 @@ final class BundledPred implements Predicate {
      */
     @Override
     public boolean contains(final Long message) {
-        final String bundle = this.marker.get(message);
+        final String marker = this.triples.get(
+            message,
+            BundlesMotor.MSG_TO_MARKER
+        );
         boolean allow;
-        if (this.passed.contains(bundle)) {
+        if (this.passed.contains(marker)) {
             allow = false;
         } else {
-            this.passed.add(bundle);
+            this.passed.add(marker);
             allow = true;
         }
         return allow;

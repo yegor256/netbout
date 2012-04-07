@@ -44,9 +44,9 @@ import java.util.List;
 final class UnbundledPred implements Predicate {
 
     /**
-     * Marker to use.
+     * Triples to use.
      */
-    private final transient Marker marker;
+    private final transient Triples triples;
 
     /**
      * Expected bundle.
@@ -54,13 +54,20 @@ final class UnbundledPred implements Predicate {
     private final transient String bundle;
 
     /**
-     * Public ctor.
-     * @param mrkr The marker to use
-     * @param bndl The bundle to use
+     * Current bout, to ignore.
      */
-    public BundledPred(final Marker mrkr, final String bndl) {
-        this.marker = mrkr;
+    private final transient Long bout;
+
+    /**
+     * Public ctor.
+     * @param trpls The triples to use
+     * @param bndl The bundle to use
+     * @param bot Current bout number to ignore
+     */
+    public BundledPred(final Triples trpls, final String bndl, final Long bot) {
+        this.triples = trpls;
         this.bundle = bndl;
+        this.bout = bot;
     }
 
     /**
@@ -84,9 +91,13 @@ final class UnbundledPred implements Predicate {
      */
     @Override
     public boolean contains(final Long message) {
-        final String bundle = this.marker.get(message);
-        return this.marker.equals(BundledPred.marker(this.index(), message))
-            && !BundledPred.boutOf(this.index(), message).equals(this.bout);
+        final String marker = this.triples.get(
+            message,
+            BundlesMotor.MSG_TO_MARKER
+        );
+        return this.bundle.equals(marker)
+            && !this.triples.get(BundlesMotor.MSG_TO_BOUT, message)
+                .equals(this.bout);
     }
 
 }
