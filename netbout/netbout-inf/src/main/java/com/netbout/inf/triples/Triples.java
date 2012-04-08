@@ -65,7 +65,7 @@ public final class Triples implements Closeable {
     }
 
     /**
-     * Get the value.
+     * Get the value (the first one).
      * @param number The number
      * @param name Name of triple
      * @return The value found
@@ -76,12 +76,32 @@ public final class Triples implements Closeable {
     }
 
     /**
+     * Get all triples.
+     * @param number The number
+     * @param name Name of triple
+     * @return The values found
+     * @throws MissedTripleException If not found
+     */
+    public <T> Iterator<T> all(final Long number, final String name) {
+    }
+
+    /**
      * Reverse lookup.
      * @param name Name of triple
      * @param value The value to look for
-     * @return Reverse sorted list of message numbers
+     * @return Reverse sorted list of numbers found
      */
     public <T> Iterator<Long> reverse(final String name, final T value) {
+    }
+
+    /**
+     * Reverse lookup, by any of the values provided.
+     * @param name Name of triple
+     * @param values The values to look for
+     * @return Reverse sorted list of numbers found
+     */
+    public <T> Iterator<Long> reverse(final String name,
+        final Iterator<T> values) {
     }
 
 }

@@ -48,25 +48,12 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "talks-with", extracts = true)
-public final class TalksWithPred extends AbstractVarargPred {
+public final class TalksWithPred implements Pointer {
 
     /**
-     * MAP ID.
+     * Triples to use.
      */
-    private static final String MAP_DUDES =
-        String.format("%s:dudes", TalksWithPred.class.getName());
-
-    /**
-     * MAP ID.
-     */
-    private static final String MAP_BOUTS =
-        String.format("%s:bouts", TalksWithPred.class.getName());
-
-    /**
-     * Found set of message numbers.
-     */
-    private final transient Set<Long> messages;
+    private final transient Triples triples;
 
     /**
      * Iterator of them.
@@ -74,58 +61,25 @@ public final class TalksWithPred extends AbstractVarargPred {
     private final transient Iterator<Long> iterator;
 
     /**
-     * Public ctor.
-     * @param args The arguments
-     * @param index The index to use for searching
+     * The participant.
      */
-    public TalksWithPred(final List<Atom> args, final Index index) {
-        super(args, index);
-        final ConcurrentMap<Urn, SortedSet<Long>> dudes =
-            index.get(TalksWithPred.MAP_DUDES);
-        final Urn urn = Urn.create(((TextAtom) this.arg(0)).value());
-        if (dudes.containsKey(urn)) {
-            this.messages = dudes.get(urn);
-        } else {
-            this.messages = new ConcurrentSkipListSet<Long>();
-        }
-        this.iterator = this.messages.iterator();
-    }
+    private final transient Urn urn;
 
     /**
-     * Extracts necessary data from message.
-     * @param msg The message to extract from
-     * @param index The index to extract to
+     * Public ctor.
+     * @param trpls The triples to work with
+     * @param person Who we're looking for
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public static void extract(final Message msg, final Index index) {
-        final Long bout = msg.bout().number();
-        final ConcurrentMap<Urn, SortedSet<Long>> dudes =
-            index.get(TalksWithPred.MAP_DUDES);
-        final ConcurrentMap<Long, SortedSet<Urn>> bouts =
-            index.get(TalksWithPred.MAP_BOUTS);
-        bouts.putIfAbsent(
-            bout,
-            new ConcurrentSkipListSet<Urn>()
+    public TalksWithPred(final Triples trpls, final Urn person) {
+        this.triples = trpls;
+        this.urn = person;
+        this.iterator = this.triples.reverse(
+            ParticipantsMotor.MSG_TO_BOUT,
+            this.triples.all(
+                this.urn,
+                ParticipantsMotor.BOUT_TO_PARTICIPANT
+            )
         );
-        final Set<Urn> names = new HashSet<Urn>();
-        for (Participant dude : msg.bout().participants()) {
-            final Urn name = dude.identity().name();
-            names.add(name);
-            dudes.putIfAbsent(
-                name,
-                new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
-            );
-            dudes.get(name).add(msg.number());
-            bouts.get(bout).add(name);
-        }
-        final Iterator<Urn> iterator = bouts.get(bout).iterator();
-        while (iterator.hasNext()) {
-            final Urn name = iterator.next();
-            if (!names.contains(name)) {
-                iterator.remove();
-                dudes.get(name).remove(msg.number());
-            }
-        }
     }
 
     /**
@@ -149,7 +103,10 @@ public final class TalksWithPred extends AbstractVarargPred {
      */
     @Override
     public boolean contains(final Long message) {
-        return this.messages.contains(message);
+        return this.triples.<Urn>all(
+            this.triples.get(message, ParticipantsMotor.MSG_TO_BOUT),
+            ParticipantsMotor.BOUT_TO_PARTICIPANT
+        ).contains(this.urn);
     }
 
 }
