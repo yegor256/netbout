@@ -46,7 +46,7 @@ import org.apache.commons.lang.StringUtils;
  * @see <a href="http://tools.ietf.org/html/rfc2141">RFC2141</a>
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.UseConcurrentHashMap" })
-public final class Urn implements Comparable, Serializable {
+public final class Urn implements Comparable<Urn>, Serializable {
 
     /**
      * Serialization marker.
@@ -157,8 +157,8 @@ public final class Urn implements Comparable, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Object obj) {
-        return this.uri.compareTo(((Urn) obj).uri);
+    public int compareTo(final Urn urn) {
+        return this.uri.compareTo(urn.uri);
     }
 
     /**

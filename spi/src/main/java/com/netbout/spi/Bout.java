@@ -35,7 +35,9 @@ import java.util.Date;
 /**
  * Bout, a conversation room.
  *
- * <p>Instances of this interface are thread-safe.
+ * <p>Bouts are comparable by their numbers.
+ *
+ * <p>Instances of this interface must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
