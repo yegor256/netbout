@@ -86,6 +86,23 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public boolean equals(final Object bout) {
+        return bout instanceof Bout
+            && this.number().equals(((Bout) bout).number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.number().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long number() {
         final String num = this.client
             .get("reading bout number")
