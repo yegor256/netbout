@@ -33,6 +33,7 @@ import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import org.apache.commons.lang.StringUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -154,11 +155,25 @@ public final class HubBoutTest {
      * @throws Exception If there is some problem inside
      */
     @Test(expected = com.netbout.spi.IllegalOperationException.class)
-    public void boutRejectsTooLongTitles() throws Exception {
+    public void rejectsTooLongTitles() throws Exception {
         // @checkstyle MagicNumber (1 line)
         final String title = StringUtils.repeat("some text", 200);
         new HubBout(this.hub, this.viewer, this.boutDtMocker.mock())
             .rename(title);
+    }
+
+    /**
+     * HubBout can be equal to other bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void exposesEqualityFeature() throws Exception {
+        MatcherAssert.assertThat(
+            new HubBout(this.hub, this.viewer, this.boutDtMocker.mock()),
+            Matchers.equalTo(
+                new HubBout(this.hub, this.viewer, this.boutDtMocker.mock())
+            )
+        );
     }
 
 }

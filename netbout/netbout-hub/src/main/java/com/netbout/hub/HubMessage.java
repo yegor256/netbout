@@ -87,6 +87,23 @@ final class HubMessage implements Message {
      * {@inheritDoc}
      */
     @Override
+    public boolean equals(final Object bout) {
+        return bout instanceof Message
+            && this.number().equals(((Message) bout).number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.number().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return String.format("msg#%d", this.number());
     }
