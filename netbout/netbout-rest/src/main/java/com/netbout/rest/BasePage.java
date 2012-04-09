@@ -343,10 +343,22 @@ public class BasePage {
      *  somehow properly.
      */
     public static boolean trusted(final Identity identity) {
+        final String[] nids = new String[] {
+            FacebookRs.NAMESPACE,
+            "test",
+            "woquo",
+            "caybo",
+            "netbout",
+        };
+        boolean trusted = false;
         final String nid = identity.name().nid();
-        return nid.equals(FacebookRs.NAMESPACE)
-            || "test".equals(nid)
-            || "netbout".equals(nid);
+        for (String good : nids) {
+            if (nid.equals(good)) {
+                trusted = true;
+                break;
+            }
+        }
+        return trusted;
     }
 
     /**
