@@ -53,8 +53,8 @@ public final class LoginRs extends AbstractRs {
         final UriBuilder fburi = UriBuilder.fromUri(
             UriBuilder
                 .fromPath("https://www.facebook.com/dialog/oauth")
-                .replaceQueryParam("client_id", "{id}")
-                .replaceQueryParam("redirect_uri", "{uri}")
+                .queryParam("client_id", "{id}")
+                .queryParam("redirect_uri", "{uri}")
                 .build(
                     Manifests.read("Netbout-FbId"),
                     this.base().path("/fb/back").build()

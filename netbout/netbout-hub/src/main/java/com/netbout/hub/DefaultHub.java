@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -58,7 +59,7 @@ import java.util.concurrent.TimeUnit;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.DoNotUseThreads" })
-public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
+public final class DefaultHub implements PowerHub, StatsProvider {
 
     /**
      * The bus.
@@ -87,6 +88,11 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
         new ConcurrentHashMap<Urn, Identity>();
 
     /**
+     * Notifier of silent identities.
+     */
+    private final transient ScheduledFuture reminder;
+
+    /**
      * Public ctor.
      */
     public DefaultHub() {
@@ -104,38 +110,19 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         this.promote(this.persister());
-        Executors.newSingleThreadScheduledExecutor()
-            .scheduleAtFixedRate(this, 0L, 1L, TimeUnit.MINUTES);
+        this.reminder = Executors
+            .newSingleThreadScheduledExecutor()
+            .scheduleAtFixedRate(
+                new Reminder(this.ibus),
+                0L,
+                1L,
+                TimeUnit.MINUTES
+            );
         Logger.debug(
             this,
             "#DefaultHub(%[type]s): instantiated",
             bus
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void run() {
-        final List<Urn> names = this.make("find-silent-identities")
-            .synchronously()
-            .asDefault(new ArrayList<Urn>(0))
-            .exec();
-        for (Urn name : names) {
-            final String marker = this.make("get-silence-marker")
-                .synchronously()
-                .arg(name)
-                .asDefault("")
-                .exec();
-            if (!marker.isEmpty()) {
-                this.make("remind-silent-identity")
-                    .arg(name)
-                    .arg(marker)
-                    .asDefault(false)
-                    .exec();
-            }
-        }
     }
 
     /**
@@ -155,6 +142,7 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
      */
     @Override
     public void close() throws java.io.IOException {
+        this.reminder.cancel(true);
         Logger.debug(this, "#close(): shutting down BUS");
         this.ibus.close();
         Logger.debug(this, "#close(): shutting down INF");

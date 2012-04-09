@@ -24,46 +24,65 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.notifiers.facebook;
+package com.netbout.hub;
 
-import com.rexsl.core.Manifests;
-import com.rexsl.test.RestTester;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.Matchers;
+import com.netbout.bus.Bus;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Reminder farm.
+ * Entry point to Hub.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see <a href="http://developers.facebook.com/docs/authentication/#applogin">Authentication of apps</a>
- * @see <a href="http://developers.facebook.com/docs/reference/api/permissions/">App permissions</a>
  */
-final class TokenBuilder {
+@SuppressWarnings("PMD.DoNotUseThreads")
+final class Reminder implements Runnable {
 
     /**
-     * Get application access token.
-     * @return The token
+     * The hub.
      */
-    public String build() {
-        final URI uri = UriBuilder
-            // @checkstyle MultipleStringLiterals (5 lines)
-            .fromPath("https://graph.facebook.com/oauth/access_token")
-            .queryParam("client_id", "{id}")
-            .queryParam("client_secret", "{secret}")
-            .queryParam("grant_type", "client_credentials")
-            .build(
-                Manifests.read("Netbout-FbId"),
-                Manifests.read("Netbout-FbSecret")
-            );
-        final String response = RestTester.start(uri)
-            .get("getting access_token from Facebook")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertBody(Matchers.startsWith("access_token="))
-            .getBody();
-        return response.split("=", 2)[1];
+    private final transient Bus ibus;
+
+    /**
+     * Public ctor.
+     * @param bus The bus
+     */
+    public Reminder(final Bus bus) {
+        this.ibus = bus;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+        final List<Urn> names = this.ibus.make("find-silent-identities")
+            .synchronously()
+            .asDefault(new ArrayList<Urn>(0))
+            .exec();
+        for (Urn name : names) {
+            final String marker = this.ibus.make("get-silence-marker")
+                .synchronously()
+                .arg(name)
+                .asDefault("")
+                .exec();
+            if (!marker.isEmpty()) {
+                this.ibus.make("remind-silent-identity")
+                    .arg(name)
+                    .arg(marker)
+                    .asDefault(false)
+                    .exec();
+                Logger.info(
+                    this,
+                    "#run(): '%s' has to be reminded: '%s'",
+                    name,
+                    marker
+                );
+            }
+        }
     }
 
 }
