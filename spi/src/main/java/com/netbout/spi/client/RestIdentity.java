@@ -89,6 +89,14 @@ final class RestIdentity implements Identity {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("RestIdentity(%s)", this.name());
+    }
+
+    /**
      * Get its URI.
      * @return The URI
      */

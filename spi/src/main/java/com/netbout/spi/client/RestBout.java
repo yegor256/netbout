@@ -103,6 +103,14 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return String.format("RestBout#%d", this.number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long number() {
         final String num = this.client
             .get("reading bout number")

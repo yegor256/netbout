@@ -43,7 +43,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Locale;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -90,23 +89,6 @@ public final class FacebookRs extends AbstractRs {
                     .queryParam("secret", "{fbcode}")
                     .build(code)
             )
-            .build();
-    }
-
-    /**
-     * Facebook canvas.
-     * @return The JAX-RS response
-     * @see <a link="http://developers.facebook.com/docs/guides/canvas/">Graph API, Canvas</a>
-     */
-    @POST
-    @Path("/canvas")
-    public Response canvas() {
-        return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
-            .preserved()
-            .status(Response.Status.SEE_OTHER)
-            .location(this.base().build())
             .build();
     }
 

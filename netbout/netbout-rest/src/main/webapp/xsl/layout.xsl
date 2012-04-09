@@ -84,7 +84,7 @@
                             <xsl:value-of select="message"/>
                         </div>
                     </xsl:if>
-                    <xsl:if test="identity/eta != 0">
+                    <xsl:if test="identity/eta &gt; 0">
                         <div class="error-message">
                             <xsl:value-of select="$TEXTS/the.server.is.busy"/>
                             <xsl:choose>

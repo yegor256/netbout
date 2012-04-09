@@ -44,6 +44,7 @@ import org.joda.time.format.ISODateTimeFormat;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class RestMessage implements Message {
 
     /**
@@ -89,6 +90,14 @@ final class RestMessage implements Message {
     @Override
     public int hashCode() {
         return this.number().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("RestMessage#%d", this.number());
     }
 
     /**

@@ -26,37 +26,47 @@
  */
 package com.netbout.notifiers.facebook;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
+import com.netbout.rest.AbstractRs;
+import com.netbout.rest.BasePage;
 import com.restfb.DefaultFacebookClient;
+import com.rexsl.page.PageBuilder;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 /**
- * Reminder farm.
+ * Facebook canvas (the URL of it should be configured in facebook developers
+ * panel).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see <a href="http://developers.facebook.com/docs/reference/api/user/#apprequests">Graph API</a>
- * @see <a href="http://stackoverflow.com/questions/6072839">related discussion in SO</a>
- * @see <a href="http://stackoverflow.com/questions/5758928">more about notifications</a>
  */
-@Farm
-public final class RemindFarm {
+@Path("/canvas")
+public final class CanvasRs extends AbstractRs {
 
     /**
-     * Remind identity which is silent for a long time.
-     * @param name Name of identity
-     * @param marker The marker to avoid duplicate reminders
+     * Facebook canvas.
+     *
+     * <p>FB sends {@code fb_source}, {@code ref}, {@code count}, and
+     * {@code fb_bmpos}.
+     *
+     * @return The JAX-RS response
+     * @see <a link="http://developers.facebook.com/docs/guides/canvas/">Graph API, Canvas</a>
      */
-    @Operation("remind-silent-identity")
-    public void remindSilentIdentity(final Urn name, final String marker) {
-        final Requests requests = new Requests(
+    @POST
+    @Path("/")
+    public Response canvas() {
+        new Requests(
             new DefaultFacebookClient(new TokenBuilder().build()),
-            name.nss()
-        );
-        if (requests.clean(marker)) {
-            requests.publish(marker);
-        }
+            this.identity().name().nss()
+        ).clean("");
+        return new PageBuilder()
+            .build(BasePage.class)
+            .init(this, false)
+            .preserved()
+            .status(Response.Status.SEE_OTHER)
+            .location(this.base().build())
+            .build();
     }
 
 }
