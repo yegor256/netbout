@@ -93,10 +93,6 @@
             <artifactId>xercesImpl</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.xmlmatchers</groupId>
-            <artifactId>xml-matchers</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>

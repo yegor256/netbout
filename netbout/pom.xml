@@ -244,16 +244,6 @@
             </dependency>
             <dependency>
                 <!--
-                XML matchers.
-                @link http://code.google.com/p/xml-matchers/
-                -->
-                <groupId>org.xmlmatchers</groupId>
-                <artifactId>xml-matchers</artifactId>
-                <version since="26 June 2011">0.10</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <!--
                 Mockito is used as a mocking library during testing.
                 Other options: jMock.
                 @link http://stackoverflow.com/questions/22697
