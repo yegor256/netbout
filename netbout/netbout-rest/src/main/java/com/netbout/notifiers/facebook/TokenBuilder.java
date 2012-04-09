@@ -51,9 +51,9 @@ final class TokenBuilder {
         final URI uri = UriBuilder
             // @checkstyle MultipleStringLiterals (5 lines)
             .fromPath("https://graph.facebook.com/oauth/access_token")
-            .replaceQueryParam("client_id", "{id}")
-            .replaceQueryParam("client_secret", "{secret}")
-            .replaceQueryParam("grant_type", "client_credentials")
+            .queryParam("client_id", "{id}")
+            .queryParam("client_secret", "{secret}")
+            .queryParam("grant_type", "client_credentials")
             .build(
                 Manifests.read("Netbout-FbId"),
                 Manifests.read("Netbout-FbSecret")
