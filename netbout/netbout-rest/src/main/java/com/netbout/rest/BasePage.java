@@ -38,7 +38,6 @@ import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import com.rexsl.page.JaxbBundle;
 import com.ymock.util.Logger;
-import java.net.InetAddress;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
@@ -322,7 +321,7 @@ public class BasePage {
     public final String getIp() {
         String addr;
         try {
-            addr = InetAddress.getLocalHost().getHostAddress();
+            addr = java.net.InetAddress.getLocalHost().getHostAddress();
         } catch (java.net.UnknownHostException ex) {
             Logger.error(this, "#getIp(): %[exception]s", ex);
             addr = "";
