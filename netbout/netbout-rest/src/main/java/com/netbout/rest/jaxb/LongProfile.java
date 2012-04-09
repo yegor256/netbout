@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Identity;
+import com.rexsl.page.JaxbBundle;
 import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.HashSet;

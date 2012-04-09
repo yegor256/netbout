@@ -26,16 +26,16 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
+import com.netbout.rest.BasePage;
 import com.netbout.rest.LoginRequiredException;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.types.User;
 import com.rexsl.core.Manifests;
+import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;
 import com.ymock.util.Logger;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public final class FacebookRs extends AbstractRs {
             );
         }
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .preserved()
             .status(Response.Status.SEE_OTHER)
@@ -102,7 +102,7 @@ public final class FacebookRs extends AbstractRs {
     @Path("/canvas")
     public Response canvas() {
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .preserved()
             .status(Response.Status.SEE_OTHER)
@@ -157,7 +157,7 @@ public final class FacebookRs extends AbstractRs {
             secret
         );
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .render()
             .authenticated(identity)

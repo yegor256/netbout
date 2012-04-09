@@ -214,7 +214,7 @@ public final class ResourceMocker {
      * @return The XML
      * @throws Exception If there is some problem inside
      */
-    public static Source the(final Page page, final Resource resource)
+    public static Source the(final BasePage page, final Resource resource)
         throws Exception {
         final XslResolver resolver = (XslResolver) resource.providers()
             .getContextResolver(

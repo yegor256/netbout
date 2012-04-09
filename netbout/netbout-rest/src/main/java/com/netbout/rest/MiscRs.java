@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.PageBuilder;
+import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.PageBuilder;
 import com.ymock.util.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -67,7 +67,7 @@ public final class MiscRs extends AbstractRs {
         );
         return new PageBuilder()
             .stylesheet("/xsl/error.xsl")
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .append(
                 new JaxbBundle("error")

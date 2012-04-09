@@ -48,7 +48,7 @@ public final class LoginRsTest {
         rest.setAuth("some-incorrect-auth-code");
         final Response response = rest.login();
         MatcherAssert.assertThat(
-            ResourceMocker.the((Page) response.getEntity(), rest),
+            ResourceMocker.the((BasePage) response.getEntity(), rest),
             XmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
         );
     }
