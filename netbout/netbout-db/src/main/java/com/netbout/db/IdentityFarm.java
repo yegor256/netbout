@@ -232,7 +232,7 @@ public final class IdentityFarm {
     @Operation("find-silent-identities")
     public List<Urn> findSilentIdentities() {
         final Calendar cal = new GregorianCalendar();
-        cal.add(Calendar.DAY_OF_YEAR, -1);
+        cal.add(Calendar.HOUR, -1);
         return new DbSession(true).sql(
             // @checkstyle StringLiteralsConcatenation (2 lines)
             "SELECT author, MAX(date) AS recent FROM message"

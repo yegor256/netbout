@@ -223,7 +223,7 @@ public final class IdentityFarmTest {
         final Urn who = new IdentityRowMocker().mock();
         final Long bout = new BoutRowMocker().withParticipant(who).mock();
         final Calendar cal = new GregorianCalendar();
-        cal.add(Calendar.HOUR, -1);
+        cal.add(Calendar.MINUTE, -1);
         new MessageRowMocker(bout)
             .withDate(cal.getTime())
             .withAuthor(who)
