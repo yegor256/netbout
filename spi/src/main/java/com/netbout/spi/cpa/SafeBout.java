@@ -77,6 +77,23 @@ final class SafeBout implements Bout {
      * {@inheritDoc}
      */
     @Override
+    public boolean equals(final Object bot) {
+        return bot instanceof Bout
+            && this.number().equals(((Bout) bot).number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.number().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long number() {
         return this.bout.number();
     }
