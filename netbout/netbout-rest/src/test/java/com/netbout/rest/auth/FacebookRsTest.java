@@ -28,7 +28,7 @@ package com.netbout.rest.auth;
 
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
-import com.netbout.rest.Page;
+import com.netbout.rest.BasePage;
 import com.netbout.rest.ResourceMocker;
 import com.netbout.rest.UriInfoMocker;
 import com.netbout.spi.Identity;
@@ -138,7 +138,7 @@ public final class FacebookRsTest {
             Matchers.equalTo(HttpURLConnection.HTTP_OK)
         );
         MatcherAssert.assertThat(
-            ResourceMocker.the((Page) response.getEntity(), rest),
+            ResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
                 XmlMatchers.hasXPath(
                     String.format("//identity[name='urn:facebook:%s']", fbid)

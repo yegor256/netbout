@@ -27,10 +27,10 @@
 package com.netbout.rest;
 
 import com.netbout.rest.jaxb.Invitee;
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.JaxbGroup;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
+import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.PageBuilder;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.GET;
@@ -78,7 +78,7 @@ public final class FriendsRs extends AbstractRs {
         }
         return new PageBuilder()
             .schema("")
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .append(new JaxbBundle("mask", mask))
             .append(JaxbGroup.build(invitees, "invitees"))

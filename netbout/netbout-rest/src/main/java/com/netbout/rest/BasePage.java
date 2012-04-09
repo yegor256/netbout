@@ -31,12 +31,12 @@ import com.netbout.rest.jaxb.Link;
 import com.netbout.rest.jaxb.LongHelper;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.jaxb.Nano;
-import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
+import com.rexsl.page.JaxbBundle;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Page.
+ * BasePage.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -68,7 +68,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
 @SuppressWarnings("PMD.TooManyMethods")
-public abstract class AbstractPage implements Page {
+public class BasePage {
 
     /**
      * Home resource of this page.
@@ -106,7 +106,7 @@ public abstract class AbstractPage implements Page {
      * @param srch Is this page searcheable?
      * @return This object
      */
-    public final Page init(final Resource res, final boolean srch) {
+    public final BasePage init(final Resource res, final boolean srch) {
         this.home = res;
         this.searcheable = srch;
         this.link(
@@ -118,10 +118,12 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
-     * {@inheritDoc}
+     * Add new link by name and HREF.
+     * @param name The name
+     * @param href The link
+     * @return This object
      */
-    @Override
-    public final Page link(final String name, final String href) {
+    public final BasePage link(final String name, final String href) {
         this.links.add(
             new Link(
                 name,
@@ -132,19 +134,22 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
-     * {@inheritDoc}
+     * Add new link by name and HREF.
+     * @param name The name
+     * @param uri The link
+     * @return This object
      */
-    @Override
-    public final Page link(final String name, final UriBuilder uri) {
+    public final BasePage link(final String name, final UriBuilder uri) {
         this.links.add(new Link(name, uri));
         return this;
     }
 
     /**
-     * {@inheritDoc}
+     * Append new element.
+     * @param element The element to append
+     * @return This object
      */
-    @Override
-    public final Page append(final Object element) {
+    public final BasePage append(final Object element) {
         this.elements.add(element);
         if (!(element instanceof org.w3c.dom.Element)) {
             final XslResolver resolver = (XslResolver) this.home.providers()
@@ -158,19 +163,20 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
-     * {@inheritDoc}
+     * Add new element.
+     * @param bundle The element
+     * @return This object
      */
-    @Override
-    public final Page append(final JaxbBundle bundle) {
+    public final BasePage append(final JaxbBundle bundle) {
         this.append(bundle.element());
         return this;
     }
 
     /**
-     * {@inheritDoc}
+     * Render it.
+     * @return This object
      */
-    @Override
-    public final Page render() {
+    public final BasePage render() {
         this.builder.entity(this);
         this.log = this.home.log().events();
         this.home.log().clear();
@@ -178,9 +184,10 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
-     * {@inheritDoc}
+     * Add authentication information.
+     * @param identity The user
+     * @return This object
      */
-    @Override
     public final Response.ResponseBuilder authenticated(
         final Identity identity) {
         if (identity instanceof Helper) {
@@ -221,9 +228,9 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
-     * {@inheritDoc}
+     * It's anonymous.
+     * @return This object
      */
-    @Override
     public final Response.ResponseBuilder anonymous() {
         this.link("login", "/g");
         this.extend();
@@ -244,9 +251,9 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
-     * {@inheritDoc}
+     * Preserve authentication status.
+     * @return This object
      */
-    @Override
     public final Response.ResponseBuilder preserved() {
         Response.ResponseBuilder bldr;
         try {

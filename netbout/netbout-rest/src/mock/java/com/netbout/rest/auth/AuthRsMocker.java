@@ -26,12 +26,12 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
+import com.netbout.rest.BasePage;
 import com.netbout.rest.ForwardException;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
+import com.rexsl.page.PageBuilder;
 import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -74,7 +74,7 @@ public final class AuthRsMocker extends AbstractRs {
         );
         identity.profile().alias(iname.nss());
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .render()
             .authenticated(identity)

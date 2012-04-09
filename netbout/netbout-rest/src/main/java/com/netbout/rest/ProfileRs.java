@@ -28,9 +28,9 @@ package com.netbout.rest;
 
 import com.netbout.rest.jaxb.LongProfile;
 import com.netbout.rest.jaxb.Namespace;
-import com.netbout.rest.page.JaxbGroup;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
+import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.PageBuilder;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -65,7 +65,7 @@ public final class ProfileRs extends AbstractRs {
         );
         return new PageBuilder()
             .stylesheet("/xsl/profile.xsl")
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .link("promote", this.base().path("/pf/promote"))
             // @checkstyle MultipleStringLiterals (2 lines)
@@ -94,7 +94,7 @@ public final class ProfileRs extends AbstractRs {
         }
         new LongProfile(this.self(), this.identity()).setLocale(locale);
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .entity(String.format("switched to '%s'", locale))
@@ -131,7 +131,7 @@ public final class ProfileRs extends AbstractRs {
         final Identity identity = this.identity();
         this.hub().promote(identity, url);
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
@@ -160,7 +160,7 @@ public final class ProfileRs extends AbstractRs {
             );
         }
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
