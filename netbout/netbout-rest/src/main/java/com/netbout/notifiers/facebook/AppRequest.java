@@ -24,43 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.notifiers.facebook;
 
-import javax.ws.rs.core.Response;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
+import com.restfb.Facebook;
+import com.restfb.types.FacebookType;
 
 /**
- * Test case for {@link LoginRs}.
+ * App request type, for RestFb.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LoginRsTest {
+final class AppRequest extends FacebookType {
 
     /**
-     * LoginRs can render a login page.
-     * @throws Exception If there is some problem inside
+     * Data of request.
      */
-    @Test
-    public void rendersLoginPage() throws Exception {
-        final LoginRs rest = new ResourceMocker().mock(LoginRs.class);
-        rest.setAuth("some-incorrect-auth-code");
-        final Response response = rest.login();
-        MatcherAssert.assertThat(
-            ResourceMocker.the((BasePage) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
-        );
-    }
+    @Facebook("data")
+    private transient String data;
 
     /**
-     * LoginRs can detect a situation when a logged in user is trying to login,
-     * and still allow him to see the login page.
-     * @throws Exception If there is some problem inside
+     * Get data.
+     * @return The data
      */
-    @Test
-    public void doesntForwardIfUserAlreadyLoggedIn() throws Exception {
-        ((LoginRs) new ResourceMocker().mock(LoginRs.class)).login();
+    public String getData() {
+        return this.data;
     }
 
 }

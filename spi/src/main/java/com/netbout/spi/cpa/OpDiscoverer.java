@@ -129,7 +129,21 @@ final class OpDiscoverer {
                 throw new IllegalArgumentException(ex);
             }
             if (farm instanceof IdentityAware) {
-                ((IdentityAware) farm).init(new SafeIdentity(this.identity));
+                final Identity safe = new SafeIdentity(this.identity);
+                ((IdentityAware) farm).init(safe);
+                Logger.debug(
+                    this,
+                    // @checkstyle LineLength (1 line)
+                    "#retrieve(..): %[type]s farm instantiated and initialized as '%s'",
+                    farm,
+                    safe
+                );
+            } else {
+                Logger.debug(
+                    this,
+                    "#retrieve(..): %[type]s farm instantiated anonymously",
+                    farm
+                );
             }
             for (ConcurrentMap.Entry<String, HelpTarget> entry
                 : this.inFarm(farm).entrySet()) {

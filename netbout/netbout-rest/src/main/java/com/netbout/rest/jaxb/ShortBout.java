@@ -26,12 +26,12 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
+import com.rexsl.page.JaxbBundle;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;

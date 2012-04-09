@@ -71,6 +71,23 @@ final class SafeIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
+    public boolean equals(final Object idnt) {
+        return idnt instanceof Identity
+            && this.name().equals(((Identity) idnt).name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.name().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long eta() {
         return this.identity.eta();
     }

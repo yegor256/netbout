@@ -31,6 +31,8 @@ import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Message;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -60,6 +62,22 @@ public final class HubMessageTest {
         Mockito.verify(data).getText();
         msg.date();
         Mockito.verify(data).getDate();
+    }
+
+    /**
+     * HubMessage can be equal to the same message.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void exposesEqualityFeature() throws Exception {
+        final Hub hub = new HubMocker().mock();
+        final Identity viewer = new IdentityMocker().mock();
+        final Bout bout = new BoutMocker().mock();
+        final MessageDt data = Mockito.mock(MessageDt.class);
+        MatcherAssert.assertThat(
+            new HubMessage(hub, viewer, bout, data),
+            Matchers.equalTo(new HubMessage(hub, viewer, bout, data))
+        );
     }
 
 }

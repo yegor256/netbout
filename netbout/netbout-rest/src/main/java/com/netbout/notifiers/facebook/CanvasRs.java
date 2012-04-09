@@ -24,11 +24,49 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.notifiers.facebook;
+
+import com.netbout.rest.AbstractRs;
+import com.netbout.rest.BasePage;
+import com.restfb.DefaultFacebookClient;
+import com.rexsl.page.PageBuilder;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 /**
- * Page building feature, test cases.
+ * Facebook canvas (the URL of it should be configured in facebook developers
+ * panel).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.page;
+@Path("/canvas")
+public final class CanvasRs extends AbstractRs {
+
+    /**
+     * Facebook canvas.
+     *
+     * <p>FB sends {@code fb_source}, {@code ref}, {@code count}, and
+     * {@code fb_bmpos}.
+     *
+     * @return The JAX-RS response
+     * @see <a link="http://developers.facebook.com/docs/guides/canvas/">Graph API, Canvas</a>
+     */
+    @POST
+    @Path("/")
+    public Response canvas() {
+        new Requests(
+            new DefaultFacebookClient(new TokenBuilder().build()),
+            this.identity().name().nss()
+        ).clean("");
+        return new PageBuilder()
+            .build(BasePage.class)
+            .init(this, false)
+            .preserved()
+            .status(Response.Status.SEE_OTHER)
+            .location(this.base().build())
+            .build();
+    }
+
+}

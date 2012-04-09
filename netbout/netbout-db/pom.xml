@@ -66,10 +66,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.xmlmatchers</groupId>
-            <artifactId>xml-matchers</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.ymock</groupId>
             <artifactId>ymock-util</artifactId>
         </dependency>

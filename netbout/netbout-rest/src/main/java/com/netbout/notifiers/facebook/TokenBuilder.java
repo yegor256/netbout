@@ -24,11 +24,46 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.notifiers.facebook;
+
+import com.rexsl.core.Manifests;
+import com.rexsl.test.RestTester;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
+import org.hamcrest.Matchers;
 
 /**
- * Page building feature.
+ * Reminder farm.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see <a href="http://developers.facebook.com/docs/authentication/#applogin">Authentication of apps</a>
+ * @see <a href="http://developers.facebook.com/docs/reference/api/permissions/">App permissions</a>
  */
-package com.netbout.rest.page;
+final class TokenBuilder {
+
+    /**
+     * Get application access token.
+     * @return The token
+     */
+    public String build() {
+        final URI uri = UriBuilder
+            // @checkstyle MultipleStringLiterals (5 lines)
+            .fromPath("https://graph.facebook.com/oauth/access_token")
+            .replaceQueryParam("client_id", "{id}")
+            .replaceQueryParam("client_secret", "{secret}")
+            .replaceQueryParam("grant_type", "client_credentials")
+            .build(
+                Manifests.read("Netbout-FbId"),
+                Manifests.read("Netbout-FbSecret")
+            );
+        final String response = RestTester.start(uri)
+            .get("getting access_token from Facebook")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertBody(Matchers.startsWith("access_token="))
+            .getBody();
+        return response.split("=", 2)[1];
+    }
+
+}

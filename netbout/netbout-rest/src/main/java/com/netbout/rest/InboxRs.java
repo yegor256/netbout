@@ -27,9 +27,6 @@
 package com.netbout.rest;
 
 import com.netbout.rest.jaxb.ShortBout;
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.JaxbGroup;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
@@ -37,6 +34,9 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
+import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.PageBuilder;
 import com.ymock.util.Logger;
 import java.util.LinkedList;
 import java.util.List;
@@ -130,7 +130,7 @@ public final class InboxRs extends AbstractRs {
         return new PageBuilder()
             .schema("")
             .stylesheet("/xsl/inbox.xsl")
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, true)
             .append(new JaxbBundle("query", this.query))
             .append(new JaxbBundle("view", view))
@@ -152,7 +152,7 @@ public final class InboxRs extends AbstractRs {
         final Identity identity = this.identity();
         final Bout bout = identity.start();
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(identity)
             .entity(String.format("bout #%d created", bout.number()))
@@ -185,7 +185,7 @@ public final class InboxRs extends AbstractRs {
         bout.post(text);
         bout.invite(identity.friend(new Urn("facebook", "1531296526")));
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)

@@ -72,6 +72,31 @@ final class RestIdentity implements Identity {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof Identity)
+            && this.name().equals(((Identity) obj).name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.name().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("RestIdentity(%s)", this.name());
+    }
+
+    /**
      * Get its URI.
      * @return The URI
      */

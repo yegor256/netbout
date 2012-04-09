@@ -76,7 +76,7 @@ public final class BoutRsTest {
         rest.setStageCoords(null);
         final Response response = rest.front();
         MatcherAssert.assertThat(
-            ResourceMocker.the((Page) response.getEntity(), rest),
+            ResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
                 XmlMatchers.hasXPath(
                     "/page/bout/participants/participant/identity"

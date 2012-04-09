@@ -28,15 +28,15 @@ package com.netbout.rest;
 
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.rest.jaxb.LongBout;
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.JaxbGroup;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
+import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.PageBuilder;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.CookieParam;
@@ -222,7 +222,7 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -249,7 +249,7 @@ public final class BoutRs extends AbstractRs {
         }
         bout.rename(title);
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -281,7 +281,7 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -299,7 +299,7 @@ public final class BoutRs extends AbstractRs {
     public Response join() {
         this.bout().confirm();
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -316,7 +316,7 @@ public final class BoutRs extends AbstractRs {
     public Response leave() {
         this.bout().leave();
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -340,7 +340,7 @@ public final class BoutRs extends AbstractRs {
         }
         NetboutUtils.participantOf(friend, this.bout()).kickOff();
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -376,17 +376,17 @@ public final class BoutRs extends AbstractRs {
      * Main page.
      * @return The page
      */
-    private Page page() {
+    private BasePage page() {
         final Identity myself = this.identity();
         this.coords.normalize(this.hub(), this.bout());
-        final Page page = new PageBuilder()
+        final BasePage page = new PageBuilder()
             .schema("")
             .stylesheet(
                 this.base().path("/{bout}/xsl/{stage}/wrapper.xsl")
                     .build(this.bout().number(), this.coords.stage())
                     .toString()
             )
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, true)
             .append(
                 new LongBout(
@@ -423,7 +423,7 @@ public final class BoutRs extends AbstractRs {
      * @param page The page to append to
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    private void appendInvitees(final Page page) {
+    private void appendInvitees(final BasePage page) {
         if (this.mask != null) {
             final List<Invitee> invitees = new LinkedList<Invitee>();
             for (Identity friend : this.identity().friends(this.mask)) {
