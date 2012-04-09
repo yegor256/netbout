@@ -113,7 +113,12 @@
         <servlet-class>com.rexsl.core.RestfulServlet</servlet-class>
         <init-param>
             <param-name>com.rexsl.PACKAGES</param-name>
-            <param-value>com.netbout.rest,com.netbout.rest.auth,com.netbout.notifiers.email</param-value>
+            <param-value>
+                com.netbout.rest,
+                com.netbout.rest.auth,
+                com.netbout.notifiers.email,
+                com.netbout.notifiers.facebook
+            </param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

@@ -26,37 +26,44 @@
  */
 package com.netbout.notifiers.facebook;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
-import com.restfb.DefaultFacebookClient;
+import com.rexsl.core.Manifests;
+import com.rexsl.test.RestTester;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
+import org.hamcrest.Matchers;
 
 /**
  * Reminder farm.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see <a href="http://developers.facebook.com/docs/reference/api/user/#apprequests">Graph API</a>
- * @see <a href="http://stackoverflow.com/questions/6072839">related discussion in SO</a>
- * @see <a href="http://stackoverflow.com/questions/5758928">more about notifications</a>
+ * @see <a href="http://developers.facebook.com/docs/authentication/#applogin">Authentication of apps</a>
+ * @see <a href="http://developers.facebook.com/docs/reference/api/permissions/">App permissions</a>
  */
-@Farm
-public final class RemindFarm {
+final class TokenBuilder {
 
     /**
-     * Remind identity which is silent for a long time.
-     * @param name Name of identity
-     * @param marker The marker to avoid duplicate reminders
+     * Get application access token.
+     * @return The token
      */
-    @Operation("remind-silent-identity")
-    public void remindSilentIdentity(final Urn name, final String marker) {
-        final Requests requests = new Requests(
-            new DefaultFacebookClient(new TokenBuilder().build()),
-            name.nss()
-        );
-        if (requests.clean(marker)) {
-            requests.publish(marker);
-        }
+    public String build() {
+        final URI uri = UriBuilder
+            // @checkstyle MultipleStringLiterals (5 lines)
+            .fromPath("https://graph.facebook.com/oauth/access_token")
+            .replaceQueryParam("client_id", "{id}")
+            .replaceQueryParam("client_secret", "{secret}")
+            .replaceQueryParam("grant_type", "client_credentials")
+            .build(
+                Manifests.read("Netbout-FbId"),
+                Manifests.read("Netbout-FbSecret")
+            );
+        final String response = RestTester.start(uri)
+            .get("getting access_token from Facebook")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertBody(Matchers.startsWith("access_token="))
+            .getBody();
+        return response.split("=", 2)[1];
     }
 
 }

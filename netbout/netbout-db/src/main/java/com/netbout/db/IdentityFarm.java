@@ -297,8 +297,10 @@ public final class IdentityFarm {
                 }
             );
         String marker;
-        if (total > 0) {
-            marker = String.format("%d message(s)", total);
+        if (total == 1) {
+            marker = "1 message";
+        } else if (total > 0) {
+            marker = String.format("%d messages", total);
         } else {
             marker = "";
         }

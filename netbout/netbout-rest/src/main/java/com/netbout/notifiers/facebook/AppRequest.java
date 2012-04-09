@@ -26,37 +26,29 @@
  */
 package com.netbout.notifiers.facebook;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
-import com.restfb.DefaultFacebookClient;
+import com.restfb.Facebook;
+import com.restfb.types.FacebookType;
 
 /**
- * Reminder farm.
+ * App request type, for RestFb.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see <a href="http://developers.facebook.com/docs/reference/api/user/#apprequests">Graph API</a>
- * @see <a href="http://stackoverflow.com/questions/6072839">related discussion in SO</a>
- * @see <a href="http://stackoverflow.com/questions/5758928">more about notifications</a>
  */
-@Farm
-public final class RemindFarm {
+final class AppRequest extends FacebookType {
 
     /**
-     * Remind identity which is silent for a long time.
-     * @param name Name of identity
-     * @param marker The marker to avoid duplicate reminders
+     * Data of request.
      */
-    @Operation("remind-silent-identity")
-    public void remindSilentIdentity(final Urn name, final String marker) {
-        final Requests requests = new Requests(
-            new DefaultFacebookClient(new TokenBuilder().build()),
-            name.nss()
-        );
-        if (requests.clean(marker)) {
-            requests.publish(marker);
-        }
+    @Facebook("data")
+    private transient String data;
+
+    /**
+     * Get data.
+     * @return The data
+     */
+    public String getData() {
+        return this.data;
     }
 
 }
