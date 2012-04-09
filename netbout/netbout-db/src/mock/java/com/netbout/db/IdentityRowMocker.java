@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,7 +88,9 @@ public final class IdentityRowMocker {
 
     /**
      * Mock it and return its URN.
+     * @return Name of just mocked identity
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Urn mock() {
         final IdentityFarm farm = new IdentityFarm();
         try {

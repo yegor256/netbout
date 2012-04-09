@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.util.Date;
 
 /**
@@ -48,6 +47,11 @@ public final class MessageRowMocker {
     private transient Date date = new Date();
 
     /**
+     * Text of message.
+     */
+    private transient String text = "hi there!";
+
+    /**
      * Author of bout.
      */
     private transient Urn author = new IdentityRowMocker().mock();
@@ -58,6 +62,16 @@ public final class MessageRowMocker {
      */
     public MessageRowMocker(final Long number) {
         this.bout = number;
+    }
+
+    /**
+     * With this text.
+     * @param txt The text
+     * @return THis object
+     */
+    public MessageRowMocker withText(final String txt) {
+        this.text = txt;
+        return this;
     }
 
     /**
@@ -82,6 +96,7 @@ public final class MessageRowMocker {
 
     /**
      * Mock it and return its number.
+     * @return The number of just mocked message
      */
     public Long mock() {
         final MessageFarm farm = new MessageFarm();
@@ -89,6 +104,7 @@ public final class MessageRowMocker {
         number = farm.createBoutMessage(this.bout);
         farm.changedMessageAuthor(number, this.author);
         farm.changedMessageDate(number, this.date);
+        farm.changedMessageText(number, this.text);
         return number;
     }
 

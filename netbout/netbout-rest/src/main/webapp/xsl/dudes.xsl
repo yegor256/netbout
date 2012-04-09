@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,11 +34,11 @@
     version="2.0" exclude-result-prefixes="xs">
 
     <xsl:template match="participants">
-        <nav class="dudes">
+        <div class="dudes">
             <xsl:apply-templates select="participant">
                 <xsl:sort select="@leader" order="descending" />
             </xsl:apply-templates>
-        </nav>
+        </div>
     </xsl:template>
 
     <xsl:template match="participant">

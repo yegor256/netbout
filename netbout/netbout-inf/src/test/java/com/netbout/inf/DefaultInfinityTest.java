@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,7 +52,7 @@ public final class DefaultInfinityTest {
             .doReturn(Arrays.asList(new Long[] {1L}), "get-bouts-of-identity")
             .doReturn(Arrays.asList(new Long[] {}), "get-bout-messages")
             .mock();
-        final Infinity inf = new DefaultInfinity(bus);
+        final Infinity inf = new DefaultInfinity(bus, new IndexMocker().mock());
         final Bout bout = new BoutMocker().mock();
         final Identity identity = new IdentityMocker()
             .withBout(1L, bout)

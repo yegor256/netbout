@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<texts>
+<texts revision="${build.number}">
     <beta.version>预发布版本</beta.version>
     <We.recommend.to.reauthenticate>我们建议用户用另一种方式重新登录</We.recommend.to.reauthenticate>
     <the.server.is.busy>
@@ -52,7 +52,6 @@
     <inbox>收件箱</inbox>
     <back.to.recent.bouts>点击这里返回最近的会话</back.to.recent.bouts>
     <no.title>此会话还没有标题</no.title>
-    <new.messages>个新消息</new.messages>
     <new.message>新消息</new.message>
     <all.of.them>看到所有内容</all.of.them>
     <back.to.recent.messages>点击返回最新的消息</back.to.recent.messages>

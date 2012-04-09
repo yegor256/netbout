@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@
                             <xsl:value-of select="message"/>
                         </div>
                     </xsl:if>
-                    <xsl:if test="identity/eta != 0">
+                    <xsl:if test="identity/eta &gt; 0">
                         <div class="error-message">
                             <xsl:value-of select="$TEXTS/the.server.is.busy"/>
                             <xsl:choose>
@@ -190,7 +190,7 @@
                 </xsl:if>
             </div>
             <xsl:if test="identity">
-                <div id="right" role="navigation">
+                <div id="right">
                     <ul>
                         <li>
                             <img id="photo">

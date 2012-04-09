@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -232,7 +232,7 @@ public final class IdentityFarm {
     @Operation("find-silent-identities")
     public List<Urn> findSilentIdentities() {
         final Calendar cal = new GregorianCalendar();
-        cal.add(Calendar.DAY_OF_YEAR, -1);
+        cal.add(Calendar.HOUR, -1);
         return new DbSession(true).sql(
             // @checkstyle StringLiteralsConcatenation (2 lines)
             "SELECT author, MAX(date) AS recent FROM message"
@@ -297,8 +297,10 @@ public final class IdentityFarm {
                 }
             );
         String marker;
-        if (total > 0) {
-            marker = String.format("%d message(s)", total);
+        if (total == 1) {
+            marker = "1 message";
+        } else if (total > 0) {
+            marker = String.format("%d messages", total);
         } else {
             marker = "";
         }

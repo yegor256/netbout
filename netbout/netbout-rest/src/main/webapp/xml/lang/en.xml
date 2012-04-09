@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<texts>
+<texts revision="${build.number}">
     <!-- global messages -->
     <We.recommend.to.reauthenticate>We recommend you to re-authenticate yourself</We.recommend.to.reauthenticate>
     <sec>sec</sec>
@@ -53,7 +53,6 @@
     <inbox>inbox</inbox>
     <back.to.recent.bouts>back to recent bouts</back.to.recent.bouts>
     <no.title>no title</no.title>
-    <new.messages>new</new.messages>
     <new.message>new</new.message>
     <all.of.them>all of them</all.of.them>
     <What.to.talk.about>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,8 +34,6 @@ import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.SerializationUtils;
 
 /**
@@ -48,12 +46,14 @@ import org.apache.commons.lang.SerializationUtils;
 public final class FsIndex implements Index {
 
     /**
+     * The folder to use.
+     */
+    private final transient Folder folder;
+
+    /**
      * The file to use.
      */
-    private final transient File file = new File(
-        System.getProperty("java.io.tmpdir"),
-        "netbout-INF-data.ser"
-    );
+    private final transient File file;
 
     /**
      * All maps.
@@ -62,23 +62,29 @@ public final class FsIndex implements Index {
     private final transient ConcurrentMap<String, ConcurrentMap<Object, Object>> maps;
 
     /**
-     * Public ctor.
+     * Default public ctor.
      */
     public FsIndex() {
-        synchronized (FsIndex.class) {
-            this.maps = FsIndex.load(this.file);
-        }
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
-            new Runnable() {
-                @Override
-                public void run() {
-                    FsIndex.this.flush();
-                }
-            },
-            1L,
-            1L,
-            TimeUnit.MINUTES
-        );
+        this(new EbsVolume());
+    }
+
+    /**
+     * Public ctor.
+     * @param fldr The Folder to use
+     */
+    public FsIndex(final Folder fldr) {
+        this.folder = fldr;
+        this.file = new File(this.folder.path(), "inf-data.ser");
+        this.maps = FsIndex.load(this.file);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws java.io.IOException {
+        this.flush();
+        this.folder.close();
     }
 
     /**
@@ -95,13 +101,13 @@ public final class FsIndex implements Index {
             )
         )
             .append(
-                Logger.format(
-                    "Size: %d bytes\n",
-                    SerializationUtils.serialize((Serializable) this.maps)
-                        .length
+                String.format(
+                    "File: %s (%d bytes)\n",
+                    this.file,
+                    this.file.length()
                 )
             )
-            .append(String.format("File: %s", this.file));
+            .append(this.folder.statistics());
         return text.toString();
     }
 
@@ -124,10 +130,10 @@ public final class FsIndex implements Index {
     /**
      * Flush it to disc.
      */
-    public void flush() {
+    private void flush() {
         final long start = System.nanoTime();
         try {
-            synchronized (FsIndex.class) {
+            synchronized (this.maps) {
                 SerializationUtils.serialize(
                     (Serializable) this.maps,
                     new FileOutputStream(this.file)
@@ -163,6 +169,7 @@ public final class FsIndex implements Index {
         if (src.exists()) {
             final long start = System.nanoTime();
             try {
+                Logger.info(FsIndex.class, "#load(%s): trying to load...", src);
                 maps = (ConcurrentMap) SerializationUtils.deserialize(
                     new FileInputStream(src)
                 );

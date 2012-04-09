@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,8 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 
@@ -46,7 +46,7 @@ import org.apache.commons.lang.StringUtils;
  * @see <a href="http://tools.ietf.org/html/rfc2141">RFC2141</a>
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.UseConcurrentHashMap" })
-public final class Urn implements Comparable, Serializable {
+public final class Urn implements Comparable<Urn>, Serializable {
 
     /**
      * Serialization marker.
@@ -73,7 +73,7 @@ public final class Urn implements Comparable, Serializable {
      */
     private static final String REGEX =
         // @checkstyle LineLength (1 line)
-        "^urn:[a-z]{1,31}(:([\\-a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)+(\\?[a-z]+(=([\\-a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?(&[a-z]+(=([\\-a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?)*)?\\*?$";
+        "^urn:[a-z]{1,31}(:([\\-a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)+(\\?\\w+(=([\\-a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?(&\\w+(=([\\-a-zA-Z0-9/]|%[0-9a-fA-F]{2})*)?)*)?\\*?$";
 
     /**
      * The URI.
@@ -157,8 +157,8 @@ public final class Urn implements Comparable, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Object obj) {
-        return this.uri.compareTo(((Urn) obj).uri);
+    public int compareTo(final Urn urn) {
+        return this.uri.compareTo(urn.uri);
     }
 
     /**
@@ -372,7 +372,7 @@ public final class Urn implements Comparable, Serializable {
      * @return The map of values
      */
     private static Map<String, String> demap(final String urn) {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new TreeMap<String, String>();
         final String[] sectors = StringUtils.split(urn, '?');
         if (sectors.length == 2) {
             final String[] parts = StringUtils.split(sectors[1], '&');

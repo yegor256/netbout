@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,7 @@ public final class LongProfileTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongProfile obj = new LongProfile(
-            UriBuilder.fromUri("http://localhost/foo"),
+            UriBuilder.fromUri("http://localhost/foo?auth=foo"),
             new IdentityMocker().mock()
         );
         MatcherAssert.assertThat(
@@ -59,7 +59,10 @@ public final class LongProfileTest {
                 XhtmlMatchers.hasXPath("//locales/link[@rel='locale']"),
                 XhtmlMatchers.hasXPath("//link[code='en']"),
                 XhtmlMatchers.hasXPath("//link[name='English']"),
-                XhtmlMatchers.hasXPath("//link[language='English']")
+                XhtmlMatchers.hasXPath("//link[language='English']"),
+                XhtmlMatchers.hasXPath(
+                    "//link[@href='http://localhost/foo/toggle?l=en&auth=foo']"
+                )
             )
         );
     }

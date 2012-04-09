@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,12 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
+import com.rexsl.page.JaxbBundle;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -162,18 +161,12 @@ public final class ShortBout {
     }
 
     /**
-     * How many UN-seen messages are there?
-     * @return Total number of messages which haven't been seen yet
+     * This bout has any unseen messsages?
+     * @return TRUE if there are some unseen messages inside
      */
-    @XmlAttribute(name = "unseen")
-    public Integer getTotalNumberOfUnseenMessages() {
-        Integer count = 0;
-        for (Message msg : this.bout.messages("")) {
-            if (!msg.seen()) {
-                count += 1;
-            }
-        }
-        return count;
+    @XmlAttribute
+    public boolean isUnseen() {
+        return NetboutUtils.isUnread(this.bout);
     }
 
     /**
@@ -201,6 +194,10 @@ public final class ShortBout {
             );
             link.add(new JaxbBundle("number", item.number()).element());
             link.add(new JaxbBundle("title", item.title()).element());
+            link.add(
+                new JaxbBundle("unseen", NetboutUtils.isUnread(item))
+                    .element()
+            );
             links.add(link);
         }
         if (max == 0) {
@@ -208,7 +205,7 @@ public final class ShortBout {
                 new Link(
                     "all",
                     this.builder.clone().path("/..")
-                        .queryParam(RestSession.QUERY_PARAM, "{query}")
+                        .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
                         .build(query)
                 )
             );

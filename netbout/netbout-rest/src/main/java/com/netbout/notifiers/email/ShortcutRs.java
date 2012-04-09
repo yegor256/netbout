@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,9 +59,9 @@ public final class ShortcutRs extends AbstractRs {
         }
         return Response.seeOther(
             this.base().path("/auth")
-                .queryParam("identity", "{who}")
-                .queryParam("secret", "{secret}")
-                .queryParam("goto", "/{bout}")
+                .replaceQueryParam("identity", "{who}")
+                .replaceQueryParam("secret", "{secret}")
+                .replaceQueryParam("goto", "/{bout}")
                 .build(
                     anchor.identity().name(),
                     new SecureString(anchor.identity().name()),

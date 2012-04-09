@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,11 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
+import com.rexsl.page.PageBuilder;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -91,7 +91,7 @@ public final class FastRs extends AbstractRs {
             throw new ForwardException(this, this.base(), ex);
         }
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)

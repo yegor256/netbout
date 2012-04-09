@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@
         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
     <display-name>www.netbout.com</display-name>
-    <description>netBout.com</description>
+    <description>netBout.com r${build.number}</description>
 
     <context-param>
         <param-name>Webmaster</param-name>
@@ -76,7 +76,16 @@
         </init-param>
         <init-param>
             <param-name>com.rexsl.trap.Notifier</param-name>
-            <param-value>com.rexsl.trap.SmtpNotifier?to=yegor@netbout.com&amp;password=:Netbout-SmtpPassword&amp;subject=netbout%20runtime%20exception&amp;transport=smtps&amp;mail.smtp.from=no-reply@netbout.com&amp;mail.smtp.host=:Netbout-SmtpHost&amp;mail.smtp.port=:Netbout-SmtpPort&amp;mail.smtp.user=:Netbout-SmtpUser</param-value>
+            <param-value>com.rexsl.trap.SmtpNotifier
+                ?to=yegor@netbout.com
+                &amp;password=:Netbout-SmtpPassword
+                &amp;subject=netbout%20runtime%20exception
+                &amp;transport=smtps
+                &amp;mail.smtp.from=no-reply@netbout.com
+                &amp;mail.smtp.host=:Netbout-SmtpHost
+                &amp;mail.smtp.port=:Netbout-SmtpPort
+                &amp;mail.smtp.user=:Netbout-SmtpUser
+            </param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
@@ -104,7 +113,12 @@
         <servlet-class>com.rexsl.core.RestfulServlet</servlet-class>
         <init-param>
             <param-name>com.rexsl.PACKAGES</param-name>
-            <param-value>com.netbout.rest,com.netbout.rest.auth,com.netbout.notifiers.email</param-value>
+            <param-value>
+                com.netbout.rest,
+                com.netbout.rest.auth,
+                com.netbout.notifiers.email,
+                com.netbout.notifiers.facebook
+            </param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

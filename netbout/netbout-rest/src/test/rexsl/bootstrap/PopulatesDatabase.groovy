@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import com.ymock.util.Logger
 
 def urlFile = new File(rexsl.basedir, 'jdbc.txt')
 if (urlFile.exists()) {
-    Manifests.inject('Netbout-JdbcUrl', urlFile.text)
+    Manifests.inject('Netbout-JdbcUrl', urlFile.text.trim())
 }
 
 def line = new StringBuilder()

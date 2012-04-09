@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,16 +26,16 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
+import com.netbout.rest.BasePage;
 import com.netbout.rest.LoginRequiredException;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.types.User;
 import com.rexsl.core.Manifests;
+import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;
 import com.ymock.util.Logger;
 import java.io.IOException;
@@ -43,7 +43,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Locale;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -80,7 +79,7 @@ public final class FacebookRs extends AbstractRs {
             );
         }
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .preserved()
             .status(Response.Status.SEE_OTHER)
@@ -90,23 +89,6 @@ public final class FacebookRs extends AbstractRs {
                     .queryParam("secret", "{fbcode}")
                     .build(code)
             )
-            .build();
-    }
-
-    /**
-     * Facebook canvas.
-     * @return The JAX-RS response
-     * @see <a link="http://developers.facebook.com/docs/guides/canvas/">Graph API, Canvas</a>
-     */
-    @POST
-    @Path("/canvas")
-    public Response canvas() {
-        return new PageBuilder()
-            .build(AbstractPage.class)
-            .init(this, false)
-            .preserved()
-            .status(Response.Status.SEE_OTHER)
-            .location(this.base().build())
             .build();
     }
 
@@ -157,7 +139,7 @@ public final class FacebookRs extends AbstractRs {
             secret
         );
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .render()
             .authenticated(identity)

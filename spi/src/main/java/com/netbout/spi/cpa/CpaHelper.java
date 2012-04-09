@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -95,6 +95,14 @@ public final class CpaHelper implements Helper {
      * {@inheritDoc}
      */
     @Override
+    public void close() {
+        // nothing to do here
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void execute(final Token token) {
         if (!this.ops.containsKey(token.mnemo())) {
             throw new IllegalArgumentException(
@@ -125,7 +133,7 @@ public final class CpaHelper implements Helper {
         final long start = System.nanoTime();
         final ConcurrentMap<String, HelpTarget> found =
             new OpDiscoverer(this.identity).discover(url);
-        Logger.info(
+        Logger.debug(
             this,
             "#init('%s'): %d operations discovered in %[nano]s: %[list]s",
             url,

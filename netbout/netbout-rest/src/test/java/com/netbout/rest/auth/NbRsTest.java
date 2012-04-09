@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.auth;
 
+import com.netbout.rest.BasePage;
 import com.netbout.rest.ForwardException;
-import com.netbout.rest.Page;
 import com.netbout.rest.ResourceMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
@@ -55,7 +55,7 @@ public final class NbRsTest {
         final String secret = new SecureString(iname).toString();
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
-            ResourceMocker.the((Page) response.getEntity(), rest),
+            ResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
                 XmlMatchers.hasXPath("//identity[alias='hh']"),
                 XmlMatchers.hasXPath("//identity[name='urn:netbout:hh']"),

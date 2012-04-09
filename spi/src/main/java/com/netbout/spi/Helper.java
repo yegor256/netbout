@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.io.Closeable;
 import java.net.URL;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Helper {
+public interface Helper extends Closeable {
 
     /**
      * Returns full list of supported operations (their mnemos).

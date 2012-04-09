@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,25 +26,10 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.Hub;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.core.XslResolver;
-import com.rexsl.test.XhtmlConverter;
-import java.io.StringWriter;
 import java.net.URI;
-import java.net.URL;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.Source;
-import org.hamcrest.MatcherAssert;
 import org.mockito.Mockito;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Builds an instance of {@link UriInfo}.

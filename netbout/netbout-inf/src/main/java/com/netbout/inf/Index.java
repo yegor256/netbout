@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import java.io.Closeable;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -34,7 +35,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Index {
+public interface Index extends Closeable {
 
     /**
      * Get a map from this index.

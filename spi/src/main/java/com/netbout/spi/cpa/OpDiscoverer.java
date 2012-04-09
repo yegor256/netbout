@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,6 +110,7 @@ final class OpDiscoverer {
      * @param ref The reflections
      * @return Associative array of discovered targets/operations
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private ConcurrentMap<String, HelpTarget> retrieve(final Reflections ref) {
         final ConcurrentMap<String, HelpTarget> targets =
             new ConcurrentHashMap<String, HelpTarget>();
@@ -128,7 +129,21 @@ final class OpDiscoverer {
                 throw new IllegalArgumentException(ex);
             }
             if (farm instanceof IdentityAware) {
-                ((IdentityAware) farm).init(this.identity);
+                final Identity safe = new SafeIdentity(this.identity);
+                ((IdentityAware) farm).init(safe);
+                Logger.debug(
+                    this,
+                    // @checkstyle LineLength (1 line)
+                    "#retrieve(..): %[type]s farm instantiated and initialized as '%s'",
+                    farm,
+                    safe
+                );
+            } else {
+                Logger.debug(
+                    this,
+                    "#retrieve(..): %[type]s farm instantiated anonymously",
+                    farm
+                );
             }
             for (ConcurrentMap.Entry<String, HelpTarget> entry
                 : this.inFarm(farm).entrySet()) {

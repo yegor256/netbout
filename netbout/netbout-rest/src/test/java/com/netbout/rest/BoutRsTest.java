@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,22 +68,28 @@ public final class BoutRsTest {
             )
             .mock(BoutRs.class);
         rest.setNumber(bout.number());
-        rest.setPeriod(null);
+        rest.setPeriod("10-20");
         rest.setStage(null);
         rest.setPlace(null);
-        rest.setQuery(null);
+        rest.setQuery("hello");
         rest.setMask(null);
         rest.setStageCoords(null);
         final Response response = rest.front();
         MatcherAssert.assertThat(
-            ResourceMocker.the((Page) response.getEntity(), rest),
+            ResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
                 XmlMatchers.hasXPath(
                     "/page/bout/participants/participant/identity"
                 ),
                 XmlMatchers.hasXPath(
                     String.format("/page/bout[title='%s']", title)
-                )
+                ),
+                XmlMatchers.hasXPath("/page/links/link[@rel='top']"),
+                XmlMatchers.hasXPath("/page/links/link[@rel='leave']"),
+                XmlMatchers.hasXPath("/page/links/link[@rel='post']"),
+                XmlMatchers.hasXPath("/page[@searcheable='true']"),
+                XmlMatchers.hasXPath("/page[query='hello']"),
+                XmlMatchers.hasXPath("/page/bout[view='10-20']")
             )
         );
     }

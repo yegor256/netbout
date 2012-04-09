@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
-import com.netbout.rest.MetaText;
+import com.netbout.rest.meta.MetaText;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
@@ -68,6 +68,12 @@ public final class LongMessage {
     private transient Message message;
 
     /**
+     * Seen attbibute (cached here in order to avoid its changing during
+     * message.text() calls).
+     */
+    private transient Boolean seen;
+
+    /**
      * Public ctor for JAXB.
      */
     public LongMessage() {
@@ -84,6 +90,16 @@ public final class LongMessage {
         this.hub = ihub;
         this.bout = ibout;
         this.message = msg;
+        this.seen = this.message.seen();
+    }
+
+    /**
+     * Was it seen by the author already?
+     * @return The status
+     */
+    @XmlAttribute
+    public Boolean getSeen() {
+        return this.seen;
     }
 
     /**
@@ -157,15 +173,6 @@ public final class LongMessage {
     @XmlElement
     public String getWhen() {
         return PeriodsBuilder.when(this.message.date());
-    }
-
-    /**
-     * Was it seen by the author already?
-     * @return The status
-     */
-    @XmlAttribute
-    public Boolean getSeen() {
-        return this.message.seen();
     }
 
 }

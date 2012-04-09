@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,16 +26,16 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractPage;
 import com.netbout.rest.AbstractRs;
+import com.netbout.rest.BasePage;
 import com.netbout.rest.CookieBuilder;
 import com.netbout.rest.Cryptor;
 import com.netbout.rest.LoginRequiredException;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
+import com.rexsl.page.PageBuilder;
 import com.ymock.util.Logger;
 import java.net.URI;
 import javax.ws.rs.CookieParam;
@@ -113,7 +113,7 @@ public final class AuthRs extends AbstractRs {
             location = this.forward;
         }
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(identity)
             .cookie(
@@ -139,11 +139,11 @@ public final class AuthRs extends AbstractRs {
             final Identity previous = this.identity();
             this.logoff();
             identity = this.authenticate(iname, secret);
-            if (AbstractPage.trusted(identity)
-                && !AbstractPage.trusted(previous)) {
+            if (BasePage.trusted(identity)
+                && !BasePage.trusted(previous)) {
                 identity = this.hub().join(identity, previous);
-            } else if (AbstractPage.trusted(previous)
-                && !AbstractPage.trusted(identity)) {
+            } else if (BasePage.trusted(previous)
+                && !BasePage.trusted(identity)) {
                 identity = this.hub().join(previous, identity);
             } else if (identity.name().equals(previous.name())) {
                 Logger.info(

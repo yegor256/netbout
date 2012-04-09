@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.rest.page.JaxbBundle;
 import com.netbout.spi.Identity;
+import com.rexsl.page.JaxbBundle;
 import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.HashSet;
@@ -94,7 +94,7 @@ public final class LongProfile {
                 "locale",
                 this.builder.clone()
                     .path("/toggle")
-                    .queryParam("l", "{locale}")
+                    .replaceQueryParam("l", "{locale}")
                     .build(locale)
             );
             link.add(new JaxbBundle("code", locale).element());

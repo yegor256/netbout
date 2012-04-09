@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,26 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.db;
+
+import com.netbout.spi.cpa.Farm;
+import com.netbout.spi.cpa.Operation;
 
 /**
- * Page building feature, test cases.
+ * General helper manipulations.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.page;
+@Farm
+public final class DbFarm {
+
+    /**
+     * Shutdown the helper.
+     */
+    @Operation("shutdown")
+    public void shutdown() {
+        Database.drop();
+    }
+
+}

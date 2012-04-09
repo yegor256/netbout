@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@ final class RestParticipant implements Participant {
      */
     @Override
     public boolean confirmed() {
-        return Boolean.valueOf(this.bySuffix("/@confirmed"));
+        return Boolean.valueOf(this.attr("confirmed"));
     }
 
     /**
@@ -92,7 +92,7 @@ final class RestParticipant implements Participant {
      */
     @Override
     public boolean leader() {
-        return Boolean.valueOf(this.bySuffix("/@leader"));
+        return Boolean.valueOf(this.attr("leader"));
     }
 
     /**
@@ -113,35 +113,37 @@ final class RestParticipant implements Participant {
         this.client
             .get("reading 'kickoff' rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath(this.xpath("/link[@rel='kickoff']"))
-            .rel(this.xpath("/link[@rel='kickoff']/@href"))
+            .assertXPath(this.xpath("", "/link[@rel='kickoff']"))
+            .rel(this.xpath("", "/link[@rel='kickoff']/@href"))
             .get(String.format("kicking off '%s' participant", this.name))
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
     /**
-     * Fetch by XPath suffix.
-     * @param suffix The suffix of XPath
+     * Fetch attribute value.
+     * @param attr Name of attribute
      * @return The value found
      */
-    public String bySuffix(final String suffix) {
+    private String attr(final String attr) {
         return this.client
-            .get(String.format("reading '%s' of a participant", suffix))
+            .get(String.format("reading '%s' of a participant", attr))
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath(this.xpath(suffix))
-            .xpath(this.xpath(suffix))
+            .assertXPath(this.xpath(String.format("and @%s", attr), ""))
+            .xpath(this.xpath("", String.format("/@%s", attr)))
             .get(0);
     }
 
     /**
-     * Build XPath.
-     * @param suffix The suffix of XPath
-     * @return The XPath path
+     * Build xpath.
+     * @param condition Extra condition to add to node
+     * @param suffix At the end of expression
+     * @return The XPath
      */
-    private String xpath(final String suffix) {
+    private String xpath(final String condition, final String suffix) {
         return String.format(
-            "/page/bout/participants/participant[identity='%s']%s",
+            "/page/bout/participants/participant[identity='%s' %s]%s",
             this.name,
+            condition,
             suffix
         );
     }

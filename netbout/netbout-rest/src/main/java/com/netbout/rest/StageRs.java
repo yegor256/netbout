@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,8 @@
 package com.netbout.rest;
 
 import com.netbout.rest.jet.JetBuilder;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
+import com.rexsl.page.PageBuilder;
 import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -105,7 +105,7 @@ public final class StageRs extends AbstractRs {
         Response resp;
         if ("home".equals(response)) {
             resp = new PageBuilder()
-                .build(AbstractPage.class)
+                .build(BasePage.class)
                 .init(this, false)
                 .authenticated(this.identity())
                 .status(Response.Status.SEE_OTHER)
@@ -139,13 +139,13 @@ public final class StageRs extends AbstractRs {
             .asDefault("")
             .exec();
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(
                 this.base().path("/{num}")
-                    .queryParam(BoutRs.PLACE_PARAM, "{dest}")
+                    .replaceQueryParam(BoutRs.PLACE_PARAM, "{dest}")
                     .build(this.bout.number(), dest)
             )
             .build();

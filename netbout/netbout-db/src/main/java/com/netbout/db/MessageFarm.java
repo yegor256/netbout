@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -116,9 +116,13 @@ public final class MessageFarm {
      */
     @Operation("get-bout-messages")
     public List<Long> getBoutMessages(final Long bout) {
-        return new DbSession(true)
-            // @checkstyle LineLength (1 line)
-            .sql("SELECT number FROM message WHERE bout = ? AND date IS NOT NULL")
+        return new DbSession(true).sql(
+            // @checkstyle StringLiteralsConcatenation (4 lines)
+            "SELECT number FROM message WHERE bout = ?"
+            + " AND date IS NOT NULL"
+            + " AND author IS NOT NULL"
+            + " AND text IS NOT NULL"
+        )
             .set(bout)
             .select(
                 new Handler<List<Long>>() {

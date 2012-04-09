@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -211,6 +211,7 @@ public abstract class AbstractRs implements Resource {
 
     /**
      * {@inheritDoc}
+     * @see http://java.net/jira/browse/JERSEY-1081
      */
     @Override
     public final UriBuilder base() {
@@ -219,9 +220,9 @@ public abstract class AbstractRs implements Resource {
             .clone();
         if (this.icookie != null && !this.icookie.isEmpty()
             && this.addAuthToURIs) {
-            builder.queryParam(RestSession.AUTH_PARAM, this.icookie);
+            builder.replaceQueryParam(RestSession.AUTH_PARAM, this.icookie);
         }
-        return builder;
+        return UriBuilder.fromUri(builder.build());
     }
 
     /**

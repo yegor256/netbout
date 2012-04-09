@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,9 @@ import java.util.Date;
 /**
  * Bout, a conversation room.
  *
- * <p>Instances of this interface are thread-safe.
+ * <p>Bouts are comparable by their numbers.
+ *
+ * <p>Instances of this interface must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

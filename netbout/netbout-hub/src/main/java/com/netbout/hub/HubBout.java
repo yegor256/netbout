@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,6 +85,23 @@ public final class HubBout implements Bout {
     @Override
     public int compareTo(final Bout bout) {
         return NetboutUtils.dateOf(this).compareTo(NetboutUtils.dateOf(bout));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object bout) {
+        return bout instanceof Bout
+            && this.number().equals(((Bout) bout).number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.number().hashCode();
     }
 
     /**
@@ -232,8 +249,8 @@ public final class HubBout implements Bout {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
-        final Collection<Participant> participants
-            = new ArrayList<Participant>();
+        final Collection<Participant> participants =
+            new ArrayList<Participant>();
         for (ParticipantDt dude : this.data.getParticipants()) {
             participants.add(
                 new HubParticipant(this.hub, this, dude, this.data)
@@ -410,6 +427,17 @@ public final class HubBout implements Bout {
                         schema
                     )
                 );
+            }
+            final String error = this.hub.make("pre-post-validate")
+                .synchronously()
+                .inBout(this)
+                .arg(this.number())
+                .arg(this.viewer.name())
+                .arg(text)
+                .asDefault("")
+                .exec();
+            if (!error.isEmpty()) {
+                throw new MessagePostException(error);
             }
         }
     }

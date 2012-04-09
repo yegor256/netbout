@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 package com.netbout.rest.period;
 
 import com.netbout.rest.jaxb.Link;
-import com.netbout.rest.page.JaxbBundle;
+import com.rexsl.page.JaxbBundle;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -295,7 +295,7 @@ public final class PeriodsBuilder {
             name,
             UriBuilder.fromUri(
                 this.base.clone()
-                    .queryParam(this.param, "{period}")
+                    .replaceQueryParam(this.param, "{period}")
                     .build(this.period)
             )
         );

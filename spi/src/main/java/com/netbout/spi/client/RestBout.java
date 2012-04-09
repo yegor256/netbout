@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -80,6 +80,31 @@ final class RestBout implements Bout {
     @Override
     public int compareTo(final Bout bout) {
         return NetboutUtils.dateOf(this).compareTo(NetboutUtils.dateOf(bout));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object bout) {
+        return bout instanceof Bout
+            && this.number().equals(((Bout) bout).number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.number().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("RestBout#%d", this.number());
     }
 
     /**

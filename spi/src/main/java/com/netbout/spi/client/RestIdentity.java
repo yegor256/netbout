@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,31 @@ final class RestIdentity implements Identity {
     @Override
     public int compareTo(final Identity identity) {
         return this.name().compareTo(identity.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof Identity)
+            && this.name().equals(((Identity) obj).name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.name().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("RestIdentity(%s)", this.name());
     }
 
     /**
@@ -149,7 +174,7 @@ final class RestIdentity implements Identity {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public List<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final String query) {
         final List<String> hrefs = this.client
             .queryParam(RestSession.QUERY_PARAM, query)
             .get(String.format("reading bouts in the inbox '%s'", query))

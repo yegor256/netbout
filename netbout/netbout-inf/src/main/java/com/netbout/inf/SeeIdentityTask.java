@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -114,7 +114,7 @@ final class SeeIdentityTask extends AbstractTask {
                 throw new IllegalStateException(ex);
             }
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#execute(): cached %d bout(s) of '%s' in %[nano]s",
             numbers.size(),

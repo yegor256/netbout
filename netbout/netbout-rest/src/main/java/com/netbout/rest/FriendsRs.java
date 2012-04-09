@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,11 @@
 package com.netbout.rest;
 
 import com.netbout.rest.jaxb.Invitee;
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.JaxbGroup;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Identity;
-import java.util.ArrayList;
+import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.PageBuilder;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -67,7 +67,7 @@ public final class FriendsRs extends AbstractRs {
                 "Query param 'mask' and 'bout' are mandatory"
             );
         }
-        final List<Invitee> invitees = new ArrayList<Invitee>();
+        final List<Invitee> invitees = new LinkedList<Invitee>();
         for (Identity identity : this.identity().friends(mask)) {
             invitees.add(
                 new Invitee(
@@ -78,7 +78,7 @@ public final class FriendsRs extends AbstractRs {
         }
         return new PageBuilder()
             .schema("")
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .append(new JaxbBundle("mask", mask))
             .append(JaxbGroup.build(invitees, "invitees"))

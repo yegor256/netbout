@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,13 +57,23 @@ public final class DefaultInfinity implements Infinity {
     /**
      * The index.
      */
-    private final transient Index index = new FsIndex();
+    private final transient Index index;
 
     /**
      * Public ctor.
      * @param ibus The BUS to work with
      */
     public DefaultInfinity(final Bus ibus) {
+        this(ibus, new FsIndex());
+    }
+
+    /**
+     * Public ctor, with custom index.
+     * @param ibus The BUS to work with
+     * @param idx The index to use
+     */
+    public DefaultInfinity(final Bus ibus, final Index idx) {
+        this.index = idx;
         this.bus = ibus;
         StageFarm.register(this);
         Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", ibus);
@@ -111,9 +121,10 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public void close() {
+    public void close() throws java.io.IOException {
         Logger.info(this, "#close(): will stop Mux in a second");
         this.mux.close();
+        this.index.close();
     }
 
     /**

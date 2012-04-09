@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,13 +32,9 @@ package com.netbout.spi;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.SortedMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -49,25 +45,21 @@ import org.mockito.stubbing.Answer;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class IdentityMocker {
 
     /**
      * Mocked identity.
      */
-    private final Identity identity = Mockito.mock(Identity.class);
+    private final transient Identity identity = Mockito.mock(Identity.class);
 
     /**
      * All bouts.
      */
-    private final SortedMap<Long, Bout> bouts =
+    private final transient SortedMap<Long, Bout> bouts =
         new ConcurrentSkipListMap<Long, Bout>();
-
-    /**
-     * Inboxes.
-     */
-    private final Map<String, Long[]> inboxes =
-        new ConcurrentHashMap<String, Long[]>();
 
     /**
      * Public ctor.
@@ -122,7 +114,7 @@ public final class IdentityMocker {
 
     /**
      * This is the name of identity.
-     * @param The name of it
+     * @param name The name of it
      * @return This object
      */
     public IdentityMocker namedAs(final String name) {
@@ -131,7 +123,7 @@ public final class IdentityMocker {
 
     /**
      * This is the name of identity.
-     * @param The name of it
+     * @param name The name of it
      * @return This object
      */
     public IdentityMocker namedAs(final Urn name) {
@@ -141,7 +133,7 @@ public final class IdentityMocker {
 
     /**
      * This is the user of identity, which it belongs to.
-     * @param The name of user
+     * @param name The name of user
      * @return This object
      */
     public IdentityMocker belongsTo(final String name) {
@@ -154,7 +146,7 @@ public final class IdentityMocker {
 
     /**
      * This is the user of identity, which it belongs to.
-     * @param The name of user
+     * @param name The name of user
      * @return This object
      */
     public IdentityMocker belongsTo(final URL name) {
@@ -177,7 +169,6 @@ public final class IdentityMocker {
      * @param num Number of it
      * @param bout The bout
      * @return This object
-     * @throws BoutNotFoundException If some problem
      */
     public IdentityMocker withBout(final Long num, final Bout bout) {
         this.bouts.put(num, bout);

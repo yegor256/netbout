@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -93,7 +93,7 @@
             <span id="bout-number" style="display: none;"><xsl:value-of select="/page/bout/number"/></span>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='top']/@href"/>
                 </xsl:attribute>
                 <span class="num">
                     <xsl:text>#</xsl:text>
@@ -101,7 +101,7 @@
                 </span>
             </a>
             <span class="title">
-                <xsl:if test="$participant/@confirmed = 'true'">
+                <xsl:if test="$participant/@confirmed = 'true' and /page/links/link[@rel='rename']">
                     <xsl:attribute name="contenteditable">
                         <xsl:text>true</xsl:text>
                     </xsl:attribute>
@@ -145,7 +145,7 @@
                 <li>
                     <a>
                         <xsl:attribute name="href">
-                            <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                            <xsl:value-of select="/page/links/link[@rel='top']/@href"/>
                         </xsl:attribute>
                         <xsl:value-of select="$TEXTS/back.to.recent.messages"/>
                     </a>
@@ -239,9 +239,30 @@
                                     <xsl:value-of select="render/@namespace"/>
                                     <xsl:text>"&gt;</xsl:text>
                                 </span>
-                                <span class="xml-toggle" style="cursor: pointer;">
-                                    <xsl:text>...</xsl:text>
+                                <xsl:text> </xsl:text>
+                                <span class="xml-toggle" style="cursor: pointer;"
+                                    title="click to see full content">
+                                    <xsl:text>... </xsl:text>
+                                    <xsl:variable name="length">
+                                        <xsl:value-of select="string-length(render)"/>
+                                    </xsl:variable>
+                                    <xsl:choose>
+                                        <xsl:when test="$length &gt; 5 * 1024">
+                                            <xsl:value-of select="format-number($length div 1024, '0.#')"/>
+                                            <xsl:text>Kb</xsl:text>
+                                        </xsl:when>
+                                        <xsl:when test="$length &gt; 1024 * 1024">
+                                            <xsl:value-of select="format-number($length div (1024 * 1024), '0.##')"/>
+                                            <xsl:text>Mb</xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="$length"/>
+                                            <xsl:text> bytes</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <xsl:text> ...</xsl:text>
                                 </span>
+                                <xsl:text> </xsl:text>
                                 <span class="tt">
                                     <xsl:text>&lt;/</xsl:text>
                                     <xsl:value-of select="render/@name"/>
@@ -324,16 +345,18 @@
     </xsl:template>
 
     <xsl:template name="rename">
-        <form id="rename" method="post" style="display: none;">
-            <xsl:attribute name="action">
-                <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
-            </xsl:attribute>
-            <input name="title" size="50" autocomplete="off">
-                <xsl:attribute name="value">
-                    <xsl:value-of select="/page/bout/title"/>
+        <xsl:if test="/page/links/link[@rel='rename']">
+            <form id="rename" method="post" style="display: none;">
+                <xsl:attribute name="action">
+                    <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
                 </xsl:attribute>
-            </input>
-        </form>
+                <input name="title" size="50" autocomplete="off">
+                    <xsl:attribute name="value">
+                        <xsl:value-of select="/page/bout/title"/>
+                    </xsl:attribute>
+                </input>
+            </form>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template name="options">

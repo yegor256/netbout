@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,11 @@
  */
 package com.netbout.hub;
 
-import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.inf.DefaultInfinity;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
-import java.net.URL;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -95,10 +93,9 @@ public final class PowerHubMocker {
                     return (Identity) invocation.getArguments()[0];
                 }
             }
-        ).when(this.hub).join(
-            Mockito.any(Identity.class),
-            Mockito.any(Identity.class)
-        );
+        )
+            .when(this.hub)
+            .join(Mockito.any(Identity.class), Mockito.any(Identity.class));
     }
 
     /**

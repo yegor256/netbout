@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<texts>
+<texts revision="${build.number}">
     <beta.version>ベータ版</beta.version>
     <!-- global messages -->
     <We.recommend.to.reauthenticate>自分を再度認証させることをお勧めします</We.recommend.to.reauthenticate>
@@ -59,7 +59,6 @@
     <inbox>受信箱</inbox>
     <back.to.recent.bouts>最近の会話に戻る</back.to.recent.bouts>
     <no.title>題名が付いていません</no.title>
-    <new.messages>個の新しいメッセージ</new.messages>
     <new.message>未読</new.message>
     <all.of.them>それら全て</all.of.them>
     <What.to.talk.about>

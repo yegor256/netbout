@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -102,7 +102,7 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
             }
         }
         this.helpers.put(identity, helper);
-        Logger.info(
+        Logger.debug(
             this,
             "#register(%s): registered (%d total now)",
             helper,

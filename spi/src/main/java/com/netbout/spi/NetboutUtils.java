@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -119,6 +119,25 @@ public final class NetboutUtils {
             recent = mdate;
         }
         return recent;
+    }
+
+    /**
+     * This bout has something unread?
+     * @param bout The bout to check
+     * @return TRUE if this bout has some new messages
+     * @todo #332 This implementation is very ineffective and should be
+     *  changed. We should introduce a new predicate in INF and use it.
+     *  Something like "(unseen-by ?)".
+     */
+    public static boolean isUnread(final Bout bout) {
+        boolean unread = false;
+        for (Message msg : bout.messages("")) {
+            if (!msg.seen()) {
+                unread = true;
+                break;
+            }
+        }
+        return unread;
     }
 
     /**

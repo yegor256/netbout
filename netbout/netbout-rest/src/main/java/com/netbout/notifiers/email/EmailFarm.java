@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 package com.netbout.notifiers.email;
 
 import com.netbout.hub.Hub;
-import com.netbout.rest.MetaText;
+import com.netbout.rest.meta.MetaText;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -110,14 +110,24 @@ public final class EmailFarm implements IdentityAware {
         throws Exception {
         final Bout bout = this.identity.bout(bnum);
         final Message message = bout.message(mnum);
-        for (Participant participant : bout.participants()) {
-            if (!this.NID.equals(participant.identity().name().nid())) {
-                continue;
+        final Boolean visible = this.hub.make("is-message-visible")
+            .synchronously()
+            .inBout(bout)
+            .arg(bout.number())
+            .arg(message.number())
+            .arg(message.text())
+            .asDefault(true)
+            .exec();
+        if (visible) {
+            for (Participant participant : bout.participants()) {
+                if (!this.NID.equals(participant.identity().name().nid())) {
+                    continue;
+                }
+                if (message.author().equals(participant.identity())) {
+                    continue;
+                }
+                this.send(participant, message);
             }
-            if (message.author().equals(participant.identity())) {
-                continue;
-            }
-            this.send(participant, message);
         }
     }
 

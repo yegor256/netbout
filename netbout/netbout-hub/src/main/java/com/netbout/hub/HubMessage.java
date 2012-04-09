@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,6 +81,23 @@ final class HubMessage implements Message {
     @Override
     public int compareTo(final Message msg) {
         return this.date().compareTo(msg.date());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object bout) {
+        return bout instanceof Message
+            && this.number().equals(((Message) bout).number());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.number().hashCode();
     }
 
     /**

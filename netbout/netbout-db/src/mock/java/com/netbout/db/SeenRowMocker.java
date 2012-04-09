@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,6 @@
 package com.netbout.db;
 
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.Random;
 
 /**
  * Mocker of {@code SEEN} row in a database.

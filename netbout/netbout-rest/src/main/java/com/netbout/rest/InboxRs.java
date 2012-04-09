@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,9 +27,6 @@
 package com.netbout.rest;
 
 import com.netbout.rest.jaxb.ShortBout;
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.JaxbGroup;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
@@ -37,8 +34,11 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
+import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.PageBuilder;
 import com.ymock.util.Logger;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -88,7 +88,7 @@ public final class InboxRs extends AbstractRs {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Response inbox(@QueryParam(InboxRs.PERIOD_PARAM) final String view) {
         final Identity identity = this.identity();
-        final List<ShortBout> bouts = new ArrayList<ShortBout>();
+        final List<ShortBout> bouts = new LinkedList<ShortBout>();
         // @checkstyle MagicNumber (1 line)
         final Period period = PeriodsBuilder.parse(view, 5L);
         final Iterable<Bout> inbox = this.fetch(period);
@@ -96,7 +96,7 @@ public final class InboxRs extends AbstractRs {
             period,
             UriBuilder.fromUri(
                 this.base().clone()
-                    .queryParam(RestSession.QUERY_PARAM, "{query}")
+                    .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
                     .build(this.query)
             )
         ).setQueryParam(InboxRs.PERIOD_PARAM);
@@ -130,7 +130,7 @@ public final class InboxRs extends AbstractRs {
         return new PageBuilder()
             .schema("")
             .stylesheet("/xsl/inbox.xsl")
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, true)
             .append(new JaxbBundle("query", this.query))
             .append(new JaxbBundle("view", view))
@@ -152,7 +152,7 @@ public final class InboxRs extends AbstractRs {
         final Identity identity = this.identity();
         final Bout bout = identity.start();
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(identity)
             .entity(String.format("bout #%d created", bout.number()))
@@ -185,7 +185,7 @@ public final class InboxRs extends AbstractRs {
         bout.post(text);
         bout.invite(identity.friend(new Urn("facebook", "1531296526")));
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)

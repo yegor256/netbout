@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -106,7 +106,7 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
         this.promote(this.persister());
         Executors.newSingleThreadScheduledExecutor()
             .scheduleAtFixedRate(this, 0L, 1L, TimeUnit.MINUTES);
-        Logger.info(
+        Logger.debug(
             this,
             "#DefaultHub(%[type]s): instantiated",
             bus
@@ -154,20 +154,12 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
      * {@inheritDoc}
      */
     @Override
-    public void close() {
-        Logger.info(this, "#close(): shutting down INF");
-        try {
-            this.inf.close();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
-        Logger.info(this, "#close(): shutting down BUS");
-        try {
-            this.ibus.close();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
-        Logger.info(this, "#close(): closed successfully");
+    public void close() throws java.io.IOException {
+        Logger.debug(this, "#close(): shutting down BUS");
+        this.ibus.close();
+        Logger.debug(this, "#close(): shutting down INF");
+        this.inf.close();
+        Logger.debug(this, "#close(): closed successfully");
     }
 
     /**
@@ -265,7 +257,7 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
         }
         this.all.remove(existing);
         this.save(new HelperIdentity((HubIdentity) identity, helper));
-        Logger.info(
+        Logger.debug(
             this,
             "#promote('%s', '%[type]s'): replaced existing identity (%[type]s)",
             identity.name(),
@@ -371,7 +363,7 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
             .synchronously()
             .asDefault(new ArrayList<Urn>())
             .exec();
-        Logger.info(this, "#promote(): promoting %[list]s", helpers);
+        Logger.debug(this, "#promote(): promoting %[list]s", helpers);
         for (Urn name : helpers) {
             if (name.equals(persister.name())) {
                 continue;
@@ -391,7 +383,7 @@ public final class DefaultHub implements PowerHub, StatsProvider, Runnable {
                 );
             }
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#promote(): done with all helpers in %[nano]s: %[list]s",
             System.nanoTime() - start,

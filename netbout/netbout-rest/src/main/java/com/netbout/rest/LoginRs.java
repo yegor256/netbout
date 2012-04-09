@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.page.PageBuilder;
 import com.rexsl.core.Manifests;
+import com.rexsl.page.PageBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -53,8 +53,8 @@ public final class LoginRs extends AbstractRs {
         final UriBuilder fburi = UriBuilder.fromUri(
             UriBuilder
                 .fromPath("https://www.facebook.com/dialog/oauth")
-                .queryParam("client_id", "{id}")
-                .queryParam("redirect_uri", "{uri}")
+                .replaceQueryParam("client_id", "{id}")
+                .replaceQueryParam("redirect_uri", "{uri}")
                 .build(
                     Manifests.read("Netbout-FbId"),
                     this.base().path("/fb/back").build()
@@ -62,7 +62,7 @@ public final class LoginRs extends AbstractRs {
         );
         return new PageBuilder()
             .stylesheet("/xsl/login.xsl")
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .link("facebook", fburi)
             .render()
@@ -89,7 +89,7 @@ public final class LoginRs extends AbstractRs {
     @GET
     public Response logout() {
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .anonymous()
             .status(Response.Status.SEE_OTHER)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,15 +32,9 @@ import com.netbout.bus.cache.EmptyTokenCache;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.JobBuilder;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.Scheduler;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Default implementation of {@link Bus}.
@@ -48,6 +42,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.DoNotUseThreads")
 public final class DefaultBus implements Bus, StatsProvider {
 
     /**
@@ -59,19 +54,35 @@ public final class DefaultBus implements Bus, StatsProvider {
     );
 
     /**
-     * Quartz scheduler.
+     * Scheduled future for "routine" calls.
      */
-    private final transient Scheduler scheduler;
+    private final transient ScheduledFuture schedule;
 
     /**
      * Public ctor.
      */
     public DefaultBus() {
-        try {
-            this.scheduler = StdSchedulerFactory.getDefaultScheduler();
-        } catch (org.quartz.SchedulerException ex) {
-            throw new IllegalStateException(ex);
-        }
+        this.schedule = Executors
+            .newSingleThreadScheduledExecutor()
+            .scheduleAtFixedRate(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        final long start = System.nanoTime();
+                        DefaultBus.this.make("routine")
+                            .asDefault(false)
+                            .exec();
+                        Logger.debug(
+                            this,
+                            "#run(): routine job done in %[nano]s",
+                            System.nanoTime() - start
+                        );
+                    }
+                },
+                1L,
+                1L,
+                TimeUnit.MINUTES
+            );
         StageFarm.register(this);
     }
 
@@ -80,12 +91,12 @@ public final class DefaultBus implements Bus, StatsProvider {
      */
     @Override
     public void close() {
-        try {
-            this.scheduler.shutdown();
-        } catch (org.quartz.SchedulerException ex) {
-            throw new IllegalStateException(ex);
-        }
-        Logger.info(this, "#close(): Quartz shutdown, BUS closed");
+        this.schedule.cancel(true);
+        this.make("shutdown")
+            .synchronously()
+            .asDefault(false)
+            .exec();
+        Logger.info(this, "#close(): BUS closed");
     }
 
     /**
@@ -102,21 +113,6 @@ public final class DefaultBus implements Bus, StatsProvider {
     @Override
     public void register(final Identity identity, final Helper helper) {
         this.controller.register(identity, helper);
-        synchronized (this.scheduler) {
-            try {
-                if (this.scheduler.isInStandbyMode()) {
-                    this.addRoutine();
-                    this.scheduler.start();
-                    Logger.info(
-                        this,
-                        "#register(%s): Quartz started",
-                        helper.location()
-                    );
-                }
-            } catch (org.quartz.SchedulerException ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
     }
 
     /**
@@ -125,58 +121,6 @@ public final class DefaultBus implements Bus, StatsProvider {
     @Override
     public String statistics() {
         return ((StatsProvider) this.controller).statistics();
-    }
-
-    /**
-     * Add routine mechanism.
-     * @throws org.quartz.SchedulerException If some problem
-     * @checkstyle RedundantThrows (2 lines)
-     */
-    private void addRoutine() throws org.quartz.SchedulerException {
-        final JobDataMap data = new JobDataMap();
-        data.put(DefaultBus.RoutineJob.KEY, this);
-        this.scheduler.scheduleJob(
-            JobBuilder
-                .newJob(DefaultBus.RoutineJob.class)
-                .withIdentity("routine-bus-job")
-                .usingJobData(data)
-                .build(),
-            TriggerBuilder
-                .newTrigger()
-                .startNow()
-                .withSchedule(
-                    SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(1)
-                        .repeatForever()
-                )
-                .build()
-        );
-    }
-
-    /**
-     * Routine job.
-     */
-    @DisallowConcurrentExecution
-    public static final class RoutineJob implements Job {
-        /**
-         * Key in context.
-         */
-        public static final String KEY = "bus";
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void execute(final JobExecutionContext context) {
-            final long start = System.nanoTime();
-            final Bus bus = (Bus) context.getMergedJobDataMap().get(this.KEY);
-            bus.make("routine").asDefault(false).exec();
-            Logger.debug(
-                this,
-                "#execute(%[type]s): routine job done in %[nano]s",
-                context,
-                System.nanoTime() - start
-            );
-        }
     }
 
 }

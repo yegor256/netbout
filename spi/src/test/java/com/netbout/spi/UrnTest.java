@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, NetBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,9 @@
 package com.netbout.spi;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.lang.SerializationUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -176,6 +179,10 @@ public final class UrnTest {
             "urn:foo:some%20text%20with%20spaces",
             "urn:a:",
             "urn:a:?alpha=50",
+            "urn:a:?boom",
+            "urn:a:test?123",
+            "urn:a:test?1a2b3c",
+            "urn:a:test?1A2B3C",
             "urn:a:?alpha=abccde%20%45%4Fme",
             "urn:woquo:ns:pa/procure/BalanceRecord?name=*",
             "urn:a:?alpha=50&beta=u%20worksfine",
@@ -306,6 +313,27 @@ public final class UrnTest {
             ((Urn) SerializationUtils.deserialize(bytes)).toString(),
             Matchers.equalTo(urn.toString())
         );
+    }
+
+    /**
+     * Urn can be persistent in params ordering.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void persistsOrderingOfParams() throws Exception {
+        final List<String> params = Arrays.asList(
+            new String[] {"ft", "sec", "9", "123", "a1b2c3", "A", "B", "C"}
+        );
+        Urn first = new Urn("urn:test:x");
+        Urn second = first;
+        for (String param : params) {
+            first = first.param(param, "");
+        }
+        Collections.shuffle(params);
+        for (String param : params) {
+            second = second.param(param, "");
+        }
+        MatcherAssert.assertThat(first, Matchers.equalTo(second));
     }
 
 }

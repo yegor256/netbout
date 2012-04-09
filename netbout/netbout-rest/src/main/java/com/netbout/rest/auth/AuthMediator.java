@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -107,8 +107,8 @@ public final class AuthMediator {
             throw new IOException(ex);
         }
         final URI uri = UriBuilder.fromUri(entry.toString())
-            .queryParam("identity", "{iname}")
-            .queryParam("secret", "{secret}")
+            .replaceQueryParam("identity", "{iname}")
+            .replaceQueryParam("secret", "{secret}")
             .build(iname, secret);
         try {
             remote = this.load(uri);

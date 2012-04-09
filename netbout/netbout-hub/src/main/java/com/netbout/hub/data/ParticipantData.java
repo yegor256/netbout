@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public void setConfirmed(final Boolean flag) {
-        synchronized (this) {
+        synchronized (this.bout) {
             this.confirmed = flag;
             this.hub.make("changed-participant-status")
                 .asap()
@@ -121,7 +121,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public Boolean isConfirmed() {
-        synchronized (this) {
+        synchronized (this.bout) {
             if (this.confirmed == null) {
                 this.confirmed = this.hub.make("get-participant-status")
                     .synchronously()
@@ -138,7 +138,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public void setLeader(final Boolean flag) {
-        synchronized (this) {
+        synchronized (this.bout) {
             this.leader = flag;
             this.hub.make("changed-participant-leadership")
                 .asap()
@@ -160,7 +160,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public Boolean isLeader() {
-        synchronized (this) {
+        synchronized (this.bout) {
             if (this.leader == null) {
                 this.leader = this.hub.make("get-participant-leadership")
                     .synchronously()

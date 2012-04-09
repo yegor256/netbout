@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,16 +28,16 @@ package com.netbout.rest;
 
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.rest.jaxb.LongBout;
-import com.netbout.rest.page.JaxbBundle;
-import com.netbout.rest.page.JaxbGroup;
-import com.netbout.rest.page.PageBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
-import java.util.ArrayList;
+import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.PageBuilder;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
@@ -98,7 +98,7 @@ public final class BoutRs extends AbstractRs {
     /**
      * The period we're looking at.
      */
-    private transient String view;
+    private transient String view = "";
 
     /**
      * Set number of bout.
@@ -222,7 +222,7 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -249,7 +249,7 @@ public final class BoutRs extends AbstractRs {
         }
         bout.rename(title);
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -281,7 +281,7 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -299,7 +299,7 @@ public final class BoutRs extends AbstractRs {
     public Response join() {
         this.bout().confirm();
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -316,7 +316,7 @@ public final class BoutRs extends AbstractRs {
     public Response leave() {
         this.bout().leave();
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -340,7 +340,7 @@ public final class BoutRs extends AbstractRs {
         }
         NetboutUtils.participantOf(friend, this.bout()).kickOff();
         return new PageBuilder()
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, false)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -376,18 +376,17 @@ public final class BoutRs extends AbstractRs {
      * Main page.
      * @return The page
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    private Page page() {
+    private BasePage page() {
         final Identity myself = this.identity();
         this.coords.normalize(this.hub(), this.bout());
-        final Page page = new PageBuilder()
+        final BasePage page = new PageBuilder()
             .schema("")
             .stylesheet(
                 this.base().path("/{bout}/xsl/{stage}/wrapper.xsl")
                     .build(this.bout().number(), this.coords.stage())
                     .toString()
             )
-            .build(AbstractPage.class)
+            .build(BasePage.class)
             .init(this, true)
             .append(
                 new LongBout(
@@ -403,21 +402,36 @@ public final class BoutRs extends AbstractRs {
             )
             .append(new JaxbBundle("query", this.query))
             .link("leave", this.self("/leave"));
+        this.appendInvitees(page);
+        page.link(
+            "top",
+            this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, null)
+        );
+        if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
+            page.link("post", this.self("/p"));
+        } else {
+            page.link("join", this.self("/join"));
+        }
+        if (NetboutUtils.participantOf(myself, this.bout()).leader()) {
+            page.link("rename", this.self("/r"));
+        }
+        return page;
+    }
+
+    /**
+     * Append invitees, if necessary.
+     * @param page The page to append to
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private void appendInvitees(final BasePage page) {
         if (this.mask != null) {
-            final List<Invitee> invitees = new ArrayList<Invitee>();
-            for (Identity friend : myself.friends(this.mask)) {
+            final List<Invitee> invitees = new LinkedList<Invitee>();
+            for (Identity friend : this.identity().friends(this.mask)) {
                 invitees.add(new Invitee(friend, this.self("")));
             }
             page.append(new JaxbBundle("mask", this.mask))
                 .append(JaxbGroup.build(invitees, "invitees"));
         }
-        if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
-            page.link("post", this.self("/p"))
-                .link("rename", this.self("/r"));
-        } else {
-            page.link("join", this.self("/join"));
-        }
-        return page;
     }
 
     /**
@@ -426,10 +440,14 @@ public final class BoutRs extends AbstractRs {
      * @return The location, its builder actually
      */
     private UriBuilder self(final String path) {
-        return this.base()
-            // @checkstyle MultipleStringLiterals (1 line)
-            .path(String.format("/%d", this.bout().number()))
-            .path(path);
+        return UriBuilder.fromUri(
+            this.base()
+                .path("/{bout}")
+                .path(path)
+                .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
+                .replaceQueryParam(BoutRs.PERIOD_PARAM, "{period}")
+                .build(this.bout().number(), this.query, this.view)
+        );
     }
 
 }

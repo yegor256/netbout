@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netBout.com
+ * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,11 @@ public final class LifecycleListener implements ServletContextListener {
     @Override
     public void contextInitialized(final ServletContextEvent event) {
         final long start = System.nanoTime();
-        Manifests.append(event.getServletContext());
+        try {
+            Manifests.append(event.getServletContext());
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
         this.hub = new DefaultHub();
         event.getServletContext()
             .setAttribute("com.netbout.rest.HUB", this.hub);
@@ -75,16 +79,25 @@ public final class LifecycleListener implements ServletContextListener {
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
         final long start = System.nanoTime();
-        try {
-            this.hub.close();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
+        if (this.hub == null) {
+            Logger.warn(this, "#contextDestroyed(): HUB is null");
+        } else {
+            try {
+                this.hub.close();
+            } catch (java.io.IOException ex) {
+                Logger.error(
+                    this,
+                    "#contextDestroyed(): %[exception]s",
+                    ex
+                );
+            }
         }
         Logger.info(
             this,
-            "contextDestroyed(): done in %[nano]s",
+            "#contextDestroyed(): done in %[nano]s",
             System.nanoTime() - start
         );
+        org.apache.log4j.LogManager.shutdown();
     }
 
 }
