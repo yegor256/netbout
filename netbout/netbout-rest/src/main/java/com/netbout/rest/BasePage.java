@@ -37,6 +37,7 @@ import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import com.rexsl.page.JaxbBundle;
+import com.ymock.util.Logger;
 import java.net.InetAddress;
 import java.net.URI;
 import java.util.Collection;
@@ -319,7 +320,14 @@ public class BasePage {
      */
     @XmlAttribute
     public final String getIp() {
-        return InetAddress.getLocalHost().getHostAddress();
+        String addr;
+        try {
+            addr = InetAddress.getLocalHost().getHostAddress();
+        } catch (java.net.UnknownHostException ex) {
+            Logger.error(this, "#getIp(): %[exception]s", ex);
+            addr = "";
+        }
+        return addr;
     }
 
     /**
