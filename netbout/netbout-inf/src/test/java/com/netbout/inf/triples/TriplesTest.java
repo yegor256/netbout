@@ -27,12 +27,16 @@
 package com.netbout.inf.triples;
 
 import com.google.common.io.Files;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -46,9 +50,14 @@ import org.junit.runners.Parameterized;
 public final class TriplesTest {
 
     /**
+     * The type.
+     */
+    private final transient Class<? extends Triples> type;
+
+    /**
      * The implementation.
      */
-    private final transient Triples triples;
+    private transient Triples triples;
 
     /**
      * The random.
@@ -57,10 +66,10 @@ public final class TriplesTest {
 
     /**
      * Public ctor.
-     * @param trpl The triples
+     * @param tpe The type
      */
-    public TriplesTest(final Triples trpl) {
-        this.triples = trpl;
+    public TriplesTest(final Class<? extends Triples> tpe) {
+        this.type = tpe;
     }
 
     /**
@@ -70,8 +79,19 @@ public final class TriplesTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         final Collection<Object[]> args = new LinkedList<Object[]>();
-        args.add(new Object[] {new BerkeleyTriples(Files.createTempDir())});
+        args.add(new Object[] {BerkeleyTriples.class});
         return args;
+    }
+
+    /**
+     * Start triples.
+     * @throws Exception If there is some problem inside
+     */
+    @Before
+    public void start() throws Exception {
+        this.triples = this.type
+            .getConstructor(File.class)
+            .newInstance(Files.createTempDir());
     }
 
     /**
@@ -79,7 +99,7 @@ public final class TriplesTest {
      * @throws Exception If there is some problem inside
      */
     @After
-    public void closeTriple() throws Exception {
+    public void close() throws Exception {
         this.triples.close();
     }
 
@@ -101,6 +121,32 @@ public final class TriplesTest {
             this.triples.has(number, name, "some other value"),
             Matchers.is(false)
         );
+    }
+
+    /**
+     * Triples can find single value.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsSingleValue() throws Exception {
+        final String name = "the-name";
+        final Long number = this.random.nextLong();
+        final Urn urn = new UrnMocker().mock();
+        this.triples.put(number, name, urn);
+        this.triples.put(this.random.nextLong(), name, "other value");
+        MatcherAssert.assertThat(
+            this.triples.<Urn>get(number, name),
+            Matchers.equalTo(urn)
+        );
+    }
+
+    /**
+     * Triples can throw if key-value pair is not found.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = MissedTripleException.class)
+    public void throwsIfKeyValuePairNotFound() throws Exception {
+        this.triples.get(this.random.nextLong(), "foo-foo-foo");
     }
 
 }

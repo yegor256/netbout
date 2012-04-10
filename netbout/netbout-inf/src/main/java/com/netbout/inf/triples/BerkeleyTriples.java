@@ -38,7 +38,9 @@ import com.sleepycat.je.OperationStatus;
 import com.ymock.util.Logger;
 import java.io.Closeable;
 import java.io.File;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.lang.CharEncoding;
@@ -80,11 +82,19 @@ public final class BerkeleyTriples implements Triples {
      */
     @Override
     public void close() throws java.io.IOException {
+        final Collection<String> names = new LinkedList<String>();
         for (Database database : this.databases.values()) {
+            names.add(database.getDatabaseName());
             database.close();
         }
+        final File home = this.env.getHome();
         this.env.close();
-        Logger.debug(this, "#close(): closed");
+        Logger.debug(
+            this,
+            "#close(): closed %s with %[list]s",
+            home,
+            names
+        );
     }
 
     /**
@@ -165,6 +175,7 @@ public final class BerkeleyTriples implements Triples {
                     name,
                     env.openDatabase(null, name, config)
                 );
+                Logger.debug(this, "#database('%s'): opened", name);
             }
         }
         return this.databases.get(name);
