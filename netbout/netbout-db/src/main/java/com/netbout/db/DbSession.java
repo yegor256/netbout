@@ -199,6 +199,7 @@ public final class DbSession {
      */
     @SuppressWarnings("PMD.CloseResource")
     private <T> T run(final Handler<T> handler, final Fetcher fetcher) {
+        Database.log(this.query);
         final long start = System.nanoTime();
         T result;
         try {
