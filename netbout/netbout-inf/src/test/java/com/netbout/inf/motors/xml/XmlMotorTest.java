@@ -27,7 +27,7 @@
 package com.netbout.inf.motors.xml;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.IndexMocker;
+import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Message;
@@ -99,7 +99,7 @@ public final class XmlMotorTest {
             )
             + "/>"
         ).when(msg).text();
-        new XmlMotor(this.dir).see(msg);
+        new XmlMotor(this.dir.newFolder("x")).see(msg);
     }
 
     /**
@@ -109,7 +109,7 @@ public final class XmlMotorTest {
     @Test
     public void positivelyMatchesXmlDocument() throws Exception {
         final Urn namespace = new Urn("urn:test:foo");
-        final Pointer motor = new XmlMotor(this.dir);
+        final Pointer motor = new XmlMotor(this.dir.newFolder("y"));
         final Predicate pred = motor.build(
             "ns",
             Arrays.asList(new Atom[] {new TextAtom(namespace)})
@@ -123,7 +123,7 @@ public final class XmlMotorTest {
      */
     @Test
     public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Pointer motor = new XmlMotor(this.dir);
+        final Pointer motor = new XmlMotor(this.dir.newFolder("z"));
         final Predicate pred = motor.build(
             "ns",
             Arrays.asList(new Atom[] {new TextAtom("urn:test:different")})

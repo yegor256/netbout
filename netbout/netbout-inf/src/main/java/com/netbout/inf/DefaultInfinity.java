@@ -56,14 +56,24 @@ public final class DefaultInfinity implements Infinity {
     /**
      * Store of predicates.
      */
-    private final transient Store store = new PredicateStore();
+    private final transient Store store;
 
     /**
-     * Public ctor, with custom index.
+     * Public ctor.
      * @param ibus The BUS to work with
      */
     public DefaultInfinity(final Bus ibus) {
+        this(ibus, new PredicateStore());
+    }
+
+    /**
+     * Protect ctor, for tests.
+     * @param ibus The BUS to work with
+     * @param str The store
+     */
+    protected DefaultInfinity(final Bus ibus, final Store str) {
         this.bus = ibus;
+        this.store = str;
         StageFarm.register(this);
         Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", ibus);
     }

@@ -27,8 +27,7 @@
 package com.netbout.inf.motors.misc;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.IndexMocker;
+import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Bout;
@@ -71,7 +70,7 @@ public final class ParticipantsMotorTest {
         final Message message = new MessageMocker()
             .inBout(bout)
             .mock();
-        final Pointer motor = new ParticipantsMotor(this.dir);
+        final Pointer motor = new ParticipantsMotor(this.dir.newFolder("f1"));
         final Predicate pred = motor.build(
             "talks-with",
             Arrays.asList(new Atom[] {new TextAtom(name.toString())})

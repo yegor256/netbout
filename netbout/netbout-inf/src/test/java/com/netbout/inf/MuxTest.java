@@ -84,7 +84,7 @@ public final class MuxTest {
          * @param ltch Latch to count down
          */
         public FooTask(final Urn urn, final CountDownLatch ltch) {
-            super(new IndexMocker().mock());
+            super(new StoreMocker().mock());
             this.name = urn;
             this.latch = ltch;
         }

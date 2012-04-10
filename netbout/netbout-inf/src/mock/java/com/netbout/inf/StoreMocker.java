@@ -24,59 +24,28 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.atoms;
+package com.netbout.inf;
 
-import com.netbout.inf.Atom;
-import org.apache.commons.lang.SerializationUtils;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Test case of {@link VariableAtom}.
+ * Mocker of {@link Store}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VariableAtomTest {
+public final class StoreMocker {
 
     /**
-     * VariableAtom can encapsulate text.
-     * @throws Exception If there is some problem inside
+     * The object.
      */
-    @Test
-    public void encapsulatesText() throws Exception {
-        final Atom atom = new VariableAtom("bout.number");
-        MatcherAssert.assertThat(
-            atom.toString(),
-            Matchers.equalTo("$bout.number")
-        );
-    }
+    private final transient Store store = Mockito.mock(Store.class);
 
     /**
-     * VariableAtom can compare to another object.
-     * @throws Exception If there is some problem inside
+     * Build it.
+     * @return The predicate
      */
-    @Test
-    public void comparesToSimilarObject() throws Exception {
-        final String text = "text";
-        MatcherAssert.assertThat(
-            new VariableAtom(text),
-            Matchers.equalTo(new VariableAtom(text))
-        );
-    }
-
-    /**
-     * VariableAtom can be serialized.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void serializesToBytes() throws Exception {
-        final VariableAtom var = new VariableAtom("bout.title");
-        final byte[] bytes = SerializationUtils.serialize(var);
-        MatcherAssert.assertThat(
-            ((VariableAtom) SerializationUtils.deserialize(bytes)).toString(),
-            Matchers.equalTo(var.toString())
-        );
+    public Store mock() {
+        return this.store;
     }
 
 }

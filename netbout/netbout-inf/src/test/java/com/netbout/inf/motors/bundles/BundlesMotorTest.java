@@ -27,6 +27,7 @@
 package com.netbout.inf.motors.bundles;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
@@ -34,6 +35,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -64,7 +66,7 @@ public final class BundlesMotorTest {
         final Message msg = new MessageMocker()
             .inBout(bout)
             .mock();
-        final Pointer motor = new BundlesMotor(this.dir);
+        final Pointer motor = new BundlesMotor(this.dir.newFolder("f1"));
         motor.see(msg);
         final Predicate pred = motor.build("bundled", null);
         MatcherAssert.assertThat(

@@ -28,10 +28,8 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import org.junit.Test;
 
@@ -52,12 +50,9 @@ public final class DefaultInfinityTest {
             .doReturn(Arrays.asList(new Long[] {1L}), "get-bouts-of-identity")
             .doReturn(Arrays.asList(new Long[] {}), "get-bout-messages")
             .mock();
-        final Infinity inf = new DefaultInfinity(bus, new IndexMocker().mock());
-        final Bout bout = new BoutMocker().mock();
-        final Identity identity = new IdentityMocker()
-            .withBout(1L, bout)
-            .mock();
-        inf.see(identity);
+        final Infinity inf = new DefaultInfinity(bus, new StoreMocker().mock());
+        final Message msg = new MessageMocker().mock();
+        inf.see(msg);
         inf.messages("foo");
     }
 

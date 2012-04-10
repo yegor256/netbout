@@ -44,7 +44,7 @@ public final class TextAtomTest {
      */
     @Test
     public void encapsulatesText() throws Exception {
-        final Atom<String> atom = new TextAtom("some text");
+        final Atom atom = new TextAtom("some text");
         MatcherAssert.assertThat(
             atom.toString(),
             Matchers.equalTo("\"some text\"")

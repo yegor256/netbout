@@ -27,10 +27,8 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.NumberAtom;
-import com.netbout.inf.predicates.logic.AndPred;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -75,8 +73,7 @@ public final class FromPredTest {
                         Arrays.asList(new Atom[] {new NumberAtom(limit)})
                     ),
                 }
-            ),
-            index
+            )
         );
         long count = 0L;
         for (int pos = 0; pos < total; pos += 1) {

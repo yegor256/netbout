@@ -27,6 +27,7 @@
 package com.netbout.inf.motors.texts;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
@@ -69,7 +70,7 @@ public final class TextsMotorTest {
             .withNumber(number)
             .withText("hello, dude!")
             .mock();
-        final Pointer motor = new TextsMotor(this.dir);
+        final Pointer motor = new TextsMotor(this.dir.newFolder("f1"));
         motor.see(message);
         final Predicate pred = motor.build(
             "",
@@ -78,8 +79,7 @@ public final class TextsMotorTest {
                     new TextAtom("  "),
                     VariableAtom.TEXT,
                 }
-            ),
-            index
+            )
         );
         MatcherAssert.assertThat("matched", pred.contains(number));
         MatcherAssert.assertThat("is empty", !pred.hasNext());
@@ -101,7 +101,7 @@ public final class TextsMotorTest {
                 {"jeff lebowski", "the dude is Jeff Bridges (Lebowski)"},
             }
         );
-        final Pointer motor = new TextsMotor(this.dir);
+        final Pointer motor = new TextsMotor(this.dir.newFolder("f2"));
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Long number = new Random().nextLong();
             final Message message = new MessageMocker()
@@ -116,8 +116,7 @@ public final class TextsMotorTest {
                         new TextAtom(entry.getKey()),
                         VariableAtom.TEXT,
                     }
-                ),
-                index
+                )
             );
             MatcherAssert.assertThat(
                 String.format(
@@ -141,7 +140,7 @@ public final class TextsMotorTest {
                 {"boy", "short story about some girls"},
             }
         );
-        final Pointer motor = new TextsMotor(this.dir);
+        final Pointer motor = new TextsMotor(this.dir.newFolder("f3"));
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Long number = new Random().nextLong();
             final Message message = new MessageMocker()
@@ -155,8 +154,7 @@ public final class TextsMotorTest {
                         new TextAtom(entry.getKey()),
                         VariableAtom.TEXT,
                     }
-                ),
-                index
+                )
             );
             MatcherAssert.assertThat(
                 String.format(
