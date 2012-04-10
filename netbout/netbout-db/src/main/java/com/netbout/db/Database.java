@@ -104,7 +104,7 @@ final class Database {
         Database.LOGGED.incrementAndGet();
         synchronized (Database.LOGGED) {
             // @checkstyle MagicNumber (1 line)
-            if (Database.LOGGED.get() > 100) {
+            if (Database.LOGGED.get() > 1000) {
                 Logger.info(
                     Database.class,
                     "#log(..): %d DB SQL queries executed",
