@@ -24,67 +24,65 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.motors.misc;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Index;
+import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.atoms.NumberAtom;
-import com.netbout.inf.predicates.logic.AndPred;
+import com.netbout.inf.atoms.TextAtom;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link FromPred}.
+ * Test case of {@link ParticipantsMotor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class FromPredTest {
+public final class ParticipantsMotorTest {
 
     /**
-     * FromPred can match a message with required position.
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder dir = new TemporaryFolder();
+
+    /**
+     * ParticipantsMotor can match a message with participant.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void positivelyMatchesMessageAtPosition() throws Exception {
-        final Predicate pred = new FromPred(
-            Arrays.asList(new Atom[] {new NumberAtom(1L)})
+    public void positivelyMatchesMessageWithParticipant() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final Bout bout = new BoutMocker()
+            .withParticipant(name)
+            .mock();
+        final Message message = new MessageMocker()
+            .inBout(bout)
+            .mock();
+        final Pointer motor = new ParticipantsMotor(this.dir);
+        final Predicate pred = motor.build(
+            "talks-with",
+            Arrays.asList(new Atom[] {new TextAtom(name.toString())})
         );
-        MatcherAssert.assertThat("not matched", !pred.contains(2L));
-        MatcherAssert.assertThat("matched", pred.contains(2L));
-    }
-
-    /**
-     * FromPred can let us select all messages after certain point.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void selectsPortionOfMessages() throws Exception {
-        final long total = 10L;
-        final long from = 3L;
-        final long limit = total - from - 1;
-        final Predicate pred = new AndPred(
-            Arrays.asList(
-                new Atom[] {
-                    new FromPred(
-                        Arrays.asList(new Atom[] {new NumberAtom(from)})
-                    ),
-                    new LimitPred(
-                        Arrays.asList(new Atom[] {new NumberAtom(limit)})
-                    ),
-                }
-            ),
-            index
+        MatcherAssert.assertThat("has next", pred.hasNext());
+        MatcherAssert.assertThat(
+            pred.next(),
+            Matchers.equalTo(message.number())
         );
-        long count = 0L;
-        for (int pos = 0; pos < total; pos += 1) {
-            if (pred.contains(1L)) {
-                count += 1;
-            }
-        }
-        MatcherAssert.assertThat(count, Matchers.equalTo(limit));
+        MatcherAssert.assertThat("end of iterator", !pred.hasNext());
+        MatcherAssert.assertThat("matched", pred.contains(message.number()));
     }
 
 }

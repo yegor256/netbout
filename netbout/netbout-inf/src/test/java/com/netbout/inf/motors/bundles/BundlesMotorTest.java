@@ -24,57 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.motors.bundles;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link TalksWithPred}.
+ * Test case of {@link BundlesMotor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TalksWithPredTest {
+public final class BundlesMotorTest {
 
     /**
-     * TalksWithPred can match a message with participant.
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder dir = new TemporaryFolder();
+
+    /**
+     * BundlesMotor can extract marker.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void positivelyMatchesMessageWithParticipant() throws Exception {
-        final Urn name = new UrnMocker().mock();
+    public void extractsMarker() throws Exception {
         final Bout bout = new BoutMocker()
-            .withParticipant(name)
+            .withParticipant("urn:test:somebody")
             .mock();
-        final Message message = new MessageMocker()
+        final Message msg = new MessageMocker()
             .inBout(bout)
             .mock();
-        final Index index = new IndexMocker().mock();
-        TalksWithPred.extract(message, index);
-        final Predicate pred = new TalksWithPred(
-            Arrays.asList(new Atom[] {new TextAtom(name.toString())}),
-            index
-        );
-        MatcherAssert.assertThat("has next", pred.hasNext());
+        final Pointer motor = new BundlesMotor(this.dir);
+        motor.see(msg);
+        final Predicate pred = motor.build("bundled", null);
         MatcherAssert.assertThat(
-            pred.next(),
-            Matchers.equalTo(message.number())
+            pred.contains(msg.number()),
+            Matchers.is(true)
         );
-        MatcherAssert.assertThat("end of iterator", !pred.hasNext());
-        MatcherAssert.assertThat("matched", pred.contains(message.number()));
     }
 
 }

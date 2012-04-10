@@ -24,17 +24,8 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.motors.bundles;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.IndexMocker;
-import com.netbout.inf.Predicate;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 /**
@@ -45,32 +36,12 @@ import org.junit.Test;
 public final class BundledPredTest {
 
     /**
-     * BundledPred can extract marker.
+     * BundledPred can match a message.
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
-    public void extractsMarker() throws Exception {
-        final Bout bout = new BoutMocker()
-            .withParticipant("urn:test:somebody")
-            .mock();
-        final Message from = new MessageMocker()
-            .inBout(bout)
-            .mock();
-        BundledPred.extract(from, new IndexMocker().mock());
-    }
-
-    /**
-     * BundledPred can pass only bundled messages.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void positivelyMatchesBundledMessageOnly() throws Exception {
-        final Predicate pred = new BundledPred(
-            Arrays.asList(new Atom[] {}),
-            new IndexMocker().mock()
-        );
-        MatcherAssert.assertThat("no", pred.contains(1L));
+    public void matchesMessageNumber() throws Exception {
+        // todo
     }
 
 }

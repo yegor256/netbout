@@ -24,17 +24,8 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.motors.bundles;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.IndexMocker;
-import com.netbout.inf.Predicate;
-import com.netbout.inf.atoms.NumberAtom;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
-import java.util.Arrays;
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 /**
@@ -50,14 +41,7 @@ public final class UnbundledPredTest {
      */
     @Test
     public void positivelyMatchesUnbundledMessageOnly() throws Exception {
-        final Message message = new MessageMocker().mock();
-        final Index index = new IndexMocker().mock();
-        BundledPred.extract(message, index);
-        final Predicate pred = new UnbundledPred(
-            Arrays.asList(new Atom[] {new NumberAtom(message.bout().number())}),
-            index
-        );
-        MatcherAssert.assertThat("no!", !pred.contains(message.number()));
+        // todo
     }
 
 }

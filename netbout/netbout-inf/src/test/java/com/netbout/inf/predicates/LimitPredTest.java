@@ -27,7 +27,6 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.Arrays;
@@ -48,8 +47,7 @@ public final class LimitPredTest {
     @Test
     public void positivelyMatchesMessageAtPosition() throws Exception {
         final Predicate pred = new LimitPred(
-            Arrays.asList(new Atom[] {new NumberAtom(1L)}),
-            new IndexMocker().mock()
+            Arrays.asList(new Atom[] {new NumberAtom(1L)})
         );
         MatcherAssert.assertThat("matched", pred.contains(1L));
         MatcherAssert.assertThat("not matched", !pred.contains(1L));

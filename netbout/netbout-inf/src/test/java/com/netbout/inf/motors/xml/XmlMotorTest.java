@@ -37,7 +37,9 @@ import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 /**
@@ -46,6 +48,13 @@ import org.mockito.Mockito;
  * @version $Id$
  */
 public final class XmlMotorTest {
+
+    /**
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder dir = new TemporaryFolder();
 
     /**
      * URL of XSD schema.
@@ -78,9 +87,8 @@ public final class XmlMotorTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
     public void extractsNamespaceFromXml() throws Exception {
-        final Message from = Mockito.mock(Message.class);
+        final Message msg = Mockito.mock(Message.class);
         Mockito.doReturn(
             // @checkstyle StringLiteralsConcatenation (7 lines)
             "<root xmlns='urn:test:bar'"
@@ -90,8 +98,8 @@ public final class XmlMotorTest {
                 this.xsd
             )
             + "/>"
-        ).when(from).text();
-        XmlMotor.extract(from, new IndexMocker().mock());
+        ).when(msg).text();
+        new XmlMotor(this.dir).see(msg);
     }
 
     /**
@@ -101,9 +109,10 @@ public final class XmlMotorTest {
     @Test
     public void positivelyMatchesXmlDocument() throws Exception {
         final Urn namespace = new Urn("urn:test:foo");
-        final Predicate pred = new XmlMotor(
-            Arrays.asList(new Atom[] {new TextAtom(namespace)}),
-            new IndexMocker().mock()
+        final Pointer motor = new XmlMotor(this.dir);
+        final Predicate pred = motor.build(
+            "ns",
+            Arrays.asList(new Atom[] {new TextAtom(namespace)})
         );
         MatcherAssert.assertThat("not matched (temp)", !pred.contains(1L));
     }
@@ -114,9 +123,10 @@ public final class XmlMotorTest {
      */
     @Test
     public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new XmlMotor(
-            Arrays.asList(new Atom[] {new TextAtom("urn:test:different")}),
-            new IndexMocker().mock()
+        final Pointer motor = new XmlMotor(this.dir);
+        final Predicate pred = motor.build(
+            "ns",
+            Arrays.asList(new Atom[] {new TextAtom("urn:test:different")})
         );
         MatcherAssert.assertThat(
             "not matched",

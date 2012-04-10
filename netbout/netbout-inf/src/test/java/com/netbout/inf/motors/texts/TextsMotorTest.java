@@ -37,20 +37,29 @@ import java.util.Map;
 import java.util.Random;
 import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.MatcherAssert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link MatchesPred}.
+ * Test case of {@link TextsMotor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 @SuppressWarnings({
     "PMD.UseConcurrentHashMap", "PMD.AvoidInstantiatingObjectsInLoops"
 })
-public final class MatchesPredTest {
+public final class TextsMotorTest {
 
     /**
-     * MatchesPred can match empty text.
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder dir = new TemporaryFolder();
+
+    /**
+     * TextsMotor can match empty text.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -60,9 +69,10 @@ public final class MatchesPredTest {
             .withNumber(number)
             .withText("hello, dude!")
             .mock();
-        final Index index = new IndexMocker().mock();
-        MatchesPred.extract(message, index);
-        final Predicate pred = new MatchesPred(
+        final Pointer motor = new TextsMotor(this.dir);
+        motor.see(message);
+        final Predicate pred = motor.build(
+            "",
             Arrays.asList(
                 new Atom[] {
                     new TextAtom("  "),
@@ -76,7 +86,7 @@ public final class MatchesPredTest {
     }
 
     /**
-     * MatchesPred can match by keyword or a combination of them.
+     * TextsMotor can match by keyword or a combination of them.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -91,15 +101,16 @@ public final class MatchesPredTest {
                 {"jeff lebowski", "the dude is Jeff Bridges (Lebowski)"},
             }
         );
-        final Index index = new IndexMocker().mock();
+        final Pointer motor = new TextsMotor(this.dir);
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Long number = new Random().nextLong();
             final Message message = new MessageMocker()
                 .withNumber(number)
                 .withText(entry.getValue())
                 .mock();
-            MatchesPred.extract(message, index);
-            final Predicate pred = new MatchesPred(
+            motor.see(message);
+            final Predicate pred = motor.build(
+                "",
                 Arrays.asList(
                     new Atom[] {
                         new TextAtom(entry.getKey()),
@@ -120,7 +131,7 @@ public final class MatchesPredTest {
     }
 
     /**
-     * MatchesPred can avoid matching when it's not necessary.
+     * TextsMotor can avoid matching when it's not necessary.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -130,15 +141,15 @@ public final class MatchesPredTest {
                 {"boy", "short story about some girls"},
             }
         );
-        final Index index = new IndexMocker().mock();
+        final Pointer motor = new TextsMotor(this.dir);
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Long number = new Random().nextLong();
             final Message message = new MessageMocker()
                 .withNumber(number)
                 .withText(entry.getValue())
                 .mock();
-            MatchesPred.extract(message, index);
-            final Predicate pred = new MatchesPred(
+            final Predicate pred = motor.build(
+                "",
                 Arrays.asList(
                     new Atom[] {
                         new TextAtom(entry.getKey()),
