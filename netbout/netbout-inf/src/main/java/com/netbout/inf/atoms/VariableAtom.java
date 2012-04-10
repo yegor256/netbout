@@ -37,7 +37,7 @@ import java.io.Serializable;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VariableAtom implements Atom<String>, Serializable {
+public final class VariableAtom implements Atom, Serializable {
 
     /**
      * Text of message.
@@ -109,14 +109,6 @@ public final class VariableAtom implements Atom<String>, Serializable {
     public boolean equals(final Object obj) {
         return obj instanceof VariableAtom
             && this.name.equals(((VariableAtom) obj).name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String value() {
-        return this.name;
     }
 
     /**

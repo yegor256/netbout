@@ -83,7 +83,7 @@ final class BundledPred implements Predicate {
     @Override
     public boolean contains(final Long message) {
         final String marker = this.triples.get(
-            this.triples.get(message, BundlesMotor.MSG_TO_BOUT),
+            this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT),
             BundlesMotor.BOUT_TO_MARKER
         );
         boolean allow;

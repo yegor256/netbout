@@ -62,10 +62,8 @@ public final class PredicateStore implements Store {
 
     /**
      * Public ctor.
-     * @param idx The index
      */
-    public PredicateStore(final Index idx) {
-        this.index = idx;
+    public PredicateStore() {
         this.pointers = this.discover();
     }
 
@@ -73,7 +71,22 @@ public final class PredicateStore implements Store {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws java.io.IOException {
+    public String statistics() {
+        final StringBuilder text = new StringBuilder();
+        text.append("Folder stats:\n")
+            .append(this.folder.statistics())
+            .append("\nStore(s) stats:");
+        for (Pointer pointer : this.pointers) {
+            text.append("\n").append(pointer.statistics());
+        }
+        return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
         for (Pointer pointer : this.pointers) {
             IOUtils.closeQuietly(pointer);
         }

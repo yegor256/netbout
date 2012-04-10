@@ -26,9 +26,18 @@
  */
 package com.netbout.inf.motors.misc;
 
+import com.netbout.inf.Atom;
+import com.netbout.inf.Pointer;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.triples.BerkleyTriples;
+import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.reflections.Reflections;
@@ -46,12 +55,12 @@ public final class ParticipantsMotor implements Pointer {
     /**
      * Message to bout (name of triple).
      */
-    private static final String MSG_TO_BOUT = "message-to-bout";
+    static final String MSG_TO_BOUT = "message-to-bout";
 
     /**
      * Bout to participant (name of triple).
      */
-    private static final String BOUT_TO_PARTICIPANT = "bout-to-participant";
+    static final String BOUT_TO_PARTICIPANT = "bout-to-participant";
 
     /**
      * The triples.
@@ -63,7 +72,15 @@ public final class ParticipantsMotor implements Pointer {
      * @param dir The directory to work in
      */
     public ParticipantsMotor(final File dir) {
-        this.triples = new Triples(dir);
+        this.triples = new BerkleyTriples(dir);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        return this.getClass().getName();
     }
 
     /**
@@ -108,21 +125,17 @@ public final class ParticipantsMotor implements Pointer {
     public void see(final Message msg) {
         this.triples.put(
             msg.number(),
-            BundlesMotor.MSG_TO_BOUT,
+            ParticipantsMotor.MSG_TO_BOUT,
             msg.bout().number()
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Bout bout) {
-        this.triples.remove(bout.number(), BundlesMotor.BOUT_TO_PARTICIPANT);
-        for (Participant dude : bout.participants()) {
+        this.triples.clear(
+            msg.bout().number(),
+            ParticipantsMotor.BOUT_TO_PARTICIPANT
+        );
+        for (Participant dude : msg.bout().participants()) {
             this.triples.put(
-                bout.number(),
-                BundlesMotor.BOUT_TO_PARTICIPANT,
+                msg.bout().number(),
+                ParticipantsMotor.BOUT_TO_PARTICIPANT,
                 dude.identity().name()
             );
         }

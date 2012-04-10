@@ -24,12 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.xml;
+package com.netbout.inf.motors.xml;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
-import com.netbout.inf.predicates.AbstractVarargPred;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;

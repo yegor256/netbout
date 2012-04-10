@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Message;
+import java.io.Closeable;
 import java.util.List;
 
 /**
@@ -38,6 +39,12 @@ import java.util.List;
  * @version $Id$
  */
 public interface Store extends Closeable {
+
+    /**
+     * Show some stats.
+     * @return Text stats
+     */
+    String statistics();
 
     /**
      * See this message.

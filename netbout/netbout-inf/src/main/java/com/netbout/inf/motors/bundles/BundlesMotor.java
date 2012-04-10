@@ -26,13 +26,22 @@
  */
 package com.netbout.inf.motors.bundles;
 
+import com.netbout.inf.Atom;
+import com.netbout.inf.Pointer;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.triples.BerkleyTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import org.reflections.Reflections;
 
 /**
@@ -48,12 +57,12 @@ public final class BundlesMotor implements Pointer {
     /**
      * Message to bout (name of triple).
      */
-    private static final String MSG_TO_BOUT = "message-to-bout";
+    static final String MSG_TO_BOUT = "message-to-bout";
 
     /**
      * Bout to marker (name of triple).
      */
-    private static final String BOUT_TO_MARKER = "bout-to-marker";
+    static final String BOUT_TO_MARKER = "bout-to-marker";
 
     /**
      * The triples.
@@ -66,6 +75,14 @@ public final class BundlesMotor implements Pointer {
      */
     public BundlesMotor(final File dir) {
         this.triples = new BerkleyTriples(dir);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        return this.getClass().getName();
     }
 
     /**
@@ -103,7 +120,7 @@ public final class BundlesMotor implements Pointer {
         } else if ("unbundled".equals(name)) {
             pred = new UnbundledPred(
                 this.triples,
-                this.triples.get(
+                this.triples.<String>get(
                     ((NumberAtom) atoms.get(0)).value(),
                     BundlesMotor.BOUT_TO_MARKER
                 ),
@@ -123,20 +140,13 @@ public final class BundlesMotor implements Pointer {
             BundlesMotor.MSG_TO_BOUT,
             msg.bout().number()
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Bout bout) {
         final Set<Urn> names = new TreeSet<Urn>();
-        for (Participant dude : bout.participants()) {
+        for (Participant dude : msg.bout().participants()) {
             names.add(dude.identity().name());
         }
         final String marker = Logger.format("%[list]s", names);
         this.triples.put(
-            bout.number(),
+            msg.bout().number(),
             BundlesMotor.BOUT_TO_MARKER,
             marker
         );

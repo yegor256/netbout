@@ -29,6 +29,7 @@ package com.netbout.inf.motors.texts;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.triples.BerkleyTriples;
@@ -86,7 +87,15 @@ public final class TextsMotor implements Pointer {
      * @param dir The directory to work in
      */
     public TextsMotor(final File dir) {
-        this.triples = new Triples(dir);
+        this.triples = new BerkleyTriples(dir);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        return this.getClass().getName();
     }
 
     /**
@@ -119,27 +128,32 @@ public final class TextsMotor implements Pointer {
     @Override
     public Predicate build(final String name, final List<Atom> atoms) {
         Predicate predicate;
-        final Set<String> words = this.words(atoms.get(0).value().toString());
+        final Set<String> words = this.words(((TextAtom) atoms.get(0)).value());
         if (words.size() > 1) {
-            final List<Atom> atoms = new ArrayList<Atom>(words.size());
+            final List<Atom> terms = new ArrayList<Atom>(words.size());
             for (String word : words) {
-                atoms.add(
+                terms.add(
                     this.build(
                         name,
-                        Arrays.asList(new Atom[] {word, atoms.get(1)})
+                        Arrays.asList(
+                            new Atom[] {
+                                new TextAtom(word),
+                                atoms.get(1),
+                            }
+                        )
                     )
                 );
             }
-            predicate = new AndPred(atoms);
+            predicate = new AndPred(terms);
         } else if (words.isEmpty()) {
             predicate = new TruePred();
         } else {
             final VariableAtom var = (VariableAtom) atoms.get(1);
             final String word = words.iterator().next();
             if (var.equals(VariableAtom.TEXT)) {
-                predicate = new MatchesTextPred(word);
+                predicate = new MatchesTextPred(this.triples, word);
             } else if (var.equals(VariableAtom.BOUT_TITLE)) {
-                predicate = new MatchesTitlePred(word);
+                predicate = new MatchesTitlePred(this.triples, word);
             } else {
                 throw new PredicateException(
                     String.format("Variable %s not supported in MATCHES", var)
@@ -166,17 +180,10 @@ public final class TextsMotor implements Pointer {
             TextsMotor.MSG_TO_BOUT,
             msg.bout().number()
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Bout bout) {
-        this.triples.clear(bout.number(), TextsMotor.BOUT_TITLE_TO_WORD);
-        for (String word : TextsMotor.words(bout.title())) {
+        this.triples.clear(msg.bout().number(), TextsMotor.BOUT_TITLE_TO_WORD);
+        for (String word : TextsMotor.words(msg.bout().title())) {
             this.triples.put(
-                bout.number(),
+                msg.bout().number(),
                 TextsMotor.BOUT_TITLE_TO_WORD,
                 word
             );

@@ -26,9 +26,20 @@
  */
 package com.netbout.inf.motors.bundles;
 
+import com.netbout.inf.Atom;
+import com.netbout.inf.Pointer;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
+import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.atoms.VariableAtom;
+import com.netbout.inf.triples.BerkleyTriples;
+import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.reflections.Reflections;
@@ -63,7 +74,15 @@ public final class VarsMotor implements Pointer {
      * @param dir The directory to work in
      */
     public VarsMotor(final File dir) {
-        this.triples = new Triples(dir);
+        this.triples = new BerkleyTriples(dir);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        return this.getClass().getName();
     }
 
     /**
@@ -99,11 +118,20 @@ public final class VarsMotor implements Pointer {
         Predicate pred;
         if ("equals".equals(name)) {
             if (var.equals(VariableAtom.NUMBER)) {
-                pred = new EqNumberPred();
+                pred = new EqNumberPred(
+                    this.triples,
+                    ((NumberAtom) atoms.get(1)).value()
+                );
             } else if (var.equals(VariableAtom.BOUT_NUMBER)) {
-                pred = new EqBoutNumberPred(this.triples);
+                pred = new EqBoutNumberPred(
+                    this.triples,
+                    ((NumberAtom) atoms.get(1)).value()
+                );
             } else if (var.equals(VariableAtom.AUTHOR_NAME)) {
-                pred = new EqAuthorNamePred(this.triples);
+                pred = new EqAuthorNamePred(
+                    this.triples,
+                    Urn.create(((TextAtom) atoms.get(1)).value())
+                );
             } else {
                 throw new PredicateException(
                     String.format("Variable %s not supported in EQUALS", var)
@@ -136,14 +164,6 @@ public final class VarsMotor implements Pointer {
             VarsMotor.MSG_TO_AUTHOR_NAME,
             msg.author().name()
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Bout bout) {
-        // nothing to do here
     }
 
 }

@@ -24,11 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.motors.misc;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
+import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
@@ -47,7 +48,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TalksWithPred implements Pointer {
+public final class TalksWithPred implements Predicate {
 
     /**
      * Triples to use.
@@ -74,9 +75,9 @@ public final class TalksWithPred implements Pointer {
         this.urn = person;
         this.iterator = this.triples.reverse(
             ParticipantsMotor.MSG_TO_BOUT,
-            this.triples.all(
-                this.urn,
-                ParticipantsMotor.BOUT_TO_PARTICIPANT
+            this.triples.reverse(
+                ParticipantsMotor.BOUT_TO_PARTICIPANT,
+                this.urn
             )
         );
     }
@@ -102,10 +103,11 @@ public final class TalksWithPred implements Pointer {
      */
     @Override
     public boolean contains(final Long message) {
-        return this.triples.<Urn>all(
-            this.triples.get(message, ParticipantsMotor.MSG_TO_BOUT),
-            ParticipantsMotor.BOUT_TO_PARTICIPANT
-        ).contains(this.urn);
+        return this.triples.has(
+            this.triples.<Long>get(message, ParticipantsMotor.MSG_TO_BOUT),
+            ParticipantsMotor.BOUT_TO_PARTICIPANT,
+            this.urn
+        );
     }
 
 }

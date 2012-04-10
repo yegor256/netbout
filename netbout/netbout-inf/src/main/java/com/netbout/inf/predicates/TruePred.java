@@ -64,12 +64,4 @@ final class TruePred implements Predicate {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String value() {
-        throw new IllegalStateException("#value()");
-    }
-
 }

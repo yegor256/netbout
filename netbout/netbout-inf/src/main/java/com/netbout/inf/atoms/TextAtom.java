@@ -37,7 +37,7 @@ import java.io.Serializable;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextAtom implements Atom<String>, Serializable {
+public final class TextAtom implements Atom, Serializable {
 
     /**
      * Serialization marker.
@@ -75,9 +75,9 @@ public final class TextAtom implements Atom<String>, Serializable {
             && this.text.equals(((TextAtom) obj).text);
     }
     /**
-     * {@inheritDoc}
+     * Get its value.
+     * @return The value
      */
-    @Override
     public String value() {
         return this.text;
     }

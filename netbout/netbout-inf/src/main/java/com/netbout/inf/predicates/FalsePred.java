@@ -64,12 +64,4 @@ final class FalsePred implements Predicate {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String value() {
-        throw new IllegalStateException("#value()");
-    }
-
 }

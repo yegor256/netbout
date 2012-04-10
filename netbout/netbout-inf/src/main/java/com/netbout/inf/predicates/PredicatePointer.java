@@ -26,10 +26,17 @@
  */
 package com.netbout.inf.predicates;
 
+import com.netbout.inf.Atom;
 import com.netbout.inf.Pointer;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
+import com.ymock.util.Logger;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.reflections.Reflections;
 
 /**
  * Pointer to predicate.
@@ -58,6 +65,14 @@ public final class PredicatePointer implements Pointer {
     public PredicatePointer(final Class<? extends Predicate> pred) {
         this.type = pred;
         this.meta = pred.getAnnotation(Meta.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        return type.getName();
     }
 
     /**
@@ -118,14 +133,6 @@ public final class PredicatePointer implements Pointer {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Bout bout) {
-        // nothing to do here
-    }
-
-    /**
      * Discover all predicates.
      * @return List of pointers to predicates
      */
@@ -139,7 +146,7 @@ public final class PredicatePointer implements Pointer {
             ptrs.add(new PredicatePointer(pred));
         }
         Logger.debug(
-            this,
+            PredicatePointer.class,
             "#discover(): %d predicates discovered in classpath: %[list]s",
             ptrs.size(),
             ptrs

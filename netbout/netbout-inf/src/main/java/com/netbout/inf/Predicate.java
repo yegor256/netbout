@@ -34,7 +34,7 @@ package com.netbout.inf;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate {
+public interface Predicate extends Atom {
 
     /**
      * Return next message number that complies with this predicate, and jump

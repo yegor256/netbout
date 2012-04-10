@@ -35,7 +35,7 @@ import java.io.File;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Folder extends Closeable {
+public interface Folder extends Closeable {
 
     /**
      * Get its full path.

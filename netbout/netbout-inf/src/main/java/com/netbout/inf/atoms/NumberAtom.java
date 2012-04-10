@@ -37,7 +37,7 @@ import java.io.Serializable;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NumberAtom implements Atom<Long>, Serializable {
+public final class NumberAtom implements Atom, Serializable {
 
     /**
      * Serialization marker.
@@ -76,9 +76,9 @@ public final class NumberAtom implements Atom<Long>, Serializable {
     }
 
     /**
-     * {@inheritDoc}
+     * Get its value.
+     * @return The value
      */
-    @Override
     public Long value() {
         return this.number;
     }

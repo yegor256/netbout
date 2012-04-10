@@ -28,7 +28,6 @@ package com.netbout.inf;
 
 import com.netbout.bus.Bus;
 import com.netbout.inf.ih.StageFarm;
-import com.netbout.inf.index.FsIndex;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;

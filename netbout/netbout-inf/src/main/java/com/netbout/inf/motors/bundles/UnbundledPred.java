@@ -24,11 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.motors.bundles;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
+import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.triples.Triples;
@@ -94,11 +93,11 @@ final class UnbundledPred implements Predicate {
     @Override
     public boolean contains(final Long message) {
         final String marker = this.triples.get(
-            this.triples.get(message, BundlesMotor.MSG_TO_BOUT),
+            this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT),
             BundlesMotor.BOUT_TO_MARKER
         );
         return this.bundle.equals(marker)
-            && !this.triples.get(BundlesMotor.MSG_TO_BOUT, message)
+            && !this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT)
                 .equals(this.bout);
     }
 

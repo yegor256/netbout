@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.logic;
+package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
@@ -50,7 +50,7 @@ final class AndPred extends AbstractVarargPred {
     /**
      * Synchronization lock.
      */
-    private final transient Integer lock = 1L;
+    private final transient Integer lock = 1;
 
     /**
      * Public ctor.

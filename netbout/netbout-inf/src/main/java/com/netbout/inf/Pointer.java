@@ -42,6 +42,12 @@ import java.util.List;
 public interface Pointer extends Closeable {
 
     /**
+     * Show some stats.
+     * @return Text stats
+     */
+    String statistics();
+
+    /**
      * Points to this predicate (by name)?
      * @param name The name to check against
      * @return Yes or no

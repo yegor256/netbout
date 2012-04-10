@@ -51,10 +51,10 @@ final class SeeMessageTask extends AbstractTask {
     /**
      * Public ctor.
      * @param what The message to update
-     * @param index The index to use
+     * @param store The store to use
      */
-    public SeeMessageTask(final Message what, final Index index) {
-        super(index);
+    public SeeMessageTask(final Message what, final Store store) {
+        super(store);
         this.message = what;
     }
 

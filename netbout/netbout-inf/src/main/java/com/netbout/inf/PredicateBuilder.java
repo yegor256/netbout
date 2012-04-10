@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
@@ -45,13 +46,13 @@ final class PredicateBuilder {
     /**
      * The store.
      */
-    private final transient PredicateStore store;
+    private final transient Store store;
 
     /**
      * Public ctor.
      * @param str The store with predicates
      */
-    public PredicateBuilder(final PredicateStore str) {
+    public PredicateBuilder(final Store str) {
         this.store = str;
     }
 

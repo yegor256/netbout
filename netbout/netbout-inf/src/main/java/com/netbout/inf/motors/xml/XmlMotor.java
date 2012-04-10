@@ -26,11 +26,18 @@
  */
 package com.netbout.inf.motors.xml;
 
+import com.netbout.inf.Atom;
+import com.netbout.inf.Pointer;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.triples.BerkleyTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
+import com.ymock.util.Logger;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -46,12 +53,12 @@ public final class XmlMotor implements Pointer {
     /**
      * Message to namespace (name of triple).
      */
-    private static final String MSG_TO_NS = "message-to-namespace";
+    static final String MSG_TO_NS = "message-to-namespace";
 
     /**
      * The triples.
      */
-    private final transient Triples triples;
+    final transient Triples triples;
 
     /**
      * Public ctor.
@@ -59,6 +66,14 @@ public final class XmlMotor implements Pointer {
      */
     public XmlMotor(final File dir) {
         this.triples = new BerkleyTriples(dir);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String statistics() {
+        return this.getClass().getName();
     }
 
     /**
@@ -107,7 +122,7 @@ public final class XmlMotor implements Pointer {
             try {
                 this.triples.put(
                     msg.number(),
-                    BundlesMotor.MSG_TO_NS,
+                    XmlMotor.MSG_TO_NS,
                     parser.namespace().toString()
                 );
             } catch (com.netbout.spi.xml.DomValidationException ex) {
@@ -119,14 +134,6 @@ public final class XmlMotor implements Pointer {
                 );
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Bout bout) {
-        // nothing to do here
     }
 
 }

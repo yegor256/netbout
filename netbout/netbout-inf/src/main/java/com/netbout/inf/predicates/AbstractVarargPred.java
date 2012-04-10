@@ -58,16 +58,8 @@ abstract class AbstractVarargPred implements Predicate {
      * @param args Arguments/predicates
      */
     public AbstractVarargPred(final List<Atom> args) {
-        this.iname = this.getClass().getAnnotation(Meta.class).name();
+        this.iname = this.getClass().getAnnotation(Meta.class).value();
         this.atoms = new ArrayList<Atom>(args);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final String value() {
-        throw new PredicateException("#value() not supported");
     }
 
     /**
