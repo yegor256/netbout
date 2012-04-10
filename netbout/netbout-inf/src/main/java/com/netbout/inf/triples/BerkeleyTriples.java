@@ -30,6 +30,7 @@ import com.netbout.spi.Message;
 import com.sleepycat.bind.serial.StoredClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.tuple.TupleBinding;
+import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
@@ -69,6 +70,12 @@ public final class BerkeleyTriples implements Triples {
         new ConcurrentHashMap<String, Database>();
 
     /**
+     * Cursors with their open times (in millis).
+     */
+    private final transient ConcurrentMap<Long, Cursor> cursors =
+        new ConcurrentHashMap<Long, Cursor>();
+
+    /**
      * Public ctor.
      * @param dir Where to keep data
      */
@@ -84,6 +91,9 @@ public final class BerkeleyTriples implements Triples {
      */
     @Override
     public void close() throws java.io.IOException {
+        for (Cursor cursor : this.cursors.values()) {
+            cursor.close();
+        }
         final Collection<String> names = new LinkedList<String>();
         for (Database database : this.databases.values()) {
             names.add(database.getDatabaseName());
@@ -93,9 +103,10 @@ public final class BerkeleyTriples implements Triples {
         this.env.close();
         Logger.debug(
             this,
-            "#close(): closed %s with %[list]s",
+            "#close(): closed %s with %[list]s and %d cursor(s)",
             home,
-            names
+            names,
+            this.cursors.size()
         );
     }
 
@@ -117,7 +128,7 @@ public final class BerkeleyTriples implements Triples {
             null,
             this.key(number),
             this.entry(value),
-            LockMode.DEFAULT
+            null
         ) == OperationStatus.SUCCESS;
     }
 
@@ -129,7 +140,7 @@ public final class BerkeleyTriples implements Triples {
         throws MissedTripleException {
         final DatabaseEntry entry = new DatabaseEntry();
         if (this.database(name)
-            .get(null, this.key(number), entry, LockMode.DEFAULT)
+            .get(null, this.key(number), entry, null)
                 != OperationStatus.SUCCESS) {
             throw new MissedTripleException(
                 String.format("Number %d not found in '%s'", number, name)
@@ -143,7 +154,20 @@ public final class BerkeleyTriples implements Triples {
      */
     @Override
     public <T> Iterator<T> all(final Long number, final String name) {
-        return null;
+        final Cursor cursor = this.cursor(name);
+        final DatabaseEntry key = this.key(number);
+        return new AbstractIterator<T>() {
+            @Override
+            public T fetch() {
+                final DatabaseEntry entry = new DatabaseEntry();
+                T value = null;
+                if (cursor.getNext(key, entry, null)
+                    == OperationStatus.SUCCESS) {
+                    value = BerkeleyTriples.this.<T>value(entry);
+                }
+                return value;
+            }
+        };
     }
 
     /**
@@ -198,6 +222,30 @@ public final class BerkeleyTriples implements Triples {
             }
         }
         return this.databases.get(name);
+    }
+
+    /**
+     * Create new cursor.
+     * @param name Name of DB to use
+     * @return The cursor
+     */
+    private Cursor cursor(final String name) {
+        final Cursor cursor = this.database(name).openCursor(null, null);
+        synchronized (this.cursors) {
+            Long now = System.currentTimeMillis();
+            for (Long time : this.cursors.keySet()) {
+                // @checkstyle MagicNumber (1 line)
+                if (time < now - 10 * 1000) {
+                    this.cursors.get(time).close();
+                    this.cursors.remove(time);
+                }
+            }
+            while (this.cursors.containsKey(now)) {
+                --now;
+            }
+            this.cursors.put(now, cursor);
+        }
+        return cursor;
     }
 
     /**

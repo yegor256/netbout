@@ -33,6 +33,8 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Random;
+import org.apache.commons.collections.IteratorUtils;
+import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -163,6 +165,28 @@ public final class TriplesTest {
         MatcherAssert.assertThat(
             this.triples.has(number, name, value),
             Matchers.is(false)
+        );
+    }
+
+    /**
+     * Triples can find all values.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsAllValues() throws Exception {
+        final String name = "bar-bar-bar";
+        final Long number = this.random.nextLong();
+        final Urn first = new UrnMocker().mock();
+        final Urn second = new UrnMocker().mock();
+        this.triples.put(number, name, first);
+        this.triples.put(number, name, second);
+        MatcherAssert.assertThat(
+            IteratorUtils.toList(this.triples.<Urn>all(number, name)),
+            Matchers.allOf(
+                (Matcher) Matchers.hasSize(2),
+                Matchers.hasItem(first),
+                Matchers.hasItem(second)
+            )
         );
     }
 
