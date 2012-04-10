@@ -24,11 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.text;
+package com.netbout.inf.motors.texts;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;

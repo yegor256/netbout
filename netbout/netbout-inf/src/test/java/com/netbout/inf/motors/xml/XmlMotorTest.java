@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.xml;
+package com.netbout.inf.motors.xml;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.IndexMocker;
@@ -41,11 +41,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link NsPred}.
+ * Test case of {@link XmlMotor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NsPredTest {
+public final class XmlMotorTest {
 
     /**
      * URL of XSD schema.
@@ -74,7 +74,7 @@ public final class NsPredTest {
     }
 
     /**
-     * NsPred can extract namespace from XML document.
+     * XmlMotor can extract namespace from XML document.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -91,17 +91,17 @@ public final class NsPredTest {
             )
             + "/>"
         ).when(from).text();
-        NsPred.extract(from, new IndexMocker().mock());
+        XmlMotor.extract(from, new IndexMocker().mock());
     }
 
     /**
-     * NsPred can match an XML document.
+     * XmlMotor can match an XML document.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void positivelyMatchesXmlDocument() throws Exception {
         final Urn namespace = new Urn("urn:test:foo");
-        final Predicate pred = new NsPred(
+        final Predicate pred = new XmlMotor(
             Arrays.asList(new Atom[] {new TextAtom(namespace)}),
             new IndexMocker().mock()
         );
@@ -109,12 +109,12 @@ public final class NsPredTest {
     }
 
     /**
-     * NsPred can match an XML document.
+     * XmlMotor can match an XML document.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void negativelyMatchesNonXmlDocument() throws Exception {
-        final Predicate pred = new NsPred(
+        final Predicate pred = new XmlMotor(
             Arrays.asList(new Atom[] {new TextAtom("urn:test:different")}),
             new IndexMocker().mock()
         );
