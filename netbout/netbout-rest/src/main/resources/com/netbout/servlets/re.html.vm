@@ -16,8 +16,8 @@
             </p>
             <p>
                 <b style="color: red;">
-                    Internal application error (r.${build.number})
-                </b>.
+                    Internal application error (r.${build.number}).
+                </b>
             </p>
             <p>
                 Netbout team already received a notification about this

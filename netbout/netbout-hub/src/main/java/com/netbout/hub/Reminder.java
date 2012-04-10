@@ -64,24 +64,38 @@ final class Reminder implements Runnable {
             .asDefault(new ArrayList<Urn>(0))
             .exec();
         for (Urn name : names) {
-            final String marker = this.ibus.make("get-silence-marker")
-                .synchronously()
+            this.remind(name);
+        }
+    }
+
+    /**
+     * Remind one person.
+     * @param name The name to remind
+     */
+    private void remind(final Urn name) {
+        final String marker = this.ibus.make("get-silence-marker")
+            .synchronously()
+            .arg(name)
+            .asDefault("")
+            .exec();
+        if (marker.isEmpty()) {
+            Logger.warn(
+                this,
+                "#remind(%s): has to be reminded but marker is empty",
+                name
+            );
+        } else {
+            this.ibus.make("remind-silent-identity")
                 .arg(name)
-                .asDefault("")
+                .arg(marker)
+                .asDefault(false)
                 .exec();
-            if (!marker.isEmpty()) {
-                this.ibus.make("remind-silent-identity")
-                    .arg(name)
-                    .arg(marker)
-                    .asDefault(false)
-                    .exec();
-                Logger.info(
-                    this,
-                    "#run(): '%s' has to be reminded: '%s'",
-                    name,
-                    marker
-                );
-            }
+            Logger.info(
+                this,
+                "#remind(%s): has to be reminded: '%s'",
+                name,
+                marker
+            );
         }
     }
 
