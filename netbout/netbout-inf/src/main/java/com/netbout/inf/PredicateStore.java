@@ -29,6 +29,7 @@ package com.netbout.inf;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.inf.ebs.EbsVolume;
+import com.netbout.inf.motors.StoreAware;
 import com.netbout.inf.predicates.PredicatePointer;
 import com.ymock.util.Logger;
 import java.io.Closeable;
@@ -145,10 +146,11 @@ public final class PredicateStore implements Store {
         for (Class pred : ref.getSubTypesOf(Pointer.class)) {
             final File dir = new File(this.folder.path(), pred.getName());
             dir.mkdirs();
+            Pointer motor;
             try {
-                motors.add(
-                    (Pointer) pred.getConstructor(File.class).newInstance(dir)
-                );
+                motor = (Pointer) pred
+                    .getConstructor(File.class)
+                    .newInstance(dir);
             } catch (NoSuchMethodException ex) {
                 throw new PredicateException(ex);
             } catch (InstantiationException ex) {
@@ -158,6 +160,10 @@ public final class PredicateStore implements Store {
             } catch (java.lang.reflect.InvocationTargetException ex) {
                 throw new PredicateException(ex);
             }
+            if (motor instanceof StoreAware) {
+                ((StoreAware) motor).setStore(this);
+            }
+            motors.add(motor);
         }
         Logger.debug(
             this,

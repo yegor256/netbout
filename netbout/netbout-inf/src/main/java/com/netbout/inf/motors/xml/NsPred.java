@@ -95,8 +95,14 @@ final class NsPred implements Predicate {
      */
     @Override
     public boolean contains(final Long message) {
-        return this.triples.<Urn>get(message, XmlMotor.MSG_TO_NS)
-            .equals(this.namespace);
+        boolean contains;
+        try {
+            contains = this.triples.<Urn>get(message, XmlMotor.MSG_TO_NS)
+                .equals(this.namespace);
+        } catch (com.netbout.inf.triples.MissedTripleException ex) {
+            contains = false;
+        }
+        return contains;
     }
 
 }

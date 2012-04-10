@@ -68,7 +68,7 @@ final class PredicateBuilder {
         final QueryLexer lexer = new QueryLexer(input);
         final TokenStream tokens = new CommonTokenStream(lexer);
         final QueryParser parser = new QueryParser(tokens);
-        parser.setPredicateStore(this.store);
+        parser.setStore(this.store);
         Predicate predicate;
         try {
             predicate = parser.query();

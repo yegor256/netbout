@@ -29,6 +29,7 @@ package com.netbout.inf.motors.bundles;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.triples.BerkleyTriples;
 import com.netbout.inf.triples.Triples;
@@ -118,13 +119,23 @@ public final class BundlesMotor implements Pointer {
         if ("bundled".equals(name)) {
             pred = new BundledPred(this.triples);
         } else if ("unbundled".equals(name)) {
-            pred = new UnbundledPred(
-                this.triples,
-                this.triples.<String>get(
+            String marker;
+            try {
+                marker = this.triples.<String>get(
                     ((NumberAtom) atoms.get(0)).value(),
                     BundlesMotor.BOUT_TO_MARKER
-                ),
+                );
+            } catch (com.netbout.inf.triples.MissedTripleException ex) {
+                throw new PredicateException("Can't find bout");
+            }
+            pred = new UnbundledPred(
+                this.triples,
+                marker,
                 ((NumberAtom) atoms.get(0)).value()
+            );
+        } else {
+            throw new PredicateException(
+                String.format("Predicate %s not supported in BUNDLES", name)
             );
         }
         return pred;

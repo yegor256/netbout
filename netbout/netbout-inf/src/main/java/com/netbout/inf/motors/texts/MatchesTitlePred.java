@@ -82,11 +82,17 @@ final class MatchesTitlePred implements Predicate {
      */
     @Override
     public boolean contains(final Long message) {
-        return this.triples.has(
-            this.triples.<Long>get(message, TextsMotor.MSG_TO_BOUT),
-            TextsMotor.BOUT_TITLE_TO_WORD,
-            this.word
-        );
+        boolean contains;
+        try {
+            contains = this.triples.has(
+                this.triples.<Long>get(message, TextsMotor.MSG_TO_BOUT),
+                TextsMotor.BOUT_TITLE_TO_WORD,
+                this.word
+            );
+        } catch (com.netbout.inf.triples.MissedTripleException ex) {
+            contains = false;
+        }
+        return contains;
     }
 
 }

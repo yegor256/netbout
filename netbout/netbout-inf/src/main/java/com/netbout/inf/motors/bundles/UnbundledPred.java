@@ -92,13 +92,19 @@ final class UnbundledPred implements Predicate {
      */
     @Override
     public boolean contains(final Long message) {
-        final String marker = this.triples.get(
-            this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT),
-            BundlesMotor.BOUT_TO_MARKER
-        );
-        return this.bundle.equals(marker)
-            && !this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT)
-                .equals(this.bout);
+        boolean contains;
+        try {
+            final String marker = this.triples.get(
+                this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT),
+                BundlesMotor.BOUT_TO_MARKER
+            );
+            contains = this.bundle.equals(marker)
+                && !this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT)
+                    .equals(this.bout);
+        } catch (com.netbout.inf.triples.MissedTripleException ex) {
+            contains = false;
+        }
+        return contains;
     }
 
 }

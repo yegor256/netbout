@@ -82,18 +82,22 @@ final class BundledPred implements Predicate {
      */
     @Override
     public boolean contains(final Long message) {
-        final String marker = this.triples.get(
-            this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT),
-            BundlesMotor.BOUT_TO_MARKER
-        );
-        boolean allow;
-        if (this.passed.contains(marker)) {
-            allow = false;
-        } else {
-            this.passed.add(marker);
-            allow = true;
+        boolean contains;
+        try {
+            final String marker = this.triples.get(
+                this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT),
+                BundlesMotor.BOUT_TO_MARKER
+            );
+            if (this.passed.contains(marker)) {
+                contains = false;
+            } else {
+                this.passed.add(marker);
+                contains = true;
+            }
+        } catch (com.netbout.inf.triples.MissedTripleException ex) {
+            contains = false;
         }
-        return allow;
+        return contains;
     }
 
 }

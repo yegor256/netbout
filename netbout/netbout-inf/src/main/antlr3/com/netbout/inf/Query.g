@@ -24,13 +24,13 @@ grammar Query;
 }
 
 @parser::members {
-    private transient PredicateBuilder builder;
+    private transient Store store;
     @Override
     public void emitErrorMessage(String msg) {
         throw new PredicateException(msg);
     }
-    public void setPredicateBuilder(final PredicateBuilder bldr) {
-        this.builder = bldr;
+    public void setStore(final Store str) {
+        this.store = str;
     }
 }
 
@@ -51,7 +51,7 @@ predicate returns [Predicate ret]
         { atoms.add($atom.ret); }
     )*
     ')'
-    { $ret = this.builder.build($NAME.text, atoms); }
+    { $ret = this.store.build($NAME.text, atoms); }
     ;
 
 atom returns [Atom ret]

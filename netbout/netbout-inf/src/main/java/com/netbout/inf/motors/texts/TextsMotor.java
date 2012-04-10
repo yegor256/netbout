@@ -30,8 +30,10 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
+import com.netbout.inf.Store;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
+import com.netbout.inf.motors.StoreAware;
 import com.netbout.inf.triples.BerkleyTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Bout;
@@ -58,9 +60,8 @@ import org.apache.commons.collections.CollectionUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class TextsMotor implements Pointer {
+public final class TextsMotor implements Pointer, StoreAware {
 
     /**
      * Message number to word, in text (name of triple).
@@ -78,6 +79,11 @@ public final class TextsMotor implements Pointer {
     static final String MSG_TO_BOUT = "message-to-bout";
 
     /**
+     * The store.
+     */
+    private transient Store store;
+
+    /**
      * The triples.
      */
     private final transient Triples triples;
@@ -88,6 +94,14 @@ public final class TextsMotor implements Pointer {
      */
     public TextsMotor(final File dir) {
         this.triples = new BerkleyTriples(dir);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setStore(final Store str) {
+        this.store = str;
     }
 
     /**
@@ -144,9 +158,9 @@ public final class TextsMotor implements Pointer {
                     )
                 );
             }
-            predicate = new AndPred(terms);
+            predicate = this.store.build("and", terms);
         } else if (words.isEmpty()) {
-            predicate = new TruePred();
+            predicate = this.store.build("true", Arrays.asList(new Atom[]{}));
         } else {
             final VariableAtom var = (VariableAtom) atoms.get(1);
             final String word = words.iterator().next();

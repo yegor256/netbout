@@ -68,6 +68,7 @@ public final class BerkleyTriples implements Triples {
     @Override
     public <T> boolean has(final Long number, final String name,
         final T value) {
+        return false;
     }
 
     /**
@@ -76,6 +77,7 @@ public final class BerkleyTriples implements Triples {
     @Override
     public <T> T get(final Long number, final String name)
         throws MissedTripleException {
+        return null;
     }
 
     /**
@@ -83,6 +85,7 @@ public final class BerkleyTriples implements Triples {
      */
     @Override
     public <T> Iterator<T> all(final Long number, final String name) {
+        return null;
     }
 
     /**
@@ -90,6 +93,7 @@ public final class BerkleyTriples implements Triples {
      */
     @Override
     public <T> Iterator<Long> reverse(final String name, final T value) {
+        return null;
     }
 
     /**
@@ -98,6 +102,7 @@ public final class BerkleyTriples implements Triples {
     @Override
     public <T> Iterator<Long> reverse(final String name,
         final Iterator<T> values) {
+        return null;
     }
 
     /**
