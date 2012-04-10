@@ -27,17 +27,16 @@
 package com.netbout.inf.motors.texts;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
+import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
-import com.netbout.inf.predicates.AbstractVarargPred;
-import com.netbout.inf.predicates.FalsePred;
-import com.netbout.inf.predicates.TruePred;
-import com.netbout.inf.predicates.logic.AndPred;
+import com.netbout.inf.triples.BerkleyTriples;
+import com.netbout.inf.triples.Triples;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,16 +62,31 @@ import org.apache.commons.collections.CollectionUtils;
 public final class TextsMotor implements Pointer {
 
     /**
-     * The lucene.
+     * Message number to word, in text (name of triple).
      */
-    private final transient Lucene lucene;
+    static final String MSG_TEXT_TO_WORD = "message-text-to-word";
+
+    /**
+     * Bout number to word, in bout title (name of triple).
+     */
+    static final String BOUT_TITLE_TO_WORD = "bout-title-to-word";
+
+    /**
+     * Message to bout (name of triple).
+     */
+    static final String MSG_TO_BOUT = "message-to-bout";
+
+    /**
+     * The triples.
+     */
+    private final transient Triples triples;
 
     /**
      * Public ctor.
      * @param dir The directory to work in
      */
     public TextsMotor(final File dir) {
-        this.lucene = new Lucene(dir);
+        this.triples = new Triples(dir);
     }
 
     /**
@@ -88,7 +102,7 @@ public final class TextsMotor implements Pointer {
      */
     @Override
     public void close() throws java.io.IOException {
-        this.lucene.close();
+        this.triples.close();
     }
 
     /**
@@ -104,6 +118,35 @@ public final class TextsMotor implements Pointer {
      */
     @Override
     public Predicate build(final String name, final List<Atom> atoms) {
+        Predicate predicate;
+        final Set<String> words = this.words(atoms.get(0).value().toString());
+        if (words.size() > 1) {
+            final List<Atom> atoms = new ArrayList<Atom>(words.size());
+            for (String word : words) {
+                atoms.add(
+                    this.build(
+                        name,
+                        Arrays.asList(new Atom[] {word, atoms.get(1)})
+                    )
+                );
+            }
+            predicate = new AndPred(atoms);
+        } else if (words.isEmpty()) {
+            predicate = new TruePred();
+        } else {
+            final VariableAtom var = (VariableAtom) atoms.get(1);
+            final String word = words.iterator().next();
+            if (var.equals(VariableAtom.TEXT)) {
+                predicate = new MatchesTextPred(word);
+            } else if (var.equals(VariableAtom.BOUT_TITLE)) {
+                predicate = new MatchesTitlePred(word);
+            } else {
+                throw new PredicateException(
+                    String.format("Variable %s not supported in MATCHES", var)
+                );
+            }
+        }
+        return predicate;
     }
 
     /**
@@ -111,6 +154,18 @@ public final class TextsMotor implements Pointer {
      */
     @Override
     public void see(final Message msg) {
+        for (String word : TextsMotor.words(msg.text())) {
+            this.triples.put(
+                msg.number(),
+                TextsMotor.MSG_TEXT_TO_WORD,
+                word
+            );
+        }
+        this.triples.put(
+            msg.number(),
+            TextsMotor.MSG_TO_BOUT,
+            msg.bout().number()
+        );
     }
 
     /**
@@ -118,6 +173,40 @@ public final class TextsMotor implements Pointer {
      */
     @Override
     public void see(final Bout bout) {
+        this.triples.clear(bout.number(), TextsMotor.BOUT_TITLE_TO_WORD);
+        for (String word : TextsMotor.words(bout.title())) {
+            this.triples.put(
+                bout.number(),
+                TextsMotor.BOUT_TITLE_TO_WORD,
+                word
+            );
+        }
+    }
+
+    /**
+     * Extract words from text.
+     * @param text The text
+     * @return Set of words
+     */
+    private static Set<String> words(final String text) {
+        final Set<String> words = new HashSet<String>(
+            Arrays.asList(
+                text.replaceAll(
+                    "['\"\\!@#\\$%\\?\\^&\\*\\(\\),\\.\\[\\]=\\+\\/]+",
+                    "  "
+                ).trim().toUpperCase(Locale.ENGLISH).split("\\s+")
+            )
+        );
+        CollectionUtils.filter(
+            words,
+            new org.apache.commons.collections.Predicate() {
+                @Override
+                public boolean evaluate(final Object obj) {
+                    return ((String) obj).length() > 2;
+                }
+            }
+        );
+        return words;
     }
 
 }

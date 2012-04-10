@@ -61,19 +61,6 @@ public interface Infinity extends Closeable {
     Iterable<Long> messages(String query);
 
     /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
-     */
-    void see(Identity identity);
-
-    /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
-     */
-    void see(Bout bout);
-
-    /**
      * Update information about this message.
      * @param message The message to inform about
      */

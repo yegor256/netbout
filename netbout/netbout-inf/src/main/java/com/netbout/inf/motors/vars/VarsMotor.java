@@ -46,12 +46,12 @@ public final class VarsMotor implements Pointer {
     /**
      * Message to bout (name of triple).
      */
-    private static final String MSG_TO_BOUT = "message-to-bout";
+    static final String MSG_TO_BOUT = "message-to-bout";
 
     /**
-     * Bout to marker (name of triple).
+     * Message to author name (name of triple).
      */
-    private static final String BOUT_TO_MARKER = "bout-to-marker";
+    static final String MSG_TO_AUTHOR_NAME = "message-to-author-name";
 
     /**
      * The triples.
@@ -87,7 +87,7 @@ public final class VarsMotor implements Pointer {
      */
     @Override
     public boolean pointsTo(final String name) {
-        return name.matches("bundled|unbundled");
+        return name.matches("equals|unique");
     }
 
     /**
@@ -95,18 +95,28 @@ public final class VarsMotor implements Pointer {
      */
     @Override
     public Predicate build(final String name, final List<Atom> atoms) {
+        final VariableAtom var = (VariableAtom) atoms.get(0);
         Predicate pred;
-        if ("bundled".equals(name)) {
-            pred = new BundledPred(this.triples);
-        } else if ("unbundled".equals(name)) {
-            pred = new UnbundledPred(
-                this.triples,
-                this.triples.get(
-                    ((NumberAtom) atoms.get(0)).value()
-                    VarsMotor.BOUT_TO_MARKER
-                ),
-                ((NumberAtom) atoms.get(0)).value()
-            );
+        if ("equals".equals(name)) {
+            if (var.equals(VariableAtom.NUMBER)) {
+                pred = new EqNumberPred();
+            } else if (var.equals(VariableAtom.BOUT_NUMBER)) {
+                pred = new EqBoutNumberPred(this.triples);
+            } else if (var.equals(VariableAtom.AUTHOR_NAME)) {
+                pred = new EqAuthorNamePred(this.triples);
+            } else {
+                throw new PredicateException(
+                    String.format("Variable %s not supported in EQUALS", var)
+                );
+            }
+        } else {
+            if (var.equals(VariableAtom.BOUT_NUMBER)) {
+                pred = new UniqueBoutNumberPred(this.triples);
+            } else {
+                throw new PredicateException(
+                    String.format("Variable %s not supported in UNIQUE", var)
+                );
+            }
         }
         return pred;
     }
@@ -121,6 +131,11 @@ public final class VarsMotor implements Pointer {
             VarsMotor.MSG_TO_BOUT,
             msg.bout().number()
         );
+        this.triples.put(
+            msg.number(),
+            VarsMotor.MSG_TO_AUTHOR_NAME,
+            msg.author().name()
+        );
     }
 
     /**
@@ -128,16 +143,7 @@ public final class VarsMotor implements Pointer {
      */
     @Override
     public void see(final Bout bout) {
-        final Set<Urn> names = new TreeSet<Urn>();
-        for (Participant dude : bout.participants()) {
-            names.add(dude.identity().name());
-        }
-        final String marker = Logger.format("%[list]s", names);
-        this.triples.put(
-            bout.number(),
-            VarsMotor.BOUT_TO_MARKER,
-            marker
-        );
+        // nothing to do here
     }
 
 }

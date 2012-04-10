@@ -42,7 +42,6 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Meta(name = "unique", extracts = true)
 public final class UniquePred extends AbstractVarargPred {
 
     /**

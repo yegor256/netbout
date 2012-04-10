@@ -35,6 +35,11 @@ package com.netbout.inf;
 abstract class AbstractTask implements Task {
 
     /**
+     * The store with predicates.
+     */
+    private final transient Store istore;
+
+    /**
      * When started.
      */
     private transient long started;
@@ -45,16 +50,11 @@ abstract class AbstractTask implements Task {
     private transient long finished;
 
     /**
-     * The index to work with.
-     */
-    private final transient Index data;
-
-    /**
      * Public ctor.
-     * @param index The index to work with
+     * @param store The store
      */
-    public AbstractTask(final Index index) {
-        this.data = index;
+    public AbstractTask(final Store store) {
+        this.istore = store;
     }
 
     /**
@@ -103,11 +103,11 @@ abstract class AbstractTask implements Task {
     protected abstract void execute();
 
     /**
-     * Get index.
-     * @return The index
+     * Get store.
+     * @return The store
      */
-    protected final Index index() {
-        return this.data;
+    protected final Store store() {
+        return this.istore;
     }
 
 }

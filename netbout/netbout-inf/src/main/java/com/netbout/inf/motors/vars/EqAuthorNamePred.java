@@ -24,36 +24,70 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.motors.bundles;
+
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
+import com.netbout.inf.triples.Triples;
+import com.netbout.spi.Urn;
+import java.util.NoSuchElementException;
 
 /**
- * One predicate.
+ * Means "(equals $author.name 'urn:test:johnny')".
  *
- * <p>Implementations must be thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate {
+final class EqAuthorNamePred implements Predicate {
 
     /**
-     * Return next message number that complies with this predicate, and jump
-     * to the next element.
-     * @return Message number
+     * Triples to use.
      */
-    Long next();
+    private final transient Triples triples;
 
     /**
-     * Move to the next element, if it exists and return FALSE if it's absent.
-     * @return True if the next element exists, false if it's the end of row
+     * The name we're waiting.
      */
-    boolean hasNext();
+    private final transient Urn name;
 
     /**
-     * Check this message number, whether it is allowed.
-     * @param message Message number to check
-     * @return Is it allowed or not?
+     * Public ctor.
+     * @param trpls The triples to work with
+     * @param urn The name
      */
-    boolean contains(Long message);
+    public EqAuthorNamePred(final Triples trpls, final Urn urn) {
+        this.triples = trpls;
+        this.name = urn;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long next() {
+        throw new PredicateException("EqAuthorNamePred#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("EqAuthorNamePred#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return this.triples.has(
+            message,
+            VarsMotor.MSG_TO_AUTHOR_NAME,
+            this.name
+        );
+    }
 
 }

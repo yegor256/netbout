@@ -57,7 +57,7 @@ public final class DefaultInfinity implements Infinity {
     /**
      * Store of predicates.
      */
-    private final transient PredicateStore store = new PredicateStore();
+    private final transient Store store = new PredicateStore();
 
     /**
      * Public ctor, with custom index.
@@ -131,32 +131,6 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public Iterable<Long> messages(final String query) {
         return new LazyMessages(new PredicateBuilder(this.store).parse(query));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Identity identity) {
-        this.mux.add(new SeeIdentityTask(this, this.bus, identity, this.store));
-        Logger.debug(
-            this,
-            "see('%s'): request submitted",
-            identity.name()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Bout bout) {
-        this.mux.add(new SeeBoutTask(this, this.bus, bout, this.store));
-        Logger.debug(
-            this,
-            "see(bout #%d): request submitted",
-            bout.number()
-        );
     }
 
     /**

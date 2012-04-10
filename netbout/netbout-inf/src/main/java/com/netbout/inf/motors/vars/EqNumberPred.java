@@ -24,36 +24,66 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.motors.bundles;
+
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
+import com.netbout.inf.triples.Triples;
+import java.util.NoSuchElementException;
 
 /**
- * One predicate.
+ * Means "(equals $number 123)".
  *
- * <p>Implementations must be thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate {
+final class EqNumberPred implements Predicate {
 
     /**
-     * Return next message number that complies with this predicate, and jump
-     * to the next element.
-     * @return Message number
+     * Triples to use.
      */
-    Long next();
+    private final transient Triples triples;
 
     /**
-     * Move to the next element, if it exists and return FALSE if it's absent.
-     * @return True if the next element exists, false if it's the end of row
+     * The number we're waiting.
      */
-    boolean hasNext();
+    private final transient Long number;
 
     /**
-     * Check this message number, whether it is allowed.
-     * @param message Message number to check
-     * @return Is it allowed or not?
+     * Public ctor.
+     * @param trpls The triples to work with
+     * @param num The number of message
      */
-    boolean contains(Long message);
+    public EqNumberPred(final Triples trpls, final Long num) {
+        this.triples = trpls;
+        this.number = num;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long next() {
+        throw new PredicateException("EqNumberPred#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("EqNumberPred#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return message.equals(this.number)
+            && this.triples.all(message, VarsMotor.MSG_TO_BOUT).hasNext();
+    }
 
 }

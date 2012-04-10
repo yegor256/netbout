@@ -24,40 +24,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.lucene;
+package com.netbout.inf;
 
-import java.io.Closeable;
-import java.io.File;
-import java.util.Iterator;
+import com.netbout.spi.Message;
+import java.util.List;
 
 /**
- * Search engine on top of Lucene.
+ * Store of all known predicates.
+ *
+ * <p>Implementation must be immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Lucene {
+public interface Store extends Closeable {
 
     /**
-     * Public ctor.
-     * @param dir Where to keep data
+     * See this message.
+     * @param msg The message
      */
-    public Lucene(final File dir) {
-        // todo
-    }
+    void see(Message msg);
 
     /**
-     * {@inheritDoc}
+     * Build a predicate from name and list of preds.
+     *
+     * <p>Throws {@link PredicateException} if this name is not recognized.
+     *
+     * @param name Its name
+     * @param atoms List of arguments
+     * @return The predicate
      */
-    public void insert(final Long number, final Data data) {
-        // todo
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Iterator<Long> find(final String field, final String text) {
-        return null;
-    }
+    Predicate build(String name, List<Atom> atoms);
 
 }

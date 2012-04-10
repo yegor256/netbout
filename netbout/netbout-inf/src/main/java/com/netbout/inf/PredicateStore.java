@@ -28,12 +28,17 @@ package com.netbout.inf;
 
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
+import com.netbout.inf.ebs.EbsVolume;
+import com.netbout.inf.predicates.PredicatePointer;
 import com.ymock.util.Logger;
 import java.io.Closeable;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.io.IOUtils;
+import org.reflections.Reflections;
 
 /**
  * Store of all known predicates.
@@ -43,7 +48,7 @@ import org.apache.commons.io.IOUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class PredicateStore implements Closeable {
+public final class PredicateStore implements Store {
 
     /**
      * The folder to work with.
@@ -75,9 +80,9 @@ final class PredicateStore implements Closeable {
     }
 
     /**
-     * See this message.
-     * @param msg The message
+     * {@inheritDoc}
      */
+    @Override
     public void see(final Message msg) {
         for (Pointer pointer : this.pointers) {
             pointer.see(msg);
@@ -85,14 +90,9 @@ final class PredicateStore implements Closeable {
     }
 
     /**
-     * Build a predicate from name and list of preds.
-     *
-     * <p>Throws {@link PredicateException} if this name is not recognized.
-     *
-     * @param name Its name
-     * @param atoms List of arguments
-     * @return The predicate
+     * {@inheritDoc}
      */
+    @Override
     public Predicate build(final String name, final List<Atom> atoms) {
         Predicate predicate = null;
         for (Pointer ptr : this.pointers) {
@@ -130,7 +130,7 @@ final class PredicateStore implements Closeable {
         );
         final Set<Pointer> motors = new HashSet<Pointer>();
         for (Class pred : ref.getSubTypesOf(Pointer.class)) {
-            final File dir = new File(this.folder.path(), pre.getName());
+            final File dir = new File(this.folder.path(), pred.getName());
             dir.mkdirs();
             try {
                 motors.add(

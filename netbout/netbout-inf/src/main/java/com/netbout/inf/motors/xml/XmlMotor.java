@@ -26,6 +26,8 @@
  */
 package com.netbout.inf.motors.xml;
 
+import com.netbout.inf.triples.BerkleyTriples;
+import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.xml.DomParser;
@@ -56,7 +58,7 @@ public final class XmlMotor implements Pointer {
      * @param dir The directory to work in
      */
     public XmlMotor(final File dir) {
-        this.triples = new Triples(dir);
+        this.triples = new BerkleyTriples(dir);
     }
 
     /**

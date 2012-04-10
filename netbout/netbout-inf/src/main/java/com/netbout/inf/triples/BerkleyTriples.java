@@ -32,69 +32,79 @@ import java.io.File;
 import java.util.Iterator;
 
 /**
- * Triples.
+ * Triples with Berkley DB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Triples extends Closeable {
+public final class BerkleyTriples implements Triples {
 
     /**
-     * Put new triple.
-     * @param number The number
-     * @param name Name of triple
-     * @param value The value
+     * Public ctor.
+     * @param dir Where to keep data
      */
-    <T> void put(Long number, String name, T value);
+    public BerkleyTriples(final File dir) {
+        // todo
+    }
 
     /**
-     * Does it have this triple?
-     * @param number The number
-     * @param name Name of triple
-     * @param value The value
-     * @return Yes or no
+     * {@inheritDoc}
      */
-    <T> boolean has(Long number, String name, T value);
+    @Override
+    public void close() throws java.io.IOException {
+        // ...
+    }
 
     /**
-     * Get the value (the first one).
-     * @param number The number
-     * @param name Name of triple
-     * @return The value found
-     * @throws MissedTripleException If not found
+     * {@inheritDoc}
      */
-    <T> T get(Long number, String name) throws MissedTripleException;
+    @Override
+    public <T> void put(final Long number, final String name, final T value) {
+    }
 
     /**
-     * Get all triples.
-     * @param number The number
-     * @param name Name of triple
-     * @return The values found
-     * @throws MissedTripleException If not found
+     * {@inheritDoc}
      */
-    <T> Iterator<T> all(Long number, String name);
+    @Override
+    public <T> boolean has(final Long number, final String name,
+        final T value) {
+    }
 
     /**
-     * Reverse lookup.
-     * @param name Name of triple
-     * @param value The value to look for
-     * @return Reverse sorted list of numbers found
+     * {@inheritDoc}
      */
-    <T> Iterator<Long> reverse(String name, T value);
+    @Override
+    public <T> T get(final Long number, final String name)
+        throws MissedTripleException {
+    }
 
     /**
-     * Reverse lookup, by any of the values provided.
-     * @param name Name of triple
-     * @param values The values to look for
-     * @return Reverse sorted list of numbers found
+     * {@inheritDoc}
      */
-    <T> Iterator<Long> reverse(String name, Iterator<T> values);
+    @Override
+    public <T> Iterator<T> all(final Long number, final String name) {
+    }
 
     /**
-     * Clear these triples.
-     * @param number The number
-     * @param name Name of triple
+     * {@inheritDoc}
      */
-    void clear(Long number, String name);
+    @Override
+    public <T> Iterator<Long> reverse(final String name, final T value) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Iterator<Long> reverse(final String name,
+        final Iterator<T> values) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clear(final Long number, final String name) {
+    }
 
 }

@@ -24,36 +24,69 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.motors.texts;
+
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
+import com.netbout.inf.triples.Triples;
+import java.util.NoSuchElementException;
 
 /**
- * One predicate.
+ * Means "(matches '...' $text)".
  *
- * <p>Implementations must be thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate {
+final class MatchesTextPred implements Predicate {
 
     /**
-     * Return next message number that complies with this predicate, and jump
-     * to the next element.
-     * @return Message number
+     * Triples to use.
      */
-    Long next();
+    private final transient Triples triples;
 
     /**
-     * Move to the next element, if it exists and return FALSE if it's absent.
-     * @return True if the next element exists, false if it's the end of row
+     * The word we're waiting.
      */
-    boolean hasNext();
+    private final transient String word;
 
     /**
-     * Check this message number, whether it is allowed.
-     * @param message Message number to check
-     * @return Is it allowed or not?
+     * Public ctor.
+     * @param trpls The triples to work with
+     * @param wrd The word
      */
-    boolean contains(Long message);
+    public MatchesTextPred(final Triples trpls, final String wrd) {
+        this.triples = trpls;
+        this.word = wrd;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long next() {
+        throw new PredicateException("MatchesTextPred#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("MatchesTextPred#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return this.triples.has(
+            message,
+            TextsMotor.MSG_TEXT_TO_WORD,
+            this.word
+        );
+    }
 
 }

@@ -55,12 +55,6 @@ public interface Pointer extends Closeable {
     void see(Message msg);
 
     /**
-     * See this bout.
-     * @param bout The bout to see
-     */
-    void see(Bout bout);
-
-    /**
      * Create a predicate.
      * @param name Name of predicate to build
      * @param atoms Atoms

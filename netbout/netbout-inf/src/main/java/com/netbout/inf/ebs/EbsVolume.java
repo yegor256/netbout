@@ -43,7 +43,7 @@ import java.net.URI;
  * @author Krzysztof Krason (Krzysztof.Krason@gmail.com)
  * @version $Id$
  */
-final class EbsVolume implements Folder {
+public final class EbsVolume implements Folder {
 
     /**
      * The directory.

@@ -27,8 +27,6 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import java.util.ArrayList;

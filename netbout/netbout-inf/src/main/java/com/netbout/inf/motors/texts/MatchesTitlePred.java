@@ -24,11 +24,69 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.inf.motors.texts;
+
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
+import com.netbout.inf.triples.Triples;
+import java.util.NoSuchElementException;
 
 /**
- * Text engine on top of Lucene.
+ * Means "(matches '...' $bout.title)".
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.inf.lucene;
+final class MatchesTitlePred implements Predicate {
+
+    /**
+     * Triples to use.
+     */
+    private final transient Triples triples;
+
+    /**
+     * The word we're waiting.
+     */
+    private final transient String word;
+
+    /**
+     * Public ctor.
+     * @param trpls The triples to work with
+     * @param wrd The word
+     */
+    public MatchesTitlePred(final Triples trpls, final String wrd) {
+        this.triples = trpls;
+        this.word = wrd;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long next() {
+        throw new PredicateException("MatchesTitlePred#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
+        throw new PredicateException("MatchesTitlePred#next()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Long message) {
+        return this.triples.has(
+            this.triples.get(message, TextsMotor.MSG_TO_BOUT),
+            TextsMotor.BOUT_TITLE_TO_WORD,
+            this.word
+        );
+    }
+
+}

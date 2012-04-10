@@ -31,6 +31,7 @@ import com.netbout.inf.Index;
 import com.netbout.inf.Meta;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.triples.Triples;
 import java.util.List;
 
 /**
@@ -64,7 +65,8 @@ final class UnbundledPred implements Predicate {
      * @param bndl The bundle to use
      * @param bot Current bout number to ignore
      */
-    public BundledPred(final Triples trpls, final String bndl, final Long bot) {
+    public UnbundledPred(final Triples trpls, final String bndl,
+        final Long bot) {
         this.triples = trpls;
         this.bundle = bndl;
         this.bout = bot;

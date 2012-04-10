@@ -24,75 +24,78 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.motors.bundles;
 
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.HashSet;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.PredicateException;
+import com.netbout.inf.triples.Triples;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * The task to review one message.
+ * Means "(equals $bout.number 123)".
  *
- * <p>This class is immutable and thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SeeMessageTask extends AbstractTask {
+final class UniqueBoutNumberPred implements Predicate {
 
     /**
-     * The bout.
+     * Triples to use.
      */
-    private final transient Message message;
+    private final transient Triples triples;
+
+    /**
+     * List of already passed bout numbers.
+     */
+    private final transient Set<Long> passed =
+        new ConcurrentSkipListSet<Long>();
 
     /**
      * Public ctor.
-     * @param what The message to update
-     * @param index The index to use
+     * @param trpls The triples to work with
      */
-    public SeeMessageTask(final Message what, final Index index) {
-        super(index);
-        this.message = what;
+    public UniqueBoutNumberPred(final Triples trpls) {
+        this.triples = trpls;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<Urn> dependants() {
-        final Set<Urn> names = new HashSet<Urn>();
-        for (Participant dude : this.message.bout().participants()) {
-            names.add(dude.identity().name());
-        }
-        return names;
+    public Long next() {
+        throw new PredicateException("UniqueBoutNumberPred#next()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        return String.format("see-message-#%d", this.message.number());
+    public boolean hasNext() {
+        throw new PredicateException("UniqueBoutNumberPred#next()");
     }
 
     /**
      * {@inheritDoc}
-     *
-     * <p>There is no synchronization, intentionally. Msg class is thread-safe
-     * and we don't worry about concurrent changes to it.
      */
     @Override
-    protected void execute() {
-        this.store().see(this.message);
-        Logger.debug(
-            this,
-            "#execute(): cached message #%d in %[nano]s",
-            this.message.number(),
-            this.time()
+    public boolean contains(final Long message) {
+        final Iterator<Long> bouts = this.triples.all(
+            message,
+            VarsMotor.MSG_TO_BOUT
         );
+        boolean contains = false;
+        if (bouts.hasNext()) {
+            final Long bout = bouts.next();
+            if (!this.passed.contains(bout)) {
+                contains = true;
+            }
+            this.passed.add(bout);
+        }
+        return contains;
     }
 
 }

@@ -28,7 +28,6 @@ package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Index;
-import com.netbout.inf.Meta;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;

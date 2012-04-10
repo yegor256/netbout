@@ -28,6 +28,7 @@ package com.netbout.inf.motors.bundles;
 
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
+import com.netbout.inf.triples.Triples;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 

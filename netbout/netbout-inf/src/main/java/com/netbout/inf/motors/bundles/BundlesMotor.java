@@ -26,6 +26,8 @@
  */
 package com.netbout.inf.motors.bundles;
 
+import com.netbout.inf.triples.BerkleyTriples;
+import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
@@ -63,7 +65,7 @@ public final class BundlesMotor implements Pointer {
      * @param dir The directory to work in
      */
     public BundlesMotor(final File dir) {
-        this.triples = new Triples(dir);
+        this.triples = new BerkleyTriples(dir);
     }
 
     /**
@@ -102,7 +104,7 @@ public final class BundlesMotor implements Pointer {
             pred = new UnbundledPred(
                 this.triples,
                 this.triples.get(
-                    ((NumberAtom) atoms.get(0)).value()
+                    ((NumberAtom) atoms.get(0)).value(),
                     BundlesMotor.BOUT_TO_MARKER
                 ),
                 ((NumberAtom) atoms.get(0)).value()
