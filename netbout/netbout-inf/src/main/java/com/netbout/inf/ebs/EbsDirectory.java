@@ -278,11 +278,13 @@ final class EbsDirectory implements Closeable {
                 new com.jcraft.jsch.Logger() {
                     @Override
                     public boolean isEnabled(final int level) {
-                        return true;
+                        return level == com.jcraft.jsch.Logger.WARN
+                            || level == com.jcraft.jsch.Logger.FATAL
+                            || level == com.jcraft.jsch.Logger.ERROR;
                     }
                     @Override
                     public void log(final int level, final String msg) {
-                        Logger.info(EbsDirectory.class, "%s", msg);
+                        Logger.error(EbsDirectory.class, "%s", msg);
                     }
                 }
             );
