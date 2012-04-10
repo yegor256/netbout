@@ -36,12 +36,12 @@ import java.io.File;
 import java.util.Iterator;
 
 /**
- * Triples with Berkley DB.
+ * Triples with Berkeley DB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BerkleyTriples implements Triples {
+public final class BerkeleyTriples implements Triples {
 
     /**
      * Public ctor.
