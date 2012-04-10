@@ -27,6 +27,10 @@
 package com.netbout.inf.triples;
 
 import com.netbout.spi.Message;
+import com.sleepycat.je.Database;
+import com.sleepycat.je.DatabaseConfig;
+import com.sleepycat.je.Environment;
+import com.sleepycat.je.EnvironmentConfig;
 import java.io.Closeable;
 import java.io.File;
 import java.util.Iterator;
@@ -44,7 +48,9 @@ public final class BerkleyTriples implements Triples {
      * @param dir Where to keep data
      */
     public BerkleyTriples(final File dir) {
-        // todo
+        final EnvironmentConfig config = new EnvironmentConfig();
+        config.setAllowCreate(true);
+        env = new Environment(dir, config);
     }
 
     /**
