@@ -24,13 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates.logic;
+package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.IndexMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateMocker;
-import com.netbout.inf.predicates.FalsePred;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -56,8 +54,7 @@ public final class OrPredTest {
             .withMessages(new Long[] {2L})
             .mock();
         final Predicate merger = new OrPred(
-            Arrays.asList(new Atom[] {first, second, new FalsePred()}),
-            new IndexMocker().mock()
+            Arrays.asList(new Atom[] {first, second, new FalsePred()})
         );
         MatcherAssert.assertThat("has next", merger.hasNext());
         MatcherAssert.assertThat(merger.next(), Matchers.equalTo(2L));
@@ -73,8 +70,7 @@ public final class OrPredTest {
     @Test
     public void mergesTwoEmptyPredicates() throws Exception {
         final Predicate merger = new AndPred(
-            Arrays.asList(new Atom[] {new FalsePred(), new FalsePred()}),
-            new IndexMocker().mock()
+            Arrays.asList(new Atom[] {new FalsePred(), new FalsePred()})
         );
         MatcherAssert.assertThat("row is empty", !merger.hasNext());
     }
