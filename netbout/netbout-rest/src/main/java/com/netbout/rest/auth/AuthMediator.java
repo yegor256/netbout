@@ -107,8 +107,8 @@ public final class AuthMediator {
             throw new IOException(ex);
         }
         final URI uri = UriBuilder.fromUri(entry.toString())
-            .replaceQueryParam("identity", "{iname}")
-            .replaceQueryParam("secret", "{secret}")
+            .queryParam("identity", "{iname}")
+            .queryParam("secret", "{secret}")
             .build(iname, secret);
         try {
             remote = this.load(uri);

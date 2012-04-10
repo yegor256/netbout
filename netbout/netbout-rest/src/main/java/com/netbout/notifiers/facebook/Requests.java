@@ -110,6 +110,7 @@ final class Requests {
                 }
             }
         }
+        Logger.info(this, "#clean('%s'): %B", marker, clean);
         return clean;
     }
 

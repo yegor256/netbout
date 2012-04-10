@@ -25,7 +25,7 @@
                 mean time click "Back" button in your browser and try
                 to do something else.
             </p>
-            <pre>${text}</pre>
+            <pre style="display:none;">${text}</pre>
         </section>
     </body>
 </html>
