@@ -27,6 +27,8 @@
 package com.netbout.inf.triples;
 
 import com.netbout.spi.Message;
+import com.sleepycat.bind.serial.StoredClassCatalog;
+import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -102,7 +104,7 @@ public final class BerkeleyTriples implements Triples {
      */
     @Override
     public <T> void put(final Long number, final String name, final T value) {
-        this.database(name).put(null, this.key(number), this.data(value));
+        this.database(name).put(null, this.key(number), this.entry(value));
     }
 
     /**
@@ -114,7 +116,7 @@ public final class BerkeleyTriples implements Triples {
         return this.database(name).getSearchBoth(
             null,
             this.key(number),
-            this.data(value),
+            this.entry(value),
             LockMode.DEFAULT
         ) == OperationStatus.SUCCESS;
     }
@@ -125,7 +127,15 @@ public final class BerkeleyTriples implements Triples {
     @Override
     public <T> T get(final Long number, final String name)
         throws MissedTripleException {
-        return null;
+        final DatabaseEntry entry = new DatabaseEntry();
+        if (this.database(name)
+            .get(null, this.key(number), entry, LockMode.DEFAULT)
+                != OperationStatus.SUCCESS) {
+            throw new MissedTripleException(
+                String.format("Number %d not found in '%s'", number, name)
+            );
+        }
+        return this.<T>value(entry);
     }
 
     /**
@@ -171,6 +181,9 @@ public final class BerkeleyTriples implements Triples {
                 final DatabaseConfig config = new DatabaseConfig();
                 config.setAllowCreate(true);
                 config.setDeferredWrite(true);
+                if (name.charAt(0) != '-') {
+                    config.setSortedDuplicates(true);
+                }
                 this.databases.put(
                     name,
                     env.openDatabase(null, name, config)
@@ -193,20 +206,29 @@ public final class BerkeleyTriples implements Triples {
     }
 
     /**
-     * Create data.
+     * Create entry from value.
      * @param value The value
-     * @return The data
+     * @return The entry
      */
-    public <T> DatabaseEntry data(final T value) {
-        DatabaseEntry data;
-        try {
-            data = new DatabaseEntry(
-                value.toString().getBytes(CharEncoding.UTF_8)
-            );
-        } catch (java.io.UnsupportedEncodingException ex) {
-            throw new IllegalStateException(ex);
-        }
-        return data;
+    public <T> DatabaseEntry entry(final T value) {
+        final DatabaseEntry entry = new DatabaseEntry();
+        new SerialBinding(
+            new StoredClassCatalog(this.database("-meta-info")),
+            value.getClass()
+        ).objectToEntry(value, entry);
+        return entry;
+    }
+
+    /**
+     * Revert entry back to value.
+     * @param entry The entry
+     * @return The value
+     */
+    public <T> T value(final DatabaseEntry entry) {
+        return (T) new SerialBinding(
+            new StoredClassCatalog(this.database("-meta-info")),
+            Object.class
+        ).entryToObject(entry);
     }
 
 }
