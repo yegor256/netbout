@@ -149,4 +149,21 @@ public final class TriplesTest {
         this.triples.get(this.random.nextLong(), "foo-foo-foo");
     }
 
+    /**
+     * Triples can clear some records.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void clearsRecords() throws Exception {
+        final String name = "some-name-of-triple";
+        final Long number = this.random.nextLong();
+        final Long value = this.random.nextLong();
+        this.triples.put(number, name, value);
+        this.triples.clear(number, name);
+        MatcherAssert.assertThat(
+            this.triples.has(number, name, value),
+            Matchers.is(false)
+        );
+    }
+
 }

@@ -168,6 +168,12 @@ public final class BerkeleyTriples implements Triples {
      */
     @Override
     public void clear(final Long number, final String name) {
+        if (this.database(name).delete(null, this.key(number))
+            != OperationStatus.SUCCESS) {
+            throw new IllegalStateException(
+                String.format("Failed to delete %d in '%s'", number, name)
+            );
+        }
     }
 
     /**
