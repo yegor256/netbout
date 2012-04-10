@@ -70,7 +70,7 @@ public final class TriplesTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         final Collection<Object[]> args = new LinkedList<Object[]>();
-        args.add(new Object[] {new BerkleyTriples(Files.createTempDir())});
+        args.add(new Object[] {new BerkeleyTriples(Files.createTempDir())});
         return args;
     }
 
@@ -96,6 +96,10 @@ public final class TriplesTest {
         MatcherAssert.assertThat(
             this.triples.has(number, name, value),
             Matchers.is(true)
+        );
+        MatcherAssert.assertThat(
+            this.triples.has(number, name, "some other value"),
+            Matchers.is(false)
         );
     }
 

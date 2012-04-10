@@ -34,7 +34,7 @@ import com.netbout.inf.Store;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.motors.StoreAware;
-import com.netbout.inf.triples.BerkleyTriples;
+import com.netbout.inf.triples.BerkeleyTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
@@ -93,7 +93,7 @@ public final class TextsMotor implements Pointer, StoreAware {
      * @param dir The directory to work in
      */
     public TextsMotor(final File dir) {
-        this.triples = new BerkleyTriples(dir);
+        this.triples = new BerkeleyTriples(dir);
     }
 
     /**

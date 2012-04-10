@@ -33,7 +33,7 @@ import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
-import com.netbout.inf.triples.BerkleyTriples;
+import com.netbout.inf.triples.BerkeleyTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
@@ -74,7 +74,7 @@ public final class VarsMotor implements Pointer {
      * @param dir The directory to work in
      */
     public VarsMotor(final File dir) {
-        this.triples = new BerkleyTriples(dir);
+        this.triples = new BerkeleyTriples(dir);
     }
 
     /**

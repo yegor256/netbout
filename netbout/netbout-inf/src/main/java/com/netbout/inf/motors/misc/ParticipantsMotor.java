@@ -30,7 +30,7 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
-import com.netbout.inf.triples.BerkleyTriples;
+import com.netbout.inf.triples.BerkeleyTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
@@ -72,7 +72,7 @@ public final class ParticipantsMotor implements Pointer {
      * @param dir The directory to work in
      */
     public ParticipantsMotor(final File dir) {
-        this.triples = new BerkleyTriples(dir);
+        this.triples = new BerkeleyTriples(dir);
     }
 
     /**

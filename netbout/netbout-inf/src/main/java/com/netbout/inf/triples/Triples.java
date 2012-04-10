@@ -34,6 +34,8 @@ import java.util.Iterator;
 /**
  * Triples.
  *
+ * <p>Implementation must be thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
