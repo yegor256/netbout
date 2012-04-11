@@ -97,22 +97,22 @@ public final class HsqlTriples implements Triples {
      */
     @Override
     public <T> void put(final Long number, final String name, final T value) {
+        final JdbcSession session = this.session(name).sql(
+            // @checkstyle StringLiteralsConcatenation (4 lines)
+            "MERGE INTO %table-1% AS t USING"
+            + " (VALUES(CAST(? AS BIGINT), CAST(? AS BINARY(255))))"
+            + " AS vals(k, v) ON t.key = vals.k AND t.value = vals.v"
+            + " WHEN NOT MATCHED THEN INSERT VALUES vals.k, vals.v, ?"
+        )
+            .table(name)
+            .set(number)
+            .set(this.serialize(value));
         if (value instanceof Long) {
-            this.session(name)
-                .sql("INSERT INTO %table-1% VALUES (?, ?, ?)")
-                .table(name)
-                .set(number)
-                .set(this.serialize(value))
-                .set(value)
-                .insert();
+            session.set(value);
         } else {
-            this.session(name)
-                .sql("INSERT INTO %table-1% VALUES (?, ?, 0)")
-                .table(name)
-                .set(number)
-                .set(this.serialize(value))
-                .insert();
+            session.set(0L);
         }
+        session.insert();
     }
 
     /**
@@ -237,9 +237,12 @@ public final class HsqlTriples implements Triples {
                 for (String name : names) {
                     if (!this.tables.contains(name)) {
                         new JdbcSession(this.source.getConnection()).sql(
-                            // @checkstyle StringLiteralsConcatenation (2 lines)
-                            "CREATE CACHED TABLE IF NOT EXISTS %table-1%"
-                            + " (key BIGINT, value BINARY(1024), vnum BIGINT)"
+                            // @checkstyle StringLiteralsConcatenation (5 lines)
+                            "CREATE CACHED TABLE IF NOT EXISTS %table-1% ("
+                            + " key BIGINT NOT NULL,"
+                            + " value BINARY(255) NOT NULL,"
+                            + " vnum BIGINT,"
+                            + " PRIMARY KEY(key, value))"
                         ).table(name).execute();
                         this.tables.add(name);
                     }

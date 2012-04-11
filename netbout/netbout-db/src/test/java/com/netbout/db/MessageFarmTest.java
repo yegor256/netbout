@@ -120,4 +120,18 @@ public final class MessageFarmTest {
         );
     }
 
+    /**
+     * MessageFarm can find a chunk of messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsChunkOfMessages() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Long message = new MessageRowMocker(bout).mock();
+        MatcherAssert.assertThat(
+            this.farm.getMessagesChunk(message - 1),
+            Matchers.hasItem(message)
+        );
+    }
+
 }

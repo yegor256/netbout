@@ -29,6 +29,7 @@ package com.netbout.hub.cron;
 import com.netbout.hub.PowerHub;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +62,11 @@ final class Indexer extends AbstractCron {
         for (Long number : numbers) {
             this.hub().infinity().see(this.message(number));
         }
+        Logger.info(
+            this,
+            "#cron(): %d message(s) pushed to INF",
+            numbers.size()
+        );
     }
 
     /**
@@ -76,7 +82,7 @@ final class Indexer extends AbstractCron {
             .exec();
         final List<Urn> dudes = this.hub().make("get-bout-participants")
             .synchronously()
-            .arg(number)
+            .arg(bnum)
             .exec();
         return this.hub().identity(dudes.get(0)).bout(bnum).message(number);
     }

@@ -106,6 +106,8 @@ public final class TriplesTest {
     @BeforeClass
     public static void tempDir() throws Exception {
         TriplesTest.dir = Files.createTempDir();
+        FileUtils.deleteDirectory(TriplesTest.dir);
+        TriplesTest.dir.mkdirs();
     }
 
     /**

@@ -32,6 +32,8 @@ import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Messages manipulations.
@@ -60,6 +62,34 @@ public final class MessageFarm {
                         throws SQLException {
                         rset.next();
                         return rset.getLong(1);
+                    }
+                }
+            );
+    }
+
+    /**
+     * Get chunk of message numbers.
+     * @param since Number of the message, since when we need more numbers
+     * @return The list of numbers
+     */
+    @Operation("get-messages-chunk")
+    public List<Long> getMessagesChunk(final Long since) {
+        return new DbSession(true).sql(
+            // @checkstyle StringLiteralsConcatenation (2 lines)
+            "SELECT number FROM message WHERE number > ?"
+            + " ORDER BY number LIMIT 10000"
+        )
+            .set(since)
+            .select(
+                new Handler<List<Long>>() {
+                    @Override
+                    public List<Long> handle(final ResultSet rset)
+                        throws SQLException {
+                        final List<Long> numbers = new LinkedList<Long>();
+                        while (rset.next()) {
+                            numbers.add(rset.getLong(1));
+                        }
+                        return numbers;
                     }
                 }
             );
