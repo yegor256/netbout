@@ -39,6 +39,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
@@ -78,6 +80,12 @@ public final class PredicateStore implements Store {
      * Maximum successfully indexed number.
      */
     private final transient AtomicLong max = new AtomicLong(0L);
+
+    /**
+     * Numbers just done.
+     */
+    private final transient SortedSet<Long> done =
+        new ConcurrentSkipListSet<Long>();
 
     /**
      * Public ctor.
@@ -126,6 +134,14 @@ public final class PredicateStore implements Store {
      */
     @Override
     public Long maximum() {
+        while (this.done.isEmpty()) {
+            final Long smallest = this.done.first();
+            if (smallest != this.max.get() + 1) {
+                break;
+            }
+            this.max.incrementAndGet();
+            this.done.remove(smallest);
+        }
         return this.max.get();
     }
 
@@ -137,9 +153,7 @@ public final class PredicateStore implements Store {
         for (Pointer pointer : this.pointers) {
             pointer.see(msg);
         }
-        if (msg.number() == this.max.get() + 1) {
-            this.counter.put(msg.number(), PredicateStore.MSG_TO_VOID, 0L);
-        }
+        this.counter.put(this.maximum(), PredicateStore.MSG_TO_VOID, 0L);
     }
 
     /**
