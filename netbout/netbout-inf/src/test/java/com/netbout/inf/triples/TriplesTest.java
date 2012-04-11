@@ -81,7 +81,8 @@ public final class TriplesTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         final Collection<Object[]> args = new LinkedList<Object[]>();
-        args.add(new Object[] {BerkeleyTriples.class});
+        // args.add(new Object[] {BerkeleyTriples.class});
+        args.add(new Object[] {HsqlTriples.class});
         return args;
     }
 
@@ -187,6 +188,45 @@ public final class TriplesTest {
                 Matchers.hasItem(first),
                 Matchers.hasItem(second)
             )
+        );
+    }
+
+    /**
+     * Triples can reverse value to an iterator of numbers.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void reversesSingleValueToIterator() throws Exception {
+        final String name = "a-simple-name-of-triple";
+        final Long first = this.random.nextLong();
+        final Long second = first + 1L;
+        final Urn value = new UrnMocker().mock();
+        this.triples.put(first, name, value);
+        this.triples.put(second, name, value);
+        MatcherAssert.assertThat(
+            IteratorUtils.toList(this.triples.reverse(name, value)),
+            Matchers.allOf(
+                (Matcher) Matchers.hasSize(2),
+                Matchers.hasItems(second, first)
+            )
+        );
+    }
+
+    /**
+     * Triples can re-use the files.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void reusesFilesOnDiscAfterClose() throws Exception {
+        final String name = "boom-boom";
+        final Long number = this.random.nextLong();
+        final Urn value = new UrnMocker().mock();
+        this.triples.put(number, name, value);
+        this.close();
+        this.start();
+        MatcherAssert.assertThat(
+            this.triples.has(number, name, value),
+            Matchers.is(true)
         );
     }
 

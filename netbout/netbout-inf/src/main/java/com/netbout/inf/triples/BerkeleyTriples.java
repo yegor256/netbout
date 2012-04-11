@@ -38,6 +38,10 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.SecondaryConfig;
+import com.sleepycat.je.SecondaryCursor;
+import com.sleepycat.je.SecondaryDatabase;
+import com.sleepycat.je.SecondaryKeyCreator;
 import com.ymock.util.Logger;
 import java.io.Closeable;
 import java.io.File;
@@ -154,7 +158,7 @@ public final class BerkeleyTriples implements Triples {
      */
     @Override
     public <T> Iterator<T> all(final Long number, final String name) {
-        final Cursor cursor = this.cursor(name);
+        final Cursor cursor = this.cursor(this.database(name));
         final DatabaseEntry key = this.key(number);
         return new AbstractIterator<T>() {
             @Override
@@ -175,7 +179,22 @@ public final class BerkeleyTriples implements Triples {
      */
     @Override
     public <T> Iterator<Long> reverse(final String name, final T value) {
-        return null;
+        final SecondaryCursor cursor =
+            (SecondaryCursor) this.cursor(this.secondary(name));
+        final DatabaseEntry key = this.entry(value);
+        return new AbstractIterator<Long>() {
+            @Override
+            public Long fetch() {
+                final DatabaseEntry entry = new DatabaseEntry();
+                final DatabaseEntry pkey = new DatabaseEntry();
+                Long number = null;
+                if (cursor.getNext(key, pkey, entry, null)
+                    == OperationStatus.SUCCESS) {
+                    number = BerkeleyTriples.this.<Long>value(pkey);
+                }
+                return number;
+            }
+        };
     }
 
     /**
@@ -183,8 +202,8 @@ public final class BerkeleyTriples implements Triples {
      */
     @Override
     public <T> Iterator<Long> reverse(final String name,
-        final Iterator<T> values) {
-        return null;
+        final String join, final T value) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -225,12 +244,46 @@ public final class BerkeleyTriples implements Triples {
     }
 
     /**
+     * Get secondary database by name.
+     * @param name The name
+     * @return The database
+     */
+    private SecondaryDatabase secondary(final String name) {
+        final String sname = String.format("%s-secondary", name);
+        synchronized (this.databases) {
+            if (!this.databases.containsKey(sname)) {
+                final Database primary = this.database(name);
+                final SecondaryConfig config = new SecondaryConfig();
+                config.setAllowCreate(true);
+                config.setSortedDuplicates(true);
+                config.setKeyCreator(
+                    new SecondaryKeyCreator() {
+                        @Override
+                        public boolean createSecondaryKey(
+                            final SecondaryDatabase database,
+                            final DatabaseEntry key, final DatabaseEntry entry,
+                            final DatabaseEntry result) {
+                            result.setData(entry.getData());
+                            return true;
+                        }
+                    }
+                );
+                this.databases.put(
+                    sname,
+                    env.openSecondaryDatabase(null, sname, primary, config)
+                );
+            }
+        }
+        return (SecondaryDatabase) this.databases.get(sname);
+    }
+
+    /**
      * Create new cursor.
-     * @param name Name of DB to use
+     * @param database The database to use
      * @return The cursor
      */
-    private Cursor cursor(final String name) {
-        final Cursor cursor = this.database(name).openCursor(null, null);
+    private Cursor cursor(final Database database) {
+        final Cursor cursor = database.openCursor(null, null);
         synchronized (this.cursors) {
             Long now = System.currentTimeMillis();
             for (Long time : this.cursors.keySet()) {

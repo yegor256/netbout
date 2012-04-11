@@ -87,10 +87,11 @@ public interface Triples extends Closeable {
     /**
      * Reverse lookup, by any of the values provided.
      * @param name Name of triple
+     * @param join Name of joining triple
      * @param values The values to look for
      * @return Reverse sorted list of numbers found
      */
-    <T> Iterator<Long> reverse(String name, Iterator<T> values);
+    <T> Iterator<Long> reverse(String name, String join, T value);
 
     /**
      * Clear these triples.

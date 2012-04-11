@@ -75,10 +75,8 @@ public final class TalksWithPred implements Predicate {
         this.urn = person;
         this.iterator = this.triples.reverse(
             ParticipantsMotor.MSG_TO_BOUT,
-            this.triples.reverse(
-                ParticipantsMotor.BOUT_TO_PARTICIPANT,
-                this.urn
-            )
+            ParticipantsMotor.BOUT_TO_PARTICIPANT,
+            this.urn
         );
     }
 
