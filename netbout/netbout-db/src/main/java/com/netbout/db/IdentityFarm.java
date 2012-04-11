@@ -208,8 +208,10 @@ public final class IdentityFarm {
         final Calendar cal = new GregorianCalendar();
         cal.add(Calendar.HOUR, -1);
         return new DbSession(true).sql(
-            // @checkstyle StringLiteralsConcatenation (2 lines)
-            "SELECT author, MAX(date) AS recent FROM message"
+            // @checkstyle StringLiteralsConcatenation (4 lines)
+            "SELECT author, MAX(message.date) AS recent FROM message"
+            + " LEFT JOIN seen  ON seen.message = message.number"
+            + " WHERE seen.message IS NULL"
             + " GROUP BY author HAVING recent < ?"
         )
             .set(cal.getTime())

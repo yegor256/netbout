@@ -77,7 +77,9 @@ public final class EbsVolume implements Folder {
      */
     @Override
     public void close() throws java.io.IOException {
-        this.directory.close();
+        if (this.instance.charAt(0) == 'i') {
+            this.directory.close();
+        }
     }
 
     /**

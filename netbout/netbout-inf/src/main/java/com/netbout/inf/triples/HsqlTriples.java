@@ -76,7 +76,11 @@ public final class HsqlTriples implements Triples {
      */
     public HsqlTriples(final File dir) {
         this.source = HsqlTriples.datasource(dir);
-        Logger.debug(this, "#HsqlTriples(%s): instantiated", dir);
+        Logger.info(
+            this,
+            "#HsqlTriples(.../%s): instantiated",
+            dir.getName()
+        );
     }
 
     /**
@@ -273,12 +277,13 @@ public final class HsqlTriples implements Triples {
      * @return The datasource
      */
     private static DataSource datasource(final File dir) {
+        dir.mkdirs();
         final BoneCPDataSource src = new BoneCPDataSource();
         src.setDriverClass("org.hsqldb.jdbcDriver");
         src.setJdbcUrl(
             String.format(
                 "jdbc:hsqldb:file:%s",
-                new File(dir, "hsqldb.sql")
+                new File(dir, "hsqldb.")
             )
         );
         src.setUsername("sa");

@@ -60,6 +60,7 @@ import java.util.concurrent.TimeUnit;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
+ * @checkstyle ClassFanOutComplexity (500 lines)
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.DoNotUseThreads" })
 public final class DefaultHub implements PowerHub, StatsProvider {
@@ -110,7 +111,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
     public DefaultHub(final Bus bus) {
         StatsFarm.register(this);
         this.ibus = bus;
-        this.inf = new DefaultInfinity(this.ibus);
+        this.inf = new DefaultInfinity();
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         this.promote(this.persister());

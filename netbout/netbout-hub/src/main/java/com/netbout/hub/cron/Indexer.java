@@ -29,7 +29,6 @@ package com.netbout.hub.cron;
 import com.netbout.hub.PowerHub;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +52,7 @@ final class Indexer extends AbstractCron {
      * {@inheritDoc}
      */
     @Override
-    public void cron() {
+    public void cron() throws Exception {
         final List<Long> numbers = this.hub().make("get-messages-chunk")
             .synchronously()
             .arg(this.hub().infinity().maximum())
@@ -68,8 +67,9 @@ final class Indexer extends AbstractCron {
      * Create a message from its number.
      * @param number Number of message
      * @return The message itself
+     * @throws Exception When some error inside
      */
-    private Message message(final Long number) {
+    private Message message(final Long number) throws Exception {
         final Long bnum = this.hub().make("get-bout-of-message")
             .synchronously()
             .arg(number)

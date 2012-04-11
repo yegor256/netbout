@@ -57,10 +57,12 @@ public abstract class AbstractCron implements Runnable {
      * {@inheritDoc}
      */
     @Override
-    public void run() {
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
+    public final void run() {
         final long start = System.nanoTime();
         try {
             this.cron();
+        // @checkstyle IllegalCatch (1 line)
         } catch (Exception ex) {
             Logger.error(this, "#run(): %[exception]s", ex);
         }

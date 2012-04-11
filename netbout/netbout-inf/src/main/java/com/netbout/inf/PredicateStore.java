@@ -34,7 +34,6 @@ import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -121,12 +120,12 @@ public final class PredicateStore implements Store {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws IOException {
+    public void close() {
         for (Pointer pointer : this.pointers) {
             IOUtils.closeQuietly(pointer);
         }
-        this.counter.close();
-        this.folder.close();
+        IOUtils.closeQuietly(this.counter);
+        IOUtils.closeQuietly(this.folder);
     }
 
     /**
@@ -134,7 +133,7 @@ public final class PredicateStore implements Store {
      */
     @Override
     public Long maximum() {
-        while (this.done.isEmpty()) {
+        while (!this.done.isEmpty()) {
             final Long smallest = this.done.first();
             if (smallest != this.max.get() + 1) {
                 break;

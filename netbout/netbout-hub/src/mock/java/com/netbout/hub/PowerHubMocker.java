@@ -67,9 +67,7 @@ public final class PowerHubMocker {
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
-                    return new DefaultInfinity(
-                        PowerHubMocker.this.bmocker.mock()
-                    );
+                    return new DefaultInfinity();
                 }
             }
         ).when(this.hub).infinity();
