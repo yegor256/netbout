@@ -26,16 +26,10 @@
  */
 package com.netbout.inf.motors.xml;
 
-import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.triples.Triples;
-import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Namespace predicate.

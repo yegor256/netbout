@@ -26,12 +26,10 @@
  */
 package com.netbout.inf.triples;
 
-import com.ymock.util.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
@@ -74,7 +72,7 @@ public final class JdbcSession {
          * Process the result set and return some value.
          * @param rset The result set to process
          * @return The result
-         * @throws Exception If something goes wrong inside
+         * @throws SQLException If something goes wrong inside
          */
         T handle(ResultSet rset) throws SQLException;
     }

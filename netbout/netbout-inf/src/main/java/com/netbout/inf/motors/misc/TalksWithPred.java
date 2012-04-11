@@ -26,21 +26,10 @@
  */
 package com.netbout.inf.motors.misc;
 
-import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.triples.Triples;
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * This participant is in the bout.
@@ -75,7 +64,7 @@ public final class TalksWithPred implements Predicate {
         this.urn = person;
         this.iterator = this.triples.reverse(
             ParticipantsMotor.MSG_TO_BOUT,
-            ParticipantsMotor.BOUT_TO_PARTICIPANT,
+            ParticipantsMotor.BOUT_TO_DUDE,
             this.urn
         );
     }
@@ -105,7 +94,7 @@ public final class TalksWithPred implements Predicate {
         try {
             contains = this.triples.has(
                 this.triples.<Long>get(message, ParticipantsMotor.MSG_TO_BOUT),
-                ParticipantsMotor.BOUT_TO_PARTICIPANT,
+                ParticipantsMotor.BOUT_TO_DUDE,
                 this.urn
             );
         } catch (com.netbout.inf.triples.MissedTripleException ex) {

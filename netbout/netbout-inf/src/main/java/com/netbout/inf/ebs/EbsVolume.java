@@ -122,7 +122,7 @@ public final class EbsVolume implements Folder {
      */
     private static String currentInstance() {
         String instance = "unknown";
-        if (Manifests.read("Netbout-AwsKey").length() == 20) {
+        if (Manifests.read("Netbout-AwsKey").charAt(0) != '-') {
             // @checkstyle LineLength (1 line)
             instance = RestTester.start(URI.create("http://169.254.169.254/latest/meta-data/instance-id"))
                 .get("loading current EC2 instance ID")

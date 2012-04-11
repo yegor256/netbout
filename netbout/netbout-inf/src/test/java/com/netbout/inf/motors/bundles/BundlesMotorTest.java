@@ -26,14 +26,12 @@
  */
 package com.netbout.inf.motors.bundles;
 
-import com.netbout.inf.Atom;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;

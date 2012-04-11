@@ -24,79 +24,61 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.hub.cron;
 
-import com.netbout.bus.Bus;
+import com.netbout.hub.PowerHub;
+import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Entry point to Hub.
+ * Indexes messages in INF.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
-final class Reminder implements Runnable {
-
-    /**
-     * The hub.
-     */
-    private final transient Bus ibus;
+final class Indexer extends AbstractCron {
 
     /**
      * Public ctor.
-     * @param bus The bus
+     * @param hub The hub
      */
-    public Reminder(final Bus bus) {
-        this.ibus = bus;
+    public Indexer(final PowerHub hub) {
+        super(hub);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void run() {
-        final List<Urn> names = this.ibus.make("find-silent-identities")
+    public void cron() {
+        final List<Long> numbers = this.hub().make("get-messages-chunk")
             .synchronously()
-            .asDefault(new ArrayList<Urn>(0))
+            .arg(this.hub().infinity().maximum())
+            .asDefault(new ArrayList<Long>(0))
             .exec();
-        for (Urn name : names) {
-            this.remind(name);
+        for (Long number : numbers) {
+            this.hub().infinity().see(this.message(number));
         }
     }
 
     /**
-     * Remind one person.
-     * @param name The name to remind
+     * Create a message from its number.
+     * @param number Number of message
+     * @return The message itself
      */
-    private void remind(final Urn name) {
-        final String marker = this.ibus.make("get-silence-marker")
+    private Message message(final Long number) {
+        final Long bnum = this.hub().make("get-bout-of-message")
             .synchronously()
-            .arg(name)
-            .asDefault("")
+            .arg(number)
             .exec();
-        if (marker.isEmpty()) {
-            Logger.warn(
-                this,
-                "#remind(%s): has to be reminded but marker is empty",
-                name
-            );
-        } else {
-            this.ibus.make("remind-silent-identity")
-                .arg(name)
-                .arg(marker)
-                .asDefault(false)
-                .exec();
-            Logger.info(
-                this,
-                "#remind(%s): has to be reminded: '%s'",
-                name,
-                marker
-            );
-        }
+        final List<Urn> dudes = this.hub().make("get-bout-participants")
+            .synchronously()
+            .arg(number)
+            .exec();
+        return this.hub().identity(dudes.get(0)).bout(bnum).message(number);
     }
 
 }

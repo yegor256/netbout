@@ -24,29 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
-
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
-import org.junit.Test;
 
 /**
- * Test case of {@link DefaultInfinity}.
+ * Triples, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultInfinityTest {
-
-    /**
-     * DefaultInfinity can find messages.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void populatesIndexOnFirstTimeCall() throws Exception {
-        final Infinity inf = new DefaultInfinity(new StoreMocker().mock());
-        final Message msg = new MessageMocker().mock();
-        inf.see(msg);
-        inf.messages("foo");
-    }
-
-}
+package com.netbout.inf.triples;

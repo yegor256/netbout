@@ -32,9 +32,6 @@ import com.netbout.bus.cache.EmptyTokenCache;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.ymock.util.Logger;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Default implementation of {@link Bus}.
@@ -54,35 +51,9 @@ public final class DefaultBus implements Bus, StatsProvider {
     );
 
     /**
-     * Scheduled future for "routine" calls.
-     */
-    private final transient ScheduledFuture schedule;
-
-    /**
      * Public ctor.
      */
     public DefaultBus() {
-        this.schedule = Executors
-            .newSingleThreadScheduledExecutor()
-            .scheduleAtFixedRate(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        final long start = System.nanoTime();
-                        DefaultBus.this.make("routine")
-                            .asDefault(false)
-                            .exec();
-                        Logger.debug(
-                            this,
-                            "#run(): routine job done in %[nano]s",
-                            System.nanoTime() - start
-                        );
-                    }
-                },
-                1L,
-                1L,
-                TimeUnit.MINUTES
-            );
         StageFarm.register(this);
     }
 
@@ -91,7 +62,6 @@ public final class DefaultBus implements Bus, StatsProvider {
      */
     @Override
     public void close() {
-        this.schedule.cancel(true);
         this.make("shutdown")
             .synchronously()
             .asDefault(false)

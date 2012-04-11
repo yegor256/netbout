@@ -51,7 +51,7 @@ final class PosPred extends AbstractVarargPred {
     /**
      * Current position.
      */
-    private transient AtomicLong position = new AtomicLong(0L);
+    private final transient AtomicLong position = new AtomicLong(0L);
 
     /**
      * Public ctor.

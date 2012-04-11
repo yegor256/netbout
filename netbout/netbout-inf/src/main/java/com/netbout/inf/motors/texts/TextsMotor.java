@@ -36,21 +36,14 @@ import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.motors.StoreAware;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -60,22 +53,26 @@ import org.apache.commons.collections.CollectionUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class TextsMotor implements Pointer, StoreAware {
 
     /**
      * Message number to word, in text (name of triple).
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static final String MSG_TEXT_TO_WORD = "message-text-to-word";
 
     /**
      * Bout number to word, in bout title (name of triple).
      */
-    static final String BOUT_TITLE_TO_WORD = "bout-title-to-word";
+    @SuppressWarnings("PMD.DefaultPackage")
+    static final String TITLE_TO_WORD = "bout-title-to-word";
 
     /**
      * Message to bout (name of triple).
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static final String MSG_TO_BOUT = "message-to-bout";
 
     /**
@@ -140,6 +137,7 @@ public final class TextsMotor implements Pointer, StoreAware {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Predicate build(final String name, final List<Atom> atoms) {
         Predicate predicate;
         final Set<String> words = this.words(((TextAtom) atoms.get(0)).value());
@@ -194,11 +192,11 @@ public final class TextsMotor implements Pointer, StoreAware {
             TextsMotor.MSG_TO_BOUT,
             msg.bout().number()
         );
-        this.triples.clear(msg.bout().number(), TextsMotor.BOUT_TITLE_TO_WORD);
+        this.triples.clear(msg.bout().number(), TextsMotor.TITLE_TO_WORD);
         for (String word : TextsMotor.words(msg.bout().title())) {
             this.triples.put(
                 msg.bout().number(),
-                TextsMotor.BOUT_TITLE_TO_WORD,
+                TextsMotor.TITLE_TO_WORD,
                 word
             );
         }

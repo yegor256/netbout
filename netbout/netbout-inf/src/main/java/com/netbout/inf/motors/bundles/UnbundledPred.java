@@ -26,12 +26,9 @@
  */
 package com.netbout.inf.motors.bundles;
 
-import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
-import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.triples.Triples;
-import java.util.List;
 
 /**
  * Allows only messages that unbundle on the specified bout number.

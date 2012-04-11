@@ -26,8 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.io.Closeable;
@@ -59,6 +57,12 @@ public interface Infinity extends Closeable {
      * @return The list of messages, ordered
      */
     Iterable<Long> messages(String query);
+
+    /**
+     * How many messages were seen totally by this infinity?
+     * @return Maximum number of the message seen so far
+     */
+    Long maximum();
 
     /**
      * Update information about this message.

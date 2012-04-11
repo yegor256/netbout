@@ -26,9 +26,8 @@
  */
 package com.netbout.inf.triples;
 
-import com.netbout.spi.Message;
-import com.sleepycat.bind.serial.StoredClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
+import com.sleepycat.bind.serial.StoredClassCatalog;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
@@ -36,21 +35,18 @@ import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.SecondaryConfig;
 import com.sleepycat.je.SecondaryCursor;
 import com.sleepycat.je.SecondaryDatabase;
 import com.sleepycat.je.SecondaryKeyCreator;
 import com.ymock.util.Logger;
-import java.io.Closeable;
 import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.apache.commons.lang.CharEncoding;
 
 /**
  * Triples with Berkeley DB.
@@ -59,8 +55,20 @@ import org.apache.commons.lang.CharEncoding;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #358 This class doesn't work because of a limitation in Berkeley DB.
+ *  They don't allow secondary databases to be used when primary database
+ *  allows duplicates. It's strange, but this is how it is now in version 4.0.x
+ *  of Berkeley DB. Maybe in version 5.0 it is fixed.
+ *  http://stackoverflow.com/questions/10095199
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class BerkeleyTriples implements Triples {
+
+    /**
+     * Name of meta table.
+     */
+    private static final String META_TABLE = "-meta-info";
 
     /**
      * The environment.
@@ -165,8 +173,8 @@ public final class BerkeleyTriples implements Triples {
             public T fetch() {
                 final DatabaseEntry entry = new DatabaseEntry();
                 T value = null;
-                if (cursor.getNext(key, entry, null)
-                    == OperationStatus.SUCCESS) {
+                final OperationStatus status = cursor.getNext(key, entry, null);
+                if (status == OperationStatus.SUCCESS) {
                     value = BerkeleyTriples.this.<T>value(entry);
                 }
                 return value;
@@ -188,8 +196,9 @@ public final class BerkeleyTriples implements Triples {
                 final DatabaseEntry entry = new DatabaseEntry();
                 final DatabaseEntry pkey = new DatabaseEntry();
                 Long number = null;
-                if (cursor.getNext(key, pkey, entry, null)
-                    == OperationStatus.SUCCESS) {
+                final OperationStatus status =
+                    cursor.getNext(key, pkey, entry, null);
+                if (status == OperationStatus.SUCCESS) {
                     number = BerkeleyTriples.this.<Long>value(pkey);
                 }
                 return number;
@@ -235,7 +244,7 @@ public final class BerkeleyTriples implements Triples {
                 }
                 this.databases.put(
                     name,
-                    env.openDatabase(null, name, config)
+                    this.env.openDatabase(null, name, config)
                 );
                 Logger.debug(this, "#database('%s'): opened", name);
             }
@@ -258,6 +267,7 @@ public final class BerkeleyTriples implements Triples {
                 config.setSortedDuplicates(true);
                 config.setKeyCreator(
                     new SecondaryKeyCreator() {
+                        // @checkstyle ParameterNumber (5 lines)
                         @Override
                         public boolean createSecondaryKey(
                             final SecondaryDatabase database,
@@ -270,7 +280,7 @@ public final class BerkeleyTriples implements Triples {
                 );
                 this.databases.put(
                     sname,
-                    env.openSecondaryDatabase(null, sname, primary, config)
+                    this.env.openSecondaryDatabase(null, sname, primary, config)
                 );
             }
         }
@@ -316,11 +326,12 @@ public final class BerkeleyTriples implements Triples {
      * Create entry from value.
      * @param value The value
      * @return The entry
+     * @param <T> Type of value
      */
     public <T> DatabaseEntry entry(final T value) {
         final DatabaseEntry entry = new DatabaseEntry();
         new SerialBinding(
-            new StoredClassCatalog(this.database("-meta-info")),
+            new StoredClassCatalog(this.database(BerkeleyTriples.META_TABLE)),
             value.getClass()
         ).objectToEntry(value, entry);
         return entry;
@@ -330,10 +341,11 @@ public final class BerkeleyTriples implements Triples {
      * Revert entry back to value.
      * @param entry The entry
      * @return The value
+     * @param <T> Type of value
      */
     public <T> T value(final DatabaseEntry entry) {
         return (T) new SerialBinding(
-            new StoredClassCatalog(this.database("-meta-info")),
+            new StoredClassCatalog(this.database(BerkeleyTriples.META_TABLE)),
             Object.class
         ).entryToObject(entry);
     }

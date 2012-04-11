@@ -32,7 +32,6 @@ import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
@@ -53,12 +52,13 @@ public final class XmlMotor implements Pointer {
     /**
      * Message to namespace (name of triple).
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static final String MSG_TO_NS = "message-to-namespace";
 
     /**
      * The triples.
      */
-    final transient Triples triples;
+    private final transient Triples triples;
 
     /**
      * Public ctor.
@@ -118,7 +118,6 @@ public final class XmlMotor implements Pointer {
     public void see(final Message msg) {
         final DomParser parser = new DomParser(msg.text());
         if (parser.isXml()) {
-            Urn namespace;
             try {
                 this.triples.put(
                     msg.number(),

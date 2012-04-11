@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.bundles;
+package com.netbout.inf.motors.vars;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Pointer;
@@ -36,13 +36,9 @@ import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import org.reflections.Reflections;
 
 /**
  * Vars motor.
@@ -57,12 +53,14 @@ public final class VarsMotor implements Pointer {
     /**
      * Message to bout (name of triple).
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static final String MSG_TO_BOUT = "message-to-bout";
 
     /**
      * Message to author name (name of triple).
      */
-    static final String MSG_TO_AUTHOR_NAME = "message-to-author-name";
+    @SuppressWarnings("PMD.DefaultPackage")
+    static final String MSG_TO_NAME = "message-to-author-name";
 
     /**
      * The triples.
@@ -161,7 +159,7 @@ public final class VarsMotor implements Pointer {
         );
         this.triples.put(
             msg.number(),
-            VarsMotor.MSG_TO_AUTHOR_NAME,
+            VarsMotor.MSG_TO_NAME,
             msg.author().name()
         );
     }

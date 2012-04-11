@@ -34,16 +34,13 @@ import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import org.reflections.Reflections;
 
 /**
  * Bundles motor.
@@ -58,11 +55,13 @@ public final class BundlesMotor implements Pointer {
     /**
      * Message to bout (name of triple).
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static final String MSG_TO_BOUT = "message-to-bout";
 
     /**
      * Bout to marker (name of triple).
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static final String BOUT_TO_MARKER = "bout-to-marker";
 
     /**
@@ -126,7 +125,7 @@ public final class BundlesMotor implements Pointer {
                     BundlesMotor.BOUT_TO_MARKER
                 );
             } catch (com.netbout.inf.triples.MissedTripleException ex) {
-                throw new PredicateException("Can't find bout");
+                throw new PredicateException(ex);
             }
             pred = new UnbundledPred(
                 this.triples,

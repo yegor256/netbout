@@ -57,6 +57,7 @@ import org.junit.runners.Parameterized;
  * @version $Id$
  */
 @RunWith(Parameterized.class)
+@SuppressWarnings("PMD.TooManyMethods")
 public final class TriplesTest {
 
     /**
@@ -94,7 +95,6 @@ public final class TriplesTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         final Collection<Object[]> args = new LinkedList<Object[]>();
-        // args.add(new Object[] {BerkeleyTriples.class});
         args.add(new Object[] {HsqlTriples.class});
         return args;
     }
@@ -167,7 +167,7 @@ public final class TriplesTest {
         final Long number = this.random.nextLong();
         final Urn urn = new UrnMocker().mock();
         this.triples.put(number, name, urn);
-        this.triples.put(this.random.nextLong(), name, "other value");
+        this.triples.put(number + 1, name, urn);
         MatcherAssert.assertThat(
             this.triples.<Urn>get(number, name),
             Matchers.equalTo(urn)
@@ -289,6 +289,7 @@ public final class TriplesTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidCatchingThrowable")
     public void supportsMultiThreadedOperations() throws Exception {
         final String name = "boom-boom-multi-thread";
         final Long number = this.random.nextLong();
@@ -297,6 +298,7 @@ public final class TriplesTest {
         // @checkstyle MagicNumber (1 line)
         final int threads = 200;
         final AtomicInteger succeeded = new AtomicInteger(0);
+        // @checkstyle AnonInnerLength (30 lines)
         final Callable<Boolean> task = new Callable<Boolean>() {
             @Override
             public Boolean call() {
@@ -316,6 +318,7 @@ public final class TriplesTest {
                         ),
                         Matchers.hasItems(number)
                     );
+                // @checkstyle IllegalCatch (1 line)
                 } catch (Throwable ex) {
                     Logger.error(this, "%[exception]s", ex);
                     throw new IllegalStateException(ex);

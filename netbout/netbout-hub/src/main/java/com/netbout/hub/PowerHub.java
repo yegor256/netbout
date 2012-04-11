@@ -37,7 +37,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface PowerHub extends Hub {
+public interface PowerHub extends Hub {
 
     /**
      * Get ETA of identity.

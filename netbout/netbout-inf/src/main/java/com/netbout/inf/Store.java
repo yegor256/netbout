@@ -47,6 +47,12 @@ public interface Store extends Closeable {
     String statistics();
 
     /**
+     * How many messages were seen totally by this infinity?
+     * @return Maximum number of the message seen so far
+     */
+    Long maximum();
+
+    /**
      * See this message.
      * @param msg The message
      */

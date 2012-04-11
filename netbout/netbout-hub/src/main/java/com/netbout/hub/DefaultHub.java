@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.bus.TxBuilder;
+import com.netbout.hub.cron.AbstractCron;
 import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.hub.hh.StatsFarm;
 import com.netbout.hub.hh.StatsProvider;
@@ -42,7 +43,9 @@ import com.netbout.spi.cpa.CpaHelper;
 import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,9 +91,10 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         new ConcurrentHashMap<Urn, Identity>();
 
     /**
-     * Notifier of silent identities.
+     * Cron tasks running.
      */
-    private final transient ScheduledFuture reminder;
+    private final transient Collection<ScheduledFuture> crons =
+        new LinkedList<ScheduledFuture>();
 
     /**
      * Public ctor.
@@ -110,14 +114,12 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         this.promote(this.persister());
-        this.reminder = Executors
-            .newSingleThreadScheduledExecutor()
-            .scheduleAtFixedRate(
-                new Reminder(this.ibus),
-                0L,
-                1L,
-                TimeUnit.MINUTES
+        for (Runnable task : AbstractCron.all(this)) {
+            this.crons.add(
+                Executors.newSingleThreadScheduledExecutor()
+                    .scheduleWithFixedDelay(task, 1L, 1L, TimeUnit.MINUTES)
             );
+        }
         Logger.debug(
             this,
             "#DefaultHub(%[type]s): instantiated",
@@ -142,7 +144,9 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      */
     @Override
     public void close() throws java.io.IOException {
-        this.reminder.cancel(true);
+        for (ScheduledFuture cron : this.crons) {
+            cron.cancel(true);
+        }
         Logger.debug(this, "#close(): shutting down BUS");
         this.ibus.close();
         Logger.debug(this, "#close(): shutting down INF");

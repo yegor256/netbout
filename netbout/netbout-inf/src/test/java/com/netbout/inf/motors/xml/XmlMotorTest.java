@@ -111,6 +111,7 @@ public final class XmlMotorTest {
         final Urn namespace = new Urn("urn:test:foo");
         final Pointer motor = new XmlMotor(this.dir.newFolder("y"));
         final Predicate pred = motor.build(
+            // @checkstyle MultipleStringLiterals (1 line)
             "ns",
             Arrays.asList(new Atom[] {new TextAtom(namespace)})
         );

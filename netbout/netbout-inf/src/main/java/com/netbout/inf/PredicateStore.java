@@ -26,19 +26,20 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.inf.ebs.EbsVolume;
 import com.netbout.inf.motors.StoreAware;
 import com.netbout.inf.predicates.PredicatePointer;
+import com.netbout.inf.triples.HsqlTriples;
+import com.netbout.inf.triples.Triples;
+import com.netbout.spi.Message;
 import com.ymock.util.Logger;
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 
@@ -49,8 +50,14 @@ import org.reflections.Reflections;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class PredicateStore implements Store {
+
+    /**
+     * Message to some void constant (name of triple).
+     */
+    private static final String MSG_TO_VOID = "message-to-void";
 
     /**
      * The folder to work with.
@@ -63,10 +70,28 @@ public final class PredicateStore implements Store {
     private final transient Set<Pointer> pointers;
 
     /**
+     * Counter of messages indexed.
+     */
+    private final transient Triples counter;
+
+    /**
+     * Maximum successfully indexed number.
+     */
+    private final transient AtomicLong max = new AtomicLong(0L);
+
+    /**
      * Public ctor.
      */
     public PredicateStore() {
         this.pointers = this.discover();
+        this.counter = new HsqlTriples(new File(this.folder.path(), "counter"));
+        final Iterator<Long> numbers = this.counter
+            .reverse(PredicateStore.MSG_TO_VOID, 0L);
+        if (numbers.hasNext()) {
+            this.max.set(numbers.next());
+        } else {
+            this.max.set(0L);
+        }
     }
 
     /**
@@ -92,7 +117,16 @@ public final class PredicateStore implements Store {
         for (Pointer pointer : this.pointers) {
             IOUtils.closeQuietly(pointer);
         }
+        this.counter.close();
         this.folder.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long maximum() {
+        return this.max.get();
     }
 
     /**
@@ -102,6 +136,9 @@ public final class PredicateStore implements Store {
     public void see(final Message msg) {
         for (Pointer pointer : this.pointers) {
             pointer.see(msg);
+        }
+        if (msg.number() == this.max.get() + 1) {
+            this.counter.put(msg.number(), PredicateStore.MSG_TO_VOID, 0L);
         }
     }
 
@@ -146,6 +183,7 @@ public final class PredicateStore implements Store {
      * Discover all motors.
      * @return List of pointers to predicates
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private Set<Pointer> motors() {
         final Reflections ref = new Reflections(
             StoreAware.class.getPackage().getName()

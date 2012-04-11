@@ -26,7 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import java.io.Closeable;
 import java.util.List;
@@ -64,6 +63,7 @@ public interface Pointer extends Closeable {
      * Create a predicate.
      * @param name Name of predicate to build
      * @param atoms Atoms
+     * @return Predicate just built
      */
     Predicate build(String name, List<Atom> atoms);
 

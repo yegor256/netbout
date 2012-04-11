@@ -27,7 +27,6 @@
 package com.netbout.inf.motors.texts;
 
 import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateException;
 import com.netbout.inf.triples.Triples;
 import java.util.NoSuchElementException;
 
@@ -66,7 +65,7 @@ final class MatchesTextPred implements Predicate {
      */
     @Override
     public Long next() {
-        throw new PredicateException("MatchesTextPred#next()");
+        throw new NoSuchElementException();
     }
 
     /**
@@ -74,7 +73,7 @@ final class MatchesTextPred implements Predicate {
      */
     @Override
     public boolean hasNext() {
-        throw new PredicateException("MatchesTextPred#next()");
+        return false;
     }
 
     /**

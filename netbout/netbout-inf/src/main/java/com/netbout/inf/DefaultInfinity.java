@@ -26,10 +26,7 @@
  */
 package com.netbout.inf;
 
-import com.netbout.bus.Bus;
-import com.netbout.inf.ih.StageFarm;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.ih.StageFarm;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
@@ -45,11 +42,6 @@ import org.apache.commons.io.IOUtils;
 public final class DefaultInfinity implements Infinity {
 
     /**
-     * The bus.
-     */
-    private final transient Bus bus;
-
-    /**
      * Multiplexer of tasks.
      */
     private final transient Mux mux = new Mux();
@@ -61,22 +53,19 @@ public final class DefaultInfinity implements Infinity {
 
     /**
      * Public ctor.
-     * @param ibus The BUS to work with
      */
-    public DefaultInfinity(final Bus ibus) {
-        this(ibus, new PredicateStore());
+    public DefaultInfinity() {
+        this(new PredicateStore());
     }
 
     /**
      * Protect ctor, for tests.
-     * @param ibus The BUS to work with
      * @param str The store
      */
-    protected DefaultInfinity(final Bus ibus, final Store str) {
-        this.bus = ibus;
+    protected DefaultInfinity(final Store str) {
         this.store = str;
         StageFarm.register(this);
-        Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", ibus);
+        Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", str);
     }
 
     /**
@@ -141,6 +130,14 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public Iterable<Long> messages(final String query) {
         return new LazyMessages(new PredicateBuilder(this.store).parse(query));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long maximum() {
+        return this.store.maximum();
     }
 
     /**

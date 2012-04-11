@@ -24,10 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.bundles;
+package com.netbout.inf.motors.vars;
 
 import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateException;
 import com.netbout.inf.triples.Triples;
 import java.util.NoSuchElementException;
 

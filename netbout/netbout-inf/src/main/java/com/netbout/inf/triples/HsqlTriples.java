@@ -27,9 +27,7 @@
 package com.netbout.inf.triples;
 
 import com.jolbox.bonecp.BoneCPDataSource;
-import com.netbout.spi.Message;
 import com.ymock.util.Logger;
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -38,7 +36,6 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.DbUtils;
@@ -51,7 +48,9 @@ import org.apache.commons.lang.SerializationUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class HsqlTriples implements Triples {
 
     /**
@@ -180,31 +179,7 @@ public final class HsqlTriples implements Triples {
             .sql("SELECT value FROM %table-1% WHERE key=?")
             .table(name)
             .set(number)
-            .select(
-                new JdbcSession.Handler<Iterator<T>>() {
-                    @Override
-                    public Iterator<T> handle(final ResultSet rset)
-                        throws SQLException {
-                        return new AbstractIterator<T>() {
-                            @Override
-                            public T fetch() {
-                                T value = null;
-                                try {
-                                    if (rset.next()) {
-                                        value = (T) HsqlTriples.deserialize(
-                                            rset.getBytes(1)
-                                        );
-                                    }
-                                } catch (SQLException ex) {
-                                    throw new IllegalStateException(ex);
-                                }
-                                HsqlTriples.this.preserve(rset);
-                                return value;
-                            }
-                        };
-                    }
-                }
-            );
+            .select(new ValuesHandler<T>());
     }
 
     /**
@@ -226,6 +201,7 @@ public final class HsqlTriples implements Triples {
     public <T> Iterator<Long> reverse(final String name, final String join,
         final T value) {
         return this.session(name, join)
+            // @checkstyle LineLength (1 line)
             .sql("SELECT l.key FROM %table-1% AS l JOIN %table-2% AS r ON l.vnum = r.key WHERE r.value=? ORDER BY l.key DESC")
             .table(name)
             .table(join)
@@ -250,12 +226,14 @@ public final class HsqlTriples implements Triples {
      * @param names Names of the table to use
      * @return JDBC session
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private JdbcSession session(final String... names) {
         try {
             synchronized (this.tables) {
                 for (String name : names) {
                     if (!this.tables.contains(name)) {
                         new JdbcSession(this.source.getConnection()).sql(
+                            // @checkstyle StringLiteralsConcatenation (2 lines)
                             "CREATE CACHED TABLE IF NOT EXISTS %table-1%"
                             + " (key BIGINT, value BINARY(1024), vnum BIGINT)"
                         ).table(name).execute();
@@ -273,6 +251,7 @@ public final class HsqlTriples implements Triples {
      * Serialize this value into string.
      * @param value The value
      * @return Serialized
+     * @param <T> Type of value
      */
     private static <T> byte[] serialize(final T value) {
         return SerializationUtils.serialize((Serializable) value);
@@ -282,6 +261,7 @@ public final class HsqlTriples implements Triples {
      * Deserialize this string into value.
      * @param bytes The data
      * @return De-serialized value
+     * @param <T> Type of value
      */
     private static <T> T deserialize(final byte[] bytes) {
         return (T) SerializationUtils.deserialize(bytes);
@@ -303,6 +283,7 @@ public final class HsqlTriples implements Triples {
         );
         src.setUsername("sa");
         src.setPassword("");
+        // @checkstyle MagicNumber (1 line)
         src.setMaxConnectionsPerPartition(50);
         return src;
     }
@@ -354,5 +335,32 @@ public final class HsqlTriples implements Triples {
         }
     }
 
+    /**
+     * Values handler.
+     */
+    private final class ValuesHandler<T> implements
+        JdbcSession.Handler<Iterator<T>> {
+        @Override
+        public Iterator<T> handle(final ResultSet rset)
+            throws SQLException {
+            return new AbstractIterator<T>() {
+                @Override
+                public T fetch() {
+                    T value = null;
+                    try {
+                        if (rset.next()) {
+                            value = (T) HsqlTriples.deserialize(
+                                rset.getBytes(1)
+                            );
+                        }
+                    } catch (SQLException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                    HsqlTriples.this.preserve(rset);
+                    return value;
+                }
+            };
+        }
+    }
 
 }

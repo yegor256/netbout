@@ -28,7 +28,6 @@ package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Predicate;
-import com.netbout.inf.predicates.AbstractVarargPred;
 import java.util.List;
 
 /**
@@ -50,6 +49,7 @@ final class AndPred extends AbstractVarargPred {
     /**
      * Synchronization lock.
      */
+    @SuppressWarnings("PMD.FinalFieldCouldBeStatic")
     private final transient Integer lock = 1;
 
     /**

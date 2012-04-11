@@ -24,59 +24,79 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.ih;
+package com.netbout.hub.cron;
 
-import com.netbout.inf.InfinityMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.XhtmlConverter;
-import com.rexsl.test.XhtmlMatchers;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.hub.PowerHub;
+import com.ymock.util.Logger;
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
- * Test case of {@link StageFarm}.
+ * One cron task.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class StageFarmTest {
+@SuppressWarnings("PMD.DoNotUseThreads")
+public abstract class AbstractCron implements Runnable {
 
     /**
-     * StageFarm can render stage XML.
-     * @throws Exception If there is some problem inside
+     * The hub.
      */
-    @Test
-    public void rendersStageXml() throws Exception {
-        final StageFarm farm = new StageFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        farm.register(new InfinityMocker().mock());
-        final String xml = farm.renderStageXml(
-            1L, identity.name(), identity.name(), ""
-        );
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xml),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/data/server")
-            )
+    private final transient PowerHub ihub;
+
+    /**
+     * Public ctor.
+     * @param hub The hub
+     */
+    public AbstractCron(final PowerHub hub) {
+        this.ihub = hub;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+        final long start = System.nanoTime();
+        try {
+            this.cron();
+        } catch (Exception ex) {
+            Logger.error(this, "#run(): %[exception]s", ex);
+        }
+        Logger.debug(
+            this,
+            "#run(): %[type]s done in %[nano]s",
+            this,
+            System.nanoTime() - start
         );
     }
 
     /**
-     * StageFarm can render XSL.
-     * @throws Exception If there is some problem inside
+     * Instantiate all of them.
+     * @param hub The hub to use
+     * @return List of them
      */
-    @Test
-    public void testRenderingOfXslStylesheet() throws Exception {
-        final StageFarm farm = new StageFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        final String xsl = farm.renderStageXsl(1L, identity.name());
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
-            XhtmlMatchers.hasXPath("/xsl:stylesheet")
-        );
+    public static Collection<Runnable> all(final PowerHub hub) {
+        final Collection<Runnable> tasks = new LinkedList<Runnable>();
+        tasks.add(new Reminder(hub));
+        tasks.add(new Routine(hub));
+        tasks.add(new Indexer(hub));
+        return tasks;
+    }
+
+    /**
+     * Run it.
+     * @throws Exception If any problem insde
+     */
+    protected abstract void cron() throws Exception;
+
+    /**
+     * Get access to incapsulated Hub.
+     * @return The hub
+     */
+    protected final PowerHub hub() {
+        return this.ihub;
     }
 
 }

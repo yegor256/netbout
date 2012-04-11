@@ -27,7 +27,6 @@
 package com.netbout.inf.motors.texts;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateStore;
 import com.netbout.inf.atoms.TextAtom;
@@ -151,6 +150,7 @@ public final class TextsMotorTest {
                 .withNumber(number)
                 .withText(entry.getValue())
                 .mock();
+            motor.see(message);
             final Predicate pred = motor.build(
                 "",
                 Arrays.asList(

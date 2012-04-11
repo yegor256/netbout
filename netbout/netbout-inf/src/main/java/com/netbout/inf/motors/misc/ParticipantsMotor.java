@@ -33,14 +33,10 @@ import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import org.reflections.Reflections;
 
 /**
  * Participants motor.
@@ -55,12 +51,14 @@ public final class ParticipantsMotor implements Pointer {
     /**
      * Message to bout (name of triple).
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static final String MSG_TO_BOUT = "message-to-bout";
 
     /**
      * Bout to participant (name of triple).
      */
-    static final String BOUT_TO_PARTICIPANT = "bout-to-participant";
+    @SuppressWarnings("PMD.DefaultPackage")
+    static final String BOUT_TO_DUDE = "bout-to-participant";
 
     /**
      * The triples.
@@ -130,12 +128,12 @@ public final class ParticipantsMotor implements Pointer {
         );
         this.triples.clear(
             msg.bout().number(),
-            ParticipantsMotor.BOUT_TO_PARTICIPANT
+            ParticipantsMotor.BOUT_TO_DUDE
         );
         for (Participant dude : msg.bout().participants()) {
             this.triples.put(
                 msg.bout().number(),
-                ParticipantsMotor.BOUT_TO_PARTICIPANT,
+                ParticipantsMotor.BOUT_TO_DUDE,
                 dude.identity().name()
             );
         }

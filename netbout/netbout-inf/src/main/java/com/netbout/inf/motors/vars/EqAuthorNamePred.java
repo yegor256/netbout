@@ -24,10 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.bundles;
+package com.netbout.inf.motors.vars;
 
 import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateException;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Urn;
 import java.util.NoSuchElementException;
@@ -85,7 +84,7 @@ final class EqAuthorNamePred implements Predicate {
     public boolean contains(final Long message) {
         return this.triples.has(
             message,
-            VarsMotor.MSG_TO_AUTHOR_NAME,
+            VarsMotor.MSG_TO_NAME,
             this.name
         );
     }

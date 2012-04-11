@@ -26,9 +26,7 @@
  */
 package com.netbout.inf.triples;
 
-import com.netbout.spi.Message;
 import java.io.Closeable;
-import java.io.File;
 import java.util.Iterator;
 
 /**
@@ -46,6 +44,7 @@ public interface Triples extends Closeable {
      * @param number The number
      * @param name Name of triple
      * @param value The value
+     * @param <T> Type of value
      */
     <T> void put(Long number, String name, T value);
 
@@ -55,6 +54,7 @@ public interface Triples extends Closeable {
      * @param name Name of triple
      * @param value The value
      * @return Yes or no
+     * @param <T> Type of value
      */
     <T> boolean has(Long number, String name, T value);
 
@@ -64,6 +64,7 @@ public interface Triples extends Closeable {
      * @param name Name of triple
      * @return The value found
      * @throws MissedTripleException If not found
+     * @param <T> Type of value
      */
     <T> T get(Long number, String name) throws MissedTripleException;
 
@@ -72,7 +73,7 @@ public interface Triples extends Closeable {
      * @param number The number
      * @param name Name of triple
      * @return The values found
-     * @throws MissedTripleException If not found
+     * @param <T> Type of value
      */
     <T> Iterator<T> all(Long number, String name);
 
@@ -81,6 +82,7 @@ public interface Triples extends Closeable {
      * @param name Name of triple
      * @param value The value to look for
      * @return Reverse sorted list of numbers found
+     * @param <T> Type of value
      */
     <T> Iterator<Long> reverse(String name, T value);
 
@@ -88,8 +90,9 @@ public interface Triples extends Closeable {
      * Reverse lookup, by any of the values provided.
      * @param name Name of triple
      * @param join Name of joining triple
-     * @param values The values to look for
+     * @param value The values to look for
      * @return Reverse sorted list of numbers found
+     * @param <T> Type of value
      */
     <T> Iterator<Long> reverse(String name, String join, T value);
 

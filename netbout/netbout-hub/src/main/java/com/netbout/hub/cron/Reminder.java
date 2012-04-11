@@ -24,59 +24,73 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.ih;
+package com.netbout.hub.cron;
 
-import com.netbout.inf.InfinityMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.XhtmlConverter;
-import com.rexsl.test.XhtmlMatchers;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.hub.PowerHub;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Test case of {@link StageFarm}.
+ * Remind all identities.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class StageFarmTest {
+final class Reminder extends AbstractCron {
 
     /**
-     * StageFarm can render stage XML.
-     * @throws Exception If there is some problem inside
+     * Public ctor.
+     * @param hub The hub
      */
-    @Test
-    public void rendersStageXml() throws Exception {
-        final StageFarm farm = new StageFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        farm.register(new InfinityMocker().mock());
-        final String xml = farm.renderStageXml(
-            1L, identity.name(), identity.name(), ""
-        );
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xml),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/data/server")
-            )
-        );
+    public Reminder(final PowerHub hub) {
+        super(hub);
     }
 
     /**
-     * StageFarm can render XSL.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void testRenderingOfXslStylesheet() throws Exception {
-        final StageFarm farm = new StageFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        final String xsl = farm.renderStageXsl(1L, identity.name());
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
-            XhtmlMatchers.hasXPath("/xsl:stylesheet")
-        );
+    @Override
+    public void cron() {
+        final List<Urn> names = this.hub().make("find-silent-identities")
+            .synchronously()
+            .asDefault(new ArrayList<Urn>(0))
+            .exec();
+        for (Urn name : names) {
+            this.remind(name);
+        }
+    }
+
+    /**
+     * Remind one person.
+     * @param name The name to remind
+     */
+    private void remind(final Urn name) {
+        final String marker = this.hub().make("get-silence-marker")
+            .synchronously()
+            .arg(name)
+            .asDefault("")
+            .exec();
+        if (marker.isEmpty()) {
+            Logger.warn(
+                this,
+                "#remind(%s): has to be reminded but marker is empty",
+                name
+            );
+        } else {
+            this.hub().make("remind-silent-identity")
+                .arg(name)
+                .arg(marker)
+                .asDefault(false)
+                .exec();
+            Logger.info(
+                this,
+                "#remind(%s): has to be reminded: '%s'",
+                name,
+                marker
+            );
+        }
     }
 
 }

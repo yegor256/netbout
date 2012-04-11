@@ -26,28 +26,8 @@
  */
 package com.netbout.inf.triples;
 
-import com.netbout.spi.Message;
-import com.sleepycat.bind.serial.StoredClassCatalog;
-import com.sleepycat.bind.serial.SerialBinding;
-import com.sleepycat.bind.tuple.TupleBinding;
-import com.sleepycat.je.Cursor;
-import com.sleepycat.je.Database;
-import com.sleepycat.je.DatabaseConfig;
-import com.sleepycat.je.DatabaseEntry;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.LockMode;
-import com.sleepycat.je.OperationStatus;
-import com.ymock.util.Logger;
-import java.io.Closeable;
-import java.io.File;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import org.apache.commons.lang.CharEncoding;
 
 /**
  * Abstract iterator over a cursor.
@@ -68,16 +48,17 @@ abstract class AbstractIterator<T> implements Iterator<T> {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.NullAssignment")
     public T next() {
         T next;
-        if (recent == null) {
+        if (this.recent == null) {
             next = this.fetch();
             if (next == null) {
                 throw new NoSuchElementException();
             }
         } else {
-            next = recent;
-            recent = null;
+            next = this.recent;
+            this.recent = null;
         }
         return next;
     }

@@ -51,12 +51,11 @@ final class LimitPred extends AbstractVarargPred {
     /**
      * Current position.
      */
-    private transient AtomicLong position = new AtomicLong(0L);
+    private final transient AtomicLong position = new AtomicLong(0L);
 
     /**
      * Public ctor.
      * @param args The arguments
-     * @param index The index to use for searching
      */
     public LimitPred(final List<Atom> args) {
         super(args);

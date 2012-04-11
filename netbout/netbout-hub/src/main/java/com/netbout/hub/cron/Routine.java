@@ -24,59 +24,34 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.ih;
+package com.netbout.hub.cron;
 
-import com.netbout.inf.InfinityMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.XhtmlConverter;
-import com.rexsl.test.XhtmlMatchers;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.netbout.hub.PowerHub;
 
 /**
- * Test case of {@link StageFarm}.
+ * Routine event to push.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class StageFarmTest {
+final class Routine extends AbstractCron {
 
     /**
-     * StageFarm can render stage XML.
-     * @throws Exception If there is some problem inside
+     * Public ctor.
+     * @param hub The hub
      */
-    @Test
-    public void rendersStageXml() throws Exception {
-        final StageFarm farm = new StageFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        farm.register(new InfinityMocker().mock());
-        final String xml = farm.renderStageXml(
-            1L, identity.name(), identity.name(), ""
-        );
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xml),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/data/server")
-            )
-        );
+    public Routine(final PowerHub hub) {
+        super(hub);
     }
 
     /**
-     * StageFarm can render XSL.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void testRenderingOfXslStylesheet() throws Exception {
-        final StageFarm farm = new StageFarm();
-        final Identity identity = new IdentityMocker().mock();
-        farm.init(identity);
-        final String xsl = farm.renderStageXsl(1L, identity.name());
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
-            XhtmlMatchers.hasXPath("/xsl:stylesheet")
-        );
+    @Override
+    protected void cron() {
+        this.hub().make("routine")
+            .asDefault(false)
+            .exec();
     }
 
 }

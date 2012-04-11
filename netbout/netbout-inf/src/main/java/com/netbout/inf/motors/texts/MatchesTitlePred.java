@@ -27,7 +27,6 @@
 package com.netbout.inf.motors.texts;
 
 import com.netbout.inf.Predicate;
-import com.netbout.inf.PredicateException;
 import com.netbout.inf.triples.Triples;
 import java.util.NoSuchElementException;
 
@@ -66,7 +65,7 @@ final class MatchesTitlePred implements Predicate {
      */
     @Override
     public Long next() {
-        throw new PredicateException("MatchesTitlePred#next()");
+        throw new NoSuchElementException();
     }
 
     /**
@@ -74,7 +73,7 @@ final class MatchesTitlePred implements Predicate {
      */
     @Override
     public boolean hasNext() {
-        throw new PredicateException("MatchesTitlePred#next()");
+        return false;
     }
 
     /**
@@ -86,7 +85,7 @@ final class MatchesTitlePred implements Predicate {
         try {
             contains = this.triples.has(
                 this.triples.<Long>get(message, TextsMotor.MSG_TO_BOUT),
-                TextsMotor.BOUT_TITLE_TO_WORD,
+                TextsMotor.TITLE_TO_WORD,
                 this.word
             );
         } catch (com.netbout.inf.triples.MissedTripleException ex) {

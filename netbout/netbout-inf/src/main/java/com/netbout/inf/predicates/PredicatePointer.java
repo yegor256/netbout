@@ -30,7 +30,6 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.util.HashSet;
@@ -72,7 +71,7 @@ public final class PredicatePointer implements Pointer {
      */
     @Override
     public String statistics() {
-        return type.getName();
+        return this.type.getName();
     }
 
     /**

@@ -38,7 +38,7 @@ public interface StoreAware {
 
     /**
      * Inject store.
-     * @param store The store to inject
+     * @param str The store to inject
      */
     void setStore(Store str);
 
