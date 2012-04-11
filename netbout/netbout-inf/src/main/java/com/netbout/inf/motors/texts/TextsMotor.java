@@ -117,7 +117,7 @@ public final class TextsMotor implements Pointer, StoreAware {
      */
     @Override
     public String toString() {
-        return "Texts";
+        return "TextsMotor";
     }
 
     /**

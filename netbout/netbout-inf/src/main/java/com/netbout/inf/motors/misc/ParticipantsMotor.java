@@ -88,7 +88,7 @@ public final class ParticipantsMotor implements Pointer {
      */
     @Override
     public String toString() {
-        return "Participants";
+        return "ParticipantsMotor";
     }
 
     /**

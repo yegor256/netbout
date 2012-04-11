@@ -31,6 +31,7 @@ import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -83,8 +84,9 @@ public final class HsqlTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws java.io.IOException {
-        Logger.debug(this, "#close(): closed");
+    public void close() throws IOException {
+        this.session().sql("SHUTDOWN COMPACT").execute();
+        Logger.info(this, "#close(): closed");
     }
 
     /**
@@ -314,7 +316,7 @@ public final class HsqlTriples implements Triples {
             Long now = System.currentTimeMillis();
             for (Long time : this.rsets.keySet()) {
                 // @checkstyle MagicNumber (1 line)
-                if (time < now - 10 * 1000) {
+                if (time < now - 60 * 1000) {
                     DbUtils.closeQuietly(this.rsets.get(time));
                     this.rsets.remove(time);
                 }

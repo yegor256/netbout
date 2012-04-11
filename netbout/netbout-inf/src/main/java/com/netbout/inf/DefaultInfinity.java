@@ -33,6 +33,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Default implementation of Infitity.
@@ -122,7 +123,7 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public void close() throws java.io.IOException {
         Logger.info(this, "#close(): will stop Mux in a second");
-        this.mux.close();
+        IOUtils.closeQuietly(this.mux);
         this.store.close();
     }
 

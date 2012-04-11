@@ -91,7 +91,7 @@ public final class BundlesMotor implements Pointer {
      */
     @Override
     public String toString() {
-        return "Bundles";
+        return "BundlesMotor";
     }
 
     /**

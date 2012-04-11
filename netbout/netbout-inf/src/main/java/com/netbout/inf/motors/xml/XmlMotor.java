@@ -81,7 +81,7 @@ public final class XmlMotor implements Pointer {
      */
     @Override
     public String toString() {
-        return "XML";
+        return "XmlMotor";
     }
 
     /**

@@ -33,7 +33,7 @@ import com.netbout.spi.Urn;
 import java.util.NoSuchElementException;
 
 /**
- * Means "(equals $author.name 'urn:test:johnny')".
+ * Means "(equal $author.name 'urn:test:johnny')".
  *
  * <p>This class is thread-safe.
  *
@@ -67,7 +67,7 @@ final class EqAuthorNamePred implements Predicate {
      */
     @Override
     public Long next() {
-        throw new PredicateException("EqAuthorNamePred#next()");
+        throw new NoSuchElementException();
     }
 
     /**
@@ -75,7 +75,7 @@ final class EqAuthorNamePred implements Predicate {
      */
     @Override
     public boolean hasNext() {
-        throw new PredicateException("EqAuthorNamePred#next()");
+        return false;
     }
 
     /**

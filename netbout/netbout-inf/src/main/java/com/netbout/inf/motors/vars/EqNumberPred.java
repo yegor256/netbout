@@ -32,7 +32,7 @@ import com.netbout.inf.triples.Triples;
 import java.util.NoSuchElementException;
 
 /**
- * Means "(equals $number 123)".
+ * Means "(equal $number 123)".
  *
  * <p>This class is thread-safe.
  *
@@ -66,7 +66,7 @@ final class EqNumberPred implements Predicate {
      */
     @Override
     public Long next() {
-        throw new PredicateException("EqNumberPred#next()");
+        throw new NoSuchElementException();
     }
 
     /**
@@ -74,7 +74,7 @@ final class EqNumberPred implements Predicate {
      */
     @Override
     public boolean hasNext() {
-        throw new PredicateException("EqNumberPred#next()");
+        return false;
     }
 
     /**

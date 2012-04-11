@@ -34,6 +34,7 @@ import com.netbout.inf.predicates.PredicatePointer;
 import com.ymock.util.Logger;
 import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -87,10 +88,11 @@ public final class PredicateStore implements Store {
      * {@inheritDoc}
      */
     @Override
-    public void close() {
+    public void close() throws IOException {
         for (Pointer pointer : this.pointers) {
             IOUtils.closeQuietly(pointer);
         }
+        this.folder.close();
     }
 
     /**
@@ -131,6 +133,12 @@ public final class PredicateStore implements Store {
         final Set<Pointer> ptrs = new HashSet<Pointer>();
         ptrs.addAll(PredicatePointer.discover());
         ptrs.addAll(this.motors());
+        Logger.info(
+            this,
+            "#discover(): %d pointer(s) discovered in classpath: %[list]s",
+            ptrs.size(),
+            ptrs
+        );
         return ptrs;
     }
 
@@ -167,7 +175,7 @@ public final class PredicateStore implements Store {
         }
         Logger.debug(
             this,
-            "#discover(): %d motors discovered in classpath: %[list]s",
+            "#motors(): %d motors discovered in classpath: %[list]s",
             motors.size(),
             motors
         );

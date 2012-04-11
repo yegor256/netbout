@@ -29,10 +29,15 @@ package com.netbout.inf.triples;
 import com.google.common.io.Files;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import com.ymock.util.Logger;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matcher;
@@ -272,9 +277,62 @@ public final class TriplesTest {
         this.triples.put(number, name, value);
         this.close();
         this.start();
+        this.triples.put(number + 1, name, value);
         MatcherAssert.assertThat(
             this.triples.has(number, name, value),
             Matchers.is(true)
+        );
+    }
+
+    /**
+     * Triples can work in multiple threads.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void supportsMultiThreadedOperations() throws Exception {
+        final String name = "boom-boom-multi-thread";
+        final Long number = this.random.nextLong();
+        final Urn value = new UrnMocker().mock();
+        TriplesTest.this.triples.put(number, name, value);
+        // @checkstyle MagicNumber (1 line)
+        final int threads = 200;
+        final AtomicInteger succeeded = new AtomicInteger(0);
+        final Callable<Boolean> task = new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                try {
+                    TriplesTest.this.triples.put(
+                        TriplesTest.this.random.nextLong(),
+                        name,
+                        value
+                    );
+                    MatcherAssert.assertThat(
+                        TriplesTest.this.triples.has(number, name, value),
+                        Matchers.is(true)
+                    );
+                    MatcherAssert.assertThat(
+                        IteratorUtils.toList(
+                            TriplesTest.this.triples.reverse(name, value)
+                        ),
+                        Matchers.hasItems(number)
+                    );
+                } catch (Throwable ex) {
+                    Logger.error(this, "%[exception]s", ex);
+                    throw new IllegalStateException(ex);
+                }
+                succeeded.incrementAndGet();
+                return true;
+            }
+        };
+        final Collection<Callable<Boolean>> tasks =
+            new ArrayList<Callable<Boolean>>(threads / 2);
+        for (int thread = 0; thread < threads; ++thread) {
+            tasks.add(task);
+        }
+        Executors.newFixedThreadPool(threads).invokeAll(tasks);
+        MatcherAssert.assertThat(
+            succeeded.get(),
+            Matchers.equalTo(threads)
         );
     }
 

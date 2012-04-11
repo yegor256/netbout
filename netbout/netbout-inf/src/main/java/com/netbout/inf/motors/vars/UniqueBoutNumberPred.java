@@ -30,6 +30,7 @@ import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.triples.Triples;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -67,7 +68,7 @@ final class UniqueBoutNumberPred implements Predicate {
      */
     @Override
     public Long next() {
-        throw new PredicateException("UniqueBoutNumberPred#next()");
+        throw new NoSuchElementException();
     }
 
     /**
@@ -75,7 +76,7 @@ final class UniqueBoutNumberPred implements Predicate {
      */
     @Override
     public boolean hasNext() {
-        throw new PredicateException("UniqueBoutNumberPred#next()");
+        return false;
     }
 
     /**

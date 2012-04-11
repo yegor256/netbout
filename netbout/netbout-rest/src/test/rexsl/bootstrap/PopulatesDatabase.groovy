@@ -67,5 +67,8 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
     )
 }
 
-queries.each { new DbSession(true).sql(it).update() }
+queries.each { query ->
+    new DbSession(true).sql(query).update()
+    Logger.debug(this, 'done: %s', query)
+}
 Logger.info(this, 'Test database is ready (%d queries)', queries.size())

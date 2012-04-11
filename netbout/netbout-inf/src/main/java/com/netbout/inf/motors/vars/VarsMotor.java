@@ -90,7 +90,7 @@ public final class VarsMotor implements Pointer {
      */
     @Override
     public String toString() {
-        return "Vars";
+        return "VarsMotor";
     }
 
     /**
@@ -106,7 +106,7 @@ public final class VarsMotor implements Pointer {
      */
     @Override
     public boolean pointsTo(final String name) {
-        return name.matches("equals|unique");
+        return name.matches("equal|unique");
     }
 
     /**
