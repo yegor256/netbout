@@ -92,12 +92,22 @@ public final class HsqlTriples implements Triples {
      */
     @Override
     public <T> void put(final Long number, final String name, final T value) {
-        this.session(name)
-            .sql("INSERT INTO %table-1% VALUES (?, ?)")
-            .table(name)
-            .set(number)
-            .set(this.serialize(value))
-            .insert();
+        if (value instanceof Long) {
+            this.session(name)
+                .sql("INSERT INTO %table-1% VALUES (?, ?, ?)")
+                .table(name)
+                .set(number)
+                .set(this.serialize(value))
+                .set(value)
+                .insert();
+        } else {
+            this.session(name)
+                .sql("INSERT INTO %table-1% VALUES (?, ?, 0)")
+                .table(name)
+                .set(number)
+                .set(this.serialize(value))
+                .insert();
+        }
     }
 
     /**
@@ -204,29 +214,7 @@ public final class HsqlTriples implements Triples {
             .sql("SELECT key FROM %table-1% WHERE value=? ORDER BY key DESC")
             .table(name)
             .set(HsqlTriples.serialize(value))
-            .select(
-                new JdbcSession.Handler<Iterator<Long>>() {
-                    @Override
-                    public Iterator<Long> handle(final ResultSet rset)
-                        throws SQLException {
-                        return new AbstractIterator<Long>() {
-                            @Override
-                            public Long fetch() {
-                                Long number = null;
-                                try {
-                                    if (rset.next()) {
-                                        number = rset.getLong(1);
-                                    }
-                                } catch (SQLException ex) {
-                                    throw new IllegalStateException(ex);
-                                }
-                                HsqlTriples.this.preserve(rset);
-                                return number;
-                            }
-                        };
-                    }
-                }
-            );
+            .select(new LongHandler());
     }
 
     /**
@@ -235,7 +223,12 @@ public final class HsqlTriples implements Triples {
     @Override
     public <T> Iterator<Long> reverse(final String name, final String join,
         final T value) {
-        throw new UnsupportedOperationException();
+        return this.session(name)
+            .sql("SELECT l.key FROM %table-1% AS l JOIN %table-2% AS r ON l.vnum = r.key WHERE r.value=? ORDER BY l.key DESC")
+            .table(name)
+            .table(join)
+            .set(HsqlTriples.serialize(value))
+            .select(new LongHandler());
     }
 
     /**
@@ -259,10 +252,10 @@ public final class HsqlTriples implements Triples {
         try {
             synchronized (this.tables) {
                 if (!this.tables.contains(name)) {
-                    new JdbcSession(this.source.getConnection())
-                        .sql("CREATE CACHED TABLE IF NOT EXISTS %table-1% (key BIGINT, value BINARY(1024))")
-                        .table(name)
-                        .execute();
+                    new JdbcSession(this.source.getConnection()).sql(
+                        "CREATE CACHED TABLE IF NOT EXISTS %table-1%"
+                        + " (key BIGINT, value BINARY(1024), vnum BIGINT)"
+                    ).table(name).execute();
                     this.tables.add(name);
                 }
             }
@@ -330,5 +323,32 @@ public final class HsqlTriples implements Triples {
             this.rsets.put(now, rset);
         }
     }
+
+    /**
+     * Long handler.
+     */
+    private final class LongHandler implements
+        JdbcSession.Handler<Iterator<Long>> {
+        @Override
+        public Iterator<Long> handle(final ResultSet rset)
+            throws SQLException {
+            return new AbstractIterator<Long>() {
+                @Override
+                public Long fetch() {
+                    Long number = null;
+                    try {
+                        if (rset.next()) {
+                            number = rset.getLong(1);
+                        }
+                    } catch (SQLException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                    HsqlTriples.this.preserve(rset);
+                    return number;
+                }
+            };
+        }
+    }
+
 
 }

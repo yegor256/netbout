@@ -239,6 +239,28 @@ public final class TriplesTest {
     }
 
     /**
+     * Triples can join two triples.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void joinTwoTriples() throws Exception {
+        final String left = "left-triple";
+        final String right = "right-triple";
+        final Long number = this.random.nextLong();
+        final Long joiner = this.random.nextLong();
+        this.triples.put(number, left, joiner);
+        final Urn value = new UrnMocker().mock();
+        this.triples.put(joiner, right, value);
+        MatcherAssert.assertThat(
+            IteratorUtils.toList(this.triples.reverse(left, right, value)),
+            Matchers.allOf(
+                (Matcher) Matchers.hasSize(1),
+                Matchers.hasItems(number)
+            )
+        );
+    }
+
+    /**
      * Triples can re-use the files.
      * @throws Exception If there is some problem inside
      */
