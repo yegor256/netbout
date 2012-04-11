@@ -71,6 +71,7 @@ public final class ParticipantsMotorTest {
             .inBout(bout)
             .mock();
         final Pointer motor = new ParticipantsMotor(this.dir.newFolder("f1"));
+        motor.see(message);
         final Predicate pred = motor.build(
             "talks-with",
             Arrays.asList(new Atom[] {new TextAtom(name.toString())})

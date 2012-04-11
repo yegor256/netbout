@@ -144,7 +144,6 @@ public final class HubIdentity implements Identity {
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        this.hub.infinity().see(bout);
         Logger.info(
             this,
             "Bout #%d started successfully by '%s'",

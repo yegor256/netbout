@@ -49,20 +49,6 @@ public final class IdentityFarmTest {
     private final transient IdentityFarm farm = new IdentityFarm();
 
     /**
-     * IdentityFarm can find bouts that belong to some identity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void findsBoutsThatBelongToSomeIdentity() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
-        final Long bout = new BoutRowMocker()
-            .withParticipant(identity)
-            .mock();
-        final List<Long> numbers = this.farm.getBoutsOfIdentity(identity);
-        MatcherAssert.assertThat(numbers, Matchers.hasItem(bout));
-    }
-
-    /**
      * IdentityFarm can change photo of identity.
      * @throws Exception If there is some problem inside
      */

@@ -84,32 +84,6 @@ public final class IdentityFarm {
     }
 
     /**
-     * Get list of bouts that belong to some identity.
-     * @param name The identity of bout participant
-     * @return List of bout numbers
-     */
-    @Operation("get-bouts-of-identity")
-    public List<Long> getBoutsOfIdentity(final Urn name) {
-        return new DbSession(true)
-            // @checkstyle LineLength (1 line)
-            .sql("SELECT number FROM bout JOIN participant ON bout.number = participant.bout WHERE identity = ?")
-            .set(name)
-            .select(
-                new Handler<List<Long>>() {
-                    @Override
-                    public List<Long> handle(final ResultSet rset)
-                        throws SQLException {
-                        final List<Long> numbers = new LinkedList<Long>();
-                        while (rset.next()) {
-                            numbers.add(rset.getLong(1));
-                        }
-                        return numbers;
-                    }
-                }
-            );
-    }
-
-    /**
      * Get identity photo.
      * @param name The name of the identity
      * @return Photo of the identity

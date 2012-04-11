@@ -26,9 +26,11 @@
  */
 package com.netbout.inf;
 
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link PredicateBuilder}.
@@ -72,8 +74,10 @@ public final class PredicateBuilderTest {
             "(unknown-function 1 2 3)",
             "(invalid-name-of-predicate# 5)",
         };
-        final PredicateBuilder builder =
-            new PredicateBuilder(new StoreMocker().mock());
+        final Store store = Mockito.mock(Store.class);
+        Mockito.doThrow(new PredicateException("")).when(store)
+            .build(Mockito.anyString(), (List) Mockito.anyObject());
+        final PredicateBuilder builder = new PredicateBuilder(store);
         for (String query : queries) {
             try {
                 builder.parse(query);

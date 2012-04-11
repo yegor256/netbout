@@ -46,18 +46,6 @@ public final class MessageFarmTest {
     private final transient MessageFarm farm = new MessageFarm();
 
     /**
-     * MessageFarm can add a new message to a bout and retrieve it back.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void addsMessageToBoutAndRetrievesItBack() throws Exception {
-        final Long bout = new BoutRowMocker().mock();
-        final Long message = new MessageRowMocker(bout).mock();
-        final List<Long> nums = this.farm.getBoutMessages(bout);
-        MatcherAssert.assertThat(nums, Matchers.hasItem(message));
-    }
-
-    /**
      * MessageFarm can check for message existence.
      * @throws Exception If there is some problem inside
      */

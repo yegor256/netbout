@@ -337,7 +337,6 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             .arg(identity.name())
             .asDefault(true)
             .exec();
-        this.infinity().see(identity);
         return this.all.get(identity.name());
     }
 

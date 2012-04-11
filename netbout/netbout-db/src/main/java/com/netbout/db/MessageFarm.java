@@ -110,36 +110,6 @@ public final class MessageFarm {
     }
 
     /**
-     * Get list of numbers of all bout messages.
-     * @param bout The bout where it happened
-     * @return List of numbers
-     */
-    @Operation("get-bout-messages")
-    public List<Long> getBoutMessages(final Long bout) {
-        return new DbSession(true).sql(
-            // @checkstyle StringLiteralsConcatenation (4 lines)
-            "SELECT number FROM message WHERE bout = ?"
-            + " AND date IS NOT NULL"
-            + " AND author IS NOT NULL"
-            + " AND text IS NOT NULL"
-        )
-            .set(bout)
-            .select(
-                new Handler<List<Long>>() {
-                    @Override
-                    public List<Long> handle(final ResultSet rset)
-                        throws SQLException {
-                        final List<Long> numbers = new LinkedList<Long>();
-                        while (rset.next()) {
-                            numbers.add(rset.getLong(1));
-                        }
-                        return numbers;
-                    }
-                }
-            );
-    }
-
-    /**
      * Get message date.
      * @param number Number of the message
      * @return The date

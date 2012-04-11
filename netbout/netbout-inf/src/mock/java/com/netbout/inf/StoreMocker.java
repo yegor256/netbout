@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import java.util.List;
 import org.mockito.Mockito;
 
 /**
@@ -45,6 +46,8 @@ public final class StoreMocker {
      * @return The predicate
      */
     public Store mock() {
+        Mockito.doReturn(new PredicateMocker().mock()).when(this.store)
+            .build(Mockito.anyString(), (List) Mockito.anyObject());
         return this.store;
     }
 

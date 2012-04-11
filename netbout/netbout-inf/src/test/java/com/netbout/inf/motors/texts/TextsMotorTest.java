@@ -99,7 +99,7 @@ public final class TextsMotorTest {
                 {"", "hello dear friend, how are you?"},
                 {"up?", "hi there, what's up"},
                 {"any time", "You can call me any time, really!"},
-                {"all", "Call me when you can"},
+                {"call", "Call me when you can"},
                 {"jeff lebowski", "the dude is Jeff Bridges (Lebowski)"},
             }
         );
