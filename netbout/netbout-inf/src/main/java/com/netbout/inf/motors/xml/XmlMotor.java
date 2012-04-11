@@ -30,7 +30,7 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
-import com.netbout.inf.triples.BerkeleyTriples;
+import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
@@ -65,7 +65,7 @@ public final class XmlMotor implements Pointer {
      * @param dir The directory to work in
      */
     public XmlMotor(final File dir) {
-        this.triples = new BerkeleyTriples(dir);
+        this.triples = new HsqlTriples(dir);
     }
 
     /**

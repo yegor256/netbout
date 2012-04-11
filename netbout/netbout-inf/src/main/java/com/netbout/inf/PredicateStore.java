@@ -140,7 +140,7 @@ public final class PredicateStore implements Store {
      */
     private Set<Pointer> motors() {
         final Reflections ref = new Reflections(
-            this.getClass().getPackage().getName()
+            StoreAware.class.getPackage().getName()
         );
         final Set<Pointer> motors = new HashSet<Pointer>();
         for (Class pred : ref.getSubTypesOf(Pointer.class)) {
@@ -152,7 +152,7 @@ public final class PredicateStore implements Store {
                     .getConstructor(File.class)
                     .newInstance(dir);
             } catch (NoSuchMethodException ex) {
-                throw new PredicateException(ex);
+                throw new PredicateException(pred.getName(), ex);
             } catch (InstantiationException ex) {
                 throw new PredicateException(ex);
             } catch (IllegalAccessException ex) {

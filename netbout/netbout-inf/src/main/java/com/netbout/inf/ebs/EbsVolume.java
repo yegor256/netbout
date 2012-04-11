@@ -86,18 +86,20 @@ public final class EbsVolume implements Folder {
     @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public File path() {
-        try {
-            if (!this.directory.mounted()) {
-                this.directory.mount(
-                    new EbsDevice(
-                        this.instance,
-                        Manifests.read("Netbout-EbsVolume")
-                    ).name()
-                );
+        if (this.instance.charAt(0) == 'i') {
+            try {
+                if (!this.directory.mounted()) {
+                    this.directory.mount(
+                        new EbsDevice(
+                            this.instance,
+                            Manifests.read("Netbout-EbsVolume")
+                        ).name()
+                    );
+                }
+            // @checkstyle IllegalCatch (1 line)
+            } catch (Exception ex) {
+                Logger.error(this, "#path(): failed with %[exception]s", ex);
             }
-        // @checkstyle IllegalCatch (1 line)
-        } catch (Exception ex) {
-            Logger.error(this, "#path(): failed with %[exception]s", ex);
         }
         return this.directory.path();
     }
@@ -119,15 +121,13 @@ public final class EbsVolume implements Folder {
      * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?AESDG-chapter-instancedata.html">here</a>.
      */
     private static String currentInstance() {
-        String instance;
-        try {
+        String instance = "unknown";
+        if (Manifests.read("Netbout-AwsKey").length() == 20) {
             // @checkstyle LineLength (1 line)
             instance = RestTester.start(URI.create("http://169.254.169.254/latest/meta-data/instance-id"))
                 .get("loading current EC2 instance ID")
                 .assertStatus(HttpURLConnection.HTTP_OK)
                 .getBody();
-        } catch (AssertionError ex) {
-            instance = "unknown";
         }
         Logger.info(
             EbsVolume.class,

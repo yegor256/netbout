@@ -109,9 +109,13 @@ public final class PredicatePointer implements Pointer {
         }
         Predicate predicate;
         try {
-            predicate = (Predicate) this.type
-                .getConstructor(List.class)
-                .newInstance(atoms);
+            if (this.type.getConstructors().length > 0) {
+                predicate = (Predicate) this.type
+                    .getConstructor(List.class)
+                    .newInstance(atoms);
+            } else {
+                predicate = (Predicate) this.type.newInstance();
+            }
         } catch (NoSuchMethodException ex) {
             throw new PredicateException(ex);
         } catch (InstantiationException ex) {

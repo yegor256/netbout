@@ -223,7 +223,7 @@ public final class HsqlTriples implements Triples {
     @Override
     public <T> Iterator<Long> reverse(final String name, final String join,
         final T value) {
-        return this.session(name)
+        return this.session(name, join)
             .sql("SELECT l.key FROM %table-1% AS l JOIN %table-2% AS r ON l.vnum = r.key WHERE r.value=? ORDER BY l.key DESC")
             .table(name)
             .table(join)
@@ -245,18 +245,20 @@ public final class HsqlTriples implements Triples {
 
     /**
      * Create new session.
-     * @param name Name of the table to use
+     * @param names Names of the table to use
      * @return JDBC session
      */
-    private JdbcSession session(final String name) {
+    private JdbcSession session(final String... names) {
         try {
             synchronized (this.tables) {
-                if (!this.tables.contains(name)) {
-                    new JdbcSession(this.source.getConnection()).sql(
-                        "CREATE CACHED TABLE IF NOT EXISTS %table-1%"
-                        + " (key BIGINT, value BINARY(1024), vnum BIGINT)"
-                    ).table(name).execute();
-                    this.tables.add(name);
+                for (String name : names) {
+                    if (!this.tables.contains(name)) {
+                        new JdbcSession(this.source.getConnection()).sql(
+                            "CREATE CACHED TABLE IF NOT EXISTS %table-1%"
+                            + " (key BIGINT, value BINARY(1024), vnum BIGINT)"
+                        ).table(name).execute();
+                        this.tables.add(name);
+                    }
                 }
             }
             return new JdbcSession(this.source.getConnection());
