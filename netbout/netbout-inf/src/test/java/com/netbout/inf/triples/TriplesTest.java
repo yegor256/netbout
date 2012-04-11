@@ -34,11 +34,14 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Random;
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -50,6 +53,11 @@ import org.junit.runners.Parameterized;
  */
 @RunWith(Parameterized.class)
 public final class TriplesTest {
+
+    /**
+     * Temp dir.
+     */
+    private static File dir;
 
     /**
      * The type.
@@ -87,6 +95,24 @@ public final class TriplesTest {
     }
 
     /**
+     * Create a temp dir for the entire test.
+     * @throws Exception If there is some problem inside
+     */
+    @BeforeClass
+    public static void tempDir() throws Exception {
+        TriplesTest.dir = Files.createTempDir();
+    }
+
+    /**
+     * Remove a temp dir.
+     * @throws Exception If there is some problem inside
+     */
+    @AfterClass
+    public static void delDir() throws Exception {
+        FileUtils.deleteDirectory(TriplesTest.dir);
+    }
+
+    /**
      * Start triples.
      * @throws Exception If there is some problem inside
      */
@@ -94,7 +120,7 @@ public final class TriplesTest {
     public void start() throws Exception {
         this.triples = this.type
             .getConstructor(File.class)
-            .newInstance(Files.createTempDir());
+            .newInstance(new File(TriplesTest.dir, this.type.getName()));
     }
 
     /**

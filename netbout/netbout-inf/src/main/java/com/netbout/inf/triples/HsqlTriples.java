@@ -260,7 +260,7 @@ public final class HsqlTriples implements Triples {
             synchronized (this.tables) {
                 if (!this.tables.contains(name)) {
                     new JdbcSession(this.source.getConnection())
-                        .sql("CREATE CACHED TABLE %table-1% (key BIGINT, value BINARY(1024))")
+                        .sql("CREATE CACHED TABLE IF NOT EXISTS %table-1% (key BIGINT, value BINARY(1024))")
                         .table(name)
                         .execute();
                     this.tables.add(name);
