@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.triples;
 
+import com.ymock.util.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -112,6 +113,9 @@ public final class JdbcSession {
     public JdbcSession table(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("TABLE can't be NULL");
+        }
+        if (!name.matches("[a-z\\-]+")) {
+            throw new IllegalArgumentException("Invalid table name");
         }
         this.tables.add(name);
         return this;
@@ -235,6 +239,7 @@ public final class JdbcSession {
                 DbUtils.closeQuietly(stmt);
             }
         } catch (SQLException ex) {
+            Logger.error(this, "#run(): %s", this.tablize(this.query));
             throw new IllegalArgumentException(ex);
         } finally {
             DbUtils.closeQuietly(this.conn);

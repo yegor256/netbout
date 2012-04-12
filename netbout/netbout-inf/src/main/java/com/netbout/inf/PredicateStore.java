@@ -140,6 +140,10 @@ public final class PredicateStore implements Store {
             }
             this.max.incrementAndGet();
             this.done.remove(smallest);
+            // @checkstyle MagicNumber (1 line)
+            if (this.max.get() % 1000 == 0) {
+                Logger.info(this, "#maximum(): %d message(s)", this.max.get());
+            }
         }
         return this.max.get();
     }

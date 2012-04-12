@@ -74,10 +74,28 @@ public final class HsqlTriples implements Triples {
      */
     public HsqlTriples(final File dir) {
         this.source = HsqlTriples.datasource(dir);
+        this.session()
+            .sql("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES")
+            .select(
+                new JdbcSession.Handler<Boolean>() {
+                    @Override
+                    public Boolean handle(final ResultSet rset)
+                        throws SQLException {
+                        while (rset.next()) {
+                            final String name = rset.getString(1);
+                            if (name.matches("[a-z\\-]+")) {
+                                HsqlTriples.this.tables.add(name);
+                            }
+                        }
+                        return false;
+                    }
+                }
+            );
         Logger.info(
             this,
-            "#HsqlTriples(.../%s): instantiated",
-            dir.getName()
+            "#HsqlTriples(.../%s): instantiated with %[list]s",
+            dir.getName(),
+            this.tables
         );
     }
 
@@ -238,12 +256,22 @@ public final class HsqlTriples implements Triples {
                     if (!this.tables.contains(name)) {
                         new JdbcSession(this.source.getConnection()).sql(
                             // @checkstyle StringLiteralsConcatenation (5 lines)
-                            "CREATE CACHED TABLE IF NOT EXISTS %table-1% ("
+                            "CREATE CACHED TABLE %table-1% ("
                             + " key BIGINT NOT NULL,"
                             + " value VARCHAR(65536) NOT NULL,"
                             + " vnum BIGINT,"
                             + " PRIMARY KEY(key, value))"
                         ).table(name).execute();
+                        new JdbcSession(this.source.getConnection()).sql(
+                            "CREATE INDEX %table-1% ON %table-2% (key DESC)"
+                        ).table(String.format("key-index-%s", name))
+                            .table(name)
+                            .execute();
+                        new JdbcSession(this.source.getConnection()).sql(
+                            "CREATE INDEX %table-1% ON %table-2% (value)"
+                        ).table(String.format("value-index-%s", name))
+                            .table(name)
+                            .execute();
                         this.tables.add(name);
                     }
                 }
