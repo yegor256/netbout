@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub.hh;
+package com.netbout.hh;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;

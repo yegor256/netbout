@@ -24,11 +24,20 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.hh;
 
 /**
- * Hub Helper (HH), tests.
+ * Provider of statistics.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.hub.hh;
+public interface StatsProvider {
+
+    /**
+     * Get some statistics, for the stage.
+     * @return The text
+     */
+    String statistics();
+
+}
