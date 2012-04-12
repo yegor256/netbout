@@ -139,7 +139,7 @@ public final class HsqlTriples implements Triples {
     public boolean has(final Long number, final String name,
         final String value) {
         return this.session(name)
-            .sql("SELECT * FROM %table-1% WHERE key=? AND value=? LIMIT 1")
+            .sql("SELECT key FROM %table-1% WHERE key=? AND value=? LIMIT 1")
             .table(name)
             .set(number)
             .set(value)
@@ -270,6 +270,11 @@ public final class HsqlTriples implements Triples {
                         new JdbcSession(this.source.getConnection()).sql(
                             "CREATE INDEX %table-1% ON %table-2% (value)"
                         ).table(String.format("value-index-%s", name))
+                            .table(name)
+                            .execute();
+                        new JdbcSession(this.source.getConnection()).sql(
+                            "CREATE INDEX %table-1% ON %table-2% (vnum DESC)"
+                        ).table(String.format("vnum-index-%s", name))
                             .table(name)
                             .execute();
                         this.tables.add(name);
