@@ -52,7 +52,7 @@ public final class LoginRs extends AbstractRs {
     public Response login() {
         final UriBuilder fburi = UriBuilder.fromUri(
             UriBuilder
-                .fromPath("https://www.facebook.com/dialog/oauth")
+                .fromUri("https://www.facebook.com/dialog/oauth")
                 .queryParam("client_id", "{id}")
                 .queryParam("redirect_uri", "{uri}")
                 .build(

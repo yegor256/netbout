@@ -156,6 +156,7 @@ public final class PredicateStore implements Store {
         for (Pointer pointer : this.pointers) {
             pointer.see(msg);
         }
+        this.done.add(msg.number());
         this.counter.put(this.maximum(), PredicateStore.MSG_TO_VOID, "");
     }
 

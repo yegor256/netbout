@@ -32,6 +32,7 @@ import com.netbout.hub.BoutMgr;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
+import com.netbout.inf.InfinityMocker;
 import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -77,7 +78,9 @@ public final class DefaultBoutMgrTest {
     @org.junit.Ignore
     public void createsNewBoutWithRealHub() throws Exception {
         final Bus bus = new BusMocker().mock();
-        final BoutMgr mgr = new DefaultBoutMgr(new DefaultHub(bus));
+        final BoutMgr mgr = new DefaultBoutMgr(
+            new DefaultHub(bus, new InfinityMocker().mock())
+        );
         final Long first = mgr.create(new UrnMocker().mock());
         final Long second = mgr.create(new UrnMocker().mock());
         MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));

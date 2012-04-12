@@ -54,9 +54,10 @@ final class Indexer extends AbstractCron {
      */
     @Override
     public void cron() throws Exception {
+        final Long maximum = this.hub().infinity().maximum();
         final List<Long> numbers = this.hub().make("get-messages-chunk")
             .synchronously()
-            .arg(this.hub().infinity().maximum())
+            .arg(maximum)
             .asDefault(new ArrayList<Long>(0))
             .exec();
         for (Long number : numbers) {
@@ -64,8 +65,9 @@ final class Indexer extends AbstractCron {
         }
         Logger.info(
             this,
-            "#cron(): %d message(s) pushed to INF",
-            numbers.size()
+            "#cron(): %d message(s) pushed to INF (maximum=%d)",
+            numbers.size(),
+            maximum
         );
     }
 

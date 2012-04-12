@@ -134,6 +134,7 @@ public final class HubBout implements Bout {
     @Override
     public void confirm() {
         this.data.confirm(this.viewer.name());
+        this.hub.infinity().see(this);
         Logger.info(
             this,
             "Participant '%s' confirmed participation in bout #%d",
@@ -148,6 +149,7 @@ public final class HubBout implements Bout {
     @Override
     public void leave() {
         this.data.kickOff(this.viewer.name());
+        this.hub.infinity().see(this);
         Logger.info(
             this,
             "Participant '%s' just left bout #%d",
@@ -177,6 +179,7 @@ public final class HubBout implements Bout {
             );
         }
         this.data.setTitle(text);
+        this.hub.infinity().see(this);
         Logger.info(
             this,
             "Bout #%d was successfully renamed to '%s'",
@@ -236,6 +239,7 @@ public final class HubBout implements Bout {
         if (confirm) {
             dude.setConfirmed(true);
         }
+        this.hub.infinity().see(this);
         return new HubParticipant(this.hub, this, dude, this.data);
     }
 

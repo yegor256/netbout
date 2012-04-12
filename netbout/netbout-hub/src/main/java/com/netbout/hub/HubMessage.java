@@ -42,7 +42,7 @@ final class HubMessage implements Message {
     /**
      * The hub.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * The viewer.
@@ -67,7 +67,7 @@ final class HubMessage implements Message {
      * @param dat The data
      * @checkstyle ParameterNumber (3 lines)
      */
-    public HubMessage(final Hub ihub, final Identity vwr,
+    public HubMessage(final PowerHub ihub, final Identity vwr,
         final Bout bout, final MessageDt dat) {
         this.hub = ihub;
         this.viewer = vwr;
@@ -142,6 +142,7 @@ final class HubMessage implements Message {
     @Override
     public String text() {
         this.data.addSeenBy(this.viewer.name());
+        this.hub.infinity().see(this);
         return this.data.getText();
     }
 

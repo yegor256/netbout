@@ -29,6 +29,7 @@ package com.netbout.hub.hh;
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.DefaultHub;
+import com.netbout.inf.InfinityMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlConverter;
@@ -51,7 +52,7 @@ public final class StatsFarmTest {
     public void rendersStageXml() throws Exception {
         final Bus bus = new BusMocker().mock();
         final StatsFarm farm = new StatsFarm();
-        farm.register(new DefaultHub(bus));
+        farm.register(new DefaultHub(bus, new InfinityMocker().mock()));
         final Identity identity = new IdentityMocker().mock();
         farm.init(identity);
         final String xml = farm.renderStageXml(

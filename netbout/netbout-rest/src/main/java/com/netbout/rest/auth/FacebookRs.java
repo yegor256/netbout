@@ -161,7 +161,8 @@ public final class FacebookRs extends AbstractRs {
         );
         resolved.profile().setPhoto(
             UriBuilder
-                .fromPath("https://graph.facebook.com/{id}/picture")
+                .fromUri("https://graph.facebook.com/")
+                .path("/{id}/picture")
                 .build(fbuser.getId())
                 .toURL()
         );
@@ -209,7 +210,7 @@ public final class FacebookRs extends AbstractRs {
     private String token(final String code) throws IOException {
         final URI uri = UriBuilder
             // @checkstyle MultipleStringLiterals (5 lines)
-            .fromPath("https://graph.facebook.com/oauth/access_token")
+            .fromUri("https://graph.facebook.com/oauth/access_token")
             .queryParam("client_id", "{id}")
             .queryParam("redirect_uri", "{uri}")
             .queryParam("client_secret", "{secret}")

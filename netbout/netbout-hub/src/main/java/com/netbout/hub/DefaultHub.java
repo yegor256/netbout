@@ -101,17 +101,18 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      * Public ctor.
      */
     public DefaultHub() {
-        this(new DefaultBus());
+        this(new DefaultBus(), new DefaultInfinity());
     }
 
     /**
      * Public ctor, for tests mostly.
      * @param bus The bus
+     * @param infinity The infinity
      */
-    public DefaultHub(final Bus bus) {
+    public DefaultHub(final Bus bus, final Infinity infinity) {
         StatsFarm.register(this);
         this.ibus = bus;
-        this.inf = new DefaultInfinity();
+        this.inf = infinity;
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         this.promote(this.persister());
@@ -342,6 +343,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             .arg(identity.name())
             .asDefault(true)
             .exec();
+        this.inf.see(identity);
         return this.all.get(identity.name());
     }
 

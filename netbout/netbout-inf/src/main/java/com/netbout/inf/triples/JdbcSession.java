@@ -224,7 +224,6 @@ public final class JdbcSession {
      */
     @SuppressWarnings("PMD.CloseResource")
     private <T> T run(final Handler<T> handler, final Fetcher fetcher) {
-        final long start = System.nanoTime();
         final String sql = this.tablize(this.query);
         T result = null;
         try {
@@ -243,16 +242,6 @@ public final class JdbcSession {
             throw new IllegalArgumentException(ex);
         } finally {
             DbUtils.closeQuietly(this.conn);
-        }
-        final long delta = System.nanoTime() - start;
-        // @checkstyle MagicNumber (1 line)
-        if (delta > 5 * 1000 * 1000) {
-            Logger.warn(
-                this,
-                "#run(): too slow '%s': %[nano]s",
-                sql,
-                delta
-            );
         }
         return result;
     }

@@ -50,6 +50,13 @@
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
+            <artifactId>netbout-inf</artifactId>
+            <version netbout="yes">2.0-SNAPSHOT</version>
+            <classifier>mock</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
             <version netbout="yes">2.0-SNAPSHOT</version>
         </dependency>

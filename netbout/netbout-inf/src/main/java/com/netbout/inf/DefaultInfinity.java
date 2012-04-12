@@ -27,9 +27,12 @@
 package com.netbout.inf;
 
 import com.netbout.ih.StageFarm;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.util.Iterator;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -121,7 +124,11 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public long eta(final Urn who) {
-        return this.mux.eta(who);
+        long eta = this.mux.eta(who);
+        if (eta == 0 && this.store.maximum() == 0) {
+            eta = 1;
+        }
+        return eta;
     }
 
     /**
@@ -150,6 +157,38 @@ public final class DefaultInfinity implements Infinity {
             this,
             "see(message #%d): request submitted",
             message.number()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void see(final Bout bout) {
+        final Iterator<Message> msgs = bout.messages("").iterator();
+        if (msgs.hasNext()) {
+            this.see(msgs.next());
+        }
+        Logger.debug(
+            this,
+            "see(bout #%d): request submitted",
+            bout.number()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void see(final Identity identity) {
+        final Iterator<Bout> bouts = identity.inbox("").iterator();
+        if (bouts.hasNext()) {
+            this.see(bouts.next());
+        }
+        Logger.debug(
+            this,
+            "see('%s'): request submitted",
+            identity
         );
     }
 
