@@ -129,7 +129,7 @@ public final class MessageFarmTest {
         final Long bout = new BoutRowMocker().mock();
         final Long message = new MessageRowMocker(bout).mock();
         MatcherAssert.assertThat(
-            this.farm.getMessagesChunk(message - 1),
+            this.farm.getMessagesChunk(message - 1, 2L),
             Matchers.hasItem(message)
         );
     }

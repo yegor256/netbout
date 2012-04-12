@@ -27,7 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.bus.BusMocker;
-import com.netbout.inf.DefaultInfinity;
+import com.netbout.inf.InfinityMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
@@ -67,7 +67,7 @@ public final class PowerHubMocker {
         Mockito.doAnswer(
             new Answer() {
                 public Object answer(final InvocationOnMock invocation) {
-                    return new DefaultInfinity();
+                    return new InfinityMocker().mock();
                 }
             }
         ).when(this.hub).infinity();

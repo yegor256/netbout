@@ -70,16 +70,18 @@ public final class MessageFarm {
     /**
      * Get chunk of message numbers.
      * @param since Number of the message, since when we need more numbers
+     * @param length Maximum length of the chunk
      * @return The list of numbers
      */
     @Operation("get-messages-chunk")
-    public List<Long> getMessagesChunk(final Long since) {
+    public List<Long> getMessagesChunk(final Long since, final Long length) {
         return new DbSession(true).sql(
             // @checkstyle StringLiteralsConcatenation (2 lines)
             "SELECT number FROM message WHERE number > ?"
-            + " ORDER BY number LIMIT 10000"
+            + " ORDER BY number LIMIT ?"
         )
             .set(since)
+            .set(length)
             .select(
                 new Handler<List<Long>>() {
                     @Override

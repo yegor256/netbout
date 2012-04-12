@@ -58,16 +58,23 @@ final class Indexer extends AbstractCron {
         final List<Long> numbers = this.hub().make("get-messages-chunk")
             .synchronously()
             .arg(maximum)
+            // @checkstyle MagicNumber (1 line)
+            .arg(200L)
             .asDefault(new ArrayList<Long>(0))
             .exec();
+        Logger.info(
+            this,
+            "#cron(): %d message(s) will be pushed to INF now (maximum=%d)",
+            numbers.size(),
+            maximum
+        );
         for (Long number : numbers) {
             this.hub().infinity().see(this.message(number));
         }
         Logger.info(
             this,
-            "#cron(): %d message(s) pushed to INF (maximum=%d)",
-            numbers.size(),
-            maximum
+            "#cron(): %d message(s) pushed to INF successfully",
+            numbers.size()
         );
     }
 
