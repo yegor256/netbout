@@ -93,7 +93,7 @@ public final class PredicateStore implements Store {
         this.pointers = this.discover();
         this.counter = new HsqlTriples(new File(this.folder.path(), "counter"));
         final Iterator<Long> numbers = this.counter
-            .reverse(PredicateStore.MSG_TO_VOID, 0L);
+            .reverse(PredicateStore.MSG_TO_VOID, "");
         if (numbers.hasNext()) {
             this.max.set(numbers.next());
         } else {
@@ -152,7 +152,7 @@ public final class PredicateStore implements Store {
         for (Pointer pointer : this.pointers) {
             pointer.see(msg);
         }
-        this.counter.put(this.maximum(), PredicateStore.MSG_TO_VOID, 0L);
+        this.counter.put(this.maximum(), PredicateStore.MSG_TO_VOID, "");
     }
 
     /**

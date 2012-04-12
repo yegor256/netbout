@@ -65,7 +65,7 @@ public final class TalksWithPred implements Predicate {
         this.iterator = this.triples.reverse(
             ParticipantsMotor.MSG_TO_BOUT,
             ParticipantsMotor.BOUT_TO_DUDE,
-            this.urn
+            this.urn.toString()
         );
     }
 
@@ -93,9 +93,11 @@ public final class TalksWithPred implements Predicate {
         boolean contains;
         try {
             contains = this.triples.has(
-                this.triples.<Long>get(message, ParticipantsMotor.MSG_TO_BOUT),
+                Long.valueOf(
+                    this.triples.get(message, ParticipantsMotor.MSG_TO_BOUT)
+                ),
                 ParticipantsMotor.BOUT_TO_DUDE,
-                this.urn
+                this.urn.toString()
             );
         } catch (com.netbout.inf.triples.MissedTripleException ex) {
             contains = false;

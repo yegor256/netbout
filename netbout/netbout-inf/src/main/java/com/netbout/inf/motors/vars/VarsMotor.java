@@ -155,12 +155,12 @@ public final class VarsMotor implements Pointer {
         this.triples.put(
             msg.number(),
             VarsMotor.MSG_TO_BOUT,
-            msg.bout().number()
+            msg.bout().number().toString()
         );
         this.triples.put(
             msg.number(),
             VarsMotor.MSG_TO_NAME,
-            msg.author().name()
+            msg.author().name().toString()
         );
     }
 

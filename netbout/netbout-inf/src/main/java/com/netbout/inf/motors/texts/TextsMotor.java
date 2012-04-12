@@ -190,7 +190,7 @@ public final class TextsMotor implements Pointer, StoreAware {
         this.triples.put(
             msg.number(),
             TextsMotor.MSG_TO_BOUT,
-            msg.bout().number()
+            msg.bout().number().toString()
         );
         this.triples.clear(msg.bout().number(), TextsMotor.TITLE_TO_WORD);
         for (String word : TextsMotor.words(msg.bout().title())) {

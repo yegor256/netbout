@@ -30,7 +30,6 @@ import com.jolbox.bonecp.BoneCPDataSource;
 import com.ymock.util.Logger;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -39,7 +38,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import javax.sql.DataSource;
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.lang.SerializationUtils;
 
 /**
  * Triples with HSQL DB.
@@ -88,6 +86,7 @@ public final class HsqlTriples implements Triples {
      */
     @Override
     public void close() throws IOException {
+        Logger.info(this, "#close(): closing...");
         this.session().sql("SHUTDOWN COMPACT").execute();
         Logger.info(this, "#close(): closed");
     }
@@ -96,19 +95,19 @@ public final class HsqlTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> void put(final Long number, final String name, final T value) {
+    public void put(final Long number, final String name, final String value) {
         final JdbcSession session = this.session(name).sql(
             // @checkstyle StringLiteralsConcatenation (4 lines)
             "MERGE INTO %table-1% AS t USING"
-            + " (VALUES(CAST(? AS BIGINT), CAST(? AS BINARY(255))))"
+            + " (VALUES(?, ?))"
             + " AS vals(k, v) ON t.key = vals.k AND t.value = vals.v"
             + " WHEN NOT MATCHED THEN INSERT VALUES vals.k, vals.v, ?"
         )
             .table(name)
             .set(number)
-            .set(this.serialize(value));
-        if (value instanceof Long) {
-            session.set(value);
+            .set(value);
+        if (value.matches("\\-?\\d+")) {
+            session.set(Long.valueOf(value));
         } else {
             session.set(0L);
         }
@@ -119,13 +118,13 @@ public final class HsqlTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> boolean has(final Long number, final String name,
-        final T value) {
+    public boolean has(final Long number, final String name,
+        final String value) {
         return this.session(name)
             .sql("SELECT * FROM %table-1% WHERE key=? AND value=? LIMIT 1")
             .table(name)
             .set(number)
-            .set(this.serialize(value))
+            .set(value)
             .select(
                 new JdbcSession.Handler<Boolean>() {
                     @Override
@@ -143,19 +142,20 @@ public final class HsqlTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> T get(final Long number, final String name)
+    public String get(final Long number, final String name)
         throws MissedTripleException {
-        final T value = this.session(name)
+        final String value = this.session(name)
             .sql("SELECT value FROM %table-1% WHERE key=? LIMIT 1")
             .table(name)
             .set(number)
             .select(
-                new JdbcSession.Handler<T>() {
+                new JdbcSession.Handler<String>() {
                     @Override
-                    public T handle(final ResultSet rset) throws SQLException {
-                        T val = null;
+                    public String handle(final ResultSet rset)
+                        throws SQLException {
+                        String val = null;
                         if (rset.next()) {
-                            val = (T) HsqlTriples.deserialize(rset.getBytes(1));
+                            val = rset.getString(1);
                         }
                         rset.close();
                         return val;
@@ -178,23 +178,23 @@ public final class HsqlTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> Iterator<T> all(final Long number, final String name) {
+    public Iterator<String> all(final Long number, final String name) {
         return this.session(name)
             .sql("SELECT value FROM %table-1% WHERE key=?")
             .table(name)
             .set(number)
-            .select(new ValuesHandler<T>());
+            .select(new ValuesHandler());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> Iterator<Long> reverse(final String name, final T value) {
+    public Iterator<Long> reverse(final String name, final String value) {
         return this.session(name)
             .sql("SELECT key FROM %table-1% WHERE value=? ORDER BY key DESC")
             .table(name)
-            .set(HsqlTriples.serialize(value))
+            .set(value)
             .select(new LongHandler());
     }
 
@@ -202,14 +202,14 @@ public final class HsqlTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> Iterator<Long> reverse(final String name, final String join,
-        final T value) {
+    public Iterator<Long> reverse(final String name, final String join,
+        final String value) {
         return this.session(name, join)
             // @checkstyle LineLength (1 line)
             .sql("SELECT l.key FROM %table-1% AS l JOIN %table-2% AS r ON l.vnum = r.key WHERE r.value=? ORDER BY l.key DESC")
             .table(name)
             .table(join)
-            .set(HsqlTriples.serialize(value))
+            .set(value)
             .select(new LongHandler());
     }
 
@@ -240,7 +240,7 @@ public final class HsqlTriples implements Triples {
                             // @checkstyle StringLiteralsConcatenation (5 lines)
                             "CREATE CACHED TABLE IF NOT EXISTS %table-1% ("
                             + " key BIGINT NOT NULL,"
-                            + " value BINARY(255) NOT NULL,"
+                            + " value VARCHAR(65536) NOT NULL,"
                             + " vnum BIGINT,"
                             + " PRIMARY KEY(key, value))"
                         ).table(name).execute();
@@ -252,26 +252,6 @@ public final class HsqlTriples implements Triples {
         } catch (java.sql.SQLException ex) {
             throw new IllegalStateException(ex);
         }
-    }
-
-    /**
-     * Serialize this value into string.
-     * @param value The value
-     * @return Serialized
-     * @param <T> Type of value
-     */
-    private static <T> byte[] serialize(final T value) {
-        return SerializationUtils.serialize((Serializable) value);
-    }
-
-    /**
-     * Deserialize this string into value.
-     * @param bytes The data
-     * @return De-serialized value
-     * @param <T> Type of value
-     */
-    private static <T> T deserialize(final byte[] bytes) {
-        return (T) SerializationUtils.deserialize(bytes);
     }
 
     /**
@@ -346,20 +326,18 @@ public final class HsqlTriples implements Triples {
     /**
      * Values handler.
      */
-    private final class ValuesHandler<T> implements
-        JdbcSession.Handler<Iterator<T>> {
+    private final class ValuesHandler implements
+        JdbcSession.Handler<Iterator<String>> {
         @Override
-        public Iterator<T> handle(final ResultSet rset)
+        public Iterator<String> handle(final ResultSet rset)
             throws SQLException {
-            return new AbstractIterator<T>() {
+            return new AbstractIterator<String>() {
                 @Override
-                public T fetch() {
-                    T value = null;
+                public String fetch() {
+                    String value = null;
                     try {
                         if (rset.next()) {
-                            value = (T) HsqlTriples.deserialize(
-                                rset.getBytes(1)
-                            );
+                            value = rset.getString(1);
                         }
                     } catch (SQLException ex) {
                         throw new IllegalStateException(ex);

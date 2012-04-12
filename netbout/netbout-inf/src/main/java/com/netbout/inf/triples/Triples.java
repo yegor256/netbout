@@ -44,9 +44,8 @@ public interface Triples extends Closeable {
      * @param number The number
      * @param name Name of triple
      * @param value The value
-     * @param <T> Type of value
      */
-    <T> void put(Long number, String name, T value);
+    void put(Long number, String name, String value);
 
     /**
      * Does it have this triple?
@@ -54,9 +53,8 @@ public interface Triples extends Closeable {
      * @param name Name of triple
      * @param value The value
      * @return Yes or no
-     * @param <T> Type of value
      */
-    <T> boolean has(Long number, String name, T value);
+    boolean has(Long number, String name, String value);
 
     /**
      * Get the value (the first one).
@@ -64,27 +62,24 @@ public interface Triples extends Closeable {
      * @param name Name of triple
      * @return The value found
      * @throws MissedTripleException If not found
-     * @param <T> Type of value
      */
-    <T> T get(Long number, String name) throws MissedTripleException;
+    String get(Long number, String name) throws MissedTripleException;
 
     /**
      * Get all triples.
      * @param number The number
      * @param name Name of triple
      * @return The values found
-     * @param <T> Type of value
      */
-    <T> Iterator<T> all(Long number, String name);
+    Iterator<String> all(Long number, String name);
 
     /**
      * Reverse lookup.
      * @param name Name of triple
      * @param value The value to look for
      * @return Reverse sorted list of numbers found
-     * @param <T> Type of value
      */
-    <T> Iterator<Long> reverse(String name, T value);
+    Iterator<Long> reverse(String name, String value);
 
     /**
      * Reverse lookup, by any of the values provided.
@@ -92,9 +87,8 @@ public interface Triples extends Closeable {
      * @param join Name of joining triple
      * @param value The values to look for
      * @return Reverse sorted list of numbers found
-     * @param <T> Type of value
      */
-    <T> Iterator<Long> reverse(String name, String join, T value);
+    Iterator<Long> reverse(String name, String join, String value);
 
     /**
      * Clear these triples.

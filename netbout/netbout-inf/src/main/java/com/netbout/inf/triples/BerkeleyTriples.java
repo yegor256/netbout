@@ -126,7 +126,7 @@ public final class BerkeleyTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> void put(final Long number, final String name, final T value) {
+    public void put(final Long number, final String name, final String value) {
         this.database(name).put(null, this.key(number), this.entry(value));
     }
 
@@ -134,8 +134,8 @@ public final class BerkeleyTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> boolean has(final Long number, final String name,
-        final T value) {
+    public boolean has(final Long number, final String name,
+        final String value) {
         return this.database(name).getSearchBoth(
             null,
             this.key(number),
@@ -148,7 +148,7 @@ public final class BerkeleyTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> T get(final Long number, final String name)
+    public String get(final Long number, final String name)
         throws MissedTripleException {
         final DatabaseEntry entry = new DatabaseEntry();
         if (this.database(name)
@@ -158,24 +158,24 @@ public final class BerkeleyTriples implements Triples {
                 String.format("Number %d not found in '%s'", number, name)
             );
         }
-        return this.<T>value(entry);
+        return this.value(entry);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> Iterator<T> all(final Long number, final String name) {
+    public Iterator<String> all(final Long number, final String name) {
         final Cursor cursor = this.cursor(this.database(name));
         final DatabaseEntry key = this.key(number);
-        return new AbstractIterator<T>() {
+        return new AbstractIterator<String>() {
             @Override
-            public T fetch() {
+            public String fetch() {
                 final DatabaseEntry entry = new DatabaseEntry();
-                T value = null;
+                String value = null;
                 final OperationStatus status = cursor.getNext(key, entry, null);
                 if (status == OperationStatus.SUCCESS) {
-                    value = BerkeleyTriples.this.<T>value(entry);
+                    value = BerkeleyTriples.this.value(entry);
                 }
                 return value;
             }
@@ -186,7 +186,7 @@ public final class BerkeleyTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> Iterator<Long> reverse(final String name, final T value) {
+    public Iterator<Long> reverse(final String name, final String value) {
         final SecondaryCursor cursor =
             (SecondaryCursor) this.cursor(this.secondary(name));
         final DatabaseEntry key = this.entry(value);
@@ -210,8 +210,8 @@ public final class BerkeleyTriples implements Triples {
      * {@inheritDoc}
      */
     @Override
-    public <T> Iterator<Long> reverse(final String name,
-        final String join, final T value) {
+    public Iterator<Long> reverse(final String name,
+        final String join, final String value) {
         throw new UnsupportedOperationException();
     }
 
@@ -326,9 +326,8 @@ public final class BerkeleyTriples implements Triples {
      * Create entry from value.
      * @param value The value
      * @return The entry
-     * @param <T> Type of value
      */
-    public <T> DatabaseEntry entry(final T value) {
+    public DatabaseEntry entry(final String value) {
         final DatabaseEntry entry = new DatabaseEntry();
         new SerialBinding(
             new StoredClassCatalog(this.database(BerkeleyTriples.META_TABLE)),
@@ -341,7 +340,7 @@ public final class BerkeleyTriples implements Triples {
      * Revert entry back to value.
      * @param entry The entry
      * @return The value
-     * @param <T> Type of value
+     * @param <T> Expected type
      */
     public <T> T value(final DatabaseEntry entry) {
         return (T) new SerialBinding(

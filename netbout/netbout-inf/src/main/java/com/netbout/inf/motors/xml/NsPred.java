@@ -64,8 +64,10 @@ final class NsPred implements Predicate {
     public NsPred(final Triples trp, final Urn nsp) {
         this.triples = trp;
         this.namespace = nsp;
-        this.iterator = this.triples
-            .reverse(XmlMotor.MSG_TO_NS, this.namespace);
+        this.iterator = this.triples.reverse(
+            XmlMotor.MSG_TO_NS,
+            this.namespace.toString()
+        );
     }
 
     /**
@@ -91,8 +93,9 @@ final class NsPred implements Predicate {
     public boolean contains(final Long message) {
         boolean contains;
         try {
-            contains = this.triples.<Urn>get(message, XmlMotor.MSG_TO_NS)
-                .equals(this.namespace);
+            contains = Urn.create(
+                this.triples.get(message, XmlMotor.MSG_TO_NS)
+            ).equals(this.namespace);
         } catch (com.netbout.inf.triples.MissedTripleException ex) {
             contains = false;
         }

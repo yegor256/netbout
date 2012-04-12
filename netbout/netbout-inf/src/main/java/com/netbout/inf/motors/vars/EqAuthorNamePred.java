@@ -85,7 +85,7 @@ final class EqAuthorNamePred implements Predicate {
         return this.triples.has(
             message,
             VarsMotor.MSG_TO_NAME,
-            this.name
+            this.name.toString()
         );
     }
 

@@ -84,7 +84,7 @@ final class EqBoutNumberPred implements Predicate {
         return this.triples.has(
             message,
             VarsMotor.MSG_TO_BOUT,
-            this.number
+            this.number.toString()
         );
     }
 

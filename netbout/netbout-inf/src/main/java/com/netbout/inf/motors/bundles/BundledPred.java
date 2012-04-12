@@ -85,7 +85,9 @@ final class BundledPred implements Predicate {
         boolean contains;
         try {
             final String marker = this.triples.get(
-                this.triples.<Long>get(message, BundlesMotor.MSG_TO_BOUT),
+                Long.valueOf(
+                    this.triples.get(message, BundlesMotor.MSG_TO_BOUT)
+                ),
                 BundlesMotor.BOUT_TO_MARKER
             );
             if (this.passed.contains(marker)) {

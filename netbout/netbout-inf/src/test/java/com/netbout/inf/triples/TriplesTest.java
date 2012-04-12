@@ -168,10 +168,10 @@ public final class TriplesTest {
         final String name = "the-name";
         final Long number = this.random.nextLong();
         final Urn urn = new UrnMocker().mock();
-        this.triples.put(number, name, urn);
-        this.triples.put(number + 1, name, urn);
+        this.triples.put(number, name, urn.toString());
+        this.triples.put(number + 1, name, urn.toString());
         MatcherAssert.assertThat(
-            this.triples.<Urn>get(number, name),
+            Urn.create(this.triples.get(number, name)),
             Matchers.equalTo(urn)
         );
     }
@@ -194,10 +194,10 @@ public final class TriplesTest {
         final String name = "some-name-of-triple";
         final Long number = this.random.nextLong();
         final Long value = this.random.nextLong();
-        this.triples.put(number, name, value);
+        this.triples.put(number, name, value.toString());
         this.triples.clear(number, name);
         MatcherAssert.assertThat(
-            this.triples.has(number, name, value),
+            this.triples.has(number, name, value.toString()),
             Matchers.is(false)
         );
     }
@@ -212,14 +212,14 @@ public final class TriplesTest {
         final Long number = this.random.nextLong();
         final Urn first = new UrnMocker().mock();
         final Urn second = new UrnMocker().mock();
-        this.triples.put(number, name, first);
-        this.triples.put(number, name, second);
+        this.triples.put(number, name, first.toString());
+        this.triples.put(number, name, second.toString());
         MatcherAssert.assertThat(
-            IteratorUtils.toList(this.triples.<Urn>all(number, name)),
+            IteratorUtils.toList(this.triples.all(number, name)),
             Matchers.allOf(
                 (Matcher) Matchers.hasSize(2),
-                Matchers.hasItem(first),
-                Matchers.hasItem(second)
+                Matchers.hasItem(first.toString()),
+                Matchers.hasItem(second.toString())
             )
         );
     }
@@ -234,10 +234,10 @@ public final class TriplesTest {
         final Long first = this.random.nextLong();
         final Long second = first + 1L;
         final Urn value = new UrnMocker().mock();
-        this.triples.put(first, name, value);
-        this.triples.put(second, name, value);
+        this.triples.put(first, name, value.toString());
+        this.triples.put(second, name, value.toString());
         MatcherAssert.assertThat(
-            IteratorUtils.toList(this.triples.reverse(name, value)),
+            IteratorUtils.toList(this.triples.reverse(name, value.toString())),
             Matchers.allOf(
                 (Matcher) Matchers.hasSize(2),
                 Matchers.hasItems(second, first)
@@ -255,11 +255,13 @@ public final class TriplesTest {
         final String right = "right-triple";
         final Long number = this.random.nextLong();
         final Long joiner = this.random.nextLong();
-        this.triples.put(number, left, joiner);
+        this.triples.put(number, left, joiner.toString());
         final Urn value = new UrnMocker().mock();
-        this.triples.put(joiner, right, value);
+        this.triples.put(joiner, right, value.toString());
         MatcherAssert.assertThat(
-            IteratorUtils.toList(this.triples.reverse(left, right, value)),
+            IteratorUtils.toList(
+                this.triples.reverse(left, right, value.toString())
+            ),
             Matchers.allOf(
                 (Matcher) Matchers.hasSize(1),
                 Matchers.hasItems(number)
@@ -276,12 +278,12 @@ public final class TriplesTest {
         final String name = "boom-boom";
         final Long number = this.random.nextLong();
         final Urn value = new UrnMocker().mock();
-        this.triples.put(number, name, value);
+        this.triples.put(number, name, value.toString());
         this.close();
         this.start();
-        this.triples.put(number + 1, name, value);
+        this.triples.put(number + 1, name, value.toString());
         MatcherAssert.assertThat(
-            this.triples.has(number, name, value),
+            this.triples.has(number, name, value.toString()),
             Matchers.is(true)
         );
     }
@@ -296,7 +298,7 @@ public final class TriplesTest {
         final String name = "boom-boom-multi-thread";
         final Long number = this.random.nextLong();
         final Urn value = new UrnMocker().mock();
-        TriplesTest.this.triples.put(number, name, value);
+        TriplesTest.this.triples.put(number, name, value.toString());
         // @checkstyle MagicNumber (1 line)
         final int threads = 200;
         final AtomicInteger succeeded = new AtomicInteger(0);
@@ -308,15 +310,19 @@ public final class TriplesTest {
                     TriplesTest.this.triples.put(
                         TriplesTest.this.random.nextLong(),
                         name,
-                        value
+                        value.toString()
                     );
                     MatcherAssert.assertThat(
-                        TriplesTest.this.triples.has(number, name, value),
+                        TriplesTest.this.triples.has(
+                            number, name, value.toString()
+                        ),
                         Matchers.is(true)
                     );
                     MatcherAssert.assertThat(
                         IteratorUtils.toList(
-                            TriplesTest.this.triples.reverse(name, value)
+                            TriplesTest.this.triples.reverse(
+                                name, value.toString()
+                            )
                         ),
                         Matchers.hasItems(number)
                     );

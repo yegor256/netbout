@@ -120,7 +120,7 @@ public final class BundlesMotor implements Pointer {
         } else if ("unbundled".equals(name)) {
             String marker;
             try {
-                marker = this.triples.<String>get(
+                marker = this.triples.get(
                     ((NumberAtom) atoms.get(0)).value(),
                     BundlesMotor.BOUT_TO_MARKER
                 );
@@ -148,7 +148,7 @@ public final class BundlesMotor implements Pointer {
         this.triples.put(
             msg.number(),
             BundlesMotor.MSG_TO_BOUT,
-            msg.bout().number()
+            msg.bout().number().toString()
         );
         final Set<Urn> names = new TreeSet<Urn>();
         for (Participant dude : msg.bout().participants()) {

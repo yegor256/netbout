@@ -84,7 +84,9 @@ final class MatchesTitlePred implements Predicate {
         boolean contains;
         try {
             contains = this.triples.has(
-                this.triples.<Long>get(message, TextsMotor.MSG_TO_BOUT),
+                Long.valueOf(
+                    this.triples.get(message, TextsMotor.MSG_TO_BOUT)
+                ),
                 TextsMotor.TITLE_TO_WORD,
                 this.word
             );

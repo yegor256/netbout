@@ -83,13 +83,13 @@ final class UniqueBoutNumberPred implements Predicate {
      */
     @Override
     public boolean contains(final Long message) {
-        final Iterator<Long> bouts = this.triples.all(
+        final Iterator<String> bouts = this.triples.all(
             message,
             VarsMotor.MSG_TO_BOUT
         );
         boolean contains = false;
         if (bouts.hasNext()) {
-            final Long bout = bouts.next();
+            final Long bout = Long.valueOf(bouts.next());
             if (!this.passed.contains(bout)) {
                 contains = true;
             }

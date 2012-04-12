@@ -124,7 +124,7 @@ public final class ParticipantsMotor implements Pointer {
         this.triples.put(
             msg.number(),
             ParticipantsMotor.MSG_TO_BOUT,
-            msg.bout().number()
+            msg.bout().number().toString()
         );
         this.triples.clear(
             msg.bout().number(),
@@ -134,7 +134,7 @@ public final class ParticipantsMotor implements Pointer {
             this.triples.put(
                 msg.bout().number(),
                 ParticipantsMotor.BOUT_TO_DUDE,
-                dude.identity().name()
+                dude.identity().name().toString()
             );
         }
     }

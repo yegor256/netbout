@@ -252,8 +252,8 @@ public final class JdbcSession {
         for (Object arg : this.args) {
             if (arg instanceof Long) {
                 stmt.setLong(pos, (Long) arg);
-            } else if (arg instanceof byte[]) {
-                stmt.setBytes(pos, (byte[]) arg);
+            } else if (arg instanceof String) {
+                stmt.setString(pos, (String) arg);
             } else {
                 throw new IllegalArgumentException();
             }
