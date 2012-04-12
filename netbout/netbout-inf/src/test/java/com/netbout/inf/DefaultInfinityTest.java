@@ -43,7 +43,7 @@ public final class DefaultInfinityTest {
      */
     @Test
     public void populatesIndexOnFirstTimeCall() throws Exception {
-        final Infinity inf = new DefaultInfinity(new StoreMocker().mock());
+        final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
         final Message msg = new MessageMocker().mock();
         inf.see(msg);
         inf.messages("foo");

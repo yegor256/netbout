@@ -27,12 +27,19 @@
 package com.netbout.inf;
 
 import com.netbout.ih.StageFarm;
+import com.netbout.inf.ebs.EbsVolume;
+import com.netbout.inf.triples.HsqlTriples;
+import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
+import java.io.File;
 import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -42,7 +49,12 @@ import org.apache.commons.io.IOUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class DefaultInfinity implements Infinity {
+public final class DefaultInfinity implements Infinity, TaskListener {
+
+    /**
+     * Message to some void constant (name of triple).
+     */
+    private static final String MSG_TO_VOID = "message-to-void";
 
     /**
      * Multiplexer of tasks.
@@ -50,25 +62,60 @@ public final class DefaultInfinity implements Infinity {
     private final transient Mux mux = new Mux();
 
     /**
+     * The folder to work with.
+     */
+    private final transient Folder folder;
+
+    /**
      * Store of predicates.
      */
     private final transient Store store;
 
     /**
+     * Counter of messages indexed.
+     */
+    private final transient Triples counter;
+
+    /**
+     * Maximum successfully indexed number.
+     */
+    private final transient AtomicLong max = new AtomicLong(0L);
+
+    /**
+     * Numbers in pipeline.
+     */
+    private final transient SortedSet<Long> pipeline =
+        new ConcurrentSkipListSet<Long>();
+
+    /**
      * Public ctor.
      */
     public DefaultInfinity() {
-        this(new PredicateStore());
+        this(new EbsVolume());
     }
 
     /**
      * Protect ctor, for tests.
-     * @param str The store
+     * @param fldr The folder
      */
-    protected DefaultInfinity(final Store str) {
-        this.store = str;
+    protected DefaultInfinity(final Folder fldr) {
+        this.folder = fldr;
+        this.store = new PredicateStore(this.folder);
         StageFarm.register(this);
-        Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", str);
+        this.counter = new HsqlTriples(new File(this.folder.path(), "counter"));
+        final Iterator<Long> numbers = this.counter
+            .reverse(DefaultInfinity.MSG_TO_VOID, "");
+        if (numbers.hasNext()) {
+            this.max.set(numbers.next());
+        } else {
+            this.max.set(0L);
+        }
+        Logger.info(
+            this,
+            "#DefaultInfinity(%[type]s): instantiated (max=%d)",
+            this.folder,
+            this.max.get()
+        );
     }
 
     /**
@@ -115,6 +162,7 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public void close() throws java.io.IOException {
         Logger.info(this, "#close(): will stop Mux in a second");
+        IOUtils.closeQuietly(this.counter);
         IOUtils.closeQuietly(this.mux);
         this.store.close();
     }
@@ -125,7 +173,7 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public long eta(final Urn who) {
         long eta = this.mux.eta(who);
-        if (eta == 0 && this.store.maximum() == 0) {
+        if (eta == 0 && this.maximum() == 0) {
             eta = 1;
         }
         return eta;
@@ -144,7 +192,20 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public Long maximum() {
-        return this.store.maximum();
+        return this.max.get();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void done(final Message message) {
+        final Long number = message.number();
+        if (this.pipeline.first() == number) {
+            this.max.set(number);
+            this.counter.put(number, DefaultInfinity.MSG_TO_VOID, "");
+        }
+        this.pipeline.remove(number);
     }
 
     /**
@@ -152,7 +213,8 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void see(final Message message) {
-        this.mux.add(new SeeMessageTask(message, this.store));
+        this.pipeline.add(message.number());
+        this.mux.add(new SeeMessageTask(message, this.store, this));
         Logger.debug(
             this,
             "see(message #%d): request submitted",

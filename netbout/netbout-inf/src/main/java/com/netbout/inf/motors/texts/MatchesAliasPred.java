@@ -24,86 +24,76 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.log;
+package com.netbout.inf.motors.texts;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.LoggingEvent;
+import com.netbout.inf.Predicate;
+import com.netbout.inf.triples.Triples;
+import java.util.NoSuchElementException;
 
 /**
- * Global web log appender.
+ * Means "(matches '...' $author.alias)".
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class WebAppender extends AppenderSkeleton {
+final class MatchesAliasPred implements Predicate {
 
     /**
-     * List of log events (keys are thread names).
+     * Triples to use.
      */
-    private static final ConcurrentMap<String, List<String>> EVENTS =
-        new ConcurrentHashMap<String, List<String>>();
+    private final transient Triples triples;
 
     /**
-     * {@inheritDoc}
+     * The word we're waiting.
      */
-    @Override
-    public boolean requiresLayout() {
-        return true;
+    private final transient String word;
+
+    /**
+     * Public ctor.
+     * @param trpls The triples to work with
+     * @param wrd The word
+     */
+    public MatchesAliasPred(final Triples trpls, final String wrd) {
+        this.triples = trpls;
+        this.word = wrd;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void activateOptions() {
-        // nothing to do
+    public Long next() {
+        throw new NoSuchElementException();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() {
-        // nothing to do
+    public boolean hasNext() {
+        return false;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void append(final LoggingEvent event) {
-        final boolean suites = this.EVENTS.containsKey(event.getThreadName())
-            && event.getLevel().isGreaterOrEqual(Level.INFO)
-            && !((String) event.getMessage()).isEmpty()
-            && ((String) event.getMessage()).charAt() != '#';
-        if (suites)
-            this.EVENTS.get(event.getThreadName()).add(
-                this.getLayout().format(event)
+    public boolean contains(final Long message) {
+        boolean contains;
+        try {
+            contains = this.triples.has(
+                Long.valueOf(
+                    this.triples.get(message, TextsMotor.MSG_TO_BOUT)
+                ),
+                TextsMotor.ALIAS_TO_WORD,
+                this.word
             );
+        } catch (com.netbout.inf.triples.MissedTripleException ex) {
+            contains = false;
         }
-    }
-
-    /**
-     * Start recording events for this thread.
-     */
-    public static void start() {
-        WebAppender.EVENTS.put(
-            Thread.currentThread().getName(),
-            new LinkedList<String>()
-        );
-    }
-
-    /**
-     * Get all recorded events, for current thread.
-     * @return The list of events
-     */
-    public static List<String> get() {
-        return WebAppender.EVENTS.get(Thread.currentThread().getName());
+        return contains;
     }
 
 }

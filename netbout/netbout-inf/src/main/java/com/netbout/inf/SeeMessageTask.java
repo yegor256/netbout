@@ -49,13 +49,21 @@ final class SeeMessageTask extends AbstractTask {
     private final transient Message message;
 
     /**
+     * The listener.
+     */
+    private final transient TaskListener listener;
+
+    /**
      * Public ctor.
      * @param what The message to update
      * @param store The store to use
+     * @param ltr Listener of result
      */
-    public SeeMessageTask(final Message what, final Store store) {
+    public SeeMessageTask(final Message what, final Store store,
+        final TaskListener ltr) {
         super(store);
         this.message = what;
+        this.listener = ltr;
     }
 
     /**
@@ -87,6 +95,7 @@ final class SeeMessageTask extends AbstractTask {
     @Override
     protected void execute() {
         this.store().see(this.message);
+        this.listener.done(this.message);
         Logger.debug(
             this,
             "#execute(): cached message #%d in %[nano]s",

@@ -26,21 +26,14 @@
  */
 package com.netbout.inf;
 
-import com.netbout.inf.ebs.EbsVolume;
 import com.netbout.inf.motors.StoreAware;
 import com.netbout.inf.predicates.PredicatePointer;
-import com.netbout.inf.triples.HsqlTriples;
-import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.io.File;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 
@@ -56,14 +49,9 @@ import org.reflections.Reflections;
 public final class PredicateStore implements Store {
 
     /**
-     * Message to some void constant (name of triple).
-     */
-    private static final String MSG_TO_VOID = "message-to-void";
-
-    /**
      * The folder to work with.
      */
-    private final transient Folder folder = new EbsVolume();
+    private final transient Folder folder;
 
     /**
      * Pointers to all known predicates.
@@ -71,34 +59,12 @@ public final class PredicateStore implements Store {
     private final transient Set<Pointer> pointers;
 
     /**
-     * Counter of messages indexed.
-     */
-    private final transient Triples counter;
-
-    /**
-     * Maximum successfully indexed number.
-     */
-    private final transient AtomicLong max = new AtomicLong(0L);
-
-    /**
-     * Numbers just done.
-     */
-    private final transient SortedSet<Long> done =
-        new ConcurrentSkipListSet<Long>();
-
-    /**
      * Public ctor.
+     * @param fldr The folder to work with
      */
-    public PredicateStore() {
+    public PredicateStore(final Folder fldr) {
+        this.folder = fldr;
         this.pointers = this.discover();
-        this.counter = new HsqlTriples(new File(this.folder.path(), "counter"));
-        final Iterator<Long> numbers = this.counter
-            .reverse(PredicateStore.MSG_TO_VOID, "");
-        if (numbers.hasNext()) {
-            this.max.set(numbers.next());
-        } else {
-            this.max.set(0L);
-        }
     }
 
     /**
@@ -124,28 +90,7 @@ public final class PredicateStore implements Store {
         for (Pointer pointer : this.pointers) {
             IOUtils.closeQuietly(pointer);
         }
-        IOUtils.closeQuietly(this.counter);
         IOUtils.closeQuietly(this.folder);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long maximum() {
-        while (!this.done.isEmpty()) {
-            final Long smallest = this.done.first();
-            if (smallest != this.max.get() + 1) {
-                break;
-            }
-            this.max.incrementAndGet();
-            this.done.remove(smallest);
-            // @checkstyle MagicNumber (1 line)
-            if (this.max.get() % 1000 == 0) {
-                Logger.info(this, "#maximum(): %d message(s)", this.max.get());
-            }
-        }
-        return this.max.get();
     }
 
     /**
@@ -156,8 +101,6 @@ public final class PredicateStore implements Store {
         for (Pointer pointer : this.pointers) {
             pointer.see(msg);
         }
-        this.done.add(msg.number());
-        this.counter.put(this.maximum(), PredicateStore.MSG_TO_VOID, "");
     }
 
     /**

@@ -27,40 +27,19 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Message;
-import java.io.Closeable;
-import java.util.List;
 
 /**
- * Store of all known predicates.
- *
- * <p>Implementation must be immutable and thread-safe.
+ * Listener of task completion.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Store extends Closeable {
+interface TaskListener {
 
     /**
-     * Show some stats.
-     * @return Text stats
+     * When it's done.
+     * @param message The message to inform about
      */
-    String statistics();
-
-    /**
-     * See this message.
-     * @param msg The message
-     */
-    void see(Message msg);
-
-    /**
-     * Build a predicate from name and list of preds.
-     *
-     * <p>Throws {@link PredicateException} if this name is not recognized.
-     *
-     * @param name Its name
-     * @param atoms List of arguments
-     * @return The predicate
-     */
-    Predicate build(String name, List<Atom> atoms);
+    void done(Message message);
 
 }

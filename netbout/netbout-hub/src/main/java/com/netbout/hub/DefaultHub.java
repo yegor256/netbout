@@ -108,6 +108,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      * Public ctor, for tests mostly.
      * @param bus The bus
      * @param infinity The infinity
+     * @todo #538 
      */
     public DefaultHub(final Bus bus, final Infinity infinity) {
         StatsFarm.register(this);

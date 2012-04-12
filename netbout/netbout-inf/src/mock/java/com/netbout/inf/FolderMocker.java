@@ -26,41 +26,38 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
-import java.io.Closeable;
-import java.util.List;
+import java.io.File;
+import org.mockito.Mockito;
 
 /**
- * Store of all known predicates.
- *
- * <p>Implementation must be immutable and thread-safe.
- *
+ * Mocker of {@link Folder}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Store extends Closeable {
+public final class FolderMocker {
 
     /**
-     * Show some stats.
-     * @return Text stats
+     * The object.
      */
-    String statistics();
+    private final transient Folder folder = Mockito.mock(Folder.class);
 
     /**
-     * See this message.
-     * @param msg The message
+     * With this path.
+     * @param dir The path
+     * @return This object
      */
-    void see(Message msg);
+    public FolderMocker withPath(final File dir) {
+        dir.mkdirs();
+        Mockito.doReturn(dir).when(this.folder).path();
+        return this;
+    }
 
     /**
-     * Build a predicate from name and list of preds.
-     *
-     * <p>Throws {@link PredicateException} if this name is not recognized.
-     *
-     * @param name Its name
-     * @param atoms List of arguments
+     * Build it.
      * @return The predicate
      */
-    Predicate build(String name, List<Atom> atoms);
+    public Folder mock() {
+        return this.folder;
+    }
 
 }

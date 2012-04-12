@@ -27,12 +27,14 @@
 package com.netbout.inf.motors.texts;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.FolderMocker;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateStore;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -46,6 +48,7 @@ import org.junit.rules.TemporaryFolder;
  * Test case of {@link TextsMotor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings({
     "PMD.UseConcurrentHashMap", "PMD.AvoidInstantiatingObjectsInLoops"
@@ -70,9 +73,12 @@ public final class TextsMotorTest {
             .withNumber(number)
             .withText("hello, dude!")
             .mock();
-        final TextsMotor motor = new TextsMotor(this.dir.newFolder("f1"));
+        final File path = this.dir.newFolder("f1");
+        final TextsMotor motor = new TextsMotor(path);
         motor.see(message);
-        motor.setStore(new PredicateStore());
+        motor.setStore(
+            new PredicateStore(new FolderMocker().withPath(path).mock())
+        );
         final Predicate pred = motor.build(
             "",
             Arrays.asList(
@@ -102,8 +108,11 @@ public final class TextsMotorTest {
                 {"jeff lebowski", "the dude is Jeff Bridges (Lebowski)"},
             }
         );
-        final TextsMotor motor = new TextsMotor(this.dir.newFolder("f2"));
-        motor.setStore(new PredicateStore());
+        final File path = this.dir.newFolder("f2");
+        final TextsMotor motor = new TextsMotor(path);
+        motor.setStore(
+            new PredicateStore(new FolderMocker().withPath(path).mock())
+        );
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Long number = new Random().nextLong();
             final Message message = new MessageMocker()
@@ -142,8 +151,11 @@ public final class TextsMotorTest {
                 {"boy", "short story about some girls"},
             }
         );
-        final TextsMotor motor = new TextsMotor(this.dir.newFolder("f3"));
-        motor.setStore(new PredicateStore());
+        final File path = this.dir.newFolder("f3");
+        final TextsMotor motor = new TextsMotor(path);
+        motor.setStore(
+            new PredicateStore(new FolderMocker().withPath(path).mock())
+        );
         for (Map.Entry<String, String> entry : matches.entrySet()) {
             final Long number = new Random().nextLong();
             final Message message = new MessageMocker()

@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link SeeMessageTask}.
@@ -65,6 +66,7 @@ public final class SeeMessageTaskTest {
         final Store store = new StoreMocker().mock();
         for (int idx = 0; idx < failed.get(); idx += 1) {
             tasks.add(
+                // @checkstyle AnonInnerLength (30 lines)
                 new Callable<Long>() {
                     @Override
                     public Long call() {
@@ -76,7 +78,9 @@ public final class SeeMessageTaskTest {
                                 .withDate(new Date())
                                 .inBout(bout)
                                 .mock();
-                            new SeeMessageTask(msg, store).run();
+                            new SeeMessageTask(
+                                msg, store, Mockito.mock(TaskListener.class)
+                            ).run();
                         // @checkstyle IllegalCatch (1 line)
                         } catch (Throwable ex) {
                             Logger.error(this, "%[exception]s", ex);

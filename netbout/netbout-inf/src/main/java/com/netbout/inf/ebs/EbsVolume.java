@@ -49,7 +49,10 @@ public final class EbsVolume implements Folder {
      * The directory.
      */
     private final transient EbsDirectory directory = new EbsDirectory(
-        new File(System.getProperty("java.io.tmpdir"), "netbout-INF")
+        new File(
+            System.getProperty("java.io.tmpdir"),
+            Manifests.read("Netbout-InfDir")
+        )
     );
 
     /**

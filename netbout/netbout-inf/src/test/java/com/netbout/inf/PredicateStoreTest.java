@@ -41,7 +41,7 @@ public final class PredicateStoreTest {
      */
     @Test
     public void discoversAllMotorsAndPredicates() throws Exception {
-        new PredicateStore();
+        new PredicateStore(new FolderMocker().mock());
     }
 
 }

@@ -20,3 +20,4 @@ Netbout-SuperSecret: -super-secret
 Netbout-AwsKey: -key
 Netbout-AwsSecret: -secret
 Netbout-EbsVolume: v-1
+Netbout-InfDir: INF-for-REST

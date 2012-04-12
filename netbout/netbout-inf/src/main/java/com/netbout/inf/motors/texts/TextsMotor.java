@@ -37,6 +37,7 @@ import com.netbout.inf.motors.StoreAware;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
+import com.netbout.spi.NetboutUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,24 +56,27 @@ import org.apache.commons.collections.CollectionUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.DefaultPackage")
 public final class TextsMotor implements Pointer, StoreAware {
 
     /**
      * Message number to word, in text (name of triple).
      */
-    @SuppressWarnings("PMD.DefaultPackage")
     static final String MSG_TEXT_TO_WORD = "message-text-to-word";
 
     /**
      * Bout number to word, in bout title (name of triple).
      */
-    @SuppressWarnings("PMD.DefaultPackage")
     static final String TITLE_TO_WORD = "bout-title-to-word";
+
+    /**
+     * Bout number to word, in author alias (name of triple).
+     */
+    static final String ALIAS_TO_WORD = "author-alias-to-word";
 
     /**
      * Message to bout (name of triple).
      */
-    @SuppressWarnings("PMD.DefaultPackage")
     static final String MSG_TO_BOUT = "message-to-bout";
 
     /**
@@ -166,6 +170,8 @@ public final class TextsMotor implements Pointer, StoreAware {
                 predicate = new MatchesTextPred(this.triples, word);
             } else if (var.equals(VariableAtom.BOUT_TITLE)) {
                 predicate = new MatchesTitlePred(this.triples, word);
+            } else if (var.equals(VariableAtom.AUTHOR_ALIAS)) {
+                predicate = new MatchesAliasPred(this.triples, word);
             } else {
                 throw new PredicateException(
                     String.format("Variable %s not supported in MATCHES", var)
@@ -197,6 +203,15 @@ public final class TextsMotor implements Pointer, StoreAware {
             this.triples.put(
                 msg.bout().number(),
                 TextsMotor.TITLE_TO_WORD,
+                word
+            );
+        }
+        this.triples.clear(msg.bout().number(), TextsMotor.ALIAS_TO_WORD);
+        for (String word
+            : TextsMotor.words(NetboutUtils.aliasOf(msg.author()))) {
+            this.triples.put(
+                msg.bout().number(),
+                TextsMotor.ALIAS_TO_WORD,
                 word
             );
         }
