@@ -1,4 +1,4 @@
-/**
+2/**
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -24,90 +24,30 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.notices;
+
+import com.netbout.inf.Notice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 
 /**
- * Abstract task.
+ * New alias was added to identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-abstract class AbstractTask implements Task {
+public interface AliasAddedNotice extends Notice {
 
     /**
-     * The store with predicates.
+     * The identity where alias was added.
+     * @return The identity
      */
-    private final transient Store istore;
+    Identity identity();
 
     /**
-     * When started.
+     * The alias.
+     * @return The alias
      */
-    private transient long started;
-
-    /**
-     * When finished (or NULL if still running).
-     */
-    private transient long finished;
-
-    /**
-     * Public ctor.
-     * @param store The store
-     */
-    public AbstractTask(final Store store) {
-        this.istore = store;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final int hashCode() {
-        return this.toString().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean equals(final Object task) {
-        return task instanceof Task && this.hashCode() == task.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void run() {
-        this.started = System.nanoTime();
-        this.execute();
-        this.finished = System.nanoTime();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final long time() {
-        long time;
-        if (this.finished == 0L) {
-            time = System.nanoTime() - this.started;
-        } else {
-            time = this.finished - this.started;
-        }
-        return time;
-    }
-
-    /**
-     * Execute task.
-     */
-    protected abstract void execute();
-
-    /**
-     * Get store.
-     * @return The store
-     */
-    protected final Store store() {
-        return this.istore;
-    }
+    String alias();
 
 }

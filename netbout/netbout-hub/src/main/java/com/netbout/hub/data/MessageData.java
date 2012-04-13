@@ -227,6 +227,18 @@ final class MessageData implements MessageDt {
                     .asDefault(true)
                     .exec();
                 this.seenBy.put(identity, true);
+                this.hub.see(
+                    new MessageSeenNotice() {
+                        @Override
+                        public Message message() {
+                            return new InfMessage(MessageData.this);
+                        }
+                        @Override
+                        public Identity seenBy() {
+                            return new InfIdentity(identity.name());
+                        }
+                    }
+                );
             }
         }
         Logger.debug(

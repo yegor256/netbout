@@ -27,87 +27,11 @@
 package com.netbout.inf;
 
 /**
- * Abstract task.
+ * Notice for infinity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-abstract class AbstractTask implements Task {
-
-    /**
-     * The store with predicates.
-     */
-    private final transient Store istore;
-
-    /**
-     * When started.
-     */
-    private transient long started;
-
-    /**
-     * When finished (or NULL if still running).
-     */
-    private transient long finished;
-
-    /**
-     * Public ctor.
-     * @param store The store
-     */
-    public AbstractTask(final Store store) {
-        this.istore = store;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final int hashCode() {
-        return this.toString().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean equals(final Object task) {
-        return task instanceof Task && this.hashCode() == task.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void run() {
-        this.started = System.nanoTime();
-        this.execute();
-        this.finished = System.nanoTime();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final long time() {
-        long time;
-        if (this.finished == 0L) {
-            time = System.nanoTime() - this.started;
-        } else {
-            time = this.finished - this.started;
-        }
-        return time;
-    }
-
-    /**
-     * Execute task.
-     */
-    protected abstract void execute();
-
-    /**
-     * Get store.
-     * @return The store
-     */
-    protected final Store store() {
-        return this.istore;
-    }
+public interface Notice {
 
 }

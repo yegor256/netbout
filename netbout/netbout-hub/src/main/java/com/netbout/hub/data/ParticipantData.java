@@ -45,9 +45,9 @@ final class ParticipantData implements ParticipantDt {
     private final transient Hub hub;
 
     /**
-     * Number of bout.
+     * Bout data.
      */
-    private final transient Long bout;
+    private final transient BoutDt boutdt;
 
     /**
      * The participant.
@@ -70,10 +70,10 @@ final class ParticipantData implements ParticipantDt {
      * @param num The number
      * @param idnt The identity
      */
-    public ParticipantData(final Hub ihub, final Long num, final Urn idnt) {
+    public ParticipantData(final Hub ihub, final BoutDt bdata, final Urn idnt) {
         this.hub = ihub;
-        assert num != null;
-        this.bout = num;
+        assert bdata != null;
+        this.boutdt = bdata;
         assert idnt != null;
         this.identity = idnt;
     }
@@ -108,6 +108,18 @@ final class ParticipantData implements ParticipantDt {
                 .arg(flag)
                 .asDefault(true)
                 .exec();
+            this.hub.see(
+                new ParticipationConfirmedNotice() {
+                    @Override
+                    public Bout bout() {
+                        return new InfMessage(ParticipantData.this.boutdt);
+                    }
+                    @Override
+                    public Identity confirmedBy() {
+                        return new InfIdentity(ParticipantData.this.identity);
+                    }
+                }
+            );
         }
         Logger.debug(
             this,

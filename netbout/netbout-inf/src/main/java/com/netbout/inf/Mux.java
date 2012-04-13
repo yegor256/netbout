@@ -173,11 +173,11 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      */
     public long eta(final Urn who) {
         long eta;
-        if (this.dependants.containsKey(who)) {
+        final int count = this.getActiveCount();
+        if (this.dependants.containsKey(who) && count > 0) {
             eta = this.dependants.get(who).get();
             if (eta > 0) {
-                eta = this.queue.size() * (long) this.stats.getMean()
-                    / this.getActiveCount();
+                eta = this.queue.size() * (long) this.stats.getMean() / count;
             }
         } else {
             eta = 0L;
@@ -192,30 +192,28 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     public void add(final Task task) {
         if (!this.isTerminated() && !this.isShutdown()
             && !this.isTerminating()) {
-            synchronized (this.queue) {
-                if (this.queue.contains(task)) {
-                    Logger.debug(
-                        this,
-                        "#add('%s'): in the queue already, ignored dup",
-                        task
-                    );
-                } else {
-                    this.queue.add(task);
-                    for (Urn who : task.dependants()) {
-                        this.dependants.putIfAbsent(who, new AtomicLong());
-                        this.dependants.get(who).incrementAndGet();
-                    }
-                    Logger.debug(
-                        this,
-                        // @checkstyle LineLength (1 line)
-                        "#add('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
-                        task,
-                        this.queue.size(),
-                        this.getActiveCount(),
-                        this.getCompletedTaskCount(),
-                        this.getCorePoolSize()
-                    );
+            if (this.queue.contains(task)) {
+                Logger.debug(
+                    this,
+                    "#add('%s'): in the queue already, ignored dup",
+                    task
+                );
+            } else {
+                this.queue.add(task);
+                for (Urn who : task.dependants()) {
+                    this.dependants.putIfAbsent(who, new AtomicLong());
+                    this.dependants.get(who).incrementAndGet();
                 }
+                Logger.debug(
+                    this,
+                    // @checkstyle LineLength (1 line)
+                    "#add('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
+                    task,
+                    this.queue.size(),
+                    this.getActiveCount(),
+                    this.getCompletedTaskCount(),
+                    this.getCorePoolSize()
+                );
             }
         }
     }
@@ -239,9 +237,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 }
                 this.run(task);
                 for (Urn who : task.dependants()) {
-                    synchronized (Mux.this) {
-                        Mux.this.dependants.get(who).decrementAndGet();
-                    }
+                    Mux.this.dependants.get(who).decrementAndGet();
                 }
                 Mux.this.stats.addValue((double) task.time());
             }

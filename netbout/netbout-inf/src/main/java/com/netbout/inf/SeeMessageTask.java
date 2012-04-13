@@ -54,6 +54,11 @@ final class SeeMessageTask extends AbstractTask {
     private final transient TaskListener listener;
 
     /**
+     * Dependants.
+     */
+    private final transient Set<Urn> deps = new HashSet<Urn>();
+
+    /**
      * Public ctor.
      * @param what The message to update
      * @param store The store to use
@@ -64,6 +69,9 @@ final class SeeMessageTask extends AbstractTask {
         super(store);
         this.message = what;
         this.listener = ltr;
+        for (Participant dude : what.bout().participants()) {
+            this.deps.add(dude.identity().name());
+        }
     }
 
     /**
@@ -71,11 +79,7 @@ final class SeeMessageTask extends AbstractTask {
      */
     @Override
     public Set<Urn> dependants() {
-        final Set<Urn> names = new HashSet<Urn>();
-        for (Participant dude : this.message.bout().participants()) {
-            names.add(dude.identity().name());
-        }
-        return names;
+        return this.deps;
     }
 
     /**

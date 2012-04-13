@@ -24,52 +24,23 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.notices;
 
-import java.io.File;
-import org.mockito.Mockito;
+import com.netbout.inf.Notice;
+import com.netbout.spi.Message;
 
 /**
- * Mocker of {@link Folder}.
+ * New message was just posted.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class FolderMocker {
+public interface MessagePostedNotice extends Notice {
 
     /**
-     * The object.
+     * Link to the message.
+     * @return The message
      */
-    private final transient Folder folder = Mockito.mock(Folder.class);
-
-    /**
-     * Public ctor.
-     */
-    public FolderMocker() {
-        this.withPath(
-            new File(
-                System.getProperty("java.io.tmpdir"),
-                "FolderMocker"
-            )
-        );
-    }
-
-    /**
-     * With this path.
-     * @param dir The path
-     * @return This object
-     */
-    public FolderMocker withPath(final File dir) {
-        dir.mkdirs();
-        Mockito.doReturn(dir).when(this.folder).path();
-        return this;
-    }
-
-    /**
-     * Build it.
-     * @return The predicate
-     */
-    public Folder mock() {
-        return this.folder;
-    }
+    Message message();
 
 }

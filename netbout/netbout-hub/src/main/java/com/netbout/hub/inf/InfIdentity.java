@@ -24,80 +24,39 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.hub.inf;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import java.util.Date;
+import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Profile;
+import com.netbout.spi.UnreachableUrnException;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
+import java.net.URL;
+import java.util.Set;
 
 /**
- * Message in a hub.
+ * Identity to be seen by INF.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class HubMessage implements Message {
+@SuppressWarnings("PMD.TooManyMethods")
+public final class InfIdentity implements Identity {
 
     /**
-     * The hub.
+     * The name.
      */
-    private final transient PowerHub hub;
-
-    /**
-     * The viewer.
-     */
-    private final transient Identity viewer;
-
-    /**
-     * The bout where this message is located.
-     */
-    private final transient Bout ibout;
-
-    /**
-     * The data.
-     */
-    private final transient MessageDt data;
+    private final transient Urn iname;
 
     /**
      * Public ctor.
-     * @param ihub The hub
-     * @param vwr Viewer
-     * @param bout The bout where this message is located
-     * @param dat The data
-     * @checkstyle ParameterNumber (3 lines)
+     * @param name The identity's name
      */
-    public HubMessage(final PowerHub ihub, final Identity vwr,
-        final Bout bout, final MessageDt dat) {
-        this.hub = ihub;
-        this.viewer = vwr;
-        this.ibout = bout;
-        this.data = dat;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int compareTo(final Message msg) {
-        return this.date().compareTo(msg.date());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object bout) {
-        return bout instanceof Message
-            && this.number().equals(((Message) bout).number());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.number().hashCode();
+    public InfIdentity(final Urn name) {
+        this.iname = name;
     }
 
     /**
@@ -105,60 +64,104 @@ final class HubMessage implements Message {
      */
     @Override
     public String toString() {
-        return String.format("msg#%d", this.number());
+        throw new UnsupportedOperationException("#toString()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Bout bout() {
-        return this.ibout;
+    public int compareTo(final Identity identity) {
+        throw new UnsupportedOperationException("#compareTo()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long number() {
-        return this.data.getNumber();
+    public boolean equals(final Object obj) {
+        throw new UnsupportedOperationException("#equals()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Identity author() {
-        try {
-            return this.hub.identity(this.data.getAuthor());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new IllegalStateException(ex);
-        }
+    public int hashCode() {
+        throw new UnsupportedOperationException("#hashCode()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String text() {
-        this.data.addSeenBy(this.viewer.name());
-        return this.data.getText();
+    public Long eta() {
+        throw new UnsupportedOperationException("#eta()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Date date() {
-        return this.data.getDate();
+    public URL authority() {
+        throw new UnsupportedOperationException("#authority()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Boolean seen() {
-        return this.data.isSeenBy(this.viewer.name());
+    public Urn name() {
+        return this.iname;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout start() {
+        throw new UnsupportedOperationException("#start()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bout bout(final Long number) {
+        throw new UnsupportedOperationException("#bout()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterable<Bout> inbox(final String query) {
+        throw new UnsupportedOperationException("#inbox()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Profile profile() {
+        throw new UnsupportedOperationException("#profile()");
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
+     */
+    @Override
+    public Identity friend(final Urn name) throws UnreachableUrnException {
+        throw new UnsupportedOperationException("#friend()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Identity> friends(final String keyword) {
+        throw new UnsupportedOperationException("#friends()");
     }
 
 }

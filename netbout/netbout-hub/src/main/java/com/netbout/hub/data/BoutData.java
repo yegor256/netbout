@@ -130,6 +130,18 @@ final class BoutData implements BoutDt {
                 .asDefault(true)
                 .exec();
         }
+        this.hub.infinity().see(
+            new KickOffNotice() {
+                @Override
+                public Bout bout() {
+                    return new InfBout(BoutData.this);
+                }
+                @Override
+                public Identity identity() {
+                    return new InfIdentity(identity.name());
+                }
+            }
+        );
     }
 
     /**
@@ -220,6 +232,14 @@ final class BoutData implements BoutDt {
                 .arg(this.title)
                 .asDefault(true)
                 .exec();
+            this.hub.infinity().see(
+                new BoutRenamedNotice() {
+                    @Override
+                    public Bout bout() {
+                        return new InfBout(BoutData.this);
+                    }
+                }
+            );
         }
         Logger.debug(
             this,
@@ -244,6 +264,18 @@ final class BoutData implements BoutDt {
                 .arg(data.getIdentity())
                 .asDefault(true)
                 .exec();
+            this.hub.infinity().see(
+                new ParticipantInvitedNotice() {
+                    @Override
+                    public Bout bout() {
+                        return new InfBout(BoutData.this);
+                    }
+                    @Override
+                    public Identity invitee() {
+                        return new InfIdentity(urn);
+                    }
+                }
+            );
         }
         Logger.debug(
             this,
@@ -285,24 +317,31 @@ final class BoutData implements BoutDt {
      */
     @Override
     public MessageDt addMessage() {
-        MessageDt data;
         synchronized (this.number) {
             final Long num = this.hub.make("create-bout-message")
                 .synchronously()
                 .arg(this.number)
                 .asDefault(1L)
                 .exec();
-            data = new MessageData(this.hub, num);
+            final MessageDt data = new MessageData(this.hub, num);
             this.messages.put(num, data);
             this.listener.messageCreated(num, this.number);
+            this.hub.infinity().see(
+                new MessagePostedNotice() {
+                    @Override
+                    public Message message() {
+                        return new InfMessage(data);
+                    }
+                }
+            );
+            Logger.debug(
+                this,
+                "#addMessage(): new empty message #%d added to bout #%d",
+                data.getNumber(),
+                this.number
+            );
+            return data;
         }
-        Logger.debug(
-            this,
-            "#addMessage(): new empty message #%d added to bout #%d",
-            data.getNumber(),
-            this.number
-        );
-        return data;
     }
 
     /**

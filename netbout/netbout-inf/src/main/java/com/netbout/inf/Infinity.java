@@ -67,21 +67,9 @@ public interface Infinity extends Closeable {
     Long maximum();
 
     /**
-     * Update information about this message.
-     * @param message The message to inform about
+     * Send this notice to infinity.
+     * @param notice The notice to see
      */
-    void see(Message message);
-
-    /**
-     * Update information about this bout.
-     * @param bout The bout to inform about
-     */
-    void see(Bout bout);
-
-    /**
-     * Update information about this identity.
-     * @param identity The identity to inform about
-     */
-    void see(Identity identity);
+    void see(Notice notice);
 
 }

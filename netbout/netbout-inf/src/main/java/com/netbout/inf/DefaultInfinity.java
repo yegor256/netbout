@@ -124,7 +124,8 @@ public final class DefaultInfinity implements Infinity, TaskListener {
     @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
-        text.append("Mux stats:\n")
+        text.append(String.format("maximum(): %s\n", this.maximum()))
+            .append("Mux stats:\n")
             .append(this.mux.statistics())
             .append("\n\nStore stats:\n")
             .append(this.store.statistics())
@@ -200,60 +201,26 @@ public final class DefaultInfinity implements Infinity, TaskListener {
      */
     @Override
     public void done(final Message message) {
-        final Long number = message.number();
-        if (this.pipeline.first() == number) {
-            if (this.max.get() < number) {
-                this.max.set(number);
+        if (!this.pipeline.isEmpty()) {
+            final Long number = message.number();
+            if (this.pipeline.first() == number) {
+                // @checkstyle NestedIfDepth (1 line)
+                if (this.max.get() < number) {
+                    this.max.set(number);
+                }
+                this.counter.put(number, DefaultInfinity.MSG_TO_VOID, "");
             }
-            this.counter.put(number, DefaultInfinity.MSG_TO_VOID, "");
+            this.pipeline.remove(number);
         }
-        this.pipeline.remove(number);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void see(final Message message) {
-        this.pipeline.add(message.number());
-        this.mux.add(new SeeMessageTask(message, this.store, this));
-        Logger.debug(
-            this,
-            "see(message #%d): request submitted",
-            message.number()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Bout bout) {
-        final Iterator<Message> msgs = bout.messages("").iterator();
-        if (msgs.hasNext()) {
-            this.see(msgs.next());
-        }
-        Logger.debug(
-            this,
-            "see(bout #%d): request submitted",
-            bout.number()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Identity identity) {
-        final Iterator<Bout> bouts = identity.inbox("").iterator();
-        if (bouts.hasNext()) {
-            this.see(bouts.next());
-        }
-        Logger.debug(
-            this,
-            "see('%s'): request submitted",
-            identity
-        );
+    public void see(final Notice notice) {
+        this.mux.add(new SeeTask(notice, this.store, this));
+        Logger.debug(this,"see(%s): notice submitted", notice);
     }
 
 }

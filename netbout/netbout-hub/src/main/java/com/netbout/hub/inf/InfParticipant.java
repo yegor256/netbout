@@ -24,54 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.hub.inf;
 
+import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-import java.util.Date;
+import com.netbout.spi.Participant;
+import com.ymock.util.Logger;
 
 /**
- * Message in a hub.
+ * Participant to be seen by INF.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class HubMessage implements Message {
-
-    /**
-     * The hub.
-     */
-    private final transient PowerHub hub;
-
-    /**
-     * The viewer.
-     */
-    private final transient Identity viewer;
-
-    /**
-     * The bout where this message is located.
-     */
-    private final transient Bout ibout;
+public final class InfParticipant implements Participant {
 
     /**
      * The data.
      */
-    private final transient MessageDt data;
+    private final transient ParticipantDt data;
 
     /**
      * Public ctor.
-     * @param ihub The hub
-     * @param vwr Viewer
-     * @param bout The bout where this message is located
      * @param dat The data
-     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubMessage(final PowerHub ihub, final Identity vwr,
-        final Bout bout, final MessageDt dat) {
-        this.hub = ihub;
-        this.viewer = vwr;
-        this.ibout = bout;
+    public InfParticipant(final ParticipantDt dat) {
         this.data = dat;
     }
 
@@ -79,33 +57,8 @@ final class HubMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Message msg) {
-        return this.date().compareTo(msg.date());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object bout) {
-        return bout instanceof Message
-            && this.number().equals(((Message) bout).number());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.number().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
-        return String.format("msg#%d", this.number());
+        throw new UnsupportedOperationException("#toString()");
     }
 
     /**
@@ -113,52 +66,47 @@ final class HubMessage implements Message {
      */
     @Override
     public Bout bout() {
-        return this.ibout;
+        throw new UnsupportedOperationException("#bout()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long number() {
-        return this.data.getNumber();
+    public Identity identity() {
+        return new InfIdentity(this.data.getIdentity());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Identity author() {
-        try {
-            return this.hub.identity(this.data.getAuthor());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new IllegalStateException(ex);
-        }
+    public void kickOff() {
+        throw new UnsupportedOperationException("#kickOff()");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String text() {
-        this.data.addSeenBy(this.viewer.name());
-        return this.data.getText();
+    public boolean confirmed() {
+        return this.data.isConfirmed();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Date date() {
-        return this.data.getDate();
+    public boolean leader() {
+        return this.data.isLeader();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Boolean seen() {
-        return this.data.isSeenBy(this.viewer.name());
+    public void consign() {
+        throw new UnsupportedOperationException("#consign()");
     }
 
 }

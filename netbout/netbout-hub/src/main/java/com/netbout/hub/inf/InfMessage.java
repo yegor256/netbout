@@ -24,55 +24,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
+package com.netbout.hub.inf;
 
+import com.netbout.hub.BoutDt;
+import com.netbout.hub.MessageDt;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import java.util.Date;
 
 /**
- * Message in a hub.
+ * Message we push to INF.
+ *
+ * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class HubMessage implements Message {
+public final class InfMessage implements Message {
 
     /**
-     * The hub.
-     */
-    private final transient PowerHub hub;
-
-    /**
-     * The viewer.
-     */
-    private final transient Identity viewer;
-
-    /**
-     * The bout where this message is located.
-     */
-    private final transient Bout ibout;
-
-    /**
-     * The data.
+     * Message data.
      */
     private final transient MessageDt data;
 
     /**
      * Public ctor.
-     * @param ihub The hub
-     * @param vwr Viewer
-     * @param bout The bout where this message is located
-     * @param dat The data
-     * @checkstyle ParameterNumber (3 lines)
+     * @param msg Message data
      */
-    public HubMessage(final PowerHub ihub, final Identity vwr,
-        final Bout bout, final MessageDt dat) {
-        this.hub = ihub;
-        this.viewer = vwr;
-        this.ibout = bout;
-        this.data = dat;
+    public HubMessage(final MessageDt msg) {
+        this.data = msg;
     }
 
     /**
@@ -80,7 +61,7 @@ final class HubMessage implements Message {
      */
     @Override
     public int compareTo(final Message msg) {
-        return this.date().compareTo(msg.date());
+        throw new UnsupportedOperationException("#compareTo()");
     }
 
     /**
@@ -88,8 +69,7 @@ final class HubMessage implements Message {
      */
     @Override
     public boolean equals(final Object bout) {
-        return bout instanceof Message
-            && this.number().equals(((Message) bout).number());
+        throw new UnsupportedOperationException("#equals()");
     }
 
     /**
@@ -97,7 +77,7 @@ final class HubMessage implements Message {
      */
     @Override
     public int hashCode() {
-        return this.number().hashCode();
+        throw new UnsupportedOperationException("#hashCode()");
     }
 
     /**
@@ -105,7 +85,7 @@ final class HubMessage implements Message {
      */
     @Override
     public String toString() {
-        return String.format("msg#%d", this.number());
+        throw new UnsupportedOperationException("#toString()");
     }
 
     /**
@@ -113,7 +93,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Bout bout() {
-        return this.ibout;
+        throw new UnsupportedOperationException("#bout()");
     }
 
     /**
@@ -129,11 +109,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Identity author() {
-        try {
-            return this.hub.identity(this.data.getAuthor());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return new InfIdentity(this.data.getAuthor());
     }
 
     /**
@@ -141,7 +117,6 @@ final class HubMessage implements Message {
      */
     @Override
     public String text() {
-        this.data.addSeenBy(this.viewer.name());
         return this.data.getText();
     }
 
@@ -158,7 +133,7 @@ final class HubMessage implements Message {
      */
     @Override
     public Boolean seen() {
-        return this.data.isSeenBy(this.viewer.name());
+        throw new UnsupportedOperationException("#seen()");
     }
 
 }

@@ -110,7 +110,6 @@ public final class HubParticipant implements Participant {
     public void kickOff() {
         final Identity identity = this.identity();
         this.boutdt.kickOff(identity.name());
-        this.hub.infinity().see(this.ibout);
         Logger.info(
             this,
             "Participant '%s' was kicked-off from bout #%d",
@@ -141,7 +140,6 @@ public final class HubParticipant implements Participant {
     @Override
     public void consign() {
         this.boutdt.setLeader(this.identity().name());
-        this.hub.infinity().see(this.ibout);
     }
 
 }
