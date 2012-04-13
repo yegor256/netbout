@@ -26,13 +26,22 @@
  */
 package com.netbout.inf;
 
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * Abstract task.
+ * The task to review one notice.
+ *
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-abstract class AbstractTask implements Task {
+final class SeeTask implements Task {
 
     /**
      * The store with predicates.
@@ -50,18 +59,41 @@ abstract class AbstractTask implements Task {
     private transient long finished;
 
     /**
-     * Public ctor.
-     * @param store The store
+     * The notice.
      */
-    public AbstractTask(final Store store) {
+    private final transient Notice notice;
+
+    /**
+     * The listener.
+     */
+    private final transient TaskListener listener;
+
+    /**
+     * Dependants.
+     */
+    private final transient Set<Urn> deps = new HashSet<Urn>();
+
+    /**
+     * Public ctor.
+     * @param what The notice to process
+     * @param store The store to use
+     * @param ltr Listener of result
+     */
+    public SeeTask(final Notice what, final Store store,
+        final TaskListener ltr) {
         this.istore = store;
+        this.notice = what;
+        this.listener = ltr;
+        for (Participant dude : what.bout().participants()) {
+            this.deps.add(dude.identity().name());
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return this.toString().hashCode();
     }
 
@@ -69,7 +101,7 @@ abstract class AbstractTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public final boolean equals(final Object task) {
+    public boolean equals(final Object task) {
         return task instanceof Task && this.hashCode() == task.hashCode();
     }
 
@@ -77,7 +109,7 @@ abstract class AbstractTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public final void run() {
+    public void run() {
         this.started = System.nanoTime();
         this.execute();
         this.finished = System.nanoTime();
@@ -87,7 +119,7 @@ abstract class AbstractTask implements Task {
      * {@inheritDoc}
      */
     @Override
-    public final long time() {
+    public long time() {
         long time;
         if (this.finished == 0L) {
             time = System.nanoTime() - this.started;
@@ -98,16 +130,35 @@ abstract class AbstractTask implements Task {
     }
 
     /**
-     * Execute task.
+     * {@inheritDoc}
      */
-    protected abstract void execute();
+    @Override
+    public Set<Urn> dependants() {
+        return this.deps;
+    }
 
     /**
-     * Get store.
-     * @return The store
+     * {@inheritDoc}
      */
-    protected final Store store() {
-        return this.istore;
+    @Override
+    public String toString() {
+        return String.format("see-message-#%d", this.message.number());
+    }
+
+    /**
+     * Execute it.
+     * <p>There is no synchronization, intentionally. Msg class is thread-safe
+     * and we don't worry about concurrent changes to it.
+     */
+    private void execute() {
+        this.store().see(this.message);
+        this.listener.done(this.message);
+        Logger.debug(
+            this,
+            "#execute(): cached message #%d in %[nano]s",
+            this.message.number(),
+            this.time()
+        );
     }
 
 }
