@@ -54,9 +54,9 @@ MatcherAssert.assertThat(
 
 [
     'urn:test:dh' : 'file:com.netbout.dh',
-    'urn:test:hh' : 'file:com.netbout.hub.hh',
-    'urn:test:bh' : 'file:com.netbout.bus.bh',
-    'urn:test:ih' : 'file:com.netbout.inf.ih',
+    'urn:test:hh' : 'file:com.netbout.hh',
+    'urn:test:bh' : 'file:com.netbout.bh',
+    'urn:test:ih' : 'file:com.netbout.ih',
     'urn:test:email' : 'file:com.netbout.notifiers.email',
 ].each {
     new RestExpert(

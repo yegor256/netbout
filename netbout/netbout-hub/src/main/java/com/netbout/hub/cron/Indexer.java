@@ -54,28 +54,36 @@ final class Indexer extends AbstractCron {
      */
     @Override
     public void cron() throws Exception {
+        final long start = System.nanoTime();
         final Long maximum = this.hub().infinity().maximum();
         final List<Long> numbers = this.hub().make("get-messages-chunk")
             .synchronously()
             .arg(maximum)
             // @checkstyle MagicNumber (1 line)
-            .arg(200L)
+            .arg(500L)
             .asDefault(new ArrayList<Long>(0))
             .exec();
-        Logger.info(
-            this,
-            "#cron(): %d message(s) will be pushed to INF now (maximum=%d)",
-            numbers.size(),
-            maximum
-        );
-        for (Long number : numbers) {
-            this.hub().infinity().see(this.message(number));
+        if (!numbers.isEmpty()) {
+            Logger.info(
+                this,
+                "#cron(): %d messages (%d..%d) going to INF now (maximum=%d)",
+                numbers.size(),
+                numbers.get(0),
+                numbers.get(numbers.size() - 1),
+                maximum
+            );
+            for (Long number : numbers) {
+                this.hub().infinity().see(this.message(number));
+            }
+            Logger.info(
+                this,
+                "#cron(): %d messages (%d..%d) pushed to INF in %[nano]s",
+                numbers.size(),
+                numbers.get(0),
+                numbers.get(numbers.size() - 1),
+                System.nanoTime() - start
+            );
         }
-        Logger.info(
-            this,
-            "#cron(): %d message(s) pushed to INF successfully",
-            numbers.size()
-        );
     }
 
     /**

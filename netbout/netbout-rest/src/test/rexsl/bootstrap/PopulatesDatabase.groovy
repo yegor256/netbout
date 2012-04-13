@@ -52,7 +52,7 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
 }
 
 // let's create a big amount of bouts and messages for one identity
-(5000..6000).each {
+(5000..5200).each {
     queries.add(
         'INSERT IGNORE INTO bout (number, title, date) VALUES'
         + " (${it}, 'test', '2001-01-01')"

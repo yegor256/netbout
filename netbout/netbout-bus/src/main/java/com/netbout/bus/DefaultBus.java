@@ -26,8 +26,8 @@
  */
 package com.netbout.bus;
 
-import com.netbout.bus.bh.StageFarm;
-import com.netbout.bus.bh.StatsProvider;
+import com.netbout.bh.StageFarm;
+import com.netbout.bh.StatsProvider;
 import com.netbout.bus.cache.EmptyTokenCache;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;

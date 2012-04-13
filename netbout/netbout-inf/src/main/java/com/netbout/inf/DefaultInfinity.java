@@ -202,7 +202,9 @@ public final class DefaultInfinity implements Infinity, TaskListener {
     public void done(final Message message) {
         final Long number = message.number();
         if (this.pipeline.first() == number) {
-            this.max.set(number);
+            if (this.max.get() < number) {
+                this.max.set(number);
+            }
             this.counter.put(number, DefaultInfinity.MSG_TO_VOID, "");
         }
         this.pipeline.remove(number);

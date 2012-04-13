@@ -24,50 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus.bh;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
- * The stage to render with JAXB.
+ * Bus helper.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@XmlType(name = "data")
-@XmlAccessorType(XmlAccessType.NONE)
-public final class Stage {
-
-    /**
-     * The text to show.
-     */
-    private final transient String text;
-
-    /**
-     * Public ctor, for JAXB.
-     */
-    public Stage() {
-        throw new IllegalStateException("illegal call");
-    }
-
-    /**
-     * Public ctor.
-     * @param txt The text to show
-     */
-    public Stage(final String txt) {
-        this.text = txt;
-    }
-
-    /**
-     * Get text.
-     * @return The text
-     */
-    @XmlElement
-    public String getText() {
-        return this.text;
-    }
-
-}
+package com.netbout.bh;

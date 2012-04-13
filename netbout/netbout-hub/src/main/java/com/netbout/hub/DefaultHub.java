@@ -108,6 +108,9 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      * Public ctor, for tests mostly.
      * @param bus The bus
      * @param infinity The infinity
+     * @todo #358 We expose THIS to sub-objects, which is very bad practice,
+     *  mostly because they may start using it BEFORE the ctor is finished. We
+     *  should introduce a start() method in this class.
      */
     public DefaultHub(final Bus bus, final Infinity infinity) {
         StatsFarm.register(this);
@@ -343,7 +346,6 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             .arg(identity.name())
             .asDefault(true)
             .exec();
-        this.inf.see(identity);
         return this.all.get(identity.name());
     }
 

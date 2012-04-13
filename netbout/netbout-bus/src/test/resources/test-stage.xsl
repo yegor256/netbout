@@ -8,7 +8,7 @@
         <xsl:text>http://example.com/</xsl:text>
     </xsl:variable>
 
-    <xsl:include href="../../../src/main/resources/com/netbout/bus/bh/stage.xsl" />
+    <xsl:include href="../../../src/main/resources/com/netbout/bh/stage.xsl" />
 
     <xsl:output method="xhtml"/>
 

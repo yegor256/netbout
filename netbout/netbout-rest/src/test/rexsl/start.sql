@@ -28,6 +28,19 @@
 -- @version $Id$
 --
 
+-- clean it
+DELETE FROM alias;
+DELETE FROM bill;
+DELETE FROM invoice;
+DELETE FROM helper;
+DELETE FROM locale;
+DELETE FROM seen;
+DELETE FROM message;
+DELETE FROM participant;
+DELETE FROM bout;
+DELETE FROM namespace;
+DELETE FROM identity;
+
 -- me, in order to allow sensitive helpers to work
 INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'urn:facebook:1531296526',

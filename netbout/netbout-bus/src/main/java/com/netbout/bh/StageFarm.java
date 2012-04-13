@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.bus.bh;
+package com.netbout.bh;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
