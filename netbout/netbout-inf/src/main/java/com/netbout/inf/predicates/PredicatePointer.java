@@ -27,6 +27,7 @@
 package com.netbout.inf.predicates;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Notice;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
@@ -131,7 +132,7 @@ public final class PredicatePointer implements Pointer {
      * {@inheritDoc}
      */
     @Override
-    public void see(final Message msg) {
+    public void see(final Notice notice) {
         // nothing to do here
     }
 

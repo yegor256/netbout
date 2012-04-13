@@ -46,7 +46,7 @@ final class SeeTask implements Task {
     /**
      * The store with predicates.
      */
-    private final transient Store istore;
+    private final transient Store store;
 
     /**
      * When started.
@@ -54,7 +54,7 @@ final class SeeTask implements Task {
     private transient long started;
 
     /**
-     * When finished (or NULL if still running).
+     * When finished (or ZERO if still running).
      */
     private transient long finished;
 
@@ -84,9 +84,6 @@ final class SeeTask implements Task {
         this.istore = store;
         this.notice = what;
         this.listener = ltr;
-        for (Participant dude : what.bout().participants()) {
-            this.deps.add(dude.identity().name());
-        }
     }
 
     /**
@@ -152,7 +149,6 @@ final class SeeTask implements Task {
      */
     private void execute() {
         this.store().see(this.message);
-        this.listener.done(this.message);
         Logger.debug(
             this,
             "#execute(): cached message #%d in %[nano]s",

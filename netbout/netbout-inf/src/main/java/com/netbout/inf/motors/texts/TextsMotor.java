@@ -27,6 +27,7 @@
 package com.netbout.inf.motors.texts;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Notice;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
@@ -34,6 +35,9 @@ import com.netbout.inf.Store;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.motors.StoreAware;
+import com.netbout.inf.notices.BoutRenamedNotice;
+import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
@@ -185,35 +189,21 @@ public final class TextsMotor implements Pointer, StoreAware {
      * {@inheritDoc}
      */
     @Override
-    public void see(final Message msg) {
-        for (String word : TextsMotor.words(msg.text())) {
-            this.triples.put(
-                msg.number(),
-                TextsMotor.MSG_TEXT_TO_WORD,
-                word
-            );
-        }
-        this.triples.put(
-            msg.number(),
-            TextsMotor.MSG_TO_BOUT,
-            msg.bout().number().toString()
-        );
-        this.triples.clear(msg.bout().number(), TextsMotor.TITLE_TO_WORD);
-        for (String word : TextsMotor.words(msg.bout().title())) {
-            this.triples.put(
-                msg.bout().number(),
-                TextsMotor.TITLE_TO_WORD,
-                word
-            );
-        }
-        this.triples.clear(msg.bout().number(), TextsMotor.ALIAS_TO_WORD);
-        for (String word
-            : TextsMotor.words(NetboutUtils.aliasOf(msg.author()))) {
-            this.triples.put(
-                msg.bout().number(),
-                TextsMotor.ALIAS_TO_WORD,
-                word
-            );
+    public void see(final Notice notice) {
+        if (notice instanceof MessagePostedNotice) {
+            this.posted(((MessagePostedNotice) notice).message());
+        } else if (notice instanceof BoutRenamedNotice) {
+            this.renamed((BoutRenamedNotice) notice);
+        } else if (notice instanceof KickOffNotice) {
+            // this.triples.clear(msg.bout().number(), TextsMotor.ALIAS_TO_WORD);
+            // for (String word
+            //     : TextsMotor.words(NetboutUtils.aliasOf(msg.author()))) {
+            //     this.triples.put(
+            //         msg.bout().number(),
+            //         TextsMotor.ALIAS_TO_WORD,
+            //         word
+            //     );
+            // }
         }
     }
 
@@ -241,6 +231,40 @@ public final class TextsMotor implements Pointer, StoreAware {
             }
         );
         return words;
+    }
+
+    /**
+     * Message was just posted.
+     * @param msg The message
+     */
+    private void posted(final Message msg) {
+        for (String word : TextsMotor.words(msg.text())) {
+            this.triples.put(
+                msg.number(),
+                TextsMotor.MSG_TEXT_TO_WORD,
+                word
+            );
+        }
+        this.triples.put(
+            msg.number(),
+            TextsMotor.MSG_TO_BOUT,
+            msg.bout().number().toString()
+        );
+    }
+
+    /**
+     * Bout was renamed.
+     * @param notice Notice about it
+     */
+    private void renamed(final BoutRenamedNotice notice) {
+        this.triples.clear(notice.bout().number(), TextsMotor.TITLE_TO_WORD);
+        for (String word : TextsMotor.words(notice.bout().title())) {
+            this.triples.put(
+                notice.bout().number(),
+                TextsMotor.TITLE_TO_WORD,
+                word
+            );
+        }
     }
 
 }

@@ -28,12 +28,17 @@ package com.netbout.inf;
 
 import com.netbout.inf.motors.StoreAware;
 import com.netbout.inf.predicates.PredicatePointer;
+import com.netbout.inf.triples.HsqlTriples;
+import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 
@@ -49,6 +54,11 @@ import org.reflections.Reflections;
 public final class PredicateStore implements Store {
 
     /**
+     * Message to some void constant (name of triple).
+     */
+    private static final String MSG_TO_VOID = "message-to-void";
+
+    /**
      * The folder to work with.
      */
     private final transient Folder folder;
@@ -59,12 +69,36 @@ public final class PredicateStore implements Store {
     private final transient Set<Pointer> pointers;
 
     /**
+     * Counter of messages indexed.
+     */
+    private final transient Triples counter;
+
+    /**
+     * Maximum successfully indexed number.
+     */
+    private final transient AtomicLong max = new AtomicLong(0L);
+
+    /**
+     * Numbers in pipeline.
+     */
+    private final transient SortedSet<Long> pipeline =
+        new ConcurrentSkipListSet<Long>();
+
+    /**
      * Public ctor.
      * @param fldr The folder to work with
      */
     public PredicateStore(final Folder fldr) {
         this.folder = fldr;
         this.pointers = this.discover();
+        this.counter = new HsqlTriples(new File(this.folder.path(), "counter"));
+        final Iterator<Long> numbers = this.counter
+            .reverse(DefaultInfinity.MSG_TO_VOID, "");
+        if (numbers.hasNext()) {
+            this.max.set(numbers.next());
+        } else {
+            this.max.set(0L);
+        }
     }
 
     /**
@@ -87,6 +121,7 @@ public final class PredicateStore implements Store {
      */
     @Override
     public void close() {
+        IOUtils.closeQuietly(this.counter);
         for (Pointer pointer : this.pointers) {
             IOUtils.closeQuietly(pointer);
         }
@@ -97,9 +132,29 @@ public final class PredicateStore implements Store {
      * {@inheritDoc}
      */
     @Override
-    public void see(final Message msg) {
+    public Long maximum() {
+        return this.max.get();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void see(final Notice notice) {
         for (Pointer pointer : this.pointers) {
-            pointer.see(msg);
+            pointer.see(notice);
+        }
+        if (!this.pipeline.isEmpty() && notice instanceof MessagePostedNotice) {
+            final Long number =
+                ((MessagePostedNotice) notice).message().number();
+            if (this.pipeline.first() == number) {
+                // @checkstyle NestedIfDepth (1 line)
+                if (this.max.get() < number) {
+                    this.max.set(number);
+                }
+                this.counter.put(number, PredicateStore.MSG_TO_VOID, "");
+            }
+            this.pipeline.remove(number);
         }
     }
 

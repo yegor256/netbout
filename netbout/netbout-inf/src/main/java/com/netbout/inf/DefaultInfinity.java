@@ -28,8 +28,6 @@ package com.netbout.inf;
 
 import com.netbout.ih.StageFarm;
 import com.netbout.inf.ebs.EbsVolume;
-import com.netbout.inf.triples.HsqlTriples;
-import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -37,9 +35,6 @@ import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.io.File;
 import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -49,12 +44,7 @@ import org.apache.commons.io.IOUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class DefaultInfinity implements Infinity, TaskListener {
-
-    /**
-     * Message to some void constant (name of triple).
-     */
-    private static final String MSG_TO_VOID = "message-to-void";
+public final class DefaultInfinity implements Infinity {
 
     /**
      * Multiplexer of tasks.
@@ -72,22 +62,6 @@ public final class DefaultInfinity implements Infinity, TaskListener {
     private final transient Store store;
 
     /**
-     * Counter of messages indexed.
-     */
-    private final transient Triples counter;
-
-    /**
-     * Maximum successfully indexed number.
-     */
-    private final transient AtomicLong max = new AtomicLong(0L);
-
-    /**
-     * Numbers in pipeline.
-     */
-    private final transient SortedSet<Long> pipeline =
-        new ConcurrentSkipListSet<Long>();
-
-    /**
      * Public ctor.
      */
     public DefaultInfinity() {
@@ -102,19 +76,11 @@ public final class DefaultInfinity implements Infinity, TaskListener {
         this.folder = fldr;
         this.store = new PredicateStore(this.folder);
         StageFarm.register(this);
-        this.counter = new HsqlTriples(new File(this.folder.path(), "counter"));
-        final Iterator<Long> numbers = this.counter
-            .reverse(DefaultInfinity.MSG_TO_VOID, "");
-        if (numbers.hasNext()) {
-            this.max.set(numbers.next());
-        } else {
-            this.max.set(0L);
-        }
         Logger.info(
             this,
             "#DefaultInfinity(%[type]s): instantiated (max=%d)",
             this.folder,
-            this.max.get()
+            this.maximum()
         );
     }
 
@@ -163,7 +129,6 @@ public final class DefaultInfinity implements Infinity, TaskListener {
     @Override
     public void close() throws java.io.IOException {
         Logger.info(this, "#close(): will stop Mux in a second");
-        IOUtils.closeQuietly(this.counter);
         IOUtils.closeQuietly(this.mux);
         this.store.close();
     }
@@ -193,25 +158,7 @@ public final class DefaultInfinity implements Infinity, TaskListener {
      */
     @Override
     public Long maximum() {
-        return this.max.get();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void done(final Message message) {
-        if (!this.pipeline.isEmpty()) {
-            final Long number = message.number();
-            if (this.pipeline.first() == number) {
-                // @checkstyle NestedIfDepth (1 line)
-                if (this.max.get() < number) {
-                    this.max.set(number);
-                }
-                this.counter.put(number, DefaultInfinity.MSG_TO_VOID, "");
-            }
-            this.pipeline.remove(number);
-        }
+        return this.store.maximum();
     }
 
     /**
@@ -219,8 +166,7 @@ public final class DefaultInfinity implements Infinity, TaskListener {
      */
     @Override
     public void see(final Notice notice) {
-        this.mux.add(new SeeTask(notice, this.store, this));
-        Logger.debug(this,"see(%s): notice submitted", notice);
+        this.mux.add(notice);
     }
 
 }

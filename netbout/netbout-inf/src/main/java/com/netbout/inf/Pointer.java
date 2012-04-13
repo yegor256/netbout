@@ -26,7 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
 import java.io.Closeable;
 import java.util.List;
 
@@ -54,10 +53,10 @@ public interface Pointer extends Closeable {
     boolean pointsTo(String name);
 
     /**
-     * See this message.
-     * @param msg The message to see
+     * See this notice.
+     * @param notice The notice to process
      */
-    void see(Message msg);
+    void see(Notice notice);
 
     /**
      * Create a predicate.

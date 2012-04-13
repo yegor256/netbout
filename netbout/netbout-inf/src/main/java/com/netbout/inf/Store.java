@@ -47,10 +47,16 @@ public interface Store extends Closeable {
     String statistics();
 
     /**
-     * See this message.
-     * @param msg The message
+     * See this notice.
+     * @param notice The notice
      */
-    void see(Message msg);
+    void see(Notice notice);
+
+    /**
+     * How many messages were seen totally by this store?
+     * @return Maximum number of the message seen so far
+     */
+    Long maximum();
 
     /**
      * Build a predicate from name and list of preds.

@@ -27,10 +27,12 @@
 package com.netbout.inf.motors.bundles;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Notice;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.PredicateException;
 import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
@@ -144,7 +146,17 @@ public final class BundlesMotor implements Pointer {
      * {@inheritDoc}
      */
     @Override
-    public void see(final Message msg) {
+    public void see(final Notice notice) {
+        if (notice instanceof MessagePostedNotice) {
+            this.posted(((MessagePostedNotice) notice).message());
+        }
+    }
+
+    /**
+     * Message was posted.
+     * @param msg The message
+     */
+    private void posted(final Message msg) {
         this.triples.put(
             msg.number(),
             BundlesMotor.MSG_TO_BOUT,

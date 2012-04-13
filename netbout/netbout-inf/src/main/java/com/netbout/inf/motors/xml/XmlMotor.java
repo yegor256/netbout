@@ -27,9 +27,11 @@
 package com.netbout.inf.motors.xml;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Notice;
 import com.netbout.inf.Pointer;
 import com.netbout.inf.Predicate;
 import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
 import com.netbout.spi.Message;
@@ -115,7 +117,17 @@ public final class XmlMotor implements Pointer {
      * {@inheritDoc}
      */
     @Override
-    public void see(final Message msg) {
+    public void see(final Notice notice) {
+        if (notice instanceof MessagePostedNotice) {
+            this.posted(((MessagePostedNotice) notice).message());
+        }
+    }
+
+    /**
+     * Message was just posted.
+     * @param msg The message
+     */
+    private void posted(final Message msg) {
         final DomParser parser = new DomParser(msg.text());
         if (parser.isXml()) {
             try {

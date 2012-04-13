@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
- * Multiplexer of heap updating tasks.
+ * Multiplexer of notices.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -61,27 +61,33 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         Runtime.getRuntime().availableProcessors() * 4;
 
     /**
+     * The store with predicates.
+     */
+    private final transient Store store;
+
+    /**
      * Tasks to execute.
      */
     private final transient BlockingQueue<Task> queue =
         new LinkedBlockingQueue<Task>();
 
     /**
-     * How many tasks are currently dependants.
+     * How many notices every identity has now in pending status.
      */
     private final transient ConcurrentMap<Urn, AtomicLong> dependants =
         new ConcurrentHashMap<Urn, AtomicLong>();
 
     /**
-     * Stats on performance.
+     * Stats on notice processing performance.
      */
     private final transient DescriptiveStatistics stats =
         new DescriptiveStatistics(5000);
 
     /**
      * Public ctor.
+     * @param str The store to use
      */
-    public Mux() {
+    public Mux(final Store str) {
         super(
             Mux.THREADS,
             Mux.THREADS,
@@ -99,6 +105,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 }
             }
         );
+        this.store = str;
         this.prestartAllCoreThreads();
         for (int thread = 0; thread < Mux.THREADS; thread += 1) {
             this.submit(new Routine());
@@ -186,12 +193,13 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     }
 
     /**
-     * Add new task to be executed ASAP.
-     * @param task The task to execute
+     * Add new notice to be executed ASAP.
+     * @param notice The notice to process
      */
-    public void add(final Task task) {
+    public void add(final Notice notice) {
         if (!this.isTerminated() && !this.isShutdown()
             && !this.isTerminating()) {
+            final Task task = new NoticeTask(notice, this.store);
             if (this.queue.contains(task)) {
                 Logger.debug(
                     this,
