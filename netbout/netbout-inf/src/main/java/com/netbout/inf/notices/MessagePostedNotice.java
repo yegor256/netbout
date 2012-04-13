@@ -26,21 +26,12 @@
  */
 package com.netbout.inf.notices;
 
-import com.netbout.inf.Notice;
-import com.netbout.spi.Message;
-
 /**
  * New message was just posted.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface MessagePostedNotice extends Notice {
-
-    /**
-     * Link to the message.
-     * @return The message
-     */
-    Message message();
+public interface MessagePostedNotice extends MessageRelatedNotice {
 
 }

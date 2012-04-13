@@ -44,15 +44,15 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link SeeTask}.
+ * Test case of {@link NoticeTask}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class SeeTaskTest {
+public final class NoticeTaskTest {
 
     /**
-     * SeeTask can handle many message updates in parallel.
+     * NoticeTask can handle many message updates in parallel.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -78,7 +78,7 @@ public final class SeeTaskTest {
                                 .withDate(new Date())
                                 .inBout(bout)
                                 .mock();
-                            new SeeTask(
+                            new NoticeTask(
                                 notice, store, Mockito.mock(TaskListener.class)
                             ).run();
                         // @checkstyle IllegalCatch (1 line)

@@ -26,13 +26,21 @@
  */
 package com.netbout.inf.notices;
 
+import com.netbout.inf.Notice;
+import com.netbout.spi.Message;
+
 /**
- * Participation in bout was just confirmed.
+ * Message-related notice.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface ParticipationConfirmedNotice
-    extends BoutRelatedNotice, IdentityRelatedNotice {
+public interface MessageRelatedNotice extends Notice {
+
+    /**
+     * Link to the message.
+     * @return The message
+     */
+    Message message();
 
 }

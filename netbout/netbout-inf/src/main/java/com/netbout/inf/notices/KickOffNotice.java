@@ -26,28 +26,13 @@
  */
 package com.netbout.inf.notices;
 
-import com.netbout.inf.Notice;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-
 /**
  * Participant was kicked off.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface KickOffNotice extends Notice {
-
-    /**
-     * Link to the bout.
-     * @return The bout
-     */
-    Bout bout();
-
-    /**
-     * Who just left.
-     * @return The identity
-     */
-    Identity identity();
+public interface KickOffNotice extends
+    IdentityRelatedNotice, BoutRelatedNotice {
 
 }

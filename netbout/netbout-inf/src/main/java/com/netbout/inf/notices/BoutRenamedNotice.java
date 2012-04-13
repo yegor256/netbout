@@ -26,21 +26,12 @@
  */
 package com.netbout.inf.notices;
 
-import com.netbout.inf.Notice;
-import com.netbout.spi.Bout;
-
 /**
  * Bout was just renamed.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutRenamedNotice extends Notice {
-
-    /**
-     * Link to the bout.
-     * @return The bout
-     */
-    Bout bout();
+public interface BoutRenamedNotice extends BoutRelatedNotice {
 
 }

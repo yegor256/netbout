@@ -26,13 +26,21 @@
  */
 package com.netbout.inf.notices;
 
+import com.netbout.inf.Notice;
+import com.netbout.spi.Identity;
+
 /**
- * Participation in bout was just confirmed.
+ * Notice is related to identity.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface ParticipationConfirmedNotice
-    extends BoutRelatedNotice, IdentityRelatedNotice {
+public interface IdentityRelatedNotice extends Notice {
+
+    /**
+     * The identity this notice is related to.
+     * @return The identity
+     */
+    Identity identity();
 
 }

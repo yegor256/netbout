@@ -36,7 +36,7 @@ import com.netbout.spi.Identity;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface AliasAddedNotice extends Notice {
+public interface AliasAddedNotice extends IdentityRelatedNotice {
 
     /**
      * The identity where alias was added.

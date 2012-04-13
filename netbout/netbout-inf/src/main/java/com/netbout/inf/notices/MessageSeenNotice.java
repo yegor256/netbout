@@ -26,28 +26,13 @@
  */
 package com.netbout.inf.notices;
 
-import com.netbout.inf.Notice;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
-
 /**
  * Message was just seen.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface MessageSeenNotice extends Notice {
-
-    /**
-     * Link to the message.
-     * @return The message
-     */
-    Message message();
-
-    /**
-     * Who seen it?
-     * @return The identity
-     */
-    Identity seenBy();
+public interface MessageSeenNotice
+    extends MessageRelatedNotice, IdentityRelatedNotice {
 
 }
