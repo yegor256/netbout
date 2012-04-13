@@ -52,7 +52,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NoticeTask implements Task {
+final class MuxTask implements Runnable {
 
     /**
      * The store with predicates.
@@ -72,16 +72,16 @@ final class NoticeTask implements Task {
     /**
      * The notice.
      */
-    private final transient Notice notice;
+    private final transient Notice ntc;
 
     /**
      * Public ctor.
      * @param what The notice to process
      * @param str The store to use
      */
-    public NoticeTask(final Notice what, final Store str) {
+    public MuxTask(final Notice what, final Store str) {
         this.store = str;
-        this.notice = what;
+        this.ntc = what;
     }
 
     /**
@@ -111,9 +111,17 @@ final class NoticeTask implements Task {
     }
 
     /**
-     * {@inheritDoc}
+     * Get notice incapsulated.
+     * @return The notice
      */
-    @Override
+    public Notice notice() {
+        return this.ntc;
+    }
+
+    /**
+     * Get its execution time.
+     * @return Time in nanoseconds
+     */
     public long time() {
         long time;
         if (this.finished == 0L) {
@@ -125,23 +133,23 @@ final class NoticeTask implements Task {
     }
 
     /**
-     * {@inheritDoc}
+     * Get names of all people waiting for the completion of this task.
+     * @return Names
      */
-    @Override
     public Set<Urn> dependants() {
         final Set<Urn> deps = new HashSet<Urn>();
-        if (this.notice instanceof IdentityRelatedNotice) {
-            deps.add(((IdentityRelatedNotice) this.notice).identity().name());
+        if (this.ntc instanceof IdentityRelatedNotice) {
+            deps.add(((IdentityRelatedNotice) this.ntc).identity().name());
         }
-        if (this.notice instanceof BoutRelatedNotice) {
+        if (this.ntc instanceof BoutRelatedNotice) {
             deps.addAll(
-                NoticeTask.dudesOf(((BoutRelatedNotice) this.notice).bout())
+                NoticeTask.dudesOf(((BoutRelatedNotice) this.ntc).bout())
             );
         }
-        if (this.notice instanceof MessageRelatedNotice) {
+        if (this.ntc instanceof MessageRelatedNotice) {
             deps.addAll(
                 NoticeTask.dudesOf(
-                    ((MessageRelatedNotice) this.notice).message().bout()
+                    ((MessageRelatedNotice) this.ntc).message().bout()
                 )
             );
         }
@@ -154,20 +162,20 @@ final class NoticeTask implements Task {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        text.append(NoticeTask.nameOf(this.notice));
-        if (this.notice instanceof IdentityRelatedNotice) {
+        text.append(NoticeTask.nameOf(this.ntc));
+        if (this.ntc instanceof IdentityRelatedNotice) {
             text.append(" w/").append(
-                ((IdentityRelatedNotice) this.notice).identity().name()
+                ((IdentityRelatedNotice) this.ntc).identity().name()
             );
         }
-        if (this.notice instanceof BoutRelatedNotice) {
+        if (this.ntc instanceof BoutRelatedNotice) {
             text.append(" @").append(
-                ((BoutRelatedNotice) this.notice).bout().number()
+                ((BoutRelatedNotice) this.ntc).bout().number()
             );
         }
-        if (this.notice instanceof MessageRelatedNotice) {
+        if (this.ntc instanceof MessageRelatedNotice) {
             text.append(" at").append(
-                ((MessageRelatedNotice) this.notice).message().number()
+                ((MessageRelatedNotice) this.ntc).message().number()
             );
         }
         return text.toString();
@@ -177,7 +185,7 @@ final class NoticeTask implements Task {
      * Execute it.
      */
     private void execute() {
-        this.store.see(this.notice);
+        this.store.see(this.ntc);
         Logger.debug(
             this,
             "#execute(): cached \"%s\" in %[nano]s",
@@ -188,22 +196,22 @@ final class NoticeTask implements Task {
 
     /**
      * Get name of notice.
-     * @param ntc The notice to analyze
+     * @param notice The notice to analyze
      * @return The name
      */
-    private static String nameOf(final Notice ntc) {
+    private static String nameOf(final Notice notice) {
         String name;
-        if (ntc instanceof MessagePostedNotice) {
+        if (notice instanceof MessagePostedNotice) {
             name = "message posted";
-        } else if (ntc instanceof MessageSeenNotice) {
+        } else if (notice instanceof MessageSeenNotice) {
             name = "message seen";
-        } else if (ntc instanceof AliasAddedNotice) {
+        } else if (notice instanceof AliasAddedNotice) {
             name = "alias added";
-        } else if (ntc instanceof BoutRenamedNotice) {
+        } else if (notice instanceof BoutRenamedNotice) {
             name = "bout renamed";
-        } else if (ntc instanceof KickOffNotice) {
+        } else if (notice instanceof KickOffNotice) {
             name = "kicked off";
-        } else if (ntc instanceof ParticipationConfirmedNotice) {
+        } else if (notice instanceof ParticipationConfirmedNotice) {
             name = "participation confirmed";
         } else {
             throw new IllegalStateException("unknown type of notice");
