@@ -33,6 +33,7 @@ import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import com.rexsl.test.XhtmlMatchers;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -41,7 +42,6 @@ import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case for {@link InboxRs}.
@@ -81,19 +81,19 @@ public final class InboxRsTest {
         MatcherAssert.assertThat(
             NbResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
-                XmlMatchers.hasXPath("/page/bouts[count(bout)>1]"),
-                XmlMatchers.hasXPath(
+                XhtmlMatchers.hasXPath("/page/bouts[count(bout)>1]"),
+                XhtmlMatchers.hasXPath(
                     String.format("/page/bouts/bout[number=%d]", total)
                 ),
-                XmlMatchers.hasXPath(
+                XhtmlMatchers.hasXPath(
                     String.format(
                         "/page/periods[count(link)=%d]",
                         PeriodsBuilder.MAX_LINKS
                     )
                 ),
-                XmlMatchers.hasXPath("/page/periods/link[@rel='more']"),
-                XmlMatchers.hasXPath("/page/periods/link[@rel='earliest']"),
-                XmlMatchers.hasXPath("//link[@rel='more']")
+                XhtmlMatchers.hasXPath("/page/periods/link[@rel='more']"),
+                XhtmlMatchers.hasXPath("/page/periods/link[@rel='earliest']"),
+                XhtmlMatchers.hasXPath("//link[@rel='more']")
             )
         );
     }

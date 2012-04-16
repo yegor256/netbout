@@ -26,10 +26,10 @@
  */
 package com.netbout.rest;
 
+import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case for {@link LoginRs}.
@@ -49,7 +49,7 @@ public final class LoginRsTest {
         final Response response = rest.login();
         MatcherAssert.assertThat(
             NbResourceMocker.the((BasePage) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
+            XhtmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
         );
     }
 

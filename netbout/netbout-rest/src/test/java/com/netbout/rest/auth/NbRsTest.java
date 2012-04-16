@@ -31,11 +31,11 @@ import com.netbout.rest.ForwardException;
 import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
+import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case for {@link NbRs}.
@@ -57,9 +57,9 @@ public final class NbRsTest {
         MatcherAssert.assertThat(
             NbResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
-                XmlMatchers.hasXPath("//identity[alias='hh']"),
-                XmlMatchers.hasXPath("//identity[name='urn:netbout:hh']"),
-                XmlMatchers.hasXPath(
+                XhtmlMatchers.hasXPath("//identity[alias='hh']"),
+                XhtmlMatchers.hasXPath("//identity[name='urn:netbout:hh']"),
+                XhtmlMatchers.hasXPath(
                     "//identity[authority='http://www.netbout.com/nb']"
                 )
             )

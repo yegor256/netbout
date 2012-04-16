@@ -36,7 +36,7 @@ import com.rexsl.core.XslResolver;
 import com.rexsl.page.Resource;
 import com.rexsl.page.ResourceMocker;
 import com.rexsl.page.UriInfoMocker;
-import com.rexsl.test.XhtmlConverter;
+import com.rexsl.test.XhtmlMatchers;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
@@ -50,7 +50,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.transform.Source;
 import org.hamcrest.MatcherAssert;
 import org.mockito.Mockito;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Builds an instance of {@link NbResource}.
@@ -177,7 +176,7 @@ public final class NbResourceMocker {
      * @return The XML
      * @throws Exception If any
      */
-    public static Source the(final BasePage page, final NbResource resource)
+    public static String the(final BasePage page, final NbResource resource)
         throws Exception {
         final XslResolver resolver = (XslResolver) resource.providers()
             .getContextResolver(
@@ -188,12 +187,9 @@ public final class NbResourceMocker {
         mrsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         final StringWriter writer = new StringWriter();
         mrsh.marshal(page, writer);
-        final Source source = XhtmlConverter.the(writer.toString());
-        MatcherAssert.assertThat(
-            source,
-            XmlMatchers.hasXPath("/page/nano")
-        );
-        return source;
+        final String xml = writer.toString();
+        MatcherAssert.assertThat(xml, XhtmlMatchers.hasXPath("/page/millis"));
+        return xml;
     }
 
 }

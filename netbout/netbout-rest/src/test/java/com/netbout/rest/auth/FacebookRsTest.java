@@ -36,6 +36,7 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.core.Manifests;
 import com.rexsl.page.UriInfoMocker;
+import com.rexsl.test.XhtmlMatchers;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.core.Response;
@@ -49,7 +50,6 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case for {@link LoginRs}.
@@ -140,10 +140,10 @@ public final class FacebookRsTest {
         MatcherAssert.assertThat(
             NbResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
-                XmlMatchers.hasXPath(
+                XhtmlMatchers.hasXPath(
                     String.format("//identity[name='urn:facebook:%s']", fbid)
                 ),
-                XmlMatchers.hasXPath("//identity[locale='en']")
+                XhtmlMatchers.hasXPath("//identity[locale='en']")
             )
         );
     }
