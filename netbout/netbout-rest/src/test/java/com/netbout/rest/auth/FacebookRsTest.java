@@ -29,13 +29,13 @@ package com.netbout.rest.auth;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.netbout.rest.BasePage;
-import com.netbout.rest.ResourceMocker;
-import com.netbout.rest.UriInfoMocker;
+import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.core.Manifests;
+import com.rexsl.page.UriInfoMocker;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.core.Response;
@@ -84,7 +84,7 @@ public final class FacebookRsTest {
             .withRequestUri(base)
             .mock();
         final URI redirect = UriBuilder.fromUri(base).path("/fb/back").build();
-        final FacebookRs rest = new ResourceMocker()
+        final FacebookRs rest = new NbResourceMocker()
             .withHub(hub)
             .withUriInfo(info)
             .mock(FacebookRs.class);
@@ -131,14 +131,14 @@ public final class FacebookRsTest {
             Manifests.read("Netbout-SuperSecret"),
             fbid
         );
-        final FacebookRs rest = new ResourceMocker().mock(FacebookRs.class);
+        final FacebookRs rest = new NbResourceMocker().mock(FacebookRs.class);
         final Response response = rest.auth(Urn.create("urn:facebook:1"), code);
         MatcherAssert.assertThat(
             response.getStatus(),
             Matchers.equalTo(HttpURLConnection.HTTP_OK)
         );
         MatcherAssert.assertThat(
-            ResourceMocker.the((BasePage) response.getEntity(), rest),
+            NbResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
                 XmlMatchers.hasXPath(
                     String.format("//identity[name='urn:facebook:%s']", fbid)

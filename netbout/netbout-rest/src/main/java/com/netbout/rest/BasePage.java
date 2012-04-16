@@ -27,7 +27,6 @@
 package com.netbout.rest;
 
 import com.netbout.rest.auth.FacebookRs;
-import com.netbout.rest.jaxb.Link;
 import com.netbout.rest.jaxb.LongHelper;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.rest.jaxb.Nano;
@@ -37,6 +36,7 @@ import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
 import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.Link;
 import com.ymock.util.Logger;
 import java.net.URI;
 import java.util.Collection;
@@ -69,12 +69,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
 @SuppressWarnings("PMD.TooManyMethods")
-public class BasePage {
-
-    /**
-     * Home resource of this page.
-     */
-    private transient Resource home;
+public class BasePage extends com.rexsl.page.BasePage<BasePage, NbResource> {
 
     /**
      * Is this page searcheable?
@@ -87,89 +82,17 @@ public class BasePage {
     private final transient Response.ResponseBuilder builder = Response.ok();
 
     /**
-     * Collection of elements.
-     */
-    private final transient Collection elements = new LinkedList();
-
-    /**
-     * Collection of links.
-     */
-    private final transient Collection<Link> links = new LinkedList<Link>();
-
-    /**
      * Collection of log events.
      */
     private transient Collection<String> log;
 
     /**
-     * Initializer.
-     * @param res Home of this page
+     * The page is searchable.
      * @param srch Is this page searcheable?
      * @return This object
      */
-    public final BasePage init(final Resource res, final boolean srch) {
-        this.home = res;
+    public final BasePage searcheable(final boolean srch) {
         this.searcheable = srch;
-        this.link(
-            "self",
-            UriBuilder.fromUri(this.home.uriInfo().getRequestUri())
-        );
-        this.link("home", this.home.base());
-        return this;
-    }
-
-    /**
-     * Add new link by name and HREF.
-     * @param name The name
-     * @param href The link
-     * @return This object
-     */
-    public final BasePage link(final String name, final String href) {
-        this.links.add(
-            new Link(
-                name,
-                this.home.base().path(href).build()
-            )
-        );
-        return this;
-    }
-
-    /**
-     * Add new link by name and HREF.
-     * @param name The name
-     * @param uri The link
-     * @return This object
-     */
-    public final BasePage link(final String name, final UriBuilder uri) {
-        this.links.add(new Link(name, uri));
-        return this;
-    }
-
-    /**
-     * Append new element.
-     * @param element The element to append
-     * @return This object
-     */
-    public final BasePage append(final Object element) {
-        this.elements.add(element);
-        if (!(element instanceof org.w3c.dom.Element)) {
-            final XslResolver resolver = (XslResolver) this.home.providers()
-                .getContextResolver(
-                    Marshaller.class,
-                    MediaType.APPLICATION_XML_TYPE
-                );
-            resolver.add(element.getClass());
-        }
-        return this;
-    }
-
-    /**
-     * Add new element.
-     * @param bundle The element
-     * @return This object
-     */
-    public final BasePage append(final JaxbBundle bundle) {
-        this.append(bundle.element());
         return this;
     }
 
@@ -179,8 +102,8 @@ public class BasePage {
      */
     public final BasePage render() {
         this.builder.entity(this);
-        this.log = this.home.log().events();
-        this.home.log().clear();
+        this.log = this.home().log().events();
+        this.home().log().clear();
         return this;
     }
 
@@ -197,15 +120,15 @@ public class BasePage {
             this.append(new LongIdentity(identity));
         }
         this.append(new JaxbBundle("auth", new Cryptor().encrypt(identity)));
-        this.link("logout", "/g/out");
-        this.link("profile", "/pf");
+        this.link(new Link("logout", "/g/out"));
+        this.link(new Link("profile", "/pf"));
         if (this.trusted(identity)) {
-            this.link("start", "/s");
+            this.link(new Link("start", "/s"));
         } else {
-            this.link("re-login", "/g/re");
+            this.link(new Link("re-login", "/g/re"));
         }
         this.extend();
-        final URI base = this.home.base().build();
+        final URI base = this.home().base().build();
         return this.builder
             .header(
                 HttpHeaders.SET_COOKIE,
@@ -214,7 +137,7 @@ public class BasePage {
             .cookie(
                 new CookieBuilder(base)
                     .named(RestSession.LOG_COOKIE)
-                    .valued(this.home.log().toString())
+                    .valued(this.home().log().toString())
                     .temporary()
                     .build()
             )
@@ -233,7 +156,7 @@ public class BasePage {
      * @return This object
      */
     public final Response.ResponseBuilder anonymous() {
-        this.link("login", "/g");
+        this.link(new Link("login", "/g"));
         this.extend();
         return this.builder
             .header(
@@ -258,31 +181,11 @@ public class BasePage {
     public final Response.ResponseBuilder preserved() {
         Response.ResponseBuilder bldr;
         try {
-            bldr = this.authenticated(this.home.identity());
+            bldr = this.authenticated(this.home().identity());
         } catch (LoginRequiredException ex) {
             bldr = this.anonymous();
         }
         return bldr;
-    }
-
-    /**
-     * Get all elements.
-     * @return Full list of injected elements
-     */
-    @XmlAnyElement(lax = true)
-    @XmlMixed
-    public final Collection<Object> getElements() {
-        return this.elements;
-    }
-
-    /**
-     * Get all links.
-     * @return Full list of links
-     */
-    @XmlElement(name = "link")
-    @XmlElementWrapper(name = "links")
-    public final Collection<Link> getLinks() {
-        return this.links;
     }
 
     /**
@@ -293,40 +196,6 @@ public class BasePage {
     @XmlElementWrapper(name = "log")
     public final Collection<String> getLog() {
         return this.log;
-    }
-
-    /**
-     * Get time of page generation, in nanoseconds.
-     * @return Time in nanoseconds
-     */
-    @XmlElement
-    public final Nano getNano() {
-        return new Nano(this.home.nano());
-    }
-
-    /**
-     * Get time of page generation.
-     * @return Time in ISO 8601
-     */
-    @XmlAttribute
-    public final Date getTime() {
-        return new Date();
-    }
-
-    /**
-     * Get IP address of the server.
-     * @return The IP address
-     */
-    @XmlAttribute
-    public final String getIp() {
-        String addr;
-        try {
-            addr = java.net.InetAddress.getLocalHost().getHostAddress();
-        } catch (java.net.UnknownHostException ex) {
-            Logger.error(this, "#getIp(): %[exception]s", ex);
-            addr = "";
-        }
-        return addr;
     }
 
     /**
@@ -379,7 +248,7 @@ public class BasePage {
                 .add("date", Manifests.read("Netbout-Date"))
                 .up()
         );
-        this.append(new JaxbBundle("message", this.home.message()));
+        this.append(new JaxbBundle("message", this.home().message()));
     }
 
     /**
@@ -388,12 +257,12 @@ public class BasePage {
      * @return Value of the HTTP header
      */
     private String nocookie(final String name) {
-        return new CookieBuilder(this.home.base().build())
+        return new CookieBuilder(this.home().base().build())
             .named(name)
             .pathed(
                 String.format(
                     "/%s",
-                    this.home.httpServletRequest().getContextPath()
+                    this.home().httpServletRequest().getContextPath()
                 )
             )
             .build()

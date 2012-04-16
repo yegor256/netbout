@@ -62,7 +62,7 @@ public final class CanvasRs extends AbstractRs {
         ).clean("");
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .preserved()
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())

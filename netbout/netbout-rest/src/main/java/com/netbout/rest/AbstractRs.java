@@ -31,6 +31,7 @@ import com.netbout.rest.log.LogList;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
+import com.rexsl.page.BaseResource;
 import com.ymock.util.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -48,13 +49,7 @@ import javax.ws.rs.ext.Providers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public abstract class AbstractRs implements Resource {
-
-    /**
-     * When this resource was started, in nanoseconds.
-     */
-    private final transient long inano = System.nanoTime();
+public abstract class AbstractRs extends BaseResource implements NbResource {
 
     /**
      * List of log events.
@@ -65,26 +60,6 @@ public abstract class AbstractRs implements Resource {
      * Hub to work with.
      */
     private transient Hub ihub;
-
-    /**
-     * List of known JAX-RS providers.
-     */
-    private transient Providers iproviders;
-
-    /**
-     * URI info.
-     */
-    private transient UriInfo iuriInfo;
-
-    /**
-     * Http headers.
-     */
-    private transient HttpHeaders ihttpHeaders;
-
-    /**
-     * HTTP servlet request.
-     */
-    private transient HttpServletRequest ihttpRequest;
 
     /**
      * Cookie.
@@ -100,14 +75,6 @@ public abstract class AbstractRs implements Resource {
      * The message to show.
      */
     private transient String imessage = "";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final long nano() {
-        return this.inano;
-    }
 
     /**
      * {@inheritDoc}
@@ -135,70 +102,6 @@ public abstract class AbstractRs implements Resource {
             );
             throw new LoginRequiredException(this, ex);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Providers providers() {
-        if (this.iproviders == null) {
-            throw new IllegalStateException(
-                Logger.format(
-                    "%[type]s#providers was never injected by JAX-RS",
-                    this
-                )
-            );
-        }
-        return this.iproviders;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final HttpHeaders httpHeaders() {
-        if (this.ihttpHeaders == null) {
-            throw new IllegalStateException(
-                Logger.format(
-                    "%[type]s#httpHeaders was never injected by JAX-RS",
-                    this
-                )
-            );
-        }
-        return this.ihttpHeaders;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final UriInfo uriInfo() {
-        if (this.iuriInfo == null) {
-            throw new IllegalStateException(
-                Logger.format(
-                    "%[type]s#uriInfo was never injected by JAX-RS",
-                    this
-                )
-            );
-        }
-        return this.iuriInfo;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final HttpServletRequest httpServletRequest() {
-        if (this.ihttpRequest == null) {
-            throw new IllegalStateException(
-                Logger.format(
-                    "%[type]s#httpRequest was never injected by JAX-RS",
-                    this
-                )
-            );
-        }
-        return this.ihttpRequest;
     }
 
     /**
@@ -300,66 +203,6 @@ public abstract class AbstractRs implements Resource {
     }
 
     /**
-     * Set URI Info. Should be called by JAX-RS implemenation
-     * because of <tt>&#64;Context</tt> annotation.
-     * @param info The info to inject
-     */
-    @Context
-    public final void setUriInfo(final UriInfo info) {
-        this.iuriInfo = info;
-        Logger.debug(
-            this,
-            "#setUriInfo(%[type]s): injected",
-            info
-        );
-    }
-
-    /**
-     * Set Providers. Should be called by JAX-RS implemenation
-     * because of <tt>&#64;Context</tt> annotation.
-     * @param prov List of providers
-     */
-    @Context
-    public final void setProviders(final Providers prov) {
-        this.iproviders = prov;
-        Logger.debug(
-            this,
-            "#setProviders(%[type]s): injected",
-            prov
-        );
-    }
-
-    /**
-     * Set HttpHeaders. Should be called by JAX-RS implemenation
-     * because of <tt>&#64;Context</tt> annotation.
-     * @param hdrs List of headers
-     */
-    @Context
-    public final void setHttpHeaders(final HttpHeaders hdrs) {
-        this.ihttpHeaders = hdrs;
-        Logger.debug(
-            this,
-            "#setHttpHeaders(%[type]s): injected",
-            hdrs
-        );
-    }
-
-    /**
-     * Set HttpServletRequest. Should be called by JAX-RS implemenation
-     * because of <tt>&#64;Context</tt> annotation.
-     * @param request The request
-     */
-    @Context
-    public final void setHttpServletRequest(final HttpServletRequest request) {
-        this.ihttpRequest = request;
-        Logger.debug(
-            this,
-            "#setHttpServletRequest(%[type]s): injected",
-            request
-        );
-    }
-
-    /**
      * Inject servlet context. Should be called by JAX-RS implemenation
      * because of <tt>&#64;Context</tt> annotation. Servlet attributes are
      * injected into context by {@link com.netbout.servlets.Starter} servlet
@@ -386,7 +229,7 @@ public abstract class AbstractRs implements Resource {
      * @return This object
      * @param <T> The type of it
      */
-    public final <T> T duplicate(final Resource res) {
+    public final <T> T duplicate(final NbResource res) {
         this.ihub = ((AbstractRs) res).hub();
         this.setProviders(res.providers());
         this.setHttpHeaders(res.httpHeaders());

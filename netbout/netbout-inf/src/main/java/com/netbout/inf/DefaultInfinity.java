@@ -49,7 +49,7 @@ public final class DefaultInfinity implements Infinity {
     /**
      * Multiplexer of tasks.
      */
-    private final transient Mux mux = new Mux();
+    private final transient Mux mux;
 
     /**
      * The folder to work with.
@@ -75,6 +75,7 @@ public final class DefaultInfinity implements Infinity {
     protected DefaultInfinity(final Folder fldr) {
         this.folder = fldr;
         this.store = new PredicateStore(this.folder);
+        this.mux = new Mux(this.store);
         StageFarm.register(this);
         Logger.info(
             this,

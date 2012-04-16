@@ -32,6 +32,7 @@ import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.Link;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -192,13 +193,11 @@ public final class ShortBout {
                 "bout",
                 this.builder.clone().path("/../{num}").build(item.number())
             );
-            link.add(new JaxbBundle("number", item.number()).element());
-            link.add(new JaxbBundle("title", item.title()).element());
-            link.add(
-                new JaxbBundle("unseen", NetboutUtils.isUnread(item))
-                    .element()
+            links.add(
+                link.with(new JaxbBundle("number", item.number()))
+                    .with(new JaxbBundle("title", item.title()))
+                    .with(new JaxbBundle("unseen", NetboutUtils.isUnread(item)))
             );
-            links.add(link);
         }
         if (max == 0) {
             links.add(

@@ -142,6 +142,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-page</artifactId>
+            <version>${rexsl.version}</version>
+            <classifier>mock</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- Embedded Java Servlet Container, for tests only. -->
             <groupId>com.sun.grizzly</groupId>
             <artifactId>grizzly-servlet-webserver</artifactId>

@@ -59,7 +59,7 @@ public final class BoutRsTest {
             .mock();
         Mockito.doReturn(bout).when(identity).start();
         Mockito.doReturn(bout).when(identity).bout(Mockito.any(Long.class));
-        final BoutRs rest = new ResourceMocker()
+        final BoutRs rest = new NbResourceMocker()
             .withIdentity(identity)
             .withHub(
                 new HubMocker()
@@ -76,7 +76,7 @@ public final class BoutRsTest {
         rest.setStageCoords(null);
         final Response response = rest.front();
         MatcherAssert.assertThat(
-            ResourceMocker.the((BasePage) response.getEntity(), rest),
+            NbResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
                 XmlMatchers.hasXPath(
                     "/page/bout/participants/participant/identity"

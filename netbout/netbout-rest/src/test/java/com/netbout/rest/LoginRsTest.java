@@ -44,11 +44,11 @@ public final class LoginRsTest {
      */
     @Test
     public void rendersLoginPage() throws Exception {
-        final LoginRs rest = new ResourceMocker().mock(LoginRs.class);
+        final LoginRs rest = new NbResourceMocker().mock(LoginRs.class);
         rest.setAuth("some-incorrect-auth-code");
         final Response response = rest.login();
         MatcherAssert.assertThat(
-            ResourceMocker.the((BasePage) response.getEntity(), rest),
+            NbResourceMocker.the((BasePage) response.getEntity(), rest),
             XmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
         );
     }
@@ -60,7 +60,7 @@ public final class LoginRsTest {
      */
     @Test
     public void doesntForwardIfUserAlreadyLoggedIn() throws Exception {
-        ((LoginRs) new ResourceMocker().mock(LoginRs.class)).login();
+        ((LoginRs) new NbResourceMocker().mock(LoginRs.class)).login();
     }
 
 }

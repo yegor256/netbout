@@ -36,6 +36,7 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import java.util.LinkedList;
 import java.util.List;
@@ -223,7 +224,7 @@ public final class BoutRs extends AbstractRs {
         }
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -250,7 +251,7 @@ public final class BoutRs extends AbstractRs {
         bout.rename(title);
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -282,7 +283,7 @@ public final class BoutRs extends AbstractRs {
         }
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -300,7 +301,7 @@ public final class BoutRs extends AbstractRs {
         this.bout().confirm();
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -317,7 +318,7 @@ public final class BoutRs extends AbstractRs {
         this.bout().leave();
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())
@@ -341,7 +342,7 @@ public final class BoutRs extends AbstractRs {
         NetboutUtils.participantOf(friend, this.bout()).kickOff();
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -387,7 +388,8 @@ public final class BoutRs extends AbstractRs {
                     .toString()
             )
             .build(BasePage.class)
-            .init(this, true)
+            .init(this)
+            .searcheable(true)
             .append(
                 new LongBout(
                     this,
@@ -401,19 +403,21 @@ public final class BoutRs extends AbstractRs {
                 )
             )
             .append(new JaxbBundle("query", this.query))
-            .link("leave", this.self("/leave"));
+            .link(new Link("leave", "./leave"));
         this.appendInvitees(page);
         page.link(
-            "top",
-            this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, null)
+            new Link(
+                "top",
+                this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, null)
+            )
         );
         if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
-            page.link("post", this.self("/p"));
+            page.link(new Link("post", "./p"));
         } else {
-            page.link("join", this.self("/join"));
+            page.link(new Link("join", "./join"));
         }
         if (NetboutUtils.participantOf(myself, this.bout()).leader()) {
-            page.link("rename", this.self("/r"));
+            page.link(new Link("rename", "./r"));
         }
         return page;
     }

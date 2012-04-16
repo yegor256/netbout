@@ -63,7 +63,7 @@ public final class StageRsTest {
                 "render-stage-resource"
         )
             .mock();
-        final BoutRs root = new ResourceMocker()
+        final BoutRs root = new NbResourceMocker()
             .withHub(hub)
             .withIdentity(identity)
             .mock(BoutRs.class);

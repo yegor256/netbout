@@ -120,12 +120,35 @@ public final class ParticipantsMotor implements Pointer {
      * {@inheritDoc}
      */
     @Override
-    public void see(final Message msg) {
+    public void see(final Notice notice) {
+        if (notice instanceof MessagePostedNotice) {
+            this.posted(((MessagePostedNotice) notice).message());
+        }
+        if (notice instanceof ParticipationConfirmedNotice) {
+            this.joined((BoutRelatedNotice) notice);
+        }
+        if (notice instanceof KickOffNotice) {
+            this.joined((KickOffNotice) notice);
+        }
+    }
+
+    /**
+     * Message was posted.
+     * @param msg The message
+     */
+    private void posted(final Message msg) {
         this.triples.put(
             msg.number(),
             ParticipantsMotor.MSG_TO_BOUT,
             msg.bout().number().toString()
         );
+    }
+
+    /**
+     * Participant joined bout.
+     * @param notice The notice
+     */
+    private void joined(final BoutRelatedNotice notice) {
         this.triples.clear(
             msg.bout().number(),
             ParticipantsMotor.BOUT_TO_DUDE

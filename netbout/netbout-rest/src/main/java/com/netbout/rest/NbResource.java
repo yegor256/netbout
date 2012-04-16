@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.rest.log.LogList;
 import com.netbout.spi.Identity;
+import com.rexsl.page.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
@@ -40,13 +41,7 @@ import javax.ws.rs.ext.Providers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Resource {
-
-    /**
-     * When this resource was created, in nano seconds.
-     * @return The time
-     */
-    long nano();
+public interface NbResource extends Resource {
 
     /**
      * Get current user identity, or throws {@link LoginRequiredException} if
@@ -72,29 +67,5 @@ public interface Resource {
      * @return The builder
      */
     UriBuilder base();
-
-    /**
-     * Get URI Info.
-     * @return URI info
-     */
-    UriInfo uriInfo();
-
-    /**
-     * All registered JAX-RS providers.
-     * @return Providers
-     */
-    Providers providers();
-
-    /**
-     * All Http Headers.
-     * @return Headers
-     */
-    HttpHeaders httpHeaders();
-
-    /**
-     * Request just received.
-     * @return The request
-     */
-    HttpServletRequest httpServletRequest();
 
 }

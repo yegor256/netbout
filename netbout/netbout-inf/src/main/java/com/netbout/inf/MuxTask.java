@@ -97,7 +97,7 @@ final class MuxTask implements Runnable {
      */
     @Override
     public boolean equals(final Object task) {
-        return task instanceof Task && this.hashCode() == task.hashCode();
+        return task instanceof MuxTask && this.hashCode() == task.hashCode();
     }
 
     /**
@@ -143,12 +143,12 @@ final class MuxTask implements Runnable {
         }
         if (this.ntc instanceof BoutRelatedNotice) {
             deps.addAll(
-                NoticeTask.dudesOf(((BoutRelatedNotice) this.ntc).bout())
+                MuxTask.dudesOf(((BoutRelatedNotice) this.ntc).bout())
             );
         }
         if (this.ntc instanceof MessageRelatedNotice) {
             deps.addAll(
-                NoticeTask.dudesOf(
+                MuxTask.dudesOf(
                     ((MessageRelatedNotice) this.ntc).message().bout()
                 )
             );
@@ -162,7 +162,7 @@ final class MuxTask implements Runnable {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        text.append(NoticeTask.nameOf(this.ntc));
+        text.append(MuxTask.nameOf(this.ntc));
         if (this.ntc instanceof IdentityRelatedNotice) {
             text.append(" w/").append(
                 ((IdentityRelatedNotice) this.ntc).identity().name()

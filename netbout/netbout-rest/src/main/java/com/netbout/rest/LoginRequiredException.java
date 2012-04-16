@@ -42,7 +42,7 @@ public final class LoginRequiredException extends ForwardException {
      * @param res The originator of the exception
      * @param cause Cause of this problem
      */
-    public LoginRequiredException(final Resource res, final String cause) {
+    public LoginRequiredException(final NbResource res, final String cause) {
         super(res, LoginRequiredException.path(res), cause);
         Logger.debug(
             this,
@@ -57,7 +57,7 @@ public final class LoginRequiredException extends ForwardException {
      * @param res The originator of the exception
      * @param cause Cause of this problem
      */
-    public LoginRequiredException(final Resource res, final Exception cause) {
+    public LoginRequiredException(final NbResource res, final Exception cause) {
         super(res, LoginRequiredException.path(res), cause);
         Logger.debug(
             this,
@@ -72,7 +72,7 @@ public final class LoginRequiredException extends ForwardException {
      * @param res The originator of the exception
      * @return The destination
      */
-    private static UriBuilder path(final Resource res) {
+    private static UriBuilder path(final NbResource res) {
         return res.base().path("/g");
     }
 

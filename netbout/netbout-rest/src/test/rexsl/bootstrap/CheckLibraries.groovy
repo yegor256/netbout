@@ -23,57 +23,45 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.rest;
-
-import java.net.URI;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import org.mockito.Mockito;
-
-/**
- * Builds an instance of {@link UriInfo}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UriInfoMocker {
+package com.netbout.rest.rexsl.bootstrap
 
-    /**
-     * The mock.
-     */
-    private final transient UriInfo info = Mockito.mock(UriInfo.class);
+import com.ymock.util.Logger
+import java.util.jar.JarFile
+import org.apache.commons.io.FilenameUtils
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 
-    /**
-     * Public ctor.
-     */
-    public UriInfoMocker() {
-        this.withRequestUri(
-            UriBuilder.fromUri("http://localhost:99/local").build()
-        );
+def errors = 0
+def classes = new HashMap<String, File>()
+def libs = new File(rexsl.webdir, "/lib")
+libs.eachFile() { file ->
+    def jar = new JarFile(file)
+    jar.entries().each { entry ->
+        if (!entry.name.endsWith('.class')) {
+            return
+        }
+        if (classes.containsKey(entry.name)) {
+            Logger.warn(
+                this,
+                '%s: %s vs %s',
+                entry.name,
+                FilenameUtils.getBaseName(classes.get(entry.name).getPath()),
+                FilenameUtils.getBaseName(file.getPath())
+            )
+            ++errors
+        } else {
+            classes.put(entry.name, file)
+        }
     }
+}
+System.exit(1)
 
-    /**
-     * With this request URI.
-     * @param uri The URI
-     * @return This object
-     */
-    public UriInfoMocker withRequestUri(final URI uri) {
-        Mockito.doReturn(uri).when(this.info).getRequestUri();
-        Mockito.doReturn(UriBuilder.fromUri(uri))
-            .when(this.info).getBaseUriBuilder();
-        Mockito.doReturn(UriBuilder.fromUri(uri))
-            .when(this.info).getAbsolutePathBuilder();
-        Mockito.doReturn(uri).when(this.info).getAbsolutePath();
-        Mockito.doReturn(uri).when(this.info).getBaseUri();
-        return this;
-    }
-
-    /**
-     * Build an instance of provided class.
-     * @return The resource just created
-     */
-    public UriInfo mock() {
-        return this.info;
-    }
-
+if (errors > 0) {
+    throw new AssertionError(
+        String.format('%d errors in /lib directory', errors)
+    )
 }

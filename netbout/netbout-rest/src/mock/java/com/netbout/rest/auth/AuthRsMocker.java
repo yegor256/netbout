@@ -75,7 +75,7 @@ public final class AuthRsMocker extends AbstractRs {
         identity.profile().alias(iname.nss());
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .render()
             .authenticated(identity)
             .build();

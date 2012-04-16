@@ -92,7 +92,7 @@ public final class FastRs extends AbstractRs {
         }
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.base().path("/{num}").build(bout.number()))

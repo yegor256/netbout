@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.inf.motors.StoreAware;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.predicates.PredicatePointer;
 import com.netbout.inf.triples.HsqlTriples;
 import com.netbout.inf.triples.Triples;
@@ -34,6 +35,7 @@ import com.netbout.spi.Message;
 import com.ymock.util.Logger;
 import java.io.File;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -93,7 +95,7 @@ public final class PredicateStore implements Store {
         this.pointers = this.discover();
         this.counter = new HsqlTriples(new File(this.folder.path(), "counter"));
         final Iterator<Long> numbers = this.counter
-            .reverse(DefaultInfinity.MSG_TO_VOID, "");
+            .reverse(PredicateStore.MSG_TO_VOID, "");
         if (numbers.hasNext()) {
             this.max.set(numbers.next());
         } else {

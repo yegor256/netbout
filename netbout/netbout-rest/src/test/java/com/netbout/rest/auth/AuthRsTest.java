@@ -27,7 +27,7 @@
 package com.netbout.rest.auth;
 
 import com.netbout.rest.ForwardException;
-import com.netbout.rest.ResourceMocker;
+import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
@@ -78,7 +78,7 @@ public final class AuthRsTest {
         final Identity identity = new IdentityMocker()
             .namedAs(iname)
             .mock();
-        final AuthRs rest = new ResourceMocker()
+        final AuthRs rest = new NbResourceMocker()
             .withIdentity(identity)
             .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
@@ -98,7 +98,7 @@ public final class AuthRsTest {
         final ContainerMocker container = new ContainerMocker()
             .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
             .mock();
-        final AuthRs rest = new ResourceMocker()
+        final AuthRs rest = new NbResourceMocker()
             .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
         rest.auth(new Urn("foo", "test"), "", "/path-to-go");

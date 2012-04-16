@@ -80,7 +80,7 @@ public final class FacebookRs extends AbstractRs {
         }
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .preserved()
             .status(Response.Status.SEE_OTHER)
             .location(
@@ -140,7 +140,7 @@ public final class FacebookRs extends AbstractRs {
         );
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .render()
             .authenticated(identity)
             .build();

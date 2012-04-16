@@ -29,7 +29,7 @@ package com.netbout.rest.jaxb;
 import com.netbout.hub.Hub;
 import com.netbout.rest.BoutRs;
 import com.netbout.rest.ForwardException;
-import com.netbout.rest.Resource;
+import com.netbout.rest.NbResource;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
@@ -39,6 +39,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
+import com.rexsl.page.Link;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -64,7 +65,7 @@ public final class LongBout {
     /**
      * Where we are.
      */
-    private final transient Resource home;
+    private final transient NbResource home;
 
     /**
      * The bus.
@@ -126,7 +127,7 @@ public final class LongBout {
      * @checkstyle ParameterNumber (7 lines)
      */
     public LongBout(
-        final Resource res, final Hub ihub, final Bout bot,
+        final NbResource res, final Hub ihub, final Bout bot,
         final StageCoordinates crds,
         final String keyword, final UriBuilder bldr, final Identity vwr,
         final String period

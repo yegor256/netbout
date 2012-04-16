@@ -68,7 +68,7 @@ public final class MiscRs extends AbstractRs {
         return new PageBuilder()
             .stylesheet("/xsl/error.xsl")
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .append(
                 new JaxbBundle("error")
                     .add("code", code)

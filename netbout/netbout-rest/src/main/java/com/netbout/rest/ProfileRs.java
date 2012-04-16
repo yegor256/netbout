@@ -30,6 +30,7 @@ import com.netbout.rest.jaxb.LongProfile;
 import com.netbout.rest.jaxb.Namespace;
 import com.netbout.spi.Identity;
 import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import java.net.URL;
 import java.util.Collection;
@@ -66,10 +67,10 @@ public final class ProfileRs extends AbstractRs {
         return new PageBuilder()
             .stylesheet("/xsl/profile.xsl")
             .build(BasePage.class)
-            .init(this, false)
-            .link("promote", this.base().path("/pf/promote"))
+            .init(this)
+            .link(new Link("promote", "/pf/promote"))
             // @checkstyle MultipleStringLiterals (2 lines)
-            .link("namespaces", this.base().path("/pf/namespaces"))
+            .link(new Link("namespaces", "/pf/namespaces"))
             .append(JaxbGroup.build(this.namespaces(), "namespaces"))
             .append(profile)
             .render()
@@ -95,7 +96,7 @@ public final class ProfileRs extends AbstractRs {
         new LongProfile(this.self(), this.identity()).setLocale(locale);
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(this.identity())
             .entity(String.format("switched to '%s'", locale))
             .status(Response.Status.SEE_OTHER)
@@ -132,7 +133,7 @@ public final class ProfileRs extends AbstractRs {
         this.hub().promote(identity, url);
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.self().build())
@@ -161,7 +162,7 @@ public final class ProfileRs extends AbstractRs {
         }
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.self().build())

@@ -114,7 +114,7 @@ public final class AuthRs extends AbstractRs {
         }
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(identity)
             .cookie(
                 new CookieBuilder(this.base().build())

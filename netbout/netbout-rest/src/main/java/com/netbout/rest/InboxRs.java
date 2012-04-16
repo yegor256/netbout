@@ -36,6 +36,7 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.ymock.util.Logger;
 import java.util.LinkedList;
@@ -131,12 +132,13 @@ public final class InboxRs extends AbstractRs {
             .schema("")
             .stylesheet("/xsl/inbox.xsl")
             .build(BasePage.class)
-            .init(this, true)
+            .init(this)
+            .searcheable(true)
             .append(new JaxbBundle("query", this.query))
             .append(new JaxbBundle("view", view))
             .append(JaxbGroup.build(bouts, "bouts"))
             .append(JaxbGroup.build(periods.links(), "periods"))
-            .link("friends", this.base().path("/f"))
+            .link(new Link("friends", "/f"))
             .render()
             .authenticated(identity)
             .build();
@@ -153,7 +155,7 @@ public final class InboxRs extends AbstractRs {
         final Bout bout = identity.start();
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(identity)
             .entity(String.format("bout #%d created", bout.number()))
             .status(Response.Status.SEE_OTHER)
@@ -186,7 +188,7 @@ public final class InboxRs extends AbstractRs {
         bout.invite(identity.friend(new Urn("facebook", "1531296526")));
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())

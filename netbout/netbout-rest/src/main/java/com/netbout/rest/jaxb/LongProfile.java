@@ -28,6 +28,7 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Identity;
 import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.Link;
 import com.ymock.util.Logger;
 import java.util.Collection;
 import java.util.HashSet;
@@ -90,27 +91,25 @@ public final class LongProfile {
         final Locale current = this.viewer.profile().locale();
         final Collection<Link> links = new LinkedList<Link>();
         for (Locale locale : this.available()) {
-            final Link link = new Link(
-                "locale",
-                this.builder.clone()
-                    .path("/toggle")
-                    .replaceQueryParam("l", "{locale}")
-                    .build(locale)
+            links.add(
+                new Link(
+                    "locale",
+                    this.builder.clone()
+                        .path("/toggle")
+                        .replaceQueryParam("l", "{locale}")
+                        .build(locale)
+                )
+                    .with(new JaxbBundle("code", locale).element())
+                    .with(
+                        new JaxbBundle("name", locale.getDisplayName(current))
+                    )
+                    .with(
+                        new JaxbBundle(
+                            "language",
+                            locale.getDisplayLanguage(current)
+                        )
+                    )
             );
-            link.add(new JaxbBundle("code", locale).element());
-            link.add(
-                new JaxbBundle(
-                    "name",
-                    locale.getDisplayName(current)
-                ).element()
-            );
-            link.add(
-                new JaxbBundle(
-                    "language",
-                    locale.getDisplayLanguage(current)
-                ).element()
-            );
-            links.add(link);
         }
         return links;
     }

@@ -58,7 +58,7 @@ public final class BoutStylesheetRsTest {
         final Identity identity = new IdentityMocker()
             .withBout(bout.number(), bout)
             .mock();
-        final BoutStylesheetRs rest = new ResourceMocker()
+        final BoutStylesheetRs rest = new NbResourceMocker()
             .withIdentity(identity)
             .mock(BoutStylesheetRs.class);
         final Urn stage = new UrnMocker().mock();
@@ -97,7 +97,7 @@ public final class BoutStylesheetRsTest {
             .withIdentity(identity.name(), identity)
             .doReturn(text, "render-stage-xsl")
             .mock();
-        final BoutStylesheetRs rest = new ResourceMocker()
+        final BoutStylesheetRs rest = new NbResourceMocker()
             .withIdentity(identity)
             .withHub(hub)
             .mock(BoutStylesheetRs.class);

@@ -192,9 +192,11 @@ public final class TextsMotor implements Pointer, StoreAware {
     public void see(final Notice notice) {
         if (notice instanceof MessagePostedNotice) {
             this.posted(((MessagePostedNotice) notice).message());
-        } else if (notice instanceof BoutRenamedNotice) {
+        }
+        if (notice instanceof BoutRenamedNotice) {
             this.renamed((BoutRenamedNotice) notice);
-        } else if (notice instanceof KickOffNotice) {
+        }
+        if (notice instanceof KickOffNotice) {
             // this.triples.clear(msg.bout().number(), TextsMotor.ALIAS_TO_WORD);
             // for (String word
             //     : TextsMotor.words(NetboutUtils.aliasOf(msg.author()))) {

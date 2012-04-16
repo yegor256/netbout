@@ -74,12 +74,12 @@ public final class InboxRsTest {
                     .mock()
             );
         }
-        final InboxRs rest = new ResourceMocker()
+        final InboxRs rest = new NbResourceMocker()
             .withIdentity(imocker.mock())
             .mock(InboxRs.class);
         final Response response = rest.inbox(null);
         MatcherAssert.assertThat(
-            ResourceMocker.the((BasePage) response.getEntity(), rest),
+            NbResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
                 XmlMatchers.hasXPath("/page/bouts[count(bout)>1]"),
                 XmlMatchers.hasXPath(
@@ -104,7 +104,7 @@ public final class InboxRsTest {
      */
     @Test
     public void startsNewBout() throws Exception {
-        final InboxRs rest = new ResourceMocker().mock(InboxRs.class);
+        final InboxRs rest = new NbResourceMocker().mock(InboxRs.class);
         final Response response = rest.start();
         MatcherAssert.assertThat(
             response.getStatus(),

@@ -33,6 +33,9 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.rexsl.core.XslResolver;
+import com.rexsl.page.Resource;
+import com.rexsl.page.ResourceMocker;
+import com.rexsl.page.UriInfoMocker;
 import com.rexsl.test.XhtmlConverter;
 import java.io.StringWriter;
 import java.net.URI;
@@ -50,11 +53,11 @@ import org.mockito.Mockito;
 import org.xmlmatchers.XmlMatchers;
 
 /**
- * Builds an instance of {@link Resource}.
+ * Builds an instance of {@link NbResource}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class ResourceMocker {
+public final class NbResourceMocker {
 
     /**
      * Hub.
@@ -79,55 +82,14 @@ public final class ResourceMocker {
     /**
      * Providers.
      */
-    private final transient Providers providers =
-        Mockito.mock(Providers.class);
-
-    /**
-     * URI info.
-     */
-    private transient UriInfo uriInfo =
-        Mockito.mock(UriInfo.class);
-
-    /**
-     * Http headers.
-     */
-    private final transient HttpHeaders httpHeaders =
-        Mockito.mock(HttpHeaders.class);
-
-    /**
-     * Servlet request.
-     */
-    private final transient HttpServletRequest httpRequest =
-        Mockito.mock(HttpServletRequest.class);
-
-    /**
-     * Public ctor.
-     * @throws Exception If something is wrong
-     */
-    public ResourceMocker() throws Exception {
-        final URI home = new URI("http://localhost:99/local");
-        this.uriInfo = new UriInfoMocker()
-            .withRequestUri(home)
-            .mock();
-        Mockito.doReturn(home.getHost()).when(this.httpRequest)
-            .getRemoteAddr();
-        Mockito.doReturn(home.getPath()).when(this.httpRequest)
-            .getRequestURI();
-        Mockito.doReturn(home.getPath()).when(this.httpRequest)
-            .getContextPath();
-        Mockito.doReturn(new XslResolver())
-            .when(this.providers)
-            .getContextResolver(
-                Marshaller.class, MediaType.APPLICATION_XML_TYPE
-            );
-    }
+    private final transient ResourceMocker resource = new ResourceMocker();
 
     /**
      * With this URL for all namespaces.
      * @param url The URL
      * @return This object
      */
-    public ResourceMocker withNamespaceURL(final URL url) {
+    public NbResourceMocker withNamespaceURL(final URL url) {
         this.namespaceUrl = url;
         return this;
     }
@@ -137,7 +99,7 @@ public final class ResourceMocker {
      * @param msg The message
      * @return This object
      */
-    public ResourceMocker withMessage(final String msg) {
+    public NbResourceMocker withMessage(final String msg) {
         this.message = msg;
         return this;
     }
@@ -147,7 +109,7 @@ public final class ResourceMocker {
      * @param idnt The identity
      * @return This object
      */
-    public ResourceMocker withIdentity(final Identity idnt) {
+    public NbResourceMocker withIdentity(final Identity idnt) {
         this.identity = idnt;
         return this;
     }
@@ -157,8 +119,8 @@ public final class ResourceMocker {
      * @param info The object
      * @return This object
      */
-    public ResourceMocker withUriInfo(final UriInfo info) {
-        this.uriInfo = info;
+    public NbResourceMocker withUriInfo(final UriInfo info) {
+        this.resource.withUriInfo(info);
         return this;
     }
 
@@ -167,7 +129,7 @@ public final class ResourceMocker {
      * @param ihub The hub
      * @return This object
      */
-    public ResourceMocker withHub(final Hub ihub) {
+    public NbResourceMocker withHub(final Hub ihub) {
         this.hub = ihub;
         return this;
     }
@@ -177,7 +139,7 @@ public final class ResourceMocker {
      * @param type The class to build
      * @param <T> The class of response
      * @return The resource just created
-     * @throws Exception If something is wrong
+     * @throws Exception If any
      */
     public <T> T mock(final Class<? extends Resource> type) throws Exception {
         if (this.hub == null) {
@@ -195,10 +157,11 @@ public final class ResourceMocker {
         // @checkstyle IllegalType (1 line)
         final AbstractRs rest = (AbstractRs) type.newInstance();
         rest.setMessage(this.message);
-        rest.setUriInfo(this.uriInfo);
-        rest.setHttpHeaders(this.httpHeaders);
-        rest.setHttpServletRequest(this.httpRequest);
-        rest.setProviders(this.providers);
+        final Resource res = this.resource.mock();
+        rest.setUriInfo(res.uriInfo());
+        rest.setHttpHeaders(res.httpHeaders());
+        rest.setHttpServletRequest(res.httpServletRequest());
+        rest.setProviders(res.providers());
         rest.setCookie(new Cryptor().encrypt(this.identity));
         final ServletContext context = Mockito.mock(ServletContext.class);
         Mockito.doReturn(this.hub).when(context)
@@ -212,9 +175,9 @@ public final class ResourceMocker {
      * @param page The page
      * @param resource The resource, where this response came from
      * @return The XML
-     * @throws Exception If there is some problem inside
+     * @throws Exception If any
      */
-    public static Source the(final BasePage page, final Resource resource)
+    public static Source the(final BasePage page, final NbResource resource)
         throws Exception {
         final XslResolver resolver = (XslResolver) resource.providers()
             .getContextResolver(

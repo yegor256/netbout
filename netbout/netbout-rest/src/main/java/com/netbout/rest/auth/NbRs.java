@@ -61,7 +61,7 @@ public final class NbRs extends AbstractRs {
         @QueryParam("secret") final String secret) {
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .render()
             .authenticated(this.authenticate(iname, secret))
             .build();

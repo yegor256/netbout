@@ -68,8 +68,8 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     /**
      * Tasks to execute.
      */
-    private final transient BlockingQueue<Task> queue =
-        new LinkedBlockingQueue<Task>();
+    private final transient BlockingQueue<MuxTask> queue =
+        new LinkedBlockingQueue<MuxTask>();
 
     /**
      * How many notices every identity has now in pending status.
@@ -199,7 +199,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     public void add(final Notice notice) {
         if (!this.isTerminated() && !this.isShutdown()
             && !this.isTerminating()) {
-            final Task task = new NoticeTask(notice, this.store);
+            final MuxTask task = new MuxTask(notice, this.store);
             if (this.queue.contains(task)) {
                 Logger.debug(
                     this,
@@ -236,7 +236,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         @Override
         public void run() {
             while (true) {
-                Task task;
+                MuxTask task;
                 try {
                     task = Mux.this.queue.take();
                 } catch (InterruptedException ex) {
@@ -255,12 +255,12 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
          * @param task The task to run
          */
         @SuppressWarnings("PMD.AvoidCatchingThrowable")
-        private void run(final Task task) {
+        private void run(final MuxTask task) {
             try {
                 task.run();
             // @checkstyle IllegalCatch (1 line)
             } catch (Throwable ex) {
-                Mux.this.add(task);
+                Mux.this.add(task.notice());
                 Logger.warn(
                     this,
                     "#run('%s'): resubmitted because of: %[exception]s",

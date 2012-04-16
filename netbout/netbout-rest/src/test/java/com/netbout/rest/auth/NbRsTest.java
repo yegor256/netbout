@@ -28,7 +28,7 @@ package com.netbout.rest.auth;
 
 import com.netbout.rest.BasePage;
 import com.netbout.rest.ForwardException;
-import com.netbout.rest.ResourceMocker;
+import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
 import javax.ws.rs.core.Response;
@@ -51,11 +51,11 @@ public final class NbRsTest {
     @Test
     public void authenticatesByNamesAndSecret() throws Exception {
         final Urn iname = new Urn("netbout", "hh");
-        final NbRs rest = new ResourceMocker().mock(NbRs.class);
+        final NbRs rest = new NbResourceMocker().mock(NbRs.class);
         final String secret = new SecureString(iname).toString();
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
-            ResourceMocker.the((BasePage) response.getEntity(), rest),
+            NbResourceMocker.the((BasePage) response.getEntity(), rest),
             Matchers.allOf(
                 XmlMatchers.hasXPath("//identity[alias='hh']"),
                 XmlMatchers.hasXPath("//identity[name='urn:netbout:hh']"),
@@ -72,7 +72,7 @@ public final class NbRsTest {
      */
     @Test(expected = ForwardException.class)
     public void doesntAuthenticateWithIncorrectSecret() throws Exception {
-        final NbRs rest = new ResourceMocker().mock(NbRs.class);
+        final NbRs rest = new NbResourceMocker().mock(NbRs.class);
         rest.auth(Urn.create("urn:foo:name"), "incorrect-secret-code");
     }
 

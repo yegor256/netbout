@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.rexsl.core.Manifests;
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -63,8 +64,8 @@ public final class LoginRs extends AbstractRs {
         return new PageBuilder()
             .stylesheet("/xsl/login.xsl")
             .build(BasePage.class)
-            .init(this, false)
-            .link("facebook", fburi)
+            .init(this)
+            .link(new Link("facebook", fburi))
             .render()
             .preserved()
             .build();
@@ -90,7 +91,7 @@ public final class LoginRs extends AbstractRs {
     public Response logout() {
         return new PageBuilder()
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .anonymous()
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())

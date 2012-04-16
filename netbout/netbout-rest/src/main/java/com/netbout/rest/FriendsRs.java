@@ -79,7 +79,7 @@ public final class FriendsRs extends AbstractRs {
         return new PageBuilder()
             .schema("")
             .build(BasePage.class)
-            .init(this, false)
+            .init(this)
             .append(new JaxbBundle("mask", mask))
             .append(JaxbGroup.build(invitees, "invitees"))
             .render()

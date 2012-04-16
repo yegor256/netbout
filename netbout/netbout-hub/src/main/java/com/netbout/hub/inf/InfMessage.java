@@ -49,11 +49,18 @@ public final class InfMessage implements Message {
     private final transient MessageDt data;
 
     /**
+     * Bout number.
+     */
+    private final transient Long bnum;
+
+    /**
      * Public ctor.
      * @param msg Message data
+     * @param num Bout number
      */
-    public HubMessage(final MessageDt msg) {
+    public HubMessage(final MessageDt msg, final Long num) {
         this.data = msg;
+        this.bnum = num;
     }
 
     /**
@@ -93,7 +100,7 @@ public final class InfMessage implements Message {
      */
     @Override
     public Bout bout() {
-        throw new UnsupportedOperationException("#bout()");
+        return 0;
     }
 
     /**

@@ -29,6 +29,7 @@ package com.netbout.rest.jaxb;
 import com.netbout.spi.Helper;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.rexsl.page.Link;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
