@@ -44,7 +44,7 @@ import org.apache.commons.lang.StringUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (400 lines)
  */
-public final class StageRs extends AbstractRs {
+public final class StageRs extends BaseRs {
 
     /**
      * The bout we're in.
@@ -105,7 +105,7 @@ public final class StageRs extends AbstractRs {
         Response resp;
         if ("home".equals(response)) {
             resp = new PageBuilder()
-                .build(BasePage.class)
+                .build(NbPage.class)
                 .init(this)
                 .authenticated(this.identity())
                 .status(Response.Status.SEE_OTHER)
@@ -139,7 +139,7 @@ public final class StageRs extends AbstractRs {
             .asDefault("")
             .exec();
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)

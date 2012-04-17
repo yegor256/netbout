@@ -79,7 +79,7 @@ public final class InboxRsTest {
             .mock(InboxRs.class);
         final Response response = rest.inbox(null);
         MatcherAssert.assertThat(
-            NbResourceMocker.the((BasePage) response.getEntity(), rest),
+            NbResourceMocker.the((NbPage) response.getEntity(), rest),
             Matchers.allOf(
                 XhtmlMatchers.hasXPath("/page/bouts[count(bout)>1]"),
                 XhtmlMatchers.hasXPath(

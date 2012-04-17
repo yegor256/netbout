@@ -42,7 +42,7 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/m")
-public final class MiscRs extends AbstractRs {
+public final class MiscRs extends BaseRs {
 
     /**
      * Get "error" page by code.
@@ -67,7 +67,7 @@ public final class MiscRs extends AbstractRs {
         );
         return new PageBuilder()
             .stylesheet("/xsl/error.xsl")
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .append(
                 new JaxbBundle("error")

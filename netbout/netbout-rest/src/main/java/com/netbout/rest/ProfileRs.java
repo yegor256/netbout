@@ -52,7 +52,7 @@ import org.apache.commons.lang.StringUtils;
  * @version $Id$
  */
 @Path("/pf")
-public final class ProfileRs extends AbstractRs {
+public final class ProfileRs extends BaseRs {
 
     /**
      * The profile page.
@@ -66,7 +66,7 @@ public final class ProfileRs extends AbstractRs {
         );
         return new PageBuilder()
             .stylesheet("/xsl/profile.xsl")
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .link(new Link("promote", "/pf/promote"))
             // @checkstyle MultipleStringLiterals (2 lines)
@@ -95,7 +95,7 @@ public final class ProfileRs extends AbstractRs {
         }
         new LongProfile(this.self(), this.identity()).setLocale(locale);
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(this.identity())
             .entity(String.format("switched to '%s'", locale))
@@ -132,7 +132,7 @@ public final class ProfileRs extends AbstractRs {
         final Identity identity = this.identity();
         this.hub().promote(identity, url);
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
@@ -161,7 +161,7 @@ public final class ProfileRs extends AbstractRs {
             );
         }
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)

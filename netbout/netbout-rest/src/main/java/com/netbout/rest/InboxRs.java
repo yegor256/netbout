@@ -56,7 +56,7 @@ import javax.ws.rs.core.UriBuilder;
  * @version $Id$
  */
 @Path("/")
-public final class InboxRs extends AbstractRs {
+public final class InboxRs extends BaseRs {
 
     /**
      * Threshold param.
@@ -131,7 +131,7 @@ public final class InboxRs extends AbstractRs {
         return new PageBuilder()
             .schema("")
             .stylesheet("/xsl/inbox.xsl")
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .searcheable(true)
             .append(new JaxbBundle("query", this.query))
@@ -154,7 +154,7 @@ public final class InboxRs extends AbstractRs {
         final Identity identity = this.identity();
         final Bout bout = identity.start();
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(identity)
             .entity(String.format("bout #%d created", bout.number()))
@@ -187,7 +187,7 @@ public final class InboxRs extends AbstractRs {
         bout.post(text);
         bout.invite(identity.friend(new Urn("facebook", "1531296526")));
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)

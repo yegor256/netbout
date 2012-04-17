@@ -29,12 +29,12 @@ package com.netbout.rest;
 import com.netbout.rest.auth.FacebookRs;
 import com.netbout.rest.jaxb.LongHelper;
 import com.netbout.rest.jaxb.LongIdentity;
-import com.netbout.rest.jaxb.Nano;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
+import com.rexsl.page.BasePage;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
 import com.ymock.util.Logger;
@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * BasePage.
+ * NbPage.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -69,7 +69,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.NONE)
 @SuppressWarnings("PMD.TooManyMethods")
-public class BasePage extends com.rexsl.page.BasePage<BasePage, NbResource> {
+public class NbPage extends BasePage<NbPage, NbResource> {
 
     /**
      * Is this page searcheable?
@@ -91,7 +91,7 @@ public class BasePage extends com.rexsl.page.BasePage<BasePage, NbResource> {
      * @param srch Is this page searcheable?
      * @return This object
      */
-    public final BasePage searcheable(final boolean srch) {
+    public final NbPage searcheable(final boolean srch) {
         this.searcheable = srch;
         return this;
     }
@@ -100,7 +100,7 @@ public class BasePage extends com.rexsl.page.BasePage<BasePage, NbResource> {
      * Render it.
      * @return This object
      */
-    public final BasePage render() {
+    public final NbPage render() {
         this.builder.entity(this);
         this.log = this.home().log().events();
         this.home().log().clear();

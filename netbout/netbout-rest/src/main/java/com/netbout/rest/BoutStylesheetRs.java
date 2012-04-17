@@ -41,7 +41,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @version $Id$
  */
 @Path("/{num : [0-9]+}/xsl/{stage : [\\w:\\.\\-]+}")
-public final class BoutStylesheetRs extends AbstractRs {
+public final class BoutStylesheetRs extends BaseRs {
 
     /**
      * Number of the bout.

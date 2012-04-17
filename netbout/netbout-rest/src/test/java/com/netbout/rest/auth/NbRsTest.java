@@ -26,7 +26,7 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.BasePage;
+import com.netbout.rest.NbPage;
 import com.netbout.rest.ForwardException;
 import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Urn;
@@ -55,7 +55,7 @@ public final class NbRsTest {
         final String secret = new SecureString(iname).toString();
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
-            NbResourceMocker.the((BasePage) response.getEntity(), rest),
+            NbResourceMocker.the((NbPage) response.getEntity(), rest),
             Matchers.allOf(
                 XhtmlMatchers.hasXPath("//identity[alias='hh']"),
                 XhtmlMatchers.hasXPath("//identity[name='urn:netbout:hh']"),

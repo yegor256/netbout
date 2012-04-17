@@ -49,7 +49,7 @@ import javax.ws.rs.ext.Providers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public abstract class AbstractRs extends BaseResource implements NbResource {
+public abstract class BaseRs extends BaseResource implements NbResource {
 
     /**
      * List of log events.
@@ -229,17 +229,17 @@ public abstract class AbstractRs extends BaseResource implements NbResource {
      * @return This object
      * @param <T> The type of it
      */
-    public final <T> T duplicate(final NbResource res) {
-        this.ihub = ((AbstractRs) res).hub();
+    public final <T> T duplicate(final BaseRs res) {
+        this.ihub = res.hub();
         this.setProviders(res.providers());
         this.setHttpHeaders(res.httpHeaders());
         this.setUriInfo(res.uriInfo());
         this.setHttpServletRequest(res.httpServletRequest());
         this.setMessage(res.message());
-        if (((AbstractRs) res).addAuthToURIs) {
-            this.setAuth(((AbstractRs) res).icookie);
+        if (res.addAuthToURIs) {
+            this.setAuth(res.icookie);
         } else {
-            this.setCookie(((AbstractRs) res).icookie);
+            this.setCookie(res.icookie);
         }
         return (T) this;
     }

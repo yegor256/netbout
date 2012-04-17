@@ -154,7 +154,7 @@ public final class NbResourceMocker {
             }
         }
         // @checkstyle IllegalType (1 line)
-        final AbstractRs rest = (AbstractRs) type.newInstance();
+        final BaseRs rest = (BaseRs) type.newInstance();
         rest.setMessage(this.message);
         final Resource res = this.resource.mock();
         rest.setUriInfo(res.uriInfo());
@@ -176,7 +176,7 @@ public final class NbResourceMocker {
      * @return The XML
      * @throws Exception If any
      */
-    public static String the(final BasePage page, final NbResource resource)
+    public static String the(final NbPage page, final NbResource resource)
         throws Exception {
         final XslResolver resolver = (XslResolver) resource.providers()
             .getContextResolver(

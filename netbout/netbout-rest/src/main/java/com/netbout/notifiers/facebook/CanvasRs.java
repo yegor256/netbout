@@ -26,8 +26,8 @@
  */
 package com.netbout.notifiers.facebook;
 
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.BasePage;
+import com.netbout.rest.BaseRs;
+import com.netbout.rest.NbPage;
 import com.restfb.DefaultFacebookClient;
 import com.rexsl.page.PageBuilder;
 import javax.ws.rs.POST;
@@ -42,7 +42,7 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/canvas")
-public final class CanvasRs extends AbstractRs {
+public final class CanvasRs extends BaseRs {
 
     /**
      * Facebook canvas.
@@ -61,7 +61,7 @@ public final class CanvasRs extends AbstractRs {
             this.identity().name().nss()
         ).clean("");
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .preserved()
             .status(Response.Status.SEE_OTHER)

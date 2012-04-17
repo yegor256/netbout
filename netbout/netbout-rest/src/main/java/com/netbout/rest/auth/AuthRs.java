@@ -26,11 +26,11 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.BasePage;
+import com.netbout.rest.BaseRs;
 import com.netbout.rest.CookieBuilder;
 import com.netbout.rest.Cryptor;
 import com.netbout.rest.LoginRequiredException;
+import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
@@ -52,7 +52,7 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/auth")
-public final class AuthRs extends AbstractRs {
+public final class AuthRs extends BaseRs {
 
     /**
      * The URL to go next.
@@ -113,7 +113,7 @@ public final class AuthRs extends AbstractRs {
             location = this.forward;
         }
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(identity)
             .cookie(
@@ -139,11 +139,11 @@ public final class AuthRs extends AbstractRs {
             final Identity previous = this.identity();
             this.logoff();
             identity = this.authenticate(iname, secret);
-            if (BasePage.trusted(identity)
-                && !BasePage.trusted(previous)) {
+            if (NbPage.trusted(identity)
+                && !NbPage.trusted(previous)) {
                 identity = this.hub().join(identity, previous);
-            } else if (BasePage.trusted(previous)
-                && !BasePage.trusted(identity)) {
+            } else if (NbPage.trusted(previous)
+                && !NbPage.trusted(identity)) {
                 identity = this.hub().join(previous, identity);
             } else if (identity.name().equals(previous.name())) {
                 Logger.info(

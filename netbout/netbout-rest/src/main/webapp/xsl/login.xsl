@@ -67,8 +67,8 @@
                     <xsl:text>r</xsl:text>
                     <xsl:value-of select="/page/version/revision"/>
                     <xsl:text> </xsl:text>
-                    <xsl:call-template name="nano">
-                        <xsl:with-param name="nano" select="/page/nano" />
+                    <xsl:call-template name="millis">
+                        <xsl:with-param name="millis" select="/page/millis" />
                     </xsl:call-template>
                 </div>
                 <div id="wrapper">

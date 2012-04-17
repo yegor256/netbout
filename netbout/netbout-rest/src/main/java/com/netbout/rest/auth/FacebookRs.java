@@ -26,9 +26,9 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.BasePage;
+import com.netbout.rest.BaseRs;
 import com.netbout.rest.LoginRequiredException;
+import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.restfb.DefaultFacebookClient;
@@ -57,7 +57,7 @@ import org.apache.commons.lang.LocaleUtils;
  * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
  */
 @Path("/fb")
-public final class FacebookRs extends AbstractRs {
+public final class FacebookRs extends BaseRs {
 
     /**
      * Namespace.
@@ -79,7 +79,7 @@ public final class FacebookRs extends AbstractRs {
             );
         }
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .preserved()
             .status(Response.Status.SEE_OTHER)
@@ -139,7 +139,7 @@ public final class FacebookRs extends AbstractRs {
             secret
         );
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .render()
             .authenticated(identity)

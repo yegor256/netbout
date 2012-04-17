@@ -59,7 +59,7 @@ import javax.ws.rs.core.UriBuilder;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 @Path("/{num : [0-9]+}")
-public final class BoutRs extends AbstractRs {
+public final class BoutRs extends BaseRs {
 
     /**
      * Threshold param.
@@ -223,7 +223,7 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -250,7 +250,7 @@ public final class BoutRs extends AbstractRs {
         }
         bout.rename(title);
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -282,7 +282,7 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -300,7 +300,7 @@ public final class BoutRs extends AbstractRs {
     public Response join() {
         this.bout().confirm();
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -317,7 +317,7 @@ public final class BoutRs extends AbstractRs {
     public Response leave() {
         this.bout().leave();
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -341,7 +341,7 @@ public final class BoutRs extends AbstractRs {
         }
         NetboutUtils.participantOf(friend, this.bout()).kickOff();
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
@@ -377,17 +377,17 @@ public final class BoutRs extends AbstractRs {
      * Main page.
      * @return The page
      */
-    private BasePage page() {
+    private NbPage page() {
         final Identity myself = this.identity();
         this.coords.normalize(this.hub(), this.bout());
-        final BasePage page = new PageBuilder()
+        final NbPage page = new PageBuilder()
             .schema("")
             .stylesheet(
                 this.base().path("/{bout}/xsl/{stage}/wrapper.xsl")
                     .build(this.bout().number(), this.coords.stage())
                     .toString()
             )
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .searcheable(true)
             .append(
@@ -427,7 +427,7 @@ public final class BoutRs extends AbstractRs {
      * @param page The page to append to
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    private void appendInvitees(final BasePage page) {
+    private void appendInvitees(final NbPage page) {
         if (this.mask != null) {
             final List<Invitee> invitees = new LinkedList<Invitee>();
             for (Identity friend : this.identity().friends(this.mask)) {

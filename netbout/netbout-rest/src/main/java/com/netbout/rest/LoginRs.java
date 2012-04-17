@@ -41,7 +41,7 @@ import javax.ws.rs.core.UriBuilder;
  * @version $Id$
  */
 @Path("/g")
-public final class LoginRs extends AbstractRs {
+public final class LoginRs extends BaseRs {
 
     /**
      * Login page.
@@ -63,7 +63,7 @@ public final class LoginRs extends AbstractRs {
         );
         return new PageBuilder()
             .stylesheet("/xsl/login.xsl")
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .link(new Link("facebook", fburi))
             .render()
@@ -90,7 +90,7 @@ public final class LoginRs extends AbstractRs {
     @GET
     public Response logout() {
         return new PageBuilder()
-            .build(BasePage.class)
+            .build(NbPage.class)
             .init(this)
             .anonymous()
             .status(Response.Status.SEE_OTHER)
