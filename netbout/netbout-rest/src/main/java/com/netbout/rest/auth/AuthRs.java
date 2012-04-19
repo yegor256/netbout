@@ -27,7 +27,6 @@
 package com.netbout.rest.auth;
 
 import com.netbout.rest.BaseRs;
-import com.netbout.rest.CookieBuilder;
 import com.netbout.rest.Cryptor;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.NbPage;
@@ -35,6 +34,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
+import com.rexsl.misc.CookieBuilder;
 import com.rexsl.page.PageBuilder;
 import com.ymock.util.Logger;
 import java.net.URI;
@@ -117,8 +117,8 @@ public final class AuthRs extends BaseRs {
             .init(this)
             .authenticated(identity)
             .cookie(
-                new CookieBuilder(this.base().build())
-                    .named(RestSession.GOTO_COOKIE)
+                new CookieBuilder(this.base())
+                    .name(RestSession.GOTO_COOKIE)
                     .build()
             )
             .status(Response.Status.SEE_OTHER)

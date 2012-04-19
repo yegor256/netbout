@@ -34,6 +34,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
+import com.rexsl.misc.CookieBuilder;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.Link;
@@ -192,9 +193,9 @@ public final class BoutRs extends BaseRs {
             .asDefault(this.coords.place())
             .exec();
         return resp.cookie(
-            new CookieBuilder(this.self("").build())
-                .named("netbout-stage")
-                .valued(this.coords.copy().setPlace(place).toString())
+            new CookieBuilder(this.self(""))
+                .name("netbout-stage")
+                .value(this.coords.copy().setPlace(place).toString())
                 .temporary()
                 .build()
         ).build();

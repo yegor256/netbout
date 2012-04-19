@@ -34,6 +34,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
 import com.rexsl.core.XslResolver;
+import com.rexsl.misc.CookieBuilder;
 import com.rexsl.page.BasePage;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
@@ -128,23 +129,22 @@ public class NbPage extends BasePage<NbPage, NbResource> {
             this.link(new Link("re-login", "/g/re"));
         }
         this.extend();
-        final URI base = this.home().base().build();
         return this.builder
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
         )
             .cookie(
-                new CookieBuilder(base)
-                    .named(RestSession.LOG_COOKIE)
-                    .valued(this.home().log().toString())
+                new CookieBuilder(this.home().base())
+                    .name(RestSession.LOG_COOKIE)
+                    .value(this.home().log().toString())
                     .temporary()
                     .build()
             )
             .cookie(
-                new CookieBuilder(base)
-                    .named(RestSession.AUTH_COOKIE)
-                    .valued(new Cryptor().encrypt(identity))
+                new CookieBuilder(this.home().base())
+                    .name(RestSession.AUTH_COOKIE)
+                    .value(new Cryptor().encrypt(identity))
                     .temporary()
                     .build()
             )
@@ -257,9 +257,9 @@ public class NbPage extends BasePage<NbPage, NbResource> {
      * @return Value of the HTTP header
      */
     private String nocookie(final String name) {
-        return new CookieBuilder(this.home().base().build())
-            .named(name)
-            .pathed(
+        return new CookieBuilder(this.home().base())
+            .name(name)
+            .path(
                 String.format(
                     "/%s",
                     this.home().httpServletRequest().getContextPath()

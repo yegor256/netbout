@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
+import com.rexsl.misc.CookieBuilder;
 import com.ymock.util.Logger;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -109,16 +110,16 @@ public class ForwardException extends WebApplicationException {
             .entity(msg)
             .location(builder.build())
             .cookie(
-                new CookieBuilder(res.base().build())
-                    .named(RestSession.MESSAGE_COOKIE)
-                    .valued(new SecureString(msg).toString())
+                new CookieBuilder(res.base())
+                    .name(RestSession.MESSAGE_COOKIE)
+                    .value(new SecureString(msg).toString())
                     .temporary()
                     .build()
             )
             .cookie(
-                new CookieBuilder(res.base().build())
-                    .named(RestSession.GOTO_COOKIE)
-                    .valued(
+                new CookieBuilder(res.base())
+                    .name(RestSession.GOTO_COOKIE)
+                    .value(
                         new SecureString(res.uriInfo().getRequestUri())
                             .toString()
                     )
