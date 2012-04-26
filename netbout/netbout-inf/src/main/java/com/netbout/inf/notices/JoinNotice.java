@@ -32,7 +32,6 @@ package com.netbout.inf.notices;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface ParticipationConfirmedNotice
-    extends BoutNotice, IdentityNotice {
+public interface JoinNotice extends BoutNotice, IdentityNotice {
 
 }
