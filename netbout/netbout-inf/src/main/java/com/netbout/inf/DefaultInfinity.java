@@ -159,7 +159,7 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public Iterable<Long> messages(final String query)
         throws InvalidSyntaxException {
-        final Term term = new Parser(this.store).parse(query).term();
+        final Term term = new ParserAdapter(this.store).parse(query).term();
         return new LazyMessages(this.ray.fetch(term), term);
     }
 

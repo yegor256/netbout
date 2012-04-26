@@ -34,14 +34,14 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
 /**
- * Parser of query text.
+ * Adapter for ANTLR3 parser.
  *
  * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Parser {
+final class ParserAdapter {
 
     /**
      * The store.
@@ -52,7 +52,7 @@ final class Parser {
      * Public ctor.
      * @param str The store with functors
      */
-    public Parser(final Store str) {
+    public ParserAdapter(final Store str) {
         this.store = str;
     }
 
