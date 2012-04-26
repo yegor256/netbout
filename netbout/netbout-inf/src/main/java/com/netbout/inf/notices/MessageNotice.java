@@ -35,7 +35,7 @@ import com.netbout.spi.Message;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface MessageRelatedNotice extends Notice {
+public interface MessageNotice extends Notice {
 
     /**
      * Link to the message.

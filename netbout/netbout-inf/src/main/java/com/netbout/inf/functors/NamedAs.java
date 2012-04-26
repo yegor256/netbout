@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functos;
+package com.netbout.inf.functors;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

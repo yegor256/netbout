@@ -35,7 +35,7 @@ import com.netbout.spi.Bout;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutRelatedNotice extends Notice {
+public interface BoutNotice extends Notice {
 
     /**
      * Link to the bout.

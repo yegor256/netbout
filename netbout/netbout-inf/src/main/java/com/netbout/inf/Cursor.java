@@ -34,7 +34,7 @@ package com.netbout.inf;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Cursor {
+public interface Cursor {
 
     /**
      * Add attribute to every msg including this one, which satisfy the
@@ -85,11 +85,10 @@ interface Cursor {
     Cursor invalidate();
 
     /**
-     * Get message.
+     * Get message (throws runtime exception if there is no message).
      * @return The message
-     * @throws NoSuchElementException If it doesn't exist
      */
-    Msg msg() throws NoSuchElementException;
+    Msg msg();
 
     /**
      * Is it valid?

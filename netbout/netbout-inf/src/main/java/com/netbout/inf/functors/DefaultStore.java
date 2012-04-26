@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functor;
+package com.netbout.inf.functors;
 
 import com.netbout.inf.Functor;
 import com.netbout.inf.InvalidSyntaxException;

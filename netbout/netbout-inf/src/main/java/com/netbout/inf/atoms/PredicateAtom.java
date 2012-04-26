@@ -27,7 +27,10 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Functor;
 import com.netbout.inf.Term;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -64,7 +67,7 @@ public final class PredicateAtom implements Atom<String> {
     public PredicateAtom(final String txt, final List<Atom> atoms,
         final Functor fnctr) {
         this.name = txt;
-        this.args = atoms;
+        this.args = new ArrayList<Atom>(atoms);
         this.functor = fnctr;
     }
 

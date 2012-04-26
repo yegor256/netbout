@@ -24,50 +24,52 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf.ray;
 
-import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Functor;
-import com.netbout.inf.Noticable;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
-import com.netbout.inf.Term;
-import com.netbout.inf.notices.MessagePostedNotice;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import com.netbout.inf.TermBuilder;
+import java.io.File;
 
 /**
- * Allows only messages where variable equals to value.
- *
- * <p>This class is thread-safe.
+ * Default implementation of {@link Ray}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("equal")
-final class Equal implements Functor, Noticable<MessagePostedNotice> {
+public final class MemRay implements Ray {
 
     /**
-     * {@inheritDoc}
+     * Public ctor.
+     * @param dir The directory to work with
      */
-    @Override
-    final Term build(final Ray ray, final List<Atom> atoms) {
-        return ray.builder().matcher(
-            VariableAtom.class.cast(atoms.get(0)).attribute(),
-            atoms.get(1).value().toString()
-        );
+    public MemRay(final File dir) {
+        // todo
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Msg msg = ray.create(notice.message().number());
-        msg.replace(VariableAtom.NUMBER, notice.message().number());
-        msg.replace(VariableAtom.BOUT_NUMBER, notice.message().bout().number());
-        msg.replace(VariableAtom.AUTHOR_NAME, notice.message().author());
+    public Cursor cursor() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Msg msg(final long number) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TermBuilder builder() {
+        return null;
     }
 
 }

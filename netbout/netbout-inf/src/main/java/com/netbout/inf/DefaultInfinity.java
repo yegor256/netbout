@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.ih.StageFarm;
 import com.netbout.inf.ebs.EbsVolume;
+import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;

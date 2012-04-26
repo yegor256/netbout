@@ -77,7 +77,7 @@ public enum VariableAtom implements Atom {
      * Public ctor.
      * @param value The value of it
      */
-    public VariableAtom(final String value) {
+    VariableAtom(final String value) {
         this.name = value;
     }
 

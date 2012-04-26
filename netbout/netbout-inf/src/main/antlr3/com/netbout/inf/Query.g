@@ -6,6 +6,7 @@ grammar Query;
 @header {
     package com.netbout.inf;
     import com.netbout.inf.atoms.NumberAtom;
+    import com.netbout.inf.atoms.PredicateAtom;
     import com.netbout.inf.atoms.TextAtom;
     import com.netbout.inf.atoms.VariableAtom;
     import java.util.LinkedList;
@@ -19,7 +20,7 @@ grammar Query;
 @lexer::members {
     @Override
     public void emitErrorMessage(String msg) {
-        throw new PredicateException(msg);
+        throw new IllegalArgumentException(msg);
     }
 }
 
@@ -27,7 +28,7 @@ grammar Query;
     private transient Store store;
     @Override
     public void emitErrorMessage(String msg) {
-        throw new PredicateException(msg);
+        throw new IllegalArgumentException(msg);
     }
     public void setStore(final Store str) {
         this.store = str;
@@ -51,7 +52,7 @@ predicate returns [Predicate ret]
         { atoms.add($atom.ret); }
     )*
     ')'
-    { $ret = this.store.build($NAME.text, atoms); }
+    { $ret = new PredicateAtom($NAME.text, atoms, this.store.get($NAME.text)); }
     ;
 
 atom returns [Atom ret]

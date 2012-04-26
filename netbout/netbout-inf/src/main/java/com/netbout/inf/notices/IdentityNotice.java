@@ -35,7 +35,7 @@ import com.netbout.spi.Identity;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface IdentityRelatedNotice extends Notice {
+public interface IdentityNotice extends Notice {
 
     /**
      * The identity this notice is related to.

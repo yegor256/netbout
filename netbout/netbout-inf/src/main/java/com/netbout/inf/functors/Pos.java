@@ -24,12 +24,16 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.bundles;
+package com.netbout.inf.functors;
 
+import com.netbout.inf.Atom;
+import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
-import com.netbout.inf.PredicateException;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import com.netbout.inf.Ray;
+import com.netbout.inf.Term;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Allows only message at this position.

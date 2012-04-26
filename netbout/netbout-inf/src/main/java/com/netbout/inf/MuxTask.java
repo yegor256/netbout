@@ -32,14 +32,14 @@ import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.netbout.inf.Notice;
 import com.netbout.inf.notices.AliasAddedNotice;
-import com.netbout.inf.notices.BoutRelatedNotice;
+import com.netbout.inf.notices.BoutNotice;
 import com.netbout.inf.notices.BoutRenamedNotice;
-import com.netbout.inf.notices.IdentityRelatedNotice;
+import com.netbout.inf.notices.IdentityNotice;
+import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.inf.notices.MessagePostedNotice;
-import com.netbout.inf.notices.MessageRelatedNotice;
+import com.netbout.inf.notices.MessageNotice;
 import com.netbout.inf.notices.MessageSeenNotice;
-import com.netbout.inf.notices.ParticipationConfirmedNotice;
 import com.ymock.util.Logger;
 import java.util.HashSet;
 import java.util.Set;
@@ -138,18 +138,18 @@ final class MuxTask implements Runnable {
      */
     public Set<Urn> dependants() {
         final Set<Urn> deps = new HashSet<Urn>();
-        if (this.ntc instanceof IdentityRelatedNotice) {
-            deps.add(((IdentityRelatedNotice) this.ntc).identity().name());
+        if (this.ntc instanceof IdentityNotice) {
+            deps.add(((IdentityNotice) this.ntc).identity().name());
         }
-        if (this.ntc instanceof BoutRelatedNotice) {
+        if (this.ntc instanceof BoutNotice) {
             deps.addAll(
-                MuxTask.dudesOf(((BoutRelatedNotice) this.ntc).bout())
+                MuxTask.dudesOf(((BoutNotice) this.ntc).bout())
             );
         }
-        if (this.ntc instanceof MessageRelatedNotice) {
+        if (this.ntc instanceof MessageNotice) {
             deps.addAll(
                 MuxTask.dudesOf(
-                    ((MessageRelatedNotice) this.ntc).message().bout()
+                    ((MessageNotice) this.ntc).message().bout()
                 )
             );
         }
@@ -163,19 +163,19 @@ final class MuxTask implements Runnable {
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(MuxTask.nameOf(this.ntc));
-        if (this.ntc instanceof IdentityRelatedNotice) {
+        if (this.ntc instanceof IdentityNotice) {
             text.append(" w/").append(
-                ((IdentityRelatedNotice) this.ntc).identity().name()
+                ((IdentityNotice) this.ntc).identity().name()
             );
         }
-        if (this.ntc instanceof BoutRelatedNotice) {
+        if (this.ntc instanceof BoutNotice) {
             text.append(" @").append(
-                ((BoutRelatedNotice) this.ntc).bout().number()
+                ((BoutNotice) this.ntc).bout().number()
             );
         }
-        if (this.ntc instanceof MessageRelatedNotice) {
+        if (this.ntc instanceof MessageNotice) {
             text.append(" at").append(
-                ((MessageRelatedNotice) this.ntc).message().number()
+                ((MessageNotice) this.ntc).message().number()
             );
         }
         return text.toString();
@@ -211,7 +211,7 @@ final class MuxTask implements Runnable {
             name = "bout renamed";
         } else if (notice instanceof KickOffNotice) {
             name = "kicked off";
-        } else if (notice instanceof ParticipationConfirmedNotice) {
+        } else if (notice instanceof JoinNotice) {
             name = "participation confirmed";
         } else {
             throw new IllegalStateException("unknown type of notice");
