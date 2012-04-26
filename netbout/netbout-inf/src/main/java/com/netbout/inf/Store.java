@@ -31,42 +31,21 @@ import java.io.Closeable;
 import java.util.List;
 
 /**
- * Store of all known predicates.
+ * Store of all known functors.
  *
- * <p>Implementation must be immutable and thread-safe.
+ * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Store extends Closeable {
+public interface Store extends Closeable, Noticable<Notice> {
 
     /**
-     * Show some stats.
-     * @return Text stats
-     */
-    String statistics();
-
-    /**
-     * See this notice.
-     * @param notice The notice
-     */
-    void see(Notice notice);
-
-    /**
-     * How many messages were seen totally by this store?
-     * @return Maximum number of the message seen so far
-     */
-    Long maximum();
-
-    /**
-     * Build a predicate from name and list of preds.
-     *
-     * <p>Throws {@link PredicateException} if this name is not recognized.
-     *
+     * Find functor by name.
      * @param name Its name
-     * @param atoms List of arguments
-     * @return The predicate
+     * @return The functor
+     * @throws InvalidSyntaxException If it's not found
      */
-    Predicate build(String name, List<Atom> atoms);
+    Functor get(String name) throws InvalidSyntaxException;
 
 }

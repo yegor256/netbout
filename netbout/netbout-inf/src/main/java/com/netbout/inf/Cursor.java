@@ -27,33 +27,59 @@
 package com.netbout.inf;
 
 /**
- * One predicate.
+ * Cursor in {@link Ray}.
  *
- * <p>Implementations must be thread-safe.
+ * <p>Implementation must be immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Predicate extends Atom {
+interface Cursor {
 
     /**
-     * Return next message number that complies with this predicate, and jump
-     * to the next element.
-     * @return Message number
+     * Set attribute to every msg including this one, which satisfy the
+     * term.
+     * @param term The term to satisfy
+     * @param name The name of attribute to set
+     * @param value The value to set
      */
-    Long next();
+    void set(Term term, String name, String value);
 
     /**
-     * Move to the next element, if it exists and return FALSE if it's absent.
-     * @return True if the next element exists, false if it's the end of row
+     * Delete attribute from every msg including this one, which satisfy the
+     * term.
+     * @param term The term to satisfy
+     * @param name The name of attribute to delete
      */
-    boolean hasNext();
+    void delete(Term term, String name);
 
     /**
-     * Check this message number, whether it is allowed.
-     * @param message Message number to check
-     * @return Is it allowed or not?
+     * Delete attribute from every msg including this one, which satisfy the
+     * term.
+     * @param term The term to satisfy
+     * @param name The name of attribute to delete
+     * @param value The value to delete
      */
-    boolean contains(Long message);
+    void delete(Term term, String name, String value);
+
+    /**
+     * Shift cursor to the next message, which satisfies the term.
+     * @param term The term to satisfy
+     * @return New cursor
+     */
+    Cursor shift(Term term);
+
+    /**
+     * Get message.
+     * @return The message
+     * @throws NoSuchElementException If it doesn't exist
+     */
+    Msg msg() throws NoSuchElementException;
+
+    /**
+     * Is it the end of ray?
+     * @return TRUE if this is the end
+     */
+    boolean end();
 
 }

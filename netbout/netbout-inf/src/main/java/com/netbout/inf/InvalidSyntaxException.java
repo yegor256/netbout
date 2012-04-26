@@ -24,11 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.inf;
 
 /**
- * Triples.
+ * Invalid syntax in query string.
+ *
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.inf.triples;
+public final class InvalidSyntaxException extends Exception {
+
+    /**
+     * Public ctor.
+     * @param cause The cause of it
+     */
+    public InvalidSyntaxException(final Throwable cause) {
+        super(cause);
+    }
+
+    /**
+     * Public ctor.
+     * @param cause The cause of it
+     */
+    public InvalidSyntaxException(final String cause) {
+        super(cause);
+    }
+
+    /**
+     * Public ctor.
+     * @param query The query that cause this problem
+     * @param thr The cause of it
+     */
+    public InvalidSyntaxException(final String query, final Throwable thr) {
+        super(query, thr);
+    }
+
+}

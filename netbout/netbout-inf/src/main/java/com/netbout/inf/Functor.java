@@ -26,44 +26,24 @@
  */
 package com.netbout.inf;
 
-import java.io.Closeable;
 import java.util.List;
 
 /**
- * Pointer to a predicate.
+ * Functor.
  *
  * <p>Implementation must be immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Pointer extends Closeable {
+public interface Functor {
 
     /**
-     * Show some stats.
-     * @return Text stats
-     */
-    String statistics();
-
-    /**
-     * Points to this predicate (by name)?
-     * @param name The name to check against
-     * @return Yes or no
-     */
-    boolean pointsTo(String name);
-
-    /**
-     * See this notice.
-     * @param notice The notice to process
-     */
-    void see(Notice notice);
-
-    /**
-     * Create a predicate.
-     * @param name Name of predicate to build
+     * Create a term.
+     * @param ray The ray to use
      * @param atoms Atoms
-     * @return Predicate just built
+     * @return The term to build
      */
-    Predicate build(String name, List<Atom> atoms);
+    Term build(Ray ray, List<Atom> atoms);
 
 }

@@ -37,18 +37,12 @@ import java.io.Serializable;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextAtom implements Atom, Serializable {
-
-    /**
-     * Serialization marker.
-     */
-    private static final long serialVersionUID = 0x4255AFCD6612DDEFL;
+public final class TextAtom implements Atom {
 
     /**
      * The value of it.
      */
-    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
-    private final String text;
+    private final transient String text;
 
     /**
      * Public ctor.

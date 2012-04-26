@@ -41,12 +41,6 @@ import java.io.Closeable;
 public interface Infinity extends Closeable {
 
     /**
-     * Show some stats.
-     * @return Text stats
-     */
-    String statistics();
-
-    /**
      * How long do I need to wait before sending requests?
      * @param who Who is asking
      * @return Estimated number of milliseconds
@@ -57,8 +51,9 @@ public interface Infinity extends Closeable {
      * Find messages for the given predicate.
      * @param query The predicate to use
      * @return The list of messages, ordered
+     * @throws InvalidSyntaxException If query syntax is not valid
      */
-    Iterable<Long> messages(String query);
+    Iterable<Long> messages(String query) throws InvalidSyntaxException;
 
     /**
      * How many messages were seen totally by this infinity?

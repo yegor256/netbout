@@ -24,14 +24,43 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.notices;
+package com.netbout.inf.motors.bundles;
+
+import com.netbout.inf.Functor;
+import com.netbout.inf.PredicateException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * New message was just posted.
+ * Allows only messages from the bouts bundled to the provided one.
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface MessagePostedNotice extends MessageNotice {
+@NamedAs("unbundled")
+final class Unbundled implements Functor {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    final Term build(final Ray ray, final List<Atom> atoms) {
+        final long bout = NumberAtom.class.cast(atoms.get(0)).value();
+        final String marker = ray.cursor().shift(
+            ray.builder().matcher(Equal.BOUT_NUMBER, bout)
+        ).msg().first(Bundled.ATTR);
+        return ray.builder().and(
+            Arrays.asList(
+                new Term[] {
+                    ray.builder().matcher(Bundled.ATTR, marker),
+                    ray.builder().not(
+                        ray.builder().matcher(Bundled.BOUT_NUMBER, bout)
+                    )
+                }
+            )
+        );
+    }
 
 }

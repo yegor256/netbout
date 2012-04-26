@@ -24,14 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.notices;
 
 /**
- * New message was just posted.
+ * Functors.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface MessagePostedNotice extends MessageNotice {
-
-}
+package com.netbout.inf.functors;

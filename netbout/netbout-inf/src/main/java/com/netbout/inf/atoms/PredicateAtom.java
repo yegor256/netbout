@@ -24,22 +24,85 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.triples;
+package com.netbout.inf.atoms;
+
+import com.netbout.inf.Atom;
+import com.netbout.inf.Term;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * When triple is not found by {Triples#get()}.
+ * Predicate atom.
+ *
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MissedTripleException extends Exception {
+public final class PredicateAtom implements Atom {
+
+    /**
+     * The functor.
+     */
+    private final transient Functor functor;
+
+    /**
+     * The name of it.
+     */
+    private final transient String name;
+
+    /**
+     * List of atoms.
+     */
+    private final transient List<Atom> args;
 
     /**
      * Public ctor.
-     * @param cause The cause
+     * @param txt Name of it
+     * @param atoms Arguments
+     * @param fnctr The functor
      */
-    public MissedTripleException(final String cause) {
-        super(cause);
+    public PredicateAtom(final String txt, final List<Atom> atoms,
+        final Functor fnctr) {
+        this.name = txt;
+        this.args = atoms;
+        this.functor = fnctr;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.name.hashCode() + this.args.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof PredicasteAtom
+            && this.hashCode() == obj.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format(
+            "(%s %s)",
+            this.name,
+            StringUtils.join(this.args, " ")
+        );
+    }
+
+    /**
+     * Get term from it.
+     * @return The term
+     */
+    public Term term() {
+        return this.functor.build(this.args);
     }
 
 }

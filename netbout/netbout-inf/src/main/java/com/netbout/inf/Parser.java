@@ -26,39 +26,65 @@
  */
 package com.netbout.inf;
 
+import com.ymock.util.Logger;
+import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.TokenStream;
+
 /**
- * Exception in predicate.
+ * Parser of query text.
  *
  * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PredicateException extends RuntimeException {
+final class Parser {
+
+    /**
+     * The store.
+     */
+    private final transient Store store;
 
     /**
      * Public ctor.
-     * @param cause The cause of it
+     * @param str The store with functors
      */
-    public PredicateException(final Throwable cause) {
-        super(cause);
+    public Parser(final Store str) {
+        this.store = str;
     }
 
     /**
-     * Public ctor.
-     * @param cause The cause of it
+     * Build a predicate atom from a query string.
+     * @param query The query
+     * @return The predicate atom
+     * @throws InvalidSyntaxException If query is not valid
      */
-    public PredicateException(final String cause) {
-        super(cause);
-    }
-
-    /**
-     * Public ctor.
-     * @param query The query that cause this problem
-     * @param thr The cause of it
-     */
-    public PredicateException(final String query, final Throwable thr) {
-        super(query, thr);
+    public PredicateAtom parse(final String query)
+        throws InvalidSyntaxException {
+        final CharStream input = new ANTLRStringStream(
+            NetboutUtils.normalize(query)
+        );
+        final QueryLexer lexer = new QueryLexer(input);
+        final TokenStream tokens = new CommonTokenStream(lexer);
+        final QueryParser parser = new QueryParser(tokens);
+        parser.setStore(this.store);
+        PredicateAtom predicate;
+        try {
+            predicate = parser.predicate();
+        } catch (org.antlr.runtime.RecognitionException ex) {
+            throw InvalidSyntaxException(query, ex);
+        } catch (PredicateException ex) {
+            throw InvalidSyntaxException(query, ex);
+        }
+        Logger.debug(
+            this,
+            "#parse('%s'): predicate '%s' parsed",
+            query,
+            predicate
+        );
+        return predicate;
     }
 
 }

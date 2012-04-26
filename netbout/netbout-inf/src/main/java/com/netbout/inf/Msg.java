@@ -24,77 +24,55 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.triples;
-
-import java.io.Closeable;
-import java.util.Iterator;
+package com.netbout.inf;
 
 /**
- * Triples.
+ * One message with attributes.
  *
  * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Triples extends Closeable {
+public interface Msg {
 
     /**
-     * Put new triple.
-     * @param number The number
-     * @param name Name of triple
-     * @param value The value
+     * Get its number.
+     * @return The number of it
      */
-    void put(Long number, String name, String value);
+    long number();
 
     /**
-     * Does it have this triple?
-     * @param number The number
-     * @param name Name of triple
-     * @param value The value
-     * @return Yes or no
+     * Set attribute.
+     * @param name The name of attribute to set
+     * @param value The value to set
      */
-    boolean has(Long number, String name, String value);
+    void add(String name, String value);
 
     /**
-     * Get the value (the first one).
-     * @param number The number
-     * @param name Name of triple
-     * @return The value found
-     * @throws MissedTripleException If not found
+     * Replace all attributes with this name with this one.
+     * @param name The name of attribute to set
+     * @param value The value to set
      */
-    String get(Long number, String name) throws MissedTripleException;
+    void replace(String name, String value);
 
     /**
-     * Get all triples.
-     * @param number The number
-     * @param name Name of triple
-     * @return The values found
+     * Get value of certain attribute.
+     * @param name The name of attribute to get
      */
-    Iterator<String> all(Long number, String name);
+    String first(String name);
 
     /**
-     * Reverse lookup.
-     * @param name Name of triple
-     * @param value The value to look for
-     * @return Reverse sorted list of numbers found
+     * Delete all attributes with this name.
+     * @param name The name of attribute to delete
      */
-    Iterator<Long> reverse(String name, String value);
+    void delete(String name);
 
     /**
-     * Reverse lookup, by any of the values provided.
-     * @param name Name of triple
-     * @param join Name of joining triple
-     * @param value The values to look for
-     * @return Reverse sorted list of numbers found
+     * Delete attribute with this name and value.
+     * @param name The name of attribute to delete
+     * @param value The value to delete
      */
-    Iterator<Long> reverse(String name, String join, String value);
-
-    /**
-     * Clear these triples.
-     * @param number The number
-     * @param name Name of triple
-     */
-    void clear(Long number, String name);
+    void delete(String name, String value);
 
 }

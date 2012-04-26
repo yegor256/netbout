@@ -148,7 +148,7 @@ public final class BundlesMotor implements Pointer {
     @Override
     public void see(final Notice notice) {
         if (notice instanceof MessagePostedNotice) {
-            this.posted(((MessagePostedNotice) notice).message());
+            this.posted();
         }
     }
 

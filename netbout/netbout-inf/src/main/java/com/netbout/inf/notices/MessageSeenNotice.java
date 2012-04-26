@@ -32,7 +32,6 @@ package com.netbout.inf.notices;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface MessageSeenNotice
-    extends MessageRelatedNotice, IdentityRelatedNotice {
+public interface MessageSeenNotice extends MessageNotice, IdentityNotice {
 
 }

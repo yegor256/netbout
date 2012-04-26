@@ -32,6 +32,6 @@ package com.netbout.inf.notices;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutRenamedNotice extends BoutRelatedNotice {
+public interface BoutRenamedNotice extends BoutNotice {
 
 }

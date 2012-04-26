@@ -24,14 +24,26 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.notices;
+package com.netbout.inf;
+
+import java.util.List;
 
 /**
- * New message was just posted.
+ * Something noticable.
+ *
+ * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @param <T> Type of notice
  */
-public interface MessagePostedNotice extends MessageNotice {
+public interface Noticable<T extends Notice> {
+
+    /**
+     * See this notice.
+     * @param ray The data storage to use
+     * @param notice The notice to process
+     */
+    void see(Ray ray, T notice);
 
 }

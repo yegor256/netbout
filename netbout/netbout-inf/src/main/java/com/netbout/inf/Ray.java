@@ -24,14 +24,35 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.notices;
+package com.netbout.inf;
 
 /**
- * New message was just posted.
+ * Ray of messages.
+ *
+ * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface MessagePostedNotice extends MessageNotice {
+public interface Ray {
+
+    /**
+     * Create new cursor.
+     * @return The cursor
+     */
+    Cursor cursor();
+
+    /**
+     * Create new message.
+     * @param number The ID of it
+     * @return The msg just created
+     */
+    Msg create(long number);
+
+    /**
+     * Create term builder.
+     * @return The builder
+     */
+    TermBuilder builder();
 
 }

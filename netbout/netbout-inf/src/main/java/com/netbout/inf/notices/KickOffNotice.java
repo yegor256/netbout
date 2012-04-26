@@ -32,7 +32,6 @@ package com.netbout.inf.notices;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface KickOffNotice extends
-    IdentityRelatedNotice, BoutRelatedNotice {
+public interface KickOffNotice extends IdentityNotice, BoutNotice {
 
 }

@@ -27,7 +27,6 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
-import java.io.Serializable;
 
 /**
  * Variable atom.
@@ -37,54 +36,42 @@ import java.io.Serializable;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VariableAtom implements Atom, Serializable {
+public enum VariableAtom implements Atom {
 
     /**
      * Text of message.
      */
-    public static final VariableAtom TEXT =
-        new VariableAtom("text");
+    TEXT("text"),
 
     /**
      * Number of message.
      */
-    public static final VariableAtom NUMBER =
-        new VariableAtom("number");
+    NUMBER("number"),
 
     /**
      * Number of bout.
      */
-    public static final VariableAtom BOUT_NUMBER =
-        new VariableAtom("bout.number");
+    BOUT_NUMBER("bout.number"),
 
     /**
      * Title of bout.
      */
-    public static final VariableAtom BOUT_TITLE =
-        new VariableAtom("bout.title");
+    BOUT_TITLE("bout.title"),
 
     /**
      * Name of author.
      */
-    public static final VariableAtom AUTHOR_NAME =
-        new VariableAtom("author.name");
+    AUTHOR_NAME("author.name"),
 
     /**
      * Alias of author.
      */
-    public static final VariableAtom AUTHOR_ALIAS =
-        new VariableAtom("author.alias");
-
-    /**
-     * Serialization marker.
-     */
-    private static final long serialVersionUID = 0x4255AFCD9812DDEFL;
+    AUTHOR_ALIAS("author.alias");
 
     /**
      * The name of it.
      */
-    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
-    private final String name;
+    private final transient String name;
 
     /**
      * Public ctor.
@@ -92,23 +79,6 @@ public final class VariableAtom implements Atom, Serializable {
      */
     public VariableAtom(final String value) {
         this.name = value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.name.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof VariableAtom
-            && this.name.equals(((VariableAtom) obj).name);
     }
 
     /**

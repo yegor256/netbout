@@ -57,9 +57,14 @@ public final class DefaultInfinity implements Infinity {
     private final transient Folder folder;
 
     /**
-     * Store of predicates.
+     * Store of functors.
      */
     private final transient Store store;
+
+    /**
+     * Ray of messages.
+     */
+    private final transient Ray ray;
 
     /**
      * Public ctor.
@@ -74,7 +79,8 @@ public final class DefaultInfinity implements Infinity {
      */
     protected DefaultInfinity(final Folder fldr) {
         this.folder = fldr;
-        this.store = new PredicateStore(this.folder);
+        this.ray = new MemRay(new File(this.folder.path(), "memray"));
+        this.store = new FunctorStore(this.folder);
         this.mux = new Mux(this.store);
         StageFarm.register(this);
         Logger.info(
@@ -89,7 +95,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public String statistics() {
+    public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("maximum(): %s\n", this.maximum()))
             .append("Mux stats:\n")
@@ -129,9 +135,9 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void close() throws java.io.IOException {
-        Logger.info(this, "#close(): will stop Mux in a second");
-        IOUtils.closeQuietly(this.mux);
+        this.mux.close();
         this.store.close();
+        Logger.info(this, "#close(): closed");
     }
 
     /**
@@ -150,8 +156,10 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Long> messages(final String query) {
-        return new LazyMessages(new PredicateBuilder(this.store).parse(query));
+    public Iterable<Long> messages(final String query)
+        throws InvalidSyntaxException {
+        final Term term = new Parser(this.store).parse(query).term();
+        return new LazyMessages(this.ray.fetch(term), term);
     }
 
     /**

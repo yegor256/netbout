@@ -24,14 +24,62 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.notices;
+package com.netbout.inf.motors.bundles;
+
+import com.netbout.inf.Functor;
+import com.netbout.inf.PredicateException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * New message was just posted.
+ * Select messages by XML namespace.
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface MessagePostedNotice extends MessageNotice {
+@NamedAs
+final class Namespace implements Functor, Noticable<MessagePostedNotice> {
+
+    /**
+     * The attribute to use.
+     */
+    private static final String ATTR = "xml-namespace";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    final Term build(final Ray ray, final List<Atom> atoms) {
+        return ray.builder().matcher(
+            Namespace.ATTR,
+            TextAtom.class.cast(atoms.get(0)).value()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void see(final Ray ray, final MessagePostedNotice notice) {
+        final Message message = notice.message();
+        final DomParser parser = new DomParser(message.text());
+        if (parser.isXml()) {
+            try {
+                ray.create(msg.number()).set(
+                    Namespace.ATTR,
+                    parser.namespace().toString()
+                );
+            } catch (com.netbout.spi.xml.DomValidationException ex) {
+                Logger.warn(
+                    Namespace.class,
+                    "#see(#%d): %[exception]s",
+                    message.number(),
+                    ex
+                );
+            }
+        }
+    }
 
 }

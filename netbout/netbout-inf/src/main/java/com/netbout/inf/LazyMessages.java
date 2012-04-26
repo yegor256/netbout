@@ -39,16 +39,23 @@ import java.util.Iterator;
 final class LazyMessages implements Iterable<Long> {
 
     /**
-     * The predicate.
+     * The message.
      */
-    private final transient Predicate predicate;
+    private final transient Msg msg;
+
+    /**
+     * The term.
+     */
+    private final transient Term term;
 
     /**
      * Public ctor.
-     * @param pred The predicate
+     * @param message The message
+     * @param trm The term
      */
-    public LazyMessages(final Predicate pred) {
-        this.predicate = pred;
+    public LazyMessages(final Msg message, final Term trm) {
+        this.msg = message;
+        this.term = trm;
     }
 
     /**
@@ -68,14 +75,14 @@ final class LazyMessages implements Iterable<Long> {
          */
         @Override
         public boolean hasNext() {
-            return LazyMessages.this.predicate.hasNext();
+            return LazyMessages.this.msg.exists();
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public Long next() {
-            return LazyMessages.this.predicate.next();
+            return LazyMessages.this.msg.number();
         }
         /**
          * {@inheritDoc}

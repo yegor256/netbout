@@ -33,6 +33,6 @@ package com.netbout.inf.notices;
  * @version $Id$
  */
 public interface ParticipationConfirmedNotice
-    extends BoutRelatedNotice, IdentityRelatedNotice {
+    extends BoutNotice, IdentityNotice {
 
 }

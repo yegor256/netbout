@@ -26,64 +26,45 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.NetboutUtils;
-import com.ymock.util.Logger;
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.TokenStream;
+import java.util.Collection;
 
 /**
- * Builder of a predicate.
+ * Builder of terms.
  *
- * <p>This class is immutable and thread-safe.
+ * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class PredicateBuilder {
+public interface TermBuilder {
 
     /**
-     * The store.
+     * Create attribute matching term.
+     * @param name Name of attribute
+     * @param value Value of attribute
+     * @return The term
      */
-    private final transient Store store;
+    Term matcher(String name, String value);
 
     /**
-     * Public ctor.
-     * @param str The store with predicates
+     * Logical AND.
+     * @param terms Terms to group
+     * @return The term
      */
-    public PredicateBuilder(final Store str) {
-        this.store = str;
-    }
+    Term and(Collection<Term> terms);
 
     /**
-     * Build a predicate from a query string.
-     * @param query The query
-     * @return The predicate
+     * Logical OR.
+     * @param terms Terms to group
+     * @return The term
      */
-    public Predicate parse(final String query) {
-        final CharStream input = new ANTLRStringStream(
-            NetboutUtils.normalize(query)
-        );
-        final QueryLexer lexer = new QueryLexer(input);
-        final TokenStream tokens = new CommonTokenStream(lexer);
-        final QueryParser parser = new QueryParser(tokens);
-        parser.setStore(this.store);
-        Predicate predicate;
-        try {
-            predicate = parser.query();
-        } catch (org.antlr.runtime.RecognitionException ex) {
-            throw new PredicateException(query, ex);
-        } catch (PredicateException ex) {
-            throw new PredicateException(query, ex);
-        }
-        Logger.debug(
-            this,
-            "#parse('%s'): predicate found: '%s'",
-            query,
-            predicate
-        );
-        return predicate;
-    }
+    Term or(Collection<Term> terms);
+
+    /**
+     * Logical NOT.
+     * @param term The term to negate
+     * @return The term
+     */
+    Term not(Term term);
 
 }

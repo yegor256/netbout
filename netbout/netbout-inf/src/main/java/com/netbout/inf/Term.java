@@ -24,68 +24,23 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.triples;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+package com.netbout.inf;
 
 /**
- * Abstract iterator over a cursor.
+ * Term.
  *
- * <p>The class is NOT thread-safe.
+ * <p>Implementation must be immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-abstract class AbstractIterator<T> implements Iterator<T> {
+public interface Term {
 
     /**
-     * Fetched recently (or NULL if nothing in the cache).
+     * Shift this cursor to the next position.
+     * @param cursor The cursor to shift
+     * @return New cursor, shifted one
      */
-    private transient T recent;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("PMD.NullAssignment")
-    public T next() {
-        T next;
-        if (this.recent == null) {
-            next = this.fetch();
-            if (next == null) {
-                throw new NoSuchElementException();
-            }
-        } else {
-            next = this.recent;
-            this.recent = null;
-        }
-        return next;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        if (this.recent == null) {
-            this.recent = this.fetch();
-        }
-        return this.recent != null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException("#remove()");
-    }
-
-    /**
-     * Fetch the value or return NULL if there is nothing more to fetch.
-     * @return The value or NULL
-     */
-    protected abstract T fetch();
+    Cursor shift(Cursor cursor);
 
 }
