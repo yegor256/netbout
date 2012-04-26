@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.inf.atoms.PredicateAtom;
+import com.netbout.spi.NetboutUtils;
 import com.ymock.util.Logger;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
@@ -75,9 +76,9 @@ final class ParserAdapter {
         try {
             predicate = parser.query();
         } catch (org.antlr.runtime.RecognitionException ex) {
-            throw InvalidSyntaxException(query, ex);
+            throw new InvalidSyntaxException(query, ex);
         } catch (IllegalArgumentException ex) {
-            throw InvalidSyntaxException(query, ex);
+            throw new InvalidSyntaxException(query, ex);
         }
         Logger.debug(
             this,

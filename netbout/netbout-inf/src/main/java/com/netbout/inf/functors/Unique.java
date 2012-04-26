@@ -62,7 +62,7 @@ final class Unique implements Functor {
                     ray.builder().and(this.terms.values())
                 );
                 if (!shifted.end()) {
-                    final String value = shifted.msg().get(attr);
+                    final String value = shifted.msg().first(attr);
                     this.terms.put(
                         value,
                         ray.builder().not(

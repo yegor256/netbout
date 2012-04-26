@@ -27,7 +27,6 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Message;
-import java.io.Closeable;
 import java.util.List;
 
 /**
@@ -38,7 +37,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Store extends Closeable {
+public interface Store {
 
     /**
      * Find functor by name.

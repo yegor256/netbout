@@ -32,6 +32,7 @@ import com.netbout.inf.Notice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Store;
 import com.ymock.util.Logger;
+import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.reflections.Reflections;
@@ -60,8 +61,14 @@ public final class DefaultStore implements Store {
     public void see(final Ray ray, final Notice notice) {
         for (Functor functor : this.functors.values()) {
             for (Method method : functor.getClass().getMethods()) {
-                if (method.getAnnotation(Noticable.class)) {
-                    method.invoke(functor, ray, notice);
+                if (method.getAnnotation(Noticable.class) != null) {
+                    try {
+                        method.invoke(functor, ray, notice);
+                    } catch (IllegalAccessException ex) {
+                        throw new IllegalStateException(ex);
+                    } catch (java.lang.reflect.InvocationTargetException ex) {
+                        throw new IllegalStateException(ex);
+                    }
                 }
             }
         }
@@ -92,13 +99,12 @@ public final class DefaultStore implements Store {
         final ConcurrentMap<String, Functor> map =
             new ConcurrentHashMap<String, Functor>();
         for (Class type : ref.getSubTypesOf(Functor.class)) {
+            Functor functor;
             try {
                 functor = Functor.class.cast(type.newInstance());
             } catch (InstantiationException ex) {
                 throw new IllegalStateException(ex);
             } catch (IllegalAccessException ex) {
-                throw new IllegalStateException(ex);
-            } catch (java.lang.reflect.InvocationTargetException ex) {
                 throw new IllegalStateException(ex);
             }
             map.put(
@@ -107,7 +113,7 @@ public final class DefaultStore implements Store {
             );
         }
         Logger.debug(
-            this,
+            DefaultStore.class,
             "#discover(): %d functors discovered in classpath: %[list]s",
             map.size(),
             map.keySet()

@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.ih.StageFarm;
 import com.netbout.inf.ebs.EbsVolume;
+import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
@@ -60,7 +61,7 @@ public final class DefaultInfinity implements Infinity {
     /**
      * Store of functors.
      */
-    private final transient Store store;
+    private final transient Store store = new DefaultStore();
 
     /**
      * Ray of messages.
@@ -81,8 +82,7 @@ public final class DefaultInfinity implements Infinity {
     protected DefaultInfinity(final Folder fldr) {
         this.folder = fldr;
         this.ray = new MemRay(new File(this.folder.path(), "memray"));
-        this.store = new FunctorStore(this.folder);
-        this.mux = new Mux(this.store);
+        this.mux = new Mux(this.ray, this.store);
         StageFarm.register(this);
         Logger.info(
             this,
@@ -100,9 +100,9 @@ public final class DefaultInfinity implements Infinity {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("maximum(): %s\n", this.maximum()))
             .append("Mux stats:\n")
-            .append(this.mux.statistics())
+            .append(this.mux)
             .append("\n\nStore stats:\n")
-            .append(this.store.statistics())
+            .append(this.store)
             .append("\n\njava.lang.Runtime:\n")
             .append(
                 String.format(
@@ -137,7 +137,6 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public void close() throws java.io.IOException {
         this.mux.close();
-        this.store.close();
         Logger.info(this, "#close(): closed");
     }
 
@@ -159,7 +158,9 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public Iterable<Long> messages(final String query)
         throws InvalidSyntaxException {
-        final Term term = new ParserAdapter(this.store).parse(query).term();
+        final Term term = new ParserAdapter(this.store)
+            .parse(query)
+            .term(this.ray);
         return new LazyMessages(this.ray.cursor(), term);
     }
 
@@ -168,7 +169,7 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public Long maximum() {
-        return this.store.maximum();
+        return 0L;
     }
 
     /**

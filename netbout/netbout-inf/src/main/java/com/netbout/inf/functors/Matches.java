@@ -37,6 +37,7 @@ import com.netbout.inf.notices.MessagePostedNotice;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -80,7 +81,7 @@ final class Matches implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Msg msg = ray.create(notice.message().number());
+        final Msg msg = ray.msg(notice.message().number());
         for (String word : Matches.words(notice.message().text())) {
             msg.add(Matches.ATTR, word);
         }

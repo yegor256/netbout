@@ -60,6 +60,11 @@ final class MuxTask implements Runnable {
     private final transient Store store;
 
     /**
+     * The ray.
+     */
+    private final transient Ray ray;
+
+    /**
      * When started.
      */
     private transient long started;
@@ -77,10 +82,12 @@ final class MuxTask implements Runnable {
     /**
      * Public ctor.
      * @param what The notice to process
+     * @param iray The ray to use
      * @param str The store to use
      */
-    public MuxTask(final Notice what, final Store str) {
+    public MuxTask(final Notice what, final Ray iray, final Store str) {
         this.store = str;
+        this.ray = iray;
         this.ntc = what;
     }
 
@@ -185,7 +192,7 @@ final class MuxTask implements Runnable {
      * Execute it.
      */
     private void execute() {
-        this.store.see(this.ntc);
+        this.store.see(this.ray, this.ntc);
         Logger.debug(
             this,
             "#execute(): cached \"%s\" in %[nano]s",

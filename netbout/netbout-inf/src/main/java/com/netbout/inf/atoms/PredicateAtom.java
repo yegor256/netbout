@@ -28,6 +28,7 @@ package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Functor;
+import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public final class PredicateAtom implements Atom<String> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof PredicasteAtom
+        return obj instanceof PredicateAtom
             && this.hashCode() == obj.hashCode();
     }
 
@@ -101,11 +102,20 @@ public final class PredicateAtom implements Atom<String> {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String value() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Get term from it.
+     * @param ray The ray to use
      * @return The term
      */
-    public Term term() {
-        return this.functor.build(this.args);
+    public Term term(final Ray ray) {
+        return this.functor.build(ray, this.args);
     }
 
 }

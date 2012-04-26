@@ -61,7 +61,7 @@ atom returns [Atom ret]
     { $ret = $predicate.ret; }
     |
     VARIABLE
-    { $ret = new VariableAtom($VARIABLE.text); }
+    { $ret = VariableAtom.valueOf($VARIABLE.text); }
     |
     TEXT
     { $ret = new TextAtom($TEXT.text); }

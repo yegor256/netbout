@@ -89,7 +89,7 @@ final class TalksWith implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final KickOffNotice notice) {
-        ray.cursor.delete(
+        ray.cursor().delete(
             ray.builder().matcher(
                 VariableAtom.BOUT_NUMBER.attribute(),
                 notice.bout().number().toString()
@@ -106,7 +106,7 @@ final class TalksWith implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final JoinNotice notice) {
-        ray.cursor.add(
+        ray.cursor().add(
             ray.builder().matcher(
                 VariableAtom.BOUT_NUMBER.attribute(),
                 notice.bout().number().toString()

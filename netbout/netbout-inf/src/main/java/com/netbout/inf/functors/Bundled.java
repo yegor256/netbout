@@ -33,7 +33,12 @@ import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
+import com.ymock.util.Logger;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -68,7 +73,7 @@ final class Bundled implements Functor {
                 );
                 if (!shifted.end()) {
                     final String marker = shifted.msg().first(Bundled.ATTR);
-                    this.markers.put(
+                    this.terms.put(
                         marker,
                         ray.builder().not(
                             ray.builder().matcher(Bundled.ATTR, marker)
@@ -87,7 +92,7 @@ final class Bundled implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        ray.create(notice.message().number())
+        ray.msg(notice.message().number())
             .replace(Bundled.ATTR, Bundled.marker(notice.message()));
     }
 

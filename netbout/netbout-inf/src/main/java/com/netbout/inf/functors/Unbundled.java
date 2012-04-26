@@ -31,6 +31,8 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.atoms.VariableAtom;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,17 +52,20 @@ final class Unbundled implements Functor {
      */
     @Override
     public final Term build(final Ray ray, final List<Atom> atoms) {
-        final long bout = NumberAtom.class.cast(atoms.get(0)).value();
-        final String marker = ray.cursor().shift(
-            ray.builder().matcher(Equal.BOUT_NUMBER, bout)
-        ).msg().first(Bundled.ATTR);
+        final Long bout = NumberAtom.class.cast(atoms.get(0)).value();
+        final Term matcher = ray.builder().matcher(
+            VariableAtom.BOUT_NUMBER.attribute(),
+            bout.toString()
+        );
+        final String marker = ray.cursor()
+            .shift(matcher)
+            .msg()
+            .first(Bundled.ATTR);
         return ray.builder().and(
             Arrays.asList(
                 new Term[] {
                     ray.builder().matcher(Bundled.ATTR, marker),
-                    ray.builder().not(
-                        ray.builder().matcher(Bundled.BOUT_NUMBER, bout)
-                    )
+                    ray.builder().not(matcher)
                 }
             )
         );

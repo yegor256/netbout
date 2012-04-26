@@ -36,7 +36,7 @@ import com.netbout.inf.Atom;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public enum VariableAtom implements Atom {
+public enum VariableAtom implements Atom<String> {
 
     /**
      * Text of message.
@@ -87,6 +87,14 @@ public enum VariableAtom implements Atom {
     @Override
     public String toString() {
         return String.format("$%s", this.name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String value() {
+        throw new UnsupportedOperationException();
     }
 
     /**

@@ -61,6 +61,11 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         Runtime.getRuntime().availableProcessors() * 4;
 
     /**
+     * The ray.
+     */
+    private final transient Ray ray;
+
+    /**
      * The store with predicates.
      */
     private final transient Store store;
@@ -85,9 +90,10 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
 
     /**
      * Public ctor.
+     * @param iray The ray to use
      * @param str The store to use
      */
-    public Mux(final Store str) {
+    public Mux(final Ray iray, final Store str) {
         super(
             Mux.THREADS,
             Mux.THREADS,
@@ -105,6 +111,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 }
             }
         );
+        this.ray = iray;
         this.store = str;
         this.prestartAllCoreThreads();
         for (int thread = 0; thread < Mux.THREADS; thread += 1) {
@@ -199,7 +206,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     public void add(final Notice notice) {
         if (!this.isTerminated() && !this.isShutdown()
             && !this.isTerminating()) {
-            final MuxTask task = new MuxTask(notice, this.store);
+            final MuxTask task = new MuxTask(notice, this.ray, this.store);
             if (this.queue.contains(task)) {
                 Logger.debug(
                     this,
