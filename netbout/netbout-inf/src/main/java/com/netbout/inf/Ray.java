@@ -47,7 +47,7 @@ public interface Ray {
      * @param number The ID of it
      * @return The msg just created
      */
-    Msg create(long number);
+    Msg msg(long number);
 
     /**
      * Create term builder.

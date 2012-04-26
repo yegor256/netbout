@@ -37,13 +37,22 @@ package com.netbout.inf;
 interface Cursor {
 
     /**
-     * Set attribute to every msg including this one, which satisfy the
+     * Add attribute to every msg including this one, which satisfy the
      * term.
      * @param term The term to satisfy
      * @param name The name of attribute to set
      * @param value The value to set
      */
-    void set(Term term, String name, String value);
+    void add(Term term, String name, String value);
+
+    /**
+     * Replace attribute to every msg including this one, which satisfy the
+     * term.
+     * @param term The term to satisfy
+     * @param name The name of attribute to set
+     * @param value The value to set
+     */
+    void replace(Term term, String name, String value);
 
     /**
      * Delete attribute from every msg including this one, which satisfy the
@@ -70,11 +79,23 @@ interface Cursor {
     Cursor shift(Term term);
 
     /**
+     * Make it invalid.
+     * @return New cursor
+     */
+    Cursor invalidate();
+
+    /**
      * Get message.
      * @return The message
      * @throws NoSuchElementException If it doesn't exist
      */
     Msg msg() throws NoSuchElementException;
+
+    /**
+     * Is it valid?
+     * @return TRUE if it has a message
+     */
+    boolean valid();
 
     /**
      * Is it the end of ray?

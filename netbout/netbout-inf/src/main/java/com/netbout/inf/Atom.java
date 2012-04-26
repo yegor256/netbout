@@ -33,7 +33,14 @@ package com.netbout.inf;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @param <T> Type of value
  */
-public interface Atom {
+public interface Atom<T> {
+
+    /**
+     * Get its value.
+     * @return The value
+     */
+    T value();
 
 }

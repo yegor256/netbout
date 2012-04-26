@@ -24,84 +24,43 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.predicates;
+package com.netbout.inf.motors.bundles;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.Predicate;
+import com.netbout.inf.Functor;
 import com.netbout.inf.PredicateException;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import java.util.Set;
 
 /**
- * Variable arguments predicate.
+ * Allows only messages where variable equals to value.
  *
  * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-abstract class AbstractVarargPred implements Predicate {
+@NamedAs("equal")
+final class Equal implements Functor, Noticable<MessagePostedNotice> {
 
     /**
-     * Name of it.
+     * {@inheritDoc}
      */
-    private final transient String iname;
-
-    /**
-     * Arguments.
-     */
-    private final transient List<Atom> atoms;
-
-    /**
-     * Public ctor.
-     * @param args Arguments/predicates
-     */
-    public AbstractVarargPred(final List<Atom> args) {
-        this.iname = this.getClass().getAnnotation(Meta.class).value();
-        this.atoms = new ArrayList<Atom>(args);
+    @Override
+    final Term build(final Ray ray, final List<Atom> atoms) {
+        return ray.builder().matcher(
+            VariableAtom.class.cast(atoms.get(0)).attribute(),
+            atoms.get(1).value().toString()
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
-        return String.format(
-            "(%s %s)",
-            this.iname,
-            StringUtils.join(this.args(), " ")
-        );
-    }
-
-    /**
-     * Get arguments.
-     * @return The arguments
-     */
-    protected final List<Atom> args() {
-        return this.atoms;
-    }
-
-    /**
-     * Get its name.
-     * @return The name
-     */
-    protected final String name() {
-        return this.iname;
-    }
-
-    /**
-     * Get argument by number.
-     * @param num The number
-     * @return The predicate/argument
-     */
-    protected final Atom arg(final int num) {
-        if (num >= this.atoms.size()) {
-            throw new PredicateException(
-                String.format("argument #%d is absnet in '%s'", num, this)
-            );
-        }
-        return this.atoms.get(num);
+    public void see(final Ray ray, final MessagePostedNotice notice) {
+        final Msg msg = ray.create(notice.message().number());
+        msg.replace(VariableAtom.NUMBER, notice.message().number());
+        msg.replace(VariableAtom.BOUT_NUMBER, notice.message().bout().number());
+        msg.replace(VariableAtom.AUTHOR_NAME, notice.message().author());
     }
 
 }

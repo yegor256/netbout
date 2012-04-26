@@ -24,78 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.vars;
+package com.netbout.inf.motors.bundles;
 
-import com.netbout.inf.Predicate;
-import com.netbout.inf.triples.Triples;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import com.netbout.inf.Functor;
+import com.netbout.inf.PredicateException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Means "(equals $bout.number 123)".
+ * Allows only messages from this position and further on.
  *
  * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class UniqueBoutNumberPred implements Predicate {
-
-    /**
-     * Triples to use.
-     */
-    private final transient Triples triples;
-
-    /**
-     * List of already passed bout numbers.
-     */
-    private final transient Set<Long> passed =
-        new ConcurrentSkipListSet<Long>();
-
-    /**
-     * Public ctor.
-     * @param trpls The triples to work with
-     */
-    public UniqueBoutNumberPred(final Triples trpls) {
-        this.triples = trpls;
-    }
+@NamedAs("limit")
+final class Limit implements Functor {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long next() {
-        throw new NoSuchElementException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean contains(final Long message) {
-        final Iterator<String> bouts = this.triples.all(
-            message,
-            VarsMotor.MSG_TO_BOUT
-        );
-        boolean contains = false;
-        if (bouts.hasNext()) {
-            final Long bout = Long.valueOf(bouts.next());
-            if (!this.passed.contains(bout)) {
-                contains = true;
+    final Term build(final Ray ray, final List<Atom> atoms) {
+        final long limit = NumberAtom.class.cast(atoms.get(0)).value();
+        return new Term() {
+            private final transient AtomicLong pos = new AtomicLong(0L);
+            @Override
+            public Cursor shift(final Cursor cursor) {
+                Cursor shifted = cursor;
+                if (this.pos.getAndIncrement() >= limit) {
+                    shifted = shifted.shift(ray.builder().never());
+                }
+                return shifted;
             }
-            this.passed.add(bout);
-        }
-        return contains;
+        };
     }
 
 }

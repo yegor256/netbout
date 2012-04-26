@@ -26,80 +26,76 @@
  */
 package com.netbout.inf.motors.bundles;
 
-import com.netbout.inf.Predicate;
+import com.netbout.inf.Functor;
 import com.netbout.inf.PredicateException;
-import com.netbout.inf.triples.Triples;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Allows only bundled messages.
+ * Allows only matched messages.
  *
  * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class BundledPred implements Predicate {
+@NamedAs("matches")
+final class Matches implements Functor, Noticable<MessagePostedNotice> {
 
     /**
-     * Triples to use.
+     * The attribute to use.
      */
-    private final transient Triples triples;
-
-    /**
-     * List of already passed markers.
-     */
-    private final transient Set<String> passed =
-        new ConcurrentSkipListSet<String>();
-
-    /**
-     * Public ctor.
-     * @param trpls The triples to work with
-     */
-    public BundledPred(final Triples trpls) {
-        this.triples = trpls;
-    }
+    private static final String ATTR = "matches";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long next() {
-        throw new PredicateException("BUNDLED#next()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        throw new PredicateException("BUNDLED#hasNext()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean contains(final Long message) {
-        boolean contains;
-        try {
-            final String marker = this.triples.get(
-                Long.valueOf(
-                    this.triples.get(message, BundlesMotor.MSG_TO_BOUT)
-                ),
-                BundlesMotor.BOUT_TO_MARKER
-            );
-            if (this.passed.contains(marker)) {
-                contains = false;
-            } else {
-                this.passed.add(marker);
-                contains = true;
-            }
-        } catch (com.netbout.inf.triples.MissedTripleException ex) {
-            contains = false;
+    final Term build(final Ray ray, final List<Atom> atoms) {
+        final Set<String> words = Matches.words(
+            TextAtom.class.cast(atoms.get(0)).value()
+        );
+        final Collection<Term> terms = new ArrayList<Term>(words.size());
+        for (String word : words) {
+            terms.add(ray.builder().matcher(Matches.ATTR, word));
         }
-        return contains;
+        return ray.builder().or(terms);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void see(final Ray ray, final MessagePostedNotice notice) {
+        final Msg msg = ray.create(notice.message().number());
+        for (String word : Matches.words(notice.message().text())) {
+            msg.add(Matches.ATTR, word);
+        }
+    }
+
+    /**
+     * Extract words from text.
+     * @param text The text
+     * @return Set of words
+     */
+    private static Set<String> words(final String text) {
+        final Set<String> words = new HashSet<String>(
+            Arrays.asList(
+                text.replaceAll(
+                    "['\"\\!@#\\$%\\?\\^&\\*\\(\\),\\.\\[\\]=\\+\\/]+",
+                    "  "
+                ).trim().toUpperCase(Locale.ENGLISH).split("\\s+")
+            )
+        );
+        CollectionUtils.filter(
+            words,
+            new org.apache.commons.collections.Predicate() {
+                @Override
+                public boolean evaluate(final Object obj) {
+                    return ((String) obj).length() > 2;
+                }
+            }
+        );
+        return words;
     }
 
 }

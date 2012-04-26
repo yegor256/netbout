@@ -37,7 +37,7 @@ import java.io.Serializable;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextAtom implements Atom {
+public final class TextAtom implements Atom<String> {
 
     /**
      * The value of it.
@@ -68,10 +68,11 @@ public final class TextAtom implements Atom {
         return obj instanceof TextAtom
             && this.text.equals(((TextAtom) obj).text);
     }
+
     /**
-     * Get its value.
-     * @return The value
+     * {@inheritDoc}
      */
+    @Override
     public String value() {
         return this.text;
     }

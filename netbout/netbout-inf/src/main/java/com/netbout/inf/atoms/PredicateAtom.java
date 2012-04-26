@@ -38,7 +38,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PredicateAtom implements Atom {
+public final class PredicateAtom implements Atom<String> {
 
     /**
      * The functor.

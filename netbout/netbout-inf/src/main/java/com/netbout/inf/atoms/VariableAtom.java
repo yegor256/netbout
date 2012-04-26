@@ -89,4 +89,12 @@ public enum VariableAtom implements Atom {
         return String.format("$%s", this.name);
     }
 
+    /**
+     * Name of attribute for Msg.
+     * @return The name
+     */
+    public String attribute() {
+        return String.format("variable-%s", this.name);
+    }
+
 }

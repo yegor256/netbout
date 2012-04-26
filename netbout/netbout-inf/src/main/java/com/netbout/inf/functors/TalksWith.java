@@ -24,76 +24,80 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.motors.texts;
+package com.netbout.inf.motors.bundles;
 
-import com.netbout.inf.Predicate;
-import com.netbout.inf.triples.Triples;
-import java.util.NoSuchElementException;
+import com.netbout.inf.Functor;
+import com.netbout.inf.PredicateException;
+import java.util.Set;
 
 /**
- * Means "(matches '...' $bout.title)".
+ * Allows messages that are visible to the give person.
  *
  * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MatchesTitlePred implements Predicate {
+@NamedAs("talks-with")
+final class TalksWith implements Functor, Noticable<MessagePostedNotice>,
+    Noticable<KickOffNotice>, Noticable<JoinNotice> {
 
     /**
-     * Triples to use.
+     * The attribute to use.
      */
-    private final transient Triples triples;
+    private static final String ATTR = "talks-with";
 
     /**
-     * The word we're waiting.
+     * {@inheritDoc}
      */
-    private final transient String word;
-
-    /**
-     * Public ctor.
-     * @param trpls The triples to work with
-     * @param wrd The word
-     */
-    public MatchesTitlePred(final Triples trpls, final String wrd) {
-        this.triples = trpls;
-        this.word = wrd;
+    @Override
+    final Term build(final Ray ray, final List<Atom> atoms) {
+        return ray.builder().matcher(
+            TalksWith.ATTR,
+            TextAtom.class.cast(atoms.get(0)).value()
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long next() {
-        throw new NoSuchElementException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean contains(final Long message) {
-        boolean contains;
-        try {
-            contains = this.triples.has(
-                Long.valueOf(
-                    this.triples.get(message, TextsMotor.MSG_TO_BOUT)
-                ),
-                TextsMotor.TITLE_TO_WORD,
-                this.word
-            );
-        } catch (com.netbout.inf.triples.MissedTripleException ex) {
-            contains = false;
+    public void see(final Ray ray, final MessagePostedNotice notice) {
+        final Msg msg = ray.create(notice.message().number());
+        msg.delete(TalksWith.ATTR);
+        for (Participant dude : notice.message().bout().participants()) {
+            msg.add(TalksWith.ATTR, dude.identity().name().toString());
         }
-        return contains;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void see(final Ray ray, final KickOffNotice notice) {
+        ray.cursor.delete(
+            ray.builder().matcher(
+                VariableAtom.BOUT_NUMBER.attribute(),
+                notice.bout().number().toString()
+            ),
+            TalksWith.ATTR,
+            notice.identity().name().toString()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void see(final Ray ray, final JoinNotice notice) {
+        ray.cursor.add(
+            ray.builder().matcher(
+                VariableAtom.BOUT_NUMBER.attribute(),
+                notice.bout().number().toString()
+            ),
+            TalksWith.ATTR,
+            notice.identity().name().toString()
+        );
     }
 
 }

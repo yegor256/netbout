@@ -40,18 +40,14 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @version $Id$
  */
 @NamedAs("unique")
-final class Bundled implements Functor, Noticable<MessagePostedNotice> {
-
-    /**
-     * The attribute to use.
-     */
-    private static final String ATTR = "bundled-marker";
+final class Unique implements Functor {
 
     /**
      * {@inheritDoc}
      */
     @Override
     final Term build(final Ray ray, final List<Atom> atoms) {
+        final String attr = VariableAtom.class.cast(atoms.get(0)).attribute();
         return new Term() {
             private final transient ConcurrentMap<String, Term> terms =
                 new ConcurrentHashMap<String, Term>();
@@ -61,39 +57,17 @@ final class Bundled implements Functor, Noticable<MessagePostedNotice> {
                     ray.builder().and(this.terms.values())
                 );
                 if (!shifted.end()) {
-                    final String marker = shifted.msg().get(Bundled.ATTR);
-                    this.markers.put(
-                        marker,
+                    final String value = shifted.msg().get(attr);
+                    this.terms.put(
+                        value,
                         ray.builder().not(
-                            ray.builder().matcher(Bundled.ATTR, marker)
+                            ray.builder().matcher(attr, value)
                         )
                     );
                 }
                 return shifted;
             }
         };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Ray ray, final MessagePostedNotice notice) {
-        ray.create(notice.message().number())
-            .replace(Bundled.ATTR, Bundled.marker(notice.message()));
-    }
-
-    /**
-     * Create marker from a message.
-     * @param message The message
-     * @return Marker
-     */
-    private static String marker(final Message message) {
-        final Set<Urn> names = new TreeSet<Urn>();
-        for (Participant dude : message.bout().participants()) {
-            names.add(dude.identity().name());
-        }
-        return Logger.format("%[list]s", names);
     }
 
 }

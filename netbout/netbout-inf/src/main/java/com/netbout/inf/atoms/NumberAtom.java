@@ -36,18 +36,18 @@ import com.netbout.inf.Atom;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NumberAtom implements Atom {
+public final class NumberAtom implements Atom<Long> {
 
     /**
      * The value of it.
      */
-    private final transient long number;
+    private final transient Long number;
 
     /**
      * Public ctor.
      * @param value The value of it
      */
-    public NumberAtom(final long value) {
+    public NumberAtom(final Long value) {
         this.number = value;
     }
 
@@ -69,10 +69,10 @@ public final class NumberAtom implements Atom {
     }
 
     /**
-     * Get its value.
-     * @return The value
+     * {@inheritDoc}
      */
-    public long value() {
+    @Override
+    public Long value() {
         return this.number;
     }
 

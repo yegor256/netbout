@@ -67,4 +67,10 @@ public interface TermBuilder {
      */
     Term not(Term term);
 
+    /**
+     * Never matching term.
+     * @return The term
+     */
+    Term never();
+
 }

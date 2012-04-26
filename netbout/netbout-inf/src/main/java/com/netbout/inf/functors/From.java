@@ -24,11 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.inf.motors.bundles;
+
+import com.netbout.inf.Functor;
+import com.netbout.inf.PredicateException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Motors.
+ * Allows only messages from this position and further on.
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.inf.motors;
+@NamedAs("from")
+final class From implements Functor {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    final Term build(final Ray ray, final List<Atom> atoms) {
+        final long from = NumberAtom.class.cast(atoms.get(0)).value();
+        return new Term() {
+            private final transient AtomicLong pos = new AtomicLong(0L);
+            @Override
+            public Cursor shift(final Cursor cursor) {
+                Cursor shifted = cursor;
+                if (this.pos.getAndIncrement() < from) {
+                    shifted = shifted.invalidate();
+                }
+                return shifted;
+            }
+        };
+    }
+
+}
