@@ -29,13 +29,12 @@ package com.netbout.inf.functors;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
-import com.netbout.inf.Noticable;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Message;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Select messages by XML namespace.
@@ -46,7 +45,7 @@ import java.util.concurrent.ConcurrentMap;
  * @version $Id$
  */
 @NamedAs
-final class Namespace implements Functor, Noticable<MessagePostedNotice> {
+final class Namespace implements Functor {
 
     /**
      * The attribute to use.
@@ -57,7 +56,7 @@ final class Namespace implements Functor, Noticable<MessagePostedNotice> {
      * {@inheritDoc}
      */
     @Override
-    final Term build(final Ray ray, final List<Atom> atoms) {
+    public final Term build(final Ray ray, final List<Atom> atoms) {
         return ray.builder().matcher(
             Namespace.ATTR,
             TextAtom.class.cast(atoms.get(0)).value()
@@ -65,9 +64,11 @@ final class Namespace implements Functor, Noticable<MessagePostedNotice> {
     }
 
     /**
-     * {@inheritDoc}
+     * Notice when new message is posted.
+     * @param ray The ray
+     * @param notice The notice
      */
-    @Override
+    @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
         final Message message = notice.message();
         final DomParser parser = new DomParser(message.text());

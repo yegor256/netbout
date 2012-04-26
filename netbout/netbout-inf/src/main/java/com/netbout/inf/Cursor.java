@@ -85,6 +85,12 @@ public interface Cursor {
     Cursor invalidate();
 
     /**
+     * Make a copy.
+     * @return New cursor
+     */
+    Cursor copy();
+
+    /**
      * Get message (throws runtime exception if there is no message).
      * @return The message
      */

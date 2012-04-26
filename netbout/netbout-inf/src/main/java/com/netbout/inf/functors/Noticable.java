@@ -24,26 +24,20 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.functors;
 
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Something noticable.
- *
- * <p>Implementation must be thread-safe.
+ * Meta information about functor's method.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @param <T> Type of notice
  */
-public interface Noticable<T extends Notice> {
-
-    /**
-     * See this notice.
-     * @param ray The data storage to use
-     * @param notice The notice to process
-     */
-    void see(Ray ray, T notice);
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@interface Noticable {
 }

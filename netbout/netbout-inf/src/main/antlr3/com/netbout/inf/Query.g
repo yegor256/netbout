@@ -35,14 +35,14 @@ grammar Query;
     }
 }
 
-query returns [Predicate ret]
+query returns [PredicateAtom ret]
     :
     predicate
     { $ret = $predicate.ret; }
     EOF
     ;
 
-predicate returns [Predicate ret]
+predicate returns [PredicateAtom ret]
     @init { final List<Atom> atoms = new LinkedList<Atom>(); }
     :
     '('

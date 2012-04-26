@@ -38,7 +38,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Store extends Closeable, Noticable<Notice> {
+public interface Store extends Closeable {
 
     /**
      * Find functor by name.
@@ -47,5 +47,12 @@ public interface Store extends Closeable, Noticable<Notice> {
      * @throws InvalidSyntaxException If it's not found
      */
     Functor get(String name) throws InvalidSyntaxException;
+
+    /**
+     * Notice when new message is posted.
+     * @param ray The ray
+     * @param notice The notice
+     */
+    void see(Ray ray, Notice notice);
 
 }

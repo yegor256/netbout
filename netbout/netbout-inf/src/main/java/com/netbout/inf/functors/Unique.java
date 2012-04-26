@@ -31,6 +31,7 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.atoms.VariableAtom;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -50,7 +51,7 @@ final class Unique implements Functor {
      * {@inheritDoc}
      */
     @Override
-    final Term build(final Ray ray, final List<Atom> atoms) {
+    public final Term build(final Ray ray, final List<Atom> atoms) {
         final String attr = VariableAtom.class.cast(atoms.get(0)).attribute();
         return new Term() {
             private final transient ConcurrentMap<String, Term> terms =

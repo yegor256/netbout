@@ -29,13 +29,12 @@ package com.netbout.inf.functors;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
-import com.netbout.inf.Noticable;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Allows only messages where variable equals to value.
@@ -46,13 +45,13 @@ import java.util.concurrent.ConcurrentMap;
  * @version $Id$
  */
 @NamedAs("equal")
-final class Equal implements Functor, Noticable<MessagePostedNotice> {
+final class Equal implements Functor {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    final Term build(final Ray ray, final List<Atom> atoms) {
+    public final Term build(final Ray ray, final List<Atom> atoms) {
         return ray.builder().matcher(
             VariableAtom.class.cast(atoms.get(0)).attribute(),
             atoms.get(1).value().toString()
@@ -60,9 +59,11 @@ final class Equal implements Functor, Noticable<MessagePostedNotice> {
     }
 
     /**
-     * {@inheritDoc}
+     * Notice when new message is posted.
+     * @param ray The ray
+     * @param notice The notice
      */
-    @Override
+    @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
         final Msg msg = ray.create(notice.message().number());
         msg.replace(VariableAtom.NUMBER, notice.message().number());

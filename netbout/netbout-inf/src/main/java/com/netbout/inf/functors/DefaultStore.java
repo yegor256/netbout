@@ -59,7 +59,11 @@ public final class DefaultStore implements Store {
     @Override
     public void see(final Ray ray, final Notice notice) {
         for (Functor functor : this.functors.values()) {
-            functor.see(ray, notice);
+            for (Method method : functor.getClass().getMethods()) {
+                if (method.getAnnotation(Noticable.class)) {
+                    method.invoke(functor, ray, notice);
+                }
+            }
         }
     }
 

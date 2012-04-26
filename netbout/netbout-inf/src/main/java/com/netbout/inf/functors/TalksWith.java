@@ -29,13 +29,16 @@ package com.netbout.inf.functors;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
-import com.netbout.inf.Noticable;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.TextAtom;
+import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Message;
+import com.netbout.spi.Participant;
 import java.util.List;
 
 /**
@@ -47,8 +50,7 @@ import java.util.List;
  * @version $Id$
  */
 @NamedAs("talks-with")
-final class TalksWith implements Functor, Noticable<MessagePostedNotice>,
-    Noticable<KickOffNotice>, Noticable<JoinNotice> {
+final class TalksWith implements Functor {
 
     /**
      * The attribute to use.
@@ -59,7 +61,7 @@ final class TalksWith implements Functor, Noticable<MessagePostedNotice>,
      * {@inheritDoc}
      */
     @Override
-    final Term build(final Ray ray, final List<Atom> atoms) {
+    public final Term build(final Ray ray, final List<Atom> atoms) {
         return ray.builder().matcher(
             TalksWith.ATTR,
             TextAtom.class.cast(atoms.get(0)).value()
@@ -67,11 +69,13 @@ final class TalksWith implements Functor, Noticable<MessagePostedNotice>,
     }
 
     /**
-     * {@inheritDoc}
+     * Notice when new message is posted.
+     * @param ray The ray
+     * @param notice The notice
      */
-    @Override
+    @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Msg msg = ray.create(notice.message().number());
+        final Msg msg = ray.msg(notice.message().number());
         msg.delete(TalksWith.ATTR);
         for (Participant dude : notice.message().bout().participants()) {
             msg.add(TalksWith.ATTR, dude.identity().name().toString());
@@ -79,9 +83,11 @@ final class TalksWith implements Functor, Noticable<MessagePostedNotice>,
     }
 
     /**
-     * {@inheritDoc}
+     * Notice when participant removed.
+     * @param ray The ray
+     * @param notice The notice
      */
-    @Override
+    @Noticable
     public void see(final Ray ray, final KickOffNotice notice) {
         ray.cursor.delete(
             ray.builder().matcher(
@@ -94,9 +100,11 @@ final class TalksWith implements Functor, Noticable<MessagePostedNotice>,
     }
 
     /**
-     * {@inheritDoc}
+     * Notice when new participant joined.
+     * @param ray The ray
+     * @param notice The notice
      */
-    @Override
+    @Noticable
     public void see(final Ray ray, final JoinNotice notice) {
         ray.cursor.add(
             ray.builder().matcher(

@@ -39,9 +39,9 @@ import java.util.Iterator;
 final class LazyMessages implements Iterable<Long> {
 
     /**
-     * The message.
+     * The cursor.
      */
-    private final transient Msg msg;
+    private final transient Cursor cursor;
 
     /**
      * The term.
@@ -50,11 +50,11 @@ final class LazyMessages implements Iterable<Long> {
 
     /**
      * Public ctor.
-     * @param message The message
+     * @param crs The cursor
      * @param trm The term
      */
-    public LazyMessages(final Msg message, final Term trm) {
-        this.msg = message;
+    public LazyMessages(final Cursor crs, final Term trm) {
+        this.cursor = crs;
         this.term = trm;
     }
 
@@ -63,26 +63,46 @@ final class LazyMessages implements Iterable<Long> {
      */
     @Override
     public Iterator<Long> iterator() {
-        return new MessagesIterator();
+        return new MessagesIterator(this.cursor);
     }
 
     /**
-     * Iterator.
+     * Iterator, NOT thread safe.
      */
     private final class MessagesIterator implements Iterator<Long> {
+        /**
+         * Cursor to use.
+         */
+        private transient Cursor cursor;
+        /**
+         * Shifted already?
+         */
+        private transient boolean shifted;
+        /**
+         * Public ctor.
+         * @param crs The cursor
+         */
+        public MessagesIterator(final Cursor crs) {
+            this.cursor = crs.copy();
+        }
         /**
          * {@inheritDoc}
          */
         @Override
         public boolean hasNext() {
-            return LazyMessages.this.msg.exists();
+            if (!this.shifted) {
+                this.cursor = this.cursor.shift(LazyMessages.this.term);
+                this.shifted = true;
+            }
+            return this.cursor.valid();
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public Long next() {
-            return LazyMessages.this.msg.number();
+            this.shifted = false;
+            return this.cursor.msg().number();
         }
         /**
          * {@inheritDoc}
