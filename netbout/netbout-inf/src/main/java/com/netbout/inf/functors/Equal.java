@@ -32,6 +32,7 @@ import com.netbout.inf.Functor;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.TermBuilder;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
 import java.util.List;
@@ -65,16 +66,22 @@ final class Equal implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Msg msg = ray.msg(notice.message().number());
-        msg.replace(
+        final Term matcher = ray.builder().matcher(
+            TermBuilder.NUMBER,
+            notice.message().number().toString()
+        );
+        ray.cursor().replace(
+            matcher,
             VariableAtom.NUMBER.attribute(),
             notice.message().number().toString()
         );
-        msg.replace(
+        ray.cursor().replace(
+            matcher,
             VariableAtom.BOUT_NUMBER.attribute(),
             notice.message().bout().number().toString()
         );
-        msg.replace(
+        ray.cursor().replace(
+            matcher,
             VariableAtom.AUTHOR_NAME.attribute(),
             notice.message().author().toString()
         );

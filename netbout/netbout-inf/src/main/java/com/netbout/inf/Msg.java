@@ -43,36 +43,9 @@ public interface Msg {
     long number();
 
     /**
-     * Set attribute.
-     * @param name The name of attribute to set
-     * @param value The value to set
-     */
-    void add(String name, String value);
-
-    /**
-     * Replace all attributes with this name with this one.
-     * @param name The name of attribute to set
-     * @param value The value to set
-     */
-    void replace(String name, String value);
-
-    /**
      * Get value of certain attribute.
      * @param name The name of attribute to get
      */
     String first(String name);
-
-    /**
-     * Delete all attributes with this name.
-     * @param name The name of attribute to delete
-     */
-    void delete(String name);
-
-    /**
-     * Delete attribute with this name and value.
-     * @param name The name of attribute to delete
-     * @param value The value to delete
-     */
-    void delete(String name, String value);
 
 }

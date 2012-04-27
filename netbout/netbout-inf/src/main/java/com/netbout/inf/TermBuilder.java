@@ -39,6 +39,11 @@ import java.util.Collection;
 public interface TermBuilder {
 
     /**
+     * Number of message.
+     */
+    String NUMBER = "#number";
+
+    /**
      * Create attribute matching term.
      * @param name Name of attribute
      * @param value Value of attribute

@@ -32,6 +32,7 @@ import com.netbout.inf.Functor;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.TermBuilder;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.notices.JoinNotice;
@@ -75,10 +76,17 @@ final class TalksWith implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Msg msg = ray.msg(notice.message().number());
-        msg.delete(TalksWith.ATTR);
+        final Term matcher = ray.builder().matcher(
+            TermBuilder.NUMBER,
+            notice.message().number().toString()
+        );
+        ray.cursor().delete(matcher, TalksWith.ATTR);
         for (Participant dude : notice.message().bout().participants()) {
-            msg.add(TalksWith.ATTR, dude.identity().name().toString());
+            ray.cursor().add(
+                matcher,
+                TalksWith.ATTR,
+                dude.identity().name().toString()
+            );
         }
     }
 

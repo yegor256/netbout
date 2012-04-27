@@ -31,6 +31,7 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.TermBuilder;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
@@ -76,7 +77,11 @@ final class Namespace implements Functor {
         final DomParser parser = new DomParser(message.text());
         if (parser.isXml()) {
             try {
-                ray.msg(message.number()).replace(
+                ray.cursor().replace(
+                    ray.builder().matcher(
+                        TermBuilder.NUMBER,
+                        message.number().toString()
+                    ),
                     Namespace.ATTR,
                     parser.namespace().toString()
                 );

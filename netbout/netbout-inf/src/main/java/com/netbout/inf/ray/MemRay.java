@@ -85,23 +85,7 @@ public final class MemRay implements Ray {
                 return number;
             }
             @Override
-            public void add(String name, String value) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void replace(String name, String value) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
             public String first(String name) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void delete(String name) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void delete(String name, String value) {
                 throw new UnsupportedOperationException();
             }
         };
