@@ -35,14 +35,14 @@ grammar Query;
     }
 }
 
-query returns [PredicateAtom ret]
+query returns [PredicateAtom ret] throws InvalidSyntaxException
     :
     predicate
     { $ret = $predicate.ret; }
     EOF
     ;
 
-predicate returns [PredicateAtom ret]
+predicate returns [PredicateAtom ret] throws InvalidSyntaxException
     @init { final List<Atom> atoms = new LinkedList<Atom>(); }
     :
     '('
@@ -55,7 +55,7 @@ predicate returns [PredicateAtom ret]
     { $ret = new PredicateAtom($NAME.text, atoms, this.store.get($NAME.text)); }
     ;
 
-atom returns [Atom ret]
+atom returns [Atom ret] throws InvalidSyntaxException
     :
     predicate
     { $ret = $predicate.ret; }
