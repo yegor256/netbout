@@ -29,25 +29,23 @@ package com.netbout.inf;
 import org.mockito.Mockito;
 
 /**
- * Mocker of {@link Ray}.
+ * Mocker of {@link Msg}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class RayMocker {
+public final class MsgMocker {
 
     /**
      * The object.
      */
-    private final transient Ray ray = Mockito.mock(Ray.class);
+    private final transient Msg msg = Mockito.mock(Msg.class);
 
     /**
      * Build it.
-     * @return The ray
+     * @return The msg
      */
-    public Ray mock() {
-        Mockito.doReturn(new MsgMocker().mock())
-            .when(this.ray).msg(Mockito.anyLong());
-        return this.ray;
+    public Msg mock() {
+        return this.msg;
     }
 
 }

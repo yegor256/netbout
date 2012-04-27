@@ -48,13 +48,8 @@ public final class StoreMocker {
      */
     public Store mock() {
         try {
-            Mockito.doReturn(
-                new PredicateAtom(
-                    "mocked-predicate",
-                    new ArrayList<Atom>(0),
-                    new FunctorMocker().mock()
-                )
-            ).when(this.store).get(Mockito.anyString());
+            Mockito.doReturn(new FunctorMocker().mock())
+                .when(this.store).get(Mockito.anyString());
         } catch (InvalidSyntaxException ex) {
             throw new IllegalStateException(ex);
         }
