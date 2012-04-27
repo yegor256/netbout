@@ -29,94 +29,110 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
+import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
-import com.ymock.util.Logger;
 import java.io.File;
-import java.io.IOException;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * In-memory implementation of {@link Ray}.
+ * In-memory implementation of {@link Cursor}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MemRay implements Ray {
+public final class MemCursor implements Cursor {
 
     /**
-     * List of messages.
+     * Message number where we're staying now.
      */
-    private final transient SortedSet<Msg> messages =
-        new ConcurrentSkipListSet<Msg>();
+    private final transient Msg msg = null;
 
     /**
      * Public ctor.
      * @param dir The directory to work with
      */
-    public MemRay(final File dir) throws IOException {
-        // load them from file
+    public MemCursor() {
+        // todo
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws IOException {
-        Logger.info(this, "#close(): closed");
+    public void add(final Term term, final String name, final String value) {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Cursor cursor() {
-        return new MemCursor();
+    public void replace(final Term term, final String name,
+        final String value) {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Msg msg(final long number) {
-        Msg msg = new Msg() {
-            @Override
-            public long number() {
-                return number;
-            }
-            @Override
-            public void add(String name, String value) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void replace(String name, String value) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public String first(String name) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void delete(String name) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void delete(String name, String value) {
-                throw new UnsupportedOperationException();
-            }
-        };
-        if (!this.messages.contains(msg)) {
-            this.messages.add(new MemMsg());
-        }
-        return this.messages.tailSet(msg).first();
+    public void delete(final Term term, final String name) {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TermBuilder builder() {
-        return new MemTermBuilder();
+    public void delete(final Term term, final String name, final String value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Cursor shift(final Term term) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Cursor invalidate() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Cursor copy() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Msg msg() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean valid() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean end() {
+        throw new UnsupportedOperationException();
     }
 
 }

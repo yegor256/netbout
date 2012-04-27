@@ -29,94 +29,68 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
+import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
-import com.ymock.util.Logger;
 import java.io.File;
-import java.io.IOException;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.Collection;
 
 /**
- * In-memory implementation of {@link Ray}.
+ * Default implementation of {@link TermBuilder}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MemRay implements Ray {
+public final class MemTermBuilder implements TermBuilder {
 
     /**
      * List of messages.
      */
-    private final transient SortedSet<Msg> messages =
-        new ConcurrentSkipListSet<Msg>();
 
     /**
      * Public ctor.
-     * @param dir The directory to work with
      */
-    public MemRay(final File dir) throws IOException {
-        // load them from file
+    public MemTermBuilder() {
+        // todo
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws IOException {
-        Logger.info(this, "#close(): closed");
+    public Term matcher(String name, String value) {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Cursor cursor() {
-        return new MemCursor();
+    public Term and(Collection<Term> terms) {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Msg msg(final long number) {
-        Msg msg = new Msg() {
-            @Override
-            public long number() {
-                return number;
-            }
-            @Override
-            public void add(String name, String value) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void replace(String name, String value) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public String first(String name) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void delete(String name) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void delete(String name, String value) {
-                throw new UnsupportedOperationException();
-            }
-        };
-        if (!this.messages.contains(msg)) {
-            this.messages.add(new MemMsg());
-        }
-        return this.messages.tailSet(msg).first();
+    public Term or(Collection<Term> terms) {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TermBuilder builder() {
-        return new MemTermBuilder();
+    public Term not(Term term) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Term never() {
+        throw new UnsupportedOperationException();
     }
 
 }

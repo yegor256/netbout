@@ -26,6 +26,8 @@
  */
 package com.netbout.inf;
 
+import java.io.Closeable;
+
 /**
  * Ray of messages.
  *
@@ -34,7 +36,7 @@ package com.netbout.inf;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Ray {
+public interface Ray extends Closeable {
 
     /**
      * Create new cursor.

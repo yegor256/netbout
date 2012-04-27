@@ -36,6 +36,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import org.apache.commons.io.IOUtils;
 
@@ -70,16 +71,18 @@ public final class DefaultInfinity implements Infinity {
 
     /**
      * Public ctor.
+     * @throws IOException If some IO problem
      */
-    public DefaultInfinity() {
+    public DefaultInfinity() throws IOException {
         this(new EbsVolume());
     }
 
     /**
      * Protect ctor, for tests.
      * @param fldr The folder
+     * @throws IOException If some IO problem
      */
-    protected DefaultInfinity(final Folder fldr) {
+    protected DefaultInfinity(final Folder fldr) throws IOException {
         this.folder = fldr;
         this.ray = new MemRay(new File(this.folder.path(), "memray"));
         this.mux = new Mux(this.ray, this.store);
@@ -137,6 +140,7 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public void close() throws java.io.IOException {
         this.mux.close();
+        this.ray.close();
         Logger.info(this, "#close(): closed");
     }
 
