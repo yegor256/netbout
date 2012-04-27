@@ -120,10 +120,10 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
     }
 
     /**
-     * Show some stats.
-     * @return The text
+     * {@inheritDoc}
      */
-    public String statistics() {
+    @Override
+    public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d identities\n", this.dependants.size()));
         for (ConcurrentMap.Entry<Urn, AtomicLong> entry

@@ -26,22 +26,26 @@
  */
 package com.netbout.inf;
 
-import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Test case of {@link PredicateStore}.
+ * Mocker of {@link Ray}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PredicateStoreTest {
+public final class RayMocker {
 
     /**
-     * PredicateStore can be instantiated.
-     * @throws Exception If there is some problem inside
+     * The object.
      */
-    @Test
-    public void discoversAllMotorsAndPredicates() throws Exception {
-        new PredicateStore(new FolderMocker().mock());
+    private final transient Ray ray = Mockito.mock(Ray.class);
+
+    /**
+     * Build it.
+     * @return The ray
+     */
+    public Ray mock() {
+        return this.ray;
     }
 
 }

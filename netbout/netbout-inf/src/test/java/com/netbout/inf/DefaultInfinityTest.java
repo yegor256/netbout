@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import org.junit.Test;
@@ -44,8 +45,14 @@ public final class DefaultInfinityTest {
     @Test
     public void populatesIndexOnFirstTimeCall() throws Exception {
         final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
-        final Message msg = new MessageMocker().mock();
-        inf.see(msg);
+        inf.see(
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return new MessageMocker().mock();
+                }
+            }
+        );
         inf.messages("foo");
     }
 

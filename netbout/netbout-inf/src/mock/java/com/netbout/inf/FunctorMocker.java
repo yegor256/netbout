@@ -26,24 +26,26 @@
  */
 package com.netbout.inf;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Test case of {@link MuxTask}.
+ * Mocker of {@link Functor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class MuxTaskTest {
+public final class FunctorMocker {
 
     /**
-     * NoticeTask can handle many message updates in parallel.
-     * @throws Exception If there is some problem inside
+     * The object.
      */
-    @Test
-    public void handlesMessageUpdatesInParallel() throws Exception {
+    private final transient Functor functor = Mockito.mock(Functor.class);
+
+    /**
+     * Build it.
+     * @return The functor
+     */
+    public Functor mock() {
+        return this.functor;
     }
 
 }

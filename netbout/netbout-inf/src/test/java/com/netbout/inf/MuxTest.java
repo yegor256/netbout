@@ -26,6 +26,9 @@
  */
 package com.netbout.inf;
 
+import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.security.SecureRandom;
@@ -57,67 +60,36 @@ public final class MuxTest {
      */
     @Test
     public void runsTasksInParallel() throws Exception {
-        final Mux mux = new Mux();
+        final Mux mux = new Mux(
+            new RayMocker().mock(),
+            new StoreMocker().mock()
+        );
         final Urn name = new UrnMocker().mock();
         final CountDownLatch latch = new CountDownLatch(100);
-        final Task task = new FooTask(name, latch);
         for (int idx = 0; idx < latch.getCount(); idx += 1) {
-            mux.add(task);
+            mux.add(
+                new MessagePostedNotice() {
+                    @Override
+                    public Message message() {
+                        return new MessageMocker().mock();
+                    }
+                }
+            );
         }
         latch.await(1, TimeUnit.SECONDS);
         MatcherAssert.assertThat(mux.eta(name), Matchers.equalTo(0L));
         mux.close();
     }
-
-    private static final class FooTask extends AbstractTask {
-        /**
-         * My name.
-         */
-        private final transient Urn name;
-        /**
-         * The latch to count down.
-         */
-        private final transient CountDownLatch latch;
-        /**
-         * Public ctor.
-         * @param urn My name
-         * @param ltch Latch to count down
-         */
-        public FooTask(final Urn urn, final CountDownLatch ltch) {
-            super(new StoreMocker().mock());
-            this.name = urn;
-            this.latch = ltch;
-        }
-        @Override
-        protected void execute() {
-            try {
-                // @checkstyle MagicNumber (1 line)
-                TimeUnit.MILLISECONDS.sleep((long) MuxTest.RANDOM.nextInt(10));
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-            this.latch.countDown();
-        }
-        @Override
-        public String toString() {
-            return this.name.toString();
-        }
-        @Override
-        public Set<Urn> dependants() {
-            final Set<Urn> names = new HashSet<Urn>();
-            names.add(this.name);
-            return names;
-        }
-    };
-
     /**
      * Mux can render statistics.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void rendersStatistics() throws Exception {
-        final Mux mux = new Mux();
-        MatcherAssert.assertThat(mux.statistics(), Matchers.notNullValue());
+        MatcherAssert.assertThat(
+            new Mux(new RayMocker().mock(), new StoreMocker().mock()),
+            Matchers.hasToString(Matchers.notNullValue())
+        );
     }
 
 }

@@ -26,7 +26,8 @@
  */
 package com.netbout.inf;
 
-import java.util.List;
+import com.netbout.inf.atoms.PredicateAtom;
+import java.util.ArrayList;
 import org.mockito.Mockito;
 
 /**
@@ -46,8 +47,17 @@ public final class StoreMocker {
      * @return The predicate
      */
     public Store mock() {
-        Mockito.doReturn(new PredicateMocker().mock()).when(this.store)
-            .build(Mockito.anyString(), (List) Mockito.anyObject());
+        try {
+            Mockito.doReturn(
+                new PredicateAtom(
+                    "mocked-predicate",
+                    new ArrayList<Atom>(0),
+                    new FunctorMocker().mock()
+                )
+            ).when(this.store).get(Mockito.anyString());
+        } catch (InvalidSyntaxException ex) {
+            throw new IllegalStateException(ex);
+        }
         return this.store;
     }
 

@@ -45,37 +45,10 @@ public final class VariableAtomTest {
      */
     @Test
     public void encapsulatesText() throws Exception {
-        final Atom atom = new VariableAtom("bout.number");
+        final Atom atom = VariableAtom.BOUT_NUMBER;
         MatcherAssert.assertThat(
             atom.toString(),
             Matchers.equalTo("$bout.number")
-        );
-    }
-
-    /**
-     * VariableAtom can compare to another object.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void comparesToSimilarObject() throws Exception {
-        final String text = "text";
-        MatcherAssert.assertThat(
-            new VariableAtom(text),
-            Matchers.equalTo(new VariableAtom(text))
-        );
-    }
-
-    /**
-     * VariableAtom can be serialized.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void serializesToBytes() throws Exception {
-        final VariableAtom var = new VariableAtom("bout.title");
-        final byte[] bytes = SerializationUtils.serialize(var);
-        MatcherAssert.assertThat(
-            ((VariableAtom) SerializationUtils.deserialize(bytes)).toString(),
-            Matchers.equalTo(var.toString())
         );
     }
 

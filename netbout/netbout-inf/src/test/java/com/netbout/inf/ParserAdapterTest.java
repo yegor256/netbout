@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.netbout.inf.atoms.PredicateAtom;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -33,14 +34,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link PredicateBuilder}.
+ * Test case of {@link ParserAdapter}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PredicateBuilderTest {
+public final class ParserAdapterTest {
 
     /**
-     * PredicateBuilder can parse different formats.
+     * ParserAdapter can parse different formats.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -55,15 +56,15 @@ public final class PredicateBuilderTest {
             "(and (from 5) (limit 2) (unique $bout.number))",
             "just simple text: \u0435",
         };
-        final PredicateBuilder builder =
-            new PredicateBuilder(new StoreMocker().mock());
+        final ParserAdapter builder =
+            new ParserAdapter(new StoreMocker().mock());
         for (String query : queries) {
             builder.parse(query);
         }
     }
 
     /**
-     * PredicateBuilder can parse invalid format and throw exception.
+     * ParserAdapter can parse invalid format and throw exception.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -75,16 +76,16 @@ public final class PredicateBuilderTest {
             "(invalid-name-of-predicate# 5)",
         };
         final Store store = Mockito.mock(Store.class);
-        Mockito.doThrow(new PredicateException("")).when(store)
-            .build(Mockito.anyString(), (List) Mockito.anyObject());
-        final PredicateBuilder builder = new PredicateBuilder(store);
+        Mockito.doThrow(new InvalidSyntaxException("")).when(store)
+            .get(Mockito.anyString());
+        final ParserAdapter builder = new ParserAdapter(store);
         for (String query : queries) {
             try {
                 builder.parse(query);
                 throw new IllegalArgumentException(
                     String.format("should fail with '%s'", query)
                 );
-            } catch (PredicateException ex) {
+            } catch (InvalidSyntaxException ex) {
                 MatcherAssert.assertThat(
                     ex.getMessage(),
                     Matchers.containsString(query)
@@ -94,30 +95,30 @@ public final class PredicateBuilderTest {
     }
 
     /**
-     * PredicateBuilder can build a predicate from a string.
+     * ParserAdapter can build a predicate from a string.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void buildsPredicateFromQuery() throws Exception {
-        final PredicateBuilder builder =
-            new PredicateBuilder(new StoreMocker().mock());
+        final ParserAdapter builder =
+            new ParserAdapter(new StoreMocker().mock());
         final String text = "\u043F\u0440\u0438\u0432\u0435";
-        final Predicate pred = builder.parse(
+        final PredicateAtom pred = builder.parse(
             String.format("(and (matches \"%s\" $text) (pos 0))", text)
         );
         MatcherAssert.assertThat(pred, Matchers.notNullValue());
     }
 
     /**
-     * PredicateBuilder can build a predicate from a plain text.
+     * ParserAdapter can build a predicate from a plain text.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void buildsPredicateFromText() throws Exception {
-        final PredicateBuilder builder =
-            new PredicateBuilder(new StoreMocker().mock());
+        final ParserAdapter builder =
+            new ParserAdapter(new StoreMocker().mock());
         final String text = "\u043F\u0440\u0438\u0432\u0435\u0442";
-        final Predicate pred = builder.parse(text);
+        final PredicateAtom pred = builder.parse(text);
         MatcherAssert.assertThat(pred, Matchers.notNullValue());
     }
 
