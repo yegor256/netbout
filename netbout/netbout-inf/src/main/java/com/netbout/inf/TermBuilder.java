@@ -62,6 +62,7 @@ public interface TermBuilder {
      * Logical OR.
      * @param terms Terms to group
      * @return The term
+     * @checkstyle MethodName (3 lines)
      */
     Term or(Collection<Term> terms);
 

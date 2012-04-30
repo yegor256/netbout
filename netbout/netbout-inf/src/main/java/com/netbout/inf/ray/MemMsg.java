@@ -26,11 +26,7 @@
  */
 package com.netbout.inf.ray;
 
-import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
-import com.netbout.inf.Ray;
-import com.netbout.inf.TermBuilder;
-import java.io.File;
 
 /**
  * Default implementation of {@link Ray}.
@@ -46,7 +42,6 @@ public final class MemMsg implements Msg {
 
     /**
      * Public ctor.
-     * @param dir The directory to work with
      */
     public MemMsg() {
         // todo
@@ -64,7 +59,7 @@ public final class MemMsg implements Msg {
      * {@inheritDoc}
      */
     @Override
-    public String first(String name) {
+    public String first(final String name) {
         throw new UnsupportedOperationException();
     }
 

@@ -27,7 +27,6 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
-import java.io.Serializable;
 
 /**
  * Text atom.

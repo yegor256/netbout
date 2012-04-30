@@ -26,9 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.io.Closeable;
 

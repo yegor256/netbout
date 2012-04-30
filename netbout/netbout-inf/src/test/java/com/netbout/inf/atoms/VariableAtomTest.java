@@ -27,7 +27,6 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
-import org.apache.commons.lang.SerializationUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

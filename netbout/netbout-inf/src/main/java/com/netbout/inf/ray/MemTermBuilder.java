@@ -26,12 +26,8 @@
  */
 package com.netbout.inf.ray;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
-import java.io.File;
 import java.util.Collection;
 
 /**
@@ -57,7 +53,7 @@ public final class MemTermBuilder implements TermBuilder {
      * {@inheritDoc}
      */
     @Override
-    public Term matcher(String name, String value) {
+    public Term matcher(final String name, final String value) {
         throw new UnsupportedOperationException();
     }
 
@@ -65,7 +61,16 @@ public final class MemTermBuilder implements TermBuilder {
      * {@inheritDoc}
      */
     @Override
-    public Term and(Collection<Term> terms) {
+    public Term and(final Collection<Term> terms) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @checkstyle MethodName (3 lines)
+     */
+    @Override
+    public Term or(final Collection<Term> terms) {
         throw new UnsupportedOperationException();
     }
 
@@ -73,15 +78,7 @@ public final class MemTermBuilder implements TermBuilder {
      * {@inheritDoc}
      */
     @Override
-    public Term or(Collection<Term> terms) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term not(Term term) {
+    public Term not(final Term term) {
         throw new UnsupportedOperationException();
     }
 

@@ -26,9 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Message;
-import java.util.List;
-
 /**
  * Store of all known functors.
  *

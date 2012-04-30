@@ -51,7 +51,7 @@ final class Unique implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public final Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom> atoms) {
         final String attr = VariableAtom.class.cast(atoms.get(0)).attribute();
         return new Term() {
             private final transient ConcurrentMap<String, Term> terms =

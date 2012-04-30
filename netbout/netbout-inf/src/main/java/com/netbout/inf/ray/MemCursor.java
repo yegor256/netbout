@@ -28,10 +28,7 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
-import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
-import java.io.File;
 
 /**
  * In-memory implementation of {@link Cursor}.
@@ -48,7 +45,6 @@ public final class MemCursor implements Cursor {
 
     /**
      * Public ctor.
-     * @param dir The directory to work with
      */
     public MemCursor() {
         // todo

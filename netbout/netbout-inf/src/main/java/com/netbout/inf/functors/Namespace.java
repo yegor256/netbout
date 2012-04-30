@@ -27,7 +27,6 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
@@ -59,7 +58,7 @@ final class Namespace implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public final Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom> atoms) {
         return ray.builder().matcher(
             Namespace.ATTR,
             TextAtom.class.cast(atoms.get(0)).value()

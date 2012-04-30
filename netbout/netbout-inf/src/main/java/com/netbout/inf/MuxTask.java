@@ -26,20 +26,18 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Message;
-import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
-import com.netbout.inf.Notice;
 import com.netbout.inf.notices.AliasAddedNotice;
 import com.netbout.inf.notices.BoutNotice;
 import com.netbout.inf.notices.BoutRenamedNotice;
 import com.netbout.inf.notices.IdentityNotice;
 import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
-import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.notices.MessageNotice;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.notices.MessageSeenNotice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import com.ymock.util.Logger;
 import java.util.HashSet;
 import java.util.Set;

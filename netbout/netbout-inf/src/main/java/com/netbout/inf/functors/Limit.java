@@ -33,8 +33,6 @@ import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -52,7 +50,7 @@ final class Limit implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public final Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom> atoms) {
         final long limit = NumberAtom.class.cast(atoms.get(0)).value();
         return new Term() {
             private final transient AtomicLong pos = new AtomicLong(0L);

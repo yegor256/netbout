@@ -50,7 +50,7 @@ final class Pos implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public final Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom> atoms) {
         final long desired = NumberAtom.class.cast(atoms.get(0)).value();
         return new Term() {
             private final transient AtomicLong pos = new AtomicLong(0L);

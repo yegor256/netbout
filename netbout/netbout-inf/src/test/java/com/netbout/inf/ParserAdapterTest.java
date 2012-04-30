@@ -27,7 +27,6 @@
 package com.netbout.inf;
 
 import com.netbout.inf.atoms.PredicateAtom;
-import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

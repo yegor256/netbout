@@ -53,6 +53,7 @@ public final class MemRay implements Ray {
     /**
      * Public ctor.
      * @param dir The directory to work with
+     * @throws IOException If some I/O problem
      */
     public MemRay(final File dir) throws IOException {
         // load them from file
@@ -79,13 +80,13 @@ public final class MemRay implements Ray {
      */
     @Override
     public Msg msg(final long number) {
-        Msg msg = new Msg() {
+        final Msg msg = new Msg() {
             @Override
             public long number() {
                 return number;
             }
             @Override
-            public String first(String name) {
+            public String first(final String name) {
                 throw new UnsupportedOperationException();
             }
         };

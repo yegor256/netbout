@@ -45,6 +45,8 @@ public interface Msg {
     /**
      * Get value of certain attribute.
      * @param name The name of attribute to get
+     * @return First available value of the attribute (runtime exception if
+     *  there is no value)
      */
     String first(String name);
 

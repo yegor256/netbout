@@ -26,8 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.netbout.inf.atoms.PredicateAtom;
-import java.util.ArrayList;
 import org.mockito.Mockito;
 
 /**

@@ -24,45 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
-
-import com.netbout.inf.Atom;
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Functor;
-import com.netbout.inf.Ray;
-import com.netbout.inf.Term;
-import com.netbout.inf.atoms.NumberAtom;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Allows only messages from this position and further on.
- *
- * <p>This class is thread-safe.
+ * In-memory implementation of ray.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("from")
-final class From implements Functor {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
-        final long from = NumberAtom.class.cast(atoms.get(0)).value();
-        return new Term() {
-            private final transient AtomicLong pos = new AtomicLong(0L);
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                Cursor shifted = cursor;
-                if (this.pos.getAndIncrement() < from) {
-                    shifted = shifted.invalidate();
-                }
-                return shifted;
-            }
-        };
-    }
-
-}
+package com.netbout.inf.ray;

@@ -27,9 +27,7 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
@@ -38,7 +36,6 @@ import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.inf.notices.MessagePostedNotice;
-import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import java.util.List;
 
@@ -62,7 +59,7 @@ final class TalksWith implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public final Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom> atoms) {
         return ray.builder().matcher(
             TalksWith.ATTR,
             TextAtom.class.cast(atoms.get(0)).value()
