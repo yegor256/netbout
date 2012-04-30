@@ -82,7 +82,7 @@ final class Matches implements Functor {
     public void see(final Ray ray, final MessagePostedNotice notice) {
         final Term matcher = ray.builder().matcher(
             TermBuilder.NUMBER,
-            notice.message().number().toString()
+            Long.toString(ray.msg(notice.message().number()).number())
         );
         for (String word : Matches.words(notice.message().text())) {
             ray.cursor().add(matcher, Matches.ATTR, word);

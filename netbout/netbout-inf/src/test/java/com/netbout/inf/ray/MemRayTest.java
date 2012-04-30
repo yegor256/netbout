@@ -24,65 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf.ray;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.Functor;
+import com.netbout.inf.Cursor;
 import com.netbout.inf.Ray;
-import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
-import com.netbout.inf.atoms.VariableAtom;
-import com.netbout.inf.notices.MessagePostedNotice;
-import java.util.List;
+import java.util.Random;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Allows only messages where variable equals to value.
- *
- * <p>This class is thread-safe.
- *
+ * Test case of {@link MemRay}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("equal")
-final class Equal implements Functor {
+public final class MemRayTest {
 
     /**
-     * {@inheritDoc}
+     * MemRay can store and find.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
-        return ray.builder().matcher(
-            VariableAtom.class.cast(atoms.get(0)).attribute(),
-            atoms.get(1).value().toString()
+    @Test
+    public void storesAndFinds() throws Exception {
+        final Ray ray = new MemRay(this.temp.newFolder("test"));
+        final Long number = Math.abs(new Random().nextLong());
+        final String attribute = "some-attribute";
+        final String value = "some value to set, \u0433!";
+        ray.msg(1L);
+        ray.cursor().add(
+            ray.builder().matcher(TermBuilder.NUMBER, number)
+            attribute,
+            value
         );
-    }
-
-    /**
-     * Notice when new message is posted.
-     * @param ray The ray
-     * @param notice The notice
-     */
-    @Noticable
-    public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Term matcher = ray.builder().matcher(
-            TermBuilder.NUMBER,
-            Long.toString(ray.msg(notice.message().number()).number())
+        final Cursor cursor = ray.cursor().shift(
+            ray.builder().matcher(attribute, value)
         );
-        ray.cursor().replace(
-            matcher,
-            VariableAtom.NUMBER.attribute(),
-            notice.message().number().toString()
+        MatcherAssert.assertThat(cursor.valid(), Matchers.is(true));
+        MatcherAssert.assertThat(cursor.end(), Matchers.is(false));
+        MatcherAssert.assertThat(
+            cursor.msg().number(),
+            Matchers.equalTo(number)
         );
-        ray.cursor().replace(
-            matcher,
-            VariableAtom.BOUT_NUMBER.attribute(),
-            notice.message().bout().number().toString()
+        MatcherAssert.assertThat(
+            cursor.msg().first(attribute),
+            Matchers.equalTo(value)
         );
-        ray.cursor().replace(
-            matcher,
-            VariableAtom.AUTHOR_NAME.attribute(),
-            notice.message().author().toString()
-        );
+        ray.close();
     }
 
 }

@@ -79,7 +79,7 @@ final class Namespace implements Functor {
                 ray.cursor().replace(
                     ray.builder().matcher(
                         TermBuilder.NUMBER,
-                        message.number().toString()
+                        Long.toString(ray.msg(message.number()).number())
                     ),
                     Namespace.ATTR,
                     parser.namespace().toString()
