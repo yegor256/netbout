@@ -27,7 +27,9 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.FolderMocker;
 import com.netbout.inf.Ray;
+import com.netbout.inf.TermBuilder;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -47,13 +49,13 @@ public final class MemRayTest {
      */
     @Test
     public void storesAndFinds() throws Exception {
-        final Ray ray = new MemRay(this.temp.newFolder("test"));
+        final Ray ray = new MemRay(new FolderMocker().mock().path());
         final Long number = Math.abs(new Random().nextLong());
         final String attribute = "some-attribute";
         final String value = "some value to set, \u0433!";
         ray.msg(1L);
         ray.cursor().add(
-            ray.builder().matcher(TermBuilder.NUMBER, number)
+            ray.builder().matcher(TermBuilder.NUMBER, number.toString()),
             attribute,
             value
         );
