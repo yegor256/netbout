@@ -33,6 +33,8 @@ import com.netbout.inf.Term;
 /**
  * In-memory implementation of {@link Cursor}.
  *
+ * <p>The class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

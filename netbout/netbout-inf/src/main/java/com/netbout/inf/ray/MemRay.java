@@ -39,6 +39,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 /**
  * In-memory implementation of {@link Ray}.
  *
+ * <p>The class is thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

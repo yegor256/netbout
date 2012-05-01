@@ -36,6 +36,8 @@ import java.util.SortedSet;
 /**
  * Matching term.
  *
+ * <p>The class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

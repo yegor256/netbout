@@ -34,6 +34,8 @@ import java.util.Collection;
 /**
  * Default implementation of {@link TermBuilder}.
  *
+ * <p>The class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

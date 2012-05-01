@@ -27,48 +27,60 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.Arrays;
+import java.util.Random;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * OR term.
- *
- * <p>The class is immutable and thread-safe.
- *
+ * Test case of {@link OrTerm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class OrTerm implements Term {
+public final class OrTermTest {
 
     /**
-     * Index map.
+     * OrTerm can shift a cursor.
+     * @throws Exception If there is some problem inside
      */
-    private final transient IndexMap imap;
-
-    /**
-     * Terms.
-     */
-    private final transient Collection<Term> terms;
-
-    /**
-     * Public ctor.
-     * @param map The index map
-     * @param args Arguments (terms)
-     */
-    public OrTerm(final IndexMap map, final Collection<Term> args) {
-        this.imap = map;
-        this.terms = args;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cursor shift(final Cursor cursor) {
-        return null;
+    @Test
+    public void shiftsCursorToTheFirstValue() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final String attr = "attribute name";
+        final String first = "some text-1 \u0433!";
+        final String second = "some text-2 \u0433!";
+        final long msg = new Random().nextLong();
+        map.index(attr).add(msg + 1, first);
+        map.index(attr).add(msg, first);
+        map.index(attr).add(msg, second);
+        map.index(attr).add(msg - 1, "irrelevant");
+        final Term term = new OrTerm(
+            map,
+            Arrays.asList(
+                new Term[] {
+                    new MatcherTerm(map, attr, first),
+                    new MatcherTerm(map, attr, second),
+                }
+            )
+        );
+        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
+        MatcherAssert.assertThat(
+            term.shift(cursor).msg().number(),
+            Matchers.equalTo(msg + 1)
+        );
+        MatcherAssert.assertThat(
+            term.shift(term.shift(cursor)).msg().number(),
+            Matchers.equalTo(msg)
+        );
+        MatcherAssert.assertThat(
+            term.shift(term.shift(term.shift(cursor))).end(),
+            Matchers.equalTo(true)
+        );
     }
 
 }
