@@ -29,7 +29,9 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.SortedSet;
 
@@ -68,7 +70,25 @@ final class OrTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        return null;
+        Cursor slider;
+        if (cursor.end()) {
+            slider = cursor;
+        } else {
+            final Collection<Long> msgs =
+                new ArrayList<Long>(this.terms.size());
+            for (Term term : this.terms) {
+                final Cursor shifted = term.shift(cursor);
+                if (!shifted.end()) {
+                    msgs.add(shifted.msg().number());
+                }
+            }
+            if (msgs.isEmpty()) {
+                slider = new MemCursor(0L, this.imap);
+            } else {
+                slider = new MemCursor(Collections.max(msgs), this.imap);
+            }
+        }
+        return slider;
     }
 
 }
