@@ -62,6 +62,23 @@ final class MemCursor implements Cursor {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        text.append("cursor-");
+        if (this.msg == Long.MAX_VALUE) {
+            text.append("TOP");
+        } else if (this.msg == 0L) {
+            text.append("END");
+        } else {
+            text.append(this.msg);
+        }
+        return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void add(final Term term, final String attr, final String value) {
         this.update(
             new Updater() {

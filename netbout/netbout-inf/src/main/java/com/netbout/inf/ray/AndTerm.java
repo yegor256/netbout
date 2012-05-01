@@ -30,7 +30,9 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.SortedSet;
 
 /**
@@ -66,29 +68,91 @@ final class AndTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        long msg = Long.MAX_VALUE;
-        while (true) {
-            boolean match = true;
+        Cursor slider;
+        if (cursor.end()) {
+            slider = cursor;
+        } else {
+            final Map<Term, Cursor> cursors = new HashMap<Term, Cursor>();
             for (Term term : this.terms) {
-                long next = msg;
-                do {
-                    final Cursor shifted = term.shift(cursor);
-                    if (shifted.end()) {
-                        msg = 0L;
-                        break;
-                    }
-                } while (next > msg);
-                match &= next == msg;
-                msg = next;
-                if (msg == 0L) {
+                cursors.put(term, cursor);
+            }
+            long msg = cursor.msg().number() - 1;
+            while (true) {
+                slider = this.cycle(cursors, msg);
+                if (slider.end() || this.match(cursors.values())) {
                     break;
                 }
+                msg = slider.msg().number();
             }
-            if (match) {
+        }
+        return slider;
+    }
+
+    /**
+     * Run one cycle through all terms.
+     * @param cursors All cursors of all terms
+     * @param until Until we reach (or pass) this point
+     * @return Result of the cycle run
+     */
+    private Cursor cycle(final Map<Term, Cursor> cursors, final long until) {
+        long anchor = until;
+        Cursor slider = new MemCursor(0L, this.imap);
+        for (Term term : this.terms) {
+            slider = this.slide(cursors.get(term), term, anchor);
+            cursors.put(term, slider);
+            if (slider.end()) {
+                break;
+            }
+            anchor = slider.msg().number();
+        }
+        return slider;
+    }
+
+    /**
+     * Slide down this particular cursor by the term, UNTIL point is
+     * reached (or passed).
+     * @param cursor The cursor to use
+     * @param term The term to use
+     * @param until What point to expect
+     * @return New cursor, where we stopped (may be the end)
+     */
+    private Cursor slide(final Cursor cursor, final Term term,
+        final long until) {
+        Cursor slider = cursor;
+        while (true) {
+            if (slider.end()) {
+                break;
+            }
+            if (slider.msg().number() <= until) {
+                break;
+            }
+            slider = term.shift(slider);
+        }
+        return slider;
+    }
+
+    /**
+     * All cursors point to the same message?
+     * @param cursors All cursors of all terms
+     * @return TRUE if all of them point to the same message
+     */
+    private boolean match(final Collection<Cursor> cursors) {
+        boolean match = true;
+        long msg = Long.MAX_VALUE;
+        for (Cursor cursor : cursors) {
+            if (cursor.end()) {
+                match = false;
+                break;
+            }
+            if (msg == Long.MAX_VALUE) {
+                msg = cursor.msg().number();
+            }
+            if (cursor.msg().number() != msg) {
+                match = false;
                 break;
             }
         }
-        return new MemCursor(msg, this.imap);
+        return match;
     }
 
 }
