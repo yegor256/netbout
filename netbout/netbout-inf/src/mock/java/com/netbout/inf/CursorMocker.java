@@ -29,33 +29,42 @@ package com.netbout.inf;
 import org.mockito.Mockito;
 
 /**
- * Mocker of {@link Msg}.
+ * Mocker of {@link Cursor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MsgMocker {
+public final class CursorMocker {
 
     /**
      * The object.
      */
-    private final transient Msg msg = Mockito.mock(Msg.class);
+    private final transient Cursor cursor = Mockito.mock(Cursor.class);
 
     /**
-     * With this number.
-     * @param number The number
+     * With this message.
+     * @param msg The msg
      * @return This object
      */
-    public MsgMocker withNumber(final long number) {
-        Mockito.doReturn(number).when(this.msg).number();
+    public CursorMocker withMsg(final Msg msg) {
+        Mockito.doReturn(msg).when(this.cursor).msg();
         return this;
     }
 
     /**
-     * Build it.
-     * @return The msg
+     * With this message.
+     * @param msg The msg
+     * @return This object
      */
-    public Msg mock() {
-        return this.msg;
+    public CursorMocker withMsg(final long msg) {
+        return this.withMsg(new MsgMocker().withNumber(msg).mock());
+    }
+
+    /**
+     * Build it.
+     * @return The cursor
+     */
+    public Cursor mock() {
+        return this.cursor;
     }
 
 }

@@ -26,6 +26,8 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Cursor;
+import com.netbout.inf.TermBuilder;
 import java.util.Random;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
@@ -33,57 +35,36 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link DefaultIndex}.
+ * Test case of {@link MemCursor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultIndexTest {
+public final class MemCursorTest {
 
     /**
-     * DefaultIndex can replace values.
+     * MemCursor can add values to a set of messages.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void replacesValues() throws Exception {
-        final Index index = new DefaultIndex();
-        final long msg = new Random().nextLong();
+    public void addsValuesToSelectedMessages() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final Long msg = new Random().nextLong();
+        map.index(TermBuilder.NUMBER).replace(msg, msg.toString());
+        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
+        final String attr = "attribute name";
         final String value = "some text \u0433!";
-        index.add(msg, "first value");
-        index.add(msg, "second value");
-        index.replace(msg, value);
+        cursor.add(
+            new MatcherTerm(map, TermBuilder.NUMBER, msg.toString()),
+            attr,
+            value
+        );
         MatcherAssert.assertThat(
-            index.values(msg),
+            map.index(attr).values(msg),
             Matchers.allOf(
                 (Matcher) Matchers.hasSize(1),
                 Matchers.hasItem(value)
             )
         );
-        MatcherAssert.assertThat(
-            index.msgs(value),
-            Matchers.hasItem(msg)
-        );
-    }
-
-    /**
-     * DefaultIndex can order message numbers propertly.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void ordersNumbersProperly() throws Exception {
-        final Index index = new DefaultIndex();
-        final long msg = new Random().nextLong();
-        final String value = "text-\u0433!";
-        for (int pos = 1; pos < 10; ++pos) {
-            index.add(msg - pos, value);
-        }
-        long before = msg;
-        for (Long num : index.msgs(value)) {
-            MatcherAssert.assertThat(
-                num,
-                Matchers.lessThan(before)
-            );
-            before = num;
-        }
     }
 
 }

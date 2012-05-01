@@ -26,6 +26,10 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Cursor;
+import com.netbout.inf.CursorMocker;
+import com.netbout.inf.Term;
+import com.netbout.inf.TermBuilder;
 import java.util.Random;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
@@ -33,57 +37,29 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link DefaultIndex}.
+ * Test case of {@link MatcherTerm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultIndexTest {
+public final class MatcherTermTest {
 
     /**
-     * DefaultIndex can replace values.
+     * MatcherTerm can shift a cursor.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void replacesValues() throws Exception {
-        final Index index = new DefaultIndex();
-        final long msg = new Random().nextLong();
+    public void shiftsCursorToTheFirstValue() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final String attr = "attribute name";
         final String value = "some text \u0433!";
-        index.add(msg, "first value");
-        index.add(msg, "second value");
-        index.replace(msg, value);
-        MatcherAssert.assertThat(
-            index.values(msg),
-            Matchers.allOf(
-                (Matcher) Matchers.hasSize(1),
-                Matchers.hasItem(value)
-            )
-        );
-        MatcherAssert.assertThat(
-            index.msgs(value),
-            Matchers.hasItem(msg)
-        );
-    }
-
-    /**
-     * DefaultIndex can order message numbers propertly.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void ordersNumbersProperly() throws Exception {
-        final Index index = new DefaultIndex();
         final long msg = new Random().nextLong();
-        final String value = "text-\u0433!";
-        for (int pos = 1; pos < 10; ++pos) {
-            index.add(msg - pos, value);
-        }
-        long before = msg;
-        for (Long num : index.msgs(value)) {
-            MatcherAssert.assertThat(
-                num,
-                Matchers.lessThan(before)
-            );
-            before = num;
-        }
+        map.index(attr).add(msg, value);
+        final Term term = new MatcherTerm(map, attr, value);
+        final Cursor cursor = new CursorMocker().withMsg(msg).mock();
+        MatcherAssert.assertThat(
+            term.shift(cursor).msg().number(),
+            Matchers.equalTo(msg)
+        );
     }
 
 }
