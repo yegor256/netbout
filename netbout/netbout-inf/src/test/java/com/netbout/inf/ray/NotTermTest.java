@@ -27,61 +27,53 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.Arrays;
+import java.util.Random;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * NOT term.
- *
- * <p>The class is immutable and thread-safe.
- *
+ * Test case of {@link NotTerm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements Term {
+public final class NotTermTest {
 
     /**
-     * Index map.
+     * NotTerm can shift a cursor.
+     * @throws Exception If there is some problem inside
      */
-    private final transient IndexMap imap;
-
-    /**
-     * Term to negate.
-     */
-    private final transient Term term;
-
-    /**
-     * Public ctor.
-     * @param map The index map
-     * @param trm The term
-     */
-    public NotTerm(final IndexMap map, final Term trm) {
-        this.imap = map;
-        this.term = trm;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cursor shift(final Cursor cursor) {
-        Cursor shifted = cursor;
-        long first;
-        while (!shifted.end()) {
-            first = shifted.msg().number();
-            shifted = this.term.shift(shifted);
-            if (shifted.end()) {
-                break;
-            }
-            if (shifted.msg().number() < first) {
-                shifted = new MemCursor(first, this.imap);
-                break;
-            }
-        }
-        return shifted;
+    @Test
+    public void shiftsCursorToTheFirstValue() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final String attr = "attribute name";
+        final String value = "some text-1 \u0433!";
+        final long msg = new Random().nextLong();
+        map.index(attr).add(msg + 1, "irrelevant");
+        map.index(attr).add(msg, value);
+        map.index(attr).add(msg - 1, "irrelevant again");
+        final Term term = new NotTerm(
+            map,
+            new MatcherTerm(map, attr, value)
+        );
+        final Cursor cursor = new MemCursor(msg + 1, map);
+        MatcherAssert.assertThat(
+            term.shift(cursor).msg().number(),
+            Matchers.equalTo(msg + 1)
+        );
+        MatcherAssert.assertThat(
+            term.shift(term.shift(cursor)).msg().number(),
+            Matchers.equalTo(msg - 1)
+        );
+        MatcherAssert.assertThat(
+            term.shift(term.shift(term.shift(cursor))).end(),
+            Matchers.equalTo(true)
+        );
     }
 
 }
