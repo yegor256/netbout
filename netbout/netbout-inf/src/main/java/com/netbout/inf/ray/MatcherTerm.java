@@ -77,18 +77,35 @@ final class MatcherTerm implements Term {
         if (cursor.end()) {
             shifted = cursor;
         } else {
-            SortedSet<Long> tail = this.imap.index(this.attr)
+            final long current = cursor.msg().number();
+            final Iterator<Long> tail = this.imap.index(this.attr)
                 .msgs(this.value)
-                .tailSet(cursor.msg().number());
-            if (tail.size() < 2) {
-                shifted = new MemCursor(0L, this.imap);
-            } else {
-                final Iterator<Long> iterator = tail.iterator();
-                iterator.next();
-                shifted = new MemCursor(iterator.next(), this.imap);
-            }
+                .tailSet(current)
+                .iterator();
+            shifted = new MemCursor(this.next(tail, current), this.imap);
         }
         return shifted;
+    }
+
+    /**
+     * Get next number from iterator, which is not equal to the provided one.
+     * @param iterator The iterator
+     * @param ignore The number to ignore
+     * @return The number found or ZERO if nothing found
+     */
+    private long next(final Iterator<Long> iterator, final long ignore) {
+        Long next = 0L;
+        if (iterator.hasNext()) {
+            next = iterator.next();
+            if (next == ignore) {
+                if (iterator.hasNext()) {
+                    next = iterator.next();
+                } else {
+                    next = 0L;
+                }
+            }
+        }
+        return next;
     }
 
 }

@@ -54,11 +54,20 @@ public final class MatcherTermTest {
         final String value = "some text \u0433!";
         final long msg = new Random().nextLong();
         map.index(attr).add(msg, value);
+        map.index(attr).add(msg - 1L, value);
         final Term term = new MatcherTerm(map, attr, value);
-        final Cursor cursor = new CursorMocker().withMsg(msg).mock();
+        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         MatcherAssert.assertThat(
             term.shift(cursor).msg().number(),
             Matchers.equalTo(msg)
+        );
+        MatcherAssert.assertThat(
+            term.shift(term.shift(cursor)).msg().number(),
+            Matchers.equalTo(msg - 1L)
+        );
+        MatcherAssert.assertThat(
+            term.shift(term.shift(term.shift(cursor))).end(),
+            Matchers.equalTo(true)
         );
     }
 

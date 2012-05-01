@@ -47,6 +47,7 @@ public final class CursorMocker {
      */
     public CursorMocker withMsg(final Msg msg) {
         Mockito.doReturn(msg).when(this.cursor).msg();
+        Mockito.doReturn(false).when(this.cursor).end();
         return this;
     }
 
