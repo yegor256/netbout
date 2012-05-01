@@ -40,36 +40,36 @@ public interface Cursor {
      * Add attribute to every msg including this one, which satisfy the
      * term.
      * @param term The term to satisfy
-     * @param name The name of attribute to set
+     * @param attr The attr of attribute to set
      * @param value The value to set
      */
-    void add(Term term, String name, String value);
+    void add(Term term, String attr, String value);
 
     /**
      * Replace attribute to every msg including this one, which satisfy the
      * term.
      * @param term The term to satisfy
-     * @param name The name of attribute to set
+     * @param attr The attr of attribute to set
      * @param value The value to set
      */
-    void replace(Term term, String name, String value);
+    void replace(Term term, String attr, String value);
 
     /**
      * Delete attribute from every msg including this one, which satisfy the
      * term.
      * @param term The term to satisfy
-     * @param name The name of attribute to delete
+     * @param attr The attr of attribute to delete
      */
-    void delete(Term term, String name);
+    void delete(Term term, String attr);
 
     /**
      * Delete attribute from every msg including this one, which satisfy the
      * term.
      * @param term The term to satisfy
-     * @param name The name of attribute to delete
+     * @param attr The attr of attribute to delete
      * @param value The value to delete
      */
-    void delete(Term term, String name, String value);
+    void delete(Term term, String attr, String value);
 
     /**
      * Shift cursor to the next message, which satisfies the term.
@@ -77,12 +77,6 @@ public interface Cursor {
      * @return New cursor
      */
     Cursor shift(Term term);
-
-    /**
-     * Make it invalid.
-     * @return New cursor
-     */
-    Cursor invalidate();
 
     /**
      * Make a copy.
@@ -95,12 +89,6 @@ public interface Cursor {
      * @return The message
      */
     Msg msg();
-
-    /**
-     * Is it valid?
-     * @return TRUE if it has a message
-     */
-    boolean valid();
 
     /**
      * Is it the end of ray?

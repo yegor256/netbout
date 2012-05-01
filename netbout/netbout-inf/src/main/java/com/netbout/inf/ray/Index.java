@@ -26,76 +26,56 @@
  */
 package com.netbout.inf.ray;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
-import java.util.Collection;
+import java.util.Set;
+import java.util.SortedSet;
 
 /**
- * Default implementation of {@link TermBuilder}.
+ * Index, as a map of String to SortedSet of Long.
+ *
+ * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MemTermBuilder implements TermBuilder {
+interface Index {
 
     /**
-     * Index map.
+     * Replace all existing values for this number with this one.
+     * @param msg Number of message
+     * @param value The value to set
      */
-    private final transient IndexMap imap;
+    void replace(long msg, String value);
 
     /**
-     * Public ctor.
-     * @param map The index map
+     * Add this value to the message.
+     * @param msg Number of message
+     * @param value The value to add
      */
-    public MemTermBuilder(final IndexMap map) {
-        this.imap = map;
-    }
+    void add(long msg, String value);
 
     /**
-     * {@inheritDoc}
+     * Delete this value from the message.
+     * @param msg Number of message
+     * @param value The value to delete
      */
-    @Override
-    public Term matcher(final String name, final String value) {
-        return new MatcherTerm(this.imap, name, value);
-    }
+    void delete(long msg, String value);
 
     /**
-     * {@inheritDoc}
+     * Delete all values from the message.
+     * @param msg Number of message
      */
-    @Override
-    public Term and(final Collection<Term> terms) {
-        return new AndTerm(this.imap, terms);
-    }
+    void delete(long msg);
 
     /**
-     * {@inheritDoc}
-     * @checkstyle MethodName (3 lines)
+     * Return all values of this message.
+     * @param msg Number of message
      */
-    @Override
-    public Term or(final Collection<Term> terms) {
-        return new OrTerm(this.imap, terms);
-    }
+    Set<String> values(long msg);
 
     /**
-     * {@inheritDoc}
+     * Get sorted set of numbers for the given value.
+     * @param value The value
      */
-    @Override
-    public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term never() {
-        return new Term() {
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                return new MemCursor(0L, MemTermBuilder.this.imap);
-            }
-        };
-    }
+    SortedSet<Long> msgs(String value);
 
 }

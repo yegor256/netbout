@@ -26,41 +26,69 @@
  */
 package com.netbout.inf.ray;
 
-import com.netbout.inf.Msg;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.Term;
+import com.netbout.inf.TermBuilder;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.SortedSet;
 
 /**
- * Default implementation of {@link Ray}.
+ * Matching term.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MemMsg implements Msg {
+final class MatcherTerm implements Term {
 
     /**
-     * List of messages.
+     * Index map.
      */
+    private final transient IndexMap imap;
+
+    /**
+     * Name of attribute.
+     */
+    private final transient String attr;
+
+    /**
+     * Value to match.
+     */
+    private final transient String value;
 
     /**
      * Public ctor.
+     * @param map The index map
+     * @param atr Attribute
+     * @param val Value of it
      */
-    public MemMsg() {
-        // todo
+    public MatcherTerm(final IndexMap map, final String atr, final String val) {
+        this.imap = map;
+        this.attr = atr;
+        this.value = val;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long number() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String first(final String name) {
-        throw new UnsupportedOperationException();
+    public Cursor shift(final Cursor cursor) {
+        Cursor shifted;
+        if (cursor.end()) {
+            shifted = cursor;
+        } else {
+            SortedSet<Long> tail = this.imap.index(this.attr)
+                .msgs(this.value)
+                .tailSet(cursor.msg().number());
+            if (tail.size() < 2) {
+                shifted = new MemCursor(0L, this.imap);
+            } else {
+                final Iterator<Long> iterator = tail.iterator();
+                iterator.next();
+                shifted = new MemCursor(iterator.next(), this.imap);
+            }
+        }
+        return shifted;
     }
 
 }

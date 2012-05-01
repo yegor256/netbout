@@ -267,10 +267,9 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
                 task.run();
             // @checkstyle IllegalCatch (1 line)
             } catch (Throwable ex) {
-                Mux.this.add(task.notice());
-                Logger.warn(
+                Logger.error(
                     this,
-                    "#run('%s'): resubmitted because of: %[exception]s",
+                    "#run('%s'): %[exception]s",
                     task,
                     ex
                 );

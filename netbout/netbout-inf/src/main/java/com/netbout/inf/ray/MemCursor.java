@@ -36,51 +36,95 @@ import com.netbout.inf.Term;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MemCursor implements Cursor {
+final class MemCursor implements Cursor {
 
     /**
      * Message number where we're staying now.
      */
-    private final transient Msg msg = null;
+    private final transient long msg;
+
+    /**
+     * Index map.
+     */
+    private final transient IndexMap imap;
 
     /**
      * Public ctor.
+     * @param num Message number
+     * @param map The index map
      */
-    public MemCursor() {
-        // todo
+    public MemCursor(final long num, final IndexMap map) {
+        this.msg = num;
+        this.imap = map;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void add(final Term term, final String name, final String value) {
-        throw new UnsupportedOperationException();
+    public void add(final Term term, final String attr, final String value) {
+        this.update(
+            new Updater() {
+                @Override
+                public void update(final Index index, final long msg) {
+                    index.add(msg, value);
+                }
+            },
+            attr,
+            term
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void replace(final Term term, final String name,
+    public void replace(final Term term, final String attr,
         final String value) {
-        throw new UnsupportedOperationException();
+        this.update(
+            new Updater() {
+                @Override
+                public void update(final Index index, final long msg) {
+                    index.replace(msg, value);
+                }
+            },
+            attr,
+            term
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Term term, final String name) {
-        throw new UnsupportedOperationException();
+    public void delete(final Term term, final String attr) {
+        this.update(
+            new Updater() {
+                @Override
+                public void update(final Index index, final long msg) {
+                    index.delete(msg);
+                }
+            },
+            attr,
+            term
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Term term, final String name, final String value) {
-        throw new UnsupportedOperationException();
+    public void delete(final Term term, final String attr, final String value) {
+        this.update(
+            new Updater() {
+                @Override
+                public void update(final Index index, final long msg) {
+                    index.delete(msg, value);
+                }
+            },
+            attr,
+            term
+        );
     }
 
     /**
@@ -88,15 +132,7 @@ public final class MemCursor implements Cursor {
      */
     @Override
     public Cursor shift(final Term term) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cursor invalidate() {
-        throw new UnsupportedOperationException();
+        return term.shift(this);
     }
 
     /**
@@ -104,7 +140,7 @@ public final class MemCursor implements Cursor {
      */
     @Override
     public Cursor copy() {
-        throw new UnsupportedOperationException();
+        return new MemCursor(this.msg, this.imap);
     }
 
     /**
@@ -112,15 +148,22 @@ public final class MemCursor implements Cursor {
      */
     @Override
     public Msg msg() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean valid() {
-        throw new UnsupportedOperationException();
+        if (this.end()) {
+            throw new IllegalStateException("end of cursor reached");
+        }
+        return new Msg() {
+            @Override
+            public long number() {
+                return MemCursor.this.msg;
+            }
+            @Override
+            public String first(final String name) {
+                return MemCursor.this.imap.index(name)
+                    .values(this.number())
+                    .iterator()
+                    .next();
+            }
+        };
     }
 
     /**
@@ -128,7 +171,36 @@ public final class MemCursor implements Cursor {
      */
     @Override
     public boolean end() {
-        throw new UnsupportedOperationException();
+        return this.msg == 0L;
+    }
+
+    /**
+     * Manipulate on index.
+     * @param man The manipulator to use
+     * @param attr The attribute
+     * @param term The term
+     */
+    private void update(final MemCursor.Updater updater,
+        final String attr, final Term term) {
+        final Index index = this.imap.index(attr);
+        long num = this.msg;
+        Cursor cursor = this;
+        while (!cursor.end()) {
+            updater.update(index, cursor.msg().number());
+            cursor = cursor.shift(term);
+        }
+    }
+
+    /**
+     * Operation to do on index.
+     */
+    private interface Updater {
+        /**
+         * Update index.
+         * @param index The index
+         * @param attr The attribute
+         */
+        void update(Index index, long msg);
     }
 
 }

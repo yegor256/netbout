@@ -26,76 +26,93 @@
  */
 package com.netbout.inf.ray;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * Default implementation of {@link TermBuilder}.
+ * Index.
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MemTermBuilder implements TermBuilder {
+final class DefaultIndex implements Index {
 
     /**
-     * Index map.
+     * The map.
      */
-    private final transient IndexMap imap;
+    private final transient ConcurrentMap<String, SortedSet<Long>> map =
+        new ConcurrentHashMap<String, SortedSet<Long>>();
 
     /**
-     * Public ctor.
-     * @param map The index map
+     * {@inheritDoc}
      */
-    public MemTermBuilder(final IndexMap map) {
-        this.imap = map;
+    @Override
+    public void replace(final long msg, final String value) {
+        this.delete(msg);
+        this.msgs(value).add(msg);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Term matcher(final String name, final String value) {
-        return new MatcherTerm(this.imap, name, value);
+    public void add(final long msg, final String value) {
+        this.msgs(value).add(msg);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Term and(final Collection<Term> terms) {
-        return new AndTerm(this.imap, terms);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle MethodName (3 lines)
-     */
-    @Override
-    public Term or(final Collection<Term> terms) {
-        return new OrTerm(this.imap, terms);
+    public void delete(final long msg, final String value) {
+        final SortedSet<Long> set = this.msgs(value);
+        if (set.contains(msg)) {
+            set.remove(msg);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term never() {
-        return new Term() {
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                return new MemCursor(0L, MemTermBuilder.this.imap);
+    public void delete(final long msg) {
+        for (SortedSet<Long> set : this.map.values()) {
+            if (set.contains(msg)) {
+                set.remove(msg);
             }
-        };
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> values(final long msg) {
+        final Set<String> values = new HashSet<String>();
+        for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
+            : this.map.entrySet()) {
+            if (entry.getValue().contains(msg)) {
+                values.add(entry.getKey());
+            }
+        }
+        return values;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SortedSet<Long> msgs(final String value) {
+        if (this.map.get(value) == null) {
+            this.map.putIfAbsent(value, new TreeSet());
+        }
+        return this.map.get(value);
     }
 
 }

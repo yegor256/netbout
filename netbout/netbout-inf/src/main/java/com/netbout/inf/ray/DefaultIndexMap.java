@@ -26,76 +26,34 @@
  */
 package com.netbout.inf.ray;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
-import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * Default implementation of {@link TermBuilder}.
+ * Index map.
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MemTermBuilder implements TermBuilder {
+final class DefaultIndexMap implements IndexMap {
 
     /**
-     * Index map.
+     * The map.
      */
-    private final transient IndexMap imap;
-
-    /**
-     * Public ctor.
-     * @param map The index map
-     */
-    public MemTermBuilder(final IndexMap map) {
-        this.imap = map;
-    }
+    private final transient ConcurrentMap<String, Index> map =
+        new ConcurrentHashMap<String, Index>();
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Term matcher(final String name, final String value) {
-        return new MatcherTerm(this.imap, name, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term and(final Collection<Term> terms) {
-        return new AndTerm(this.imap, terms);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle MethodName (3 lines)
-     */
-    @Override
-    public Term or(final Collection<Term> terms) {
-        return new OrTerm(this.imap, terms);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term never() {
-        return new Term() {
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                return new MemCursor(0L, MemTermBuilder.this.imap);
-            }
-        };
+    public Index index(final String attr) {
+        if (this.map.get(attr) == null) {
+            this.map.putIfAbsent(attr, new DefaultIndex());
+        }
+        return this.map.get(attr);
     }
 
 }

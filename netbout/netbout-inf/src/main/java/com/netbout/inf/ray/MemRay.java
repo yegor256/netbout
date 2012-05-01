@@ -45,10 +45,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public final class MemRay implements Ray {
 
     /**
-     * List of messages.
+     * Index map.
      */
-    private final transient SortedSet<Msg> messages =
-        new ConcurrentSkipListSet<Msg>();
+    private final transient IndexMap imap = new DefaultIndexMap();
 
     /**
      * Public ctor.
@@ -72,7 +71,7 @@ public final class MemRay implements Ray {
      */
     @Override
     public Cursor cursor() {
-        return new MemCursor();
+        return new MemCursor(Long.MAX_VALUE, this.imap);
     }
 
     /**
@@ -80,20 +79,11 @@ public final class MemRay implements Ray {
      */
     @Override
     public Msg msg(final long number) {
-        final Msg msg = new Msg() {
-            @Override
-            public long number() {
-                return number;
-            }
-            @Override
-            public String first(final String name) {
-                throw new UnsupportedOperationException();
-            }
-        };
-        if (!this.messages.contains(msg)) {
-            this.messages.add(new MemMsg());
-        }
-        return this.messages.tailSet(msg).first();
+        this.imap.index(TermBuilder.NUMBER)
+            .replace(number, Long.toString(number));
+        return this.cursor().shift(
+            this.builder().matcher(TermBuilder.NUMBER, Long.toString(number))
+        ).msg();
     }
 
     /**
@@ -101,7 +91,7 @@ public final class MemRay implements Ray {
      */
     @Override
     public TermBuilder builder() {
-        return new MemTermBuilder();
+        return new MemTermBuilder(this.imap);
     }
 
 }

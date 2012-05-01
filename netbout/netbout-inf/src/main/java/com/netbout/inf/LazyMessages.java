@@ -94,7 +94,7 @@ final class LazyMessages implements Iterable<Long> {
                 this.cursor = this.cursor.shift(LazyMessages.this.term);
                 this.shifted = true;
             }
-            return this.cursor.valid();
+            return !this.cursor.end();
         }
         /**
          * {@inheritDoc}

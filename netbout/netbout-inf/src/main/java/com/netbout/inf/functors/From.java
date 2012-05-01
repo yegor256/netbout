@@ -29,6 +29,7 @@ package com.netbout.inf.functors;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
+import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;
@@ -58,9 +59,63 @@ final class From implements Functor {
             public Cursor shift(final Cursor cursor) {
                 Cursor shifted = cursor;
                 if (this.pos.getAndIncrement() < from) {
-                    shifted = shifted.invalidate();
+                    shifted = From.invalidator(shifted);
                 }
                 return shifted;
+            }
+        };
+    }
+
+    /**
+     * Create cursor pointing to the message next to current.
+     * @param msg Where to point to
+     * @return The cursor
+     */
+    public static Cursor invalidator(final Cursor cursor) {
+        return new Cursor() {
+            @Override
+            public Msg msg() {
+                return new Msg() {
+                    @Override
+                    public long number() {
+                        return cursor.msg().number() - 1L;
+                    }
+                    @Override
+                    public String first(final String name) {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+            @Override
+            public boolean end() {
+                return cursor.end();
+            }
+            @Override
+            public void add(final Term term, final String attr,
+                final String value) {
+                throw new UnsupportedOperationException();
+            }
+            @Override
+            public void replace(final Term term, final String attr,
+                final String value) {
+                throw new UnsupportedOperationException();
+            }
+            @Override
+            public void delete(final Term term, final String attr) {
+                throw new UnsupportedOperationException();
+            }
+            @Override
+            public void delete(final Term term, final String attr,
+                final String value) {
+                throw new UnsupportedOperationException();
+            }
+            @Override
+            public Cursor shift(final Term term) {
+                throw new UnsupportedOperationException();
+            }
+            @Override
+            public Cursor copy() {
+                throw new UnsupportedOperationException();
             }
         };
     }

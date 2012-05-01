@@ -30,14 +30,16 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.SortedSet;
 
 /**
- * Default implementation of {@link TermBuilder}.
+ * NOT term.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MemTermBuilder implements TermBuilder {
+final class NotTerm implements Term {
 
     /**
      * Index map.
@@ -45,57 +47,26 @@ final class MemTermBuilder implements TermBuilder {
     private final transient IndexMap imap;
 
     /**
+     * Term to negate.
+     */
+    private final transient Term term;
+
+    /**
      * Public ctor.
      * @param map The index map
+     * @param trm The term
      */
-    public MemTermBuilder(final IndexMap map) {
+    public NotTerm(final IndexMap map, final Term trm) {
         this.imap = map;
+        this.term = trm;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Term matcher(final String name, final String value) {
-        return new MatcherTerm(this.imap, name, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term and(final Collection<Term> terms) {
-        return new AndTerm(this.imap, terms);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle MethodName (3 lines)
-     */
-    @Override
-    public Term or(final Collection<Term> terms) {
-        return new OrTerm(this.imap, terms);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term never() {
-        return new Term() {
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                return new MemCursor(0L, MemTermBuilder.this.imap);
-            }
-        };
+    public Cursor shift(final Cursor cursor) {
+        return null;
     }
 
 }

@@ -62,7 +62,6 @@ public final class MemRayTest {
         final Cursor cursor = ray.cursor().shift(
             ray.builder().matcher(attribute, value)
         );
-        MatcherAssert.assertThat(cursor.valid(), Matchers.is(true));
         MatcherAssert.assertThat(cursor.end(), Matchers.is(false));
         MatcherAssert.assertThat(
             cursor.msg().number(),
