@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -110,7 +111,10 @@ final class DefaultIndex implements Index {
     @Override
     public SortedSet<Long> msgs(final String value) {
         if (this.map.get(value) == null) {
-            this.map.putIfAbsent(value, new TreeSet());
+            this.map.putIfAbsent(
+                value,
+                new TreeSet(Collections.reverseOrder())
+            );
         }
         return this.map.get(value);
     }
