@@ -71,7 +71,7 @@ public final class ParserAdapterTest {
         final String[] queries = new String[] {
             "(--)",
             "(\n\t\r \u0435\")",
-            "(unknown-function 1 2 3)",
+            "(unknownfunction 1 2 3)",
             "(invalid-name-of-predicate# 5)",
         };
         final Store store = Mockito.mock(Store.class);

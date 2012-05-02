@@ -61,7 +61,7 @@ atom returns [Atom ret] throws InvalidSyntaxException
     { $ret = $predicate.ret; }
     |
     VARIABLE
-    { $ret = VariableAtom.valueOf($VARIABLE.text); }
+    { $ret = VariableAtom.parse($VARIABLE.text); }
     |
     TEXT
     { $ret = new TextAtom($TEXT.text); }

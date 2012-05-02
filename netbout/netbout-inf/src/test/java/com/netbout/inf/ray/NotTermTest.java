@@ -54,7 +54,9 @@ public final class NotTermTest {
         final String attr = "attribute name";
         final String value = "some text-1 \u0433!";
         final long msg = new Random().nextLong();
+        map.touch(msg);
         map.index(attr).add(msg, value);
+        map.touch(msg - 1);
         map.index(attr).add(msg - 1, "should be found by NOT term");
         final Term term = new NotTerm(
             map,

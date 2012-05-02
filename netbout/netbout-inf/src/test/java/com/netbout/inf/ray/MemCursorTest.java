@@ -63,4 +63,22 @@ public final class MemCursorTest {
         );
     }
 
+    /**
+     * MemCursor can be comparable.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void isComparableToCursor() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final Long msg = new Random().nextLong();
+        MatcherAssert.assertThat(
+            new MemCursor(msg, map),
+            Matchers.lessThan(Cursor.class.cast(new MemCursor(msg + 1, map)))
+        );
+        MatcherAssert.assertThat(
+            new MemCursor(Long.MAX_VALUE, map),
+            Matchers.greaterThan(Cursor.class.cast(new MemCursor(0L, map)))
+        );
+    }
+
 }

@@ -105,4 +105,30 @@ public enum VariableAtom implements Atom<String> {
         return String.format("variable-%s", this.name);
     }
 
+    /**
+     * Parse text and create variable atom.
+     * @return The atom
+     */
+    public static VariableAtom parse(final String text) {
+        VariableAtom atom;
+        if (text.equals(VariableAtom.TEXT.name)) {
+            atom = VariableAtom.TEXT;
+        } else if (text.equals(VariableAtom.NUMBER.name)) {
+            atom = VariableAtom.NUMBER;
+        } else if (text.equals(VariableAtom.BOUT_NUMBER.name)) {
+            atom = VariableAtom.BOUT_NUMBER;
+        } else if (text.equals(VariableAtom.BOUT_TITLE.name)) {
+            atom = VariableAtom.BOUT_TITLE;
+        } else if (text.equals(VariableAtom.AUTHOR_NAME.name)) {
+            atom = VariableAtom.AUTHOR_NAME;
+        } else if (text.equals(VariableAtom.AUTHOR_ALIAS.name)) {
+            atom = VariableAtom.AUTHOR_ALIAS;
+        } else {
+            throw new IllegalArgumentException(
+                String.format("can't parse variable atom '%s'", text)
+            );
+        }
+        return atom;
+    }
+
 }

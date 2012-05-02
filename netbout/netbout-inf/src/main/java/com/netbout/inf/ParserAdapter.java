@@ -79,6 +79,8 @@ final class ParserAdapter {
             throw new InvalidSyntaxException(query, ex);
         } catch (IllegalArgumentException ex) {
             throw new InvalidSyntaxException(query, ex);
+        } catch (InvalidSyntaxException ex) {
+            throw new InvalidSyntaxException(query, ex);
         }
         Logger.debug(
             this,
