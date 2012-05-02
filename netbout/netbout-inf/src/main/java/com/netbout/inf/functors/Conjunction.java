@@ -45,7 +45,7 @@ import java.util.List;
  * @version $Id$
  */
 @NamedAs("and")
-final class Conjuction implements Functor {
+final class Conjunction implements Functor {
 
     /**
      * {@inheritDoc}

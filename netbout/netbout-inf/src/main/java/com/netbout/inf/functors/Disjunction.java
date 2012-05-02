@@ -45,7 +45,7 @@ import java.util.List;
  * @version $Id$
  */
 @NamedAs("or")
-final class Disjuction implements Functor {
+final class Disjunction implements Functor {
 
     /**
      * {@inheritDoc}
