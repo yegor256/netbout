@@ -31,7 +31,6 @@ package com.netbout.spi.xml;
 
 import com.netbout.spi.Urn;
 import com.rexsl.test.ContainerMocker;
-import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
@@ -55,7 +54,7 @@ public final class DomParserTest {
             "<token><number>15</number></token>"
         );
         MatcherAssert.assertThat(
-            XhtmlConverter.the(new DomPrinter(parser.parse()).print()),
+            new DomPrinter(parser.parse()).print(),
             XhtmlMatchers.hasXPath("/token/number[.=15]")
         );
     }

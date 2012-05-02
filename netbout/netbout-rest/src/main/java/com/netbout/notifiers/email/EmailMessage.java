@@ -26,7 +26,7 @@
  */
 package com.netbout.notifiers.email;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Pattern;

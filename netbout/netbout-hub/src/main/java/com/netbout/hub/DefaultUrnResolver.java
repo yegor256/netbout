@@ -29,7 +29,7 @@ package com.netbout.hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;

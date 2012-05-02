@@ -31,7 +31,7 @@ import com.netbout.inf.ebs.EbsVolume;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
 

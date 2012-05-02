@@ -29,9 +29,9 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.log.Logger;
 import com.rexsl.test.AssertionPolicy;
 import com.rexsl.test.TestResponse;
-import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.util.concurrent.TimeUnit;
 
@@ -85,7 +85,7 @@ public final class EtaAssertion implements AssertionPolicy {
      * {@inheritDoc}
      */
     @Override
-    public boolean again(final int attempt) {
+    public boolean isRetryNeeded(final int attempt) {
         boolean again = false;
         if (this.eta > 0) {
             again = true;

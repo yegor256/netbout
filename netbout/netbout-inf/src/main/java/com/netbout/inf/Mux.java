@@ -27,7 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.io.Closeable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;

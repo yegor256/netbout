@@ -29,7 +29,7 @@ package com.netbout.hub.data;
 import com.netbout.hub.Hub;
 import com.netbout.hub.MessageDt;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

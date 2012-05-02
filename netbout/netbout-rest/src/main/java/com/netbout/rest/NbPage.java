@@ -38,7 +38,7 @@ import com.rexsl.misc.CookieBuilder;
 import com.rexsl.page.BasePage;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;

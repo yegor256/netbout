@@ -31,7 +31,7 @@ import com.netbout.inf.InvalidSyntaxException;
 import com.netbout.inf.Notice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Store;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

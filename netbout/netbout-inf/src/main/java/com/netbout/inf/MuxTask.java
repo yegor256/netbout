@@ -38,7 +38,7 @@ import com.netbout.inf.notices.MessageSeenNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.HashSet;
 import java.util.Set;
 

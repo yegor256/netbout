@@ -29,10 +29,10 @@
  */
 package com.netbout.spi.cpa;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.PlainBuilder;
 import com.netbout.spi.Token;
 import com.netbout.spi.plain.PlainVoid;
-import com.ymock.util.Logger;
 import java.lang.reflect.Method;
 
 /**

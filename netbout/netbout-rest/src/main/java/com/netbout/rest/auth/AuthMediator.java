@@ -29,7 +29,7 @@ package com.netbout.rest.auth;
 import com.netbout.hub.UrnResolver;
 import com.netbout.spi.Urn;
 import com.sun.jersey.api.client.Client;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;

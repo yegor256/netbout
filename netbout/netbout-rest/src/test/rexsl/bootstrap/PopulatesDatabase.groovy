@@ -31,7 +31,7 @@ package com.netbout.rest.rexsl.bootstrap
 
 import com.netbout.db.DbSession
 import com.rexsl.core.Manifests
-import com.ymock.util.Logger
+import com.jcabi.log.Logger
 
 def urlFile = new File(rexsl.basedir, 'jdbc.txt')
 if (urlFile.exists()) {

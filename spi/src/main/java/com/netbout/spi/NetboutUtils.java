@@ -29,7 +29,7 @@
  */
 package com.netbout.spi;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;

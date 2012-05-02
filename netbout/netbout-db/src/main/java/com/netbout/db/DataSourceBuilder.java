@@ -26,8 +26,8 @@
  */
 package com.netbout.db;
 
+import com.jcabi.log.Logger;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 

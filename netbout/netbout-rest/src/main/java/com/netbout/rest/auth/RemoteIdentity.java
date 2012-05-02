@@ -31,7 +31,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;

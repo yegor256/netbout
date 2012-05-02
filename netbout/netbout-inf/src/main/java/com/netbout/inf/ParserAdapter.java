@@ -28,7 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.inf.atoms.PredicateAtom;
 import com.netbout.spi.NetboutUtils;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;

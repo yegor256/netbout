@@ -169,19 +169,9 @@
             </dependency>
             <dependency>
                 <!-- Logging facility, on top of SLF4J. -->
-                <groupId>com.ymock</groupId>
-                <artifactId>ymock-util</artifactId>
-                <version since="2 Mar 2012">1.0.5</version>
-                <exclusions>
-                    <exclusion>
-                        <!--
-                        It's a bug in ymock:
-                        @see http://trac.fazend.com/ymock/ticket/49
-                        -->
-                        <groupId>org.mockito</groupId>
-                        <artifactId>mockito-all</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-log</artifactId>
+                <version since="2 May 2012">0.1</version>
             </dependency>
             <dependency>
                 <!--

@@ -33,7 +33,7 @@ import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Profile;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.net.URL;
 import java.util.Set;
 

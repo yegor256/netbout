@@ -29,8 +29,8 @@
  */
 package com.netbout.spi.xml;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 import java.net.URL;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;

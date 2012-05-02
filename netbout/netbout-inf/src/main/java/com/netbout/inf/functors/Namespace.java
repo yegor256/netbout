@@ -35,7 +35,7 @@ import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.xml.DomParser;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.List;
 
 /**

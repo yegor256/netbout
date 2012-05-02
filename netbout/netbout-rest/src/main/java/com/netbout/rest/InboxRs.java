@@ -38,7 +38,7 @@ import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.FormParam;

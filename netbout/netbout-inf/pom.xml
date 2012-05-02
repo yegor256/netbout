@@ -123,8 +123,8 @@
             <version since="2 Feb 2012">1.2</version>
         </dependency>
         <dependency>
-            <groupId>com.ymock</groupId>
-            <artifactId>ymock-util</artifactId>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-log</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

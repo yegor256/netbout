@@ -30,7 +30,7 @@ import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 
 /**
  * Encrypts and decrypts.

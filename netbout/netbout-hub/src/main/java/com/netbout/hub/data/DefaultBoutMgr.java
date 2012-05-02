@@ -32,7 +32,7 @@ import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

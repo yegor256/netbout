@@ -30,7 +30,7 @@ import com.netbout.hub.Hub;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Flags;

@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.xml;
 
-import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -57,7 +56,7 @@ public final class DomPrinterTest {
         root.appendChild(dom.createTextNode("works"));
         final DomPrinter printer = new DomPrinter(dom);
         MatcherAssert.assertThat(
-            XhtmlConverter.the(printer.print()),
+            printer.print(),
             XhtmlMatchers.hasXPath("/test[.='works']")
         );
     }

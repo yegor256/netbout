@@ -29,10 +29,10 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.log.Logger;
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestResponse;
 import com.rexsl.test.XmlDocument;
-import com.ymock.util.Logger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;

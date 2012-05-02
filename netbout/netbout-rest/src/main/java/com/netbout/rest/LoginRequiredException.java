@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import javax.ws.rs.core.UriBuilder;
 
 /**

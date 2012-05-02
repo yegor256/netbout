@@ -29,9 +29,9 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.ymock.util.Logger;
 import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
 

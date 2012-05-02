@@ -32,7 +32,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.page.BaseResource;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;

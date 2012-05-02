@@ -28,7 +28,7 @@ package com.netbout.hub.cron;
 
 import com.netbout.hub.PowerHub;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.ArrayList;
 import java.util.List;
 

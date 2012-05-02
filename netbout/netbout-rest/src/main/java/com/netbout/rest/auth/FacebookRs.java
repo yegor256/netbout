@@ -37,7 +37,7 @@ import com.restfb.types.User;
 import com.rexsl.core.Manifests;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;

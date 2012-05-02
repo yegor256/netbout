@@ -27,7 +27,7 @@
 package com.netbout.rest.period;
 
 import com.netbout.spi.NetboutUtils;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;

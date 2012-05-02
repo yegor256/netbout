@@ -29,7 +29,7 @@ package com.netbout.hub.data;
 import com.netbout.hub.Hub;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 
 /**
  * Bout with data.

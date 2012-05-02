@@ -30,7 +30,7 @@ import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.notifiers.email.EmailFarm;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 

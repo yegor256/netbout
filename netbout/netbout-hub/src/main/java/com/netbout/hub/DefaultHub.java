@@ -40,7 +40,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaHelper;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;

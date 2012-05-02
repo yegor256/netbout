@@ -35,7 +35,7 @@ import com.amazonaws.services.ec2.model.Volume;
 import com.amazonaws.services.ec2.model.VolumeAttachment;
 import com.amazonaws.services.ec2.model.VolumeAttachmentState;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;

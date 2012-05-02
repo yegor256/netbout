@@ -30,7 +30,7 @@ import com.restfb.Connection;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.types.FacebookType;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 
 /**
  * Manager of AppRequests.

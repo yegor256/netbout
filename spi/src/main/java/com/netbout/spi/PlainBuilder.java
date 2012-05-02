@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.plain.PlainBoolean;
 import com.netbout.spi.plain.PlainDate;
 import com.netbout.spi.plain.PlainList;
@@ -36,7 +37,6 @@ import com.netbout.spi.plain.PlainLong;
 import com.netbout.spi.plain.PlainString;
 import com.netbout.spi.plain.PlainURL;
 import com.netbout.spi.plain.PlainUrn;
-import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;

@@ -26,8 +26,8 @@
  */
 package com.netbout.db;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;

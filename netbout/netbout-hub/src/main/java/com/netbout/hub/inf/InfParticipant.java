@@ -30,7 +30,7 @@ import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 
 /**
  * Participant to be seen by INF.

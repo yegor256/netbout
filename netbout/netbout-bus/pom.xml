@@ -60,8 +60,8 @@
             <version since="14 Nov 2011">2.0</version>
         </dependency>
         <dependency>
-            <groupId>com.ymock</groupId>
-            <artifactId>ymock-util</artifactId>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-log</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -27,7 +27,7 @@
 package com.netbout.rest.log;
 
 import com.netbout.spi.text.SecureString;
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.collections.ListUtils;

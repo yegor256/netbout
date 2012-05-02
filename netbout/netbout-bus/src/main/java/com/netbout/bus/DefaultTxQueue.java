@@ -26,7 +26,7 @@
  */
 package com.netbout.bus;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.Queue;
 import java.util.concurrent.SynchronousQueue;
 
