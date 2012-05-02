@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
@@ -33,7 +34,6 @@ import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Profile;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
-import com.jcabi.log.Logger;
 import java.net.URL;
 import java.util.Set;
 

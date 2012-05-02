@@ -26,6 +26,7 @@
  */
 package com.netbout.hub.data;
 
+import com.jcabi.log.Logger;
 import com.netbout.hub.BoutDt;
 import com.netbout.hub.MessageDt;
 import com.netbout.hub.ParticipantDt;
@@ -42,7 +43,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
-import com.jcabi.log.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -56,7 +56,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class BoutData implements BoutDt {
 
     /**
@@ -102,7 +104,8 @@ final class BoutData implements BoutDt {
      * @param num The number
      * @param lstr Listener of message operations
      */
-    public BoutData(final PowerHub ihub, final Long num, final MsgListener lstr) {
+    public BoutData(final PowerHub ihub, final Long num,
+        final MsgListener lstr) {
         this.hub = ihub;
         assert num != null;
         this.number = num;

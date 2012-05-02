@@ -26,10 +26,10 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
-import com.jcabi.log.Logger;
 
 /**
  * Identity.

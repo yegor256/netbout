@@ -56,7 +56,7 @@ public final class InfMessage implements Message {
     /**
      * Public ctor.
      * @param msg Message data
-     * @param num Bout data
+     * @param bout Bout data
      */
     public InfMessage(final MessageDt msg, final BoutDt bout) {
         this.data = msg;

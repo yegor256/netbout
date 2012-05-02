@@ -26,11 +26,11 @@
  */
 package com.netbout.hub.cron;
 
+import com.jcabi.log.Logger;
 import com.netbout.hub.PowerHub;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
-import com.jcabi.log.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +54,7 @@ final class Indexer extends AbstractCron {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void cron() throws Exception {
         final long start = System.nanoTime();
         final Long maximum = this.hub().infinity().maximum();

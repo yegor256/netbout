@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.DuplicateInvitationException;
 import com.netbout.spi.Identity;
@@ -36,7 +37,6 @@ import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
-import com.jcabi.log.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;

@@ -26,6 +26,7 @@
  */
 package com.netbout.hub.data;
 
+import com.jcabi.log.Logger;
 import com.netbout.hub.BoutDt;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.hub.PowerHub;
@@ -35,7 +36,6 @@ import com.netbout.inf.notices.JoinNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
-import com.jcabi.log.Logger;
 
 /**
  * Bout with data.
@@ -58,7 +58,7 @@ final class ParticipantData implements ParticipantDt {
     /**
      * The participant.
      */
-    private final transient Urn identity;
+    private final transient Urn person;
 
     /**
      * Is it confirmed?
@@ -73,7 +73,7 @@ final class ParticipantData implements ParticipantDt {
     /**
      * Public ctor.
      * @param ihub The hub
-     * @param num The number
+     * @param bdata The bout data
      * @param idnt The identity
      */
     public ParticipantData(final PowerHub ihub, final BoutDt bdata,
@@ -82,7 +82,7 @@ final class ParticipantData implements ParticipantDt {
         assert bdata != null;
         this.boutdt = bdata;
         assert idnt != null;
-        this.identity = idnt;
+        this.person = idnt;
     }
 
     /**
@@ -98,7 +98,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public Urn getIdentity() {
-        return this.identity;
+        return this.person;
     }
 
     /**
@@ -111,7 +111,7 @@ final class ParticipantData implements ParticipantDt {
             this.hub.make("changed-participant-status")
                 .asap()
                 .arg(this.boutdt.getNumber())
-                .arg(this.identity)
+                .arg(this.person)
                 .arg(flag)
                 .asDefault(true)
                 .exec();
@@ -123,7 +123,7 @@ final class ParticipantData implements ParticipantDt {
                     }
                     @Override
                     public Identity identity() {
-                        return new InfIdentity(ParticipantData.this.identity);
+                        return new InfIdentity(ParticipantData.this.person);
                     }
                 }
             );
@@ -145,7 +145,7 @@ final class ParticipantData implements ParticipantDt {
                 this.confirmed = this.hub.make("get-participant-status")
                     .synchronously()
                     .arg(this.boutdt.getNumber())
-                    .arg(this.identity)
+                    .arg(this.person)
                     .exec();
             }
         }
@@ -162,7 +162,7 @@ final class ParticipantData implements ParticipantDt {
             this.hub.make("changed-participant-leadership")
                 .asap()
                 .arg(this.boutdt.getNumber())
-                .arg(this.identity)
+                .arg(this.person)
                 .arg(flag)
                 .asDefault(true)
                 .exec();
@@ -184,7 +184,7 @@ final class ParticipantData implements ParticipantDt {
                 this.leader = this.hub.make("get-participant-leadership")
                     .synchronously()
                     .arg(this.boutdt.getNumber())
-                    .arg(this.identity)
+                    .arg(this.person)
                     .exec();
             }
         }

@@ -26,6 +26,7 @@
  */
 package com.netbout.hub.data;
 
+import com.jcabi.log.Logger;
 import com.netbout.hub.BoutDt;
 import com.netbout.hub.MessageDt;
 import com.netbout.hub.PowerHub;
@@ -35,7 +36,6 @@ import com.netbout.inf.notices.MessageSeenNotice;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
-import com.jcabi.log.Logger;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

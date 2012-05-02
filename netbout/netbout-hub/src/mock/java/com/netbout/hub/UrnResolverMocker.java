@@ -26,8 +26,8 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Urn;
 import com.jcabi.log.Logger;
+import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

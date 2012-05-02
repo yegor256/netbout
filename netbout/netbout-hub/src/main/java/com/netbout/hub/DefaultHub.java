@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.log.Logger;
 import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.bus.TxBuilder;
@@ -40,7 +41,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaHelper;
-import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;

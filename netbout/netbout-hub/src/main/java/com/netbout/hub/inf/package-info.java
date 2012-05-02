@@ -24,24 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.hub;
-
-import org.junit.Test;
 
 /**
- * Test case of {@link PhotoProxy}.
+ * Entities for INF.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PhotoProxyTest {
-
-    /**
-     * PhotoProxy can normalize broken URL provided as a string.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void normalizesBrokenUrlInString() throws Exception {
-        // todo
-    }
-
-}
+package com.netbout.hub.inf;

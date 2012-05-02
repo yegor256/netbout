@@ -26,8 +26,8 @@
  */
 package com.netbout.hub.cron;
 
-import com.netbout.hub.PowerHub;
 import com.jcabi.log.Logger;
+import com.netbout.hub.PowerHub;
 import java.util.Collection;
 import java.util.LinkedList;
 

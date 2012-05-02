@@ -26,8 +26,9 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.hub.Hub;
-import com.netbout.hub.HubMocker;
+import com.netbout.hub.BoutDtMocker;
+import com.netbout.hub.PowerHub;
+import com.netbout.hub.PowerHubMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.Random;
@@ -48,8 +49,12 @@ public final class MessageDataTest {
      */
     @Test
     public void savesSeenByFlag() throws Exception {
-        final Hub hub = new HubMocker().mock();
-        final MessageData data = new MessageData(hub, new Random().nextLong());
+        final PowerHub hub = new PowerHubMocker().mock();
+        final MessageData data = new MessageData(
+            hub,
+            new Random().nextLong(),
+            new BoutDtMocker().mock()
+        );
         final Urn identity = new UrnMocker().mock();
         data.addSeenBy(identity);
         Mockito.verify(hub).make("was-message-seen");
