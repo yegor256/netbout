@@ -61,14 +61,22 @@ public final class DefaultStore implements Store {
     public void see(final Ray ray, final Notice notice) {
         for (Functor functor : this.functors.values()) {
             for (Method method : functor.getClass().getMethods()) {
-                if (method.getAnnotation(Noticable.class) != null) {
-                    try {
-                        method.invoke(functor, ray, notice);
-                    } catch (IllegalAccessException ex) {
-                        throw new IllegalStateException(ex);
-                    } catch (java.lang.reflect.InvocationTargetException ex) {
-                        throw new IllegalStateException(ex);
-                    }
+                if (method.getAnnotation(Noticable.class) == null) {
+                    continue;
+                }
+                if (!method.getParameterTypes()[1].equals(notice.getClass())) {
+                    continue;
+                }
+                try {
+                    method.invoke(
+                        functor,
+                        ray,
+                        method.getParameterTypes()[1].cast(notice)
+                    );
+                } catch (IllegalAccessException ex) {
+                    throw new IllegalStateException(method.toString(), ex);
+                } catch (java.lang.reflect.InvocationTargetException ex) {
+                    throw new IllegalStateException(method.toString(), ex);
                 }
             }
         }

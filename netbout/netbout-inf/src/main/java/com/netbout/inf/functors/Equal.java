@@ -28,6 +28,7 @@ package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Functor;
+import com.netbout.inf.InvalidSyntaxException;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.VariableAtom;
@@ -49,7 +50,11 @@ final class Equal implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom> atoms)
+        throws InvalidSyntaxException {
+        if (!atoms.get(0).getClass().equals(VariableAtom.class)) {
+            throw new InvalidSyntaxException("first arg should be a variable");
+        }
         return ray.builder().matcher(
             VariableAtom.class.cast(atoms.get(0)).attribute(),
             atoms.get(1).value().toString()

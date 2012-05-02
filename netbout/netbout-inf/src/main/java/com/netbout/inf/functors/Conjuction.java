@@ -29,6 +29,7 @@ package com.netbout.inf.functors;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
+import com.netbout.inf.InvalidSyntaxException;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.PredicateAtom;
@@ -53,7 +54,8 @@ final class Conjuction implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom> atoms)
+        throws InvalidSyntaxException {
         final Collection<Term> terms = new ArrayList<Term>(atoms.size());
         for (Atom atom : atoms) {
             terms.add(PredicateAtom.class.cast(atom).term(ray));

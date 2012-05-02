@@ -45,7 +45,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs
+@NamedAs("ns")
 final class Namespace implements Functor {
 
     /**

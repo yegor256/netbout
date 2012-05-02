@@ -43,7 +43,8 @@ public interface Functor {
      * @param ray The ray to use
      * @param atoms Atoms
      * @return The term to build
+     * @throws InvalidSyntaxException If some error inside
      */
-    Term build(Ray ray, List<Atom> atoms);
+    Term build(Ray ray, List<Atom> atoms) throws InvalidSyntaxException;
 
 }

@@ -29,6 +29,9 @@ package com.netbout.inf;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -45,15 +48,19 @@ public final class DefaultInfinityTest {
     @Test
     public void populatesIndexOnFirstTimeCall() throws Exception {
         final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
+        final Message msg = new MessageMocker().mock();
         inf.see(
             new MessagePostedNotice() {
                 @Override
                 public Message message() {
-                    return new MessageMocker().mock();
+                    return msg;
                 }
             }
         );
-        inf.messages("foo");
+        MatcherAssert.assertThat(
+            inf.messages(String.format("(equal $number %d)", msg.number())),
+            (Matcher) Matchers.iterableWithSize(1)
+        );
     }
 
 }

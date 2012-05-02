@@ -28,6 +28,7 @@ package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Functor;
+import com.netbout.inf.InvalidSyntaxException;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
@@ -113,8 +114,9 @@ public final class PredicateAtom implements Atom<String> {
      * Get term from it.
      * @param ray The ray to use
      * @return The term
+     * @throws InvalidSyntaxException If can't build it
      */
-    public Term term(final Ray ray) {
+    public Term term(final Ray ray) throws InvalidSyntaxException {
         return this.functor.build(ray, this.args);
     }
 
