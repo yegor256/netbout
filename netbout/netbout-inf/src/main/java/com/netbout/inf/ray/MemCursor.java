@@ -38,12 +38,13 @@ import com.netbout.inf.Term;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class MemCursor implements Cursor {
 
     /**
      * Message number where we're staying now.
      */
-    private final transient long msg;
+    private final transient long where;
 
     /**
      * Index map.
@@ -56,7 +57,7 @@ final class MemCursor implements Cursor {
      * @param map The index map
      */
     public MemCursor(final long num, final IndexMap map) {
-        this.msg = num;
+        this.where = num;
         this.imap = map;
     }
 
@@ -67,12 +68,12 @@ final class MemCursor implements Cursor {
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append("cursor-");
-        if (this.msg == Long.MAX_VALUE) {
+        if (this.where == Long.MAX_VALUE) {
             text.append("TOP");
-        } else if (this.msg == 0L) {
+        } else if (this.where == 0L) {
             text.append("END");
         } else {
-            text.append(this.msg);
+            text.append(this.where);
         }
         return text.toString();
     }
@@ -88,7 +89,7 @@ final class MemCursor implements Cursor {
         } else {
             number = cursor.msg().number();
         }
-        return Long.valueOf(this.msg).compareTo(number);
+        return Long.valueOf(this.where).compareTo(number);
     }
 
     /**
@@ -173,7 +174,7 @@ final class MemCursor implements Cursor {
      */
     @Override
     public Cursor copy() {
-        return new MemCursor(this.msg, this.imap);
+        return new MemCursor(this.where, this.imap);
     }
 
     /**
@@ -187,7 +188,7 @@ final class MemCursor implements Cursor {
         return new Msg() {
             @Override
             public long number() {
-                return MemCursor.this.msg;
+                return MemCursor.this.where;
             }
             @Override
             public String first(final String name) {
@@ -204,7 +205,7 @@ final class MemCursor implements Cursor {
      */
     @Override
     public boolean end() {
-        return this.msg == 0L;
+        return this.where == 0L;
     }
 
     /**

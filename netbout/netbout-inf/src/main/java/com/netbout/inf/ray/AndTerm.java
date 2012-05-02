@@ -29,8 +29,9 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * AND term.
@@ -71,7 +72,8 @@ final class AndTerm implements Term {
         if (cursor.end()) {
             slider = cursor;
         } else {
-            final Map<Term, Cursor> cursors = new HashMap<Term, Cursor>();
+            final ConcurrentMap<Term, Cursor> cursors =
+                new ConcurrentHashMap<Term, Cursor>();
             for (Term term : this.terms) {
                 cursors.put(term, cursor);
             }

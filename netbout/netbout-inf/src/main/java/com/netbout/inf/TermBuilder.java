@@ -59,6 +59,7 @@ public interface TermBuilder {
      * @return The term
      * @checkstyle MethodName (3 lines)
      */
+    @SuppressWarnings("PMD.ShortMethodName")
     Term or(Collection<Term> terms);
 
     /**

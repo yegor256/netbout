@@ -65,6 +65,7 @@ final class NotTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
         Cursor shifted = cursor;
         Cursor candidate = cursor;

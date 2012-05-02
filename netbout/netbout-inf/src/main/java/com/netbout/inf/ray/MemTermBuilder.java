@@ -72,9 +72,10 @@ final class MemTermBuilder implements TermBuilder {
 
     /**
      * {@inheritDoc}
-     * @checkstyle MethodName (3 lines)
+     * @checkstyle MethodName (4 lines)
      */
     @Override
+    @SuppressWarnings("PMD.ShortMethodName")
     public Term or(final Collection<Term> terms) {
         return new OrTerm(this.imap, terms);
     }

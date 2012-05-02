@@ -53,11 +53,11 @@ final class Pos implements Functor {
     public Term build(final Ray ray, final List<Atom> atoms) {
         final long desired = NumberAtom.class.cast(atoms.get(0)).value();
         return new Term() {
-            private final transient AtomicLong pos = new AtomicLong(0L);
+            private final transient AtomicLong position = new AtomicLong(0L);
             @Override
             public Cursor shift(final Cursor cursor) {
                 Cursor shifted = cursor;
-                if (this.pos.getAndIncrement() >= desired) {
+                if (this.position.getAndIncrement() >= desired) {
                     shifted = shifted.shift(ray.builder().never());
                 }
                 return shifted;

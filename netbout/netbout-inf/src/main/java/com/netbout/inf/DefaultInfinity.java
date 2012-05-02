@@ -136,6 +136,7 @@ public final class DefaultInfinity implements Infinity {
     public void close() throws java.io.IOException {
         this.mux.close();
         this.ray.close();
+        this.folder.close();
         Logger.info(this, "#close(): closed");
     }
 

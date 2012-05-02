@@ -31,8 +31,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.security.SecureRandom;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
@@ -49,15 +47,11 @@ import org.junit.Test;
 public final class MuxTest {
 
     /**
-     * The random to use.
-     */
-    private static final Random RANDOM = new SecureRandom();
-
-    /**
      * Mux can run tasks in parallel.
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void runsTasksInParallel() throws Exception {
         final Mux mux = new Mux(
             new RayMocker().mock(),

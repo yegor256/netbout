@@ -50,6 +50,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.DoNotUseThreads")
 final class MuxTask implements Runnable {
 
     /**

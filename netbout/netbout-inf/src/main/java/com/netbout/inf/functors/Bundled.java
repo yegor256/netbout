@@ -54,8 +54,9 @@ import java.util.concurrent.ConcurrentMap;
 final class Bundled implements Functor {
 
     /**
-     * The attribute to use.
+     * The attribute to use (also used by {@link Unbundled}).
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static final String ATTR = "bundled-marker";
 
     /**

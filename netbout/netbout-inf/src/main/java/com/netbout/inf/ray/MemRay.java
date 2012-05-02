@@ -55,7 +55,7 @@ public final class MemRay implements Ray {
      * @throws IOException If some I/O problem
      */
     public MemRay(final File dir) throws IOException {
-        // load them from file
+        assert dir != null;
     }
 
     /**

@@ -204,32 +204,35 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      * @param notice The notice to process
      */
     public void add(final Notice notice) {
-        if (!this.isTerminated() && !this.isShutdown()
-            && !this.isTerminating()) {
-            final MuxTask task = new MuxTask(notice, this.ray, this.store);
-            if (this.queue.contains(task)) {
-                Logger.debug(
-                    this,
-                    "#add('%s'): in the queue already, ignored dup",
-                    task
-                );
-            } else {
-                this.queue.add(task);
-                for (Urn who : task.dependants()) {
+        if (this.isTerminated() || this.isShutdown()
+            || this.isTerminating()) {
+            throw new IllegalStateException("Mux is closing");
+        }
+        final MuxTask task = new MuxTask(notice, this.ray, this.store);
+        if (this.queue.contains(task)) {
+            Logger.debug(
+                this,
+                "#add('%s'): in the queue already, ignored dup",
+                task
+            );
+        } else {
+            for (Urn who : task.dependants()) {
+                if (this.dependants.get(who) == null) {
                     this.dependants.putIfAbsent(who, new AtomicLong());
-                    this.dependants.get(who).incrementAndGet();
                 }
-                Logger.debug(
-                    this,
-                    // @checkstyle LineLength (1 line)
-                    "#add('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
-                    task,
-                    this.queue.size(),
-                    this.getActiveCount(),
-                    this.getCompletedTaskCount(),
-                    this.getCorePoolSize()
-                );
+                this.dependants.get(who).incrementAndGet();
             }
+            this.queue.add(task);
+            Logger.debug(
+                this,
+                // @checkstyle LineLength (1 line)
+                "#add('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
+                task,
+                this.queue.size(),
+                this.getActiveCount(),
+                this.getCompletedTaskCount(),
+                this.getCorePoolSize()
+            );
         }
     }
 
@@ -261,6 +264,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
          * Run one task.
          * @param task The task to run
          */
+        @SuppressWarnings("PMD.AvoidCatchingGenericException")
         private void run(final MuxTask task) {
             try {
                 task.run();
