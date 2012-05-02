@@ -27,6 +27,7 @@
 package com.netbout.hub.inf;
 
 import com.netbout.hub.BoutDt;
+import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -36,6 +37,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 
 /**
  * Bout we push to identity.
@@ -45,7 +47,7 @@ import java.util.Date;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
-final class InfBout implements Bout {
+public final class InfBout implements Bout {
 
     /**
      * The data.
@@ -56,7 +58,7 @@ final class InfBout implements Bout {
      * Public ctor.
      * @param bout The data
      */
-    public HubBout(final BoutDt bout) {
+    public InfBout(final BoutDt bout) {
         this.data = bout;
     }
 

@@ -26,8 +26,14 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.hub.Hub;
+import com.netbout.hub.BoutDt;
 import com.netbout.hub.MessageDt;
+import com.netbout.hub.PowerHub;
+import com.netbout.hub.inf.InfIdentity;
+import com.netbout.hub.inf.InfMessage;
+import com.netbout.inf.notices.MessageSeenNotice;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.jcabi.log.Logger;
 import java.util.Date;
@@ -45,12 +51,17 @@ final class MessageData implements MessageDt {
     /**
      * Hub to work with.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * Number of the message.
      */
     private final transient Long number;
+
+    /**
+     * Bout data.
+     */
+    private final transient BoutDt bdata;
 
     /**
      * The date.
@@ -77,11 +88,13 @@ final class MessageData implements MessageDt {
      * Public ctor.
      * @param ihub The hub
      * @param num The number of this message
+     * @param bout Bout data
      */
-    public MessageData(final Hub ihub, final Long num) {
+    public MessageData(final PowerHub ihub, final Long num, final BoutDt bout) {
         this.hub = ihub;
         assert num != null;
         this.number = num;
+        this.bdata = bout;
     }
 
     /**
@@ -227,15 +240,18 @@ final class MessageData implements MessageDt {
                     .asDefault(true)
                     .exec();
                 this.seenBy.put(identity, true);
-                this.hub.see(
+                this.hub.infinity().see(
                     new MessageSeenNotice() {
                         @Override
                         public Message message() {
-                            return new InfMessage(MessageData.this);
+                            return new InfMessage(
+                                MessageData.this,
+                                MessageData.this.bdata
+                            );
                         }
                         @Override
-                        public Identity seenBy() {
-                            return new InfIdentity(identity.name());
+                        public Identity identity() {
+                            return new InfIdentity(identity);
                         }
                     }
                 );

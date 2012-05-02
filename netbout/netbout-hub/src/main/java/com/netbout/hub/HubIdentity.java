@@ -167,17 +167,21 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Iterable<Bout> inbox(final String query) {
-        return new LazyBouts(
-            this.hub.manager(),
-            this.hub.infinity().messages(
-                String.format(
-                    "(and (talks-with '%s') %s (unique $bout.number))",
-                    this.name(),
-                    NetboutUtils.normalize(query)
-                )
-            ),
-            this
-        );
+        try {
+            return new LazyBouts(
+                this.hub.manager(),
+                this.hub.infinity().messages(
+                    String.format(
+                        "(and (talks-with '%s') %s (unique $bout.number))",
+                        this.name(),
+                        NetboutUtils.normalize(query)
+                    )
+                ),
+                this
+            );
+        } catch (com.netbout.inf.InvalidSyntaxException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**

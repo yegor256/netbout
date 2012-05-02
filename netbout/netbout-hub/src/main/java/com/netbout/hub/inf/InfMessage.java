@@ -49,18 +49,18 @@ public final class InfMessage implements Message {
     private final transient MessageDt data;
 
     /**
-     * Bout number.
+     * Bout data.
      */
-    private final transient Long bnum;
+    private final transient BoutDt bdata;
 
     /**
      * Public ctor.
      * @param msg Message data
-     * @param num Bout number
+     * @param num Bout data
      */
-    public HubMessage(final MessageDt msg, final Long num) {
+    public InfMessage(final MessageDt msg, final BoutDt bout) {
         this.data = msg;
-        this.bnum = num;
+        this.bdata = bout;
     }
 
     /**
@@ -100,7 +100,7 @@ public final class InfMessage implements Message {
      */
     @Override
     public Bout bout() {
-        return 0;
+        return new InfBout(this.bdata);
     }
 
     /**

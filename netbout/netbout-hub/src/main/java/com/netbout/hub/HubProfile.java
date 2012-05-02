@@ -26,11 +26,14 @@
  */
 package com.netbout.hub;
 
+import com.netbout.hub.inf.InfIdentity;
+import com.netbout.inf.notices.AliasAddedNotice;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
 import com.jcabi.log.Logger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;

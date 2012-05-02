@@ -41,6 +41,7 @@ import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaHelper;
 import com.jcabi.log.Logger;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -99,8 +100,9 @@ public final class DefaultHub implements PowerHub, StatsProvider {
 
     /**
      * Public ctor.
+     * @throws IOException If something wrong
      */
-    public DefaultHub() {
+    public DefaultHub() throws IOException {
         this(new DefaultBus(), new DefaultInfinity());
     }
 
@@ -148,7 +150,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws java.io.IOException {
+    public void close() throws IOException {
         for (ScheduledFuture cron : this.crons) {
             cron.cancel(true);
         }

@@ -27,6 +27,7 @@
 package com.netbout.hub.cron;
 
 import com.netbout.hub.PowerHub;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.jcabi.log.Logger;
@@ -72,8 +73,15 @@ final class Indexer extends AbstractCron {
                 numbers.get(numbers.size() - 1),
                 maximum
             );
-            for (Long number : numbers) {
-                this.hub().infinity().see(this.message(number));
+            for (final Long number : numbers) {
+                this.hub().infinity().see(
+                    new MessagePostedNotice() {
+                        @Override
+                        public Message message() {
+                            return Indexer.this.message(number);
+                        }
+                    }
+                );
             }
             Logger.info(
                 this,
@@ -90,9 +98,8 @@ final class Indexer extends AbstractCron {
      * Create a message from its number.
      * @param number Number of message
      * @return The message itself
-     * @throws Exception When some error inside
      */
-    private Message message(final Long number) throws Exception {
+    private Message message(final Long number) {
         final Long bnum = this.hub().make("get-bout-of-message")
             .synchronously()
             .arg(number)
@@ -101,7 +108,15 @@ final class Indexer extends AbstractCron {
             .synchronously()
             .arg(bnum)
             .exec();
-        return this.hub().identity(dudes.get(0)).bout(bnum).message(number);
+        try {
+            return this.hub().identity(dudes.get(0)).bout(bnum).message(number);
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            throw new IllegalStateException(ex);
+        } catch (com.netbout.spi.BoutNotFoundException ex) {
+            throw new IllegalStateException(ex);
+        } catch (com.netbout.spi.MessageNotFoundException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
 }

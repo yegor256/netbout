@@ -26,8 +26,14 @@
  */
 package com.netbout.hub.data;
 
-import com.netbout.hub.Hub;
+import com.netbout.hub.BoutDt;
 import com.netbout.hub.ParticipantDt;
+import com.netbout.hub.PowerHub;
+import com.netbout.hub.inf.InfBout;
+import com.netbout.hub.inf.InfIdentity;
+import com.netbout.inf.notices.JoinNotice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.jcabi.log.Logger;
 
@@ -42,7 +48,7 @@ final class ParticipantData implements ParticipantDt {
     /**
      * Bus to work with.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * Bout data.
@@ -70,7 +76,8 @@ final class ParticipantData implements ParticipantDt {
      * @param num The number
      * @param idnt The identity
      */
-    public ParticipantData(final Hub ihub, final BoutDt bdata, final Urn idnt) {
+    public ParticipantData(final PowerHub ihub, final BoutDt bdata,
+        final Urn idnt) {
         this.hub = ihub;
         assert bdata != null;
         this.boutdt = bdata;
@@ -83,7 +90,7 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public Long getBout() {
-        return this.bout;
+        return this.boutdt.getNumber();
     }
 
     /**
@@ -99,23 +106,23 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public void setConfirmed(final Boolean flag) {
-        synchronized (this.bout) {
+        synchronized (this.boutdt) {
             this.confirmed = flag;
             this.hub.make("changed-participant-status")
                 .asap()
-                .arg(this.bout)
+                .arg(this.boutdt.getNumber())
                 .arg(this.identity)
                 .arg(flag)
                 .asDefault(true)
                 .exec();
-            this.hub.see(
-                new ParticipationConfirmedNotice() {
+            this.hub.infinity().see(
+                new JoinNotice() {
                     @Override
                     public Bout bout() {
-                        return new InfMessage(ParticipantData.this.boutdt);
+                        return new InfBout(ParticipantData.this.boutdt);
                     }
                     @Override
-                    public Identity confirmedBy() {
+                    public Identity identity() {
                         return new InfIdentity(ParticipantData.this.identity);
                     }
                 }
@@ -133,11 +140,11 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public Boolean isConfirmed() {
-        synchronized (this.bout) {
+        synchronized (this.boutdt) {
             if (this.confirmed == null) {
                 this.confirmed = this.hub.make("get-participant-status")
                     .synchronously()
-                    .arg(this.bout)
+                    .arg(this.boutdt.getNumber())
                     .arg(this.identity)
                     .exec();
             }
@@ -150,11 +157,11 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public void setLeader(final Boolean flag) {
-        synchronized (this.bout) {
+        synchronized (this.boutdt) {
             this.leader = flag;
             this.hub.make("changed-participant-leadership")
                 .asap()
-                .arg(this.bout)
+                .arg(this.boutdt.getNumber())
                 .arg(this.identity)
                 .arg(flag)
                 .asDefault(true)
@@ -172,11 +179,11 @@ final class ParticipantData implements ParticipantDt {
      */
     @Override
     public Boolean isLeader() {
-        synchronized (this.bout) {
+        synchronized (this.boutdt) {
             if (this.leader == null) {
                 this.leader = this.hub.make("get-participant-leadership")
                     .synchronously()
-                    .arg(this.bout)
+                    .arg(this.boutdt.getNumber())
                     .arg(this.identity)
                     .exec();
             }

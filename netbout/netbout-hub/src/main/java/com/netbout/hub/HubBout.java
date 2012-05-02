@@ -268,16 +268,20 @@ public final class HubBout implements Bout {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Iterable<Message> messages(final String query) {
-        return new LazyMessages(
-            this.hub.infinity().messages(
-                String.format(
-                    "(and (equal $bout.number %d) %s)",
-                    this.number(),
-                    NetboutUtils.normalize(query)
-                )
-            ),
-            this
-        );
+        try {
+            return new LazyMessages(
+                this.hub.infinity().messages(
+                    String.format(
+                        "(and (equal $bout.number %d) %s)",
+                        this.number(),
+                        NetboutUtils.normalize(query)
+                    )
+                ),
+                this
+            );
+        } catch (com.netbout.inf.InvalidSyntaxException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**

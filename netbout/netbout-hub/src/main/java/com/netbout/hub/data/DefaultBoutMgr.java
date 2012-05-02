@@ -27,8 +27,8 @@
 package com.netbout.hub.data;
 
 import com.netbout.hub.BoutMgr;
-import com.netbout.hub.Hub;
 import com.netbout.hub.ParticipantDt;
+import com.netbout.hub.PowerHub;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
@@ -60,7 +60,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
     /**
      * Bus to work with.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * Public ctor, for JAXB.
@@ -73,7 +73,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
      * Public ctor.
      * @param ihub The hub
      */
-    public DefaultBoutMgr(final Hub ihub) {
+    public DefaultBoutMgr(final PowerHub ihub) {
         this.hub = ihub;
     }
 

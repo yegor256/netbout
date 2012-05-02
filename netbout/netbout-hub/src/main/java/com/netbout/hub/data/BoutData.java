@@ -27,9 +27,19 @@
 package com.netbout.hub.data;
 
 import com.netbout.hub.BoutDt;
-import com.netbout.hub.Hub;
 import com.netbout.hub.MessageDt;
 import com.netbout.hub.ParticipantDt;
+import com.netbout.hub.PowerHub;
+import com.netbout.hub.inf.InfBout;
+import com.netbout.hub.inf.InfIdentity;
+import com.netbout.hub.inf.InfMessage;
+import com.netbout.inf.notices.BoutRenamedNotice;
+import com.netbout.inf.notices.JoinNotice;
+import com.netbout.inf.notices.KickOffNotice;
+import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
 import com.jcabi.log.Logger;
@@ -52,7 +62,7 @@ final class BoutData implements BoutDt {
     /**
      * Hub to work with.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * The number.
@@ -92,7 +102,7 @@ final class BoutData implements BoutDt {
      * @param num The number
      * @param lstr Listener of message operations
      */
-    public BoutData(final Hub ihub, final Long num, final MsgListener lstr) {
+    public BoutData(final PowerHub ihub, final Long num, final MsgListener lstr) {
         this.hub = ihub;
         assert num != null;
         this.number = num;
@@ -138,7 +148,7 @@ final class BoutData implements BoutDt {
                 }
                 @Override
                 public Identity identity() {
-                    return new InfIdentity(identity.name());
+                    return new InfIdentity(identity);
                 }
             }
         );
@@ -255,7 +265,7 @@ final class BoutData implements BoutDt {
     @Override
     public ParticipantDt addParticipant(final Urn name) {
         final ParticipantDt data =
-            new ParticipantData(this.hub, this.number, name);
+            new ParticipantData(this.hub, this, name);
         synchronized (this.number) {
             this.getParticipants().add(data);
             this.hub.make("added-bout-participant")
@@ -265,14 +275,14 @@ final class BoutData implements BoutDt {
                 .asDefault(true)
                 .exec();
             this.hub.infinity().see(
-                new ParticipantInvitedNotice() {
+                new JoinNotice() {
                     @Override
                     public Bout bout() {
                         return new InfBout(BoutData.this);
                     }
                     @Override
-                    public Identity invitee() {
-                        return new InfIdentity(urn);
+                    public Identity identity() {
+                        return new InfIdentity(name);
                     }
                 }
             );
@@ -304,7 +314,7 @@ final class BoutData implements BoutDt {
                     .exec();
                 for (Urn identity : identities) {
                     this.participants.add(
-                        new ParticipantData(this.hub, this.number, identity)
+                        new ParticipantData(this.hub, this, identity)
                     );
                 }
             }
@@ -323,14 +333,14 @@ final class BoutData implements BoutDt {
                 .arg(this.number)
                 .asDefault(1L)
                 .exec();
-            final MessageDt data = new MessageData(this.hub, num);
+            final MessageDt data = new MessageData(this.hub, num, this);
             this.messages.put(num, data);
             this.listener.messageCreated(num, this.number);
             this.hub.infinity().see(
                 new MessagePostedNotice() {
                     @Override
                     public Message message() {
-                        return new InfMessage(data);
+                        return new InfMessage(data, BoutData.this);
                     }
                 }
             );
@@ -363,7 +373,7 @@ final class BoutData implements BoutDt {
                 if (!exists) {
                     throw new MessageNotFoundException(num);
                 }
-                this.messages.put(num, new MessageData(this.hub, num));
+                this.messages.put(num, new MessageData(this.hub, num, this));
             }
         }
         return this.messages.get(num);
