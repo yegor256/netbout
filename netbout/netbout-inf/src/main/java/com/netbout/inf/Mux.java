@@ -26,8 +26,8 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Urn;
 import com.jcabi.log.Logger;
+import com.netbout.spi.Urn;
 import java.io.Closeable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -264,6 +264,7 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
         private void run(final MuxTask task) {
             try {
                 task.run();
+            // @checkstyle IllegalCatch (1 line)
             } catch (RuntimeException ex) {
                 Logger.error(
                     this,

@@ -26,10 +26,10 @@
  */
 package com.netbout.inf.ebs;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Folder;
 import com.rexsl.core.Manifests;
 import com.rexsl.test.RestTester;
-import com.jcabi.log.Logger;
 import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URI;

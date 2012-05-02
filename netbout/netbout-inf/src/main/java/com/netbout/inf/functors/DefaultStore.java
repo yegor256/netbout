@@ -26,12 +26,12 @@
  */
 package com.netbout.inf.functors;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Functor;
 import com.netbout.inf.InvalidSyntaxException;
 import com.netbout.inf.Notice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Store;
-import com.jcabi.log.Logger;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

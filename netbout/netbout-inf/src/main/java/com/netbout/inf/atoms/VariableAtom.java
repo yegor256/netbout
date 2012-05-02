@@ -107,6 +107,7 @@ public enum VariableAtom implements Atom<String> {
 
     /**
      * Parse text and create variable atom.
+     * @param text Some text to parse
      * @return The atom
      */
     public static VariableAtom parse(final String text) {

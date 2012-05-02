@@ -99,8 +99,8 @@ final class MemCursor implements Cursor {
         this.update(
             new Updater() {
                 @Override
-                public void update(final Index index, final long msg) {
-                    index.add(msg, value);
+                public void update(final Index index, final long num) {
+                    index.add(num, value);
                 }
             },
             attr,
@@ -117,8 +117,8 @@ final class MemCursor implements Cursor {
         this.update(
             new Updater() {
                 @Override
-                public void update(final Index index, final long msg) {
-                    index.replace(msg, value);
+                public void update(final Index index, final long num) {
+                    index.replace(num, value);
                 }
             },
             attr,
@@ -134,8 +134,8 @@ final class MemCursor implements Cursor {
         this.update(
             new Updater() {
                 @Override
-                public void update(final Index index, final long msg) {
-                    index.delete(msg);
+                public void update(final Index index, final long num) {
+                    index.delete(num);
                 }
             },
             attr,
@@ -151,8 +151,8 @@ final class MemCursor implements Cursor {
         this.update(
             new Updater() {
                 @Override
-                public void update(final Index index, final long msg) {
-                    index.delete(msg, value);
+                public void update(final Index index, final long num) {
+                    index.delete(num, value);
                 }
             },
             attr,
@@ -209,14 +209,13 @@ final class MemCursor implements Cursor {
 
     /**
      * Manipulate on index.
-     * @param man The manipulator to use
+     * @param updater The updater to use
      * @param attr The attribute
      * @param term The term
      */
     private void update(final MemCursor.Updater updater,
         final String attr, final Term term) {
         final Index index = this.imap.index(attr);
-        long num = this.msg;
         Cursor cursor = this;
         while (!cursor.end()) {
             updater.update(index, cursor.msg().number());
@@ -231,7 +230,7 @@ final class MemCursor implements Cursor {
         /**
          * Update index.
          * @param index The index
-         * @param attr The attribute
+         * @param msg The number of message to work with
          */
         void update(Index index, long msg);
     }

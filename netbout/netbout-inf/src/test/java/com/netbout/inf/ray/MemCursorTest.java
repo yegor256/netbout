@@ -27,7 +27,6 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.TermBuilder;
 import java.util.Random;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;

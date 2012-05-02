@@ -73,6 +73,7 @@ public final class DefaultIndexTest {
         final Index index = new DefaultIndex();
         final long msg = new Random().nextLong();
         final String value = "text-\u0433!";
+        // @checkstyle MagicNumber (1 line)
         for (int pos = 1; pos < 10; ++pos) {
             index.add(msg - pos, value);
         }

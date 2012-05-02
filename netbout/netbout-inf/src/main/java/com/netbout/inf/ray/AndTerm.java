@@ -28,18 +28,15 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.SortedSet;
 
 /**
  * AND term.
  *
  * <p>The class is immutable and thread-safe.
- * 
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */

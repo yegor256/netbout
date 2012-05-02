@@ -27,7 +27,6 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.InvalidSyntaxException;
 import com.netbout.inf.Ray;
@@ -36,8 +35,6 @@ import com.netbout.inf.atoms.PredicateAtom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * AND.

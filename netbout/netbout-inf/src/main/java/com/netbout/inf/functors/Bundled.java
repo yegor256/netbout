@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.functors;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
@@ -35,7 +36,6 @@ import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.jcabi.log.Logger;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;

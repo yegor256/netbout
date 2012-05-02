@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.notices.AliasAddedNotice;
 import com.netbout.inf.notices.BoutNotice;
 import com.netbout.inf.notices.BoutRenamedNotice;
@@ -38,7 +39,6 @@ import com.netbout.inf.notices.MessageSeenNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import com.jcabi.log.Logger;
 import java.util.HashSet;
 import java.util.Set;
 

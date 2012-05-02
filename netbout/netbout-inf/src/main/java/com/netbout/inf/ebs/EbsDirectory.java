@@ -26,10 +26,10 @@
  */
 package com.netbout.inf.ebs;
 
+import com.jcabi.log.Logger;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import com.jcabi.log.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;

@@ -28,9 +28,6 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.SortedSet;
 
 /**
  * Slider term.
@@ -55,7 +52,7 @@ final class PickerTerm implements Term {
     /**
      * Public ctor.
      * @param map The index map
-     * @parma num The number
+     * @param num The number
      */
     public PickerTerm(final IndexMap map, final long num) {
         this.imap = map;

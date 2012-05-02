@@ -29,12 +29,10 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.FolderMocker;
 import com.netbout.inf.Ray;
-import com.netbout.inf.TermBuilder;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link MemRay}.

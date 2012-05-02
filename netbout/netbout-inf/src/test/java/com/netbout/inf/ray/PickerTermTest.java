@@ -27,12 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
-import java.util.Arrays;
 import java.util.Random;
-import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

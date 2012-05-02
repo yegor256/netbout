@@ -30,7 +30,6 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.notices.JoinNotice;

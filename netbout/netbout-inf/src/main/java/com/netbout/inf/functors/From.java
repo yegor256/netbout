@@ -29,7 +29,6 @@ package com.netbout.inf.functors;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
-import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;

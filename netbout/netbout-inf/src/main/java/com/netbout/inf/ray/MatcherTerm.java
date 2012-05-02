@@ -28,10 +28,7 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.SortedSet;
 
 /**
  * Matching term.
@@ -100,6 +97,7 @@ final class MatcherTerm implements Term {
         if (iterator.hasNext()) {
             next = iterator.next();
             if (next == ignore) {
+                // @checkstyle NestedIfDepth (1 line)
                 if (iterator.hasNext()) {
                     next = iterator.next();
                 } else {

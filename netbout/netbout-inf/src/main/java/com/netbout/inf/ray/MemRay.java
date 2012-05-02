@@ -26,16 +26,13 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
-import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
-import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * In-memory implementation of {@link Ray}.
