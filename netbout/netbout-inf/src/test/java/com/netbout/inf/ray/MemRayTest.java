@@ -55,7 +55,7 @@ public final class MemRayTest {
         final String value = "some value to set, \u0433!";
         ray.msg(1L);
         ray.cursor().add(
-            ray.builder().matcher(TermBuilder.NUMBER, number.toString()),
+            ray.builder().picker(number),
             attribute,
             value
         );

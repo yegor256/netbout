@@ -26,8 +26,11 @@
  */
 package com.netbout.inf.ray;
 
+import java.util.Collections;
+import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Index map.
@@ -46,6 +49,12 @@ final class DefaultIndexMap implements IndexMap {
         new ConcurrentHashMap<String, Index>();
 
     /**
+     * All message numbers.
+     */
+    private final transient SortedSet<Long> all =
+        new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -54,6 +63,22 @@ final class DefaultIndexMap implements IndexMap {
             this.map.putIfAbsent(attr, new DefaultIndex());
         }
         return this.map.get(attr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void touch(final long number) {
+        this.all.add(number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SortedSet<Long> msgs() {
+        return Collections.unmodifiableSortedSet(this.all);
     }
 
 }

@@ -28,7 +28,6 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -69,19 +68,36 @@ final class NotTerm implements Term {
     @Override
     public Cursor shift(final Cursor cursor) {
         Cursor shifted = cursor;
-        long first;
+        Cursor candidate = cursor;
         while (!shifted.end()) {
-            first = shifted.msg().number();
+            candidate = new MemCursor(
+                this.next(shifted.msg().number()),
+                this.imap
+            );
             shifted = this.term.shift(shifted);
-            if (shifted.end()) {
-                break;
-            }
-            if (shifted.msg().number() < first) {
-                shifted = new MemCursor(first, this.imap);
+            if (shifted.compareTo(candidate) < 0) {
                 break;
             }
         }
-        return shifted;
+        return candidate;
+    }
+
+    /**
+     * Get next message number after this one.
+     * @param number The number to use
+     * @return Next one or zero if there is nothing else
+     */
+    private long next(final long number) {
+        final SortedSet<Long> tail = this.imap.msgs().tailSet(number);
+        long next;
+        if (tail.size() < 2) {
+            next = 0L;
+        } else {
+            final Iterator<Long> iterator = tail.iterator();
+            iterator.next();
+            next = iterator.next();
+        }
+        return next;
     }
 
 }

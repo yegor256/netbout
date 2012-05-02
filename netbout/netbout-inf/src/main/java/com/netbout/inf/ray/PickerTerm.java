@@ -24,63 +24,58 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf.ray;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.Functor;
-import com.netbout.inf.Ray;
+import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import com.netbout.inf.atoms.VariableAtom;
-import com.netbout.inf.notices.MessagePostedNotice;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.SortedSet;
 
 /**
- * Allows only messages where variable equals to value.
+ * Slider term.
  *
- * <p>This class is thread-safe.
+ * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("equal")
-final class Equal implements Functor {
+final class PickerTerm implements Term {
+
+    /**
+     * Index map.
+     */
+    private final transient IndexMap imap;
+
+    /**
+     * Number of message to pick.
+     */
+    private final transient long number;
+
+    /**
+     * Public ctor.
+     * @param map The index map
+     * @parma num The number
+     */
+    public PickerTerm(final IndexMap map, final long num) {
+        this.imap = map;
+        this.number = num;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
-        return ray.builder().matcher(
-            VariableAtom.class.cast(atoms.get(0)).attribute(),
-            atoms.get(1).value().toString()
-        );
-    }
-
-    /**
-     * Notice when new message is posted.
-     * @param ray The ray
-     * @param notice The notice
-     */
-    @Noticable
-    public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Term matcher = ray.builder().picker(
-            ray.msg(notice.message().number()).number()
-        );
-        ray.cursor().replace(
-            matcher,
-            VariableAtom.NUMBER.attribute(),
-            notice.message().number().toString()
-        );
-        ray.cursor().replace(
-            matcher,
-            VariableAtom.BOUT_NUMBER.attribute(),
-            notice.message().bout().number().toString()
-        );
-        ray.cursor().replace(
-            matcher,
-            VariableAtom.AUTHOR_NAME.attribute(),
-            notice.message().author().toString()
-        );
+    public Cursor shift(final Cursor cursor) {
+        Cursor shifted;
+        if (cursor.end()) {
+            shifted = cursor;
+        } else if (cursor.msg().number() > this.number) {
+            shifted = new MemCursor(this.number, this.imap);
+        } else {
+            shifted = new MemCursor(0L, this.imap);
+        }
+        return shifted;
     }
 
 }

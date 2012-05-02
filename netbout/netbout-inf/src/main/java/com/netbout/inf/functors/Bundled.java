@@ -31,7 +31,6 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
@@ -94,10 +93,7 @@ final class Bundled implements Functor {
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
         ray.cursor().replace(
-            ray.builder().matcher(
-                TermBuilder.NUMBER,
-                notice.message().number().toString()
-            ),
+            ray.builder().picker(notice.message().number()),
             Bundled.ATTR,
             Bundled.marker(notice.message())
         );

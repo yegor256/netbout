@@ -73,9 +73,8 @@ final class TalksWith implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Term matcher = ray.builder().matcher(
-            TermBuilder.NUMBER,
-            Long.toString(ray.msg(notice.message().number()).number())
+        final Term matcher = ray.builder().picker(
+            ray.msg(notice.message().number()).number()
         );
         ray.cursor().delete(matcher, TalksWith.ATTR);
         for (Participant dude : notice.message().bout().participants()) {

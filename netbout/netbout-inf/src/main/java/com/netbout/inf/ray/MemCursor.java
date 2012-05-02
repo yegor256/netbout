@@ -81,6 +81,20 @@ final class MemCursor implements Cursor {
      * {@inheritDoc}
      */
     @Override
+    public int compareTo(final Cursor cursor) {
+        Long number;
+        if (cursor.end()) {
+            number = 0L;
+        } else {
+            number = cursor.msg().number();
+        }
+        return Long.valueOf(this.msg).compareTo(number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void add(final Term term, final String attr, final String value) {
         this.update(
             new Updater() {

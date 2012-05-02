@@ -30,7 +30,6 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
 import java.util.ArrayList;
@@ -80,9 +79,8 @@ final class Matches implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Term matcher = ray.builder().matcher(
-            TermBuilder.NUMBER,
-            Long.toString(ray.msg(notice.message().number()).number())
+        final Term matcher = ray.builder().picker(
+            ray.msg(notice.message().number()).number()
         );
         for (String word : Matches.words(notice.message().text())) {
             ray.cursor().add(matcher, Matches.ATTR, word);

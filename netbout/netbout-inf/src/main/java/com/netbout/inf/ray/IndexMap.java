@@ -26,9 +26,11 @@
  */
 package com.netbout.inf.ray;
 
+import java.util.SortedSet;
+
 /**
  * Index.
- * 
+ *
  * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
@@ -42,5 +44,17 @@ interface IndexMap {
      * @return The index
      */
     Index index(String attribute);
+
+    /**
+     * This message was used somewhere.
+     * @param number Number of it
+     */
+    void touch(long number);
+
+    /**
+     * Sorted set of all messages.
+     * @return Sorted set of them
+     */
+    SortedSet<Long> msgs();
 
 }

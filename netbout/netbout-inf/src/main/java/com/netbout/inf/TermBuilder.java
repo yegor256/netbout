@@ -39,11 +39,6 @@ import java.util.Collection;
 public interface TermBuilder {
 
     /**
-     * Number of message.
-     */
-    String NUMBER = "#number";
-
-    /**
      * Create attribute matching term.
      * @param name Name of attribute
      * @param value Value of attribute
@@ -78,5 +73,12 @@ public interface TermBuilder {
      * @return The term
      */
     Term never();
+
+    /**
+     * Slider, which shifts to the next available message.
+     * @param number Number of message to pick
+     * @return The term
+     */
+    Term picker(long number);
 
 }

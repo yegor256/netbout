@@ -100,4 +100,12 @@ final class MemTermBuilder implements TermBuilder {
         };
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Term picker(final long number) {
+        return new PickerTerm(this.imap, number);
+    }
+
 }

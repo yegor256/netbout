@@ -49,15 +49,11 @@ public final class MemCursorTest {
     public void addsValuesToSelectedMessages() throws Exception {
         final IndexMap map = new DefaultIndexMap();
         final Long msg = new Random().nextLong();
-        map.index(TermBuilder.NUMBER).replace(msg, msg.toString());
+        map.touch(msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         final String attr = "attribute name";
         final String value = "some text \u0433!";
-        cursor.add(
-            new MatcherTerm(map, TermBuilder.NUMBER, msg.toString()),
-            attr,
-            value
-        );
+        cursor.add(new PickerTerm(map, msg), attr, value);
         MatcherAssert.assertThat(
             map.index(attr).values(msg),
             Matchers.allOf(

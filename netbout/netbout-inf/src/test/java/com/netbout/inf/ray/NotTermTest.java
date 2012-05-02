@@ -54,24 +54,19 @@ public final class NotTermTest {
         final String attr = "attribute name";
         final String value = "some text-1 \u0433!";
         final long msg = new Random().nextLong();
-        map.index(attr).add(msg + 1, "irrelevant");
         map.index(attr).add(msg, value);
-        map.index(attr).add(msg - 1, "irrelevant again");
+        map.index(attr).add(msg - 1, "should be found by NOT term");
         final Term term = new NotTerm(
             map,
             new MatcherTerm(map, attr, value)
         );
-        final Cursor cursor = new MemCursor(msg + 1, map);
+        final Cursor cursor = new MemCursor(msg, map);
         MatcherAssert.assertThat(
             term.shift(cursor).msg().number(),
-            Matchers.equalTo(msg + 1)
-        );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).msg().number(),
             Matchers.equalTo(msg - 1)
         );
         MatcherAssert.assertThat(
-            term.shift(term.shift(term.shift(cursor))).end(),
+            term.shift(term.shift(cursor)).end(),
             Matchers.equalTo(true)
         );
     }

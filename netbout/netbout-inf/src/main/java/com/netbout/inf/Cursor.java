@@ -34,7 +34,7 @@ package com.netbout.inf;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Cursor {
+public interface Cursor extends Comparable<Cursor> {
 
     /**
      * Add attribute to every msg including this one, which satisfy the

@@ -24,62 +24,44 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf.ray;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.Functor;
-import com.netbout.inf.Ray;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Term;
-import com.netbout.inf.atoms.VariableAtom;
-import com.netbout.inf.notices.MessagePostedNotice;
-import java.util.List;
+import com.netbout.inf.TermBuilder;
+import java.util.Arrays;
+import java.util.Random;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Allows only messages where variable equals to value.
- *
- * <p>This class is thread-safe.
- *
+ * Test case of {@link PickerTerm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("equal")
-final class Equal implements Functor {
+public final class PickerTermTest {
 
     /**
-     * {@inheritDoc}
+     * PickerTerm can pick one message by number.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
-        return ray.builder().matcher(
-            VariableAtom.class.cast(atoms.get(0)).attribute(),
-            atoms.get(1).value().toString()
+    @Test
+    public void shiftsCursorToTheFirstValue() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final long msg = new Random().nextLong();
+        map.touch(msg);
+        final Term term = new PickerTerm(map, msg);
+        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
+        MatcherAssert.assertThat(
+            term.shift(cursor).msg().number(),
+            Matchers.equalTo(msg)
         );
-    }
-
-    /**
-     * Notice when new message is posted.
-     * @param ray The ray
-     * @param notice The notice
-     */
-    @Noticable
-    public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Term matcher = ray.builder().picker(
-            ray.msg(notice.message().number()).number()
-        );
-        ray.cursor().replace(
-            matcher,
-            VariableAtom.NUMBER.attribute(),
-            notice.message().number().toString()
-        );
-        ray.cursor().replace(
-            matcher,
-            VariableAtom.BOUT_NUMBER.attribute(),
-            notice.message().bout().number().toString()
-        );
-        ray.cursor().replace(
-            matcher,
-            VariableAtom.AUTHOR_NAME.attribute(),
-            notice.message().author().toString()
+        MatcherAssert.assertThat(
+            term.shift(term.shift(cursor)).end(),
+            Matchers.equalTo(true)
         );
     }
 

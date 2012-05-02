@@ -29,6 +29,7 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
+import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
 import com.jcabi.log.Logger;
 import java.io.File;
@@ -81,11 +82,8 @@ public final class MemRay implements Ray {
      */
     @Override
     public Msg msg(final long number) {
-        this.imap.index(TermBuilder.NUMBER)
-            .replace(number, Long.toString(number));
-        return this.cursor().shift(
-            this.builder().matcher(TermBuilder.NUMBER, Long.toString(number))
-        ).msg();
+        this.imap.touch(number);
+        return this.cursor().shift(this.builder().picker(number)).msg();
     }
 
     /**
