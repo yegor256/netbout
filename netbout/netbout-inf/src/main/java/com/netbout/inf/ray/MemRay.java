@@ -94,4 +94,12 @@ public final class MemRay implements Ray {
         return new MemTermBuilder(this.imap);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long maximum() {
+        return this.imap.maximum();
+    }
+
 }

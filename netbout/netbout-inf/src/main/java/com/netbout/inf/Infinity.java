@@ -56,7 +56,7 @@ public interface Infinity extends Closeable {
      * How many messages were seen totally by this infinity?
      * @return Maximum number of the message seen so far
      */
-    Long maximum();
+    long maximum();
 
     /**
      * Send this notice to infinity.

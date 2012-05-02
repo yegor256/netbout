@@ -167,8 +167,8 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public Long maximum() {
-        return 0L;
+    public long maximum() {
+        return this.ray.maximum();
     }
 
     /**

@@ -57,4 +57,10 @@ interface IndexMap {
      */
     SortedSet<Long> msgs();
 
+    /**
+     * Maximum number of the message here (or zero if no messages).
+     * @return The number
+     */
+    long maximum();
+
 }

@@ -70,6 +70,12 @@ final class DefaultIndexMap implements IndexMap {
      */
     @Override
     public void touch(final long number) {
+        if (number == 0L) {
+            throw new IllegalArgumentException("msg number can't be ZERO");
+        }
+        if (number == Long.MAX_VALUE) {
+            throw new IllegalArgumentException("msg number can't be MAX_VALUE");
+        }
         this.all.add(number);
     }
 
@@ -79,6 +85,20 @@ final class DefaultIndexMap implements IndexMap {
     @Override
     public SortedSet<Long> msgs() {
         return Collections.unmodifiableSortedSet(this.all);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long maximum() {
+        long max;
+        if (this.all.isEmpty()) {
+            max = 0L;
+        } else {
+            max = this.all.first();
+        }
+        return max;
     }
 
 }

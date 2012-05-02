@@ -57,4 +57,10 @@ public interface Ray extends Closeable {
      */
     TermBuilder builder();
 
+    /**
+     * How many messages were seen totally by this ray?
+     * @return Maximum number of the msg here
+     */
+    long maximum();
+
 }

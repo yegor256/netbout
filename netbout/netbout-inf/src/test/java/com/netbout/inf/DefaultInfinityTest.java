@@ -26,9 +26,13 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -46,9 +50,10 @@ public final class DefaultInfinityTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void populatesIndexOnFirstTimeCall() throws Exception {
+    public void findsMessageJustPosted() throws Exception {
         final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
-        final Message msg = new MessageMocker().mock();
+        final Urn urn = new UrnMocker().mock();
+        final Message msg = new MessageMocker().withAuthor(urn).mock();
         inf.see(
             new MessagePostedNotice() {
                 @Override
@@ -57,6 +62,10 @@ public final class DefaultInfinityTest {
                 }
             }
         );
+        while (inf.eta(urn) > 0) {
+            TimeUnit.SECONDS.sleep(1);
+            Logger.debug(this, "eta=%d", inf.eta(urn));
+        }
         MatcherAssert.assertThat(
             inf.messages(String.format("(equal $number %d)", msg.number())),
             (Matcher) Matchers.iterableWithSize(1)

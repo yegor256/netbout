@@ -261,12 +261,10 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
          * Run one task.
          * @param task The task to run
          */
-        @SuppressWarnings("PMD.AvoidCatchingThrowable")
         private void run(final MuxTask task) {
             try {
                 task.run();
-            // @checkstyle IllegalCatch (1 line)
-            } catch (Throwable ex) {
+            } catch (RuntimeException ex) {
                 Logger.error(
                     this,
                     "#run('%s'): %[exception]s",
