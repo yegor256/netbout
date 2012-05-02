@@ -64,7 +64,7 @@ public final class DefaultStore implements Store {
                 if (method.getAnnotation(Noticable.class) == null) {
                     continue;
                 }
-                if (!method.getParameterTypes()[1].equals(notice.getClass())) {
+                if (!method.getParameterTypes()[1].isInstance(notice)) {
                     continue;
                 }
                 try {
@@ -78,6 +78,12 @@ public final class DefaultStore implements Store {
                 } catch (java.lang.reflect.InvocationTargetException ex) {
                     throw new IllegalStateException(method.toString(), ex);
                 }
+                Logger.debug(
+                    this,
+                    "#see(): %s received %[type]s",
+                    method.toGenericString(),
+                    notice
+                );
             }
         }
     }
