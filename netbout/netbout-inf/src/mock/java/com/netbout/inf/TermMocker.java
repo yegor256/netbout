@@ -24,46 +24,55 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Functor;
-import com.netbout.inf.Ray;
-import com.netbout.inf.Term;
-import com.netbout.inf.atoms.NumberAtom;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
- * Allows only message at this position.
- *
- * <p>This class is thread-safe.
- *
+ * Mocker of {@link Term}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("pos")
-final class Pos implements Functor {
+public final class TermMocker {
 
     /**
-     * {@inheritDoc}
+     * The object.
      */
-    @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
-        final long desired = NumberAtom.class.cast(atoms.get(0)).value();
-        return new Term() {
-            private final transient AtomicLong position = new AtomicLong(0L);
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                Cursor shifted = cursor;
-                System.out.println("shifted: " + this.position.get());
-                if (this.position.getAndIncrement() > desired) {
-                    shifted = shifted.shift(ray.builder().never());
+    private final transient Term term = Mockito.mock(Term.class);
+
+    /**
+     * Always shift to this msg.
+     * @param msg The msg to shift to
+     * @return This object
+     */
+    public TermMocker shiftTo(final long msg) {
+        return this.shiftTo(new CursorMocker().withMsg(msg).mock());
+    }
+
+    /**
+     * Always shift to this msg.
+     * @param cursor The cursor to shift to
+     * @return This object
+     */
+    public TermMocker shiftTo(final Cursor cursor) {
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    return cursor;
                 }
-                return shifted;
             }
-        };
+        ).when(this.term).shift(Mockito.any(Cursor.class));
+        return this;
+    }
+
+    /**
+     * Build it.
+     * @return The term
+     */
+    public Term mock() {
+        return this.term;
     }
 
 }

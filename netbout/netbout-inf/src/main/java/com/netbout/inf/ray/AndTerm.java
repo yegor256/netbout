@@ -77,13 +77,12 @@ final class AndTerm implements Term {
             for (Term term : this.terms) {
                 cursors.put(term, cursor);
             }
-            long msg = cursor.msg().number() - 1;
-            while (true) {
-                slider = this.cycle(cursors, msg);
+            slider = cursor.shift(new AlwaysTerm(this.imap));
+            while (!slider.end()) {
+                slider = this.cycle(cursors, slider);
                 if (slider.end() || this.match(cursors.values())) {
                     break;
                 }
-                msg = slider.msg().number();
             }
         }
         return slider;
@@ -95,16 +94,14 @@ final class AndTerm implements Term {
      * @param until Until we reach (or pass) this point
      * @return Result of the cycle run
      */
-    private Cursor cycle(final Map<Term, Cursor> cursors, final long until) {
-        long anchor = until;
+    private Cursor cycle(final Map<Term, Cursor> cursors, final Cursor until) {
         Cursor slider = new MemCursor(0L, this.imap);
         for (Term term : this.terms) {
-            slider = this.slide(cursors.get(term), term, anchor);
+            slider = this.slide(cursors.get(term), term, until);
             cursors.put(term, slider);
             if (slider.end()) {
                 break;
             }
-            anchor = slider.msg().number();
         }
         return slider;
     }
@@ -118,13 +115,13 @@ final class AndTerm implements Term {
      * @return New cursor, where we stopped (may be the end)
      */
     private Cursor slide(final Cursor cursor, final Term term,
-        final long until) {
+        final Cursor until) {
         Cursor slider = cursor;
         while (true) {
             if (slider.end()) {
                 break;
             }
-            if (slider.msg().number() <= until) {
+            if (slider.compareTo(until) <= 0) {
                 break;
             }
             slider = term.shift(slider);

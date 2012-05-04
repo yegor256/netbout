@@ -28,6 +28,7 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import com.netbout.inf.TermMocker;
 import java.util.Arrays;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
@@ -54,11 +55,15 @@ public final class AndTermTest {
         final String third = "some text-3 \u0433!";
         final long msg = new Random().nextLong();
         map.index(attr).add(msg + 1, first);
+        map.touch(msg + 1);
         map.index(attr).add(msg, first);
         map.index(attr).add(msg, second);
         map.index(attr).add(msg, third);
+        map.touch(msg);
         map.index(attr).add(msg - 1, second);
+        map.touch(msg - 1);
         map.index(attr).add(msg - 2, third);
+        map.touch(msg - 2);
         final Term term = new AndTerm(
             map,
             Arrays.asList(
@@ -77,6 +82,30 @@ public final class AndTermTest {
         MatcherAssert.assertThat(
             term.shift(term.shift(cursor)).end(),
             Matchers.equalTo(true)
+        );
+    }
+
+    /**
+     * AndTerm can return back a dead cursor.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void doesntShiftDeadCursor() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final Term term = new AndTerm(
+            map,
+            Arrays.asList(
+                new Term[] {
+                    new TermMocker().shiftTo(1L).mock(),
+                    new TermMocker().shiftTo(1L).mock(),
+                }
+            )
+        );
+        map.touch(1L);
+        final Cursor cursor = new MemCursor(2L, map);
+        MatcherAssert.assertThat(
+            term.shift(cursor).msg().number(),
+            Matchers.equalTo(1L)
         );
     }
 
