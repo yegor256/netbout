@@ -72,17 +72,31 @@ final class AndTerm implements Term {
         if (cursor.end()) {
             slider = cursor;
         } else {
-            final ConcurrentMap<Term, Cursor> cursors =
-                new ConcurrentHashMap<Term, Cursor>();
-            for (Term term : this.terms) {
-                cursors.put(term, cursor);
-            }
             slider = cursor.shift(new AlwaysTerm(this.imap));
-            while (!slider.end()) {
-                slider = this.cycle(cursors, slider);
-                if (slider.end() || this.match(cursors.values())) {
-                    break;
-                }
+            if (!this.terms.isEmpty()) {
+                slider = this.proceed(cursor, slider);
+            }
+        }
+        return slider;
+    }
+
+    /**
+     * Proceed with terms and cursor.
+     * @param initial Initial cursor
+     * @param cursor First cursor
+     * @return Result of the cycle run
+     */
+    private Cursor proceed(final Cursor initial, final Cursor cursor) {
+        final ConcurrentMap<Term, Cursor> cursors =
+            new ConcurrentHashMap<Term, Cursor>();
+        for (Term term : this.terms) {
+            cursors.put(term, initial);
+        }
+        Cursor slider = cursor;
+        while (!slider.end()) {
+            slider = this.cycle(cursors, slider);
+            if (slider.end() || this.match(cursors.values())) {
+                break;
             }
         }
         return slider;

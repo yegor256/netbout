@@ -67,7 +67,7 @@ public final class DefaultInfinityTest {
             Logger.debug(this, "eta=%d", inf.eta(urn));
         }
         final String query = String.format(
-            "(and (and (equal $number %d) (matches '')) (pos 0) (limit 1))",
+            "(and (and (equal $number %d) (matches '')) (pos 0) (limit 1) (unique $bout.number))",
             msg.number()
         );
         MatcherAssert.assertThat(

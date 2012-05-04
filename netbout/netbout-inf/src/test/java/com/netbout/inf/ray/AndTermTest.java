@@ -109,4 +109,20 @@ public final class AndTermTest {
         );
     }
 
+    /**
+     * AndTerm can shift with empty list of terms.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void shiftsWithEmptyListOfTerms() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final Term term = new AndTerm(map, Arrays.asList(new Term[0]));
+        map.touch(1L);
+        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
+        MatcherAssert.assertThat(
+            term.shift(cursor).msg().number(),
+            Matchers.equalTo(1L)
+        );
+    }
+
 }
