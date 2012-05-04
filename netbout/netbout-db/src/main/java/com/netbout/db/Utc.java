@@ -67,8 +67,9 @@ final class Utc {
         if (date.after(new Date())) {
             throw new IllegalStateException(
                 String.format(
-                    "Date '%s' is in the future, can't save it to DB",
-                    date
+                    "Date '%s' is %ms in the future, can't save it to DB",
+                    date,
+                    date.getTime() - new Date().getTime()
                 )
             );
         }
@@ -101,8 +102,9 @@ final class Utc {
         if (date.after(new Date())) {
             throw new IllegalStateException(
                 String.format(
-                    "Date '%s' is in the future, can't retrieve it from DB",
-                    date
+                    "Date '%s' is %dms in the future, can't retrieve from DB",
+                    date,
+                    date.getTime() - new Date().getTime()
                 )
             );
         }
