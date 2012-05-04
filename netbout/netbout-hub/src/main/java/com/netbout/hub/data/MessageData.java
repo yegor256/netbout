@@ -32,6 +32,7 @@ import com.netbout.hub.MessageDt;
 import com.netbout.hub.PowerHub;
 import com.netbout.hub.inf.InfIdentity;
 import com.netbout.hub.inf.InfMessage;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.notices.MessageSeenNotice;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -202,6 +203,17 @@ final class MessageData implements MessageDt {
                 .asDefault(true)
                 .exec();
         }
+        this.hub.infinity().see(
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return new InfMessage(
+                        MessageData.this,
+                        MessageData.this.bdata
+                    );
+                }
+            }
+        );
         Logger.debug(
             this,
             "#setText('%s'): set for msg #%d",

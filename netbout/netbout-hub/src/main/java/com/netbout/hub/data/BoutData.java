@@ -37,7 +37,6 @@ import com.netbout.hub.inf.InfMessage;
 import com.netbout.inf.notices.BoutRenamedNotice;
 import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
-import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -339,14 +338,6 @@ final class BoutData implements BoutDt {
             final MessageDt data = new MessageData(this.hub, num, this);
             this.messages.put(num, data);
             this.listener.messageCreated(num, this.number);
-            this.hub.infinity().see(
-                new MessagePostedNotice() {
-                    @Override
-                    public Message message() {
-                        return new InfMessage(data, BoutData.this);
-                    }
-                }
-            );
             Logger.debug(
                 this,
                 "#addMessage(): new empty message #%d added to bout #%d",

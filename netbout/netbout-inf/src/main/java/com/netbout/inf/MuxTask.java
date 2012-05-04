@@ -194,7 +194,7 @@ final class MuxTask implements Runnable {
         this.store.see(this.ray, this.ntc);
         Logger.debug(
             this,
-            "#execute(): cached \"%s\" in %[nano]s",
+            "#execute(): done \"%s\" in %[nano]s",
             this,
             this.time()
         );
