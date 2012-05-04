@@ -24,58 +24,68 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.functors;
 
-import com.jcabi.log.Logger;
-import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.inf.Atom;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.FolderMocker;
+import com.netbout.inf.Functor;
+import com.netbout.inf.Ray;
+import com.netbout.inf.Term;
+import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.concurrent.TimeUnit;
-import org.hamcrest.Matcher;
+import java.util.Arrays;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link DefaultInfinity}.
+ * Test case of {@link From}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultInfinityTest {
+public final class FromTest {
 
     /**
-     * DefaultInfinity can find messages.
+     * From can start from zero.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void findsMessageJustPosted() throws Exception {
-        final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
-        final Urn urn = new UrnMocker().mock();
-        final Message msg = new MessageMocker()
-            .withAuthor(urn)
-            .withText("some text to index")
-            .mock();
-        inf.see(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return msg;
-                }
-            }
-        );
-        while (inf.eta(urn) > 0) {
-            TimeUnit.SECONDS.sleep(1);
-            Logger.debug(this, "eta=%d", inf.eta(urn));
-        }
-        final String query = String.format(
-            "(and (and (equal $number %d) (matches '')) (pos 0) (from 0) (limit 1) (bundled) (unique $bout.number) (or (matches 'some') (matches 'text')))",
-            msg.number()
+    public void startsFromZero() throws Exception {
+        final Ray ray = new MemRay(new FolderMocker().mock().path());
+        final long msg = new Random().nextLong();
+        ray.msg(msg);
+        final From functor = new From();
+        final Term term = functor.build(
+            ray,
+            Arrays.asList(new Atom[] {new NumberAtom(0L)})
         );
         MatcherAssert.assertThat(
-            inf.messages(query),
-            (Matcher) Matchers.iterableWithSize(1)
+            ray.cursor().shift(term).msg().number(),
+            Matchers.equalTo(msg)
+        );
+    }
+
+    /**
+     * From can start from non-zero point.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void startsFromNonZero() throws Exception {
+        final Ray ray = new MemRay(new FolderMocker().mock().path());
+        final long msg = new Random().nextLong();
+        ray.msg(msg);
+        final From functor = new From();
+        final Term term = functor.build(
+            ray,
+            Arrays.asList(new Atom[] {new NumberAtom(1L)})
+        );
+        MatcherAssert.assertThat(
+            ray.cursor().shift(term).end(),
+            Matchers.equalTo(true)
         );
     }
 

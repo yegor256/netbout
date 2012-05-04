@@ -57,11 +57,15 @@ final class From implements Functor {
             @Override
             public Cursor shift(final Cursor cursor) {
                 Cursor shifted = cursor;
-                if (this.pos.getAndIncrement() < from && !shifted.end()) {
-                    shifted = shifted.shift(
-                        ray.builder().picker(shifted.msg().number() - 1)
-                    );
+                if (!shifted.end()) {
+                    if (shifted.msg().number() == Long.MAX_VALUE) {
+                        shifted = shifted.shift(ray.builder().always());
+                    }
+                    if (this.pos.get() < from) {
+                        shifted = shifted.shift(ray.builder().always());
+                    }
                 }
+                this.pos.getAndIncrement();
                 return shifted;
             }
         };
