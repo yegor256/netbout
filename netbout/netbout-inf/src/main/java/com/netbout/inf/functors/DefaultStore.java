@@ -113,6 +113,9 @@ public final class DefaultStore implements Store {
         final ConcurrentMap<String, Functor> map =
             new ConcurrentHashMap<String, Functor>();
         for (Class type : ref.getSubTypesOf(Functor.class)) {
+            if (type.isMemberClass() || type.isAnonymousClass()) {
+                continue;
+            }
             Functor functor;
             try {
                 functor = Functor.class.cast(type.newInstance());

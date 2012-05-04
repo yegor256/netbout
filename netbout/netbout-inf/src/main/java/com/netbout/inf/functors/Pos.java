@@ -57,10 +57,15 @@ final class Pos implements Functor {
             @Override
             public Cursor shift(final Cursor cursor) {
                 Cursor shifted = cursor;
-                System.out.println("shifted: " + this.position.get());
-                if (this.position.getAndIncrement() > desired) {
-                    shifted = shifted.shift(ray.builder().never());
+                if (!shifted.end()) {
+                    if (shifted.msg().number() == Long.MAX_VALUE) {
+                        shifted = shifted.shift(ray.builder().always());
+                    }
+                    if (this.position.get() > desired) {
+                        shifted = shifted.shift(ray.builder().never());
+                    }
                 }
+                this.position.getAndIncrement();
                 return shifted;
             }
         };

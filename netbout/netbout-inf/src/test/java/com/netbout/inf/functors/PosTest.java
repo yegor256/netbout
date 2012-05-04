@@ -51,25 +51,53 @@ import org.junit.Test;
 public final class PosTest {
 
     /**
-     * Pos can find a msg by position.
+     * Pos can catch the first message in a row.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void findsMessageByKeyword() throws Exception {
+    public void catchesTheFirstMessage() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
         final long msg = new Random().nextLong();
+        ray.msg(msg);
         final Pos functor = new Pos();
         final Term term = functor.build(
             ray,
             Arrays.asList(new Atom[] {new NumberAtom(0L)})
         );
-        final Cursor cursor = ray.cursor().shift(ray.builder().picker(msg));
         MatcherAssert.assertThat(
-            cursor.shift(term).msg().number(),
+            ray.cursor().shift(term).msg().number(),
             Matchers.equalTo(msg)
         );
         MatcherAssert.assertThat(
-            cursor.shift(term).end(),
+            ray.cursor().shift(term).end(),
+            Matchers.equalTo(true)
+        );
+    }
+
+    /**
+     * Pos can catch the second one.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void catchesTheSecondMessage() throws Exception {
+        final Ray ray = new MemRay(new FolderMocker().mock().path());
+        final long msg = new Random().nextLong();
+        ray.msg(msg);
+        final Pos functor = new Pos();
+        final Term term = functor.build(
+            ray,
+            Arrays.asList(new Atom[] {new NumberAtom(1L)})
+        );
+        MatcherAssert.assertThat(
+            ray.cursor().shift(term).end(),
+            Matchers.equalTo(false)
+        );
+        MatcherAssert.assertThat(
+            ray.cursor().shift(term).msg().number(),
+            Matchers.equalTo(msg)
+        );
+        MatcherAssert.assertThat(
+            ray.cursor().shift(term).end(),
             Matchers.equalTo(true)
         );
     }

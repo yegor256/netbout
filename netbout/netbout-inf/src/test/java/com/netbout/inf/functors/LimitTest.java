@@ -24,55 +24,52 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.functors;
 
-import com.jcabi.log.Logger;
-import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.inf.Atom;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.FolderMocker;
+import com.netbout.inf.Functor;
+import com.netbout.inf.Ray;
+import com.netbout.inf.Term;
+import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
-import java.util.concurrent.TimeUnit;
-import org.hamcrest.Matcher;
+import java.util.Arrays;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link DefaultInfinity}.
+ * Test case of {@link Limit}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultInfinityTest {
+public final class LimitTest {
 
     /**
-     * DefaultInfinity can find messages.
+     * Limit can find a msg by limit.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void findsMessageJustPosted() throws Exception {
-        final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
-        final Urn urn = new UrnMocker().mock();
-        final Message msg = new MessageMocker().withAuthor(urn).mock();
-        inf.see(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return msg;
-                }
-            }
+    public void findsMessageByLimit() throws Exception {
+        final Ray ray = new MemRay(new FolderMocker().mock().path());
+        final long msg = new Random().nextLong();
+        final Limit functor = new Limit();
+        final Term term = functor.build(
+            ray,
+            Arrays.asList(new Atom[] {new NumberAtom(1L)})
         );
-        while (inf.eta(urn) > 0) {
-            TimeUnit.SECONDS.sleep(1);
-            Logger.debug(this, "eta=%d", inf.eta(urn));
-        }
-        final String query = String.format(
-            "(and (and (equal $number %d) (matches '')) (pos 0) (limit 1))",
-            msg.number()
+        final Cursor cursor = ray.cursor().shift(ray.builder().picker(msg));
+        MatcherAssert.assertThat(
+            cursor.shift(term).msg().number(),
+            Matchers.equalTo(msg)
         );
         MatcherAssert.assertThat(
-            inf.messages(query),
-            (Matcher) Matchers.iterableWithSize(1)
+            cursor.shift(term).end(),
+            Matchers.equalTo(true)
         );
     }
 
