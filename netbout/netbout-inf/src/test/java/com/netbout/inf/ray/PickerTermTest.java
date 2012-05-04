@@ -48,7 +48,9 @@ public final class PickerTermTest {
     public void shiftsCursorToTheFirstValue() throws Exception {
         final IndexMap map = new DefaultIndexMap();
         final long msg = new Random().nextLong();
+        map.touch(msg + 1);
         map.touch(msg);
+        map.touch(msg - 1);
         final Term term = new PickerTerm(map, msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         MatcherAssert.assertThat(

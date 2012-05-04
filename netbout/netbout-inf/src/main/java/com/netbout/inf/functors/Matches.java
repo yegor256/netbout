@@ -65,11 +65,17 @@ final class Matches implements Functor {
         final Set<String> words = Matches.words(
             TextAtom.class.cast(atoms.get(0)).value()
         );
-        final Collection<Term> terms = new ArrayList<Term>(words.size());
-        for (String word : words) {
-            terms.add(ray.builder().matcher(Matches.ATTR, word));
+        Term term;
+        if (words.isEmpty()) {
+            term = ray.builder().always();
+        } else {
+            final Collection<Term> terms = new ArrayList<Term>(words.size());
+            for (String word : words) {
+                terms.add(ray.builder().matcher(Matches.ATTR, word));
+            }
+            term = ray.builder().or(terms);
         }
-        return ray.builder().or(terms);
+        return term;
     }
 
     /**

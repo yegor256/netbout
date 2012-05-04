@@ -28,18 +28,18 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
-import java.util.Collection;
+import java.util.Iterator;
+import java.util.SortedSet;
 
 /**
- * Default implementation of {@link TermBuilder}.
+ * Always term.
  *
  * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MemTermBuilder implements TermBuilder {
+final class AlwaysTerm implements Term {
 
     /**
      * Index map.
@@ -50,7 +50,7 @@ final class MemTermBuilder implements TermBuilder {
      * Public ctor.
      * @param map The index map
      */
-    public MemTermBuilder(final IndexMap map) {
+    public AlwaysTerm(final IndexMap map) {
         this.imap = map;
     }
 
@@ -58,63 +58,37 @@ final class MemTermBuilder implements TermBuilder {
      * {@inheritDoc}
      */
     @Override
-    public Term matcher(final String name, final String value) {
-        return new MatcherTerm(this.imap, name, value);
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public Cursor shift(final Cursor cursor) {
+        Cursor shifted = cursor;
+        if (!shifted.end()) {
+            shifted = new MemCursor(
+                this.next(shifted.msg().number()),
+                this.imap
+            );
+        }
+        return shifted;
     }
 
     /**
-     * {@inheritDoc}
+     * Get next message number after this one.
+     * @param number The number to use
+     * @return Next one or zero if there is nothing else
      */
-    @Override
-    public Term and(final Collection<Term> terms) {
-        return new AndTerm(this.imap, terms);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle MethodName (4 lines)
-     */
-    @Override
-    @SuppressWarnings("PMD.ShortMethodName")
-    public Term or(final Collection<Term> terms) {
-        return new OrTerm(this.imap, terms);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term never() {
-        return new Term() {
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                return new MemCursor(0L, MemTermBuilder.this.imap);
+    private long next(final long number) {
+        final Iterator<Long> tail = this.imap.msgs().tailSet(number).iterator();
+        long next = 0L;
+        if (tail.hasNext()) {
+            next = tail.next();
+            if (next == number) {
+                if (tail.hasNext()) {
+                    next = tail.next();
+                } else {
+                    next = 0L;
+                }
             }
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term always() {
-        return new AlwaysTerm(this.imap);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term picker(final long number) {
-        return new PickerTerm(this.imap, number);
+        }
+        return next;
     }
 
 }

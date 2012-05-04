@@ -24,68 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.ray;
 
-import java.util.Collection;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.Term;
+import java.util.Random;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Builder of terms.
- *
- * <p>Implementation must be thread-safe.
- *
+ * Test case of {@link AlwaysTerm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface TermBuilder {
+public final class AlwaysTermTest {
 
     /**
-     * Create attribute matching term.
-     * @param name Name of attribute
-     * @param value Value of attribute
-     * @return The term
+     * AlwaysTerm can pick one message by number.
+     * @throws Exception If there is some problem inside
      */
-    Term matcher(String name, String value);
-
-    /**
-     * Logical AND.
-     * @param terms Terms to group
-     * @return The term
-     */
-    Term and(Collection<Term> terms);
-
-    /**
-     * Logical OR.
-     * @param terms Terms to group
-     * @return The term
-     * @checkstyle MethodName (3 lines)
-     */
-    @SuppressWarnings("PMD.ShortMethodName")
-    Term or(Collection<Term> terms);
-
-    /**
-     * Logical NOT.
-     * @param term The term to negate
-     * @return The term
-     */
-    Term not(Term term);
-
-    /**
-     * Never matching term.
-     * @return The term
-     */
-    Term never();
-
-    /**
-     * Always matching term.
-     * @return The term
-     */
-    Term always();
-
-    /**
-     * Slider, which shifts to the next available message.
-     * @param number Number of message to pick
-     * @return The term
-     */
-    Term picker(long number);
+    @Test
+    public void shiftsCursorToTheFirstValue() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final long msg = new Random().nextLong();
+        map.touch(msg);
+        final Term term = new AlwaysTerm(map);
+        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
+        MatcherAssert.assertThat(
+            term.shift(cursor).msg().number(),
+            Matchers.equalTo(msg)
+        );
+        MatcherAssert.assertThat(
+            term.shift(term.shift(cursor)).end(),
+            Matchers.equalTo(true)
+        );
+    }
 
 }
