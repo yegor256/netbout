@@ -56,9 +56,15 @@ final class Limit implements Functor {
             private final transient AtomicLong pos = new AtomicLong(0L);
             @Override
             public Cursor shift(final Cursor cursor) {
+                this.pos.getAndIncrement();
                 Cursor shifted = cursor;
-                if (this.pos.getAndIncrement() >= limit) {
-                    shifted = shifted.shift(ray.builder().never());
+                if (!shifted.end()) {
+                    if (shifted.msg().number() == Long.MAX_VALUE) {
+                        shifted = shifted.shift(ray.builder().always());
+                    }
+                    if (this.pos.get() > limit) {
+                        shifted = shifted.shift(ray.builder().never());
+                    }
                 }
                 return shifted;
             }

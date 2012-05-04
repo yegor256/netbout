@@ -57,18 +57,18 @@ public final class LimitTest {
     public void findsMessageByLimit() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
         final long msg = new Random().nextLong();
+        ray.msg(msg);
         final Limit functor = new Limit();
         final Term term = functor.build(
             ray,
             Arrays.asList(new Atom[] {new NumberAtom(1L)})
         );
-        final Cursor cursor = ray.cursor().shift(ray.builder().picker(msg));
         MatcherAssert.assertThat(
-            cursor.shift(term).msg().number(),
+            ray.cursor().shift(term).msg().number(),
             Matchers.equalTo(msg)
         );
         MatcherAssert.assertThat(
-            cursor.shift(term).end(),
+            ray.cursor().shift(term).end(),
             Matchers.equalTo(true)
         );
     }
