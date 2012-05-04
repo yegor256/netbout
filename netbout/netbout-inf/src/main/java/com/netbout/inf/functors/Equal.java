@@ -84,7 +84,7 @@ final class Equal implements Functor {
         ray.cursor().replace(
             matcher,
             VariableAtom.AUTHOR_NAME.attribute(),
-            notice.message().author().toString()
+            notice.message().author().name().toString()
         );
     }
 
