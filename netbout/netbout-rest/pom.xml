@@ -46,10 +46,22 @@
         <repository>
             <id>woquo.s3</id>
             <url>s3://repo.woquo.com/snapshot</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>caybo.s3</id>
             <url>s3://repo.caybo.com/snapshot</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 

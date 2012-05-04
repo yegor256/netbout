@@ -47,6 +47,14 @@ public final class DecryptionException extends Exception {
      * Public ctor.
      * @param cause Cause of it
      */
+    public DecryptionException(final String cause) {
+        super(cause);
+    }
+
+    /**
+     * Public ctor.
+     * @param cause Cause of it
+     */
     public DecryptionException(final Throwable cause) {
         super(cause);
         Logger.warn(

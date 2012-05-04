@@ -59,10 +59,10 @@ public final class LifecycleListener implements ServletContextListener {
         final long start = System.nanoTime();
         try {
             Manifests.append(event.getServletContext());
+            this.hub = new DefaultHub();
         } catch (java.io.IOException ex) {
             throw new IllegalStateException(ex);
         }
-        this.hub = new DefaultHub();
         event.getServletContext()
             .setAttribute("com.netbout.rest.HUB", this.hub);
         EmailFarm.setHub(this.hub);

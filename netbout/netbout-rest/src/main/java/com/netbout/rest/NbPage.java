@@ -249,6 +249,17 @@ public class NbPage extends BasePage<NbPage, NbResource> {
                 .up()
         );
         this.append(new JaxbBundle("message", this.home().message()));
+        final String qauth = this.home().qauth();
+        if (!qauth.isEmpty()) {
+            for (Link link : this.getLinks()) {
+                link.setHref(
+                    UriBuilder.fromUri(link.getHref())
+                        .queryParam(RestSession.AUTH_PARAM, "{qauth}")
+                        .build(qauth)
+                        .toString()
+                );
+            }
+        }
     }
 
     /**

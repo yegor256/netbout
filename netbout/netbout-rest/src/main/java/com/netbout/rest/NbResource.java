@@ -68,4 +68,10 @@ public interface NbResource extends Resource {
      */
     UriBuilder base();
 
+    /**
+     * Query auth param for URI (or empty string if nothing to add).
+     * @return The auth param
+     */
+    String qauth();
+
 }

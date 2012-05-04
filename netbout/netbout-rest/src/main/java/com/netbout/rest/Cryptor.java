@@ -59,7 +59,7 @@ public final class Cryptor {
     public Identity decrypt(final Hub hub, final String hash)
         throws DecryptionException {
         if (hash == null) {
-            throw new DecryptionException();
+            throw new DecryptionException("HASH is empty (NULL)");
         }
         String iname;
         try {

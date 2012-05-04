@@ -205,11 +205,7 @@ public final class InboxRs extends BaseRs {
         if (!pred.startsWith("(unbundled ")) {
             pred = String.format("(and %s (bundled))", pred);
         }
-        try {
-            return this.identity().inbox(period.query(pred));
-        } catch (com.netbout.inf.PredicateException ex) {
-            throw new ForwardException(this, ex);
-        }
+        return this.identity().inbox(period.query(pred));
     }
 
 }

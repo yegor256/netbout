@@ -121,11 +121,26 @@ public abstract class BaseRs extends BaseResource implements NbResource {
         final UriBuilder builder = this.uriInfo()
             .getBaseUriBuilder()
             .clone();
-        if (this.icookie != null && !this.icookie.isEmpty()
-            && this.addAuthToURIs) {
-            builder.replaceQueryParam(RestSession.AUTH_PARAM, this.icookie);
+        final String qauth = this.qauth();
+        if (!qauth.isEmpty()) {
+            builder.queryParam(RestSession.AUTH_PARAM, qauth);
         }
         return UriBuilder.fromUri(builder.build());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String qauth() {
+        String qauth;
+        if (this.icookie == null || this.icookie.isEmpty()
+            || !this.addAuthToURIs) {
+            qauth = "";
+        } else {
+            qauth = this.icookie;
+        }
+        return qauth;
     }
 
     /**
@@ -192,13 +207,8 @@ public abstract class BaseRs extends BaseResource implements NbResource {
     @QueryParam(RestSession.AUTH_PARAM)
     public final void setAuth(final String auth) {
         if (auth != null) {
-            this.icookie = auth;
+            this.setCookie(auth);
             this.addAuthToURIs = true;
-            Logger.debug(
-                this,
-                "#setAuth('%s'): injected",
-                auth
-            );
         }
     }
 
@@ -248,7 +258,7 @@ public abstract class BaseRs extends BaseResource implements NbResource {
      * Forget current identity, if it exists.
      */
     protected final void logoff() {
-        this.icookie = "";
+        this.setCookie("");
     }
 
     /**

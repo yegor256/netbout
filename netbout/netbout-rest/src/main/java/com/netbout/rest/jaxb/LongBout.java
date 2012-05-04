@@ -228,12 +228,8 @@ public final class LongBout {
     public List<LongMessage> getMessages() {
         // @checkstyle MagicNumber (1 line)
         final Period period = PeriodsBuilder.parse(this.view, 20L);
-        Iterable<Message> discussion;
-        try {
-            discussion = this.bout.messages(period.query(this.query));
-        } catch (com.netbout.inf.PredicateException ex) {
-            throw new ForwardException(this.home, ex);
-        }
+        final Iterable<Message> discussion =
+            this.bout.messages(period.query(this.query));
         final PeriodsBuilder pbld = new PeriodsBuilder(
             period,
             UriBuilder.fromUri(
