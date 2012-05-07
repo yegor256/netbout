@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.bus.TxBuilder;
@@ -123,7 +124,8 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         this.promote(this.persister());
         for (Runnable task : AbstractCron.all(this)) {
             this.crons.add(
-                Executors.newSingleThreadScheduledExecutor()
+                Executors
+                    .newSingleThreadScheduledExecutor(new VerboseThreads(this))
                     .scheduleWithFixedDelay(task, 1L, 1L, TimeUnit.MINUTES)
             );
         }

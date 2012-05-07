@@ -74,10 +74,9 @@ public final class DbSession {
         this.auto = autocommit;
         try {
             this.conn = Database.connection();
-            this.conn.setAutoCommit(this.auto);
-            this.conn.setTransactionIsolation(
-                Connection.TRANSACTION_SERIALIZABLE
-            );
+            if (!autocommit) {
+                this.conn.setAutoCommit(this.auto);
+            }
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }

@@ -27,6 +27,7 @@
 package com.netbout.db;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +59,8 @@ public final class DataSourceBuilderTest {
     @Test
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void canHandleSimultaneousConnections() throws Exception {
-        final ExecutorService executor = Executors.newFixedThreadPool(20);
+        final ExecutorService executor =
+            Executors.newFixedThreadPool(20, new VerboseThreads());
         final Collection<Task> tasks = new ArrayList<Task>();
         for (int num = 0; num < 100; num += 1) {
             tasks.add(new Task(num));
@@ -84,19 +86,12 @@ public final class DataSourceBuilderTest {
          * {@inheritDoc}
          */
         @Override
-        @SuppressWarnings("PMD.AvoidCatchingGenericException")
         public Boolean call() {
             Logger.debug(this, "start #%d", this.number);
-            Boolean result;
-            try {
-                new AliasRowMocker(DataSourceBuilderTest.NAME).mock();
-                result = true;
-                Logger.debug(this, "finish #%d", this.number);
-            // @checkstyle IllegalCatch (1 line)
-            } catch (Exception ex) {
-                result = false;
-                Logger.error(this, "fail #%d: %[exception]s", this.number, ex);
-            }
+            Boolean result = false;
+            new AliasRowMocker(DataSourceBuilderTest.NAME).mock();
+            result = true;
+            Logger.debug(this, "finish #%d", this.number);
             return result;
         }
     }

@@ -199,7 +199,7 @@
             <!-- JDBC connector to MySQL -->
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version since="12 Oct 2010">5.1.17</version>
+            <version since="6 May 2012">5.1.20</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -282,7 +282,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version since="13 Dec 2011">1.11</version>
+            <version since="6 May 2012">1.12</version>
         </dependency>
         <dependency>
             <groupId>com.ymock.mock</groupId>

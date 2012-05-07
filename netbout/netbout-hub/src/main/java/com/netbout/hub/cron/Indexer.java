@@ -75,11 +75,12 @@ final class Indexer extends AbstractCron {
                 maximum
             );
             for (final Long number : numbers) {
+                final Message message = this.message(number);
                 this.hub().infinity().see(
                     new MessagePostedNotice() {
                         @Override
                         public Message message() {
-                            return Indexer.this.message(number);
+                            return message;
                         }
                     }
                 );

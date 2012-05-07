@@ -27,13 +27,15 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
 import java.io.Closeable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -49,13 +51,10 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 @SuppressWarnings({
     "PMD.DoNotUseThreads", "PMD.AvoidInstantiatingObjectsInLoops"
 })
-final class Mux extends ThreadPoolExecutor implements Closeable {
+final class Mux implements Closeable {
 
     /**
      * How many threads to use.
-     *
-     * <p>I don't know how to calculate this number correctly. Let's try to
-     * experiment.
      */
     private static final int THREADS =
         Runtime.getRuntime().availableProcessors() * 4;
@@ -69,6 +68,15 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      * The store with predicates.
      */
     private final transient Store store;
+
+    /**
+     * Running service.
+     */
+    private final transient ScheduledExecutorService service =
+        Executors.newScheduledThreadPool(
+            Mux.THREADS,
+            new VerboseThreads("mux")
+        );
 
     /**
      * Tasks to execute.
@@ -94,28 +102,29 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      * @param str The store to use
      */
     public Mux(final Ray iray, final Store str) {
-        super(
-            Mux.THREADS,
-            Mux.THREADS,
-            1L,
-            TimeUnit.DAYS,
-            new LinkedBlockingQueue<Runnable>(),
-            new ThreadFactory() {
-                private int num;
-                @Override
-                public Thread newThread(final Runnable runnable) {
-                    return new Thread(
-                        runnable,
-                        String.format("mux-pool-%d", ++this.num)
-                    );
-                }
-            }
-        );
         this.ray = iray;
         this.store = str;
-        this.prestartAllCoreThreads();
-        for (int thread = 0; thread < Mux.THREADS; thread += 1) {
-            this.submit(new Routine());
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                MuxTask task;
+                try {
+                    task = Mux.this.queue.take();
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalArgumentException(ex);
+                }
+                task.run();
+                for (Urn who : task.dependants()) {
+                    Mux.this.dependants.get(who).decrementAndGet();
+                }
+                Mux.this.stats.addValue((double) task.time());
+            }
+        };
+        for (int thread = 0; thread < Mux.THREADS; ++thread) {
+            this.service.scheduleWithFixedDelay(
+                runnable, 0L, 1L, TimeUnit.NANOSECONDS
+            );
         }
     }
 
@@ -155,22 +164,22 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      */
     @Override
     public void close() {
-        this.shutdown();
+        this.service.shutdown();
         try {
             // @checkstyle MagicNumber (1 line)
-            if (this.awaitTermination(10, TimeUnit.SECONDS)) {
+            if (this.service.awaitTermination(10, TimeUnit.SECONDS)) {
                 Logger.info(this, "#close(): shutdown() succeeded");
             } else {
                 Logger.warn(this, "#close(): shutdown() failed");
-                this.shutdownNow();
-                if (this.awaitTermination(1, TimeUnit.MINUTES)) {
+                this.service.shutdownNow();
+                if (this.service.awaitTermination(1, TimeUnit.MINUTES)) {
                     Logger.info(this, "#close(): shutdownNow() succeeded");
                 } else {
                     Logger.error(this, "#close(): failed to stop threads");
                 }
             }
         } catch (InterruptedException ex) {
-            this.shutdownNow();
+            this.service.shutdownNow();
             Thread.currentThread().interrupt();
         }
         Logger.info(
@@ -187,11 +196,11 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      */
     public long eta(final Urn who) {
         long eta;
-        final int count = this.getActiveCount();
-        if (this.dependants.containsKey(who) && count > 0) {
+        if (this.dependants.containsKey(who)) {
             eta = this.dependants.get(who).get();
             if (eta > 0) {
-                eta = this.queue.size() * (long) this.stats.getMean() / count;
+                eta = this.queue.size()
+                    * (long) this.stats.getMean() / Mux.THREADS;
             }
         } else {
             eta = 0L;
@@ -204,10 +213,6 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      * @param notice The notice to process
      */
     public void add(final Notice notice) {
-        if (this.isTerminated() || this.isShutdown()
-            || this.isTerminating()) {
-            throw new IllegalStateException("Mux is closing");
-        }
         final MuxTask task = new MuxTask(notice, this.ray, this.store);
         if (this.queue.contains(task)) {
             Logger.debug(
@@ -225,58 +230,10 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
             this.queue.add(task);
             Logger.debug(
                 this,
-                // @checkstyle LineLength (1 line)
-                "#add('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
+                "#add('%s'): #%d in queue",
                 task,
-                this.queue.size(),
-                this.getActiveCount(),
-                this.getCompletedTaskCount(),
-                this.getCorePoolSize()
+                this.queue.size()
             );
-        }
-    }
-
-    /**
-     * Task executing routine.
-     */
-    private final class Routine implements Runnable {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void run() {
-            while (true) {
-                MuxTask task;
-                try {
-                    task = Mux.this.queue.take();
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-                this.run(task);
-                for (Urn who : task.dependants()) {
-                    Mux.this.dependants.get(who).decrementAndGet();
-                }
-                Mux.this.stats.addValue((double) task.time());
-            }
-        }
-        /**
-         * Run one task.
-         * @param task The task to run
-         */
-        @SuppressWarnings("PMD.AvoidCatchingGenericException")
-        private void run(final MuxTask task) {
-            try {
-                task.run();
-            // @checkstyle IllegalCatch (1 line)
-            } catch (RuntimeException ex) {
-                Logger.error(
-                    this,
-                    "#run('%s'): %[exception]s",
-                    task,
-                    ex
-                );
-            }
         }
     }
 
