@@ -27,7 +27,6 @@
 package com.netbout.shary;
 
 import com.netbout.spi.xml.JaxbPrinter;
-import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +54,7 @@ public final class StageTest {
         stage.add(docs);
         final String xml = new JaxbPrinter(stage).print();
         MatcherAssert.assertThat(
-            XhtmlConverter.the(xml),
+            xml,
             Matchers.allOf(
                 XhtmlMatchers.hasXPath("/data/docs/doc[name='name']")
             )
