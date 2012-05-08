@@ -28,6 +28,8 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
@@ -52,10 +54,12 @@ public final class DefaultInfinityTest {
     @Test
     public void findsMessageJustPosted() throws Exception {
         final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
-        final Urn urn = new UrnMocker().mock();
+        final Bout bout = new BoutMocker()
+            .withParticipant(new UrnMocker().mock())
+            .mock();
         final Message msg = new MessageMocker()
-            .withAuthor(urn)
             .withText("some text to index")
+            .inBout(bout)
             .mock();
         final Urn[] deps = inf.see(
             new MessagePostedNotice() {
@@ -67,7 +71,7 @@ public final class DefaultInfinityTest {
         ).toArray(new Urn[0]);
         while (inf.eta(deps) > 0) {
             TimeUnit.MILLISECONDS.sleep(1);
-            Logger.debug(this, "eta=%dms", inf.eta(deps));
+            Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
         }
         final String query = String.format(
             "(pos 0)",

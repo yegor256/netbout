@@ -41,7 +41,7 @@ public interface Infinity extends Closeable {
     /**
      * How long do we need to wait before sending requests?
      * @param who Who is asking
-     * @return Estimated number of milliseconds
+     * @return Estimated number of nanoseconds
      */
     long eta(Urn... who);
 

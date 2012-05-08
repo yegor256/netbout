@@ -126,7 +126,7 @@ final class MuxTask implements Runnable {
 
     /**
      * Get its execution time.
-     * @return Time in milliseconds
+     * @return Time in nanoseconds
      */
     public long time() {
         long time;
@@ -135,8 +135,7 @@ final class MuxTask implements Runnable {
         } else {
             time = this.finished - this.started;
         }
-        // @checkstyle MagicNumber (1 line)
-        return time / (1000 * 1000);
+        return time;
     }
 
     /**
@@ -159,6 +158,9 @@ final class MuxTask implements Runnable {
                     ((MessageNotice) this.ntc).message().bout()
                 )
             );
+        }
+        if (deps.isEmpty()) {
+            throw new IllegalArgumentException("empty list of deps");
         }
         return deps;
     }

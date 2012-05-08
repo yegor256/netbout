@@ -211,11 +211,11 @@ final class Mux implements Closeable {
     public long eta(final Urn... who) {
         long eta = 0L;
         for (Urn urn : who) {
-            if (this.dependants.containsKey(who)) {
-                eta += this.dependants.get(who).get();
+            if (this.dependants.containsKey(urn)) {
+                eta += this.dependants.get(urn).get();
             }
         }
-        if (eta > 0) {
+        if (eta > 0 && this.stats.getN() > 0) {
             eta = this.queue.size() * (long) this.stats.getMean() / Mux.THREADS;
         }
         return eta;
@@ -230,7 +230,7 @@ final class Mux implements Closeable {
         final MuxTask task = new MuxTask(notice, this.ray, this.store);
         final Set<Urn> deps = new HashSet<Urn>();
         if (this.queue.contains(task)) {
-            Logger.debug(
+            Logger.warn(
                 this,
                 "#add('%s'): in the queue already, ignored dup",
                 task
