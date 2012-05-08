@@ -140,6 +140,58 @@ final class Mux implements Closeable {
     }
 
     /**
+     * How long do I need to wait before sending requests?
+     * @param who Who is asking
+     * @return Estimated number of nanoseconds
+     */
+    public long eta(final Urn... who) {
+        long eta = 0L;
+        for (Urn urn : who) {
+            if (this.dependants.containsKey(urn)) {
+                eta += this.dependants.get(urn).get();
+            }
+        }
+        if (eta > 0 && this.stats.getN() > 0) {
+            eta = Math.max(
+                this.queue.size() * (long) this.stats.getMean() / Mux.THREADS,
+                1L
+            );
+        }
+        return eta;
+    }
+
+    /**
+     * Add new notice to be executed ASAP.
+     * @param notice The notice to process
+     * @return Who should wait for its processing
+     */
+    public Set<Urn> add(final Notice notice) {
+        final MuxTask task = new MuxTask(notice, this.ray, this.store);
+        final Set<Urn> deps = new HashSet<Urn>();
+        if (this.queue.contains(task)) {
+            Logger.warn(
+                this,
+                "#add('%s'): in the queue already, ignored dup",
+                task
+            );
+        } else {
+            for (Urn who : task.dependants()) {
+                this.dependants.putIfAbsent(who, new AtomicLong());
+                this.dependants.get(who).incrementAndGet();
+                deps.add(who);
+            }
+            this.queue.add(task);
+            Logger.debug(
+                this,
+                "#add('%s'): #%d in queue",
+                task,
+                this.queue.size()
+            );
+        }
+        return deps;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -201,57 +253,6 @@ final class Mux implements Closeable {
             "#close(): %d remained in the queue",
             this.queue.size()
         );
-    }
-
-    /**
-     * How long do I need to wait before sending requests?
-     * @param who Who is asking
-     * @return Estimated number of nanoseconds
-     */
-    public long eta(final Urn... who) {
-        long eta = 0L;
-        for (Urn urn : who) {
-            if (this.dependants.containsKey(urn)) {
-                eta += this.dependants.get(urn).get();
-            }
-        }
-        if (eta > 0 && this.stats.getN() > 0) {
-            eta = this.queue.size() * (long) this.stats.getMean() / Mux.THREADS;
-        }
-        return eta;
-    }
-
-    /**
-     * Add new notice to be executed ASAP.
-     * @param notice The notice to process
-     * @return Who should wait for its processing
-     */
-    public Set<Urn> add(final Notice notice) {
-        final MuxTask task = new MuxTask(notice, this.ray, this.store);
-        final Set<Urn> deps = new HashSet<Urn>();
-        if (this.queue.contains(task)) {
-            Logger.warn(
-                this,
-                "#add('%s'): in the queue already, ignored dup",
-                task
-            );
-        } else {
-            for (Urn who : task.dependants()) {
-                if (this.dependants.get(who) == null) {
-                    this.dependants.putIfAbsent(who, new AtomicLong());
-                }
-                this.dependants.get(who).incrementAndGet();
-                deps.add(who);
-            }
-            this.queue.add(task);
-            Logger.debug(
-                this,
-                "#add('%s'): #%d in queue",
-                task,
-                this.queue.size()
-            );
-        }
-        return deps;
     }
 
 }

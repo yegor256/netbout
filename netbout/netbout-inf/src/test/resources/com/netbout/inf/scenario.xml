@@ -5,6 +5,7 @@
             <message.number>777</message.number>
             <message.text>How are you doing, dude?</message.text>
             <message.author>urn:test:Somebody</message.author>
+            <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <query>
             <predicate>(and (or (matches 'dude') (matches 'you')) (bundled) (limit 1) (from 0))</predicate>
@@ -15,28 +16,33 @@
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>6767</message.number>
             <message.text>First message</message.text>
+            <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>6565</message.number>
             <message.text>Second message</message.text>
+            <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <query>
             <predicate>(and (or (matches 'first') (matches 'second')) (from 1))</predicate>
-            <messages>6565</messages>
+            <messages>6767</messages>
         </query>
     </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <bout.number>5655</bout.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <bout.number>5657</bout.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>123</message.number>
             <message.text>How are you doing, dude?</message.text>
             <message.author>urn:test:Somebody</message.author>
             <bout.number>5656</bout.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <query>
             <predicate>(and (equal $bout.number 5656) (pos 0))</predicate>

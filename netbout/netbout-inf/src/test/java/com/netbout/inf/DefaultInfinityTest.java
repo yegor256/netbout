@@ -69,7 +69,7 @@ public final class DefaultInfinityTest {
                 }
             }
         ).toArray(new Urn[0]);
-        while (inf.eta(deps) > 0) {
+        while (inf.eta(deps) != 0) {
             TimeUnit.MILLISECONDS.sleep(1);
             Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
         }

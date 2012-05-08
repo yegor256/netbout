@@ -85,10 +85,11 @@ public final class InfinityTest {
         final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
         for (XmlDocument see : xml.nodes("see")) {
             final Urn[] deps = inf.see(this.notice(see)).toArray(new Urn[0]);
-            while (inf.eta(deps) > 0) {
-                TimeUnit.MILLISECONDS.sleep(2);
-                Logger.debug(this, "eta=%dms", inf.eta(deps));
+            while (inf.eta(deps) != 0) {
+                TimeUnit.MILLISECONDS.sleep(1);
+                // Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
             }
+            System.out.println("ready");
         }
         return inf;
     }
@@ -152,10 +153,16 @@ public final class InfinityTest {
      * @return The bout
      */
     private static Bout bout(final Properties props) {
-        return new BoutMocker()
+        final BoutMocker mocker = new BoutMocker()
             .titledAs(props.getProperty("bout.title", "some title"))
-            .withNumber(Long.valueOf(props.getProperty("bout.number", "55")))
-            .mock();
+            .withNumber(Long.valueOf(props.getProperty("bout.number", "55")));
+        final String[] urns = props.getProperty(
+            "bout.participants", new UrnMocker().mock().toString()
+        ).split("\\s*,\\s*");
+        for (String urn : urns) {
+            mocker.withParticipant(urn);
+        }
+        return mocker.mock();
     }
 
     /**
@@ -164,7 +171,7 @@ public final class InfinityTest {
      * @return The array
      */
     private static Long[] numbers(final String text) {
-        final String[] parts = text.split("\\s+,\\s+");
+        final String[] parts = text.split("[^0-9]*,[^0-9]*");
         final Long[] nums = new Long[parts.length];
         for (int pos = 0; pos < parts.length; ++pos) {
             nums[pos] = Long.valueOf(parts[pos]);
