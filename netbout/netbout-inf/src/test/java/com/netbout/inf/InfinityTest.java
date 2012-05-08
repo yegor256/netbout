@@ -87,9 +87,7 @@ public final class InfinityTest {
             final Urn[] deps = inf.see(this.notice(see)).toArray(new Urn[0]);
             while (inf.eta(deps) != 0) {
                 TimeUnit.MILLISECONDS.sleep(1);
-                // Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
             }
-            System.out.println("ready");
         }
         return inf;
     }

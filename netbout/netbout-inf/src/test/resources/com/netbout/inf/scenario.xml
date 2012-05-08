@@ -24,7 +24,7 @@
             <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <query>
-            <predicate>(and (or (matches 'first') (matches 'second')) (from 1))</predicate>
+            <predicate>(and (or (matches 'first') (matches 'second')) (pos 1))</predicate>
             <messages>6767</messages>
         </query>
     </scene>
@@ -45,8 +45,26 @@
             <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <query>
-            <predicate>(and (equal $bout.number 5656) (pos 0))</predicate>
+            <predicate>(and (equal $bout.number 5656) (equal $number 123) (pos 0))</predicate>
             <messages>123</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>771</message.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>772</message.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>773</message.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
+        </see>
+        <query>
+            <predicate>(and (talks-with 'urn:test:Somebody') (limit 2))</predicate>
+            <messages>773, 772</messages>
         </query>
     </scene>
 </scenario>

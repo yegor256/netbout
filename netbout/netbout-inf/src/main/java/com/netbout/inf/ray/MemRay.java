@@ -63,7 +63,7 @@ public final class MemRay implements Ray {
      */
     @Override
     public void close() throws IOException {
-        Logger.info(this, "#close(): closed");
+        Logger.debug(this, "#close(): closed");
     }
 
     /**

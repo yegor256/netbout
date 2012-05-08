@@ -59,11 +59,10 @@ final class Limit implements Functor {
                 this.pos.getAndIncrement();
                 Cursor shifted = cursor;
                 if (!shifted.end()) {
-                    if (shifted.msg().number() == Long.MAX_VALUE) {
-                        shifted = shifted.shift(ray.builder().always());
-                    }
                     if (this.pos.get() > limit) {
                         shifted = shifted.shift(ray.builder().never());
+                    } else {
+                        shifted = shifted.shift(ray.builder().always());
                     }
                 }
                 return shifted;

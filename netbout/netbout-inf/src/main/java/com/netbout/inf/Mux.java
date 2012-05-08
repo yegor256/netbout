@@ -234,7 +234,7 @@ final class Mux implements Closeable {
         try {
             // @checkstyle MagicNumber (1 line)
             if (this.service.awaitTermination(10, TimeUnit.SECONDS)) {
-                Logger.info(this, "#close(): shutdown() succeeded");
+                Logger.debug(this, "#close(): shutdown() succeeded");
             } else {
                 Logger.warn(this, "#close(): shutdown() failed");
                 this.service.shutdownNow();
@@ -248,7 +248,7 @@ final class Mux implements Closeable {
             this.service.shutdownNow();
             Thread.currentThread().interrupt();
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#close(): %d remained in the queue",
             this.queue.size()
