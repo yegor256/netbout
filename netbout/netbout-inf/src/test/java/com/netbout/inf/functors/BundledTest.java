@@ -45,26 +45,27 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link Unique}.
+ * Test case of {@link Bundled}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class UniqueTest {
+public final class BundledTest {
 
     /**
-     * Unique can find unique messages.
+     * Bundled can find bundled messages.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void findsUniqueMessages() throws Exception {
+    public void findsBundledMessages() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
         final long msg = new Random().nextLong();
         final Bout bout = new BoutMocker().mock();
+        final Bundled functor = new Bundled();
         for (int num = 0; num < 2; ++num) {
             final long number = msg - num;
             ray.msg(number);
-            new Equal().see(
+            functor.see(
                 ray,
                 new MessagePostedNotice() {
                     @Override
@@ -77,9 +78,9 @@ public final class UniqueTest {
                 }
             );
         }
-        final Term term = new Unique().build(
+        final Term term = new Bundled().build(
             ray,
-            Arrays.asList(new Atom[] {VariableAtom.BOUT_NUMBER})
+            Arrays.asList(new Atom[0])
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).msg().number(),

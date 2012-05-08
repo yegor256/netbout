@@ -53,28 +53,33 @@
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>771</message.number>
             <bout.participants>urn:test:Somebody</bout.participants>
+            <bout.number>8881</bout.number>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>772</message.number>
             <bout.participants>urn:test:Somebody</bout.participants>
+            <bout.number>8881</bout.number>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>773</message.number>
             <bout.participants>urn:test:Somebody</bout.participants>
+            <bout.number>8881</bout.number>
         </see>
         <query>
             <predicate>(and (talks-with 'urn:test:Somebody') (limit 2) (unique $bout.number))</predicate>
-            <messages>773, 772</messages>
+            <messages>773</messages>
         </query>
     </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>991</message.number>
             <bout.participants>urn:test:dude</bout.participants>
+            <bout.number>550</bout.number>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>992</message.number>
-            <bout.participants>urn:test:dude</bout.participants>
+            <bout.participants>urn:test:dude, urn:test:jeffrey</bout.participants>
+            <bout.number>551</bout.number>
         </see>
         <query>
             <predicate>(and (talks-with 'urn:test:dude') (and (and (or (matches '' $text) (matches '' $bout.title) (matches '' $author.alias)) (bundled)) (from 0)) (unique $bout.number))</predicate>

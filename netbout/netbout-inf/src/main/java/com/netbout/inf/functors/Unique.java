@@ -73,7 +73,7 @@ final class Unique implements Functor {
             }
             @Override
             public String toString() {
-                return "(UNIQUE)";
+                return String.format("(UNIQUE %s)", attr);
             }
             private void record(final Cursor cursor) {
                 final String value = cursor.msg().first(attr);

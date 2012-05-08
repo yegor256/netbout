@@ -197,7 +197,13 @@ final class MemCursor implements Cursor {
                     .values(this.number())
                     .iterator();
                 if (!values.hasNext()) {
-                    throw new IllegalArgumentException(name);
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "attribute '%s' is absent for msg #%d",
+                            name,
+                            this.number()
+                        )
+                    );
                 }
                 return values.next();
             }
