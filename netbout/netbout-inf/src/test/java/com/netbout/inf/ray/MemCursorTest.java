@@ -63,6 +63,32 @@ public final class MemCursorTest {
     }
 
     /**
+     * MemCursor can replace values for a set of messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void replacesValuesForSelectedMessages() throws Exception {
+        final IndexMap map = new DefaultIndexMap();
+        final Long msg = new Random().nextLong();
+        map.touch(msg);
+        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
+        final String attr = "attribute-1";
+        final String value = "text to save";
+        cursor.add(new PickerTerm(map, msg), attr, "previous value");
+        cursor.add(new PickerTerm(map, msg), attr, "previous value 2");
+        cursor.add(new PickerTerm(map, msg), "another attr", "val-1");
+        cursor.replace(new PickerTerm(map, msg), attr, value);
+        cursor.replace(new PickerTerm(map, msg), "some other attr", "foo");
+        MatcherAssert.assertThat(
+            map.index(attr).values(msg),
+            Matchers.allOf(
+                (Matcher) Matchers.hasSize(1),
+                Matchers.hasItem(value)
+            )
+        );
+    }
+
+    /**
      * MemCursor can be comparable.
      * @throws Exception If there is some problem inside
      */
