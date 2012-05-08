@@ -26,7 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.jcabi.log.Logger;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
@@ -38,7 +37,6 @@ import com.rexsl.test.SimpleXml;
 import com.rexsl.test.XmlDocument;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -47,6 +45,7 @@ import org.junit.Test;
  * Test case of {@link Infinity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class InfinityTest {
 

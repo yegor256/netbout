@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
 import java.io.Closeable;
@@ -41,7 +42,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -132,8 +132,8 @@ final class Mux implements Closeable {
         };
         for (int thread = 0; thread < Mux.THREADS; ++thread) {
             this.futures.add(
-                this.service.scheduleWithFixedDelay(
-                    runnable, 0L, 1L, TimeUnit.NANOSECONDS
+                this.service.scheduleAtFixedRate(
+                    new VerboseRunnable(runnable), 0L, 1L, TimeUnit.NANOSECONDS
                 )
             );
         }

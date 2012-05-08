@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
@@ -64,7 +65,11 @@ public final class MuxTest {
                 new MessagePostedNotice() {
                     @Override
                     public Message message() {
-                        return new MessageMocker().mock();
+                        return new MessageMocker().inBout(
+                            new BoutMocker().withParticipant(
+                                new UrnMocker().mock()
+                            ).mock()
+                        ).mock();
                     }
                 }
             );

@@ -35,8 +35,6 @@ import com.netbout.inf.Term;
 import com.netbout.inf.TermMocker;
 import com.netbout.inf.atoms.PredicateAtom;
 import com.netbout.inf.ray.MemRay;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -44,13 +42,12 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 /**
  * Test case of {@link Conjunction}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class ConjunctionTest {
 

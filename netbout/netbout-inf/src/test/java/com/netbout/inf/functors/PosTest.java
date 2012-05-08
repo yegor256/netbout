@@ -27,16 +27,11 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Cursor;
 import com.netbout.inf.FolderMocker;
-import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;
-import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.MemRay;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;

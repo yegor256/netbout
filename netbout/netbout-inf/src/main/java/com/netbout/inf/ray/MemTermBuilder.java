@@ -38,6 +38,7 @@ import java.util.Collection;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class MemTermBuilder implements TermBuilder {
 

@@ -29,7 +29,6 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Iterator;
-import java.util.SortedSet;
 
 /**
  * Always term.
@@ -81,6 +80,7 @@ final class AlwaysTerm implements Term {
         if (tail.hasNext()) {
             next = tail.next();
             if (next == number) {
+                // @checkstyle NestedIfDepth (4 lines)
                 if (tail.hasNext()) {
                     next = tail.next();
                 } else {

@@ -39,6 +39,7 @@ import com.netbout.inf.notices.MessageSeenNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -79,6 +80,11 @@ final class MuxTask implements Runnable {
     private final transient Notice ntc;
 
     /**
+     * Dependants.
+     */
+    private final transient Set<Urn> deps;
+
+    /**
      * Public ctor.
      * @param what The notice to process
      * @param iray The ray to use
@@ -88,6 +94,26 @@ final class MuxTask implements Runnable {
         this.store = str;
         this.ray = iray;
         this.ntc = what;
+        final Set<Urn> urns = new HashSet<Urn>();
+        if (what instanceof IdentityNotice) {
+            urns.add(((IdentityNotice) what).identity().name());
+        }
+        if (what instanceof BoutNotice) {
+            urns.addAll(
+                MuxTask.dudesOf(((BoutNotice) what).bout())
+            );
+        }
+        if (what instanceof MessageNotice) {
+            urns.addAll(
+                MuxTask.dudesOf(
+                    ((MessageNotice) what).message().bout()
+                )
+            );
+        }
+        if (urns.isEmpty()) {
+            throw new IllegalArgumentException("empty list of deps");
+        }
+        this.deps = Collections.unmodifiableSet(urns);
     }
 
     /**
@@ -143,26 +169,7 @@ final class MuxTask implements Runnable {
      * @return Names
      */
     public Set<Urn> dependants() {
-        final Set<Urn> deps = new HashSet<Urn>();
-        if (this.ntc instanceof IdentityNotice) {
-            deps.add(((IdentityNotice) this.ntc).identity().name());
-        }
-        if (this.ntc instanceof BoutNotice) {
-            deps.addAll(
-                MuxTask.dudesOf(((BoutNotice) this.ntc).bout())
-            );
-        }
-        if (this.ntc instanceof MessageNotice) {
-            deps.addAll(
-                MuxTask.dudesOf(
-                    ((MessageNotice) this.ntc).message().bout()
-                )
-            );
-        }
-        if (deps.isEmpty()) {
-            throw new IllegalArgumentException("empty list of deps");
-        }
-        return deps;
+        return this.deps;
     }
 
     /**

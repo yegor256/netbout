@@ -28,9 +28,7 @@ package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.FolderMocker;
-import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
-import com.netbout.inf.Term;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.MemRay;
@@ -46,6 +44,7 @@ import org.junit.Test;
  * Test case of {@link Matches}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class MatchesTest {
 
