@@ -82,8 +82,9 @@ public final class InfinityTest {
      */
     private Infinity prepare(final XmlDocument xml) throws Exception {
         final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
+        final Urn[] array = new Urn[0];
         for (XmlDocument see : xml.nodes("see")) {
-            final Urn[] deps = inf.see(this.notice(see)).toArray(new Urn[0]);
+            final Urn[] deps = inf.see(this.notice(see)).toArray(array);
             while (inf.eta(deps) != 0) {
                 TimeUnit.MILLISECONDS.sleep(1);
             }

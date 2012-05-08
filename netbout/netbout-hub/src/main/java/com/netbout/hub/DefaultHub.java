@@ -54,6 +54,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -64,7 +65,11 @@ import java.util.concurrent.TimeUnit;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  * @checkstyle ClassFanOutComplexity (500 lines)
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.DoNotUseThreads" })
+@SuppressWarnings({
+    "PMD.TooManyMethods",
+    "PMD.DoNotUseThreads",
+    "PMD.ExcessiveImports"
+})
 public final class DefaultHub implements PowerHub, StatsProvider {
 
     /**
@@ -122,10 +127,11 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         this.promote(this.persister());
+        final ThreadFactory factory = new VerboseThreads(this);
         for (Runnable task : AbstractCron.all(this)) {
             this.crons.add(
                 Executors
-                    .newSingleThreadScheduledExecutor(new VerboseThreads(this))
+                    .newSingleThreadScheduledExecutor(factory)
                     .scheduleWithFixedDelay(task, 1L, 1L, TimeUnit.MINUTES)
             );
         }
