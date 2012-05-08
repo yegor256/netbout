@@ -83,6 +83,10 @@ final class Bundled implements Functor {
                 }
                 return shifted;
             }
+            @Override
+            public String toString() {
+                return "(BUNDLED)";
+            }
         };
     }
 

@@ -63,6 +63,7 @@ public final class UniqueTest {
         final Bout bout = new BoutMocker().mock();
         for (int num = 0; num < 2; ++num) {
             final long number = msg - num;
+            ray.msg(number);
             new Matches().see(
                 ray,
                 new MessagePostedNotice() {

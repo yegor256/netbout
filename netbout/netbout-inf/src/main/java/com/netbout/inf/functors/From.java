@@ -68,6 +68,10 @@ final class From implements Functor {
                 this.pos.getAndIncrement();
                 return shifted;
             }
+            @Override
+            public String toString() {
+                return String.format("(FROM %d)", from);
+            }
         };
     }
 

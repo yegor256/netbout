@@ -55,7 +55,7 @@ final class Matches implements Functor {
     /**
      * The attribute to use.
      */
-    private static final String ATTR = "matches";
+    private static final String ATTR = "word";
 
     /**
      * {@inheritDoc}

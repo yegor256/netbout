@@ -68,6 +68,10 @@ final class Pos implements Functor {
                 this.position.getAndIncrement();
                 return shifted;
             }
+            @Override
+            public String toString() {
+                return String.format("(POS %d)", desired);
+            }
         };
     }
 

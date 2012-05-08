@@ -67,6 +67,20 @@ final class AndTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        text.append("(AND");
+        for (Term term : this.terms) {
+            text.append(' ').append(term);
+        }
+        text.append(')');
+        return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Cursor shift(final Cursor cursor) {
         Cursor slider;
         if (cursor.end()) {

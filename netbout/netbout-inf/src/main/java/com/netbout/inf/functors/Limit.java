@@ -67,6 +67,10 @@ final class Limit implements Functor {
                 }
                 return shifted;
             }
+            @Override
+            public String toString() {
+                return String.format("(LIMIT %d)", limit);
+            }
         };
     }
 

@@ -63,6 +63,16 @@ final class NotTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        text.append("(NOT ").append(this.term).append(')');
+        return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
         Cursor shifted = cursor;

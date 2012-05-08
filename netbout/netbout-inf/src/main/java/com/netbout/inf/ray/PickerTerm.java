@@ -63,6 +63,14 @@ final class PickerTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return String.format("(PICKER %d)", this.number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Cursor shift(final Cursor cursor) {
         Cursor shifted;
         if (cursor.end()) {

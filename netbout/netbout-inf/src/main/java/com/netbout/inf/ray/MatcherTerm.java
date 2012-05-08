@@ -71,6 +71,14 @@ final class MatcherTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return String.format("(%s = %s)", this.attr, this.value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Cursor shift(final Cursor cursor) {
         Cursor shifted;
         if (cursor.end()) {

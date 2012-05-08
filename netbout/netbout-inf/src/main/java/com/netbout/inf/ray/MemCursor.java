@@ -29,6 +29,7 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Term;
+import java.util.Iterator;
 
 /**
  * In-memory implementation of {@link Cursor}.
@@ -192,10 +193,13 @@ final class MemCursor implements Cursor {
             }
             @Override
             public String first(final String name) {
-                return MemCursor.this.imap.index(name)
+                Iterator<String> values = MemCursor.this.imap.index(name)
                     .values(this.number())
-                    .iterator()
-                    .next();
+                    .iterator();
+                if (!values.hasNext()) {
+                    throw new IllegalArgumentException(name);
+                }
+                return values.next();
             }
         };
     }

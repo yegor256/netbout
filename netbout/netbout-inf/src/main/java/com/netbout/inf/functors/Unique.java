@@ -58,19 +58,31 @@ final class Unique implements Functor {
                 new ConcurrentHashMap<String, Term>();
             @Override
             public Cursor shift(final Cursor cursor) {
-                final Cursor shifted = cursor.shift(
-                    ray.builder().and(this.terms.values())
-                );
-                if (!shifted.end()) {
-                    final String value = shifted.msg().first(attr);
-                    this.terms.put(
-                        value,
-                        ray.builder().not(
-                            ray.builder().matcher(attr, value)
-                        )
+                Cursor shifted;
+                if (cursor.end()) {
+                    shifted = cursor;
+                } else {
+                    shifted = cursor.shift(
+                        ray.builder().and(this.terms.values())
                     );
+                    if (!shifted.end()) {
+                        this.record(shifted);
+                    }
                 }
                 return shifted;
+            }
+            @Override
+            public String toString() {
+                return "(UNIQUE)";
+            }
+            private void record(final Cursor cursor) {
+                final String value = cursor.msg().first(attr);
+                this.terms.put(
+                    value,
+                    ray.builder().not(
+                        ray.builder().matcher(attr, value)
+                    )
+                );
             }
         };
     }

@@ -57,6 +57,14 @@ final class AlwaysTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return "(ALWAYS)";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
         Cursor shifted = cursor;
