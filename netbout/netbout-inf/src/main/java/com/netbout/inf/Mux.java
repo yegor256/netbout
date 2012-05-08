@@ -30,12 +30,17 @@ import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
 import java.io.Closeable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -97,6 +102,12 @@ final class Mux implements Closeable {
         new DescriptiveStatistics(5000);
 
     /**
+     * Futures running.
+     */
+    private final transient Collection<ScheduledFuture> futures =
+        new ArrayList<ScheduledFuture>(Mux.THREADS);
+
+    /**
      * Public ctor.
      * @param iray The ray to use
      * @param str The store to use
@@ -107,23 +118,23 @@ final class Mux implements Closeable {
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                MuxTask task;
                 try {
-                    task = Mux.this.queue.take();
+                    final MuxTask task = Mux.this.queue.take();
+                    task.run();
+                    for (Urn who : task.dependants()) {
+                        Mux.this.dependants.get(who).decrementAndGet();
+                    }
+                    Mux.this.stats.addValue((double) task.time());
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
-                    throw new IllegalArgumentException(ex);
                 }
-                task.run();
-                for (Urn who : task.dependants()) {
-                    Mux.this.dependants.get(who).decrementAndGet();
-                }
-                Mux.this.stats.addValue((double) task.time());
             }
         };
         for (int thread = 0; thread < Mux.THREADS; ++thread) {
-            this.service.scheduleWithFixedDelay(
-                runnable, 0L, 1L, TimeUnit.NANOSECONDS
+            this.futures.add(
+                this.service.scheduleWithFixedDelay(
+                    runnable, 0L, 1L, TimeUnit.NANOSECONDS
+                )
             );
         }
     }
@@ -164,6 +175,9 @@ final class Mux implements Closeable {
      */
     @Override
     public void close() {
+        for (ScheduledFuture future : this.futures) {
+            future.cancel(true);
+        }
         this.service.shutdown();
         try {
             // @checkstyle MagicNumber (1 line)
@@ -194,16 +208,15 @@ final class Mux implements Closeable {
      * @param who Who is asking
      * @return Estimated number of nanoseconds
      */
-    public long eta(final Urn who) {
-        long eta;
-        if (this.dependants.containsKey(who)) {
-            eta = this.dependants.get(who).get();
-            if (eta > 0) {
-                eta = this.queue.size()
-                    * (long) this.stats.getMean() / Mux.THREADS;
+    public long eta(final Urn... who) {
+        long eta = 0L;
+        for (Urn urn : who) {
+            if (this.dependants.containsKey(who)) {
+                eta += this.dependants.get(who).get();
             }
-        } else {
-            eta = 0L;
+        }
+        if (eta > 0) {
+            eta = this.queue.size() * (long) this.stats.getMean() / Mux.THREADS;
         }
         return eta;
     }
@@ -211,9 +224,11 @@ final class Mux implements Closeable {
     /**
      * Add new notice to be executed ASAP.
      * @param notice The notice to process
+     * @return Who should wait for its processing
      */
-    public void add(final Notice notice) {
+    public Set<Urn> add(final Notice notice) {
         final MuxTask task = new MuxTask(notice, this.ray, this.store);
+        final Set<Urn> deps = new HashSet<Urn>();
         if (this.queue.contains(task)) {
             Logger.debug(
                 this,
@@ -226,6 +241,7 @@ final class Mux implements Closeable {
                     this.dependants.putIfAbsent(who, new AtomicLong());
                 }
                 this.dependants.get(who).incrementAndGet();
+                deps.add(who);
             }
             this.queue.add(task);
             Logger.debug(
@@ -235,6 +251,7 @@ final class Mux implements Closeable {
                 this.queue.size()
             );
         }
+        return deps;
     }
 
 }

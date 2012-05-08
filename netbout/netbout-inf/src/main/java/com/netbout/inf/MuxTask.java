@@ -126,7 +126,7 @@ final class MuxTask implements Runnable {
 
     /**
      * Get its execution time.
-     * @return Time in nanoseconds
+     * @return Time in milliseconds
      */
     public long time() {
         long time;
@@ -135,7 +135,8 @@ final class MuxTask implements Runnable {
         } else {
             time = this.finished - this.started;
         }
-        return time;
+        // @checkstyle MagicNumber (1 line)
+        return time / (1000 * 1000);
     }
 
     /**

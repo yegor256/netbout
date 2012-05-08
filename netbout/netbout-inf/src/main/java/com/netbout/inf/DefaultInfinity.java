@@ -34,6 +34,7 @@ import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Urn;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * Default implementation of Infitity.
@@ -144,7 +145,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public long eta(final Urn who) {
+    public long eta(final Urn... who) {
         long eta = this.mux.eta(who);
         if (eta == 0 && this.maximum() == 0) {
             eta = 1;
@@ -176,8 +177,8 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public void see(final Notice notice) {
-        this.mux.add(notice);
+    public Set<Urn> see(final Notice notice) {
+        return this.mux.add(notice);
     }
 
 }

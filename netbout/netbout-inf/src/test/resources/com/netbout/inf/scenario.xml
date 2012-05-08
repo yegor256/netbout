@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<scenario>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>777</message.number>
+            <message.text>How are you doing, dude?</message.text>
+            <message.author>urn:test:Somebody</message.author>
+        </see>
+        <query>
+            <predicate>(and (or (matches 'dude') (matches 'you')) (bundled) (limit 1) (from 0))</predicate>
+            <messages>777</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>6767</message.number>
+            <message.text>First message</message.text>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>6565</message.number>
+            <message.text>Second message</message.text>
+        </see>
+        <query>
+            <predicate>(and (or (matches 'first') (matches 'second')) (from 1))</predicate>
+            <messages>6565</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <bout.number>5655</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <bout.number>5657</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>123</message.number>
+            <message.text>How are you doing, dude?</message.text>
+            <message.author>urn:test:Somebody</message.author>
+            <bout.number>5656</bout.number>
+        </see>
+        <query>
+            <predicate>(and (equal $bout.number 5656) (pos 0))</predicate>
+            <messages>123</messages>
+        </query>
+    </scene>
+</scenario>

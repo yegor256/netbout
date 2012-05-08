@@ -57,26 +57,27 @@ public final class DefaultInfinityTest {
             .withAuthor(urn)
             .withText("some text to index")
             .mock();
-        inf.see(
+        final Urn[] deps = inf.see(
             new MessagePostedNotice() {
                 @Override
                 public Message message() {
                     return msg;
                 }
             }
-        );
-        while (inf.eta(urn) > 0) {
-            TimeUnit.SECONDS.sleep(1);
-            Logger.debug(this, "eta=%d", inf.eta(urn));
+        ).toArray(new Urn[0]);
+        while (inf.eta(deps) > 0) {
+            TimeUnit.MILLISECONDS.sleep(1);
+            Logger.debug(this, "eta=%dms", inf.eta(deps));
         }
         final String query = String.format(
-            "(and (and (equal $number %d) (matches '')) (pos 0) (from 0) (limit 1) (bundled) (unique $bout.number) (or (matches 'some') (matches 'text')))",
+            "(pos 0)",
             msg.number()
         );
         MatcherAssert.assertThat(
             inf.messages(query),
             (Matcher) Matchers.iterableWithSize(1)
         );
+        inf.close();
     }
 
 }

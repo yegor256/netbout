@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.netbout.spi.Urn;
 import java.io.Closeable;
+import java.util.Set;
 
 /**
  * Infinity, with information about bouts and messages.
@@ -38,11 +39,11 @@ import java.io.Closeable;
 public interface Infinity extends Closeable {
 
     /**
-     * How long do I need to wait before sending requests?
+     * How long do we need to wait before sending requests?
      * @param who Who is asking
      * @return Estimated number of milliseconds
      */
-    long eta(Urn who);
+    long eta(Urn... who);
 
     /**
      * Find messages for the given predicate.
@@ -61,7 +62,8 @@ public interface Infinity extends Closeable {
     /**
      * Send this notice to infinity.
      * @param notice The notice to see
+     * @return Who should wait for its processing
      */
-    void see(Notice notice);
+    Set<Urn> see(Notice notice);
 
 }
