@@ -82,7 +82,22 @@
             <bout.number>551</bout.number>
         </see>
         <query>
-            <predicate>(and (talks-with 'urn:test:dude') (and (and (or (matches '' $text) (matches '' $bout.title) (matches '' $author.alias)) (bundled)) (from 0)) (unique $bout.number))</predicate>
+            <predicate>
+                (and
+                    (talks-with 'urn:test:dude')
+                    (and
+                        (and
+                            (or
+                                (matches '' $text)
+                                (matches '' $bout.title)
+                                (matches '' $author.alias)
+                            )
+                        )
+                        (from 0)
+                    )
+                    (unique $bout.number)
+                )
+            </predicate>
             <messages>992, 991</messages>
         </query>
     </scene>

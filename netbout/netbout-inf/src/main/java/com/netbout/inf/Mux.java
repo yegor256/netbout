@@ -133,7 +133,8 @@ final class Mux implements Closeable {
         for (int thread = 0; thread < Mux.THREADS; ++thread) {
             this.futures.add(
                 this.service.scheduleAtFixedRate(
-                    new VerboseRunnable(runnable), 0L, 1L, TimeUnit.NANOSECONDS
+                    new VerboseRunnable(runnable, true),
+                    0L, 1L, TimeUnit.NANOSECONDS
                 )
             );
         }

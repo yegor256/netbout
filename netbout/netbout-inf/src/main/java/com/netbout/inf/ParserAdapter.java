@@ -84,7 +84,7 @@ final class ParserAdapter {
         }
         Logger.debug(
             this,
-            "#parse('%s'): predicate '%s' parsed",
+            "#parse('%[text]s'): parsed to '%s'",
             query,
             predicate
         );
