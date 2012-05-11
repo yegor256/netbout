@@ -66,11 +66,11 @@ public final class LimitTest {
             Matchers.equalTo(false)
         );
         MatcherAssert.assertThat(
-            ray.cursor().shift(term).end(),
+            ray.cursor().shift(term).shift(term).end(),
             Matchers.equalTo(false)
         );
         MatcherAssert.assertThat(
-            ray.cursor().shift(term).end(),
+            ray.cursor().shift(term).shift(term).shift(term).end(),
             Matchers.equalTo(true)
         );
     }

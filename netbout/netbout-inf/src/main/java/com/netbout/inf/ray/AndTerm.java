@@ -31,7 +31,6 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 

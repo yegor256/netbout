@@ -54,6 +54,7 @@ final class Unique implements Functor {
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
         final String attr = VariableAtom.class.cast(atoms.get(0)).attribute();
+        // @checkstyle AnonInnerLength (50 lines)
         return new Term() {
             private final transient ConcurrentMap<String, Term> terms =
                 new ConcurrentHashMap<String, Term>();

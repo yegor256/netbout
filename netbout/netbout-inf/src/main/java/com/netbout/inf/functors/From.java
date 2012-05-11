@@ -54,6 +54,7 @@ final class From implements Functor {
     public Term build(final Ray ray, final List<Atom> atoms) {
         final long from = NumberAtom.class.cast(atoms.get(0)).value();
         return new VolatileTerm(
+            // @checkstyle AnonInnerLength (50 lines)
             new Term() {
                 private final transient AtomicLong pos = new AtomicLong(0L);
                 private final transient AtomicLong recent =
@@ -63,13 +64,14 @@ final class From implements Functor {
                     Cursor shifted = cursor;
                     if (!shifted.end()) {
                         shifted = shifted.shift(ray.builder().always());
+                        if (!shifted.end()
+                            && shifted.msg().number() <= this.recent.get()
+                            && this.pos.getAndIncrement() < from) {
+                            shifted = shifted.shift(ray.builder().always());
+                        }
                         if (shifted.end()) {
                             this.recent.set(0);
                         } else {
-                            if (shifted.msg().number() <= this.recent.get()
-                                && this.pos.getAndIncrement() < from) {
-                                shifted = shifted.shift(ray.builder().always());
-                            }
                             this.recent.set(shifted.msg().number());
                         }
                     }

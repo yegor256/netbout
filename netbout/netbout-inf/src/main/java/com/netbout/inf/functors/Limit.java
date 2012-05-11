@@ -54,6 +54,7 @@ final class Limit implements Functor {
     public Term build(final Ray ray, final List<Atom> atoms) {
         final long limit = NumberAtom.class.cast(atoms.get(0)).value();
         return new VolatileTerm(
+            // @checkstyle AnonInnerLength (50 lines)
             new Term() {
                 private final transient AtomicLong pos = new AtomicLong(0L);
                 private final transient AtomicLong recent =
@@ -64,8 +65,9 @@ final class Limit implements Functor {
                     if (!shifted.end()) {
                         shifted = shifted.shift(ray.builder().always());
                         if (!shifted.end()) {
-                            if (shifted.msg().number() < this.recent.get() &&
-                                this.pos.getAndIncrement() >= limit) {
+                            // @checkstyle NestedIfDepth (5 lines)
+                            if (shifted.msg().number() < this.recent.get()
+                                && this.pos.getAndIncrement() >= limit) {
                                 shifted = shifted.shift(ray.builder().never());
                                 this.recent.set(0);
                             } else {

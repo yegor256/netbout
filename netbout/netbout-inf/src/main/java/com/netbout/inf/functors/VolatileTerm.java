@@ -26,16 +26,8 @@
  */
 package com.netbout.inf.functors;
 
-import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Functor;
-import com.netbout.inf.InvalidSyntaxException;
-import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
-import com.netbout.inf.atoms.NumberAtom;
-import com.netbout.inf.atoms.PredicateAtom;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Volatile term.
@@ -55,7 +47,7 @@ final class VolatileTerm implements Term {
 
     /**
      * Public ctor.
-     * @param origin Original term
+     * @param term Original term
      */
     public VolatileTerm(final Term term) {
         this.origin = term;

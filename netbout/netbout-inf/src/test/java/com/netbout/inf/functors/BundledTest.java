@@ -30,8 +30,6 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.FolderMocker;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
-import com.netbout.inf.atoms.TextAtom;
-import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Bout;
@@ -50,6 +48,7 @@ import org.junit.Test;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class BundledTest {
 
     /**

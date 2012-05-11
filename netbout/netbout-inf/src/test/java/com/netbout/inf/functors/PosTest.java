@@ -64,7 +64,7 @@ public final class PosTest {
             Matchers.equalTo(msg)
         );
         MatcherAssert.assertThat(
-            ray.cursor().shift(term).end(),
+            ray.cursor().shift(term).shift(term).end(),
             Matchers.equalTo(true)
         );
     }
@@ -89,7 +89,7 @@ public final class PosTest {
             Matchers.equalTo(msg)
         );
         MatcherAssert.assertThat(
-            ray.cursor().shift(term).end(),
+            ray.cursor().shift(term).shift(term).end(),
             Matchers.equalTo(true)
         );
     }

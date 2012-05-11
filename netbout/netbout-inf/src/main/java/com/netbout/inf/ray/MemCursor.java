@@ -203,6 +203,7 @@ final class MemCursor implements Cursor {
         if (this.end()) {
             throw new IllegalStateException("end of cursor reached");
         }
+        // @checkstyle AnonInnerLength (40 lines)
         return new Msg() {
             @Override
             public long number() {
@@ -210,7 +211,7 @@ final class MemCursor implements Cursor {
             }
             @Override
             public String first(final String name) {
-                Iterator<String> values = MemCursor.this.imap.index(name)
+                final Iterator<String> values = MemCursor.this.imap.index(name)
                     .values(this.number())
                     .iterator();
                 if (!values.hasNext()) {
