@@ -82,7 +82,7 @@ final class Namespace implements Functor {
                 );
             } catch (com.netbout.spi.xml.DomValidationException ex) {
                 Logger.warn(
-                    Namespace.class,
+                    this,
                     "#see(#%d): %[exception]s",
                     message.number(),
                     ex

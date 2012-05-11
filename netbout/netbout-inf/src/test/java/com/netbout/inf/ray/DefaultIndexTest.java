@@ -26,11 +26,21 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.VerboseThreads;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 
 /**
  * Test case of {@link DefaultIndex}.
@@ -85,6 +95,62 @@ public final class DefaultIndexTest {
             );
             before = num;
         }
+    }
+
+    /**
+     * DefaultIndex can update records in parallel.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public void updatesInMultipleThreads() throws Exception {
+        final Index index = new DefaultIndex();
+        final long msg = new Random().nextLong();
+        final String value = "some value to set";
+        final int total = 100;
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch done = new CountDownLatch(total);
+        final Collection<Future<Boolean>> futures =
+            new ArrayList<Future<Boolean>>(total);
+        final ExecutorService service =
+            Executors.newFixedThreadPool(total, new VerboseThreads());
+        for (int pos = 0; pos < total; ++pos) {
+            futures.add(
+                service.submit(
+                    new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            start.await();
+                            index.delete(msg, value);
+                            index.replace(msg, value);
+                            done.countDown();
+                            return true;
+                        }
+                    }
+                )
+            );
+        }
+        start.countDown();
+        done.await(2, TimeUnit.SECONDS);
+        MatcherAssert.assertThat(
+            futures,
+            Matchers.everyItem(
+                new ArgumentMatcher<Future<Boolean>>() {
+                    @Override
+                    public boolean matches(final Object future) {
+                        try {
+                            return ((Future<Boolean>) future).get();
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                            throw new IllegalStateException(ex);
+                        } catch (java.util.concurrent.ExecutionException ex) {
+                            throw new IllegalStateException(ex);
+                        }
+                    }
+                }
+            )
+        );
+        MatcherAssert.assertThat(index.values(msg), Matchers.contains(value));
     }
 
 }
