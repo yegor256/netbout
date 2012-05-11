@@ -111,7 +111,9 @@ final class MuxTask implements Runnable {
             );
         }
         if (urns.isEmpty()) {
-            throw new IllegalArgumentException("empty list of deps");
+            throw new IllegalArgumentException(
+                Logger.format("empty list of deps in %[type]s", what)
+            );
         }
         this.deps = Collections.unmodifiableSet(urns);
     }

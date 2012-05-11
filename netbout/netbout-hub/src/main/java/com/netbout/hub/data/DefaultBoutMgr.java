@@ -111,8 +111,8 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        data.setTitle("(no title)");
         final ParticipantDt dude = data.addParticipant(author);
+        data.setTitle("(no title)");
         dude.setConfirmed(true);
         dude.setLeader(true);
         Logger.debug(

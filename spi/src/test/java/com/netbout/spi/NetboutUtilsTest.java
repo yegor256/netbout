@@ -88,4 +88,20 @@ public final class NetboutUtilsTest {
         );
     }
 
+    /**
+     * NetboutUtils can normalize a query.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void normalizedArbitraryQuery() throws Exception {
+        MatcherAssert.assertThat(
+            NetboutUtils.normalize("it's cool"),
+            Matchers.equalTo("(matches 'it\\'s cool')")
+        );
+        MatcherAssert.assertThat(
+            NetboutUtils.normalize(" \n(matches '\nhey')\n\t "),
+            Matchers.equalTo("(matches '\nhey')")
+        );
+    }
+
 }

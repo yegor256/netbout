@@ -29,13 +29,12 @@
  */
 package com.netbout.rest.rexsl.xhtml
 
-import com.rexsl.test.XhtmlConverter
 import com.rexsl.test.XhtmlMatchers
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 MatcherAssert.assertThat(
-    XhtmlConverter.the(rexsl.document),
+    rexsl.document,
     Matchers.allOf(
         XhtmlMatchers.hasXPath('//xhtml:div[@class="message"]'),
         XhtmlMatchers.hasXPath('//xhtml:div[@id="stage"]'),

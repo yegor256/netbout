@@ -36,16 +36,12 @@
     <xsl:template name="millis">
         <xsl:param name="millis" as="xs:integer"/>
         <xsl:choose>
-            <xsl:when test="$millis &gt; 1000 * 1000 * 1000">
-                <xsl:value-of select="format-number($millis div (1000 * 1000 * 1000), '0.000')"/>
+            <xsl:when test="$millis &gt; 1000">
+                <xsl:value-of select="format-number($millis div 1000, '0.0')"/>
                 <xsl:text>s</xsl:text>
             </xsl:when>
-            <xsl:when test="$millis &gt; 10 * 1000 * 1000">
-                <xsl:value-of select="round($millis div (1000 * 1000))"/>
-                <xsl:text>ms</xsl:text>
-            </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="format-number($millis div (1000 * 1000), '0.#')"/>
+                <xsl:value-of select="format-number($millis, '#')"/>
                 <xsl:text>ms</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
