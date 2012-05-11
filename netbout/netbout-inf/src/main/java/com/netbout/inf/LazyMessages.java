@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Lazy list of message numbers.
@@ -68,7 +69,7 @@ final class LazyMessages implements Iterable<Long> {
     }
 
     /**
-     * Iterator, NOT thread safe.
+     * Iterator, thread safe.
      */
     private final class MessagesIterator implements Iterator<Long> {
         /**
@@ -84,24 +85,29 @@ final class LazyMessages implements Iterable<Long> {
          * @param crs The cursor
          */
         public MessagesIterator(final Cursor crs) {
-            this.cursor = crs.copy();
+            this.cursor = crs;
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public boolean hasNext() {
-            if (!this.shifted) {
-                this.cursor = this.cursor.shift(LazyMessages.this.term);
-                this.shifted = true;
+            synchronized (this.cursor) {
+                if (!this.shifted) {
+                    this.cursor = this.cursor.shift(LazyMessages.this.term);
+                    this.shifted = true;
+                }
+                return !this.cursor.end();
             }
-            return !this.cursor.end();
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public Long next() {
+            if (!this.hasNext()) {
+                throw new NoSuchElementException();
+            }
             this.shifted = false;
             final Long number = this.cursor.msg().number();
             Logger.debug(this, "#next(): #%d", number);

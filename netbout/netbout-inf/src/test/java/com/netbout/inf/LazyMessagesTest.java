@@ -26,6 +26,9 @@
  */
 package com.netbout.inf;
 
+import java.util.Random;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -41,7 +44,11 @@ public final class LazyMessagesTest {
      */
     @Test
     public void findsMessagesInStreamOfMsgs() throws Exception {
-        // todo
+        final Long msg = new Random().nextLong();
+        final Cursor cursor = new CursorMocker().shiftTo(msg).mock();
+        final Term term = new TermMocker().mock();
+        final Iterable<Long> msgs = new LazyMessages(cursor, term);
+        MatcherAssert.assertThat(msgs, Matchers.hasItem(msg));
     }
 
 }

@@ -27,6 +27,8 @@
 package com.netbout.inf;
 
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link Cursor}.
@@ -58,6 +60,31 @@ public final class CursorMocker {
      */
     public CursorMocker withMsg(final long msg) {
         return this.withMsg(new MsgMocker().withNumber(msg).mock());
+    }
+
+    /**
+     * Always shift to this msg.
+     * @param msg The msg to shift to
+     * @return This object
+     */
+    public CursorMocker shiftTo(final long msg) {
+        return this.shiftTo(new CursorMocker().withMsg(msg).mock());
+    }
+
+    /**
+     * Always shift to this msg.
+     * @param crsr The cursor to shift to
+     * @return This object
+     */
+    public CursorMocker shiftTo(final Cursor crsr) {
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    return crsr;
+                }
+            }
+        ).when(this.cursor).shift(Mockito.any(Term.class));
+        return this;
     }
 
     /**
