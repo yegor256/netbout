@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
 import java.util.Iterator;
 
 /**
@@ -102,7 +103,9 @@ final class LazyMessages implements Iterable<Long> {
         @Override
         public Long next() {
             this.shifted = false;
-            return this.cursor.msg().number();
+            final Long number = this.cursor.msg().number();
+            Logger.debug(this, "#next(): #%d", number);
+            return number;
         }
         /**
          * {@inheritDoc}

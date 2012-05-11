@@ -80,7 +80,7 @@ public final class FromTest {
             Arrays.asList(new Atom[] {new NumberAtom(1L)})
         );
         MatcherAssert.assertThat(
-            ray.cursor().shift(term).end(),
+            ray.cursor().shift(term).shift(term).end(),
             Matchers.equalTo(true)
         );
     }

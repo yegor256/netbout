@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 
@@ -80,6 +81,7 @@ final class PickerTerm implements Term {
         } else {
             shifted = new MemCursor(0L, this.imap);
         }
+        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, shifted);
         return shifted;
     }
 

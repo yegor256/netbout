@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Iterator;
@@ -72,7 +73,7 @@ final class MatcherTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("(%s = %s)", this.attr, this.value);
+        return String.format("(%s:%s)", this.attr, this.value);
     }
 
     /**
@@ -91,6 +92,7 @@ final class MatcherTerm implements Term {
                 .iterator();
             shifted = new MemCursor(this.next(tail, current), this.imap);
         }
+        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, shifted);
         return shifted;
     }
 

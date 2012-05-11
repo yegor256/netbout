@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.functors;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
@@ -52,27 +53,43 @@ final class From implements Functor {
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
         final long from = NumberAtom.class.cast(atoms.get(0)).value();
-        return new Term() {
-            private final transient AtomicLong pos = new AtomicLong(0L);
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                Cursor shifted = cursor;
-                if (!shifted.end()) {
-                    if (shifted.msg().number() == Long.MAX_VALUE) {
+        return new VolatileTerm(
+            new Term() {
+                private final transient AtomicLong pos = new AtomicLong(0L);
+                private final transient AtomicLong recent =
+                    new AtomicLong(Long.MAX_VALUE);
+                @Override
+                public Cursor shift(final Cursor cursor) {
+                    Cursor shifted = cursor;
+                    if (!shifted.end()) {
                         shifted = shifted.shift(ray.builder().always());
+                        if (shifted.end()) {
+                            this.recent.set(0);
+                        } else {
+                            if (shifted.msg().number() < this.recent.get()
+                                && this.pos.getAndIncrement() < from) {
+                                shifted = shifted.shift(ray.builder().always());
+                            }
+                            this.recent.set(shifted.msg().number());
+                        }
                     }
-                    if (this.pos.get() < from) {
-                        shifted = shifted.shift(ray.builder().always());
-                    }
+                    Logger.debug(
+                        this,
+                        "#shift(%s): %s to %s (pos=%d, recent=%d)",
+                        cursor,
+                        this,
+                        shifted,
+                        this.pos.get(),
+                        this.recent.get()
+                    );
+                    return shifted;
                 }
-                this.pos.getAndIncrement();
-                return shifted;
+                @Override
+                public String toString() {
+                    return String.format("(FROM %d)", from);
+                }
             }
-            @Override
-            public String toString() {
-                return String.format("(FROM %d)", from);
-            }
-        };
+        );
     }
 
 }

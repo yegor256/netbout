@@ -77,15 +77,12 @@ public final class PosTest {
     public void catchesTheSecondMessage() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
         final long msg = new Random().nextLong();
+        ray.msg(msg + 1);
         ray.msg(msg);
         final Pos functor = new Pos();
         final Term term = functor.build(
             ray,
             Arrays.asList(new Atom[] {new NumberAtom(1L)})
-        );
-        MatcherAssert.assertThat(
-            ray.cursor().shift(term).end(),
-            Matchers.equalTo(false)
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).msg().number(),

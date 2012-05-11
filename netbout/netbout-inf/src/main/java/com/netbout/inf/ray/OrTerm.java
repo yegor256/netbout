@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
@@ -59,7 +60,10 @@ final class OrTerm implements Term {
      */
     public OrTerm(final IndexMap map, final Collection<Term> args) {
         this.imap = map;
-        this.terms = args;
+        this.terms = new ArrayList<Term>(args);
+        if (this.terms.isEmpty()) {
+            this.terms.add(new AlwaysTerm(this.imap));
+        }
     }
 
     /**
@@ -99,6 +103,7 @@ final class OrTerm implements Term {
                 slider = new MemCursor(Collections.max(msgs), this.imap);
             }
         }
+        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, slider);
         return slider;
     }
 

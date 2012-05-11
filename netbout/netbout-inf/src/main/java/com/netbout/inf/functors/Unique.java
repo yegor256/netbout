@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.functors;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
@@ -69,6 +70,7 @@ final class Unique implements Functor {
                         this.record(shifted);
                     }
                 }
+                Logger.debug(this, "#shift(%s): to %s", cursor, shifted);
                 return shifted;
             }
             @Override
@@ -79,9 +81,7 @@ final class Unique implements Functor {
                 final String value = cursor.msg().first(attr);
                 this.terms.put(
                     value,
-                    ray.builder().not(
-                        ray.builder().matcher(attr, value)
-                    )
+                    ray.builder().not(ray.builder().matcher(attr, value))
                 );
             }
         };

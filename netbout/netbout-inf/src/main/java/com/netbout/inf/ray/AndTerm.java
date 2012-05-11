@@ -26,8 +26,10 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,7 +62,10 @@ final class AndTerm implements Term {
      */
     public AndTerm(final IndexMap map, final Collection<Term> args) {
         this.imap = map;
-        this.terms = args;
+        this.terms = new ArrayList<Term>(args);
+        if (this.terms.isEmpty()) {
+            this.terms.add(new AlwaysTerm(this.imap));
+        }
     }
 
     /**
@@ -86,99 +91,68 @@ final class AndTerm implements Term {
         if (cursor.end()) {
             slider = cursor;
         } else {
-            slider = cursor.shift(new AlwaysTerm(this.imap));
-            if (!this.terms.isEmpty()) {
-                slider = this.proceed(cursor, slider);
+            final ConcurrentMap<Term, Cursor> cache =
+                new ConcurrentHashMap<Term, Cursor>();
+            slider = this.move(this.terms.iterator().next(), cursor, cache);
+            if (!slider.end()) {
+                slider = this.slide(slider, cache);
             }
         }
+        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, slider);
         return slider;
     }
 
     /**
-     * Proceed with terms and cursor.
-     * @param initial Initial cursor
-     * @param cursor First cursor
-     * @return Result of the cycle run
+     * Slide it down to the first match.
+     * @param cursor First expected point to reach
+     * @param cache Cached positions of every term
+     * @return Matched position (or END)
      */
-    private Cursor proceed(final Cursor initial, final Cursor cursor) {
-        final ConcurrentMap<Term, Cursor> cursors =
-            new ConcurrentHashMap<Term, Cursor>();
-        for (Term term : this.terms) {
-            cursors.put(term, initial);
-        }
+    private Cursor slide(final Cursor cursor,
+        final ConcurrentMap<Term, Cursor> cache) {
         Cursor slider = cursor;
-        while (!slider.end()) {
-            slider = this.cycle(cursors, slider);
-            if (slider.end() || this.match(cursors.values())) {
-                break;
+        boolean match;
+        do {
+            match = true;
+            final Cursor expected = slider;
+            for (Term term : this.terms) {
+                slider = this.move(term, this.above(slider), cache);
+                if (!expected.equals(slider)) {
+                    match = false;
+                    break;
+                }
             }
-        }
+        } while (!match && !slider.end());
         return slider;
     }
 
     /**
-     * Run one cycle through all terms.
-     * @param cursors All cursors of all terms
-     * @param until Until we reach (or pass) this point
-     * @return Result of the cycle run
+     * One step above.
+     * @param cursor The cursor
+     * @return Cursor with one step higher position
      */
-    private Cursor cycle(final Map<Term, Cursor> cursors, final Cursor until) {
-        Cursor slider = new MemCursor(0L, this.imap);
-        for (Term term : this.terms) {
-            slider = this.slide(cursors.get(term), term, until);
-            cursors.put(term, slider);
-            if (slider.end()) {
-                break;
-            }
+    private Cursor above(final Cursor cursor) {
+        if (cursor.msg().number() == Long.MAX_VALUE) {
+            throw new IllegalArgumentException("can't use above()");
         }
-        return slider;
+        return new MemCursor(cursor.msg().number() + 1, this.imap);
     }
 
     /**
-     * Slide down this particular cursor by the term, UNTIL point is
-     * reached (or passed).
-     * @param cursor The cursor to use
-     * @param term The term to use
-     * @param until What point to expect
-     * @return New cursor, where we stopped (may be the end)
+     * Move term one step next.
+     * @param term The term to use for movement
+     * @param from Where to start
+     * @param cache Cached positions of every term
+     * @return Matched position (or END)
      */
-    private Cursor slide(final Cursor cursor, final Term term,
-        final Cursor until) {
-        Cursor slider = cursor;
-        while (true) {
-            if (slider.end()) {
-                break;
-            }
-            if (slider.compareTo(until) <= 0) {
-                break;
-            }
-            slider = term.shift(slider);
+    private Cursor move(final Term term, final Cursor from,
+        final ConcurrentMap<Term, Cursor> cache) {
+        if (!cache.containsKey(term)
+            || cache.get(term).compareTo(from) >= 0
+            || term.getClass().getAnnotation(Term.Volatile.class) != null) {
+            cache.put(term, term.shift(from));
         }
-        return slider;
-    }
-
-    /**
-     * All cursors point to the same message?
-     * @param cursors All cursors of all terms
-     * @return TRUE if all of them point to the same message
-     */
-    private boolean match(final Collection<Cursor> cursors) {
-        boolean match = true;
-        long msg = Long.MAX_VALUE;
-        for (Cursor cursor : cursors) {
-            if (cursor.end()) {
-                match = false;
-                break;
-            }
-            if (msg == Long.MAX_VALUE) {
-                msg = cursor.msg().number();
-            }
-            if (cursor.msg().number() != msg) {
-                match = false;
-                break;
-            }
-        }
-        return match;
+        return cache.get(term);
     }
 
 }

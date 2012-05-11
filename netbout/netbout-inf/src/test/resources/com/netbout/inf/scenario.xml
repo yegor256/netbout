@@ -8,7 +8,17 @@
             <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <query>
-            <predicate>(and (or (matches 'dude') (matches 'you')) (bundled) (limit 1) (from 0))</predicate>
+            <predicate>
+                (and
+                    (or
+                        (matches 'dude')
+                        (matches 'you')
+                    )
+                    (bundled)
+                    (from 0)
+                    (limit 1)
+                )
+            </predicate>
             <messages>777</messages>
         </query>
     </scene>
@@ -25,7 +35,7 @@
         </see>
         <query>
             <predicate>(and (or (matches 'first') (matches 'second')) (pos 1))</predicate>
-            <messages>6767</messages>
+            <messages>6565</messages>
         </query>
     </scene>
     <scene>
@@ -72,6 +82,28 @@
     </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>9991</message.number>
+            <bout.participants>urn:test:william</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>9992</message.number>
+            <bout.participants>urn:test:william</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>9993</message.number>
+            <bout.participants>urn:test:william</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>9994</message.number>
+            <bout.participants>urn:test:william</bout.participants>
+        </see>
+        <query>
+            <predicate>(and (talks-with 'urn:test:william') (from 2))</predicate>
+            <messages>9993, 9992</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>991</message.number>
             <bout.participants>urn:test:dude</bout.participants>
             <bout.number>550</bout.number>
@@ -92,6 +124,7 @@
                                 (matches '' $bout.title)
                                 (matches '' $author.alias)
                             )
+                            (bundled)
                         )
                         (from 0)
                     )

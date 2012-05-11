@@ -81,6 +81,7 @@ final class Bundled implements Functor {
                         )
                     );
                 }
+                Logger.debug(this, "#shift(%s): to %s", cursor, shifted);
                 return shifted;
             }
             @Override

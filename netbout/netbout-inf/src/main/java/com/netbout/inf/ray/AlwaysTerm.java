@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Iterator;
@@ -74,6 +75,7 @@ final class AlwaysTerm implements Term {
                 this.imap
             );
         }
+        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, shifted);
         return shifted;
     }
 

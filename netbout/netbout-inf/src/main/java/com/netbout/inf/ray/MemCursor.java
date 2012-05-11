@@ -83,6 +83,23 @@ final class MemCursor implements Cursor {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return Long.valueOf(this.where).hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object cursor) {
+        return cursor instanceof MemCursor
+            && cursor.hashCode() == this.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int compareTo(final Cursor cursor) {
         Long number;
         if (cursor.end()) {

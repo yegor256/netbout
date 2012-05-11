@@ -27,13 +27,14 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
-import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
+import com.netbout.inf.InvalidSyntaxException;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.atoms.PredicateAtom;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Allows only message at this position.
@@ -50,29 +51,27 @@ final class Pos implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
-        final long desired = NumberAtom.class.cast(atoms.get(0)).value();
-        return new Term() {
-            private final transient AtomicLong position = new AtomicLong(0L);
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                Cursor shifted = cursor;
-                if (!shifted.end()) {
-                    if (shifted.msg().number() == Long.MAX_VALUE) {
-                        shifted = shifted.shift(ray.builder().always());
+    public Term build(final Ray ray, final List<Atom> atoms)
+        throws InvalidSyntaxException {
+        return new VolatileTerm(
+            new Conjunction().build(
+                ray,
+                Arrays.asList(
+                    new Atom[] {
+                        new PredicateAtom(
+                            "from",
+                            atoms,
+                            new From()
+                        ),
+                        new PredicateAtom(
+                            "limit",
+                            Arrays.asList(new Atom[] {new NumberAtom(1L)}),
+                            new Limit()
+                        ),
                     }
-                    if (this.position.get() > desired) {
-                        shifted = shifted.shift(ray.builder().never());
-                    }
-                }
-                this.position.getAndIncrement();
-                return shifted;
-            }
-            @Override
-            public String toString() {
-                return String.format("(POS %d)", desired);
-            }
-        };
+                )
+            )
+        );
     }
 
 }
