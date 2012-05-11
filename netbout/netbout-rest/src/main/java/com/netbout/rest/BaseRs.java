@@ -34,14 +34,10 @@ import com.netbout.spi.text.SecureString;
 import com.rexsl.page.BaseResource;
 import com.jcabi.log.Logger;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
 
 /**
  * Abstract RESTful resource.
@@ -49,7 +45,7 @@ import javax.ws.rs.ext.Providers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public abstract class BaseRs extends BaseResource implements NbResource {
+public class BaseRs extends BaseResource implements NbResource {
 
     /**
      * List of log events.

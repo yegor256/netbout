@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.NbPage;
 import com.netbout.rest.ForwardException;
+import com.netbout.rest.NbPage;
 import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;

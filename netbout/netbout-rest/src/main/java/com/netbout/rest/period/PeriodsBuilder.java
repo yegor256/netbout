@@ -26,9 +26,9 @@
  */
 package com.netbout.rest.period;
 
+import com.jcabi.log.Logger;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
-import com.jcabi.log.Logger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

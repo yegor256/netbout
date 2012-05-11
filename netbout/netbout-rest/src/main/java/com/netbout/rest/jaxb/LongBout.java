@@ -28,7 +28,6 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
 import com.netbout.rest.BoutRs;
-import com.netbout.rest.ForwardException;
 import com.netbout.rest.NbResource;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.rest.period.Period;

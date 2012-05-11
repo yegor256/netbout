@@ -26,11 +26,11 @@
  */
 package com.netbout.notifiers.facebook;
 
+import com.jcabi.log.Logger;
 import com.restfb.Connection;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.types.FacebookType;
-import com.jcabi.log.Logger;
 
 /**
  * Manager of AppRequests.

@@ -33,28 +33,20 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.core.Manifests;
-import com.rexsl.core.XslResolver;
 import com.rexsl.misc.CookieBuilder;
 import com.rexsl.page.BasePage;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
-import com.jcabi.log.Logger;
-import java.net.URI;
 import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**

@@ -26,10 +26,10 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Identity;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
-import com.jcabi.log.Logger;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;

@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.log.Logger;
 import com.netbout.rest.jaxb.ShortBout;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
@@ -38,7 +39,6 @@ import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
-import com.jcabi.log.Logger;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ws.rs.FormParam;
@@ -54,6 +54,7 @@ import javax.ws.rs.core.UriBuilder;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Path("/")
 public final class InboxRs extends BaseRs {

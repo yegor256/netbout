@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.log.Logger;
 import com.netbout.rest.BaseRs;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.NbPage;
@@ -37,7 +38,6 @@ import com.restfb.types.User;
 import com.rexsl.core.Manifests;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;
-import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;

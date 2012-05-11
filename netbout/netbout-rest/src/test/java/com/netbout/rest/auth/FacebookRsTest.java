@@ -26,26 +26,17 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.hub.Hub;
-import com.netbout.hub.HubMocker;
 import com.netbout.rest.NbPage;
 import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import com.rexsl.core.Manifests;
-import com.rexsl.page.UriInfoMocker;
 import com.rexsl.test.XhtmlMatchers;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case for {@link LoginRs}.

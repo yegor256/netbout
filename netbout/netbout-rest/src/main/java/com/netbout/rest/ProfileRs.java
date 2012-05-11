@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.hub.UrnResolver;
 import com.netbout.rest.jaxb.LongProfile;
 import com.netbout.rest.jaxb.Namespace;
 import com.netbout.spi.Identity;
@@ -154,11 +155,15 @@ public final class ProfileRs extends BaseRs {
         final Identity identity = this.identity();
         for (String line : StringUtils.split(text.trim(), "\n")) {
             final String[] parts = StringUtils.split(line, "=", 2);
-            this.hub().resolver().register(
-                identity,
-                StringUtils.trim(parts[0]),
-                StringUtils.trim(parts[1])
-            );
+            try {
+                this.hub().resolver().register(
+                    identity,
+                    StringUtils.trim(parts[0]),
+                    StringUtils.trim(parts[1])
+                );
+            } catch (UrnResolver.DuplicateNamespaceException ex) {
+                throw new ForwardException(this, this.self(), ex);
+            }
         }
         return new PageBuilder()
             .build(NbPage.class)

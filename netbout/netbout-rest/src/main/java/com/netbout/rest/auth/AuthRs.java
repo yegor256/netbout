@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.log.Logger;
 import com.netbout.rest.BaseRs;
 import com.netbout.rest.Cryptor;
 import com.netbout.rest.LoginRequiredException;
@@ -36,7 +37,6 @@ import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.misc.CookieBuilder;
 import com.rexsl.page.PageBuilder;
-import com.jcabi.log.Logger;
 import java.net.URI;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.DefaultValue;

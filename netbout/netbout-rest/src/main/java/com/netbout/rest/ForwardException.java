@@ -26,10 +26,10 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.misc.CookieBuilder;
-import com.jcabi.log.Logger;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;

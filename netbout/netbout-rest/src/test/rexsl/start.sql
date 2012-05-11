@@ -41,6 +41,12 @@ DELETE FROM bout;
 DELETE FROM namespace;
 DELETE FROM identity;
 
+INSERT IGNORE INTO identity (name, photo, date) VALUES (
+    'urn:void:',
+    'http://img.netbout.com/unknown.png',
+    '2008-08-30'
+);
+
 -- me, in order to allow sensitive helpers to work
 INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'urn:facebook:1531296526',
@@ -49,7 +55,7 @@ INSERT IGNORE INTO identity (name, photo, date) VALUES (
 );
 INSERT IGNORE INTO namespace (name, identity, template) VALUES (
      'facebook',
-     'urn:facebook:1531296526',
+     'urn:void:',
      'http://localhost/'
 );
 
@@ -61,7 +67,7 @@ INSERT IGNORE INTO identity (name, photo, date) VALUES (
 );
 INSERT IGNORE INTO namespace (name, identity, template) VALUES (
      'test',
-     'urn:test:bumper',
+     'urn:void:',
      'http://localhost/'
 );
 INSERT IGNORE INTO helper (identity, url, date) VALUES (

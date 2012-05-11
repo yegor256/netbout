@@ -29,11 +29,7 @@ package com.netbout.rest;
 import com.netbout.rest.log.LogList;
 import com.netbout.spi.Identity;
 import com.rexsl.page.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
 
 /**
  * RESTful resource.
