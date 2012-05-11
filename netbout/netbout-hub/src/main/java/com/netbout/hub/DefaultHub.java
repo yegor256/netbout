@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
@@ -53,8 +54,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -99,6 +100,14 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         new ConcurrentHashMap<Urn, Identity>();
 
     /**
+     * Cron runner.
+     */
+    private final transient ScheduledExecutorService service =
+        Executors.newSingleThreadScheduledExecutor(
+            new VerboseThreads(DefaultHub.class)
+        );
+
+    /**
      * Cron tasks running.
      */
     private final transient Collection<ScheduledFuture> crons =
@@ -120,6 +129,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      *  mostly because they may start using it BEFORE the ctor is finished. We
      *  should introduce a start() method in this class.
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public DefaultHub(final Bus bus, final Infinity infinity) {
         StatsFarm.register(this);
         this.ibus = bus;
@@ -127,12 +137,12 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         this.promote(this.persister());
-        final ThreadFactory factory = new VerboseThreads(this);
         for (Runnable task : AbstractCron.all(this)) {
             this.crons.add(
-                Executors
-                    .newSingleThreadScheduledExecutor(factory)
-                    .scheduleWithFixedDelay(task, 1L, 1L, TimeUnit.MINUTES)
+                this.service.scheduleWithFixedDelay(
+                    new VerboseRunnable(task, true),
+                    1L, 1L, TimeUnit.MINUTES
+                )
             );
         }
         Logger.debug(
@@ -162,11 +172,10 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         for (ScheduledFuture cron : this.crons) {
             cron.cancel(true);
         }
-        Logger.debug(this, "#close(): shutting down BUS");
+        this.service.shutdown();
         this.ibus.close();
-        Logger.debug(this, "#close(): shutting down INF");
         this.inf.close();
-        Logger.debug(this, "#close(): closed successfully");
+        Logger.info(this, "#close(): closed successfully");
     }
 
     /**

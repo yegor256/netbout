@@ -51,7 +51,7 @@ public final class EtaAssertion implements AssertionPolicy {
     /**
      * Maximum delay in nanosec.
      */
-    private static final long MAX_DELAY = 60 * 1000L * 1000 * 1000;
+    private static final long MAX_DELAY = 5 * 60 * 1000L * 1000 * 1000;
 
     /**
      * Recently detected ETA.
@@ -90,8 +90,8 @@ public final class EtaAssertion implements AssertionPolicy {
         if (this.eta > 0) {
             again = true;
             final long delay = Math.min(
-                Math.max(this.eta * attempt, this.MIN_DELAY * attempt),
-                this.MAX_DELAY * attempt
+                Math.max(this.eta * attempt, this.MIN_DELAY * attempt * 2),
+                this.MAX_DELAY
             );
             Logger.warn(
                 this,
