@@ -141,7 +141,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             this.crons.add(
                 this.service.scheduleWithFixedDelay(
                     new VerboseRunnable(task, true),
-                    1L, 1L, TimeUnit.MINUTES
+                    0L, 1L, TimeUnit.MINUTES
                 )
             );
         }
