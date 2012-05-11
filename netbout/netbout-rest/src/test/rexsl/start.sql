@@ -47,6 +47,11 @@ INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'http://img.netbout.com/unknown.png',
     '2008-08-30'
 );
+INSERT IGNORE INTO namespace (name, identity, template) VALUES (
+     'facebook',
+     'urn:facebook:1531296526',
+     'http://localhost/'
+);
 
 -- bumper helper and identity
 INSERT IGNORE INTO identity (name, photo, date) VALUES (
@@ -54,11 +59,11 @@ INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'http://img.netbout.com/unknown.png',
     '2008-08-30'
 );
--- INSERT IGNORE INTO namespace (name, identity, template) VALUES (
---     'test',
---     'urn:test:bumper',
---     'http://test-namespace.netbout.com/'
--- );
+INSERT IGNORE INTO namespace (name, identity, template) VALUES (
+     'test',
+     'urn:test:bumper',
+     'http://localhost/'
+);
 INSERT IGNORE INTO helper (identity, url, date) VALUES (
     'urn:test:bumper',
     'file:com.netbout.rest.bumper',

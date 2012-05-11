@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Default URN resolver.
@@ -42,7 +43,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.UseConcurrentHashMap")
 final class DefaultUrnResolver implements UrnResolver {
 
     /**
@@ -59,7 +59,7 @@ final class DefaultUrnResolver implements UrnResolver {
     /**
      * Namespaces and related URL templates, allocated in slots.
      */
-    private final transient Map<Urn, Map<String, String>> slots =
+    private final transient ConcurrentMap<Urn, Map<String, String>> slots =
         new ConcurrentHashMap<Urn, Map<String, String>>();
 
     /**
@@ -68,8 +68,12 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     public DefaultUrnResolver(final Hub ihub) {
         this.hub = ihub;
-        this.save(new Urn(), "void", "http://www.netbout.com/");
-        this.save(new Urn(), "netbout", "http://www.netbout.com/nb");
+        try {
+            this.save(new Urn(), "void", "http://www.netbout.com/");
+            this.save(new Urn(), "netbout", "http://www.netbout.com/nb");
+        } catch (UrnResolver.DuplicateNamespaceException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -81,7 +85,7 @@ final class DefaultUrnResolver implements UrnResolver {
         text.append("Registered namespaces:\n");
         for (Urn owner : this.slots.keySet()) {
             text.append(String.format("%s\n", owner));
-            for (Map.Entry<String, String> entry
+            for (ConcurrentMap.Entry<String, String> entry
                 : this.slots.get(owner).entrySet()) {
                 text.append(
                     String.format(
@@ -100,7 +104,7 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     @Override
     public void register(final Identity owner, final String namespace,
-        final String template) {
+        final String template) throws UrnResolver.DuplicateNamespaceException {
         if (!namespace.matches("^[a-z]{1,31}$")) {
             throw new IllegalArgumentException(
                 String.format(
@@ -144,10 +148,10 @@ final class DefaultUrnResolver implements UrnResolver {
     @Override
     public Map<String, String> registered(final Identity owner) {
         this.initialize();
-        final Map<String, String> found =
+        final ConcurrentMap<String, String> found =
             new ConcurrentHashMap<String, String>();
         if (this.slots.containsKey(owner.name())) {
-            for (Map.Entry<String, String> entry
+            for (ConcurrentMap.Entry<String, String> entry
                 : this.slots.get(owner.name()).entrySet()) {
                 found.put(entry.getKey(), entry.getValue());
             }
@@ -187,8 +191,10 @@ final class DefaultUrnResolver implements UrnResolver {
      * @param urn The identity
      * @param name Name of the namespace
      * @param template The template
+     * @throws UrnResolver.DuplicateNamespaceException If already registered
      */
-    private void save(final Urn urn, final String name, final String template) {
+    private void save(final Urn urn, final String name, final String template)
+        throws UrnResolver.DuplicateNamespaceException {
         synchronized (this.slots) {
             if (!this.slots.containsKey(urn)) {
                 this.slots.put(urn, new ConcurrentHashMap<String, String>());
@@ -266,7 +272,11 @@ final class DefaultUrnResolver implements UrnResolver {
                         .arg(name)
                         .exec();
                     assert owner != null;
-                    this.save(owner, name, template);
+                    try {
+                        this.save(owner, name, template);
+                    } catch (DuplicateNamespaceException ex) {
+                        throw new IllegalStateException(ex);
+                    }
                 }
                 if (!names.isEmpty()) {
                     this.initialized = true;
