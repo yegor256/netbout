@@ -42,6 +42,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class DefaultUrnResolver implements UrnResolver {
 
@@ -198,6 +199,16 @@ final class DefaultUrnResolver implements UrnResolver {
         synchronized (this.slots) {
             if (!this.slots.containsKey(urn)) {
                 this.slots.put(urn, new ConcurrentHashMap<String, String>());
+            }
+            for (ConcurrentMap.Entry<Urn, Map<String, String>> entry
+                : this.slots.entrySet()) {
+                for (String nsp : entry.getValue().keySet()) {
+                    if (nsp.equals(name) && !entry.getKey().equals(urn)) {
+                        throw new UrnResolver.DuplicateNamespaceException(
+                            entry.getKey(), nsp
+                        );
+                    }
+                }
             }
             this.slots.get(urn).put(name, template);
         }
