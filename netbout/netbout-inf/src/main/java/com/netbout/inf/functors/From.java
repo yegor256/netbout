@@ -66,7 +66,7 @@ final class From implements Functor {
                         if (shifted.end()) {
                             this.recent.set(0);
                         } else {
-                            if (shifted.msg().number() < this.recent.get()
+                            if (shifted.msg().number() <= this.recent.get()
                                 && this.pos.getAndIncrement() < from) {
                                 shifted = shifted.shift(ray.builder().always());
                             }
