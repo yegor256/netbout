@@ -229,12 +229,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Text formatting tool -->
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version since="17 Nov 2011">1.7</version>
-        </dependency>
-        <dependency>
             <!--
             org.hamcrest.MatcherAssert class.
             @link http://code.google.com/p/hamcrest/wiki/Tutorial
