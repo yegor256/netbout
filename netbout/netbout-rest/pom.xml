@@ -131,6 +131,11 @@
             <artifactId>jcabi-log</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-velocity</artifactId>
+            <version since="13 May 2012">0.1.6</version>
+        </dependency>
+        <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl-core</artifactId>
             <version>${rexsl.version}</version>
@@ -540,7 +545,7 @@
         <profile>
             <id>catapult</id>
             <activation>
-                <file><exists>-pom.xml</exists></file>
+                <file><exists>pom.xml</exists></file>
             </activation>
             <properties>
                 <catapult.warName>${project.build.finalName}-catapult</catapult.warName>

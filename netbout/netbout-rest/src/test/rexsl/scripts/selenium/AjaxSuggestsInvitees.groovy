@@ -50,7 +50,7 @@ driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
 def input = driver.findElementByCssSelector('form#invite input[name="mask"]')
 input.sendKeys('c')
 
-TimeUnit.SECONDS.sleep(2)
+TimeUnit.SECONDS.sleep(1)
 
 def invitees = driver.findElementById('invite-list')
 MatcherAssert.assertThat(

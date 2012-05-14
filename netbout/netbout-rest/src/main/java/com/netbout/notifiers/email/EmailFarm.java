@@ -26,6 +26,7 @@
  */
 package com.netbout.notifiers.email;
 
+import com.jcabi.velocity.VelocityPage;
 import com.netbout.hub.Hub;
 import com.netbout.rest.meta.MetaText;
 import com.netbout.spi.Bout;
@@ -37,7 +38,6 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
-import com.netbout.spi.text.Template;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -170,7 +170,7 @@ public final class EmailFarm implements IdentityAware {
      */
     private void send(final Participant dude, final Message message) {
         assert dude != null;
-        final String text = new Template(
+        final String text = new VelocityPage(
             "com/netbout/notifiers/email/email-notification.vm"
         )
             .set("bout", dude.bout())

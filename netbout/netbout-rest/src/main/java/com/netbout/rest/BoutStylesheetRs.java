@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.velocity.VelocityPage;
 import com.netbout.spi.Urn;
-import com.netbout.spi.text.Template;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -80,7 +80,7 @@ public final class BoutStylesheetRs extends BaseRs {
     @Path("/wrapper.xsl")
     @Produces("text/xsl")
     public String boutXsl() {
-        return new Template("com/netbout/rest/wrapper.xsl.vm")
+        return new VelocityPage("com/netbout/rest/wrapper.xsl.vm")
             .set(
                 "boutXsl",
                 StringEscapeUtils.escapeXml(
