@@ -208,14 +208,16 @@ final class DefaultUrnResolver implements UrnResolver {
                             entry.getKey(), nsp
                         );
                     }
-                    Logger.info(
-                        this,
-                        "#save('%s', '%s', '%s'): replacing existing '%s'",
-                        urn,
-                        name,
-                        template,
-                        entry.getValue().get(name)
-                    );
+                    if (entry.getValue().containsKey(name)) {
+                        Logger.debug(
+                            this,
+                            "#save('%s', '%s', '%s'): replacing existing '%s'",
+                            urn,
+                            name,
+                            template,
+                            entry.getValue().get(name)
+                        );
+                    }
                 }
             }
             this.slots.get(urn).put(name, template);

@@ -67,7 +67,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
     /**
      * Is this page searcheable?
      */
-    private transient boolean searcheable;
+    private transient boolean srchbl;
 
     /**
      * The response builder to return.
@@ -85,7 +85,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
      * @return This object
      */
     public final NbPage searcheable(final boolean srch) {
-        this.searcheable = srch;
+        this.srchbl = srch;
         return this;
     }
 
@@ -196,7 +196,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
      */
     @XmlAttribute
     public final boolean isSearcheable() {
-        return this.searcheable;
+        return this.srchbl;
     }
 
     /**

@@ -622,7 +622,7 @@
                                             <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
                                             <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
                                             <Netbout-PopPort>995</Netbout-PopPort>
-                                            <Netbout-SecurityKey>test-security-key</Netbout-SecurityKey>
+                                            <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
                                             <Netbout-SuperSecret>-super-secret</Netbout-SuperSecret>
                                             <Netbout-EbsVolume>volume</Netbout-EbsVolume>
                                             <Netbout-AwsKey>-key</Netbout-AwsKey>

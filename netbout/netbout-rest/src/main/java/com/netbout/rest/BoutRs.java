@@ -393,7 +393,6 @@ public final class BoutRs extends BaseRs {
             .searcheable(true)
             .append(
                 new LongBout(
-                    this,
                     this.hub(),
                     this.bout(),
                     this.coords,

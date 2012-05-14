@@ -28,7 +28,6 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
 import com.netbout.rest.BoutRs;
-import com.netbout.rest.NbResource;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
@@ -60,11 +59,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.NONE)
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class LongBout {
-
-    /**
-     * Where we are.
-     */
-    private final transient NbResource home;
 
     /**
      * The bus.
@@ -115,7 +109,6 @@ public final class LongBout {
 
     /**
      * Private ctor.
-     * @param res Where we are
      * @param ihub The hub
      * @param bot The bout
      * @param crds The coordinates of the stage to render
@@ -126,12 +119,11 @@ public final class LongBout {
      * @checkstyle ParameterNumber (7 lines)
      */
     public LongBout(
-        final NbResource res, final Hub ihub, final Bout bot,
+        final Hub ihub, final Bout bot,
         final StageCoordinates crds,
         final String keyword, final UriBuilder bldr, final Identity vwr,
         final String period
     ) {
-        this.home = res;
         this.hub = ihub;
         this.bout = bot;
         this.coords = crds;
