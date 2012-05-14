@@ -84,4 +84,39 @@ public final class DefaultInfinityTest {
         inf.close();
     }
 
+    /**
+     * DefaultInfinity can restore its state from files.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void restoresItselfFromFileSystem() throws Exception {
+        final Folder folder = new FolderMocker().mock();
+        final Infinity inf = new DefaultInfinity(folder);
+        final Bout bout = new BoutMocker()
+            .withParticipant(new UrnMocker().mock())
+            .mock();
+        final Message msg = new MessageMocker()
+            .withText("Jeffrey Lebowski")
+            .inBout(bout)
+            .mock();
+        final Urn[] deps = inf.see(
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return msg;
+                }
+            }
+        ).toArray(new Urn[0]);
+        while (inf.eta(deps) != 0) {
+            TimeUnit.MILLISECONDS.sleep(1);
+        }
+        inf.close();
+        final Infinity restored = new DefaultInfinity(folder);
+        MatcherAssert.assertThat(
+            restored.messages("(matches 'lebowski')"),
+            (Matcher) Matchers.iterableWithSize(1)
+        );
+        restored.close();
+    }
+
 }
