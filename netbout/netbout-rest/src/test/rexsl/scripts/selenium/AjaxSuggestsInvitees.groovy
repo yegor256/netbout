@@ -46,14 +46,10 @@ bout.rename('finding friends with AJAX/Selenium')
 def driver = new HtmlUnitDriver()
 driver.setJavascriptEnabled(true)
 driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
+driver.findElementByCssSelector('form#invite input[name="mask"]').sendKeys('Turturro')
+TimeUnit.SECONDS.sleep(2)
 
-def input = driver.findElementByCssSelector('form#invite input[name="mask"]')
-input.sendKeys('c')
-
-TimeUnit.SECONDS.sleep(1)
-
-def invitees = driver.findElementById('invite-list')
 MatcherAssert.assertThat(
-    invitees.findElements(By.cssSelector('li')).size(),
+    driver.findElementById('invite-list').findElements(By.cssSelector('li')).size(),
     Matchers.greaterThan(0)
 )
