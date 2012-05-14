@@ -627,7 +627,7 @@
                                             <Netbout-EbsVolume>volume</Netbout-EbsVolume>
                                             <Netbout-AwsKey>-key</Netbout-AwsKey>
                                             <Netbout-AwsSecret>-secret</Netbout-AwsSecret>
-                                            <Netbout-InfDir>INF-for-Tomcat</Netbout-InfDir>
+                                            <Netbout-InfDir>INF-for-Tomcat7</Netbout-InfDir>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>
