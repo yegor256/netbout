@@ -58,7 +58,6 @@ final class Namespace implements Functor {
      */
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
-        System.out.println("NS build: " + TextAtom.class.cast(atoms.get(0)).value());
         return ray.builder().matcher(
             Namespace.ATTR,
             TextAtom.class.cast(atoms.get(0)).value()

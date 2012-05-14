@@ -64,7 +64,7 @@ interface Index {
      * Delete all values from the message.
      * @param msg Number of message
      */
-    void delete(long msg);
+    void clean(long msg);
 
     /**
      * Return all values of this message.

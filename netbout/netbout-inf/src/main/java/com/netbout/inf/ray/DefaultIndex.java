@@ -55,7 +55,7 @@ final class DefaultIndex implements Index {
      */
     @Override
     public void replace(final long msg, final String value) {
-        this.delete(msg);
+        this.clean(msg);
         this.msgs(value).add(msg);
     }
 
@@ -82,7 +82,7 @@ final class DefaultIndex implements Index {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final long msg) {
+    public void clean(final long msg) {
         for (SortedSet<Long> set : this.map.values()) {
             if (set.contains(msg)) {
                 set.remove(msg);

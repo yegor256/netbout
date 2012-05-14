@@ -96,7 +96,7 @@ public final class DefaultInfinityTest {
             .withParticipant(new UrnMocker().mock())
             .mock();
         final Message msg = new MessageMocker()
-            .withText("Jeffrey Lebowski")
+            .withText("Jeffrey Lebowski, \u0433!")
             .inBout(bout)
             .mock();
         final Urn[] deps = inf.see(
@@ -113,7 +113,7 @@ public final class DefaultInfinityTest {
         inf.close();
         final Infinity restored = new DefaultInfinity(folder);
         MatcherAssert.assertThat(
-            restored.messages("(matches 'lebowski')"),
+            restored.messages("(matches '\u0433')"),
             (Matcher) Matchers.iterableWithSize(1)
         );
         restored.close();

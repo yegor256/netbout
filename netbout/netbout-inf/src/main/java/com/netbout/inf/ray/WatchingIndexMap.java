@@ -24,60 +24,71 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.ray;
 
-import com.jcabi.log.Logger;
-import com.netbout.ih.StageFarm;
-import com.netbout.inf.ebs.EbsVolume;
-import com.netbout.inf.functors.DefaultStore;
-import com.netbout.inf.ray.MemRay;
-import com.netbout.spi.Urn;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
+import java.util.SortedSet;
 
 /**
- * Storage of data.
+ * Watching index map.
+ *
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Storage implements Closeable {
+final class WatchingIndexMap implements IndexMap {
 
     /**
-     * Directory where to store.
+     * The original map.
      */
-    private final transient File dir;
+    private final transient IndexMap origin;
+
+    /**
+     * The records to use.
+     */
+    private final transient Records records;
 
     /**
      * Public ctor.
-     * @param file The folder
-     * @throws IOException If some IO problem
+     * @param map Original map
+     * @param rcds Records to use
      */
-    public Storage(final File file) throws IOException {
-        this.dir = file;
+    public WatchingIndexMap(final IndexMap map, final Records rcds) {
+        this.origin = map;
+        this.records = rcds;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws java.io.IOException {
-        Logger.debug(this, "#close(): closed");
+    public Index index(final String attr) {
+        return new WatchingIndex(this.origin.index(attr), attr, this.records);
     }
 
     /**
-     * Restore from file system.
-     * @param inf Infinity where to restore to
-     */
-    public void restore(final Infinity inf) {
-    }
-
-    /**
-     * Save this particular
+     * {@inheritDoc}
      */
     @Override
-    public Iterable<Long> messages(final String query)
+    public void touch(final long number) {
+        this.origin.touch(number);
+        this.records.add("touch", number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SortedSet<Long> msgs() {
+        return this.origin.msgs();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long maximum() {
+        return this.origin.maximum();
     }
 
 }

@@ -26,84 +26,97 @@
  */
 package com.netbout.inf.ray;
 
-import com.jcabi.log.Logger;
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Ray;
-import com.netbout.inf.TermBuilder;
-import java.io.File;
-import java.io.IOException;
+import java.util.Set;
+import java.util.SortedSet;
 
 /**
- * In-memory implementation of {@link Ray}.
+ * Watching ndex.
  *
- * <p>The class is thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MemRay implements Ray {
+final class WatchingIndex implements Index {
 
     /**
-     * Index map.
+     * The original index.
      */
-    private final transient IndexMap imap;
+    private final transient Index origin;
 
     /**
-     * Records.
+     * Name of attribute.
+     */
+    private final transient String attr;
+
+    /**
+     * The records to use.
      */
     private final transient Records records;
 
     /**
      * Public ctor.
-     * @param dir The directory to work with
-     * @throws IOException If some I/O problem
+     * @param index Original index
+     * @param name Attribute name
+     * @param rcds Records to use
      */
-    public MemRay(final File dir) throws IOException {
-        this.records = new Records(new File(dir, "memray.dat"));
-        this.imap = new WatchingIndexMap(this.records.restore(), this.records);
+    public WatchingIndex(final Index index, final String name,
+        final Records rcds) {
+        this.origin = index;
+        this.attr = name;
+        this.records = rcds;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws IOException {
-        this.records.close();
-        Logger.debug(this, "#close(): closed");
+    public void replace(final long msg, final String value) {
+        this.origin.replace(msg, value);
+        this.records.add("replace", this.attr, msg, value);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Cursor cursor() {
-        return new MemCursor(Long.MAX_VALUE, this.imap);
+    public void add(final long msg, final String value) {
+        this.origin.add(msg, value);
+        this.records.add("add", this.attr, msg, value);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Msg msg(final long number) {
-        this.imap.touch(number);
-        return this.cursor().shift(this.builder().picker(number)).msg();
+    public void delete(final long msg, final String value) {
+        this.origin.delete(msg, value);
+        this.records.add("delete", this.attr, msg, value);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TermBuilder builder() {
-        return new MemTermBuilder(this.imap);
+    public void clean(final long msg) {
+        this.origin.clean(msg);
+        this.records.add("clean", this.attr, msg);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long maximum() {
-        return this.imap.maximum();
+    public Set<String> values(final long msg) {
+        return this.origin.values(msg);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SortedSet<Long> msgs(final String value) {
+        return this.origin.msgs(value);
     }
 
 }

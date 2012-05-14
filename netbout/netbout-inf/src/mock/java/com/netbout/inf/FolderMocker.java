@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import java.io.File;
+import java.util.Random;
 import org.mockito.Mockito;
 
 /**
@@ -48,7 +49,7 @@ public final class FolderMocker {
         this.withPath(
             new File(
                 System.getProperty("java.io.tmpdir"),
-                "FolderMocker"
+                String.format("FolderMocker-%d", new Random().nextLong())
             )
         );
     }

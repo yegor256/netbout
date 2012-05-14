@@ -154,7 +154,7 @@ final class MemCursor implements Cursor {
             new Updater() {
                 @Override
                 public void update(final Index index, final long num) {
-                    index.delete(num);
+                    index.clean(num);
                 }
             },
             attr,
