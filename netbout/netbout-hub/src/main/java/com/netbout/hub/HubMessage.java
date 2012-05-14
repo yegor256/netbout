@@ -87,9 +87,9 @@ final class HubMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object bout) {
-        return obj == this || (bout instanceof Message
-            && this.number().equals(((Message) bout).number()));
+    public boolean equals(final Object msg) {
+        return msg == this || (msg instanceof Message
+            && this.number().equals(((Message) msg).number()));
     }
 
     /**

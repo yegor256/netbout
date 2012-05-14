@@ -28,7 +28,6 @@ package com.netbout.rest.auth;
 
 import com.netbout.rest.NbPage;
 import com.netbout.rest.NbResourceMocker;
-import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
 import com.rexsl.test.XhtmlMatchers;

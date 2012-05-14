@@ -64,12 +64,6 @@ def bout = bobby.start()
 bout.rename('Catapult inbox testing')
 
 RestTester.start(RestUriBuilder.from(bobby))
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    // @todo #160 This HTML retrieval doesn't work because of a defect in
-    //  Tomcat 6 (I think it's a defect). It passes all requests to RestfulServlet,
-    //  even those who are for "/xsl/*". That's why there is an endless cycle
-    //  which breaks the build. I think that we should switch to Tomcat 7
-    //  somehow.
-    // .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
+    .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
     .get('read inbox of a user')
     .assertStatus(HttpURLConnection.HTTP_OK)

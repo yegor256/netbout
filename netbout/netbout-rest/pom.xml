@@ -623,7 +623,7 @@
                                             <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
                                             <Netbout-PopPort>995</Netbout-PopPort>
                                             <Netbout-SecurityKey>test-security-key</Netbout-SecurityKey>
-                                            <Netbout-SuperSecret>test-super-secret</Netbout-SuperSecret>
+                                            <Netbout-SuperSecret>-super-secret</Netbout-SuperSecret>
                                             <Netbout-EbsVolume>volume</Netbout-EbsVolume>
                                             <Netbout-AwsKey>-key</Netbout-AwsKey>
                                             <Netbout-AwsSecret>-secret</Netbout-AwsSecret>
