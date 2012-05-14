@@ -293,6 +293,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      */
     @Override
     public Identity join(final Identity main, final Identity child) {
+        final Collection<String> aliases = child.profile().aliases();
         final Urn mname = main.name();
         final Urn cname = child.name();
         synchronized (this.all) {
@@ -313,11 +314,16 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             mname,
             cname
         );
+        Identity joined;
         try {
-            return this.identity(mname);
+            joined = this.identity(mname);
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
         }
+        for (String alias : aliases) {
+            joined.profile().alias(alias);
+        }
+        return joined;
     }
 
     /**

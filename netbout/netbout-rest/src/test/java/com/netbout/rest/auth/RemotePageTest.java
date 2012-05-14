@@ -26,8 +26,6 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.hub.UrnResolver;
-import com.netbout.hub.UrnResolverMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;

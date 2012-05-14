@@ -33,9 +33,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import java.net.URL;
-import java.util.AbstractSet;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -87,7 +85,6 @@ public final class RemoteIdentity implements Identity {
         throws com.netbout.spi.UnreachableUrnException {
         final Identity identity = hub.identity(this.iname);
         for (String alias : this.profile().aliases()) {
-            System.out.println("alias(" + identity.profile().getClass().getName());
             identity.profile().alias(alias);
         }
         identity.profile().setPhoto(this.profile().photo());
