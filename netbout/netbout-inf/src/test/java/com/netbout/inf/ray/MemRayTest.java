@@ -29,7 +29,9 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.FolderMocker;
 import com.netbout.inf.Ray;
+import java.io.File;
 import java.util.Random;
+import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -70,6 +72,31 @@ public final class MemRayTest {
             Matchers.equalTo(value)
         );
         ray.close();
+    }
+
+    /**
+     * MemRay can persist itself and restore.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void persistsItselfInFile() throws Exception {
+        final File dir = new FolderMocker().mock().path();
+        final Ray ray = new MemRay(dir);
+        ray.msg(2L);
+        ray.cursor().add(
+            ray.builder().picker(2L),
+            "title",
+            "How are you, \u0434\u0440\u0443\u0433?"
+        );
+        ray.close();
+        final File file = new File(dir, "memray.dat");
+        MatcherAssert.assertThat(
+            FileUtils.readFileToString(file).split(" *\\n"),
+            Matchers.arrayContaining(
+                "touch 2",
+                "add title 2 How+are+you%2C+%D0%B4%D1%80%D1%83%D0%B3%3F"
+            )
+        );
     }
 
 }

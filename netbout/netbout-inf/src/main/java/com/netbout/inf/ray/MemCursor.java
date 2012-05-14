@@ -246,6 +246,9 @@ final class MemCursor implements Cursor {
         final String attr, final Term term) {
         final Index index = this.imap.index(attr);
         Cursor cursor = this;
+        if (!cursor.end() && cursor.msg().number() == Long.MAX_VALUE) {
+            cursor = cursor.shift(term);
+        }
         while (!cursor.end()) {
             updater.update(index, cursor.msg().number());
             cursor = cursor.shift(term);

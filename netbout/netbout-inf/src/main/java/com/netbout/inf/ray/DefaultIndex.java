@@ -55,6 +55,7 @@ final class DefaultIndex implements Index {
      */
     @Override
     public void replace(final long msg, final String value) {
+        this.validate(msg);
         this.clean(msg);
         this.msgs(value).add(msg);
     }
@@ -64,6 +65,7 @@ final class DefaultIndex implements Index {
      */
     @Override
     public void add(final long msg, final String value) {
+        this.validate(msg);
         this.msgs(value).add(msg);
     }
 
@@ -72,6 +74,7 @@ final class DefaultIndex implements Index {
      */
     @Override
     public void delete(final long msg, final String value) {
+        this.validate(msg);
         final SortedSet<Long> set = this.msgs(value);
         if (set.contains(msg)) {
             set.remove(msg);
@@ -83,6 +86,7 @@ final class DefaultIndex implements Index {
      */
     @Override
     public void clean(final long msg) {
+        this.validate(msg);
         for (SortedSet<Long> set : this.map.values()) {
             if (set.contains(msg)) {
                 set.remove(msg);
@@ -95,6 +99,7 @@ final class DefaultIndex implements Index {
      */
     @Override
     public Set<String> values(final long msg) {
+        this.validate(msg);
         final Set<String> values = new HashSet<String>();
         for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
             : this.map.entrySet()) {
@@ -117,6 +122,20 @@ final class DefaultIndex implements Index {
             );
         }
         return this.map.get(value);
+    }
+
+    /**
+     * Validate this message number and throw runtime exception if it's not
+     * valid (is ZERO or MAX_VALUE).
+     * @param msg The number of msg
+     */
+    private void validate(final long msg) {
+        if (msg == 0L) {
+            throw new IllegalArgumentException("msg number can't be ZERO");
+        }
+        if (msg == Long.MAX_VALUE) {
+            throw new IllegalArgumentException("msg number can't be MAX_VALUE");
+        }
     }
 
 }

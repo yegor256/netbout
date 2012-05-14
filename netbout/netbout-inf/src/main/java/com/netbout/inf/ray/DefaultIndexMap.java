@@ -59,6 +59,9 @@ final class DefaultIndexMap implements IndexMap {
      */
     @Override
     public Index index(final String attr) {
+        if (attr == null || attr.isEmpty()) {
+            throw new IllegalArgumentException("attribute name is empty");
+        }
         if (this.map.get(attr) == null) {
             this.map.putIfAbsent(attr, new DefaultIndex());
         }
