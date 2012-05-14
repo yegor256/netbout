@@ -161,18 +161,13 @@ public final class JaxbPrinter {
         } catch (javax.xml.parsers.ParserConfigurationException ex) {
             throw new IllegalStateException(ex);
         }
-        final Urn namespace = this.namespace(this.object.getClass());
-        final XmlType annot = (XmlType) this.object.getClass()
-            .getAnnotation(XmlType.class);
-        QName qname;
-        if (namespace.isEmpty()) {
-            qname = new QName("", annot.name());
-        } else {
-            qname = new QName(namespace.toString(), annot.name());
-        }
         try {
             mrsh.marshal(
-                new JAXBElement(qname, this.object.getClass(), this.object),
+                new JAXBElement(
+                    this.qname(),
+                    this.object.getClass(),
+                    this.object
+                ),
                 dom
             );
         } catch (javax.xml.bind.JAXBException ex) {
@@ -201,7 +196,7 @@ public final class JaxbPrinter {
                 throw new IllegalArgumentException(
                     String.format(
                         // @checkstyle LineLength (1 line)
-                        "Object of type '%s' doen't have @XmlType or @XmlRootElement annotation",
+                        "Object of type '%s' doen't have @XmlType or @XmlRootElement annotation, can't find namespace",
                         type.getName()
                     )
                 );
@@ -237,6 +232,43 @@ public final class JaxbPrinter {
             }
         }
         return namespace;
+    }
+
+    /**
+     * Get QName from the object.
+     * @return The QName
+     */
+    private QName qname() {
+        String name;
+        final XmlType tannot = XmlType.class.cast(
+            this.object.getClass().getAnnotation(XmlType.class)
+        );
+        if (tannot == null) {
+            final XmlRootElement rannot = XmlRootElement.class.cast(
+                this.object.getClass().getAnnotation(XmlRootElement.class)
+            );
+            if (rannot == null) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        // @checkstyle LineLength (1 line)
+                        "Object of type '%[type]s' doen't have @XmlType or @XmlRootElement annotation, can't get its name",
+                        this.object
+                    )
+                );
+            } else {
+                name = rannot.name();
+            }
+        } else {
+            name = tannot.name();
+        }
+        QName qname;
+        final Urn namespace = this.namespace(this.object.getClass());
+        if (namespace.isEmpty()) {
+            qname = new QName("", name);
+        } else {
+            qname = new QName(namespace.toString(), name);
+        }
+        return qname;
     }
 
 }
