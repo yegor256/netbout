@@ -204,7 +204,7 @@ public final class HubProfile implements Profile {
                 }
             }
         );
-        list.addAll(this.myAliases());
+        list.addAll(this.nicknames());
         Logger.debug(
             this,
             "#aliases(): %d returned",
@@ -222,12 +222,13 @@ public final class HubProfile implements Profile {
             throw new IllegalArgumentException("alias can't be empty");
         }
         synchronized (this.person) {
-            if (this.myAliases().contains(alias)) {
+            if (this.nicknames().contains(alias)) {
                 Logger.debug(
                     this,
-                    "#alias('%s'): it's already set for '%s'",
+                    "#alias('%s'): it's already set for '%s': %[list]s",
                     alias,
-                    this.person.name()
+                    this.person.name(),
+                    this.nicknames()
                 );
             } else {
                 this.hub.make("added-identity-alias")
@@ -242,7 +243,7 @@ public final class HubProfile implements Profile {
                     alias,
                     this.person.name()
                 );
-                this.myAliases().add(alias);
+                this.nicknames().add(alias);
                 this.hub.infinity().see(
                     new AliasAddedNotice() {
                         @Override
@@ -265,7 +266,7 @@ public final class HubProfile implements Profile {
      * Returns a link to the list of aliases.
      * @return The link to the list of them
      */
-    private Set<String> myAliases() {
+    private Set<String> nicknames() {
         synchronized (this.person) {
             if (this.ialiases == null) {
                 this.ialiases = new CopyOnWriteArraySet<String>(
@@ -273,8 +274,15 @@ public final class HubProfile implements Profile {
                         .make("get-aliases-of-identity")
                         .synchronously()
                         .arg(this.person.name())
-                        .asDefault(new ArrayList<String>())
+                        .asDefault(new ArrayList<String>(0))
                         .exec()
+                );
+                Logger.debug(
+                    this,
+                    "#nicknames(): %d loaded for '%s': %[list]s",
+                    this.ialiases.size(),
+                    this.person.name(),
+                    this.ialiases
                 );
             }
         }

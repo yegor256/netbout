@@ -87,6 +87,7 @@ public final class RemoteIdentity implements Identity {
         throws com.netbout.spi.UnreachableUrnException {
         final Identity identity = hub.identity(this.iname);
         for (String alias : this.profile().aliases()) {
+            System.out.println("alias(" + identity.profile().getClass().getName());
             identity.profile().alias(alias);
         }
         identity.profile().setPhoto(this.profile().photo());
