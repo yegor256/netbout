@@ -30,9 +30,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Index.
@@ -113,7 +113,7 @@ final class DefaultIndex implements Index {
         if (this.map.get(value) == null) {
             this.map.putIfAbsent(
                 value,
-                new TreeSet(Collections.reverseOrder())
+                new ConcurrentSkipListSet(Collections.reverseOrder())
             );
         }
         return this.map.get(value);

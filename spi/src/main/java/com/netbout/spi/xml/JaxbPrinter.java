@@ -35,6 +35,7 @@ import java.net.URL;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Document;
@@ -181,32 +182,55 @@ public final class JaxbPrinter {
     }
 
     /**
-     * Get namespace of this object (it has to be static becuase it works
-     * with Class, not an Object and is used from other classes in this form).
+     * Get namespace of this object (it has to be static because it works
+     * with Class, not an Object and is used from other classes in this
+     * package).
      * @param type The type
      * @return The namespace of it
      */
     public static Urn namespace(final Class type) {
-        final XmlType annot = (XmlType) type.getAnnotation(XmlType.class);
-        if (annot == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Object of type '%s' is not @XmlType annotated entity",
-                    type.getName()
-                )
-            );
-        }
         Urn namespace;
-        if ("##default".equals(annot.namespace())) {
+        final XmlType tannot = XmlType.class.cast(
+            type.getAnnotation(XmlType.class)
+        );
+        if (tannot == null) {
+            final XmlRootElement rannot = XmlRootElement.class.cast(
+                type.getAnnotation(XmlRootElement.class)
+            );
+            if (rannot == null) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        // @checkstyle LineLength (1 line)
+                        "Object of type '%s' doen't have @XmlType or @XmlRootElement annotation",
+                        type.getName()
+                    )
+                );
+            } else {
+                namespace = JaxbPrinter.convert(rannot.namespace());
+            }
+        } else {
+            namespace = JaxbPrinter.convert(tannot.namespace());
+        }
+        return namespace;
+    }
+
+    /**
+     * Convert JAXB-specific namespace to URN.
+     * @param origin The namespace to convert, in JAXB-form
+     * @return The namespace of it
+     */
+    private static Urn convert(final String origin) {
+        Urn namespace;
+        if ("##default".equals(origin)) {
             namespace = new Urn();
         } else {
             try {
-                namespace = new Urn(annot.namespace());
+                namespace = new Urn(origin);
             } catch (java.net.URISyntaxException ex) {
                 throw new IllegalArgumentException(
                     Logger.format(
-                        "Invalid format of namespace in '%s'",
-                        type.getName()
+                        "Invalid format of namespace '%s'",
+                        origin
                     ),
                     ex
                 );

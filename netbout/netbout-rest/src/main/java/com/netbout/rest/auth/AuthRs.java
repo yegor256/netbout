@@ -171,8 +171,7 @@ public final class AuthRs extends BaseRs {
      * @param secret Secret word
      * @return The identity found
      */
-    private Identity authenticate(final Urn iname,
-        final String secret) {
+    private Identity authenticate(final Urn iname, final String secret) {
         RemoteIdentity remote;
         try {
             remote = new AuthMediator(this.hub().resolver())

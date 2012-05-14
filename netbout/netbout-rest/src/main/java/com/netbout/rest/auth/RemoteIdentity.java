@@ -33,8 +33,10 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.AbstractSet;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
@@ -72,7 +74,7 @@ public final class RemoteIdentity implements Identity {
     /**
      * Problems occured during unmarshalling.
      */
-    private final transient List<String> problems = new ArrayList<String>();
+    private final transient List<String> problems = new LinkedList<String>();
 
     /**
      * Find it in hub and return.
@@ -159,20 +161,22 @@ public final class RemoteIdentity implements Identity {
      * Set aliases, method for JAXB unmarshaller.
      * @param names List of them
      */
-    public void setAliases(final Collection<String> names) {
+    @XmlElement(name = "alias")
+    @XmlElementWrapper(name = "aliases")
+    public void setAliases(final Set<String> names) {
         for (String name : names) {
             this.iprofile.alias(name);
         }
     }
 
     /**
-     * Get aliases, method for JAXB unmarshaller.
+     * Get aliases, method for JAXB unmarshaller (it returns an empty set
+     * of aliases, which will be extended by unmarshaller and pushed back
+     * to {@link #setAliases()} - this is how JAXB works).
      * @return List of aliases
      */
-    @XmlElement(name = "alias")
-    @XmlElementWrapper(name = "aliases")
     public Set<String> getAliases() {
-        return this.iprofile.aliases();
+        return new HashSet<String>();
     }
 
     /**

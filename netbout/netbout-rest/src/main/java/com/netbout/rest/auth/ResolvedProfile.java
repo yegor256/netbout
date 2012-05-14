@@ -28,6 +28,7 @@ package com.netbout.rest.auth;
 
 import com.netbout.spi.Profile;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -76,7 +77,7 @@ final class ResolvedProfile implements Profile {
      */
     @Override
     public Set<String> aliases() {
-        return this.ialiases;
+        return Collections.unmodifiableSet(this.ialiases);
     }
 
     /**
