@@ -88,8 +88,8 @@ final class DefaultTxToken implements TxToken {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof TxToken)
-            && this.hashCode() == obj.hashCode();
+        return obj == this || ((obj instanceof TxToken)
+            && this.hashCode() == obj.hashCode());
     }
 
     /**

@@ -64,8 +64,8 @@ public final class TextAtom implements Atom<String> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof TextAtom
-            && this.text.equals(((TextAtom) obj).text);
+        return obj == this || (obj instanceof TextAtom
+            && this.text.equals(((TextAtom) obj).text));
     }
 
     /**

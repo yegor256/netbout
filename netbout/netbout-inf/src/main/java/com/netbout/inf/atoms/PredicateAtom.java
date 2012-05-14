@@ -86,8 +86,8 @@ public final class PredicateAtom implements Atom<String> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof PredicateAtom
-            && this.hashCode() == obj.hashCode();
+        return obj == this || (obj instanceof PredicateAtom
+            && this.hashCode() == obj.hashCode());
     }
 
     /**

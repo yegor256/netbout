@@ -88,8 +88,8 @@ public final class PlainUrn implements Plain<Urn> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof PlainUrn)
-            && (this.hashCode() == obj.hashCode());
+        return obj == this || ((obj instanceof PlainUrn)
+            && (this.hashCode() == obj.hashCode()));
     }
 
     /**

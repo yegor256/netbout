@@ -92,8 +92,8 @@ public final class HubBout implements Bout {
      */
     @Override
     public boolean equals(final Object bout) {
-        return bout instanceof Bout
-            && this.number().equals(((Bout) bout).number());
+        return bout == this || (bout instanceof Bout
+            && this.number().equals(((Bout) bout).number()));
     }
 
     /**

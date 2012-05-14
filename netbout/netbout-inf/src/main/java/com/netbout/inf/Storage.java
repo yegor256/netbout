@@ -24,64 +24,60 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.atoms;
+package com.netbout.inf;
 
-import com.netbout.inf.Atom;
+import com.jcabi.log.Logger;
+import com.netbout.ih.StageFarm;
+import com.netbout.inf.ebs.EbsVolume;
+import com.netbout.inf.functors.DefaultStore;
+import com.netbout.inf.ray.MemRay;
+import com.netbout.spi.Urn;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 /**
- * Number atom.
- *
- * <p>This class is immutable and thread-safe.
+ * Storage of data.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NumberAtom implements Atom<Long> {
+final class Storage implements Closeable {
 
     /**
-     * The value of it.
+     * Directory where to store.
      */
-    private final transient Long number;
+    private final transient File dir;
 
     /**
      * Public ctor.
-     * @param value The value of it
+     * @param file The folder
+     * @throws IOException If some IO problem
      */
-    public NumberAtom(final Long value) {
-        this.number = value;
+    public Storage(final File file) throws IOException {
+        this.dir = file;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return this.number.hashCode();
+    public void close() throws java.io.IOException {
+        Logger.debug(this, "#close(): closed");
     }
 
     /**
-     * {@inheritDoc}
+     * Restore from file system.
+     * @param inf Infinity where to restore to
      */
-    @Override
-    public boolean equals(final Object obj) {
-        return obj == this || (obj instanceof NumberAtom
-            && this.number.equals(((NumberAtom) obj).number));
+    public void restore(final Infinity inf) {
     }
 
     /**
-     * {@inheritDoc}
+     * Save this particular
      */
     @Override
-    public Long value() {
-        return this.number;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return this.number.toString();
+    public Iterable<Long> messages(final String query)
     }
 
 }

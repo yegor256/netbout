@@ -106,8 +106,8 @@ public final class PlainString implements Plain<String> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof PlainString)
-            && (this.hashCode() == obj.hashCode());
+        return obj == this || ((obj instanceof PlainString)
+            && (this.hashCode() == obj.hashCode()));
     }
 
     /**

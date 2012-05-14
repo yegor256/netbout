@@ -76,8 +76,8 @@ final class RestIdentity implements Identity {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof Identity)
-            && this.name().equals(((Identity) obj).name());
+        return obj == this || ((obj instanceof Identity)
+            && this.name().equals(((Identity) obj).name()));
     }
 
     /**

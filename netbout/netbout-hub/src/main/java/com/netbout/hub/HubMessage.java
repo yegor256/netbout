@@ -88,8 +88,8 @@ final class HubMessage implements Message {
      */
     @Override
     public boolean equals(final Object bout) {
-        return bout instanceof Message
-            && this.number().equals(((Message) bout).number());
+        return obj == this || (bout instanceof Message
+            && this.number().equals(((Message) bout).number()));
     }
 
     /**

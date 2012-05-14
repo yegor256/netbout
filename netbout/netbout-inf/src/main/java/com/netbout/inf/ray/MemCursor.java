@@ -92,8 +92,8 @@ final class MemCursor implements Cursor {
      */
     @Override
     public boolean equals(final Object cursor) {
-        return cursor instanceof MemCursor
-            && cursor.hashCode() == this.hashCode();
+        return cursor == this || (cursor instanceof MemCursor
+            && cursor.hashCode() == this.hashCode());
     }
 
     /**

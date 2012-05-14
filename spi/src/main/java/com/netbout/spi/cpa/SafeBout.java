@@ -78,8 +78,8 @@ final class SafeBout implements Bout {
      */
     @Override
     public boolean equals(final Object bot) {
-        return bot instanceof Bout
-            && this.number().equals(((Bout) bot).number());
+        return bot == this || (bot instanceof Bout
+            && this.number().equals(((Bout) bot).number()));
     }
 
     /**

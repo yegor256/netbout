@@ -131,7 +131,8 @@ final class MuxTask implements Runnable {
      */
     @Override
     public boolean equals(final Object task) {
-        return task instanceof MuxTask && this.hashCode() == task.hashCode();
+        return task == this || (task instanceof MuxTask
+            && this.hashCode() == task.hashCode());
     }
 
     /**
