@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.DuplicateInvitationException;
 import com.netbout.spi.Identity;
@@ -36,14 +37,13 @@ import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
-import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
 /**
- * Identity.
+ * Bout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -92,8 +92,8 @@ public final class HubBout implements Bout {
      */
     @Override
     public boolean equals(final Object bout) {
-        return bout instanceof Bout
-            && this.number().equals(((Bout) bout).number());
+        return bout == this || (bout instanceof Bout
+            && this.number().equals(((Bout) bout).number()));
     }
 
     /**
@@ -134,7 +134,6 @@ public final class HubBout implements Bout {
     @Override
     public void confirm() {
         this.data.confirm(this.viewer.name());
-        this.hub.infinity().see(this);
         Logger.info(
             this,
             "Participant '%s' confirmed participation in bout #%d",
@@ -149,7 +148,6 @@ public final class HubBout implements Bout {
     @Override
     public void leave() {
         this.data.kickOff(this.viewer.name());
-        this.hub.infinity().see(this);
         Logger.info(
             this,
             "Participant '%s' just left bout #%d",
@@ -179,7 +177,6 @@ public final class HubBout implements Bout {
             );
         }
         this.data.setTitle(text);
-        this.hub.infinity().see(this);
         Logger.info(
             this,
             "Bout #%d was successfully renamed to '%s'",
@@ -239,7 +236,6 @@ public final class HubBout implements Bout {
         if (confirm) {
             dude.setConfirmed(true);
         }
-        this.hub.infinity().see(this);
         return new HubParticipant(this.hub, this, dude, this.data);
     }
 
@@ -272,16 +268,20 @@ public final class HubBout implements Bout {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Iterable<Message> messages(final String query) {
-        return new LazyMessages(
-            this.hub.infinity().messages(
-                String.format(
-                    "(and (equal $bout.number %d) %s)",
-                    this.number(),
-                    NetboutUtils.normalize(query)
-                )
-            ),
-            this
-        );
+        try {
+            return new LazyMessages(
+                this.hub.infinity().messages(
+                    String.format(
+                        "(and (equal $bout.number %d) %s)",
+                        this.number(),
+                        NetboutUtils.normalize(query)
+                    )
+                ),
+                this
+            );
+        } catch (com.netbout.inf.InvalidSyntaxException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**
@@ -350,7 +350,6 @@ public final class HubBout implements Bout {
                 .arg(message.number())
                 .asDefault(false)
                 .exec();
-            this.hub.infinity().see(message);
         } else {
             try {
                 message = this.message(duplicate);

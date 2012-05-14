@@ -29,15 +29,14 @@
  */
 package com.netbout.rest.rexsl.xhtml
 
-import com.rexsl.test.XhtmlConverter
 import com.rexsl.test.XhtmlMatchers
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 MatcherAssert.assertThat(
-    XhtmlConverter.the(rexsl.document),
+    rexsl.document,
     Matchers.allOf(
         XhtmlMatchers.hasXPath('//xhtml:ul[@class="bouts"]/xhtml:li'),
-        XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"r789") and contains(.,"5.500s")]')
+        XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"r789") and contains(.,"5.5s")]')
     )
 )

@@ -26,9 +26,9 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.log.Logger;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.PageBuilder;
-import com.ymock.util.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -42,7 +42,7 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/m")
-public final class MiscRs extends AbstractRs {
+public final class MiscRs extends BaseRs {
 
     /**
      * Get "error" page by code.
@@ -67,8 +67,8 @@ public final class MiscRs extends AbstractRs {
         );
         return new PageBuilder()
             .stylesheet("/xsl/error.xsl")
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .append(
                 new JaxbBundle("error")
                     .add("code", code)

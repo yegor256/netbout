@@ -31,7 +31,7 @@ package com.netbout.rest.rexsl.bootstrap
 
 import com.netbout.db.DbSession
 import com.rexsl.core.Manifests
-import com.ymock.util.Logger
+import com.jcabi.log.Logger
 
 def urlFile = new File(rexsl.basedir, 'jdbc.txt')
 if (urlFile.exists()) {
@@ -52,7 +52,7 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
 }
 
 // let's create a big amount of bouts and messages for one identity
-(5000..6000).each {
+(5000..5200).each {
     queries.add(
         'INSERT IGNORE INTO bout (number, title, date) VALUES'
         + " (${it}, 'test', '2001-01-01')"
@@ -67,5 +67,8 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
     )
 }
 
-queries.each { new DbSession(true).sql(it).update() }
+queries.each { query ->
+    new DbSession(true).sql(query).update()
+    Logger.debug(this, 'done: %s', query)
+}
 Logger.info(this, 'Test database is ready (%d queries)', queries.size())

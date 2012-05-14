@@ -26,9 +26,9 @@
  */
 package com.netbout.rest.period;
 
-import com.netbout.rest.jaxb.Link;
+import com.jcabi.log.Logger;
 import com.rexsl.page.JaxbBundle;
-import com.ymock.util.Logger;
+import com.rexsl.page.Link;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -291,16 +291,14 @@ public final class PeriodsBuilder {
      * @return The link
      */
     private Link link(final String name, final String title) {
-        final Link link = new Link(
+        return new Link(
             name,
             UriBuilder.fromUri(
                 this.base.clone()
                     .replaceQueryParam(this.param, "{period}")
                     .build(this.period)
             )
-        );
-        link.add(new JaxbBundle("title", title).element());
-        return link;
+        ).with(new JaxbBundle("title", title));
     }
 
 }

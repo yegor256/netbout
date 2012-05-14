@@ -84,32 +84,6 @@ public final class IdentityFarm {
     }
 
     /**
-     * Get list of bouts that belong to some identity.
-     * @param name The identity of bout participant
-     * @return List of bout numbers
-     */
-    @Operation("get-bouts-of-identity")
-    public List<Long> getBoutsOfIdentity(final Urn name) {
-        return new DbSession(true)
-            // @checkstyle LineLength (1 line)
-            .sql("SELECT number FROM bout JOIN participant ON bout.number = participant.bout WHERE identity = ?")
-            .set(name)
-            .select(
-                new Handler<List<Long>>() {
-                    @Override
-                    public List<Long> handle(final ResultSet rset)
-                        throws SQLException {
-                        final List<Long> numbers = new LinkedList<Long>();
-                        while (rset.next()) {
-                            numbers.add(rset.getLong(1));
-                        }
-                        return numbers;
-                    }
-                }
-            );
-    }
-
-    /**
      * Get identity photo.
      * @param name The name of the identity
      * @return Photo of the identity
@@ -234,8 +208,10 @@ public final class IdentityFarm {
         final Calendar cal = new GregorianCalendar();
         cal.add(Calendar.HOUR, -1);
         return new DbSession(true).sql(
-            // @checkstyle StringLiteralsConcatenation (2 lines)
-            "SELECT author, MAX(date) AS recent FROM message"
+            // @checkstyle StringLiteralsConcatenation (4 lines)
+            "SELECT author, MAX(message.date) AS recent FROM message"
+            + " LEFT JOIN seen  ON seen.message = message.number"
+            + " WHERE seen.message IS NULL"
             + " GROUP BY author HAVING recent < ?"
         )
             .set(cal.getTime())

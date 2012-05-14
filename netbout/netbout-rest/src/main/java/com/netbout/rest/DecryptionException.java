@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 
 /**
  * When decryption can't build an identity.
@@ -41,6 +41,14 @@ public final class DecryptionException extends Exception {
      */
     public DecryptionException() {
         super("");
+    }
+
+    /**
+     * Public ctor.
+     * @param cause Cause of it
+     */
+    public DecryptionException(final String cause) {
+        super(cause);
     }
 
     /**

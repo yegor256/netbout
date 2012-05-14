@@ -72,8 +72,8 @@ final class SafeIdentity implements Identity {
      */
     @Override
     public boolean equals(final Object idnt) {
-        return idnt instanceof Identity
-            && this.name().equals(((Identity) idnt).name());
+        return idnt == this || (idnt instanceof Identity
+            && this.name().equals(((Identity) idnt).name()));
     }
 
     /**

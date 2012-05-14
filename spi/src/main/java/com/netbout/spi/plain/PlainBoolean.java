@@ -82,8 +82,8 @@ public final class PlainBoolean implements Plain<Boolean> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof PlainBoolean)
-            && (this.hashCode() == obj.hashCode());
+        return obj == this || ((obj instanceof PlainBoolean)
+            && (this.hashCode() == obj.hashCode()));
     }
 
     /**

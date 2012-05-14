@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
+import com.netbout.inf.InfinityMocker;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
@@ -59,7 +60,7 @@ public final class DefaultHubTest {
     public void createsIdentityByName() throws Exception {
         final Urn name = new UrnMocker().mock();
         final Bus bus = new BusMocker().mock();
-        final PowerHub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://abc"
         );
@@ -75,7 +76,7 @@ public final class DefaultHubTest {
     public void producesStatistics() throws Exception {
         final Bus bus = new BusMocker().mock();
         MatcherAssert.assertThat(
-            new DefaultHub(bus).statistics(),
+            new DefaultHub(bus, new InfinityMocker().mock()).statistics(),
             Matchers.notNullValue()
         );
     }
@@ -88,7 +89,7 @@ public final class DefaultHubTest {
     public void promotesIdentityToHelper() throws Exception {
         final Urn name = new UrnMocker().mock();
         final Bus bus = new BusMocker().mock();
-        final PowerHub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://cde"
         );
@@ -107,7 +108,7 @@ public final class DefaultHubTest {
     @Test
     public void doesntDuplicateIdentities() throws Exception {
         final Bus bus = new BusMocker().mock();
-        final PowerHub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
         final Urn name = new UrnMocker().mock();
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://foo"
@@ -123,7 +124,7 @@ public final class DefaultHubTest {
     @Test
     public void informsBusAboutIdentityBeingMentioned() throws Exception {
         final Bus bus = new BusMocker().mock();
-        final PowerHub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
         final Urn name = new UrnMocker().mock();
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://bar"
@@ -140,7 +141,7 @@ public final class DefaultHubTest {
     @Test(expected = com.netbout.spi.UnreachableUrnException.class)
     public void doesntAllowUnreachableIdentities() throws Exception {
         final Bus bus = new BusMocker().mock();
-        final PowerHub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
         final Urn name = new UrnMocker().mock();
         hub.identity(name);
     }
@@ -157,7 +158,7 @@ public final class DefaultHubTest {
         final Bus bus = new BusMocker()
             .doReturn(names, "find-identities-by-keyword")
             .mock();
-        final PowerHub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://foo-foo"
         );
@@ -175,7 +176,7 @@ public final class DefaultHubTest {
     @Test
     public void ignoresEmptyRequestsForIdentities() throws Exception {
         MatcherAssert.assertThat(
-            new DefaultHub(new BusMocker().mock())
+            new DefaultHub(new BusMocker().mock(), new InfinityMocker().mock())
                 .findByKeyword(new IdentityMocker().mock(), ""),
             Matchers.hasSize(0)
         );
@@ -188,7 +189,7 @@ public final class DefaultHubTest {
     @Test
     public void joinsTwoIdentities() throws Exception {
         final Bus bus = new BusMocker().mock();
-        final PowerHub hub = new DefaultHub(bus);
+        final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
         final Identity main = hub.identity(new Urn("urn:netbout:a"));
         final Identity child = hub.identity(new Urn("urn:netbout:b"));
         hub.join(main, child);

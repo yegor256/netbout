@@ -30,7 +30,6 @@ import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -47,20 +46,6 @@ public final class IdentityFarmTest {
      * Farm to work with.
      */
     private final transient IdentityFarm farm = new IdentityFarm();
-
-    /**
-     * IdentityFarm can find bouts that belong to some identity.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void findsBoutsThatBelongToSomeIdentity() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
-        final Long bout = new BoutRowMocker()
-            .withParticipant(identity)
-            .mock();
-        final List<Long> numbers = this.farm.getBoutsOfIdentity(identity);
-        MatcherAssert.assertThat(numbers, Matchers.hasItem(bout));
-    }
 
     /**
      * IdentityFarm can change photo of identity.

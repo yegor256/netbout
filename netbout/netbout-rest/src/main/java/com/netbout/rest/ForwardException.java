@@ -26,9 +26,10 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
-import com.ymock.util.Logger;
+import com.rexsl.misc.CookieBuilder;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -47,7 +48,7 @@ public class ForwardException extends WebApplicationException {
      * @param res The originator of the exception
      * @param msg The message
      */
-    public ForwardException(final Resource res, final String msg) {
+    public ForwardException(final NbResource res, final String msg) {
         this(res, res.base().path("/g"), msg);
     }
 
@@ -57,7 +58,7 @@ public class ForwardException extends WebApplicationException {
      * @param builder Where to forward to
      * @param msg The message
      */
-    public ForwardException(final Resource res, final UriBuilder builder,
+    public ForwardException(final NbResource res, final UriBuilder builder,
         final String msg) {
         super(
             new IllegalArgumentException(msg),
@@ -70,7 +71,7 @@ public class ForwardException extends WebApplicationException {
      * @param res The originator of the exception
      * @param cause Cause of trouble
      */
-    public ForwardException(final Resource res, final Exception cause) {
+    public ForwardException(final NbResource res, final Exception cause) {
         this(res, res.base().path("/"), cause);
     }
 
@@ -80,7 +81,7 @@ public class ForwardException extends WebApplicationException {
      * @param builder Where to forward to
      * @param cause Cause of trouble
      */
-    public ForwardException(final Resource res, final UriBuilder builder,
+    public ForwardException(final NbResource res, final UriBuilder builder,
         final Exception cause) {
         super(
             cause,
@@ -95,7 +96,7 @@ public class ForwardException extends WebApplicationException {
      * @param msg The message
      * @return The JAX-RS response
      */
-    private static Response response(final Resource res,
+    private static Response response(final NbResource res,
         final UriBuilder builder, final String msg) {
         Logger.debug(
             ForwardException.class,
@@ -109,16 +110,16 @@ public class ForwardException extends WebApplicationException {
             .entity(msg)
             .location(builder.build())
             .cookie(
-                new CookieBuilder(res.base().build())
-                    .named(RestSession.MESSAGE_COOKIE)
-                    .valued(new SecureString(msg).toString())
+                new CookieBuilder(res.base())
+                    .name(RestSession.MESSAGE_COOKIE)
+                    .value(new SecureString(msg).toString())
                     .temporary()
                     .build()
             )
             .cookie(
-                new CookieBuilder(res.base().build())
-                    .named(RestSession.GOTO_COOKIE)
-                    .valued(
+                new CookieBuilder(res.base())
+                    .name(RestSession.GOTO_COOKIE)
+                    .value(
                         new SecureString(res.uriInfo().getRequestUri())
                             .toString()
                     )

@@ -46,7 +46,7 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/fast")
-public final class FastRs extends AbstractRs {
+public final class FastRs extends BaseRs {
 
     /**
      * Start a new bout with this first message and participants.
@@ -91,8 +91,8 @@ public final class FastRs extends AbstractRs {
             throw new ForwardException(this, this.base(), ex);
         }
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.base().path("/{num}").build(bout.number()))

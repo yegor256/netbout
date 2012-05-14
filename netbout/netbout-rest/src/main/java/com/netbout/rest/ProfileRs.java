@@ -26,10 +26,12 @@
  */
 package com.netbout.rest;
 
+import com.netbout.hub.UrnResolver;
 import com.netbout.rest.jaxb.LongProfile;
 import com.netbout.rest.jaxb.Namespace;
 import com.netbout.spi.Identity;
 import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import java.net.URL;
 import java.util.Collection;
@@ -51,7 +53,7 @@ import org.apache.commons.lang.StringUtils;
  * @version $Id$
  */
 @Path("/pf")
-public final class ProfileRs extends AbstractRs {
+public final class ProfileRs extends BaseRs {
 
     /**
      * The profile page.
@@ -65,11 +67,11 @@ public final class ProfileRs extends AbstractRs {
         );
         return new PageBuilder()
             .stylesheet("/xsl/profile.xsl")
-            .build(BasePage.class)
-            .init(this, false)
-            .link("promote", this.base().path("/pf/promote"))
+            .build(NbPage.class)
+            .init(this)
+            .link(new Link("promote", "/pf/promote"))
             // @checkstyle MultipleStringLiterals (2 lines)
-            .link("namespaces", this.base().path("/pf/namespaces"))
+            .link(new Link("namespaces", "/pf/namespaces"))
             .append(JaxbGroup.build(this.namespaces(), "namespaces"))
             .append(profile)
             .render()
@@ -94,8 +96,8 @@ public final class ProfileRs extends AbstractRs {
         }
         new LongProfile(this.self(), this.identity()).setLocale(locale);
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(this.identity())
             .entity(String.format("switched to '%s'", locale))
             .status(Response.Status.SEE_OTHER)
@@ -131,8 +133,8 @@ public final class ProfileRs extends AbstractRs {
         final Identity identity = this.identity();
         this.hub().promote(identity, url);
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.self().build())
@@ -153,15 +155,19 @@ public final class ProfileRs extends AbstractRs {
         final Identity identity = this.identity();
         for (String line : StringUtils.split(text.trim(), "\n")) {
             final String[] parts = StringUtils.split(line, "=", 2);
-            this.hub().resolver().register(
-                identity,
-                StringUtils.trim(parts[0]),
-                StringUtils.trim(parts[1])
-            );
+            try {
+                this.hub().resolver().register(
+                    identity,
+                    StringUtils.trim(parts[0]),
+                    StringUtils.trim(parts[1])
+                );
+            } catch (UrnResolver.DuplicateNamespaceException ex) {
+                throw new ForwardException(this, this.self(), ex);
+            }
         }
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(identity)
             .status(Response.Status.SEE_OTHER)
             .location(this.self().build())

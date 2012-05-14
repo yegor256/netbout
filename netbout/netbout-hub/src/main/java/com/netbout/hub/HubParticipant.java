@@ -26,10 +26,10 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
-import com.ymock.util.Logger;
 
 /**
  * Identity.
@@ -110,7 +110,6 @@ public final class HubParticipant implements Participant {
     public void kickOff() {
         final Identity identity = this.identity();
         this.boutdt.kickOff(identity.name());
-        this.hub.infinity().see(this.ibout);
         Logger.info(
             this,
             "Participant '%s' was kicked-off from bout #%d",

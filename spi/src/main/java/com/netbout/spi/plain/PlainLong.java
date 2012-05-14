@@ -82,8 +82,8 @@ public final class PlainLong implements Plain<Long> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof PlainLong)
-            && (this.hashCode() == obj.hashCode());
+        return obj == this || ((obj instanceof PlainLong)
+            && (this.hashCode() == obj.hashCode()));
     }
 
     /**

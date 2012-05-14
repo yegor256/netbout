@@ -27,7 +27,6 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
-import java.io.Serializable;
 
 /**
  * Variable atom.
@@ -37,86 +36,49 @@ import java.io.Serializable;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VariableAtom implements Atom<String>, Serializable {
+public enum VariableAtom implements Atom<String> {
 
     /**
      * Text of message.
      */
-    public static final VariableAtom TEXT =
-        new VariableAtom("text");
+    TEXT("text"),
 
     /**
      * Number of message.
      */
-    public static final VariableAtom NUMBER =
-        new VariableAtom("number");
+    NUMBER("number"),
 
     /**
      * Number of bout.
      */
-    public static final VariableAtom BOUT_NUMBER =
-        new VariableAtom("bout.number");
+    BOUT_NUMBER("bout.number"),
 
     /**
      * Title of bout.
      */
-    public static final VariableAtom BOUT_TITLE =
-        new VariableAtom("bout.title");
+    BOUT_TITLE("bout.title"),
 
     /**
      * Name of author.
      */
-    public static final VariableAtom AUTHOR_NAME =
-        new VariableAtom("author.name");
+    AUTHOR_NAME("author.name"),
 
     /**
      * Alias of author.
      */
-    public static final VariableAtom AUTHOR_ALIAS =
-        new VariableAtom("author.alias");
-
-    /**
-     * Serialization marker.
-     */
-    private static final long serialVersionUID = 0x4255AFCD9812DDEFL;
+    AUTHOR_ALIAS("author.alias");
 
     /**
      * The name of it.
      */
-    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
-    private final String name;
+    private final transient String name;
 
     /**
      * Public ctor.
      * @param value The value of it
      */
-    public VariableAtom(final String value) {
+    VariableAtom(final String value) {
         this.name = value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.name.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof VariableAtom
-            && this.name.equals(((VariableAtom) obj).name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String value() {
-        return this.name;
     }
 
     /**
@@ -125,6 +87,49 @@ public final class VariableAtom implements Atom<String>, Serializable {
     @Override
     public String toString() {
         return String.format("$%s", this.name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String value() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Name of attribute for Msg.
+     * @return The name
+     */
+    public String attribute() {
+        return String.format("var:%s", this.name);
+    }
+
+    /**
+     * Parse text and create variable atom.
+     * @param text Some text to parse
+     * @return The atom
+     */
+    public static VariableAtom parse(final String text) {
+        VariableAtom atom;
+        if (text.equals(VariableAtom.TEXT.name)) {
+            atom = VariableAtom.TEXT;
+        } else if (text.equals(VariableAtom.NUMBER.name)) {
+            atom = VariableAtom.NUMBER;
+        } else if (text.equals(VariableAtom.BOUT_NUMBER.name)) {
+            atom = VariableAtom.BOUT_NUMBER;
+        } else if (text.equals(VariableAtom.BOUT_TITLE.name)) {
+            atom = VariableAtom.BOUT_TITLE;
+        } else if (text.equals(VariableAtom.AUTHOR_NAME.name)) {
+            atom = VariableAtom.AUTHOR_NAME;
+        } else if (text.equals(VariableAtom.AUTHOR_ALIAS.name)) {
+            atom = VariableAtom.AUTHOR_ALIAS;
+        } else {
+            throw new IllegalArgumentException(
+                String.format("can't parse variable atom '%s'", text)
+            );
+        }
+        return atom;
     }
 
 }

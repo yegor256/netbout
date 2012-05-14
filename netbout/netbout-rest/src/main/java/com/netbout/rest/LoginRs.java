@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.rexsl.core.Manifests;
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -40,7 +41,7 @@ import javax.ws.rs.core.UriBuilder;
  * @version $Id$
  */
 @Path("/g")
-public final class LoginRs extends AbstractRs {
+public final class LoginRs extends BaseRs {
 
     /**
      * Login page.
@@ -52,7 +53,7 @@ public final class LoginRs extends AbstractRs {
     public Response login() {
         final UriBuilder fburi = UriBuilder.fromUri(
             UriBuilder
-                .fromPath("https://www.facebook.com/dialog/oauth")
+                .fromUri("https://www.facebook.com/dialog/oauth")
                 .queryParam("client_id", "{id}")
                 .queryParam("redirect_uri", "{uri}")
                 .build(
@@ -62,9 +63,9 @@ public final class LoginRs extends AbstractRs {
         );
         return new PageBuilder()
             .stylesheet("/xsl/login.xsl")
-            .build(BasePage.class)
-            .init(this, false)
-            .link("facebook", fburi)
+            .build(NbPage.class)
+            .init(this)
+            .link(new Link("facebook", fburi))
             .render()
             .preserved()
             .build();
@@ -89,8 +90,8 @@ public final class LoginRs extends AbstractRs {
     @GET
     public Response logout() {
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .anonymous()
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())

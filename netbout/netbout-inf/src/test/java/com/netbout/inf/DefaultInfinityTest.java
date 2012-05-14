@@ -26,13 +26,18 @@
  */
 package com.netbout.inf;
 
-import com.netbout.bus.Bus;
-import com.netbout.bus.BusMocker;
+import com.jcabi.log.Logger;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import java.util.Arrays;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import java.util.concurrent.TimeUnit;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -47,18 +52,71 @@ public final class DefaultInfinityTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void populatesIndexOnFirstTimeCall() throws Exception {
-        final Bus bus = new BusMocker()
-            .doReturn(Arrays.asList(new Long[] {1L}), "get-bouts-of-identity")
-            .doReturn(Arrays.asList(new Long[] {}), "get-bout-messages")
+    public void findsMessageJustPosted() throws Exception {
+        final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
+        final Bout bout = new BoutMocker()
+            .withParticipant(new UrnMocker().mock())
             .mock();
-        final Infinity inf = new DefaultInfinity(bus, new IndexMocker().mock());
-        final Bout bout = new BoutMocker().mock();
-        final Identity identity = new IdentityMocker()
-            .withBout(1L, bout)
+        final Message msg = new MessageMocker()
+            .withText("some text to index")
+            .inBout(bout)
             .mock();
-        inf.see(identity);
-        inf.messages("foo");
+        final Urn[] deps = inf.see(
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return msg;
+                }
+            }
+        ).toArray(new Urn[0]);
+        while (inf.eta(deps) != 0) {
+            TimeUnit.MILLISECONDS.sleep(1);
+            Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
+        }
+        final String query = String.format(
+            "(pos 0)",
+            msg.number()
+        );
+        MatcherAssert.assertThat(
+            inf.messages(query),
+            (Matcher) Matchers.iterableWithSize(1)
+        );
+        inf.close();
+    }
+
+    /**
+     * DefaultInfinity can restore its state from files.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void restoresItselfFromFileSystem() throws Exception {
+        final Folder folder = new FolderMocker().mock();
+        final Infinity inf = new DefaultInfinity(folder);
+        final Bout bout = new BoutMocker()
+            .withParticipant(new UrnMocker().mock())
+            .mock();
+        final Message msg = new MessageMocker()
+            .withText("Jeffrey Lebowski, \u0433!")
+            .inBout(bout)
+            .mock();
+        final Urn[] deps = inf.see(
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return msg;
+                }
+            }
+        ).toArray(new Urn[0]);
+        while (inf.eta(deps) != 0) {
+            TimeUnit.MILLISECONDS.sleep(1);
+        }
+        inf.close();
+        final Infinity restored = new DefaultInfinity(folder);
+        MatcherAssert.assertThat(
+            restored.messages("(matches '\u0433')"),
+            (Matcher) Matchers.iterableWithSize(1)
+        );
+        restored.close();
     }
 
 }

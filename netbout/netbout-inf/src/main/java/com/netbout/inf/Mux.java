@@ -26,21 +26,28 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseRunnable;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 import java.io.Closeable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
- * Multiplexer of heap updating tasks.
+ * Multiplexer of notices.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -49,67 +56,147 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 @SuppressWarnings({
     "PMD.DoNotUseThreads", "PMD.AvoidInstantiatingObjectsInLoops"
 })
-final class Mux extends ThreadPoolExecutor implements Closeable {
+final class Mux implements Closeable {
 
     /**
      * How many threads to use.
-     *
-     * <p>I don't know how to calculate this number correctly. Let's try to
-     * experiment.
      */
     private static final int THREADS =
         Runtime.getRuntime().availableProcessors() * 4;
 
     /**
-     * Tasks to execute.
+     * The ray.
      */
-    private final transient BlockingQueue<Task> queue =
-        new LinkedBlockingQueue<Task>();
+    private final transient Ray ray;
 
     /**
-     * How many tasks are currently dependants.
+     * The store with predicates.
+     */
+    private final transient Store store;
+
+    /**
+     * Running service.
+     */
+    private final transient ScheduledExecutorService service =
+        Executors.newScheduledThreadPool(
+            Mux.THREADS,
+            new VerboseThreads("mux")
+        );
+
+    /**
+     * Tasks to execute.
+     */
+    private final transient BlockingQueue<MuxTask> queue =
+        new LinkedBlockingQueue<MuxTask>();
+
+    /**
+     * How many notices every identity has now in pending status.
      */
     private final transient ConcurrentMap<Urn, AtomicLong> dependants =
         new ConcurrentHashMap<Urn, AtomicLong>();
 
     /**
-     * Stats on performance.
+     * Stats on notice processing performance.
      */
     private final transient DescriptiveStatistics stats =
         new DescriptiveStatistics(5000);
 
     /**
-     * Public ctor.
+     * Futures running.
      */
-    public Mux() {
-        super(
-            Mux.THREADS,
-            Mux.THREADS,
-            1L,
-            TimeUnit.DAYS,
-            new LinkedBlockingQueue<Runnable>(),
-            new ThreadFactory() {
-                private int num;
-                @Override
-                public Thread newThread(final Runnable runnable) {
-                    return new Thread(
-                        runnable,
-                        String.format("mux-pool-%d", ++this.num)
-                    );
+    private final transient Collection<ScheduledFuture> futures =
+        new ArrayList<ScheduledFuture>(Mux.THREADS);
+
+    /**
+     * Public ctor.
+     * @param iray The ray to use
+     * @param str The store to use
+     */
+    public Mux(final Ray iray, final Store str) {
+        this.ray = iray;
+        this.store = str;
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final MuxTask task = Mux.this.queue.take();
+                    task.run();
+                    for (Urn who : task.dependants()) {
+                        Mux.this.dependants.get(who).decrementAndGet();
+                    }
+                    Mux.this.stats.addValue((double) task.time());
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
                 }
             }
-        );
-        this.prestartAllCoreThreads();
-        for (int thread = 0; thread < Mux.THREADS; thread += 1) {
-            this.submit(new Routine());
+        };
+        for (int thread = 0; thread < Mux.THREADS; ++thread) {
+            this.futures.add(
+                this.service.scheduleAtFixedRate(
+                    new VerboseRunnable(runnable, true),
+                    0L, 1L, TimeUnit.NANOSECONDS
+                )
+            );
         }
     }
 
     /**
-     * Show some stats.
-     * @return The text
+     * How long do I need to wait before sending requests?
+     * @param who Who is asking
+     * @return Estimated number of nanoseconds
      */
-    public String statistics() {
+    public long eta(final Urn... who) {
+        long eta = 0L;
+        for (Urn urn : who) {
+            if (this.dependants.containsKey(urn)) {
+                eta += this.dependants.get(urn).get();
+            }
+        }
+        if (eta > 0 && this.stats.getN() > 0) {
+            eta = Math.max(
+                this.queue.size() * (long) this.stats.getMean() / Mux.THREADS,
+                1L
+            );
+        }
+        return eta;
+    }
+
+    /**
+     * Add new notice to be executed ASAP.
+     * @param notice The notice to process
+     * @return Who should wait for its processing
+     */
+    public Set<Urn> add(final Notice notice) {
+        final MuxTask task = new MuxTask(notice, this.ray, this.store);
+        final Set<Urn> deps = new HashSet<Urn>();
+        if (this.queue.contains(task)) {
+            Logger.warn(
+                this,
+                "#add('%s'): in the queue already, ignored dup",
+                task
+            );
+        } else {
+            for (Urn who : task.dependants()) {
+                this.dependants.putIfAbsent(who, new AtomicLong());
+                this.dependants.get(who).incrementAndGet();
+                deps.add(who);
+            }
+            this.queue.add(task);
+            Logger.debug(
+                this,
+                "#add('%s'): #%d in queue",
+                task,
+                this.queue.size()
+            );
+        }
+        return deps;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d identities\n", this.dependants.size()));
         for (ConcurrentMap.Entry<Urn, AtomicLong> entry
@@ -141,130 +228,32 @@ final class Mux extends ThreadPoolExecutor implements Closeable {
      */
     @Override
     public void close() {
-        this.shutdown();
+        for (ScheduledFuture future : this.futures) {
+            future.cancel(true);
+        }
+        this.service.shutdown();
         try {
             // @checkstyle MagicNumber (1 line)
-            if (this.awaitTermination(10, TimeUnit.SECONDS)) {
-                Logger.info(this, "#close(): shutdown() succeeded");
+            if (this.service.awaitTermination(10, TimeUnit.SECONDS)) {
+                Logger.debug(this, "#close(): shutdown() succeeded");
             } else {
                 Logger.warn(this, "#close(): shutdown() failed");
-                this.shutdownNow();
-                if (this.awaitTermination(1, TimeUnit.MINUTES)) {
+                this.service.shutdownNow();
+                if (this.service.awaitTermination(1, TimeUnit.MINUTES)) {
                     Logger.info(this, "#close(): shutdownNow() succeeded");
                 } else {
                     Logger.error(this, "#close(): failed to stop threads");
                 }
             }
         } catch (InterruptedException ex) {
-            this.shutdownNow();
+            this.service.shutdownNow();
             Thread.currentThread().interrupt();
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#close(): %d remained in the queue",
             this.queue.size()
         );
-    }
-
-    /**
-     * How long do I need to wait before sending requests?
-     * @param who Who is asking
-     * @return Estimated number of nanoseconds
-     */
-    public Long eta(final Urn who) {
-        Long eta;
-        if (this.dependants.containsKey(who)) {
-            eta = this.dependants.get(who).get();
-            if (eta > 0) {
-                eta = this.queue.size() * (long) this.stats.getMean()
-                    / this.getActiveCount();
-            }
-        } else {
-            eta = 0L;
-        }
-        return eta;
-    }
-
-    /**
-     * Add new task to be executed ASAP.
-     * @param task The task to execute
-     */
-    public void add(final Task task) {
-        if (!this.isTerminated() && !this.isShutdown()
-            && !this.isTerminating()) {
-            synchronized (this.queue) {
-                if (this.queue.contains(task)) {
-                    Logger.debug(
-                        this,
-                        "#add('%s'): in the queue already, ignored dup",
-                        task
-                    );
-                } else {
-                    this.queue.add(task);
-                    for (Urn who : task.dependants()) {
-                        this.dependants.putIfAbsent(who, new AtomicLong());
-                        this.dependants.get(who).incrementAndGet();
-                    }
-                    Logger.debug(
-                        this,
-                        // @checkstyle LineLength (1 line)
-                        "#add('%s'): #%d in queue, threads=%d, completed=%d, core=%d",
-                        task,
-                        this.queue.size(),
-                        this.getActiveCount(),
-                        this.getCompletedTaskCount(),
-                        this.getCorePoolSize()
-                    );
-                }
-            }
-        }
-    }
-
-    /**
-     * Task executing routine.
-     */
-    private final class Routine implements Runnable {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void run() {
-            while (true) {
-                Task task;
-                try {
-                    task = Mux.this.queue.take();
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-                this.run(task);
-                for (Urn who : task.dependants()) {
-                    synchronized (Mux.this) {
-                        Mux.this.dependants.get(who).decrementAndGet();
-                    }
-                }
-                Mux.this.stats.addValue((double) task.time());
-            }
-        }
-        /**
-         * Run one task.
-         * @param task The task to run
-         */
-        @SuppressWarnings("PMD.AvoidCatchingThrowable")
-        private void run(final Task task) {
-            try {
-                task.run();
-            // @checkstyle IllegalCatch (1 line)
-            } catch (Throwable ex) {
-                Mux.this.add(task);
-                Logger.warn(
-                    this,
-                    "#run('%s'): resubmitted because of: %[exception]s",
-                    task,
-                    ex
-                );
-            }
-        }
     }
 
 }

@@ -26,9 +26,9 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.BasePage;
+import com.netbout.rest.BaseRs;
 import com.netbout.rest.LoginRequiredException;
+import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
@@ -46,7 +46,7 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/nb")
-public final class NbRs extends AbstractRs {
+public final class NbRs extends BaseRs {
 
     /**
      * Authentication page.
@@ -60,8 +60,8 @@ public final class NbRs extends AbstractRs {
     public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret) {
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .render()
             .authenticated(this.authenticate(iname, secret))
             .build();

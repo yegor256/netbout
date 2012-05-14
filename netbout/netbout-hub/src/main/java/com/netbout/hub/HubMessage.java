@@ -42,7 +42,7 @@ final class HubMessage implements Message {
     /**
      * The hub.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * The viewer.
@@ -67,7 +67,7 @@ final class HubMessage implements Message {
      * @param dat The data
      * @checkstyle ParameterNumber (3 lines)
      */
-    public HubMessage(final Hub ihub, final Identity vwr,
+    public HubMessage(final PowerHub ihub, final Identity vwr,
         final Bout bout, final MessageDt dat) {
         this.hub = ihub;
         this.viewer = vwr;
@@ -87,9 +87,9 @@ final class HubMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object bout) {
-        return bout instanceof Message
-            && this.number().equals(((Message) bout).number());
+    public boolean equals(final Object msg) {
+        return msg == this || (msg instanceof Message
+            && this.number().equals(((Message) msg).number()));
     }
 
     /**

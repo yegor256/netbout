@@ -62,6 +62,6 @@ RestTester.start(RestUriBuilder.from(bout).path('/s'))
     )
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 MatcherAssert.assertThat(
-    bout.messages('(and (pos 0) (ns "urn:test:bumper:ns?bar=%E8%94%94%20value%3F"))'),
+    bout.messages('(and (ns "urn:test:bumper:ns?bar=%E8%94%94%20value%3F") (pos 0))'),
     Matchers.hasSize(1)
 )

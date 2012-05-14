@@ -35,7 +35,10 @@ import java.util.Date;
 import java.util.SimpleTimeZone;
 
 /**
- * UTC time zone.
+ * UTC time zone manipulator.
+ *
+ * <p>{@link java.sql.Timestamp} is used because {@link java.sql.Date}
+ * supports only dates (without time).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -67,8 +70,9 @@ final class Utc {
         if (date.after(new Date())) {
             throw new IllegalStateException(
                 String.format(
-                    "Date '%s' is in the future, can't save it to DB",
-                    date
+                    "Date '%s' is %dms in the future, can't save it to DB",
+                    date,
+                    date.getTime() - new Date().getTime()
                 )
             );
         }
@@ -101,8 +105,9 @@ final class Utc {
         if (date.after(new Date())) {
             throw new IllegalStateException(
                 String.format(
-                    "Date '%s' is in the future, can't retrieve it from DB",
-                    date
+                    "Date '%s' is %dms in the future, can't retrieve from DB",
+                    date,
+                    date.getTime() - new Date().getTime()
                 )
             );
         }

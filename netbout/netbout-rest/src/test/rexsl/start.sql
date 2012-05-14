@@ -28,11 +28,35 @@
 -- @version $Id$
 --
 
+-- clean it
+DELETE FROM alias;
+DELETE FROM bill;
+DELETE FROM invoice;
+DELETE FROM helper;
+DELETE FROM locale;
+DELETE FROM seen;
+DELETE FROM message;
+DELETE FROM participant;
+DELETE FROM bout;
+DELETE FROM namespace;
+DELETE FROM identity;
+
+INSERT IGNORE INTO identity (name, photo, date) VALUES (
+    'urn:void:',
+    'http://img.netbout.com/unknown.png',
+    '2008-08-30'
+);
+
 -- me, in order to allow sensitive helpers to work
 INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'urn:facebook:1531296526',
     'http://img.netbout.com/unknown.png',
     '2008-08-30'
+);
+INSERT IGNORE INTO namespace (name, identity, template) VALUES (
+     'facebook',
+     'urn:void:',
+     'http://localhost/'
 );
 
 -- bumper helper and identity
@@ -40,6 +64,11 @@ INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'urn:test:bumper',
     'http://img.netbout.com/unknown.png',
     '2008-08-30'
+);
+INSERT IGNORE INTO namespace (name, identity, template) VALUES (
+     'test',
+     'urn:void:',
+     'http://localhost/'
 );
 INSERT IGNORE INTO helper (identity, url, date) VALUES (
     'urn:test:bumper',

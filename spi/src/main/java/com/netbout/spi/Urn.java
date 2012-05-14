@@ -167,7 +167,9 @@ public final class Urn implements Comparable<Urn>, Serializable {
     @Override
     public boolean equals(final Object obj) {
         boolean equals = false;
-        if (obj instanceof Urn) {
+        if (obj == this) {
+            equals = true;
+        } else if (obj instanceof Urn) {
             equals = this.uri.equals(((Urn) obj).uri);
         } else if (obj instanceof String) {
             equals = this.uri.toString().equals((String) obj);

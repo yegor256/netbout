@@ -26,7 +26,6 @@
  */
 package com.netbout.rest.meta;
 
-import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
@@ -51,7 +50,7 @@ public final class MetaTextTest {
             "**hi**, _dude_!\r\n\n     b**o\n    \n    \n    o**m\n"
         );
         MatcherAssert.assertThat(
-            XhtmlConverter.the(String.format("<x>%s</x>", meta.html())),
+            String.format("<x>%s</x>", meta.html()),
             Matchers.describedAs(
                 meta.html(),
                 Matchers.allOf(
@@ -96,9 +95,7 @@ public final class MetaTextTest {
         };
         for (String text : texts) {
             MatcherAssert.assertThat(
-                XhtmlConverter.the(
-                    String.format("<z>%s</z>", new MetaText(text).html())
-                ),
+                String.format("<z>%s</z>", new MetaText(text).html()),
                 XhtmlMatchers.hasXPath("/z")
             );
         }
@@ -142,7 +139,7 @@ public final class MetaTextTest {
             "my list:\n\n* line one\n* line two\n\nnormal text now"
         );
         MatcherAssert.assertThat(
-            XhtmlConverter.the(String.format("<r>%s</r>", meta.html())),
+            String.format("<r>%s</r>", meta.html()),
             Matchers.describedAs(
                 meta.html(),
                 Matchers.allOf(

@@ -29,10 +29,10 @@
  */
 package com.netbout.spi.cpa;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Token;
-import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;

@@ -68,6 +68,36 @@ public final class MessageFarm {
     }
 
     /**
+     * Get chunk of message numbers.
+     * @param since Number of the message, since when we need more numbers
+     * @param length Maximum length of the chunk
+     * @return The list of numbers
+     */
+    @Operation("get-messages-chunk")
+    public List<Long> getMessagesChunk(final Long since, final Long length) {
+        return new DbSession(true).sql(
+            // @checkstyle StringLiteralsConcatenation (2 lines)
+            "SELECT number FROM message WHERE number > ?"
+            + " ORDER BY number LIMIT ?"
+        )
+            .set(since)
+            .set(length)
+            .select(
+                new Handler<List<Long>>() {
+                    @Override
+                    public List<Long> handle(final ResultSet rset)
+                        throws SQLException {
+                        final List<Long> numbers = new LinkedList<Long>();
+                        while (rset.next()) {
+                            numbers.add(rset.getLong(1));
+                        }
+                        return numbers;
+                    }
+                }
+            );
+    }
+
+    /**
      * Check message existence in the bout.
      * @param bout Bout number to check
      * @param msg Message number to check
@@ -104,36 +134,6 @@ public final class MessageFarm {
                             bout = 0L;
                         }
                         return bout;
-                    }
-                }
-            );
-    }
-
-    /**
-     * Get list of numbers of all bout messages.
-     * @param bout The bout where it happened
-     * @return List of numbers
-     */
-    @Operation("get-bout-messages")
-    public List<Long> getBoutMessages(final Long bout) {
-        return new DbSession(true).sql(
-            // @checkstyle StringLiteralsConcatenation (4 lines)
-            "SELECT number FROM message WHERE bout = ?"
-            + " AND date IS NOT NULL"
-            + " AND author IS NOT NULL"
-            + " AND text IS NOT NULL"
-        )
-            .set(bout)
-            .select(
-                new Handler<List<Long>>() {
-                    @Override
-                    public List<Long> handle(final ResultSet rset)
-                        throws SQLException {
-                        final List<Long> numbers = new LinkedList<Long>();
-                        while (rset.next()) {
-                            numbers.add(rset.getLong(1));
-                        }
-                        return numbers;
                     }
                 }
             );

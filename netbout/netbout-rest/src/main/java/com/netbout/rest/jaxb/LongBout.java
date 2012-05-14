@@ -28,8 +28,6 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
 import com.netbout.rest.BoutRs;
-import com.netbout.rest.ForwardException;
-import com.netbout.rest.Resource;
 import com.netbout.rest.StageCoordinates;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
@@ -39,6 +37,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
 import com.netbout.spi.client.RestSession;
+import com.rexsl.page.Link;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -60,11 +59,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.NONE)
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class LongBout {
-
-    /**
-     * Where we are.
-     */
-    private final transient Resource home;
 
     /**
      * The bus.
@@ -115,7 +109,6 @@ public final class LongBout {
 
     /**
      * Private ctor.
-     * @param res Where we are
      * @param ihub The hub
      * @param bot The bout
      * @param crds The coordinates of the stage to render
@@ -126,12 +119,11 @@ public final class LongBout {
      * @checkstyle ParameterNumber (7 lines)
      */
     public LongBout(
-        final Resource res, final Hub ihub, final Bout bot,
+        final Hub ihub, final Bout bot,
         final StageCoordinates crds,
         final String keyword, final UriBuilder bldr, final Identity vwr,
         final String period
     ) {
-        this.home = res;
         this.hub = ihub;
         this.bout = bot;
         this.coords = crds;
@@ -227,12 +219,8 @@ public final class LongBout {
     public List<LongMessage> getMessages() {
         // @checkstyle MagicNumber (1 line)
         final Period period = PeriodsBuilder.parse(this.view, 20L);
-        Iterable<Message> discussion;
-        try {
-            discussion = this.bout.messages(period.query(this.query));
-        } catch (com.netbout.inf.PredicateException ex) {
-            throw new ForwardException(this.home, ex);
-        }
+        final Iterable<Message> discussion =
+            this.bout.messages(period.query(this.query));
         final PeriodsBuilder pbld = new PeriodsBuilder(
             period,
             UriBuilder.fromUri(

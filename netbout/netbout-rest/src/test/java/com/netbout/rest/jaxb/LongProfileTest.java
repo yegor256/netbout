@@ -27,6 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.IdentityMocker;
+import com.rexsl.page.Link;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
 import java.io.File;
@@ -79,7 +80,8 @@ public final class LongProfileTest {
             new IdentityMocker().mock()
         );
         for (Link link : profile.getLocales()) {
-            for (Element element : link.getElements()) {
+            for (Object object : link.getElements()) {
+                final Element element = (Element) object;
                 if (!"code".equals(element.getTagName())) {
                     continue;
                 }

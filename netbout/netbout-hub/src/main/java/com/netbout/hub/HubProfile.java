@@ -26,11 +26,14 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.log.Logger;
+import com.netbout.hub.inf.InfIdentity;
+import com.netbout.inf.notices.AliasAddedNotice;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
-import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +47,7 @@ import java.util.regex.Pattern;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class HubProfile implements Profile {
 
@@ -61,7 +65,7 @@ public final class HubProfile implements Profile {
     /**
      * The identity.
      */
-    private final transient Identity identity;
+    private final transient Identity person;
 
     /**
      * The locale of identity.
@@ -85,7 +89,7 @@ public final class HubProfile implements Profile {
      */
     public HubProfile(final PowerHub ihub, final Identity owner) {
         this.hub = ihub;
-        this.identity = owner;
+        this.person = owner;
     }
 
     /**
@@ -93,11 +97,11 @@ public final class HubProfile implements Profile {
      */
     @Override
     public Locale locale() {
-        synchronized (this.identity) {
+        synchronized (this.person) {
             if (this.ilocale == null) {
                 final String lang = this.hub.make("get-locale-of-identity")
                     .synchronously()
-                    .arg(this.identity.name())
+                    .arg(this.person.name())
                     .asDefault(Locale.ENGLISH.toString())
                     .exec();
                 this.ilocale = new Locale(lang);
@@ -112,13 +116,13 @@ public final class HubProfile implements Profile {
     @Override
     public void setLocale(final Locale locale) {
         final Locale previous = this.ilocale;
-        synchronized (this.identity) {
+        synchronized (this.person) {
             this.ilocale = locale;
         }
         if (previous == null || !previous.equals(locale)) {
             this.hub.make("set-identity-locale")
                 .synchronously()
-                .arg(this.identity.name())
+                .arg(this.person.name())
                 .arg(this.ilocale.toString())
                 .asDefault(true)
                 .exec();
@@ -126,7 +130,7 @@ public final class HubProfile implements Profile {
                 this,
                 "Locale set to '%s' for '%s'",
                 this.ilocale,
-                this.identity.name()
+                this.person.name()
             );
         }
     }
@@ -136,11 +140,11 @@ public final class HubProfile implements Profile {
      */
     @Override
     public URL photo() {
-        synchronized (this.identity) {
+        synchronized (this.person) {
             if (this.iphoto == null) {
                 final URL url = this.hub.make("get-identity-photo")
                     .synchronously()
-                    .arg(this.identity.name())
+                    .arg(this.person.name())
                     .asDefault(this.DEFAULT_PHOTO)
                     .exec();
                 this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
@@ -155,18 +159,18 @@ public final class HubProfile implements Profile {
     @Override
     public void setPhoto(final URL url) {
         final URL previous = this.iphoto;
-        synchronized (this.identity) {
+        synchronized (this.person) {
             this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
         }
         this.hub.make("identity-mentioned")
             .synchronously()
-            .arg(this.identity.name())
+            .arg(this.person.name())
             .asDefault(true)
             .exec();
         if (previous == null || !previous.equals(url)) {
             this.hub.make("changed-identity-photo")
                 .synchronously()
-                .arg(this.identity.name())
+                .arg(this.person.name())
                 .arg(this.iphoto)
                 .asDefault(true)
                 .exec();
@@ -174,7 +178,7 @@ public final class HubProfile implements Profile {
                 this,
                 "Photo changed to '%s' for '%s'",
                 this.iphoto,
-                this.identity.name()
+                this.person.name()
             );
         }
     }
@@ -200,13 +204,13 @@ public final class HubProfile implements Profile {
                 }
             }
         );
-        list.addAll(this.myAliases());
+        list.addAll(this.nicknames());
         Logger.debug(
             this,
             "#aliases(): %d returned",
             list.size()
         );
-        return list;
+        return Collections.unmodifiableSet(list);
     }
 
     /**
@@ -217,18 +221,19 @@ public final class HubProfile implements Profile {
         if (alias == null || alias.isEmpty()) {
             throw new IllegalArgumentException("alias can't be empty");
         }
-        synchronized (this.identity) {
-            if (this.myAliases().contains(alias)) {
+        synchronized (this.person) {
+            if (this.nicknames().contains(alias)) {
                 Logger.debug(
                     this,
-                    "#alias('%s'): it's already set for '%s'",
+                    "#alias('%s'): it's already set for '%s': %[list]s",
                     alias,
-                    this.identity.name()
+                    this.person.name(),
+                    this.nicknames()
                 );
             } else {
                 this.hub.make("added-identity-alias")
                     .asap()
-                    .arg(this.identity.name())
+                    .arg(this.person.name())
                     .arg(alias)
                     .asDefault(true)
                     .exec();
@@ -236,9 +241,23 @@ public final class HubProfile implements Profile {
                     this,
                     "Alias '%s' added for '%s'",
                     alias,
-                    this.identity.name()
+                    this.person.name()
                 );
-                this.myAliases().add(alias);
+                this.nicknames().add(alias);
+                this.hub.infinity().see(
+                    new AliasAddedNotice() {
+                        @Override
+                        public Identity identity() {
+                            return new InfIdentity(
+                                HubProfile.this.person.name()
+                            );
+                        }
+                        @Override
+                        public String alias() {
+                            return alias;
+                        }
+                    }
+                );
             }
         }
     }
@@ -247,16 +266,23 @@ public final class HubProfile implements Profile {
      * Returns a link to the list of aliases.
      * @return The link to the list of them
      */
-    private Set<String> myAliases() {
-        synchronized (this.identity) {
+    private Set<String> nicknames() {
+        synchronized (this.person) {
             if (this.ialiases == null) {
                 this.ialiases = new CopyOnWriteArraySet<String>(
                     (List<String>) this.hub
                         .make("get-aliases-of-identity")
                         .synchronously()
-                        .arg(this.identity.name())
-                        .asDefault(new ArrayList<String>())
+                        .arg(this.person.name())
+                        .asDefault(new ArrayList<String>(0))
                         .exec()
+                );
+                Logger.debug(
+                    this,
+                    "#nicknames(): %d loaded for '%s': %[list]s",
+                    this.ialiases.size(),
+                    this.person.name(),
+                    this.ialiases
                 );
             }
         }

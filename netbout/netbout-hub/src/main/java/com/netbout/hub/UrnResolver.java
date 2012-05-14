@@ -52,12 +52,28 @@ public interface UrnResolver {
     String statistics();
 
     /**
+     * If exception is already registered.
+     */
+    class DuplicateNamespaceException extends Exception {
+        /**
+         * Public ctor.
+         * @param owner Already registered owner
+         * @param nsp The namespace
+         */
+        public DuplicateNamespaceException(final Urn owner, final String nsp) {
+            super(String.format("'%s' registered by '%s'", nsp, owner));
+        }
+    }
+
+    /**
      * Register namespace.
      * @param owner Who is registering
      * @param namespace The namespace to register
      * @param template URL template
+     * @throws UrnResolver.DuplicateNamespaceException If registered
      */
-    void register(Identity owner, String namespace, String template);
+    void register(Identity owner, String namespace, String template)
+        throws UrnResolver.DuplicateNamespaceException;
 
     /**
      * Get all namespaces registered for the given identity.

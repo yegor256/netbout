@@ -77,8 +77,11 @@ public final class WebAppender extends AppenderSkeleton {
      */
     @Override
     public void append(final LoggingEvent event) {
-        if (this.EVENTS.containsKey(event.getThreadName())
-            && event.getLevel().isGreaterOrEqual(Level.INFO)) {
+        final boolean suites = this.EVENTS.containsKey(event.getThreadName())
+            && event.getLevel().isGreaterOrEqual(Level.INFO)
+            && !((String) event.getMessage()).isEmpty()
+            && ((String) event.getMessage()).charAt(0) != '#';
+        if (suites) {
             this.EVENTS.get(event.getThreadName()).add(
                 this.getLayout().format(event)
             );

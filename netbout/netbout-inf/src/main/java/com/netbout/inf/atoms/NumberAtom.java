@@ -27,7 +27,6 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
-import java.io.Serializable;
 
 /**
  * Number atom.
@@ -37,18 +36,12 @@ import java.io.Serializable;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NumberAtom implements Atom<Long>, Serializable {
-
-    /**
-     * Serialization marker.
-     */
-    private static final long serialVersionUID = 0x4253AFFD9812DDEFL;
+public final class NumberAtom implements Atom<Long> {
 
     /**
      * The value of it.
      */
-    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
-    private final Long number;
+    private final transient Long number;
 
     /**
      * Public ctor.
@@ -71,8 +64,8 @@ public final class NumberAtom implements Atom<Long>, Serializable {
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof NumberAtom
-            && this.number.equals(((NumberAtom) obj).number);
+        return obj == this || (obj instanceof NumberAtom
+            && this.number.equals(((NumberAtom) obj).number));
     }
 
     /**

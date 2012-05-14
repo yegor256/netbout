@@ -26,11 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.log.Logger;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
-import com.ymock.util.Logger;
 
 /**
  * Encrypts and decrypts.
@@ -59,7 +59,7 @@ public final class Cryptor {
     public Identity decrypt(final Hub hub, final String hash)
         throws DecryptionException {
         if (hash == null) {
-            throw new DecryptionException();
+            throw new DecryptionException("HASH is empty (NULL)");
         }
         String iname;
         try {

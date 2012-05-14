@@ -147,9 +147,9 @@
             </dependency>
             <dependency>
                 <!-- Logging facility, on top of SLF4J. -->
-                <groupId>com.ymock</groupId>
-                <artifactId>ymock-util</artifactId>
-                <version since="26 Dec 2011">1.0.4</version>
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-log</artifactId>
+                <version since="11 May 2012">0.1.5</version>
             </dependency>
             <dependency>
                 <!--
@@ -208,9 +208,15 @@
                 @link http://www.junit.org/
                 -->
                 <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
+                <artifactId>junit-dep</artifactId>
                 <version since="23 Dec 2011">4.10</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <!--
@@ -220,9 +226,15 @@
                 @link http://www.mockito.org/
                 -->
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version since="9 Oct 2010">1.8.5</version>
+                <artifactId>mockito-core</artifactId>
+                <version since="17 Apr 2012">1.9.0</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <!-- Forward all calls to SLF4J to LOG4J. -->

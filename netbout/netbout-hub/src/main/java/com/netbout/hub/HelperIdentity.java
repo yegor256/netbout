@@ -87,7 +87,7 @@ final class HelperIdentity implements Identity, Helper {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this.identity.equals(obj);
+        return obj == this || this.identity.equals(obj);
     }
 
     /**

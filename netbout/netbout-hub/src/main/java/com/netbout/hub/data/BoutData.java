@@ -26,13 +26,20 @@
  */
 package com.netbout.hub.data;
 
+import com.jcabi.log.Logger;
 import com.netbout.hub.BoutDt;
-import com.netbout.hub.Hub;
 import com.netbout.hub.MessageDt;
 import com.netbout.hub.ParticipantDt;
+import com.netbout.hub.PowerHub;
+import com.netbout.hub.inf.InfBout;
+import com.netbout.hub.inf.InfIdentity;
+import com.netbout.inf.notices.BoutRenamedNotice;
+import com.netbout.inf.notices.JoinNotice;
+import com.netbout.inf.notices.KickOffNotice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -46,13 +53,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class BoutData implements BoutDt {
 
     /**
      * Hub to work with.
      */
-    private final transient Hub hub;
+    private final transient PowerHub hub;
 
     /**
      * The number.
@@ -92,7 +101,8 @@ final class BoutData implements BoutDt {
      * @param num The number
      * @param lstr Listener of message operations
      */
-    public BoutData(final Hub ihub, final Long num, final MsgListener lstr) {
+    public BoutData(final PowerHub ihub, final Long num,
+        final MsgListener lstr) {
         this.hub = ihub;
         assert num != null;
         this.number = num;
@@ -130,6 +140,18 @@ final class BoutData implements BoutDt {
                 .asDefault(true)
                 .exec();
         }
+        this.hub.infinity().see(
+            new KickOffNotice() {
+                @Override
+                public Bout bout() {
+                    return new InfBout(BoutData.this);
+                }
+                @Override
+                public Identity identity() {
+                    return new InfIdentity(identity);
+                }
+            }
+        );
     }
 
     /**
@@ -220,6 +242,14 @@ final class BoutData implements BoutDt {
                 .arg(this.title)
                 .asDefault(true)
                 .exec();
+            this.hub.infinity().see(
+                new BoutRenamedNotice() {
+                    @Override
+                    public Bout bout() {
+                        return new InfBout(BoutData.this);
+                    }
+                }
+            );
         }
         Logger.debug(
             this,
@@ -235,7 +265,7 @@ final class BoutData implements BoutDt {
     @Override
     public ParticipantDt addParticipant(final Urn name) {
         final ParticipantDt data =
-            new ParticipantData(this.hub, this.number, name);
+            new ParticipantData(this.hub, this, name);
         synchronized (this.number) {
             this.getParticipants().add(data);
             this.hub.make("added-bout-participant")
@@ -244,6 +274,18 @@ final class BoutData implements BoutDt {
                 .arg(data.getIdentity())
                 .asDefault(true)
                 .exec();
+            this.hub.infinity().see(
+                new JoinNotice() {
+                    @Override
+                    public Bout bout() {
+                        return new InfBout(BoutData.this);
+                    }
+                    @Override
+                    public Identity identity() {
+                        return new InfIdentity(name);
+                    }
+                }
+            );
         }
         Logger.debug(
             this,
@@ -272,7 +314,7 @@ final class BoutData implements BoutDt {
                     .exec();
                 for (Urn identity : identities) {
                     this.participants.add(
-                        new ParticipantData(this.hub, this.number, identity)
+                        new ParticipantData(this.hub, this, identity)
                     );
                 }
             }
@@ -285,24 +327,23 @@ final class BoutData implements BoutDt {
      */
     @Override
     public MessageDt addMessage() {
-        MessageDt data;
         synchronized (this.number) {
             final Long num = this.hub.make("create-bout-message")
                 .synchronously()
                 .arg(this.number)
                 .asDefault(1L)
                 .exec();
-            data = new MessageData(this.hub, num);
+            final MessageDt data = new MessageData(this.hub, num, this);
             this.messages.put(num, data);
             this.listener.messageCreated(num, this.number);
+            Logger.debug(
+                this,
+                "#addMessage(): new empty message #%d added to bout #%d",
+                data.getNumber(),
+                this.number
+            );
+            return data;
         }
-        Logger.debug(
-            this,
-            "#addMessage(): new empty message #%d added to bout #%d",
-            data.getNumber(),
-            this.number
-        );
-        return data;
     }
 
     /**
@@ -324,7 +365,7 @@ final class BoutData implements BoutDt {
                 if (!exists) {
                     throw new MessageNotFoundException(num);
                 }
-                this.messages.put(num, new MessageData(this.hub, num));
+                this.messages.put(num, new MessageData(this.hub, num, this));
             }
         }
         return this.messages.get(num);

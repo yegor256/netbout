@@ -26,12 +26,16 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseRunnable;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.bus.TxBuilder;
+import com.netbout.hh.StatsFarm;
+import com.netbout.hh.StatsProvider;
+import com.netbout.hub.cron.AbstractCron;
 import com.netbout.hub.data.DefaultBoutMgr;
-import com.netbout.hub.hh.StatsFarm;
-import com.netbout.hub.hh.StatsProvider;
 import com.netbout.inf.DefaultInfinity;
 import com.netbout.inf.Infinity;
 import com.netbout.spi.Helper;
@@ -39,15 +43,18 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaHelper;
-import com.ymock.util.Logger;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -57,8 +64,13 @@ import java.util.concurrent.TimeUnit;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
+ * @checkstyle ClassFanOutComplexity (500 lines)
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.DoNotUseThreads" })
+@SuppressWarnings({
+    "PMD.TooManyMethods",
+    "PMD.DoNotUseThreads",
+    "PMD.ExcessiveImports"
+})
 public final class DefaultHub implements PowerHub, StatsProvider {
 
     /**
@@ -88,36 +100,51 @@ public final class DefaultHub implements PowerHub, StatsProvider {
         new ConcurrentHashMap<Urn, Identity>();
 
     /**
-     * Notifier of silent identities.
+     * Cron runner.
      */
-    private final transient ScheduledFuture reminder;
+    private final transient ScheduledExecutorService service =
+        Executors.newSingleThreadScheduledExecutor(
+            new VerboseThreads(DefaultHub.class)
+        );
+
+    /**
+     * Cron tasks running.
+     */
+    private final transient Collection<ScheduledFuture> crons =
+        new LinkedList<ScheduledFuture>();
 
     /**
      * Public ctor.
+     * @throws IOException If something wrong
      */
-    public DefaultHub() {
-        this(new DefaultBus());
+    public DefaultHub() throws IOException {
+        this(new DefaultBus(), new DefaultInfinity());
     }
 
     /**
      * Public ctor, for tests mostly.
      * @param bus The bus
+     * @param infinity The infinity
+     * @todo #358 We expose THIS to sub-objects, which is very bad practice,
+     *  mostly because they may start using it BEFORE the ctor is finished. We
+     *  should introduce a start() method in this class.
      */
-    public DefaultHub(final Bus bus) {
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public DefaultHub(final Bus bus, final Infinity infinity) {
         StatsFarm.register(this);
         this.ibus = bus;
-        this.inf = new DefaultInfinity(this.ibus);
+        this.inf = infinity;
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         this.promote(this.persister());
-        this.reminder = Executors
-            .newSingleThreadScheduledExecutor()
-            .scheduleAtFixedRate(
-                new Reminder(this.ibus),
-                0L,
-                1L,
-                TimeUnit.MINUTES
+        for (Runnable task : AbstractCron.all(this)) {
+            this.crons.add(
+                this.service.scheduleWithFixedDelay(
+                    new VerboseRunnable(task, true),
+                    0L, 1L, TimeUnit.MINUTES
+                )
             );
+        }
         Logger.debug(
             this,
             "#DefaultHub(%[type]s): instantiated",
@@ -141,13 +168,14 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws java.io.IOException {
-        this.reminder.cancel(true);
-        Logger.debug(this, "#close(): shutting down BUS");
+    public void close() throws IOException {
+        for (ScheduledFuture cron : this.crons) {
+            cron.cancel(true);
+        }
+        this.service.shutdown();
         this.ibus.close();
-        Logger.debug(this, "#close(): shutting down INF");
         this.inf.close();
-        Logger.debug(this, "#close(): closed successfully");
+        Logger.info(this, "#close(): closed successfully");
     }
 
     /**
@@ -265,6 +293,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      */
     @Override
     public Identity join(final Identity main, final Identity child) {
+        final Collection<String> aliases = child.profile().aliases();
         final Urn mname = main.name();
         final Urn cname = child.name();
         synchronized (this.all) {
@@ -285,11 +314,16 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             mname,
             cname
         );
+        Identity joined;
         try {
-            return this.identity(mname);
+            joined = this.identity(mname);
         } catch (com.netbout.spi.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
         }
+        for (String alias : aliases) {
+            joined.profile().alias(alias);
+        }
+        return joined;
     }
 
     /**
@@ -337,7 +371,6 @@ public final class DefaultHub implements PowerHub, StatsProvider {
             .arg(identity.name())
             .asDefault(true)
             .exec();
-        this.infinity().see(identity);
         return this.all.get(identity.name());
     }
 

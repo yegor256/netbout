@@ -26,14 +26,14 @@
  */
 package com.netbout.bus;
 
-import com.netbout.bus.bh.StatsProvider;
+import com.jcabi.log.Logger;
+import com.netbout.bh.StatsProvider;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Plain;
 import com.netbout.spi.plain.PlainList;
-import com.ymock.util.Logger;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;

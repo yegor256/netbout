@@ -6,6 +6,7 @@ grammar Query;
 @header {
     package com.netbout.inf;
     import com.netbout.inf.atoms.NumberAtom;
+    import com.netbout.inf.atoms.PredicateAtom;
     import com.netbout.inf.atoms.TextAtom;
     import com.netbout.inf.atoms.VariableAtom;
     import java.util.LinkedList;
@@ -19,29 +20,29 @@ grammar Query;
 @lexer::members {
     @Override
     public void emitErrorMessage(String msg) {
-        throw new PredicateException(msg);
+        throw new IllegalArgumentException(msg);
     }
 }
 
 @parser::members {
-    private transient PredicateBuilder builder;
+    private transient Store store;
     @Override
     public void emitErrorMessage(String msg) {
-        throw new PredicateException(msg);
+        throw new IllegalArgumentException(msg);
     }
-    public void setPredicateBuilder(final PredicateBuilder bldr) {
-        this.builder = bldr;
+    public void setStore(final Store str) {
+        this.store = str;
     }
 }
 
-query returns [Predicate ret]
+query returns [PredicateAtom ret] throws InvalidSyntaxException
     :
     predicate
     { $ret = $predicate.ret; }
     EOF
     ;
 
-predicate returns [Predicate ret]
+predicate returns [PredicateAtom ret] throws InvalidSyntaxException
     @init { final List<Atom> atoms = new LinkedList<Atom>(); }
     :
     '('
@@ -51,16 +52,16 @@ predicate returns [Predicate ret]
         { atoms.add($atom.ret); }
     )*
     ')'
-    { $ret = this.builder.build($NAME.text, atoms); }
+    { $ret = new PredicateAtom($NAME.text, atoms, this.store.get($NAME.text)); }
     ;
 
-atom returns [Atom ret]
+atom returns [Atom ret] throws InvalidSyntaxException
     :
     predicate
     { $ret = $predicate.ret; }
     |
     VARIABLE
-    { $ret = new VariableAtom($VARIABLE.text); }
+    { $ret = VariableAtom.parse($VARIABLE.text); }
     |
     TEXT
     { $ret = new TextAtom($TEXT.text); }

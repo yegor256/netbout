@@ -29,8 +29,8 @@
  */
 package com.netbout.spi.cpa;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Identity;
-import com.ymock.util.Logger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;

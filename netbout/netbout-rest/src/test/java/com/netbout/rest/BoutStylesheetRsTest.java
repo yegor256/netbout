@@ -34,7 +34,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
@@ -58,7 +57,7 @@ public final class BoutStylesheetRsTest {
         final Identity identity = new IdentityMocker()
             .withBout(bout.number(), bout)
             .mock();
-        final BoutStylesheetRs rest = new ResourceMocker()
+        final BoutStylesheetRs rest = new NbResourceMocker()
             .withIdentity(identity)
             .mock(BoutStylesheetRs.class);
         final Urn stage = new UrnMocker().mock();
@@ -66,7 +65,7 @@ public final class BoutStylesheetRsTest {
         rest.setStage(stage);
         final String xsl = rest.boutXsl();
         MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
+            xsl,
             XhtmlMatchers.hasXPath(
                 "/xsl:stylesheet/xsl:include[contains(@href,'/xsl/bout.xsl')]"
             )
@@ -76,10 +75,7 @@ public final class BoutStylesheetRsTest {
             UriBuilder.fromPath("/{bout}/xsl/{stage}/stage.xsl")
                 .build(bout.number(), stage)
         );
-        MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
-            XhtmlMatchers.hasXPath(xpath)
-        );
+        MatcherAssert.assertThat(xsl, XhtmlMatchers.hasXPath(xpath));
     }
 
     /**
@@ -97,7 +93,7 @@ public final class BoutStylesheetRsTest {
             .withIdentity(identity.name(), identity)
             .doReturn(text, "render-stage-xsl")
             .mock();
-        final BoutStylesheetRs rest = new ResourceMocker()
+        final BoutStylesheetRs rest = new NbResourceMocker()
             .withIdentity(identity)
             .withHub(hub)
             .mock(BoutStylesheetRs.class);

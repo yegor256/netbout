@@ -30,8 +30,9 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.BoutMgr;
 import com.netbout.hub.DefaultHub;
-import com.netbout.hub.Hub;
-import com.netbout.hub.HubMocker;
+import com.netbout.hub.PowerHub;
+import com.netbout.hub.PowerHubMocker;
+import com.netbout.inf.InfinityMocker;
 import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -52,7 +53,7 @@ public final class DefaultBoutMgrTest {
     @Test
     public void producesStatistics() throws Exception {
         MatcherAssert.assertThat(
-            new DefaultBoutMgr(new HubMocker().mock()).statistics(),
+            new DefaultBoutMgr(new PowerHubMocker().mock()).statistics(),
             Matchers.notNullValue()
         );
     }
@@ -63,7 +64,7 @@ public final class DefaultBoutMgrTest {
      */
     @Test
     public void createsNewBout() throws Exception {
-        final Hub hub = new HubMocker().mock();
+        final PowerHub hub = new PowerHubMocker().mock();
         final BoutMgr mgr = new DefaultBoutMgr(hub);
         final Long num = mgr.create(new UrnMocker().mock());
         MatcherAssert.assertThat(num, Matchers.equalTo(1L));
@@ -77,7 +78,9 @@ public final class DefaultBoutMgrTest {
     @org.junit.Ignore
     public void createsNewBoutWithRealHub() throws Exception {
         final Bus bus = new BusMocker().mock();
-        final BoutMgr mgr = new DefaultBoutMgr(new DefaultHub(bus));
+        final BoutMgr mgr = new DefaultBoutMgr(
+            new DefaultHub(bus, new InfinityMocker().mock())
+        );
         final Long first = mgr.create(new UrnMocker().mock());
         final Long second = mgr.create(new UrnMocker().mock());
         MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));

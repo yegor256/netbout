@@ -97,8 +97,8 @@ public final class PlainList<T> implements Plain<List<T>> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof PlainList)
-            && (this.hashCode() == obj.hashCode());
+        return obj == this || ((obj instanceof PlainList)
+            && (this.hashCode() == obj.hashCode()));
     }
 
     /**

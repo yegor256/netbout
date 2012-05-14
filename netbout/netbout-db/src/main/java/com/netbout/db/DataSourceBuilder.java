@@ -26,8 +26,8 @@
  */
 package com.netbout.db;
 
+import com.jcabi.log.Logger;
 import com.rexsl.core.Manifests;
-import com.ymock.util.Logger;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 
@@ -64,7 +64,7 @@ final class DataSourceBuilder {
         data.setTimeBetweenEvictionRunsMillis(5000);
         data.setNumTestsPerEvictionRun(5);
         data.setMinEvictableIdleTimeMillis(15000);
-        data.setDefaultAutoCommit(false);
+        data.setDefaultAutoCommit(true);
         data.setDefaultReadOnly(false);
         Logger.info(
             this,

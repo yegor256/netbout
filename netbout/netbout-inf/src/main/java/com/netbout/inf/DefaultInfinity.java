@@ -26,14 +26,15 @@
  */
 package com.netbout.inf;
 
-import com.netbout.bus.Bus;
-import com.netbout.inf.ih.StageFarm;
-import com.netbout.inf.index.FsIndex;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
+import com.jcabi.log.Logger;
+import com.netbout.ih.StageFarm;
+import com.netbout.inf.ebs.EbsVolume;
+import com.netbout.inf.functors.DefaultStore;
+import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * Default implementation of Infitity.
@@ -45,50 +46,62 @@ import com.ymock.util.Logger;
 public final class DefaultInfinity implements Infinity {
 
     /**
-     * The bus.
-     */
-    private final transient Bus bus;
-
-    /**
      * Multiplexer of tasks.
      */
-    private final transient Mux mux = new Mux();
+    private final transient Mux mux;
 
     /**
-     * The index.
+     * The folder to work with.
      */
-    private final transient Index index;
+    private final transient Folder folder;
+
+    /**
+     * Store of functors.
+     */
+    private final transient Store store = new DefaultStore();
+
+    /**
+     * Ray of messages.
+     */
+    private final transient Ray ray;
 
     /**
      * Public ctor.
-     * @param ibus The BUS to work with
+     * @throws IOException If some IO problem
      */
-    public DefaultInfinity(final Bus ibus) {
-        this(ibus, new FsIndex());
+    public DefaultInfinity() throws IOException {
+        this(new EbsVolume());
     }
 
     /**
-     * Public ctor, with custom index.
-     * @param ibus The BUS to work with
-     * @param idx The index to use
+     * Protect ctor, for tests.
+     * @param fldr The folder
+     * @throws IOException If some IO problem
      */
-    public DefaultInfinity(final Bus ibus, final Index idx) {
-        this.index = idx;
-        this.bus = ibus;
+    protected DefaultInfinity(final Folder fldr) throws IOException {
+        this.folder = fldr;
+        this.ray = new MemRay(new File(this.folder.path(), "memray"));
+        this.mux = new Mux(this.ray, this.store);
         StageFarm.register(this);
-        Logger.info(this, "#DefaultInfinity(%[type]s): instantiated", ibus);
+        Logger.info(
+            this,
+            "#DefaultInfinity(%[type]s): instantiated (max=%d)",
+            this.folder,
+            this.maximum()
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String statistics() {
+    public String toString() {
         final StringBuilder text = new StringBuilder();
-        text.append("Mux stats:\n")
-            .append(this.mux.statistics())
-            .append("\n\nIndex stats:\n")
-            .append(this.index.statistics())
+        text.append(String.format("maximum(): %s\n", this.maximum()))
+            .append("Mux stats:\n")
+            .append(this.mux)
+            .append("\n\nStore stats:\n")
+            .append(this.store)
             .append("\n\njava.lang.Runtime:\n")
             .append(
                 String.format(
@@ -122,64 +135,51 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public void close() throws java.io.IOException {
-        Logger.info(this, "#close(): will stop Mux in a second");
         this.mux.close();
-        this.index.close();
+        this.ray.close();
+        this.folder.close();
+        Logger.info(this, "#close(): closed");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long eta(final Urn who) {
-        return this.mux.eta(who);
+    public long eta(final Urn... who) {
+        long eta = this.mux.eta(who);
+        if (eta == 0 && this.maximum() == 0) {
+            eta = 1;
+        }
+        return eta;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Long> messages(final String query) {
-        return new LazyMessages(new PredicateBuilder(this.index).parse(query));
+    public Iterable<Long> messages(final String query)
+        throws InvalidSyntaxException {
+        final Term term = new ParserAdapter(this.store)
+            .parse(query)
+            .term(this.ray);
+        Logger.debug(this, "#messages('%[text]s'): term '%s'", query, term);
+        return new LazyMessages(this.ray.cursor(), term);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void see(final Identity identity) {
-        this.mux.add(new SeeIdentityTask(this, this.bus, identity, this.index));
-        Logger.debug(
-            this,
-            "see('%s'): request submitted",
-            identity.name()
-        );
+    public long maximum() {
+        return this.ray.maximum();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void see(final Bout bout) {
-        this.mux.add(new SeeBoutTask(this, this.bus, bout, this.index));
-        Logger.debug(
-            this,
-            "see(bout #%d): request submitted",
-            bout.number()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void see(final Message message) {
-        this.mux.add(new SeeMessageTask(message, this.index));
-        Logger.debug(
-            this,
-            "see(message #%d): request submitted",
-            message.number()
-        );
+    public Set<Urn> see(final Notice notice) {
+        return this.mux.add(notice);
     }
 
 }

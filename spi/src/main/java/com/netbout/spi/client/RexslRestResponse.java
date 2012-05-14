@@ -29,8 +29,8 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.log.Logger;
 import com.rexsl.test.TestResponse;
-import com.ymock.util.Logger;
 import java.net.URI;
 import java.util.List;
 import javax.ws.rs.core.HttpHeaders;

@@ -49,7 +49,7 @@ public final class HubMessageTest {
      */
     @Test
     public void wrapsMessageDtDataProperties() throws Exception {
-        final Hub hub = new HubMocker().mock();
+        final PowerHub hub = new PowerHubMocker().mock();
         final Identity viewer = new IdentityMocker().mock();
         final Bout bout = new BoutMocker().mock();
         final MessageDt data = Mockito.mock(MessageDt.class);
@@ -70,7 +70,7 @@ public final class HubMessageTest {
      */
     @Test
     public void exposesEqualityFeature() throws Exception {
-        final Hub hub = new HubMocker().mock();
+        final PowerHub hub = new PowerHubMocker().mock();
         final Identity viewer = new IdentityMocker().mock();
         final Bout bout = new BoutMocker().mock();
         final MessageDt data = Mockito.mock(MessageDt.class);

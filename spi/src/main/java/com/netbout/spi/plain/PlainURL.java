@@ -92,8 +92,8 @@ public final class PlainURL implements Plain<URL> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof PlainURL)
-            && (this.hashCode() == obj.hashCode());
+        return obj == this || ((obj instanceof PlainURL)
+            && (this.hashCode() == obj.hashCode()));
     }
 
     /**

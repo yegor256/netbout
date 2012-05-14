@@ -28,7 +28,6 @@ package com.netbout.notifiers.email;
 
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public final class StageFarmTest {
             1L, identity.name(), identity.name(), ""
         );
         MatcherAssert.assertThat(
-            XhtmlConverter.the(xml),
+            xml,
             XhtmlMatchers.hasXPath("/data/text")
         );
     }
@@ -69,7 +68,7 @@ public final class StageFarmTest {
         farm.init(identity);
         final String xsl = farm.renderStageXsl(1L, identity.name());
         MatcherAssert.assertThat(
-            XhtmlConverter.the(xsl),
+            xsl,
             XhtmlMatchers.hasXPath("/xsl:stylesheet")
         );
     }

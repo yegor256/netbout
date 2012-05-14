@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.period;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.NetboutUtils;
-import com.ymock.util.Logger;
 import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -115,9 +115,9 @@ final class PosPeriod implements Period {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof PosPeriod)
+        return obj == this || ((obj instanceof PosPeriod)
             && ((PosPeriod) obj).start.equals(this.start)
-            && ((PosPeriod) obj).limit.equals(this.limit);
+            && ((PosPeriod) obj).limit.equals(this.limit));
     }
 
     /**

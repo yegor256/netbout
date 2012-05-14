@@ -27,7 +27,6 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
-import java.io.Serializable;
 
 /**
  * Text atom.
@@ -37,18 +36,12 @@ import java.io.Serializable;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TextAtom implements Atom<String>, Serializable {
-
-    /**
-     * Serialization marker.
-     */
-    private static final long serialVersionUID = 0x4255AFCD6612DDEFL;
+public final class TextAtom implements Atom<String> {
 
     /**
      * The value of it.
      */
-    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
-    private final String text;
+    private final transient String text;
 
     /**
      * Public ctor.
@@ -71,9 +64,10 @@ public final class TextAtom implements Atom<String>, Serializable {
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof TextAtom
-            && this.text.equals(((TextAtom) obj).text);
+        return obj == this || (obj instanceof TextAtom
+            && this.text.equals(((TextAtom) obj).text));
     }
+
     /**
      * {@inheritDoc}
      */

@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -74,10 +74,9 @@ public final class DbSession {
         this.auto = autocommit;
         try {
             this.conn = Database.connection();
-            this.conn.setAutoCommit(this.auto);
-            this.conn.setTransactionIsolation(
-                Connection.TRANSACTION_SERIALIZABLE
-            );
+            if (!autocommit) {
+                this.conn.setAutoCommit(this.auto);
+            }
         } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
@@ -199,6 +198,7 @@ public final class DbSession {
      */
     @SuppressWarnings("PMD.CloseResource")
     private <T> T run(final Handler<T> handler, final Fetcher fetcher) {
+        Database.log(this.query);
         final long start = System.nanoTime();
         T result;
         try {

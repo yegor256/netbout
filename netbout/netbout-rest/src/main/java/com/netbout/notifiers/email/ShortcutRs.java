@@ -26,7 +26,7 @@
  */
 package com.netbout.notifiers.email;
 
-import com.netbout.rest.AbstractRs;
+import com.netbout.rest.BaseRs;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.spi.text.SecureString;
 import javax.ws.rs.GET;
@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/e")
-public final class ShortcutRs extends AbstractRs {
+public final class ShortcutRs extends BaseRs {
 
     /**
      * Front page of the shortcut.

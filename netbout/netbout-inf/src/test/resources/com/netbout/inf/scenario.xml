@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<scenario>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>777</message.number>
+            <message.text>How are you doing, dude?</message.text>
+            <message.author>urn:test:Somebody</message.author>
+            <bout.participants>urn:test:Somebody</bout.participants>
+        </see>
+        <query>
+            <predicate>
+                (and
+                    (or
+                        (matches 'dude')
+                        (matches 'you')
+                    )
+                    (bundled)
+                    (from 0)
+                    (limit 1)
+                )
+            </predicate>
+            <messages>777</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>6767</message.number>
+            <message.text>First message</message.text>
+            <bout.participants>urn:test:Somebody</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>6565</message.number>
+            <message.text>Second message</message.text>
+            <bout.participants>urn:test:Somebody</bout.participants>
+        </see>
+        <query>
+            <predicate>(and (or (matches 'first') (matches 'second')) (pos 1))</predicate>
+            <messages>6565</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <bout.number>5655</bout.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <bout.number>5657</bout.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>123</message.number>
+            <message.text>How are you doing, dude?</message.text>
+            <message.author>urn:test:Somebody</message.author>
+            <bout.number>5656</bout.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
+        </see>
+        <query>
+            <predicate>(and (equal $bout.number 5656) (equal $number 123) (pos 0))</predicate>
+            <messages>123</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>771</message.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
+            <bout.number>8881</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>772</message.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
+            <bout.number>8881</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>773</message.number>
+            <bout.participants>urn:test:Somebody</bout.participants>
+            <bout.number>8881</bout.number>
+        </see>
+        <query>
+            <predicate>(and (talks-with 'urn:test:Somebody') (limit 2) (unique $bout.number))</predicate>
+            <messages>773</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>9991</message.number>
+            <bout.participants>urn:test:william</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>9992</message.number>
+            <bout.participants>urn:test:william</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>9993</message.number>
+            <bout.participants>urn:test:william</bout.participants>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>9994</message.number>
+            <bout.participants>urn:test:william</bout.participants>
+        </see>
+        <query>
+            <predicate>(and (talks-with 'urn:test:william') (from 2) (limit 1))</predicate>
+            <messages>9992</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>991</message.number>
+            <bout.participants>urn:test:dude</bout.participants>
+            <bout.number>550</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>992</message.number>
+            <bout.participants>urn:test:dude, urn:test:jeffrey</bout.participants>
+            <bout.number>551</bout.number>
+        </see>
+        <query>
+            <predicate>
+                (and
+                    (talks-with 'urn:test:dude')
+                    (and
+                        (and
+                            (or
+                                (matches '' $text)
+                                (matches '' $bout.title)
+                                (matches '' $author.alias)
+                            )
+                            (bundled)
+                        )
+                        (from 0)
+                    )
+                    (unique $bout.number)
+                )
+            </predicate>
+            <messages>992, 991</messages>
+        </query>
+    </scene>
+</scenario>

@@ -46,7 +46,7 @@ import javax.ws.rs.core.UriBuilder;
  * @version $Id$
  */
 @Path("/f")
-public final class FriendsRs extends AbstractRs {
+public final class FriendsRs extends BaseRs {
 
     /**
      * Get list of friends.
@@ -78,8 +78,8 @@ public final class FriendsRs extends AbstractRs {
         }
         return new PageBuilder()
             .schema("")
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .append(new JaxbBundle("mask", mask))
             .append(JaxbGroup.build(invitees, "invitees"))
             .render()

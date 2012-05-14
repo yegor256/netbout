@@ -26,97 +26,23 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.hub.Hub;
-import com.netbout.hub.HubMocker;
-import com.netbout.rest.BasePage;
-import com.netbout.rest.ResourceMocker;
-import com.netbout.rest.UriInfoMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
+import com.netbout.rest.NbPage;
+import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import com.rexsl.core.Manifests;
+import com.rexsl.test.XhtmlMatchers;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case for {@link LoginRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(FacebookRs.class)
 public final class FacebookRsTest {
-
-    /**
-     * FacebookRs can authenticate user through Facebook.
-     * @throws Exception If there is some problem inside
-     * @todo #295 We should use YMOCK to mock this mechanism, not PowerMockito,
-     *  which is not working at the moment
-     */
-    @Test
-    @org.junit.Ignore
-    public void authenticatesUserThroughFacebook() throws Exception {
-        // @checkstyle LineLength (1 line)
-        final String code = "AQCJ9EpLpqvj9cbag0mU8z6cHqyk-2CN5cigCzwB1aykqqqpiFNzAjsnNbRRY7x4n4h2ZEmrRVHhHSHzcFTtXobWM8LJSCHSB1_cjvsJS2vy2DsqRA3qGRAjUY8pKk0tO2zYpX-kFpnn2V6Z1xxvb7uyP-qrV_mQNWSYHKfPWKL0yTxo-NpFAGT4mDYNXl_cCMs";
-        final URI base = new URI("http://localhost/test/me");
-        final String fbid = "438947328947329";
-        final Urn iname = new UrnMocker()
-            .withNid(FacebookRs.NAMESPACE)
-            .mock();
-        final Identity identity = new IdentityMocker().namedAs(iname).mock();
-        final Hub hub = new HubMocker()
-            .withIdentity(iname, identity)
-            .mock();
-        final UriInfo info = new UriInfoMocker()
-            .withRequestUri(base)
-            .mock();
-        final URI redirect = UriBuilder.fromUri(base).path("/fb/back").build();
-        final FacebookRs rest = new ResourceMocker()
-            .withHub(hub)
-            .withUriInfo(info)
-            .mock(FacebookRs.class);
-        final FacebookRs spy = PowerMockito.spy(rest);
-        PowerMockito.doReturn("access_token=abc|cde&expires=5108").when(
-            spy,
-            // @checkstyle MultipleStringLiterals (1 line)
-            "retrieve",
-            Mockito.eq(
-                UriBuilder
-                    .fromPath("https://graph.facebook.com/oauth/access_token")
-                    .queryParam("client_id", Manifests.read("Netbout-FbId"))
-                    .queryParam("redirect_uri", redirect)
-                    .queryParam(
-                        "client_secret",
-                        Manifests.read("Netbout-FbSecret")
-                    )
-                    .queryParam("code", code)
-                    .build()
-            )
-        );
-        final com.restfb.types.User fbuser =
-            Mockito.mock(com.restfb.types.User.class);
-        Mockito.doReturn(fbid).when(fbuser).getId();
-        Mockito.doReturn("John Doe").when(fbuser).getName();
-        PowerMockito.doReturn(fbuser).when(spy, "fbUser", "abc|cde");
-        final Response response = spy.auth(iname, code);
-        MatcherAssert.assertThat(
-            response.getStatus(),
-            Matchers.equalTo(HttpURLConnection.HTTP_OK)
-        );
-    }
 
     /**
      * FacebookRs can authenticate without facebook, with super code.
@@ -131,19 +57,19 @@ public final class FacebookRsTest {
             Manifests.read("Netbout-SuperSecret"),
             fbid
         );
-        final FacebookRs rest = new ResourceMocker().mock(FacebookRs.class);
+        final FacebookRs rest = new NbResourceMocker().mock(FacebookRs.class);
         final Response response = rest.auth(Urn.create("urn:facebook:1"), code);
         MatcherAssert.assertThat(
             response.getStatus(),
             Matchers.equalTo(HttpURLConnection.HTTP_OK)
         );
         MatcherAssert.assertThat(
-            ResourceMocker.the((BasePage) response.getEntity(), rest),
+            NbResourceMocker.the((NbPage) response.getEntity(), rest),
             Matchers.allOf(
-                XmlMatchers.hasXPath(
+                XhtmlMatchers.hasXPath(
                     String.format("//identity[name='urn:facebook:%s']", fbid)
                 ),
-                XmlMatchers.hasXPath("//identity[locale='en']")
+                XhtmlMatchers.hasXPath("//identity[locale='en']")
             )
         );
     }

@@ -26,7 +26,9 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Lazy list of message numbers.
@@ -39,16 +41,23 @@ import java.util.Iterator;
 final class LazyMessages implements Iterable<Long> {
 
     /**
-     * The predicate.
+     * The cursor.
      */
-    private final transient Predicate predicate;
+    private final transient Cursor cursor;
+
+    /**
+     * The term.
+     */
+    private final transient Term term;
 
     /**
      * Public ctor.
-     * @param pred The predicate
+     * @param crs The cursor
+     * @param trm The term
      */
-    public LazyMessages(final Predicate pred) {
-        this.predicate = pred;
+    public LazyMessages(final Cursor crs, final Term trm) {
+        this.cursor = crs;
+        this.term = trm;
     }
 
     /**
@@ -56,26 +65,53 @@ final class LazyMessages implements Iterable<Long> {
      */
     @Override
     public Iterator<Long> iterator() {
-        return new MessagesIterator();
+        return new MessagesIterator(this.cursor);
     }
 
     /**
-     * Iterator.
+     * Iterator, thread safe.
      */
     private final class MessagesIterator implements Iterator<Long> {
+        /**
+         * Cursor to use.
+         */
+        private transient Cursor cursor;
+        /**
+         * Shifted already?
+         */
+        private transient boolean shifted;
+        /**
+         * Public ctor.
+         * @param crs The cursor
+         */
+        public MessagesIterator(final Cursor crs) {
+            this.cursor = crs;
+        }
         /**
          * {@inheritDoc}
          */
         @Override
         public boolean hasNext() {
-            return LazyMessages.this.predicate.hasNext();
+            synchronized (this.cursor) {
+                if (!this.shifted) {
+                    this.cursor = this.cursor.shift(LazyMessages.this.term);
+                    this.shifted = true;
+                }
+                return !this.cursor.end();
+            }
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public Long next() {
-            return LazyMessages.this.predicate.next();
+            if (!this.hasNext()) {
+                throw new NoSuchElementException();
+            }
+            this.shifted = false;
+            final Long number = this.cursor.msg().number();
+            Logger.debug(this, "#next(): #%d", number);
+            return number;
         }
         /**
          * {@inheritDoc}

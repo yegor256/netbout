@@ -26,7 +26,7 @@
  */
 package com.netbout.notifiers.email;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Session;

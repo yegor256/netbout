@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
@@ -33,7 +34,6 @@ import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Profile;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
-import com.ymock.util.Logger;
 import java.net.URL;
 import java.util.Set;
 
@@ -93,8 +93,8 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof Identity)
-            && this.name().equals(((Identity) obj).name());
+        return obj == this || ((obj instanceof Identity)
+            && this.name().equals(((Identity) obj).name()));
     }
 
     /**
@@ -144,7 +144,6 @@ public final class HubIdentity implements Identity {
         } catch (com.netbout.spi.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
-        this.hub.infinity().see(bout);
         Logger.info(
             this,
             "Bout #%d started successfully by '%s'",
@@ -168,17 +167,21 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public Iterable<Bout> inbox(final String query) {
-        return new LazyBouts(
-            this.hub.manager(),
-            this.hub.infinity().messages(
-                String.format(
-                    "(and (talks-with '%s') %s (unique $bout.number))",
-                    this.name(),
-                    NetboutUtils.normalize(query)
-                )
-            ),
-            this
-        );
+        try {
+            return new LazyBouts(
+                this.hub.manager(),
+                this.hub.infinity().messages(
+                    String.format(
+                        "(and (talks-with '%s') %s (unique $bout.number))",
+                        this.name(),
+                        NetboutUtils.normalize(query)
+                    )
+                ),
+                this
+            );
+        } catch (com.netbout.inf.InvalidSyntaxException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**

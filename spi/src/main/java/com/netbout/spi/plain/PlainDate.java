@@ -99,8 +99,8 @@ public final class PlainDate implements Plain<Date> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof PlainDate)
-            && (this.hashCode() == obj.hashCode());
+        return obj == this || ((obj instanceof PlainDate)
+            && (this.hashCode() == obj.hashCode()));
     }
 
     /**

@@ -26,10 +26,10 @@
  */
 package com.netbout.bus.cache;
 
+import com.jcabi.log.Logger;
 import com.netbout.bus.TokenCache;
 import com.netbout.spi.Plain;
 import com.netbout.spi.Token;
-import com.ymock.util.Logger;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;

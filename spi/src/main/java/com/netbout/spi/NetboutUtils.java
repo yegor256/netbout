@@ -29,11 +29,12 @@
  */
 package com.netbout.spi;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Utils for netbout entities manipulations.
@@ -76,16 +77,17 @@ public final class NetboutUtils {
      * @return The text for predicate
      */
     public static String normalize(final String query) {
+        final Pattern pattern = Pattern.compile(
+            "\\s*\\(.*\\)\\s*", Pattern.DOTALL
+        );
         String normalized;
         if (query == null) {
             normalized = NetboutUtils.normalize("");
-        } else if (!query.isEmpty() && query.charAt(0) == '('
-            && query.endsWith(")")) {
-            normalized = query;
+        } else if (pattern.matcher(query).matches()) {
+            normalized = query.trim();
         } else {
             normalized = String.format(
-                // @checkstyle LineLength (1 line)
-                "(or (matches '%s' $text) (matches '%1$s' $bout.title) (matches '%1$s' $author.alias))",
+                "(matches '%s')",
                 query.replace("'", "\\'")
             );
         }

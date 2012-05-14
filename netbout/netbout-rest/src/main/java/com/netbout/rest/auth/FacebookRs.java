@@ -26,9 +26,10 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.BasePage;
+import com.jcabi.log.Logger;
+import com.netbout.rest.BaseRs;
 import com.netbout.rest.LoginRequiredException;
+import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.restfb.DefaultFacebookClient;
@@ -37,7 +38,6 @@ import com.restfb.types.User;
 import com.rexsl.core.Manifests;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;
-import com.ymock.util.Logger;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -57,7 +57,7 @@ import org.apache.commons.lang.LocaleUtils;
  * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
  */
 @Path("/fb")
-public final class FacebookRs extends AbstractRs {
+public final class FacebookRs extends BaseRs {
 
     /**
      * Namespace.
@@ -79,8 +79,8 @@ public final class FacebookRs extends AbstractRs {
             );
         }
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .preserved()
             .status(Response.Status.SEE_OTHER)
             .location(
@@ -139,8 +139,8 @@ public final class FacebookRs extends AbstractRs {
             secret
         );
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .render()
             .authenticated(identity)
             .build();
@@ -161,7 +161,8 @@ public final class FacebookRs extends AbstractRs {
         );
         resolved.profile().setPhoto(
             UriBuilder
-                .fromPath("https://graph.facebook.com/{id}/picture")
+                .fromUri("https://graph.facebook.com/")
+                .path("/{id}/picture")
                 .build(fbuser.getId())
                 .toURL()
         );
@@ -209,7 +210,7 @@ public final class FacebookRs extends AbstractRs {
     private String token(final String code) throws IOException {
         final URI uri = UriBuilder
             // @checkstyle MultipleStringLiterals (5 lines)
-            .fromPath("https://graph.facebook.com/oauth/access_token")
+            .fromUri("https://graph.facebook.com/oauth/access_token")
             .queryParam("client_id", "{id}")
             .queryParam("redirect_uri", "{uri}")
             .queryParam("client_secret", "{secret}")

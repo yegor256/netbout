@@ -26,9 +26,9 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.rest.AbstractRs;
-import com.netbout.rest.BasePage;
+import com.netbout.rest.BaseRs;
 import com.netbout.rest.ForwardException;
+import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.rexsl.page.PageBuilder;
@@ -44,7 +44,7 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/mock-auth")
-public final class AuthRsMocker extends AbstractRs {
+public final class AuthRsMocker extends BaseRs {
 
     /**
      * Authentication page.
@@ -74,8 +74,8 @@ public final class AuthRsMocker extends AbstractRs {
         );
         identity.profile().alias(iname.nss());
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .render()
             .authenticated(identity)
             .build();

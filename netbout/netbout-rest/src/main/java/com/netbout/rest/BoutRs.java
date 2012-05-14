@@ -34,8 +34,10 @@ import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
+import com.rexsl.misc.CookieBuilder;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +60,7 @@ import javax.ws.rs.core.UriBuilder;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 @Path("/{num : [0-9]+}")
-public final class BoutRs extends AbstractRs {
+public final class BoutRs extends BaseRs {
 
     /**
      * Threshold param.
@@ -191,9 +193,9 @@ public final class BoutRs extends AbstractRs {
             .asDefault(this.coords.place())
             .exec();
         return resp.cookie(
-            new CookieBuilder(this.self("").build())
-                .named("netbout-stage")
-                .valued(this.coords.copy().setPlace(place).toString())
+            new CookieBuilder(this.self(""))
+                .name("netbout-stage")
+                .value(this.coords.copy().setPlace(place).toString())
                 .temporary()
                 .build()
         ).build();
@@ -222,8 +224,8 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -249,8 +251,8 @@ public final class BoutRs extends AbstractRs {
         }
         bout.rename(title);
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -281,8 +283,8 @@ public final class BoutRs extends AbstractRs {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -299,8 +301,8 @@ public final class BoutRs extends AbstractRs {
     public Response join() {
         this.bout().confirm();
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -316,8 +318,8 @@ public final class BoutRs extends AbstractRs {
     public Response leave() {
         this.bout().leave();
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.base().build())
@@ -340,8 +342,8 @@ public final class BoutRs extends AbstractRs {
         }
         NetboutUtils.participantOf(friend, this.bout()).kickOff();
         return new PageBuilder()
-            .build(BasePage.class)
-            .init(this, false)
+            .build(NbPage.class)
+            .init(this)
             .authenticated(this.identity())
             .status(Response.Status.SEE_OTHER)
             .location(this.self("").build())
@@ -376,21 +378,21 @@ public final class BoutRs extends AbstractRs {
      * Main page.
      * @return The page
      */
-    private BasePage page() {
+    private NbPage page() {
         final Identity myself = this.identity();
         this.coords.normalize(this.hub(), this.bout());
-        final BasePage page = new PageBuilder()
+        final NbPage page = new PageBuilder()
             .schema("")
             .stylesheet(
                 this.base().path("/{bout}/xsl/{stage}/wrapper.xsl")
                     .build(this.bout().number(), this.coords.stage())
                     .toString()
             )
-            .build(BasePage.class)
-            .init(this, true)
+            .build(NbPage.class)
+            .init(this)
+            .searcheable(true)
             .append(
                 new LongBout(
-                    this,
                     this.hub(),
                     this.bout(),
                     this.coords,
@@ -401,19 +403,21 @@ public final class BoutRs extends AbstractRs {
                 )
             )
             .append(new JaxbBundle("query", this.query))
-            .link("leave", this.self("/leave"));
+            .link(new Link("leave", "./leave"));
         this.appendInvitees(page);
         page.link(
-            "top",
-            this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, null)
+            new Link(
+                "top",
+                this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, null)
+            )
         );
         if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
-            page.link("post", this.self("/p"));
+            page.link(new Link("post", "./p"));
         } else {
-            page.link("join", this.self("/join"));
+            page.link(new Link("join", "./join"));
         }
         if (NetboutUtils.participantOf(myself, this.bout()).leader()) {
-            page.link("rename", this.self("/r"));
+            page.link(new Link("rename", "./r"));
         }
         return page;
     }
@@ -423,7 +427,7 @@ public final class BoutRs extends AbstractRs {
      * @param page The page to append to
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    private void appendInvitees(final BasePage page) {
+    private void appendInvitees(final NbPage page) {
         if (this.mask != null) {
             final List<Invitee> invitees = new LinkedList<Invitee>();
             for (Identity friend : this.identity().friends(this.mask)) {

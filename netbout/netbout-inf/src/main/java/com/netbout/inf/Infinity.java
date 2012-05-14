@@ -26,11 +26,9 @@
  */
 package com.netbout.inf;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.io.Closeable;
+import java.util.Set;
 
 /**
  * Infinity, with information about bouts and messages.
@@ -41,42 +39,31 @@ import java.io.Closeable;
 public interface Infinity extends Closeable {
 
     /**
-     * Show some stats.
-     * @return Text stats
-     */
-    String statistics();
-
-    /**
-     * How long do I need to wait before sending requests?
+     * How long do we need to wait before sending requests?
      * @param who Who is asking
-     * @return Estimated number of milliseconds
+     * @return Estimated number of nanoseconds
      */
-    Long eta(Urn who);
+    long eta(Urn... who);
 
     /**
      * Find messages for the given predicate.
      * @param query The predicate to use
      * @return The list of messages, ordered
+     * @throws InvalidSyntaxException If query syntax is not valid
      */
-    Iterable<Long> messages(String query);
+    Iterable<Long> messages(String query) throws InvalidSyntaxException;
 
     /**
-     * Update information about this identity
-     * (something was changed there, maybe).
-     * @param identity The identity to inform about
+     * How many messages were seen totally by this infinity?
+     * @return Maximum number of the message seen so far
      */
-    void see(Identity identity);
+    long maximum();
 
     /**
-     * Update information about this bout (something was changed there, maybe).
-     * @param bout The bout to inform about
+     * Send this notice to infinity.
+     * @param notice The notice to see
+     * @return Who should wait for its processing
      */
-    void see(Bout bout);
-
-    /**
-     * Update information about this message.
-     * @param message The message to inform about
-     */
-    void see(Message message);
+    Set<Urn> see(Notice notice);
 
 }

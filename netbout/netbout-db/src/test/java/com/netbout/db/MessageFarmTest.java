@@ -28,7 +28,6 @@ package com.netbout.db;
 
 import com.netbout.spi.Urn;
 import java.util.Date;
-import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -44,18 +43,6 @@ public final class MessageFarmTest {
      * Farm to work with.
      */
     private final transient MessageFarm farm = new MessageFarm();
-
-    /**
-     * MessageFarm can add a new message to a bout and retrieve it back.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void addsMessageToBoutAndRetrievesItBack() throws Exception {
-        final Long bout = new BoutRowMocker().mock();
-        final Long message = new MessageRowMocker(bout).mock();
-        final List<Long> nums = this.farm.getBoutMessages(bout);
-        MatcherAssert.assertThat(nums, Matchers.hasItem(message));
-    }
 
     /**
      * MessageFarm can check for message existence.
@@ -130,6 +117,20 @@ public final class MessageFarmTest {
         MatcherAssert.assertThat(
             this.farm.getMessageText(message),
             Matchers.equalTo(text)
+        );
+    }
+
+    /**
+     * MessageFarm can find a chunk of messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsChunkOfMessages() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Long message = new MessageRowMocker(bout).mock();
+        MatcherAssert.assertThat(
+            this.farm.getMessagesChunk(message - 1, 2L),
+            Matchers.hasItem(message)
         );
     }
 

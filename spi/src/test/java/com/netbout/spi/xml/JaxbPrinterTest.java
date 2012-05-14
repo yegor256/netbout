@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.xml;
 
-import com.rexsl.test.XhtmlConverter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -64,7 +63,7 @@ public final class JaxbPrinterTest {
     public void printsJaxbAsXmlDocumentWithoutSchema() throws Exception {
         final JaxbPrinter printer = new JaxbPrinter(new FooMocker());
         MatcherAssert.assertThat(
-            XhtmlConverter.the(printer.print()),
+            printer.print(),
             XhtmlMatchers.hasXPath("/foo/name")
         );
     }

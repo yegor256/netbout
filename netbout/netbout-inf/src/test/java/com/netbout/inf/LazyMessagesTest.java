@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -43,23 +44,11 @@ public final class LazyMessagesTest {
      */
     @Test
     public void findsMessagesInStreamOfMsgs() throws Exception {
-        final Predicate pred = new PredicateMocker()
-            .withMessages(new Long[] {1L})
-            .mock();
-        final Iterable<Long> messages = new LazyMessages(pred);
-        MatcherAssert.assertThat(
-            messages,
-            Matchers.<Long>iterableWithSize(1)
-        );
-    }
-
-    /**
-     * LazyMessages throws exception on incorrect call to {@code next()}.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = java.util.NoSuchElementException.class)
-    public void throwsWhenIteratorIsEmpty() throws Exception {
-        new LazyMessages(new PredicateMocker().mock()).iterator().next();
+        final Long msg = new Random().nextLong();
+        final Cursor cursor = new CursorMocker().shiftTo(msg).mock();
+        final Term term = new TermMocker().mock();
+        final Iterable<Long> msgs = new LazyMessages(cursor, term);
+        MatcherAssert.assertThat(msgs, Matchers.hasItem(msg));
     }
 
 }

@@ -33,19 +33,15 @@
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
 
-    <xsl:template name="nano">
-        <xsl:param name="nano" as="xs:integer"/>
+    <xsl:template name="millis">
+        <xsl:param name="millis" as="xs:integer"/>
         <xsl:choose>
-            <xsl:when test="$nano &gt; 1000 * 1000 * 1000">
-                <xsl:value-of select="format-number($nano div (1000 * 1000 * 1000), '0.000')"/>
+            <xsl:when test="$millis &gt; 1000">
+                <xsl:value-of select="format-number($millis div 1000, '0.0')"/>
                 <xsl:text>s</xsl:text>
             </xsl:when>
-            <xsl:when test="$nano &gt; 10 * 1000 * 1000">
-                <xsl:value-of select="round($nano div (1000 * 1000))"/>
-                <xsl:text>ms</xsl:text>
-            </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="format-number($nano div (1000 * 1000), '0.#')"/>
+                <xsl:value-of select="format-number($millis, '#')"/>
                 <xsl:text>ms</xsl:text>
             </xsl:otherwise>
         </xsl:choose>

@@ -26,10 +26,10 @@
  */
 package com.netbout.rest;
 
+import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.xmlmatchers.XmlMatchers;
 
 /**
  * Test case for {@link LoginRs}.
@@ -44,12 +44,12 @@ public final class LoginRsTest {
      */
     @Test
     public void rendersLoginPage() throws Exception {
-        final LoginRs rest = new ResourceMocker().mock(LoginRs.class);
+        final LoginRs rest = new NbResourceMocker().mock(LoginRs.class);
         rest.setAuth("some-incorrect-auth-code");
         final Response response = rest.login();
         MatcherAssert.assertThat(
-            ResourceMocker.the((BasePage) response.getEntity(), rest),
-            XmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
+            NbResourceMocker.the((NbPage) response.getEntity(), rest),
+            XhtmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
         );
     }
 
@@ -60,7 +60,7 @@ public final class LoginRsTest {
      */
     @Test
     public void doesntForwardIfUserAlreadyLoggedIn() throws Exception {
-        ((LoginRs) new ResourceMocker().mock(LoginRs.class)).login();
+        ((LoginRs) new NbResourceMocker().mock(LoginRs.class)).login();
     }
 
 }

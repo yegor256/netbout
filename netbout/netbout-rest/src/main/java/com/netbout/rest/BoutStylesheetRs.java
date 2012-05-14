@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.velocity.VelocityPage;
 import com.netbout.spi.Urn;
-import com.netbout.spi.text.Template;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -41,7 +41,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @version $Id$
  */
 @Path("/{num : [0-9]+}/xsl/{stage : [\\w:\\.\\-]+}")
-public final class BoutStylesheetRs extends AbstractRs {
+public final class BoutStylesheetRs extends BaseRs {
 
     /**
      * Number of the bout.
@@ -80,7 +80,7 @@ public final class BoutStylesheetRs extends AbstractRs {
     @Path("/wrapper.xsl")
     @Produces("text/xsl")
     public String boutXsl() {
-        return new Template("com/netbout/rest/wrapper.xsl.vm")
+        return new VelocityPage("com/netbout/rest/wrapper.xsl.vm")
             .set(
                 "boutXsl",
                 StringEscapeUtils.escapeXml(

@@ -26,9 +26,10 @@
  */
 package com.netbout.db;
 
-import com.ymock.util.Logger;
+import com.jcabi.log.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
@@ -44,6 +45,11 @@ import org.apache.commons.dbutils.DbUtils;
 final class Database {
 
     /**
+     * Logged SQL queries.
+     */
+    private static final AtomicLong LOGGED = new AtomicLong(0L);
+
+    /**
      * Singleton instance, lazy loaded in {@link #connection()}.
      */
     private static Database instance;
@@ -54,7 +60,8 @@ final class Database {
     private final transient DataSource source = new DataSourceBuilder().build();
 
     /**
-     * Protected ctor.
+     * Protected ctor (for the sake of testability, but it should be FINAL,
+     * of course).
      */
     protected Database() {
         Logger.info(Database.class, "#Database(): instantiated");
@@ -65,7 +72,7 @@ final class Database {
      */
     @SuppressWarnings("PMD.NullAssignment")
     public static void drop() {
-        synchronized (Database.class) {
+        synchronized (Database.LOGGED) {
             Database.instance = null;
         }
         Logger.info(Database.class, "#drop(): dropped");
@@ -78,14 +85,32 @@ final class Database {
      */
     @SuppressWarnings("PMD.CloseResource")
     public static Connection connection() throws SQLException {
-        synchronized (Database.class) {
+        synchronized (Database.LOGGED) {
             if (Database.instance == null) {
                 Database.instance = new Database();
                 final Connection conn = Database.instance.connect();
                 Database.update(conn);
                 DbUtils.closeQuietly(conn);
             }
-            return Database.instance.connect();
+        }
+        return Database.instance.connect();
+    }
+
+    /**
+     * Log one query prepared for execution.
+     * @param query The SQL query
+     */
+    public static void log(final String query) {
+        Database.LOGGED.incrementAndGet();
+        synchronized (Database.LOGGED) {
+            // @checkstyle MagicNumber (1 line)
+            if (Database.LOGGED.get() % 1000 == 0) {
+                Logger.info(
+                    Database.class,
+                    "#log(..): %d DB SQL queries executed",
+                    Database.LOGGED.get()
+                );
+            }
         }
     }
 
@@ -94,7 +119,7 @@ final class Database {
      * @return New JDBC connection
      * @throws SQLException If some SQL error
      */
-    protected Connection connect() throws SQLException {
+    public Connection connect() throws SQLException {
         return this.source.getConnection();
     }
 
