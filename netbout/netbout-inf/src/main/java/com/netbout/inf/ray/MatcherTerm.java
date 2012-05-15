@@ -92,7 +92,7 @@ final class MatcherTerm implements Term {
                 .iterator();
             shifted = new MemCursor(this.next(tail, current), this.imap);
         }
-        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, shifted);
+        Logger.trace(this, "#shift(%s): %s to %s", cursor, this, shifted);
         return shifted;
     }
 

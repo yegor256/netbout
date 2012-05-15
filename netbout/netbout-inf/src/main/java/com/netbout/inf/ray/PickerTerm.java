@@ -81,7 +81,7 @@ final class PickerTerm implements Term {
         } else {
             shifted = new MemCursor(0L, this.imap);
         }
-        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, shifted);
+        Logger.trace(this, "#shift(%s): %s to %s", cursor, this, shifted);
         return shifted;
     }
 
