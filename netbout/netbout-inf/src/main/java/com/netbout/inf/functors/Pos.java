@@ -56,19 +56,17 @@ final class Pos implements Functor {
         return new VolatileTerm(
             new Conjunction().build(
                 ray,
-                Arrays.asList(
-                    new Atom[] {
-                        new PredicateAtom(
-                            "from",
-                            atoms,
-                            new From()
-                        ),
-                        new PredicateAtom(
-                            "limit",
-                            Arrays.asList(new Atom[] {new NumberAtom(1L)}),
-                            new Limit()
-                        ),
-                    }
+                Arrays.<Atom>asList(
+                    new PredicateAtom(
+                        "from",
+                        atoms,
+                        new From()
+                    ),
+                    new PredicateAtom(
+                        "limit",
+                        Arrays.asList(new Atom[] {new NumberAtom(1L)}),
+                        new Limit()
+                    )
                 )
             )
         );

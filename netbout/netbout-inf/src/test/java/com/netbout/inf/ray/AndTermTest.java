@@ -61,12 +61,10 @@ public final class AndTermTest {
         map.index(attr).add(msg - 2, third);
         final Term term = new AndTerm(
             map,
-            Arrays.asList(
-                new Term[] {
-                    new MatcherTerm(map, attr, first),
-                    new MatcherTerm(map, attr, second),
-                    new MatcherTerm(map, attr, third),
-                }
+            Arrays.<Term>asList(
+                new MatcherTerm(map, attr, first),
+                new MatcherTerm(map, attr, second),
+                new MatcherTerm(map, attr, third)
             )
         );
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
