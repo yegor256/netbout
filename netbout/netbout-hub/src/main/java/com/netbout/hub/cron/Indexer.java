@@ -62,7 +62,7 @@ final class Indexer extends AbstractCron {
             .synchronously()
             .arg(maximum)
             // @checkstyle MagicNumber (1 line)
-            .arg(500L)
+            .arg(20000L)
             .asDefault(new ArrayList<Long>(0))
             .exec();
         if (!numbers.isEmpty()) {
