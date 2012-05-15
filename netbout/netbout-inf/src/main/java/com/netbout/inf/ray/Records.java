@@ -90,6 +90,7 @@ final class Records implements Closeable {
      * Restore map from file.
      * @return The map found in the file
      * @throws IOException If some IO error
+     * @checkstyle ExecutableStatementCount (50 lines)
      */
     public IndexMap restore() throws IOException {
         final IndexMap map = new DefaultIndexMap();
@@ -102,6 +103,8 @@ final class Records implements Closeable {
             }
             try {
                 final long start = System.currentTimeMillis();
+                final long length = this.file.length();
+                long passed = 0L;
                 final BufferedReader reader = new BufferedReader(
                     new InputStreamReader(stream, CharEncoding.UTF_8)
                 );
@@ -112,7 +115,18 @@ final class Records implements Closeable {
                         break;
                     }
                     this.parse(line, map);
+                    passed += line.getBytes(CharEncoding.UTF_8).length;
                     ++count;
+                    // @checkstyle MagicNumber (1 line)
+                    if (count % 10000 == 0) {
+                        Logger.info(
+                            this,
+                            "#restore(): line #%d: %0.2f%%",
+                            count,
+                            // @checkstyle MagicNumber (1 line)
+                            100 * passed / length
+                        );
+                    }
                 }
                 Logger.info(
                     this,

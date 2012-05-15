@@ -60,7 +60,7 @@ public final class MemRay implements Ray {
      * @throws IOException If some I/O problem
      */
     public MemRay(final File dir) throws IOException {
-        this.records = new Records(new File(dir, "memray.dat"));
+        this.records = new Records(new File(dir, "mem-ray.dat"));
         this.imap = new WatchingIndexMap(this.records.restore(), this.records);
     }
 

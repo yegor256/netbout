@@ -89,7 +89,7 @@ public final class MemRayTest {
             "How are you, \u0434\u0440\u0443\u0433?"
         );
         ray.close();
-        final File file = new File(dir, "memray.dat");
+        final File file = new File(dir, "mem-ray.dat");
         MatcherAssert.assertThat(
             FileUtils.readFileToString(file).split(" *\\n"),
             Matchers.arrayContaining(

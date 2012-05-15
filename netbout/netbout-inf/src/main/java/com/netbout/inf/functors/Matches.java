@@ -97,14 +97,13 @@ final class Matches implements Functor {
      * Extract words from text.
      * @param text The text
      * @return Set of words
+     * @todo #358 Now we support only English characters. In JDK7 everything
+     *  will work: http://stackoverflow.com/questions/4304928
      */
     private static Set<String> words(final String text) {
         final Set<String> words = new HashSet<String>(
             Arrays.asList(
-                text.replaceAll(
-                    "['\"\\!@#\\$%\\?\\^&\\*\\(\\),\\.\\[\\]=\\+\\/]+",
-                    "  "
-                ).trim().toUpperCase(Locale.ENGLISH).split("\\s+")
+                text.toLowerCase(Locale.ENGLISH).split("[^\\p{Alnum}]+")
             )
         );
         CollectionUtils.filter(
