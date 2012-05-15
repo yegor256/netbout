@@ -58,11 +58,9 @@ public final class OrTermTest {
         map.index(attr).add(msg - 1, "irrelevant");
         final Term term = new OrTerm(
             map,
-            Arrays.asList(
-                new Term[] {
-                    new MatcherTerm(map, attr, first),
-                    new MatcherTerm(map, attr, second),
-                }
+            Arrays.<Term>asList(
+                new MatcherTerm(map, attr, first),
+                new MatcherTerm(map, attr, second)
             )
         );
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);

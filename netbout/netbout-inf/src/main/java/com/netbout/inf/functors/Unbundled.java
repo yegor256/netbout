@@ -62,10 +62,8 @@ final class Unbundled implements Functor {
             .first(Bundled.ATTR);
         return ray.builder().and(
             Arrays.asList(
-                new Term[] {
-                    ray.builder().matcher(Bundled.ATTR, marker),
-                    ray.builder().not(matcher),
-                }
+                ray.builder().matcher(Bundled.ATTR, marker),
+                ray.builder().not(matcher)
             )
         );
     }

@@ -78,11 +78,9 @@ public final class EqualTest {
             ray.cursor().shift(
                 functor.build(
                     ray,
-                    Arrays.asList(
-                        new Atom[] {
-                            VariableAtom.BOUT_NUMBER,
-                            new TextAtom(bout.number().toString()),
-                        }
+                    Arrays.<Atom>asList(
+                        VariableAtom.BOUT_NUMBER,
+                        new TextAtom(bout.number().toString())
                     )
                 )
             ).msg().number(),
@@ -92,11 +90,9 @@ public final class EqualTest {
             ray.cursor().shift(
                 functor.build(
                     ray,
-                    Arrays.asList(
-                        new Atom[] {
-                            VariableAtom.BOUT_NUMBER,
-                            new TextAtom(Long.toString(msg + 1)),
-                        }
+                    Arrays.<Atom>asList(
+                        VariableAtom.BOUT_NUMBER,
+                        new TextAtom(Long.toString(msg + 1))
                     )
                 )
             ).end(),

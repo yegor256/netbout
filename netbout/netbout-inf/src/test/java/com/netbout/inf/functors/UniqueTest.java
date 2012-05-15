@@ -79,7 +79,7 @@ public final class UniqueTest {
         }
         final Term term = new Unique().build(
             ray,
-            Arrays.asList(new Atom[] {VariableAtom.BOUT_NUMBER})
+            Arrays.<Atom>asList(VariableAtom.BOUT_NUMBER)
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).msg().number(),

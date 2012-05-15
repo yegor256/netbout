@@ -59,7 +59,7 @@ public final class LimitTest {
         final Limit functor = new Limit();
         final Term term = functor.build(
             ray,
-            Arrays.asList(new Atom[] {new NumberAtom(2L)})
+            Arrays.<Atom>asList(new NumberAtom(2L))
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).end(),
