@@ -44,6 +44,11 @@ import javax.servlet.ServletContextListener;
 public final class LifecycleListener implements ServletContextListener {
 
     /**
+     * When was it started.
+     */
+    private final transient long started = System.currentTimeMillis();
+
+    /**
      * The hub.
      */
     private transient Hub hub;
@@ -94,8 +99,9 @@ public final class LifecycleListener implements ServletContextListener {
         }
         Logger.info(
             this,
-            "#contextDestroyed(): done in %[nano]s",
-            System.nanoTime() - start
+            "#contextDestroyed(): done in %[nano]s (app was alive for %[ms]s)",
+            System.nanoTime() - start,
+            System.currentTimeMillis() - this.started
         );
         org.apache.log4j.LogManager.shutdown();
     }
