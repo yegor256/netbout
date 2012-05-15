@@ -75,15 +75,19 @@ final class Indexer extends AbstractCron {
                 maximum
             );
             for (final Long number : numbers) {
-                final Message message = this.message(number);
-                this.hub().infinity().see(
-                    new MessagePostedNotice() {
-                        @Override
-                        public Message message() {
-                            return message;
+                try {
+                    final Message message = this.message(number);
+                    this.hub().infinity().see(
+                        new MessagePostedNotice() {
+                            @Override
+                            public Message message() {
+                                return message;
+                            }
                         }
-                    }
-                );
+                    );
+                } catch (Indexer.BrokenMessageException ex) {
+                    Logger.warn(this, "#cron(): message #%d is broken", number);
+                }
             }
             Logger.info(
                 this,
@@ -97,11 +101,20 @@ final class Indexer extends AbstractCron {
     }
 
     /**
+     * When message is broken for some reason.
+     */
+    private static final class BrokenMessageException extends Exception {
+        // empty
+    }
+
+    /**
      * Create a message from its number.
      * @param number Number of message
      * @return The message itself
+     * @throws Indexer.BrokenMessageException If something wrong with this msg
      */
-    private Message message(final Long number) {
+    private Message message(final Long number)
+        throws Indexer.BrokenMessageException {
         final Long bnum = this.hub().make("get-bout-of-message")
             .synchronously()
             .arg(number)
@@ -110,6 +123,9 @@ final class Indexer extends AbstractCron {
             .synchronously()
             .arg(bnum)
             .exec();
+        if (dudes.isEmpty()) {
+            throw new BrokenMessageException();
+        }
         try {
             return this.hub().identity(dudes.get(0)).bout(bnum).message(number);
         } catch (com.netbout.spi.UnreachableUrnException ex) {
