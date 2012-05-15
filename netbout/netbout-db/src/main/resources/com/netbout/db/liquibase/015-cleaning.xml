@@ -35,25 +35,9 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <!--
-    @see http://liquibase.jira.com/browse/CORE-1073
-    -->
-    <!-- <includeAll path="liquibase" relativeToChangelogFile="true" /> -->
-
-    <include file="liquibase/001-basics.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/002-seen.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/003-alias.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/004-helper.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/005-namespace.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/006-void-identity.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/007-system-namespaces.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/008-creation-dates.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/009-dates-correction.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/010-bill.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/011-invoice.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/012-archiver.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/013-locale.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/014-leadership.xml" relativeToChangelogFile="true" />
-    <include file="liquibase/015-cleaning.xml" relativeToChangelogFile="true" />
+    <changeSet id="15" author="yegor" runAlways="true">
+        <sql>DELETE FROM message WHERE text IS NULL OR date IS NULL</sql>
+        <sql>DELETE FROM bout WHERE title IS NULL</sql>
+    </changeSet>
 
 </databaseChangeLog>
