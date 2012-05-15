@@ -44,6 +44,11 @@ import javax.servlet.ServletContextListener;
 public final class LifecycleListener implements ServletContextListener {
 
     /**
+     * When was it started.
+     */
+    private final transient long started = System.currentTimeMillis();
+
+    /**
      * The hub.
      */
     private transient Hub hub;
@@ -51,7 +56,7 @@ public final class LifecycleListener implements ServletContextListener {
     /**
      * {@inheritDoc}
      *
-     * <p>This attributes is used later in
+     * <p>These attributes is used later in
      * {@link com.netbout.rest.AbstractRs#setServletContext(ServletContext)}.
      */
     @Override
@@ -61,6 +66,11 @@ public final class LifecycleListener implements ServletContextListener {
             Manifests.append(event.getServletContext());
             this.hub = new DefaultHub();
         } catch (java.io.IOException ex) {
+            Logger.error(
+                this,
+                "#contextInitialized(): %[exception]s",
+                ex
+            );
             throw new IllegalStateException(ex);
         }
         event.getServletContext()
@@ -94,8 +104,9 @@ public final class LifecycleListener implements ServletContextListener {
         }
         Logger.info(
             this,
-            "#contextDestroyed(): done in %[nano]s",
-            System.nanoTime() - start
+            "#contextDestroyed(): done in %[nano]s (app was alive for %[ms]s)",
+            System.nanoTime() - start,
+            System.currentTimeMillis() - this.started
         );
         org.apache.log4j.LogManager.shutdown();
     }
