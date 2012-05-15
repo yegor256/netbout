@@ -534,6 +534,7 @@
                                         <Netbout-EbsVolume>${ebs.volume}</Netbout-EbsVolume>
                                         <Netbout-AwsKey>${aws.key}</Netbout-AwsKey>
                                         <Netbout-AwsSecret>${aws.secret}</Netbout-AwsSecret>
+                                        <Netbout-InfDir>infinity</Netbout-InfDir>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
