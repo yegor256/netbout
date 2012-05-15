@@ -75,7 +75,7 @@ final class AlwaysTerm implements Term {
                 this.imap
             );
         }
-        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, shifted);
+        Logger.trace(this, "#shift(%s): %s to %s", cursor, this, shifted);
         return shifted;
     }
 

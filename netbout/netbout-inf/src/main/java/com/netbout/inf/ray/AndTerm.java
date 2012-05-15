@@ -97,7 +97,7 @@ final class AndTerm implements Term {
                 slider = this.slide(slider, cache);
             }
         }
-        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, slider);
+        Logger.trace(this, "#shift(%s): %s to %s", cursor, this, slider);
         return slider;
     }
 

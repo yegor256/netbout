@@ -67,6 +67,7 @@ public final class EbsDirectoryTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @org.junit.Ignore
     public void checksMountingStatusThroughSsh() throws Exception {
         Assume.assumeThat(this.pem, Matchers.notNullValue());
         final EbsDirectory dir = new EbsDirectory(

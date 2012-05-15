@@ -85,7 +85,7 @@ final class NotTerm implements Term {
                 break;
             }
         }
-        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, candidate);
+        Logger.trace(this, "#shift(%s): %s to %s", cursor, this, candidate);
         return candidate;
     }
 

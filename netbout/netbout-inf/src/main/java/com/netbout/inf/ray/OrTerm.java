@@ -103,7 +103,7 @@ final class OrTerm implements Term {
                 slider = new MemCursor(Collections.max(msgs), this.imap);
             }
         }
-        Logger.debug(this, "#shift(%s): %s to %s", cursor, this, slider);
+        Logger.trace(this, "#shift(%s): %s to %s", cursor, this, slider);
         return slider;
     }
 
