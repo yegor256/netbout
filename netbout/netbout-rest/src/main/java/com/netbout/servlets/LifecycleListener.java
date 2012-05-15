@@ -56,7 +56,7 @@ public final class LifecycleListener implements ServletContextListener {
     /**
      * {@inheritDoc}
      *
-     * <p>This attributes is used later in
+     * <p>These attributes is used later in
      * {@link com.netbout.rest.AbstractRs#setServletContext(ServletContext)}.
      */
     @Override
@@ -66,6 +66,11 @@ public final class LifecycleListener implements ServletContextListener {
             Manifests.append(event.getServletContext());
             this.hub = new DefaultHub();
         } catch (java.io.IOException ex) {
+            Logger.error(
+                this,
+                "#contextInitialized(): %[exception]s",
+                ex
+            );
             throw new IllegalStateException(ex);
         }
         event.getServletContext()
