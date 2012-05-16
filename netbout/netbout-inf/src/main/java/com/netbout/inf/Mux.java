@@ -276,16 +276,18 @@ final class Mux implements Closeable {
      * @throws InterruptedException If interrupted
      */
     private void flush() throws InterruptedException {
-        // @checkstyle MagicNumber (1 line)
-        if (System.currentTimeMillis() - this.flushed.get() > 5 * 60 * 1000) {
-            this.flushed.set(System.currentTimeMillis());
-            this.semaphore.acquire(Mux.THREADS);
-            try {
-                this.ray.flush();
-            } catch (java.io.IOException ex) {
-                throw new IllegalArgumentException(ex);
+        synchronized (this.flushed) {
+            // @checkstyle MagicNumber (1 line)
+            if (System.currentTimeMillis() - this.flushed.get() > 5 * 60 * 1000) {
+                this.semaphore.acquire(Mux.THREADS);
+                try {
+                    this.ray.flush();
+                } catch (java.io.IOException ex) {
+                    throw new IllegalArgumentException(ex);
+                }
+                this.semaphore.release(Mux.THREADS);
+                this.flushed.set(System.currentTimeMillis());
             }
-            this.semaphore.release(Mux.THREADS);
         }
     }
 
