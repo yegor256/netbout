@@ -31,7 +31,9 @@ import com.netbout.inf.Term;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Test case of {@link MemTermBuilder}.
@@ -41,12 +43,19 @@ import org.junit.Test;
 public final class MemTermBuilderTest {
 
     /**
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
+
+    /**
      * MemTermBuilder can produce a never-finding-anything term.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void buildsNeverFindingAnythingTerm() throws Exception {
-        final IndexMap map = new DefaultIndexMap();
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("bar"));
         map.index("foo").add(new Random().nextLong(), "some text-1 \u0433!");
         final Term term = new MemTermBuilder(map).never();
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);

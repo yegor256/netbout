@@ -26,11 +26,28 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Index map.
@@ -39,20 +56,48 @@ import java.util.concurrent.ConcurrentSkipListSet;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-final class DefaultIndexMap implements IndexMap {
+final class DefaultIndexMap implements IndexMap, Closeable {
 
     /**
      * The map.
      */
-    private final transient ConcurrentMap<String, Index> map =
-        new ConcurrentHashMap<String, Index>();
+    private final transient ConcurrentMap<String, DefaultIndex> map =
+        new ConcurrentHashMap<String, DefaultIndex>();
 
     /**
      * All message numbers.
      */
-    private final transient SortedSet<Long> all =
-        new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
+    private final transient SortedSet<Long> all;
+
+    /**
+     * The file to work with.
+     */
+    private final transient File file;
+
+    /**
+     * Public ctor.
+     * @param dir Directory where files are kept
+     * @throws IOException If some IO error
+     */
+    public DefaultIndexMap(final File dir) throws IOException {
+        this.file = new File(dir, "index-map.txt");
+        FileUtils.touch(this.file);
+        final InputStream stream = new FileInputStream(this.file);
+        try {
+            this.all = DefaultIndexMap.restore(stream);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
+        final Pattern pattern = Pattern.compile("attr-(.*?)\\.txt");
+        for (String name : dir.list()) {
+            final Matcher matcher = pattern.matcher(name);
+            if (matcher.matches()) {
+                this.index(matcher.group(1));
+            }
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -63,9 +108,32 @@ final class DefaultIndexMap implements IndexMap {
             throw new IllegalArgumentException("attribute name is empty");
         }
         if (this.map.get(attr) == null) {
-            this.map.putIfAbsent(attr, new DefaultIndex());
+            try {
+                this.map.putIfAbsent(
+                    attr,
+                    new DefaultIndex(
+                        new File(
+                            this.file.getParentFile(),
+                            String.format("attr-%s.txt", attr)
+                        )
+                    )
+                );
+            } catch (java.io.IOException ex) {
+                throw new IllegalArgumentException(ex);
+            }
         }
         return this.map.get(attr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        this.flush();
+        for (DefaultIndex index : this.map.values()) {
+            index.close();
+        }
     }
 
     /**
@@ -102,6 +170,65 @@ final class DefaultIndexMap implements IndexMap {
             max = this.all.first();
         }
         return max;
+    }
+
+    /**
+     * Save map to disc.
+     * @throws IOException If some problem
+     */
+    public void flush() throws IOException {
+        final long start = System.currentTimeMillis();
+        final OutputStream stream = new FileOutputStream(this.file);
+        try {
+            final PrintWriter writer = new PrintWriter(
+                new OutputStreamWriter(stream, CharEncoding.UTF_8)
+            );
+            for (Long number : this.all) {
+                writer.println(number.toString());
+            }
+            writer.flush();
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
+        for (DefaultIndex index : this.map.values()) {
+            index.flush();
+        }
+        Logger.info(
+            this,
+            "#save(): saved %d msg numbers in %[ms]s",
+            this.all.size(),
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
+     * Restore map.
+     * @param stream Where to read from
+     * @return The data restored
+     * @throws IOException If some IO error
+     */
+    private static SortedSet<Long> restore(final InputStream stream)
+        throws IOException {
+        final SortedSet<Long> numbers =
+            new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
+        final long start = System.currentTimeMillis();
+        final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(stream, CharEncoding.UTF_8)
+        );
+        while (true) {
+            final String line = reader.readLine();
+            if (line == null || line.isEmpty()) {
+                break;
+            }
+            numbers.add(Long.valueOf(line));
+        }
+        Logger.info(
+            DefaultIndexMap.class,
+            "#restore(): restored %d msg numbers in %[ms]s",
+            numbers.size(),
+            System.currentTimeMillis() - start
+        );
+        return numbers;
     }
 
 }

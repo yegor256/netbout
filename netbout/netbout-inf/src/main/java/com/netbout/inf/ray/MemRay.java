@@ -47,12 +47,7 @@ public final class MemRay implements Ray {
     /**
      * Index map.
      */
-    private final transient IndexMap imap;
-
-    /**
-     * Records.
-     */
-    private final transient Records records;
+    private final transient DefaultIndexMap imap;
 
     /**
      * Public ctor.
@@ -60,8 +55,7 @@ public final class MemRay implements Ray {
      * @throws IOException If some I/O problem
      */
     public MemRay(final File dir) throws IOException {
-        this.records = new Records(new File(dir, "mem-ray.dat"));
-        this.imap = new WatchingIndexMap(this.records.restore(), this.records);
+        this.imap = new DefaultIndexMap(dir);
     }
 
     /**
@@ -69,8 +63,16 @@ public final class MemRay implements Ray {
      */
     @Override
     public void close() throws IOException {
-        this.records.close();
+        this.imap.close();
         Logger.debug(this, "#close(): closed");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void flush() throws IOException {
+        this.imap.flush();
     }
 
     /**

@@ -31,7 +31,9 @@ import com.netbout.inf.Term;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Test case of {@link AlwaysTerm}.
@@ -41,12 +43,19 @@ import org.junit.Test;
 public final class AlwaysTermTest {
 
     /**
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
+
+    /**
      * AlwaysTerm can pick one message by number.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
-        final IndexMap map = new DefaultIndexMap();
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
         final long msg = new Random().nextLong();
         map.touch(msg);
         final Term term = new AlwaysTerm(map);

@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * Ray of messages.
@@ -37,6 +38,12 @@ import java.io.Closeable;
  * @version $Id$
  */
 public interface Ray extends Closeable {
+
+    /**
+     * Flush it to disc.
+     * @throws IOException If IO problem insde
+     */
+    void flush() throws IOException;
 
     /**
      * Create new cursor.
