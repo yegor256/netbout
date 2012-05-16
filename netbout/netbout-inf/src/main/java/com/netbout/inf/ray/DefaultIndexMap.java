@@ -195,8 +195,10 @@ final class DefaultIndexMap implements IndexMap, Closeable {
         }
         Logger.info(
             this,
-            "#save(): saved %d msg numbers in %[ms]s",
+            "#save(): saved %d msg numbers to %s (%d bytes) in %[ms]s",
             this.all.size(),
+            this.file,
+            this.file.length(),
             System.currentTimeMillis() - start
         );
     }

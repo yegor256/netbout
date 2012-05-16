@@ -192,8 +192,10 @@ final class DefaultIndex implements Index, Closeable {
         }
         Logger.info(
             this,
-            "#save(): saved %d values in %[ms]s",
+            "#save(): saved %d values to %s (%d bytes) in %[ms]s",
             this.map.size(),
+            this.file,
+            this.file.length(),
             System.currentTimeMillis() - start
         );
     }

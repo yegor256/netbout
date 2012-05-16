@@ -86,7 +86,11 @@ final class Indexer extends AbstractCron {
                         }
                     );
                 } catch (Indexer.BrokenMessageException ex) {
-                    Logger.warn(this, "#cron(): message #%d is broken", number);
+                    Logger.debug(
+                        this,
+                        "#cron(): message #%d is broken",
+                        number
+                    );
                 }
             }
             Logger.info(
