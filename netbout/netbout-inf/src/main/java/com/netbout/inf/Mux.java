@@ -170,7 +170,7 @@ final class Mux implements Closeable {
         final MuxTask task = new MuxTask(notice, this.ray, this.store);
         final Set<Urn> deps = new HashSet<Urn>();
         if (this.queue.contains(task)) {
-            Logger.warn(
+            Logger.debug(
                 this,
                 "#add('%s'): in the queue already, ignored dup",
                 task
