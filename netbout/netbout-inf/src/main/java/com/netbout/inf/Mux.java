@@ -62,7 +62,7 @@ final class Mux implements Closeable {
     /**
      * How often to flush, in ms.
      */
-    private static final long FLUSH = 5 * 60 * 1000;
+    private static final long PERIOD = 5 * 60 * 1000;
 
     /**
      * How many threads to use.
@@ -283,7 +283,7 @@ final class Mux implements Closeable {
     private void flush() throws InterruptedException {
         synchronized (this.flushed) {
             // @checkstyle MagicNumber (1 line)
-            if (System.currentTimeMillis() - this.flushed.get() > Mux.FLUSH) {
+            if (System.currentTimeMillis() - this.flushed.get() > Mux.PERIOD) {
                 this.semaphore.acquire(Mux.THREADS);
                 try {
                     this.ray.flush();
