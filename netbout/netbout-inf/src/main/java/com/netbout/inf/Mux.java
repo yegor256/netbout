@@ -60,6 +60,11 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 final class Mux implements Closeable {
 
     /**
+     * How often to flush, in ms.
+     */
+    private static final long FLUSH = 5 * 60 * 1000;
+
+    /**
      * How many threads to use.
      */
     private static final int THREADS =
@@ -278,7 +283,7 @@ final class Mux implements Closeable {
     private void flush() throws InterruptedException {
         synchronized (this.flushed) {
             // @checkstyle MagicNumber (1 line)
-            if (System.currentTimeMillis() - this.flushed.get() > 5 * 60 * 1000) {
+            if (System.currentTimeMillis() - this.flushed.get() > Mux.FLUSH) {
                 this.semaphore.acquire(Mux.THREADS);
                 try {
                     this.ray.flush();
