@@ -39,15 +39,25 @@ import java.util.concurrent.TimeUnit;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
 
 /**
  * Test case of {@link DefaultIndex}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class DefaultIndexTest {
+
+    /**
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
      * DefaultIndex can replace values.
@@ -55,7 +65,7 @@ public final class DefaultIndexTest {
      */
     @Test
     public void replacesValues() throws Exception {
-        final Index index = new DefaultIndex();
+        final Index index = new DefaultIndex(this.temp.newFile("file-1"));
         final long msg = new Random().nextLong();
         final String value = "some text \u0433!";
         index.add(msg, "first value");
@@ -80,7 +90,7 @@ public final class DefaultIndexTest {
      */
     @Test
     public void ordersNumbersProperly() throws Exception {
-        final Index index = new DefaultIndex();
+        final Index index = new DefaultIndex(this.temp.newFile("file-2"));
         final long msg = new Random().nextLong();
         final String value = "text-\u0433!";
         // @checkstyle MagicNumber (1 line)
@@ -104,7 +114,7 @@ public final class DefaultIndexTest {
     @Test
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void updatesInMultipleThreads() throws Exception {
-        final Index index = new DefaultIndex();
+        final Index index = new DefaultIndex(this.temp.newFile("file-3"));
         final long msg = new Random().nextLong();
         final String value = "some value to set";
         final int total = 100;

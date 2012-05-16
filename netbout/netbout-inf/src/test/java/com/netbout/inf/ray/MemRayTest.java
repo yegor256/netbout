@@ -82,6 +82,7 @@ public final class MemRayTest {
     public void persistsItselfInFile() throws Exception {
         final File dir = new FolderMocker().mock().path();
         final Ray ray = new MemRay(dir);
+        ray.msg(1L);
         ray.msg(2L);
         ray.cursor().add(
             ray.builder().picker(2L),
@@ -89,13 +90,10 @@ public final class MemRayTest {
             "How are you, \u0434\u0440\u0443\u0433?"
         );
         ray.close();
-        final File file = new File(dir, "mem-ray.dat");
+        final File file = new File(dir, "index-map.txt");
         MatcherAssert.assertThat(
             FileUtils.readFileToString(file).split(" *\\n"),
-            Matchers.arrayContaining(
-                "touch 2",
-                "add title 2 How+are+you%2C+%D0%B4%D1%80%D1%83%D0%B3%3F"
-            )
+            Matchers.arrayContaining("2", "1")
         );
     }
 

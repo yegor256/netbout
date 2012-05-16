@@ -32,7 +32,9 @@ import java.util.Arrays;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Test case of {@link AndTerm}.
@@ -42,12 +44,19 @@ import org.junit.Test;
 public final class AndTermTest {
 
     /**
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
+
+    /**
      * AndTerm can shift a cursor.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
-        final IndexMap map = new DefaultIndexMap();
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
         final String attr = "attribute name";
         final String first = "some text-1 \u0433!";
         final String second = "some text-2 \u0433!";

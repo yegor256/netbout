@@ -42,6 +42,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -62,7 +63,7 @@ final class Mux implements Closeable {
      * How many threads to use.
      */
     private static final int THREADS =
-        Runtime.getRuntime().availableProcessors() * 4;
+        Runtime.getRuntime().availableProcessors() * 8;
 
     /**
      * The ray.
@@ -108,6 +109,16 @@ final class Mux implements Closeable {
         new ArrayList<ScheduledFuture>(Mux.THREADS);
 
     /**
+     * Semaphore.
+     */
+    private final transient Semaphore semaphore = new Semaphore(Mux.THREADS);
+
+    /**
+     * When {@link #flush()} was called last time.
+     */
+    private final transient AtomicLong flushed = new AtomicLong();
+
+    /**
      * Public ctor.
      * @param iray The ray to use
      * @param str The store to use
@@ -119,6 +130,8 @@ final class Mux implements Closeable {
             @Override
             public void run() {
                 try {
+                    Mux.this.flush();
+                    Mux.this.semaphore.acquire();
                     final MuxTask task = Mux.this.queue.take();
                     task.run();
                     for (Urn who : task.dependants()) {
@@ -127,6 +140,8 @@ final class Mux implements Closeable {
                     Mux.this.stats.addValue((double) task.time());
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
+                } finally {
+                    Mux.this.semaphore.release();
                 }
             }
         };
@@ -254,6 +269,24 @@ final class Mux implements Closeable {
             "#close(): %d remained in the queue",
             this.queue.size()
         );
+    }
+
+    /**
+     * Flush mux to disc.
+     * @throws InterruptedException If interrupted
+     */
+    private void flush() throws InterruptedException {
+        // @checkstyle MagicNumber (1 line)
+        if (System.currentTimeMillis() - this.flushed.get() > 5 * 60 * 1000) {
+            this.semaphore.acquire(Mux.THREADS);
+            try {
+                this.ray.flush();
+            } catch (java.io.IOException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+            this.semaphore.release(Mux.THREADS);
+            this.flushed.set(System.currentTimeMillis());
+        }
     }
 
 }

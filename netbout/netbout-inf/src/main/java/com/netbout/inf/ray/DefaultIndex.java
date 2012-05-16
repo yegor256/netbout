@@ -26,6 +26,18 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +45,9 @@ import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Index.
@@ -41,14 +56,43 @@ import java.util.concurrent.ConcurrentSkipListSet;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-final class DefaultIndex implements Index {
+final class DefaultIndex implements Index, Closeable {
 
     /**
      * The map.
      */
-    private final transient ConcurrentMap<String, SortedSet<Long>> map =
-        new ConcurrentHashMap<String, SortedSet<Long>>();
+    private final transient ConcurrentMap<String, SortedSet<Long>> map;
+
+    /**
+     * The file to work with.
+     */
+    private final transient File file;
+
+    /**
+     * Public ctor.
+     * @param path File where to keep it
+     * @throws IOException If some IO error
+     */
+    public DefaultIndex(final File path) throws IOException {
+        this.file = path;
+        FileUtils.touch(this.file);
+        final InputStream stream = new FileInputStream(this.file);
+        try {
+            this.map = DefaultIndex.restore(stream);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        this.flush();
+    }
 
     /**
      * {@inheritDoc}
@@ -122,6 +166,76 @@ final class DefaultIndex implements Index {
             );
         }
         return this.map.get(value);
+    }
+
+    /**
+     * Flush this map to disc.
+     * @throws IOException If some problem
+     */
+    public void flush() throws IOException {
+        final long start = System.currentTimeMillis();
+        final OutputStream stream = new FileOutputStream(this.file);
+        try {
+            final PrintWriter writer = new PrintWriter(
+                new OutputStreamWriter(stream, CharEncoding.UTF_8)
+            );
+            for (String value : this.map.keySet()) {
+                writer.println(value);
+                for (Long number : this.map.get(value)) {
+                    writer.print(' ');
+                    writer.println(number.toString());
+                }
+            }
+            writer.flush();
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
+        Logger.info(
+            this,
+            "#save(): saved %d values in %[ms]s",
+            this.map.size(),
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
+     * Restore map from stream.
+     * @param stream The stream to read from
+     * @return The data restored
+     * @throws IOException If some IO error
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private static ConcurrentMap<String, SortedSet<Long>> restore(
+        final InputStream stream) throws IOException {
+        final ConcurrentMap<String, SortedSet<Long>> data =
+            new ConcurrentHashMap<String, SortedSet<Long>>();
+        final long start = System.currentTimeMillis();
+        final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(stream, CharEncoding.UTF_8)
+        );
+        String value = null;
+        while (true) {
+            final String line = reader.readLine();
+            if (line == null || line.isEmpty()) {
+                break;
+            }
+            if (line.charAt(0) == ' ') {
+                data.get(value).add(Long.valueOf(line.substring(1)));
+            } else {
+                value = line;
+                data.put(
+                    value,
+                    new ConcurrentSkipListSet(Collections.reverseOrder())
+                );
+            }
+        }
+        Logger.info(
+            DefaultIndex.class,
+            "#restore(): restored %d values in %[ms]s",
+            data.size(),
+            System.currentTimeMillis() - start
+        );
+        return data;
     }
 
     /**

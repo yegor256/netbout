@@ -31,7 +31,9 @@ import java.util.Random;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Test case of {@link MemCursor}.
@@ -41,12 +43,19 @@ import org.junit.Test;
 public final class MemCursorTest {
 
     /**
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
+
+    /**
      * MemCursor can add values to a set of messages.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void addsValuesToSelectedMessages() throws Exception {
-        final IndexMap map = new DefaultIndexMap();
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo1"));
         final Long msg = new Random().nextLong();
         map.touch(msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
@@ -68,7 +77,7 @@ public final class MemCursorTest {
      */
     @Test
     public void replacesValuesForSelectedMessages() throws Exception {
-        final IndexMap map = new DefaultIndexMap();
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo2"));
         final Long msg = new Random().nextLong();
         map.touch(msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
@@ -94,7 +103,7 @@ public final class MemCursorTest {
      */
     @Test
     public void isComparableToCursor() throws Exception {
-        final IndexMap map = new DefaultIndexMap();
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo3"));
         final Long msg = new Random().nextLong();
         MatcherAssert.assertThat(
             new MemCursor(msg, map),
