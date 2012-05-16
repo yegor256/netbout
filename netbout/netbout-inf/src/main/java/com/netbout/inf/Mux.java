@@ -278,6 +278,7 @@ final class Mux implements Closeable {
     private void flush() throws InterruptedException {
         // @checkstyle MagicNumber (1 line)
         if (System.currentTimeMillis() - this.flushed.get() > 5 * 60 * 1000) {
+            this.flushed.set(System.currentTimeMillis());
             this.semaphore.acquire(Mux.THREADS);
             try {
                 this.ray.flush();
@@ -285,7 +286,6 @@ final class Mux implements Closeable {
                 throw new IllegalArgumentException(ex);
             }
             this.semaphore.release(Mux.THREADS);
-            this.flushed.set(System.currentTimeMillis());
         }
     }
 
