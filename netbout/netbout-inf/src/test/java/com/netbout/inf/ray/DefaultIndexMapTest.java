@@ -69,4 +69,18 @@ public final class DefaultIndexMapTest {
         );
     }
 
+    /**
+     * DefaultIndexMap can convert itself to string.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsItselfToString() throws Exception {
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("bar"));
+        map.index("attr-1").add(1L, "some value");
+        MatcherAssert.assertThat(
+            map,
+            Matchers.hasToString(Matchers.notNullValue())
+        );
+    }
+
 }

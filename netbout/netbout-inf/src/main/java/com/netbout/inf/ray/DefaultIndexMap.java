@@ -65,6 +65,7 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 final class DefaultIndexMap implements IndexMap, Closeable {
 
     /**
@@ -138,9 +139,6 @@ final class DefaultIndexMap implements IndexMap, Closeable {
     @Override
     public void close() throws IOException {
         this.flush();
-        for (DefaultIndex index : this.map.values()) {
-            index.close();
-        }
     }
 
     /**
@@ -185,6 +183,7 @@ final class DefaultIndexMap implements IndexMap, Closeable {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
+        text.append(String.format("%d msgs\n", this.all.size()));
         final String[] attrs = new String[] {
             com.netbout.inf.atoms.VariableAtom.BOUT_NUMBER.attribute(),
             "talks-with",
@@ -206,7 +205,6 @@ final class DefaultIndexMap implements IndexMap, Closeable {
      * Save map to disc.
      * @throws IOException If some problem
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void flush() throws IOException {
         final long start = System.currentTimeMillis();
         final ExecutorService service = Executors.newFixedThreadPool(

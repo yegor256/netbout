@@ -28,7 +28,6 @@ package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -41,12 +40,12 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
@@ -60,13 +59,20 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.TooManyMethods")
-final class DefaultIndex implements Index, Closeable {
+@SuppressWarnings({
+    "PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops"
+})
+final class DefaultIndex implements Index {
 
     /**
-     * The map.
+     * Main map.
      */
     private final transient ConcurrentMap<String, SortedSet<Long>> map;
+
+    /**
+     * Reverse map.
+     */
+    private final transient ConcurrentMap<Long, Set<String>> rmap;
 
     /**
      * The file to work with.
@@ -87,14 +93,7 @@ final class DefaultIndex implements Index, Closeable {
         } finally {
             IOUtils.closeQuietly(stream);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws IOException {
-        this.flush();
+        this.rmap = DefaultIndex.reverse(this.map);
     }
 
     /**
@@ -104,7 +103,7 @@ final class DefaultIndex implements Index, Closeable {
     public void replace(final long msg, final String value) {
         this.validate(msg);
         this.clean(msg);
-        this.msgs(value).add(msg);
+        this.add(msg, value);
     }
 
     /**
@@ -113,7 +112,8 @@ final class DefaultIndex implements Index, Closeable {
     @Override
     public void add(final long msg, final String value) {
         this.validate(msg);
-        this.msgs(value).add(msg);
+        this.numbers(value).add(msg);
+        this.texts(msg).add(value);
     }
 
     /**
@@ -122,10 +122,8 @@ final class DefaultIndex implements Index, Closeable {
     @Override
     public void delete(final long msg, final String value) {
         this.validate(msg);
-        final SortedSet<Long> set = this.msgs(value);
-        if (set.contains(msg)) {
-            set.remove(msg);
-        }
+        this.numbers(value).remove(msg);
+        this.texts(msg).remove(value);
     }
 
     /**
@@ -135,10 +133,9 @@ final class DefaultIndex implements Index, Closeable {
     public void clean(final long msg) {
         this.validate(msg);
         for (SortedSet<Long> set : this.map.values()) {
-            if (set.contains(msg)) {
-                set.remove(msg);
-            }
+            set.remove(msg);
         }
+        this.texts(msg).clear();
     }
 
     /**
@@ -147,36 +144,7 @@ final class DefaultIndex implements Index, Closeable {
     @Override
     public Iterator<String> values(final long msg) {
         this.validate(msg);
-        final Iterator<ConcurrentMap.Entry<String, SortedSet<Long>>> entries =
-            this.map.entrySet().iterator();
-        // @checkstyle AnonInnerLength (50 lines)
-        return new Iterator<String>() {
-            private transient AtomicReference<String> value =
-                new AtomicReference<String>();
-            @Override
-            public boolean hasNext() {
-                while (this.value.get() == null && entries.hasNext()) {
-                    final ConcurrentMap.Entry<String, SortedSet<Long>> entry =
-                        entries.next();
-                    if (entry.getValue().contains(msg)) {
-                        this.value.set(entry.getKey());
-                        break;
-                    }
-                }
-                return this.value.get() != null;
-            }
-            @Override
-            public String next() {
-                if (!this.hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                return this.value.getAndSet(null);
-            }
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        return Collections.unmodifiableSet(this.texts(msg)).iterator();
     }
 
     /**
@@ -184,13 +152,7 @@ final class DefaultIndex implements Index, Closeable {
      */
     @Override
     public SortedSet<Long> msgs(final String value) {
-        if (this.map.get(value) == null) {
-            this.map.putIfAbsent(
-                value,
-                new ConcurrentSkipListSet(Collections.reverseOrder())
-            );
-        }
-        return this.map.get(value);
+        return Collections.unmodifiableSortedSet(this.numbers(value));
     }
 
     /**
@@ -199,7 +161,14 @@ final class DefaultIndex implements Index, Closeable {
      * @return Collection of numbers, which are not found
      */
     public Collection<Long> lost(final Collection<Long> msgs) {
-        return Collections.emptyList();
+        final Collection<Long> lost = new LinkedList<Long>();
+        for (Long number : msgs) {
+            if (!this.rmap.containsKey(number)
+                || this.rmap.get(number).isEmpty()) {
+                lost.add(number);
+            }
+        }
+        return lost;
     }
 
     /**
@@ -240,7 +209,6 @@ final class DefaultIndex implements Index, Closeable {
      * @return The data restored
      * @throws IOException If some IO error
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private static ConcurrentMap<String, SortedSet<Long>> restore(
         final InputStream stream) throws IOException {
         final ConcurrentMap<String, SortedSet<Long>> data =
@@ -275,6 +243,28 @@ final class DefaultIndex implements Index, Closeable {
     }
 
     /**
+     * Reverse the map.
+     * @param origin Original map
+     * @return The reversed one
+     */
+    private static ConcurrentMap<Long, Set<String>> reverse(
+        final ConcurrentMap<String, SortedSet<Long>> origin) {
+        final ConcurrentMap<Long, Set<String>> data =
+            new ConcurrentHashMap<Long, Set<String>>();
+        for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
+            : origin.entrySet()) {
+            for (Long number : entry.getValue()) {
+                data.putIfAbsent(
+                    number,
+                    new ConcurrentSkipListSet()
+                );
+                data.get(number).add(entry.getKey());
+            }
+        }
+        return data;
+    }
+
+    /**
      * Validate this message number and throw runtime exception if it's not
      * valid (is ZERO or MAX_VALUE).
      * @param msg The number of msg
@@ -286,6 +276,29 @@ final class DefaultIndex implements Index, Closeable {
         if (msg == Long.MAX_VALUE) {
             throw new IllegalArgumentException("msg number can't be MAX_VALUE");
         }
+    }
+
+    /**
+     * Texts for given number.
+     * @param number The number
+     * @return Texts (link to existing structure)
+     */
+    private Set<String> texts(final long number) {
+        this.rmap.putIfAbsent(number, new ConcurrentSkipListSet());
+        return this.rmap.get(number);
+    }
+
+    /**
+     * Numbers for the given value.
+     * @param text The text value
+     * @return Numbers (link to existing structure in the MAP)
+     */
+    private SortedSet<Long> numbers(final String text) {
+        this.map.putIfAbsent(
+            text,
+            new ConcurrentSkipListSet(Collections.reverseOrder())
+        );
+        return this.map.get(text);
     }
 
 }
