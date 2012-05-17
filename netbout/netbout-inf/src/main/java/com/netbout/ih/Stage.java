@@ -77,7 +77,7 @@ public final class Stage {
      */
     @XmlElement
     public String getServer() throws Exception {
-        return "";
+        return "no info yet";
     }
 
 }
