@@ -137,13 +137,17 @@ public final class StatsFarm implements IdentityAware {
      * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("render-stage-xml")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public String renderStageXml(final Long number, final Urn viewer,
         final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             xml = new JaxbPrinter(new Stage(this.hub.toString())).print();
-            if (place.matches("\\d+")) {
-                final Long mnum = Long.valueOf(place);
+            for (String part : place.split("\\s*,\\s*")) {
+                if (!part.matches("\\d+")) {
+                    continue;
+                }
+                final Long mnum = Long.valueOf(part);
                 final Long bnum = this.hub.make("get-bout-of-message")
                     .synchronously()
                     .arg(mnum)
