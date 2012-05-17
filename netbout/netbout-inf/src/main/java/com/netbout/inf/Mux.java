@@ -234,6 +234,12 @@ final class Mux implements Closeable {
         text.append(String.format("%d in the queue\n", this.queue.size()));
         text.append(
             Logger.format(
+                "flushed %[ms]s ago\n",
+                System.currentTimeMillis() - this.flushed.get()
+            )
+        );
+        text.append(
+            Logger.format(
                 "%[nano]s avg time\n",
                 (long) this.stats.getMean()
             )

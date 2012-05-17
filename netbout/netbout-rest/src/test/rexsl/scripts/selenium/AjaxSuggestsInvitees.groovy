@@ -47,7 +47,7 @@ def driver = new HtmlUnitDriver()
 driver.setJavascriptEnabled(true)
 driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
 driver.findElementByCssSelector('form#invite input[name="mask"]').sendKeys('Turturro')
-TimeUnit.SECONDS.sleep(2)
+TimeUnit.SECONDS.sleep(5)
 
 MatcherAssert.assertThat(
     driver.findElementById('invite-list').findElements(By.cssSelector('li')).size(),
