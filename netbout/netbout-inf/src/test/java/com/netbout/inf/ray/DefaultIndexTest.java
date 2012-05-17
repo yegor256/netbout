@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.collections.IteratorUtils;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -72,7 +73,7 @@ public final class DefaultIndexTest {
         index.add(msg, "second value");
         index.replace(msg, value);
         MatcherAssert.assertThat(
-            index.values(msg),
+            IteratorUtils.toList(index.values(msg)),
             Matchers.allOf(
                 (Matcher) Matchers.hasSize(1),
                 Matchers.hasItem(value)
@@ -160,7 +161,10 @@ public final class DefaultIndexTest {
                 }
             )
         );
-        MatcherAssert.assertThat(index.values(msg), Matchers.contains(value));
+        MatcherAssert.assertThat(
+            IteratorUtils.toList(index.values(msg)),
+            Matchers.contains(value)
+        );
     }
 
 }

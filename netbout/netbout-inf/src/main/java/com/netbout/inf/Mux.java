@@ -68,7 +68,7 @@ final class Mux implements Closeable {
      * How many threads to use.
      */
     private static final int THREADS =
-        Runtime.getRuntime().availableProcessors() * 8;
+        Runtime.getRuntime().availableProcessors() * 4;
 
     /**
      * The ray.
@@ -232,6 +232,12 @@ final class Mux implements Closeable {
             }
         }
         text.append(String.format("%d in the queue\n", this.queue.size()));
+        text.append(
+            Logger.format(
+                "flushed %[ms]s ago\n",
+                System.currentTimeMillis() - this.flushed.get()
+            )
+        );
         text.append(
             Logger.format(
                 "%[nano]s avg time\n",
