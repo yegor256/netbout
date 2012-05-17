@@ -190,7 +190,7 @@ final class DefaultIndex implements Index, Closeable {
         } finally {
             IOUtils.closeQuietly(stream);
         }
-        Logger.info(
+        Logger.debug(
             this,
             "#save(): saved %d values to %s (%d bytes) in %[ms]s",
             this.map.size(),
@@ -231,7 +231,7 @@ final class DefaultIndex implements Index, Closeable {
                 );
             }
         }
-        Logger.info(
+        Logger.debug(
             DefaultIndex.class,
             "#restore(): restored %d values in %[ms]s",
             data.size(),

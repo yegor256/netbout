@@ -29,7 +29,8 @@
  */
 package com.netbout.rest.rexsl.bootstrap
 
-import com.netbout.db.DbSession
+import com.jcabi.jdbc.JdbcSession
+import com.netbout.db.Database
 import com.rexsl.core.Manifests
 import com.jcabi.log.Logger
 
@@ -68,7 +69,6 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
 }
 
 queries.each { query ->
-    new DbSession(true).sql(query).update()
-    Logger.debug(this, 'done: %s', query)
+    new JdbcSession(Database.source()).sql(query).update()
 }
 Logger.info(this, 'Test database is ready (%d queries)', queries.size())

@@ -26,10 +26,12 @@
  */
 package com.netbout.db;
 
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.SingleHandler;
+import com.jcabi.jdbc.Utc;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -47,19 +49,10 @@ public final class BoutFarm {
      */
     @Operation("get-next-bout-number")
     public Long getNextBoutNumber() {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("INSERT INTO bout (date) VALUES (?)")
-            .set(new Date())
-            .insert(
-                new Handler<Long>() {
-                    @Override
-                    public Long handle(final ResultSet rset)
-                        throws SQLException {
-                        rset.next();
-                        return rset.getLong(1);
-                    }
-                }
-            );
+            .set(new Utc())
+            .insert(new SingleHandler<Long>(Long.class));
     }
 
     /**
@@ -69,7 +62,7 @@ public final class BoutFarm {
      */
     @Operation("check-bout-existence")
     public Boolean checkBoutExistence(final Long number) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("SELECT number FROM bout WHERE number = ? AND title IS NOT NULL")
             .set(number)
@@ -82,7 +75,7 @@ public final class BoutFarm {
      */
     @Operation("started-new-bout")
     public void startedNewBout(final Long number) {
-        final Boolean exists = new DbSession(true)
+        final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT number FROM bout WHERE number = ?")
             .set(number)
             .select(new NotEmptyHandler());
@@ -101,26 +94,10 @@ public final class BoutFarm {
      */
     @Operation("get-bout-title")
     public String getBoutTitle(final Long number) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT title FROM bout WHERE number = ?")
             .set(number)
-            .select(
-                new Handler<String>() {
-                    @Override
-                    public String handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Bout #%d not found, can't read title",
-                                    number
-                                )
-                            );
-                        }
-                        return rset.getString(1);
-                    }
-                }
-            );
+            .select(new SingleHandler<String>(String.class));
     }
 
     /**
@@ -130,26 +107,11 @@ public final class BoutFarm {
      */
     @Operation("get-bout-date")
     public Date getBoutDate(final Long number) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT date FROM bout WHERE number = ?")
             .set(number)
-            .select(
-                new Handler<Date>() {
-                    @Override
-                    public Date handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Bout #%d not found, can't read its date",
-                                    number
-                                )
-                            );
-                        }
-                        return Utc.getTimestamp(rset, 1);
-                    }
-                }
-            );
+            .select(new SingleHandler<Utc>(Utc.class))
+            .getDate();
     }
 
     /**
@@ -159,7 +121,7 @@ public final class BoutFarm {
      */
     @Operation("changed-bout-title")
     public void changedBoutTitle(final Long number, final String title) {
-        new DbSession(true)
+        new JdbcSession(Database.source())
             .sql("UPDATE bout SET title = ? WHERE number = ?")
             .set(title)
             .set(number)

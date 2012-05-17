@@ -33,7 +33,6 @@ import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.bus.TxBuilder;
 import com.netbout.hh.StatsFarm;
-import com.netbout.hh.StatsProvider;
 import com.netbout.hub.cron.AbstractCron;
 import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.inf.DefaultInfinity;
@@ -71,7 +70,7 @@ import java.util.concurrent.TimeUnit;
     "PMD.DoNotUseThreads",
     "PMD.ExcessiveImports"
 })
-public final class DefaultHub implements PowerHub, StatsProvider {
+public final class DefaultHub implements PowerHub {
 
     /**
      * The bus.
@@ -156,7 +155,7 @@ public final class DefaultHub implements PowerHub, StatsProvider {
      * {@inheritDoc}
      */
     @Override
-    public String statistics() {
+    public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(Logger.format("%d identities total\n", this.all.size()));
         text.append(this.imanager.statistics());

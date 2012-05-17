@@ -26,6 +26,9 @@
  */
 package com.netbout.db;
 
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.Utc;
+import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
@@ -47,9 +50,11 @@ public final class BillFarm {
      * @checkstyle MagicNumber (30 lines)
      */
     @Operation("save-bills")
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void saveBills(final List<String> lines) {
-        final DbSession session = new DbSession(false);
-        final Handler handler = new VoidHandler();
+        final JdbcSession session = new JdbcSession(Database.source());
+        session.autocommit(false);
+        final JdbcSession.Handler handler = new VoidHandler();
         for (String line : lines) {
             final String[] parts = line.split("[ ]+");
             Long bout = null;
@@ -59,9 +64,12 @@ public final class BillFarm {
             session
                 // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO bill (date, mnemo, helper, msec, bout) VALUES (?, ?, ?, ?, ?)")
-                .set(ISODateTimeFormat.dateTime()
-                    .parseDateTime(parts[0])
-                    .toDate()
+                .set(
+                    new Utc(
+                        ISODateTimeFormat.dateTime()
+                            .parseDateTime(parts[0])
+                            .toDate()
+                    )
                 )
                 .set(parts[1])
                 .set(Urn.create(parts[2]))

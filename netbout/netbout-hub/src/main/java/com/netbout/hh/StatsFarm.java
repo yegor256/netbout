@@ -26,13 +26,18 @@
  */
 package com.netbout.hh;
 
+import com.netbout.hub.PowerHub;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
+import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
 import com.netbout.spi.xml.JaxbPrinter;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -48,7 +53,7 @@ public final class StatsFarm implements IdentityAware {
     /**
      * The Hub.
      */
-    private static StatsProvider hub;
+    private static PowerHub hub;
 
     /**
      * Me.
@@ -59,7 +64,7 @@ public final class StatsFarm implements IdentityAware {
      * Set data provider.
      * @param ihub The hub
      */
-    public static void register(final StatsProvider ihub) {
+    public static void register(final PowerHub ihub) {
         StatsFarm.hub = ihub;
     }
 
@@ -136,7 +141,30 @@ public final class StatsFarm implements IdentityAware {
         final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
-            xml = new JaxbPrinter(new Stage(this.hub.statistics())).print();
+            xml = new JaxbPrinter(new Stage(this.hub.toString())).print();
+            if (place.matches("\\d+")) {
+                final Long mnum = Long.valueOf(place);
+                final Long bnum = this.hub.make("get-bout-of-message")
+                    .synchronously()
+                    .arg(mnum)
+                    .exec();
+                final List<Urn> dudes = this.hub.make("get-bout-participants")
+                    .synchronously()
+                    .arg(bnum)
+                    .exec();
+                final Message msg = this.hub
+                    .identity(dudes.get(0))
+                    .bout(bnum)
+                    .message(mnum);
+                this.hub.infinity().see(
+                    new MessagePostedNotice() {
+                        @Override
+                        public Message message() {
+                            return msg;
+                        }
+                    }
+                );
+            }
         }
         return xml;
     }
@@ -159,6 +187,49 @@ public final class StatsFarm implements IdentityAware {
             );
         }
         return xsl;
+    }
+
+    /**
+     * Process POST request of the stage.
+     * @param number Bout where it is happening
+     * @param author Author of the message
+     * @param stage Name of stage to render
+     * @param place The place in the stage to render
+     * @param body Body of POST request
+     * @return New place in this stage
+     * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (5 lines)
+     */
+    @Operation("stage-post-request")
+    public String stagePostRequest(final Long number, final Urn author,
+        final Urn stage, final String place, final String body)
+        throws Exception {
+        String dest = null;
+        if (this.identity.name().equals(stage)) {
+            dest = CpaUtils.decodeBody(body).get("number");
+        }
+        return dest;
+    }
+
+    /**
+     * Change place after rendering, if necessary.
+     * @param number Bout where it is happening
+     * @param author Author of the message
+     * @param stage Name of stage to render
+     * @param place The place in the stage to render
+     * @return New place in this stage
+     * @throws Exception If some problem inside
+     * @checkstyle ParameterNumber (5 lines)
+     */
+    @Operation("post-render-change-place")
+    public String postRenderChangePlace(final Long number, final Urn author,
+        final Urn stage, final String place)
+        throws Exception {
+        String dest = null;
+        if (this.identity.name().equals(stage)) {
+            dest = "";
+        }
+        return dest;
     }
 
 }

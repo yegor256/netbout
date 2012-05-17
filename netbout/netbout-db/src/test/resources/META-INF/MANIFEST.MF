@@ -1,4 +1,4 @@
 Netbout-JdbcDriver: org.h2.Driver
-Netbout-JdbcUrl: jdbc:h2:mem:db;MODE=MySQL
+Netbout-JdbcUrl: jdbc:h2:mem:db
 Netbout-JdbcUser: mem
 Netbout-JdbcPassword: mem

@@ -26,12 +26,16 @@
  */
 package com.netbout.db;
 
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.SingleHandler;
+import com.jcabi.jdbc.Utc;
+import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,12 +57,12 @@ public final class NamespaceFarm {
     @Operation("namespace-was-registered")
     public void namespaceWasRegistered(final Urn owner, final String name,
         final String template) {
-        final Boolean exists = new DbSession(true)
+        final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT name FROM namespace WHERE name = ?")
             .set(name)
             .select(new NotEmptyHandler());
         if (exists) {
-            new DbSession(true)
+            new JdbcSession(Database.source())
                 // @checkstyle LineLength (1 line)
                 .sql("UPDATE namespace SET identity = ?, template = ? WHERE name = ?")
                 .set(owner)
@@ -66,13 +70,13 @@ public final class NamespaceFarm {
                 .set(name)
                 .update();
         } else {
-            new DbSession(true)
+            new JdbcSession(Database.source())
                 // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO namespace (name, identity, template, date) VALUES (?, ?, ?, ?)")
                 .set(name)
                 .set(owner)
                 .set(template)
-                .set(new Date())
+                .set(new Utc())
                 .insert(new VoidHandler());
         }
     }
@@ -83,10 +87,10 @@ public final class NamespaceFarm {
      */
     @Operation("get-all-namespaces")
     public List<String> getAllNamespaces() {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT name FROM namespace")
             .select(
-                new Handler<List<String>>() {
+                new JdbcSession.Handler<List<String>>() {
                     @Override
                     public List<String> handle(final ResultSet rset)
                         throws SQLException {
@@ -107,11 +111,11 @@ public final class NamespaceFarm {
      */
     @Operation("get-namespace-owner")
     public Urn getNamespaceOwner(final String name) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT identity FROM namespace WHERE name = ?")
             .set(name)
             .select(
-                new Handler<Urn>() {
+                new JdbcSession.Handler<Urn>() {
                     @Override
                     public Urn handle(final ResultSet rset)
                         throws SQLException {
@@ -136,26 +140,10 @@ public final class NamespaceFarm {
      */
     @Operation("get-namespace-template")
     public String getNamespaceTemplate(final String name) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT template FROM namespace WHERE name = ?")
             .set(name)
-            .select(
-                new Handler<String>() {
-                    @Override
-                    public String handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Namespace '%s' not found, can't read tmpl",
-                                    name
-                                )
-                            );
-                        }
-                        return rset.getString(1);
-                    }
-                }
-            );
+            .select(new SingleHandler<String>(String.class));
     }
 
 }

@@ -26,6 +26,10 @@
  */
 package com.netbout.db;
 
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.SingleHandler;
+import com.jcabi.jdbc.Utc;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
@@ -52,19 +56,10 @@ public final class MessageFarm {
      */
     @Operation("create-bout-message")
     public Long createBoutMessage(final Long bout) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("INSERT INTO message (bout) VALUES (?)")
             .set(bout)
-            .insert(
-                new Handler<Long>() {
-                    @Override
-                    public Long handle(final ResultSet rset)
-                        throws SQLException {
-                        rset.next();
-                        return rset.getLong(1);
-                    }
-                }
-            );
+            .insert(new SingleHandler<Long>(Long.class));
     }
 
     /**
@@ -75,7 +70,7 @@ public final class MessageFarm {
      */
     @Operation("get-messages-chunk")
     public List<Long> getMessagesChunk(final Long since, final Long length) {
-        return new DbSession(true).sql(
+        return new JdbcSession(Database.source()).sql(
             // @checkstyle StringLiteralsConcatenation (2 lines)
             "SELECT number FROM message WHERE number > ?"
             + " ORDER BY number LIMIT ?"
@@ -83,7 +78,7 @@ public final class MessageFarm {
             .set(since)
             .set(length)
             .select(
-                new Handler<List<Long>>() {
+                new JdbcSession.Handler<List<Long>>() {
                     @Override
                     public List<Long> handle(final ResultSet rset)
                         throws SQLException {
@@ -105,7 +100,7 @@ public final class MessageFarm {
      */
     @Operation("check-message-existence")
     public Boolean checkMessageExistence(final Long bout, final Long msg) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT number FROM message WHERE number = ? AND bout = ?")
             .set(msg)
             .set(bout)
@@ -119,11 +114,11 @@ public final class MessageFarm {
      */
     @Operation("get-bout-of-message")
     public Long getBoutOfMessage(final Long msg) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT bout FROM message WHERE number = ?")
             .set(msg)
             .select(
-                new Handler<Long>() {
+                new JdbcSession.Handler<Long>() {
                     @Override
                     public Long handle(final ResultSet rset)
                         throws SQLException {
@@ -146,26 +141,11 @@ public final class MessageFarm {
      */
     @Operation("get-message-date")
     public Date getMessageDate(final Long number) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT date FROM message WHERE number = ?")
             .set(number)
-            .select(
-                new Handler<Date>() {
-                    @Override
-                    public Date handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Message #%d not found, can't get date",
-                                    number
-                                )
-                            );
-                        }
-                        return Utc.getTimestamp(rset, 1);
-                    }
-                }
-            );
+            .select(new SingleHandler<Utc>(Utc.class))
+            .getDate();
     }
 
     /**
@@ -175,9 +155,9 @@ public final class MessageFarm {
      */
     @Operation("changed-message-date")
     public void changedMessageDate(final Long number, final Date date) {
-        new DbSession(true)
+        new JdbcSession(Database.source())
             .sql("UPDATE message SET date = ? WHERE number = ?")
-            .set(date)
+            .set(new Utc(date))
             .set(number)
             .update();
     }
@@ -189,11 +169,11 @@ public final class MessageFarm {
      */
     @Operation("get-message-author")
     public Urn getMessageAuthor(final Long number) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT author FROM message WHERE number = ?")
             .set(number)
             .select(
-                new Handler<Urn>() {
+                new JdbcSession.Handler<Urn>() {
                     @Override
                     public Urn handle(final ResultSet rset)
                         throws SQLException {
@@ -218,7 +198,7 @@ public final class MessageFarm {
      */
     @Operation("changed-message-author")
     public void changedMessageAuthor(final Long number, final Urn author) {
-        new DbSession(true)
+        new JdbcSession(Database.source())
             .sql("UPDATE message SET author = ? WHERE number = ?")
             .set(author)
             .set(number)
@@ -232,26 +212,10 @@ public final class MessageFarm {
      */
     @Operation("get-message-text")
     public String getMessageText(final Long number) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT text FROM message WHERE number = ?")
             .set(number)
-            .select(
-                new Handler<String>() {
-                    @Override
-                    public String handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Message #%d not found, can't get text",
-                                    number
-                                )
-                            );
-                        }
-                        return rset.getString(1);
-                    }
-                }
-            );
+            .select(new SingleHandler<String>(String.class));
     }
 
     /**
@@ -261,7 +225,7 @@ public final class MessageFarm {
      */
     @Operation("changed-message-text")
     public void changedMessageText(final Long number, final String text) {
-        new DbSession(true)
+        new JdbcSession(Database.source())
             .sql("UPDATE message SET text = ? WHERE number = ?")
             .set(text)
             .set(number)
