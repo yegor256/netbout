@@ -28,11 +28,10 @@ package com.netbout.db;
 
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -53,16 +52,7 @@ public final class BoutFarm {
         return new JdbcSession(Database.source())
             .sql("INSERT INTO bout (date) VALUES (?)")
             .set(new Utc())
-            .insert(
-                new JdbcSession.Handler<Long>() {
-                    @Override
-                    public Long handle(final ResultSet rset)
-                        throws SQLException {
-                        rset.next();
-                        return rset.getLong(1);
-                    }
-                }
-            );
+            .insert(new SingleHandler<Long>(Long.class));
     }
 
     /**
@@ -107,23 +97,7 @@ public final class BoutFarm {
         return new JdbcSession(Database.source())
             .sql("SELECT title FROM bout WHERE number = ?")
             .set(number)
-            .select(
-                new JdbcSession.Handler<String>() {
-                    @Override
-                    public String handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Bout #%d not found, can't read title",
-                                    number
-                                )
-                            );
-                        }
-                        return rset.getString(1);
-                    }
-                }
-            );
+            .select(new SingleHandler<String>(String.class));
     }
 
     /**
@@ -136,23 +110,8 @@ public final class BoutFarm {
         return new JdbcSession(Database.source())
             .sql("SELECT date FROM bout WHERE number = ?")
             .set(number)
-            .select(
-                new JdbcSession.Handler<Date>() {
-                    @Override
-                    public Date handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Bout #%d not found, can't read its date",
-                                    number
-                                )
-                            );
-                        }
-                        return Utc.getTimestamp(rset, 1);
-                    }
-                }
-            );
+            .select(new SingleHandler<Utc>(Utc.class))
+            .getDate();
     }
 
     /**

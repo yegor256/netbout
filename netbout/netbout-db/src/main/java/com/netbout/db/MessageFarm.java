@@ -28,6 +28,7 @@ package com.netbout.db;
 
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
@@ -58,16 +59,7 @@ public final class MessageFarm {
         return new JdbcSession(Database.source())
             .sql("INSERT INTO message (bout) VALUES (?)")
             .set(bout)
-            .insert(
-                new JdbcSession.Handler<Long>() {
-                    @Override
-                    public Long handle(final ResultSet rset)
-                        throws SQLException {
-                        rset.next();
-                        return rset.getLong(1);
-                    }
-                }
-            );
+            .insert(new SingleHandler<Long>(Long.class));
     }
 
     /**
@@ -152,23 +144,8 @@ public final class MessageFarm {
         return new JdbcSession(Database.source())
             .sql("SELECT date FROM message WHERE number = ?")
             .set(number)
-            .select(
-                new JdbcSession.Handler<Date>() {
-                    @Override
-                    public Date handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Message #%d not found, can't get date",
-                                    number
-                                )
-                            );
-                        }
-                        return Utc.getTimestamp(rset, 1);
-                    }
-                }
-            );
+            .select(new SingleHandler<Utc>(Utc.class))
+            .getDate();
     }
 
     /**
@@ -238,23 +215,7 @@ public final class MessageFarm {
         return new JdbcSession(Database.source())
             .sql("SELECT text FROM message WHERE number = ?")
             .set(number)
-            .select(
-                new JdbcSession.Handler<String>() {
-                    @Override
-                    public String handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Message #%d not found, can't get text",
-                                    number
-                                )
-                            );
-                        }
-                        return rset.getString(1);
-                    }
-                }
-            );
+            .select(new SingleHandler<String>(String.class));
     }
 
     /**

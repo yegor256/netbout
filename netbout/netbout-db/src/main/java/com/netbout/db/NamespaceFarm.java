@@ -28,6 +28,7 @@ package com.netbout.db;
 
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
@@ -142,23 +143,7 @@ public final class NamespaceFarm {
         return new JdbcSession(Database.source())
             .sql("SELECT template FROM namespace WHERE name = ?")
             .set(name)
-            .select(
-                new JdbcSession.Handler<String>() {
-                    @Override
-                    public String handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Namespace '%s' not found, can't read tmpl",
-                                    name
-                                )
-                            );
-                        }
-                        return rset.getString(1);
-                    }
-                }
-            );
+            .select(new SingleHandler<String>(String.class));
     }
 
 }

@@ -28,6 +28,7 @@ package com.netbout.db;
 
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
@@ -44,6 +45,7 @@ import java.util.List;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Farm
 public final class HelperFarm {
@@ -116,16 +118,7 @@ public final class HelperFarm {
         final String location = new JdbcSession(Database.source())
             .sql("SELECT url FROM helper WHERE identity = ?")
             .set(name)
-            .select(
-                new JdbcSession.Handler<String>() {
-                    @Override
-                    public String handle(final ResultSet rset)
-                        throws SQLException {
-                        rset.next();
-                        return rset.getString(1);
-                    }
-                }
-            );
+            .select(new SingleHandler<String>(String.class));
         URL url;
         try {
             url = new URL(location);

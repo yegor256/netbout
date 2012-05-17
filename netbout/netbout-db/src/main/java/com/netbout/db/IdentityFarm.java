@@ -28,6 +28,7 @@ package com.netbout.db;
 
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
@@ -238,23 +239,8 @@ public final class IdentityFarm {
             + " ORDER BY message.date DESC"
         )
             .set(name)
-            .select(
-                new JdbcSession.Handler<Date>() {
-                    @Override
-                    public Date handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException(
-                                String.format(
-                                    "Identity '%s' not found, can't get date",
-                                    name
-                                )
-                            );
-                        }
-                        return Utc.getTimestamp(rset, 1);
-                    }
-                }
-            );
+            .select(new SingleHandler<Utc>(Utc.class))
+            .getDate();
         final Long total = new JdbcSession(Database.source()).sql(
             // @checkstyle StringLiteralsConcatenation (5 lines)
             "SELECT COUNT(*) FROM message"
@@ -265,18 +251,7 @@ public final class IdentityFarm {
         )
             .set(name)
             .set(new Utc(recent))
-            .select(
-                new JdbcSession.Handler<Long>() {
-                    @Override
-                    public Long handle(final ResultSet rset)
-                        throws SQLException {
-                        if (!rset.next()) {
-                            throw new IllegalArgumentException();
-                        }
-                        return rset.getLong(1);
-                    }
-                }
-            );
+            .select(new SingleHandler<Long>(Long.class));
         String marker;
         if (total == 1) {
             marker = "1 message";

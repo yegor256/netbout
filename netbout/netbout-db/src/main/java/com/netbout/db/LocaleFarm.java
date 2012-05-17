@@ -27,13 +27,12 @@
 package com.netbout.db;
 
 import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Manipulations with locales.
@@ -80,19 +79,7 @@ public final class LocaleFarm {
         return new JdbcSession(Database.source())
             .sql("SELECT locale FROM locale WHERE identity = ?")
             .set(name)
-            .select(
-                new JdbcSession.Handler<String>() {
-                    @Override
-                    public String handle(final ResultSet rset)
-                        throws SQLException {
-                        String locale = null;
-                        if (rset.next()) {
-                            locale = rset.getString(1);
-                        }
-                        return locale;
-                    }
-                }
-            );
+            .select(new SingleHandler<String>(String.class, true));
     }
 
 }
