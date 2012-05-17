@@ -26,10 +26,13 @@
  */
 package com.netbout.db;
 
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.Utc;
+import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import java.util.Date;
 
 /**
  * Seen statuses.
@@ -47,11 +50,11 @@ public final class SeenFarm {
      */
     @Operation("message-was-seen")
     public void messageWasSeen(final Long msg, final Urn identity) {
-        new DbSession(true)
+        new JdbcSession(Database.source())
             .sql("INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)")
             .set(msg)
             .set(identity)
-            .set(new Date())
+            .set(new Utc())
             .insert(new VoidHandler());
     }
 
@@ -63,7 +66,7 @@ public final class SeenFarm {
      */
     @Operation("was-message-seen")
     public Boolean wasMessageSeen(final Long msg, final Urn identity) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT message FROM seen WHERE message = ? AND identity = ?")
             .set(msg)
             .set(identity)

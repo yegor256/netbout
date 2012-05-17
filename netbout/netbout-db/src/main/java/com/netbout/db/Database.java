@@ -27,14 +27,14 @@
 package com.netbout.db;
 
 import com.jcabi.log.Logger;
+import com.jolbox.bonecp.BoneCPDataSource;
+import com.rexsl.core.Manifests;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.concurrent.atomic.AtomicLong;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.apache.commons.dbutils.DbUtils;
 
 /**
  * Database-related utility class.
@@ -42,109 +42,63 @@ import org.apache.commons.dbutils.DbUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Database {
+public final class Database {
 
     /**
-     * Logged SQL queries.
+     * Singleton instance.
      */
-    private static final AtomicLong LOGGED = new AtomicLong(0L);
-
-    /**
-     * Singleton instance, lazy loaded in {@link #connection()}.
-     */
-    private static Database instance;
+    private static final Database INSTANCE = new Database();
 
     /**
      * Datasource to use.
      */
-    private final transient DataSource source = new DataSourceBuilder().build();
+    private final transient BoneCPDataSource src;
 
     /**
      * Protected ctor (for the sake of testability, but it should be FINAL,
      * of course).
      */
-    protected Database() {
-        Logger.info(Database.class, "#Database(): instantiated");
-    }
-
-    /**
-     * Drop all connections.
-     */
-    @SuppressWarnings("PMD.NullAssignment")
-    public static void drop() {
-        synchronized (Database.LOGGED) {
-            Database.instance = null;
-        }
-        Logger.info(Database.class, "#drop(): dropped");
+    private Database() {
+        this.src = new BoneCPDataSource();
+        this.src.setDriverClass(Manifests.read("Netbout-JdbcDriver"));
+        this.src.setJdbcUrl(Manifests.read("Netbout-JdbcUrl"));
+        this.src.setUsername(Manifests.read("Netbout-JdbcUser"));
+        this.src.setPassword(Manifests.read("Netbout-JdbcPassword"));
+        // @checkstyle MagicNumber (1 line)
+        this.src.setMaxConnectionsPerPartition(50);
+        this.liquibase();
+        Logger.info(Database.class, "#Database(): ready");
     }
 
     /**
      * Convenient method to get a new JDBC connection.
      * @return New JDBC connection
-     * @throws SQLException If some SQL error
      */
-    @SuppressWarnings("PMD.CloseResource")
-    public static Connection connection() throws SQLException {
-        synchronized (Database.LOGGED) {
-            if (Database.instance == null) {
-                Database.instance = new Database();
-                final Connection conn = Database.instance.connect();
-                Database.update(conn);
-                DbUtils.closeQuietly(conn);
-            }
-        }
-        return Database.instance.connect();
+    public static DataSource source() {
+        return Database.INSTANCE.src;
     }
 
     /**
-     * Log one query prepared for execution.
-     * @param query The SQL query
+     * Update DB schema to the latest version, with Liquibase.
      */
-    public static void log(final String query) {
-        Database.LOGGED.incrementAndGet();
-        synchronized (Database.LOGGED) {
-            // @checkstyle MagicNumber (1 line)
-            if (Database.LOGGED.get() % 10000 == 0) {
-                Logger.info(
-                    Database.class,
-                    "#log(..): %dK DB SQL queries executed",
-                    // @checkstyle MagicNumber (1 line)
-                    Database.LOGGED.get() / 1000
-                );
-            }
-        }
-    }
-
-    /**
-     * Create JDBC connection.
-     * @return New JDBC connection
-     * @throws SQLException If some SQL error
-     */
-    public Connection connect() throws SQLException {
-        return this.source.getConnection();
-    }
-
-    /**
-     * Update DB schema to the latest version.
-     * @param connection JDBC connection to use
-     */
-    private static void update(final Connection connection) {
-        final long start = System.nanoTime();
+    private void liquibase() {
+        Connection conn;
         try {
-            final Liquibase liquibase = new Liquibase(
-                "com/netbout/db/liquibase.xml",
-                new ClassLoaderResourceAccessor(),
-                new JdbcConnection(connection)
-            );
-            liquibase.update("netbout");
-        } catch (liquibase.exception.LiquibaseException ex) {
+            conn = this.src.getConnection();
+            try {
+                new Liquibase(
+                    "com/netbout/db/liquibase.xml",
+                    new ClassLoaderResourceAccessor(),
+                    new JdbcConnection(conn)
+                ).update("netbout");
+            } catch (liquibase.exception.LiquibaseException ex) {
+                throw new IllegalStateException(ex);
+            } finally {
+                conn.close();
+            }
+        } catch (SQLException ex) {
             throw new IllegalStateException(ex);
         }
-        Logger.info(
-            Database.class,
-            "#update(): updated DB schema in %[nano]s",
-            System.nanoTime() - start
-        );
     }
 
 }

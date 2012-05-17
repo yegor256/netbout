@@ -26,12 +26,14 @@
  */
 package com.netbout.db;
 
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.Utc;
+import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 /**
  * Manipulations with locales.
@@ -50,19 +52,19 @@ public final class LocaleFarm {
     @Operation("set-identity-locale")
     public void setIdentityLocale(final Urn identity, final String locale) {
         if (this.getLocaleOfIdentity(identity) == null) {
-            new DbSession(true)
+            new JdbcSession(Database.source())
                 // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO locale (identity, locale, date) VALUES (?, ?, ?)")
                 .set(identity)
                 .set(locale)
-                .set(new Date())
+                .set(new Utc())
                 .insert(new VoidHandler());
         } else {
-            new DbSession(true)
+            new JdbcSession(Database.source())
                 // @checkstyle LineLength (1 line)
                 .sql("UPDATE locale SET locale = ?, date = ? WHERE identity = ?")
                 .set(locale)
-                .set(new Date())
+                .set(new Utc())
                 .set(identity)
                 .update();
         }
@@ -75,11 +77,11 @@ public final class LocaleFarm {
      */
     @Operation("get-locale-of-identity")
     public String getLocaleOfIdentity(final Urn name) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT locale FROM locale WHERE identity = ?")
             .set(name)
             .select(
-                new Handler<String>() {
+                new JdbcSession.Handler<String>() {
                     @Override
                     public String handle(final ResultSet rset)
                         throws SQLException {

@@ -26,12 +26,14 @@
  */
 package com.netbout.db;
 
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.Utc;
+import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,11 +53,11 @@ public final class AliasFarm {
      */
     @Operation("added-identity-alias")
     public void addedIdentityAlias(final Urn identity, final String alias) {
-        new DbSession(true)
+        new JdbcSession(Database.source())
             .sql("INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)")
             .set(identity)
             .set(alias)
-            .set(new Date())
+            .set(new Utc())
             .insert(new VoidHandler());
     }
 
@@ -66,11 +68,11 @@ public final class AliasFarm {
      */
     @Operation("get-aliases-of-identity")
     public List<String> getAliasesOfIdentity(final Urn name) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT name FROM alias WHERE identity = ?")
             .set(name)
             .select(
-                new Handler<List<String>>() {
+                new JdbcSession.Handler<List<String>>() {
                     @Override
                     public List<String> handle(final ResultSet rset)
                         throws SQLException {

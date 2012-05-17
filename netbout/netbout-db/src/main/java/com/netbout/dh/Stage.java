@@ -26,8 +26,8 @@
  */
 package com.netbout.dh;
 
-import com.netbout.db.DbSession;
-import com.netbout.db.Handler;
+import com.jcabi.jdbc.JdbcSession;
+import com.netbout.db.Database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -96,14 +96,18 @@ public final class Stage {
             "SHOW EVENTS",
             "SHOW PROCESSLIST",
         };
-        final Handler<String> handler = new DataHandler();
+        final JdbcSession.Handler<String> handler = new DataHandler();
         for (String query : queries) {
             if (query.isEmpty()) {
                 continue;
             }
             text.append(query).append(":\n");
             try {
-                text.append(new DbSession(true).sql(query).select(handler));
+                text.append(
+                    new JdbcSession(Database.source())
+                        .sql(query)
+                        .select(handler)
+                );
             // @checkstyle IllegalCatch (1 line)
             } catch (Exception ex) {
                 text.append(ex.getMessage()).append(" \n");
@@ -115,7 +119,8 @@ public final class Stage {
     /**
      * The handler.
      */
-    private static final class DataHandler implements Handler<String> {
+    private static final class DataHandler
+        implements JdbcSession.Handler<String> {
         /**
          * {@inheritDoc}
          */

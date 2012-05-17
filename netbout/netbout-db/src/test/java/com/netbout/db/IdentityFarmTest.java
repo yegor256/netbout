@@ -115,7 +115,7 @@ public final class IdentityFarmTest {
         for (String keyword : keywords) {
             MatcherAssert.assertThat(
                 this.farm.findIdentitiesByKeyword(who, keyword),
-                Matchers.hasItem(identity)
+                Matchers.describedAs(keyword, Matchers.hasItem(identity))
             );
         }
     }

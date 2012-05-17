@@ -26,6 +26,10 @@
  */
 package com.netbout.db;
 
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.Utc;
+import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
@@ -62,7 +66,7 @@ public final class IdentityFarm {
             "%%%s%%",
             keyword.toUpperCase(Locale.ENGLISH)
         );
-        return new DbSession(true).sql(
+        return new JdbcSession(Database.source()).sql(
             // @checkstyle StringLiteralsConcatenation (13 lines)
             // @checkstyle LineLength (11 lines)
             "SELECT identity.name FROM identity"
@@ -90,11 +94,11 @@ public final class IdentityFarm {
      */
     @Operation("get-identity-photo")
     public URL getIdentityPhoto(final Urn name) {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT photo FROM identity WHERE name = ?")
             .set(name)
             .select(
-                new Handler<URL>() {
+                new JdbcSession.Handler<URL>() {
                     @Override
                     public URL handle(final ResultSet rset)
                         throws SQLException {
@@ -122,17 +126,17 @@ public final class IdentityFarm {
      */
     @Operation("identity-mentioned")
     public void identityMentioned(final Urn name) {
-        final Boolean exists = new DbSession(true)
+        final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT name FROM identity WHERE name = ?")
             .set(name)
             .select(new NotEmptyHandler());
         if (!exists) {
-            new DbSession(true)
+            new JdbcSession(Database.source())
                 // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO identity (name, photo, date) VALUES (?, ?, ?)")
                 .set(name)
                 .set("http://img.netbout.com/unknown.png")
-                .set(new Date())
+                .set(new Utc())
                 .insert(new VoidHandler());
         }
     }
@@ -144,11 +148,12 @@ public final class IdentityFarm {
      */
     @Operation("identities-joined")
     public void identitiesJoined(final Urn main, final Urn child) {
-        new DbSession(false)
+        new JdbcSession(Database.source())
+            .autocommit(false)
             // @checkstyle LineLength (1 line)
             .sql("INSERT INTO alias (name, identity, date) SELECT l.name, ?, ? FROM alias l LEFT JOIN alias r ON l.name = r.name AND r.identity = ? WHERE l.identity = ? AND r.identity IS NULL GROUP BY l.name")
             .set(main)
-            .set(new Date())
+            .set(new Utc())
             .set(main)
             .set(child)
             .update()
@@ -162,7 +167,7 @@ public final class IdentityFarm {
             // @checkstyle LineLength (1 line)
             .sql("INSERT INTO participant (bout, identity, confirmed, date) SELECT l.bout, ?, l.confirmed, ? FROM participant l LEFT JOIN participant r ON l.bout = r.bout AND r.identity = ? WHERE l.identity = ? AND r.identity IS NULL GROUP BY l.bout")
             .set(main)
-            .set(new Date())
+            .set(new Utc())
             .set(main)
             .set(child)
             .update()
@@ -172,7 +177,7 @@ public final class IdentityFarm {
             // @checkstyle LineLength (1 line)
             .sql("INSERT INTO seen (message, identity, date) SELECT l.message, ?, ? FROM seen l LEFT JOIN seen r ON l.message = r.message AND r.identity = ? WHERE l.identity = ? AND r.identity IS NULL GROUP BY l.message")
             .set(main)
-            .set(new Date())
+            .set(new Utc())
             .set(main)
             .set(child)
             .update()
@@ -192,7 +197,7 @@ public final class IdentityFarm {
      */
     @Operation("changed-identity-photo")
     public void changedIdentityPhoto(final Urn name, final URL photo) {
-        new DbSession(true)
+        new JdbcSession(Database.source())
             .sql("UPDATE identity SET photo = ? WHERE name = ?")
             .set(photo)
             .set(name)
@@ -207,14 +212,14 @@ public final class IdentityFarm {
     public List<Urn> findSilentIdentities() {
         final Calendar cal = new GregorianCalendar();
         cal.add(Calendar.HOUR, -1);
-        return new DbSession(true).sql(
+        return new JdbcSession(Database.source()).sql(
             // @checkstyle StringLiteralsConcatenation (4 lines)
             "SELECT author, MAX(message.date) AS recent FROM message"
             + " LEFT JOIN seen  ON seen.message = message.number"
             + " WHERE seen.message IS NULL"
             + " GROUP BY author HAVING recent < ?"
         )
-            .set(cal.getTime())
+            .set(new Utc(cal.getTime()))
             .select(new NamesHandler());
     }
 
@@ -225,7 +230,7 @@ public final class IdentityFarm {
      */
     @Operation("get-silence-marker")
     public String getSilenceMarker(final Urn name) {
-        final Date recent = new DbSession(true).sql(
+        final Date recent = new JdbcSession(Database.source()).sql(
             // @checkstyle StringLiteralsConcatenation (4 lines)
             "SELECT message.date FROM message"
             + " LEFT JOIN seen ON seen.message = message.number"
@@ -234,7 +239,7 @@ public final class IdentityFarm {
         )
             .set(name)
             .select(
-                new Handler<Date>() {
+                new JdbcSession.Handler<Date>() {
                     @Override
                     public Date handle(final ResultSet rset)
                         throws SQLException {
@@ -250,7 +255,7 @@ public final class IdentityFarm {
                     }
                 }
             );
-        final Long total = new DbSession(true).sql(
+        final Long total = new JdbcSession(Database.source()).sql(
             // @checkstyle StringLiteralsConcatenation (5 lines)
             "SELECT COUNT(*) FROM message"
             + " LEFT JOIN seen ON seen.message = message.number "
@@ -259,9 +264,9 @@ public final class IdentityFarm {
             + " AND seen.message IS NULL"
         )
             .set(name)
-            .set(recent)
+            .set(new Utc(recent))
             .select(
-                new Handler<Long>() {
+                new JdbcSession.Handler<Long>() {
                     @Override
                     public Long handle(final ResultSet rset)
                         throws SQLException {
@@ -284,7 +289,7 @@ public final class IdentityFarm {
     }
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    static final class NamesHandler implements Handler<List<Urn>> {
+    static final class NamesHandler implements JdbcSession.Handler<List<Urn>> {
         @Override
         public List<Urn> handle(final ResultSet rset)
             throws SQLException {

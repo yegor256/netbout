@@ -26,13 +26,16 @@
  */
 package com.netbout.db;
 
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.NotEmptyHandler;
+import com.jcabi.jdbc.Utc;
+import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,10 +54,10 @@ public final class HelperFarm {
      */
     @Operation("get-all-helpers")
     public List<Urn> getAllHelpers() {
-        return new DbSession(true)
+        return new JdbcSession(Database.source())
             .sql("SELECT identity FROM helper")
             .select(
-                new Handler<List<Urn>>() {
+                new JdbcSession.Handler<List<Urn>>() {
                     @Override
                     public List<Urn> handle(final ResultSet rset)
                         throws SQLException {
@@ -75,7 +78,7 @@ public final class HelperFarm {
      */
     @Operation("identity-promoted")
     public void identityPromoted(final Urn name, final URL url) {
-        final Boolean exists = new DbSession(true)
+        final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT url FROM helper WHERE identity = ? ")
             .set(name)
             .select(new NotEmptyHandler());
@@ -93,12 +96,12 @@ public final class HelperFarm {
                 );
             }
         } else {
-            new DbSession(true)
+            new JdbcSession(Database.source())
                 // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO helper (identity, url, date) VALUES (?, ?, ?)")
                 .set(name)
                 .set(url)
-                .set(new Date())
+                .set(new Utc())
                 .insert(new VoidHandler());
         }
     }
@@ -110,11 +113,11 @@ public final class HelperFarm {
      */
     @Operation("get-helper-url")
     public URL getHelperUrl(final Urn name) {
-        final String location = new DbSession(true)
+        final String location = new JdbcSession(Database.source())
             .sql("SELECT url FROM helper WHERE identity = ?")
             .set(name)
             .select(
-                new Handler<String>() {
+                new JdbcSession.Handler<String>() {
                     @Override
                     public String handle(final ResultSet rset)
                         throws SQLException {
