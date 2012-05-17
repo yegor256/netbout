@@ -38,6 +38,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -190,6 +191,15 @@ final class DefaultIndex implements Index, Closeable {
             );
         }
         return this.map.get(value);
+    }
+
+    /**
+     * Find lost messages.
+     * @param msgs Numbers to look for
+     * @return Collection of numbers, which are not found
+     */
+    public Collection<Long> lost(final Collection<Long> msgs) {
+        return Collections.emptyList();
     }
 
     /**

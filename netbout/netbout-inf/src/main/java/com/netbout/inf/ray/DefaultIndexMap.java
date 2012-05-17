@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseThreads;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -38,11 +39,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
@@ -184,7 +191,13 @@ final class DefaultIndexMap implements IndexMap, Closeable {
             "bundled-marker",
         };
         for (String attr : attrs) {
-            text.append(attr);
+            text.append(
+                Logger.format(
+                    "'%s' lost: %[list]s\n",
+                    attr,
+                    DefaultIndex.class.cast(this.index(attr)).lost(this.all)
+                )
+            );
         }
         return text.toString();
     }
@@ -193,23 +206,57 @@ final class DefaultIndexMap implements IndexMap, Closeable {
      * Save map to disc.
      * @throws IOException If some problem
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void flush() throws IOException {
         final long start = System.currentTimeMillis();
-        final OutputStream stream = new FileOutputStream(this.file);
-        try {
-            final PrintWriter writer = new PrintWriter(
-                new OutputStreamWriter(stream, CharEncoding.UTF_8)
-            );
-            for (Long number : this.all) {
-                writer.println(number.toString());
+        final ExecutorService service = Executors.newFixedThreadPool(
+            // @checkstyle MagicNumber (1 line)
+            Runtime.getRuntime().availableProcessors() * 4,
+            new VerboseThreads()
+        );
+        final Collection<Callable<Void>> tasks =
+            new ArrayList<Callable<Void>>(this.map.size() + 1);
+        tasks.add(
+            new Callable<Void>() {
+                public Void call() throws IOException {
+                    final OutputStream stream =
+                        new FileOutputStream(DefaultIndexMap.this.file);
+                    try {
+                        final PrintWriter writer = new PrintWriter(
+                            new OutputStreamWriter(stream, CharEncoding.UTF_8)
+                        );
+                        for (Long number : DefaultIndexMap.this.all) {
+                            writer.println(number.toString());
+                        }
+                        writer.flush();
+                    } finally {
+                        IOUtils.closeQuietly(stream);
+                    }
+                    return null;
+                }
             }
-            writer.flush();
-        } finally {
-            IOUtils.closeQuietly(stream);
+        );
+        for (final DefaultIndex index : this.map.values()) {
+            tasks.add(
+                new Callable<Void>() {
+                    public Void call() throws IOException {
+                        index.flush();
+                        return null;
+                    }
+                }
+            );
         }
-        for (DefaultIndex index : this.map.values()) {
-            index.flush();
+        try {
+            for (Future<Void> future : service.invokeAll(tasks)) {
+                future.get();
+            }
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IOException(ex);
+        } catch (java.util.concurrent.ExecutionException ex) {
+            throw new IOException(ex);
         }
+        service.shutdown();
         Logger.info(
             this,
             "#save(): saved %d msg numbers to %s (%d bytes) in %[ms]s",
