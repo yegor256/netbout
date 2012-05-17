@@ -76,8 +76,8 @@ public final class DefaultHubTest {
     public void producesStatistics() throws Exception {
         final Bus bus = new BusMocker().mock();
         MatcherAssert.assertThat(
-            new DefaultHub(bus, new InfinityMocker().mock()).statistics(),
-            Matchers.notNullValue()
+            new DefaultHub(bus, new InfinityMocker().mock()),
+            Matchers.hasToString(Matchers.notNullValue())
         );
     }
 

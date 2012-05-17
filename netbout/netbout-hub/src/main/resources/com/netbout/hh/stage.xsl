@@ -39,6 +39,16 @@
     </xsl:template>
 
     <xsl:template match="stage">
+        <form method="post">
+            <xsl:attribute name="action">
+                <xsl:value-of select="$stage-home-uri"/>
+            </xsl:attribute>
+            <p>
+                <xsl:text>MessagePostNotice: </xsl:text>
+                <input name="number" size="50"/>
+                <input value="Send" type="submit"/>
+            </p>
+        </form>
         <p>Hub statistics:</p>
         <p class="fixed"><xsl:value-of select="data/text"/></p>
     </xsl:template>
