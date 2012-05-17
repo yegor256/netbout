@@ -26,7 +26,7 @@
  */
 package com.netbout.inf.ray;
 
-import java.util.Set;
+import java.util.Iterator;
 import java.util.SortedSet;
 
 /**
@@ -71,7 +71,7 @@ interface Index {
      * @param msg Number of message
      * @return Set of values
      */
-    Set<String> values(long msg);
+    Iterator<String> values(long msg);
 
     /**
      * Get sorted set of numbers for the given value.

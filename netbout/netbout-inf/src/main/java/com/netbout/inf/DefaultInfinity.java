@@ -102,6 +102,8 @@ public final class DefaultInfinity implements Infinity {
             .append(this.mux)
             .append("\n\nStore stats:\n")
             .append(this.store)
+            .append("\n\nRay stats:\n")
+            .append(this.ray)
             .append("\n\njava.lang.Runtime:\n")
             .append(
                 String.format(

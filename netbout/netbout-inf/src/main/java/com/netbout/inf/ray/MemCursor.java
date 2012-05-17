@@ -212,8 +212,7 @@ final class MemCursor implements Cursor {
             @Override
             public String first(final String name) {
                 final Iterator<String> values = MemCursor.this.imap.index(name)
-                    .values(this.number())
-                    .iterator();
+                    .values(this.number());
                 if (!values.hasNext()) {
                     throw new IllegalArgumentException(
                         String.format(

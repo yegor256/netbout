@@ -173,6 +173,23 @@ final class DefaultIndexMap implements IndexMap, Closeable {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        final String[] attrs = new String[] {
+            com.netbout.inf.atoms.VariableAtom.BOUT_NUMBER.attribute(),
+            "talks-with",
+            "bundled-marker",
+        };
+        for (String attr : attrs) {
+            text.append(attr);
+        }
+        return text.toString();
+    }
+
+    /**
      * Save map to disc.
      * @throws IOException If some problem
      */

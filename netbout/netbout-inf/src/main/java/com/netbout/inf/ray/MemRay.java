@@ -62,6 +62,14 @@ public final class MemRay implements Ray {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return this.imap.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void close() throws IOException {
         this.imap.close();
         Logger.debug(this, "#close(): closed");

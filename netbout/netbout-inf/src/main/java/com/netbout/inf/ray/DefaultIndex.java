@@ -39,12 +39,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
@@ -58,6 +59,7 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class DefaultIndex implements Index, Closeable {
 
     /**
@@ -142,16 +144,38 @@ final class DefaultIndex implements Index, Closeable {
      * {@inheritDoc}
      */
     @Override
-    public Set<String> values(final long msg) {
+    public Iterator<String> values(final long msg) {
         this.validate(msg);
-        final Set<String> values = new HashSet<String>();
-        for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
-            : this.map.entrySet()) {
-            if (entry.getValue().contains(msg)) {
-                values.add(entry.getKey());
+        final Iterator<ConcurrentMap.Entry<String, SortedSet<Long>>> entries =
+            this.map.entrySet().iterator();
+        // @checkstyle AnonInnerLength (50 lines)
+        return new Iterator<String>() {
+            private transient AtomicReference<String> value =
+                new AtomicReference<String>();
+            @Override
+            public boolean hasNext() {
+                while (this.value.get() == null && entries.hasNext()) {
+                    final ConcurrentMap.Entry<String, SortedSet<Long>> entry =
+                        entries.next();
+                    if (entry.getValue().contains(msg)) {
+                        this.value.set(entry.getKey());
+                        break;
+                    }
+                }
+                return this.value.get() != null;
             }
-        }
-        return values;
+            @Override
+            public String next() {
+                if (!this.hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return this.value.getAndSet(null);
+            }
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
     /**
