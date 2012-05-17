@@ -46,7 +46,6 @@ import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -75,19 +74,20 @@ final class DefaultIndex implements Index {
     private final transient ConcurrentMap<Long, Set<String>> rmap;
 
     /**
-     * The file to work with.
+     * Public ctor.
      */
-    private final transient File file;
+    public DefaultIndex() {
+        this.map = new ConcurrentHashMap<String, SortedSet<Long>>();
+        this.rmap = new ConcurrentHashMap<Long, Set<String>>();
+    }
 
     /**
      * Public ctor.
-     * @param path File where to keep it
+     * @param file File to read from
      * @throws IOException If some IO error
      */
-    public DefaultIndex(final File path) throws IOException {
-        this.file = path;
-        FileUtils.touch(this.file);
-        final InputStream stream = new FileInputStream(this.file);
+    public DefaultIndex(final File file) throws IOException {
+        final InputStream stream = new FileInputStream(file);
         try {
             this.map = DefaultIndex.restore(stream);
         } finally {
@@ -172,12 +172,13 @@ final class DefaultIndex implements Index {
     }
 
     /**
-     * Flush this map to disc.
+     * Flush this map to file.
+     * @param file Where to write
      * @throws IOException If some problem
      */
-    public void flush() throws IOException {
+    public void flush(final File file) throws IOException {
         final long start = System.currentTimeMillis();
-        final OutputStream stream = new FileOutputStream(this.file);
+        final OutputStream stream = new FileOutputStream(file);
         try {
             final PrintWriter writer = new PrintWriter(
                 new OutputStreamWriter(stream, CharEncoding.UTF_8)
@@ -197,8 +198,8 @@ final class DefaultIndex implements Index {
             this,
             "#save(): saved %d values to %s (%d bytes) in %[ms]s",
             this.map.size(),
-            this.file,
-            this.file.length(),
+            file,
+            file.length(),
             System.currentTimeMillis() - start
         );
     }

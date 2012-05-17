@@ -71,7 +71,6 @@ public final class MemRay implements Ray {
      */
     @Override
     public void close() throws IOException {
-        this.imap.close();
         Logger.debug(this, "#close(): closed");
     }
 
