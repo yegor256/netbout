@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
@@ -112,6 +113,7 @@ final class Files {
                 FileUtils.deleteQuietly(new File(this.dir, name));
             }
         }
+        Logger.info(this, "#publish('%s'): done", snapshot);
     }
 
 }

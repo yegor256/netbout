@@ -66,6 +66,14 @@ final class Snapshot {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("snapshot-%s", this.ver);
+    }
+
+    /**
      * Get version of it.
      * @return The version
      */
