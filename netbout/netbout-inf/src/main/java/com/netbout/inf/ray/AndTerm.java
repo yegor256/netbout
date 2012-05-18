@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.ray;
 
-import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
@@ -97,7 +96,6 @@ final class AndTerm implements Term {
                 slider = this.slide(slider, cache);
             }
         }
-        Logger.trace(this, "#shift(%s): %s to %s", cursor, this, slider);
         return slider;
     }
 
