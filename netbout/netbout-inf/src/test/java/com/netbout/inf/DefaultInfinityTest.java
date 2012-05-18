@@ -119,4 +119,45 @@ public final class DefaultInfinityTest {
         restored.close();
     }
 
+    /**
+     * Run this class from command line with any Java profiler,
+     * and collect time/memory usage details.
+     * @param args Optional command-line args
+     * @throws Exception If any
+     */
+    public static void main(final String... args) throws Exception {
+        final Folder folder = new FolderMocker().mock();
+        final Infinity inf = new DefaultInfinity(folder);
+        for (int num = 0; num < 5000; ++num) {
+            final Urn[] deps = inf.see(DefaultInfinityTest.notice())
+                .toArray(new Urn[0]);
+            while (inf.eta(deps) != 0) {
+                TimeUnit.MILLISECONDS.sleep(1);
+            }
+        }
+        inf.messages("(and (talks-with 'urn:test:Jeffrey') (and (and (matches '') (bundled)) (from 0)) (unique $bout.number))");
+        inf.close();
+    }
+
+    /**
+     * Create random notice.
+     * @return The notice
+     * @throws Exception If any
+     */
+    public static Notice notice() throws Exception {
+        final Bout bout = new BoutMocker()
+            .withParticipant("urn:test:Jeffrey")
+            .mock();
+        final Message msg = new MessageMocker()
+            .withText("how are you there?")
+            .inBout(bout)
+            .mock();
+        return new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return msg;
+            }
+        };
+    }
+
 }

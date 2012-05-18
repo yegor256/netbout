@@ -73,12 +73,12 @@ final class NotTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
         Cursor shifted = cursor;
         Cursor candidate = cursor;
+        final Term always = new AlwaysTerm(this.imap);
         while (!shifted.end()) {
-            candidate = shifted.shift(new AlwaysTerm(this.imap));
+            candidate = shifted.shift(always);
             shifted = this.term.shift(shifted);
             if (shifted.compareTo(candidate) < 0) {
                 break;
